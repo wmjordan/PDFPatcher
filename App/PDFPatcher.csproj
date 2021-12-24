@@ -118,6 +118,7 @@
     <Compile Include="Common\StringHelper.cs" />
     <Compile Include="Common\ValueHelper.cs" />
     <Compile Include="Common\XmlHelper.cs" />
+    <Compile Include="Configuration.Designer.cs" />
     <Compile Include="Functions\DocumentOption\FontCharSubstitutionForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -705,6 +706,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ChineseCharMap.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Configuration.resx" />
     <EmbeddedResource Include="Functions\DocumentOption\FontCharSubstitutionForm.resx">
       <DependentUpon>FontCharSubstitutionForm.cs</DependentUpon>
     </EmbeddedResource>
