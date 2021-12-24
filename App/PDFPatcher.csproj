@@ -1,0 +1,1068 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{77A9FBD2-FB25-4590-864A-64A01A8724C4}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>PDFPatcher</RootNamespace>
+    <AssemblyName>PDFPatcher</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ApplicationIcon>pdf_icon.ico</ApplicationIcon>
+    <SignAssembly>true</SignAssembly>
+    <IsWebBootstrapper>true</IsWebBootstrapper>
+    <AssemblyOriginatorKeyFile>wmjordan.snk</AssemblyOriginatorKeyFile>
+    <StartupObject>PDFPatcher.Program</StartupObject>
+    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <TargetFrameworkProfile />
+    <PublishUrl>http://localhost/PDFPatcher/</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Web</InstallFrom>
+    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NET40;SOURCE_INCLUDE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <OutputPath>..\bin\Release\</OutputPath>
+    <DefineConstants>TRACE;NET40;SOURCE_INCLUDE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>Common\app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ColorPicker">
+      <HintPath>Lib\ColorPicker.dll</HintPath>
+    </Reference>
+    <Reference Include="Cyotek.Windows.Forms.ImageBox, Version=1.2.0.0, Culture=neutral, PublicKeyToken=58daa28b0b2de221, processorArchitecture=MSIL">
+      <HintPath>..\packages\CyotekImageBox.1.3.0\lib\net20\Cyotek.Windows.Forms.ImageBox.dll</HintPath>
+    </Reference>
+    <Reference Include="FreeImageNET">
+      <HintPath>Lib\FreeImageNET.dll</HintPath>
+    </Reference>
+    <Reference Include="HtmlRenderer">
+      <HintPath>Lib\HtmlRenderer.dll</HintPath>
+    </Reference>
+    <Reference Include="HtmlRenderer.WinForms">
+      <HintPath>Lib\HtmlRenderer.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="itextsharp">
+      <HintPath>Lib\itextsharp.dll</HintPath>
+    </Reference>
+    <Reference Include="ObjectListView, Version=2.9.1.1072, Culture=neutral, PublicKeyToken=b1c5bf581481bcd4, processorArchitecture=MSIL">
+      <HintPath>..\packages\ObjectListView.Official.2.9.1\lib\net20\ObjectListView.dll</HintPath>
+    </Reference>
+    <Reference Include="PowerJson">
+      <HintPath>Lib\PowerJson.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.XML" />
+    <Reference Include="TradeWright.TabControlExtra">
+      <HintPath>Lib\TradeWright.TabControlExtra.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ChineseCharMap.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ChineseCharMap.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Commands.cs" />
+    <Compile Include="CommonCommands.cs" />
+    <Compile Include="Common\CommandRegistry.cs" />
+    <Compile Include="Common\FilePath.cs" />
+    <Compile Include="Common\FontHelper.cs">
+    </Compile>
+    <Compile Include="Common\FontUtility.cs" />
+    <Compile Include="Common\ObjectListViewHelper.cs" />
+    <Compile Include="Common\ShortcutFile.cs" />
+    <Compile Include="Common\StringHelper.cs" />
+    <Compile Include="Common\ValueHelper.cs" />
+    <Compile Include="Common\XmlHelper.cs" />
+    <Compile Include="Functions\DocumentOption\FontCharSubstitutionForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Functions\DocumentOption\FontCharSubstitutionForm.Designer.cs">
+      <DependentUpon>FontCharSubstitutionForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\Editor\AddBookmarkConditionForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Functions\Editor\AddBookmarkConditionForm.Designer.cs">
+      <DependentUpon>AddBookmarkConditionForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\Editor\Commands\BookmarkActionCommand.cs" />
+    <Compile Include="Functions\Editor\Commands\BookmarkLevelCommand.cs" />
+    <Compile Include="Functions\Editor\Commands\BookmarkMarkerCommand.cs" />
+    <Compile Include="Functions\Editor\Commands\BookmarkPageCommand.cs" />
+    <Compile Include="Functions\Editor\Commands\BookmarkSelectionCommand.cs" />
+    <Compile Include="Functions\Editor\Commands\BookmarkStyleCommand.cs" />
+    <Compile Include="Functions\Editor\Commands\CopyBookmarkItemCommand.cs" />
+    <Compile Include="Functions\Editor\Commands\DeleteBookmarkItemCommand.cs" />
+    <Compile Include="Functions\Editor\Commands\DocumentPropertyCommand.cs" />
+    <Compile Include="Functions\Editor\Commands\InsertBookmarkCommand.cs" />
+    <Compile Include="Functions\Editor\Commands\OcrPageCommand.cs" />
+    <Compile Include="Functions\Editor\Commands\SavePageImageCommand.cs" />
+    <Compile Include="Functions\Editor\Commands\PagePropertiesCommand.cs" />
+    <Compile Include="Functions\Editor\Commands\PasteBookmarkItemCommand.cs" />
+    <Compile Include="Functions\Editor\Commands\QuickSelectCommand.cs" />
+    <Compile Include="Functions\Editor\Commands\SaveDocumentCommand.cs" />
+    <Compile Include="Functions\Editor\Commands\LoadDocumentCommand.cs" />
+    <Compile Include="Functions\Editor\Commands\SimpleBookmarkCommand.cs" />
+    <Compile Include="Functions\Editor\Commands\ViewerCommand.cs" />
+    <Compile Include="Functions\Editor\IEditorCommand.cs" />
+    <Compile Include="Functions\Editor\PagePropertyForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Functions\Editor\PagePropertyForm.Designer.cs">
+      <DependentUpon>PagePropertyForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\FormState.cs" />
+    <Compile Include="Common\ImageBox\DragHandle.cs" />
+    <Compile Include="Common\ImageBox\DragHandleAnchor.cs" />
+    <Compile Include="Common\ImageBox\DragHandleCollection.cs" />
+    <Compile Include="Common\ImageBox\ImageBoxEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Options\ImageExtracterOptions.cs" />
+    <Compile Include="Processor\ContentProcessors\RemoveFormProcessor.cs" />
+    <Compile Include="Processor\ContentProcessors\RemoveEmptyCommandProcessor.cs" />
+    <Compile Include="Processor\ContentProcessors\RemoveWrappedCommandProcessor.cs" />
+    <Compile Include="Processor\ImageExtractor.cs" />
+    <Compile Include="Processor\Imaging\WuColorQuantizer.cs" />
+    <Compile Include="Functions\CustomizeToolbarForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Functions\CustomizeToolbarForm.Designer.cs">
+      <DependentUpon>CustomizeToolbarForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\DraggableForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Functions\Editor\AutoBookmarkForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Functions\Editor\AutoBookmarkForm.Designer.cs">
+      <DependentUpon>AutoBookmarkForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\Editor\DocumentInfoForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Functions\Editor\DocumentInfoForm.Designer.cs">
+      <DependentUpon>DocumentInfoForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\Editor\InsertPageLabelForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Functions\Editor\InsertPageLabelForm.Designer.cs">
+      <DependentUpon>InsertPageLabelForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\Editor\Controller.cs" />
+    <Compile Include="Functions\Editor\EditModel.cs" />
+    <Compile Include="Functions\Editor\ViewerStructures.cs" />
+    <Compile Include="Functions\HtmlPageControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Functions\IDocumentEditor.cs" />
+    <Compile Include="Options\ToolbarOptions.cs" />
+    <Compile Include="Processor\Imaging\BitmapHelper.cs" />
+    <Compile Include="Processor\InfoXmlProcessors\ClearDestinationOffsetProcessor.cs" />
+    <Compile Include="Processor\MuPdf\MuDocumentInfo.cs" />
+    <Compile Include="Processor\MuPdf\MuHandle.cs" />
+    <Compile Include="Processor\MuPdf\NativeMethods.cs" />
+    <Compile Include="Processor\MuPdf\NativeMethods.Document.cs" />
+    <Compile Include="Processor\MuPdf\NativeMethods.PdfObjects.cs" />
+    <Compile Include="Processor\MuPdf\PageLabelCollection.cs" />
+    <Compile Include="Processor\MuPdf\RenderResultCache.cs" />
+    <Compile Include="Functions\Editor\DoubleClickableRadioButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Functions\Editor\InsertBookmarkForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Functions\Editor\InsertBookmarkForm.Designer.cs">
+      <DependentUpon>InsertBookmarkForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\CustomButton\GlassButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Functions\FileListHelper.cs" />
+    <Compile Include="Functions\FrontPageControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Functions\FrontPageControl.Designer.cs">
+      <DependentUpon>FrontPageControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\DocumentOption\DocumentFontListForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Functions\DocumentOption\DocumentFontListForm.Designer.cs">
+      <DependentUpon>DocumentFontListForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\DocumentInspector\AddPdfObjectForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Functions\DocumentInspector\AddPdfObjectForm.Designer.cs">
+      <DependentUpon>AddPdfObjectForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\AutoBookmark\EditAdjustmentForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Functions\AutoBookmark\EditAdjustmentForm.Designer.cs">
+      <DependentUpon>EditAdjustmentForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\AutoBookmark\FontFilterForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Functions\AutoBookmark\FontFilterForm.Designer.cs">
+      <DependentUpon>FontFilterForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\AutoBookmark\FontNameConditionEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Functions\AutoBookmark\FontNameConditionEditor.Designer.cs">
+      <DependentUpon>FontNameConditionEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\DocumentOption\PageSettingsEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Functions\DocumentOption\PageSettingsEditor.Designer.cs">
+      <DependentUpon>PageSettingsEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\DocumentOption\FontSubstitutionsEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Functions\DocumentOption\FontSubstitutionsEditor.Designer.cs">
+      <DependentUpon>FontSubstitutionsEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\FunctionControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Functions\DocumentInspector\ImageViewerForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Functions\DocumentInspector\ImageViewerForm.Designer.cs">
+      <DependentUpon>ImageViewerForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\Editor\SavePdfForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Functions\Editor\SavePdfForm.Designer.cs">
+      <DependentUpon>SavePdfForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\MergerOptionForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Functions\MergerOptionForm.Designer.cs">
+      <DependentUpon>MergerOptionForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\InfoExchangerControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Functions\InfoExchangerControl.Designer.cs">
+      <DependentUpon>InfoExchangerControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\RecentFileMenuHelper.cs" />
+    <Compile Include="Functions\RenameControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Functions\RenameControl.Designer.cs">
+      <DependentUpon>RenameControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\Editor\PdfViewerControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Functions\AutoBookmark\TextSizeConditionEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Functions\AutoBookmark\TextSizeConditionEditor.Designer.cs">
+      <DependentUpon>TextSizeConditionEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\IResettableControl.cs" />
+    <Compile Include="Functions\ITextInfoFilterEditor.cs">
+    </Compile>
+    <Compile Include="Functions\OcrControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Functions\OcrControl.Designer.cs">
+      <DependentUpon>OcrControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\AutoBookmark\PageRangeConditionEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Functions\AutoBookmark\PageRangeConditionEditor.Designer.cs">
+      <DependentUpon>PageRangeConditionEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\AutoBookmark\TextConditionEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Functions\AutoBookmark\TextConditionEditor.Designer.cs">
+      <DependentUpon>TextConditionEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\DocumentInspectorControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Functions\DocumentInspectorControl.Designer.cs">
+      <DependentUpon>DocumentInspectorControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\AutoBookmark\TextPositionConditionEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Functions\AutoBookmark\TextPositionConditionEditor.Designer.cs">
+      <DependentUpon>TextPositionConditionEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\DocumentInspector\TextViewerForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Functions\DocumentInspector\TextViewerForm.Designer.cs">
+      <DependentUpon>TextViewerForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\RenderImageControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Functions\RenderImageControl.Designer.cs">
+      <DependentUpon>RenderImageControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\MergerControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Functions\MergerControl.Designer.cs">
+      <DependentUpon>MergerControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\SourcePdfOptionForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Functions\SourcePdfOptionForm.Designer.cs">
+      <DependentUpon>SourcePdfOptionForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\UpdateForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Functions\UpdateForm.Designer.cs">
+      <DependentUpon>UpdateForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Model\AutoBookmarkCondition.cs" />
+    <Compile Include="Model\AutoBookmarkContext.cs" />
+    <Compile Include="Model\BookmarkSettings.cs" />
+    <Compile Include="Model\InsertBookmarkPositionType.cs" />
+    <Compile Include="Model\PageBoxSettings.cs" />
+    <Compile Include="Model\PageFilterFlag.cs" />
+    <Compile Include="Model\PdfDocumentFont.cs" />
+    <Compile Include="Model\PageResizing.cs" />
+    <Compile Include="Model\PdfInfoXmlDocument.cs" />
+    <Compile Include="Model\PdfModelHelper.cs" />
+    <Compile Include="Options\DocumentOptions.cs" />
+    <Compile Include="Options\ViewerOptions.cs" />
+    <Compile Include="Processor\InfoXmlProcessors\LevelUpProcessor.cs" />
+    <Compile Include="Processor\ContentProcessors\ReplaceFontProcessor.cs" />
+    <Compile Include="Processor\ContentProcessors\RemoveBookmarkProcessor.cs" />
+    <Compile Include="Processor\ContentProcessors\ColorizeBinaryImageProcessor.cs" />
+    <Compile Include="Processor\ContentProcessors\FixContentProcessor.cs" />
+    <Compile Include="Processor\ContentProcessors\PageDimensionProcessor.cs" />
+    <Compile Include="Processor\DocProcessorContext.cs" />
+    <Compile Include="Model\DocumentObject.cs" />
+    <Compile Include="Model\ITextRegion.cs" />
+    <Compile Include="Model\IHierarchicalObject.cs" />
+    <Compile Include="Processor\DocumentSink.cs" />
+    <Compile Include="Processor\MuPdf\MuPdfObject.cs" />
+    <Compile Include="Processor\OutlineManager.cs" />
+    <Compile Include="Processor\PageProcessorContext.cs" />
+    <Compile Include="Model\PdfImageData.cs" />
+    <Compile Include="Model\PdfNavigator.cs" />
+    <Compile Include="Model\PdfObjectType.cs" />
+    <Compile Include="Model\PdfPageCommand.cs" />
+    <Compile Include="Model\PdfPathDocument.cs" />
+    <Compile Include="Model\PdfPath\Context.cs" />
+    <Compile Include="Model\PdfPath\IPathAxis.cs" />
+    <Compile Include="Model\PdfPath\IPathFunction.cs" />
+    <Compile Include="Model\PdfPath\IPathPredicate.cs" />
+    <Compile Include="Model\PdfPath\IPathValue.cs" />
+    <Compile Include="Model\PdfPath\PathAxes.cs" />
+    <Compile Include="Model\PdfPath\PathAxisType.cs" />
+    <Compile Include="Model\PdfPath\PathValue.cs" />
+    <Compile Include="Model\PdfPath\PathValueType.cs" />
+    <Compile Include="Model\PdfPath\PredicateOperatorType.cs" />
+    <Compile Include="Model\PdfStructInfo.cs" />
+    <Compile Include="Options\EncodingOptions.cs" />
+    <Compile Include="Options\AutoBookmarkOptions.cs" />
+    <Compile Include="Common\PInvokeHelper.cs" />
+    <Compile Include="ConfigurationSerialization.cs" />
+    <Compile Include="Functions\Editor\ActionEditorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Functions\Editor\ActionEditorForm.Designer.cs">
+      <DependentUpon>ActionEditorForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\Editor\BookmarkEditorView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Functions\Editor\BookmarkEditorView.Designer.cs">
+      <DependentUpon>BookmarkEditorView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\EditorControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Functions\EditorControl.Designer.cs">
+      <DependentUpon>EditorControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\DocumentOption\DocumentInfoEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Functions\DocumentOption\DocumentInfoEditor.Designer.cs">
+      <DependentUpon>DocumentInfoEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\HistoryComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Functions\MacroMenu.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Functions\Editor\NewCoordinateEntryForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Functions\Editor\NewCoordinateEntryForm.Designer.cs">
+      <DependentUpon>NewCoordinateEntryForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\DocumentOption\PageLabelEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Functions\DocumentOption\PageLabelEditor.Designer.cs">
+      <DependentUpon>PageLabelEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\RenamePreviewForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Functions\RenamePreviewForm.Designer.cs">
+      <DependentUpon>RenamePreviewForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\RichTextBoxEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Functions\Editor\SearchBookmarkForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Functions\Editor\SearchBookmarkForm.Designer.cs">
+      <DependentUpon>SearchBookmarkForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\Editor\ShiftPageNumberEntryForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Functions\Editor\ShiftPageNumberEntryForm.Designer.cs">
+      <DependentUpon>ShiftPageNumberEntryForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\ExtractImageControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Functions\ExtractImageControl.Designer.cs">
+      <DependentUpon>ExtractImageControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\SourceImageOptionForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Functions\SourceImageOptionForm.Designer.cs">
+      <DependentUpon>SourceImageOptionForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\AppOptionForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Functions\AppOptionForm.Designer.cs">
+      <DependentUpon>AppOptionForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\ViewerPreferenceEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Functions\ViewerPreferenceEditor.Designer.cs">
+      <DependentUpon>ViewerPreferenceEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\AutoBookmarkControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Functions\AutoBookmarkControl.Designer.cs">
+      <DependentUpon>AutoBookmarkControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\Editor\ZoomRateEntryForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Functions\Editor\ZoomRateEntryForm.Designer.cs">
+      <DependentUpon>ZoomRateEntryForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Model\BookmarkStatus.cs" />
+    <Compile Include="Model\DistanceInfo.cs" />
+    <Compile Include="Model\ColorSpaces\CIELab.cs" />
+    <Compile Include="Model\ColorSpaces\CIEXYZ.cs" />
+    <Compile Include="Model\ColorSpaces\CMYK.cs" />
+    <Compile Include="Model\ColorSpaces\ColorSpaceHelper.cs" />
+    <Compile Include="Model\ColorSpaces\HSB.cs" />
+    <Compile Include="Model\ColorSpaces\HSL.cs" />
+    <Compile Include="Model\ColorSpaces\RGB.cs" />
+    <Compile Include="Model\ColorSpaces\YUV.cs" />
+    <Compile Include="Options\ExtractPageOptions.cs" />
+    <Compile Include="Options\OcrOptions.cs" />
+    <Compile Include="Processor\MuPdf\ImageRendererOptions.cs" />
+    <Compile Include="Processor\AutoBookmarkFilters\FontNameFilter.cs" />
+    <Compile Include="Model\FontInfo.cs" />
+    <Compile Include="Model\Margins.cs" />
+    <Compile Include="Model\MatchPattern.cs" />
+    <Compile Include="Model\PageLabel.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Model\PageSettings.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Model\CoordinateTranslationSettings.cs" />
+    <Compile Include="Model\PaperSize.cs" />
+    <Compile Include="Options\PatcherOptions.cs" />
+    <Compile Include="Model\Bound.cs" />
+    <Compile Include="Model\TextInfo.cs" />
+    <Compile Include="Model\TextRegion.cs" />
+    <Compile Include="Model\WritingDirection.cs" />
+    <Compile Include="Processor\AutoBookmarkCreator.cs" />
+    <Compile Include="Processor\AutoBookmarkFilters\MultiConditionFilter.cs" />
+    <Compile Include="Processor\AutoBookmarkFilters\AutoBookmarkFilter.cs" />
+    <Compile Include="Processor\AutoBookmarkFilters\TextFilter.cs" />
+    <Compile Include="Processor\AutoBookmarkFilters\TextPositionFilter.cs" />
+    <Compile Include="Processor\AutoBookmarkFilters\TextSizeFilter.cs" />
+    <Compile Include="Processor\AutoBookmarkFilters\PageRangeFilter.cs" />
+    <Compile Include="Processor\InfoXmlProcessors\BookmarkMatcher.cs" />
+    <Compile Include="Processor\InfoXmlProcessors\IPdfInfoXmlProcessor.cs" />
+    <Compile Include="Processor\InfoXmlProcessors\UndoAction.cs" />
+    <Compile Include="Processor\InfoXmlProcessors\DestinationGotoTopProcessor.cs" />
+    <Compile Include="Processor\InfoXmlProcessors\BookmarkOpenStatusProcessor.cs" />
+    <Compile Include="Processor\InfoXmlProcessors\SetTitleCaseProcessor.cs" />
+    <Compile Include="Processor\InfoXmlProcessors\ChangeCoordinateProcessor.cs" />
+    <Compile Include="Processor\InfoXmlProcessors\ChangePageNumberProcessor.cs" />
+    <Compile Include="Processor\InfoXmlProcessors\ChangeZoomRateProcessor.cs" />
+    <Compile Include="Processor\InfoXmlProcessors\SetTextColorProcessor.cs" />
+    <Compile Include="Processor\InfoXmlProcessors\SetTextStyleProcessor.cs" />
+    <Compile Include="Processor\InfoXmlProcessors\ReplaceTitleTextProcessor.cs" />
+    <Compile Include="Processor\InfoXmlProcessors\ForceInternalLinkProcessor.cs" />
+    <Compile Include="Processor\InfoXmlProcessors\LevelDownProcessor.cs" />
+    <Compile Include="Processor\ContentProcessors\ImageRecompressor.cs" />
+    <Compile Include="Processor\ContentProcessors\IPageProcessor.cs" />
+    <Compile Include="Processor\ContentProcessors\RemoveAnnotationProcessor.cs" />
+    <Compile Include="Processor\ContentProcessors\RemoveDictionaryItemProcessor.cs" />
+    <Compile Include="Processor\ContentProcessors\IDocProcessor.cs" />
+    <Compile Include="Processor\ContentProcessors\CommonProcessor.cs" />
+    <Compile Include="Processor\ContentProcessors\ImportOcrResultProcessor.cs" />
+    <Compile Include="Processor\ContentProcessors\RemoveThumbnailProcessor.cs" />
+    <Compile Include="Processor\ContentProcessors\RemoveTextBlockProcessor.cs" />
+    <Compile Include="Processor\Imaging\ImageDisposition.cs" />
+    <Compile Include="Processor\Imaging\ImageInfo.cs" />
+    <Compile Include="Processor\Imaging\TiffHelper.cs" />
+    <Compile Include="Processor\Imaging\JpgHelper.cs" />
+    <Compile Include="Processor\InfoDocProcessor\CollapseBookmarkProcessor.cs" />
+    <Compile Include="Processor\InfoDocProcessor\ConvertUnitProcessor.cs" />
+    <Compile Include="Processor\InfoDocProcessor\GotoDestinationProcessor.cs" />
+    <Compile Include="Processor\IInfoDocProcessor.cs" />
+    <Compile Include="Processor\InfoDocProcessor\ForceInternalDestinationProcessor.cs" />
+    <Compile Include="Processor\Imaging\JBig2Decoder.cs" />
+    <Compile Include="Processor\Imaging\JBig2Encoder.cs" />
+    <Compile Include="Processor\Imaging\JBig2Structs.cs" />
+    <Compile Include="Processor\IProcessor.cs" />
+    <Compile Include="Processor\ModiOcr.cs" />
+    <Compile Include="Processor\MuPdf\Interop.cs" />
+    <Compile Include="Processor\MuPdf\MuDocument.cs" />
+    <Compile Include="Processor\MuPdf\MuPage.cs" />
+    <Compile Include="Processor\MuPdf\MuPdfException.cs" />
+    <Compile Include="Processor\MuPdf\MuStream.cs" />
+    <Compile Include="Processor\MuPdf\MuText.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Processor\MuPdf\PixmapData.cs" />
+    <Compile Include="Processor\MuPdf\Structures.cs" />
+    <Compile Include="Processor\OcrProcessor.cs" />
+    <Compile Include="Processor\OperatorGroup.cs" />
+    <Compile Include="Model\PdfPath\IPathExpression.cs" />
+    <Compile Include="Model\PdfPath\PathCompiler.cs" />
+    <Compile Include="Processor\PdfActionExporter.cs" />
+    <Compile Include="Processor\PdfContentStreamParser.cs" />
+    <Compile Include="Model\GeneralInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Model\GraphicsState.cs" />
+    <Compile Include="Model\UnitConverter.cs" />
+    <Compile Include="Processor\InfoDocProcessor\RemoveZoomRateProcessor.cs" />
+    <Compile Include="Processor\PdfPageCommandProcessor.cs" />
+    <Compile Include="Processor\PdfPageExtractor.cs" />
+    <Compile Include="Processor\PdfProcessingEngine.cs" />
+    <Compile Include="Model\SourceItem.cs" />
+    <Compile Include="Functions\AboutControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Functions\AboutControl.Designer.cs">
+      <DependentUpon>AboutControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Common\FileHelper.cs" />
+    <Compile Include="Functions\BookmarkControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Functions\BookmarkControl.Designer.cs">
+      <DependentUpon>BookmarkControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\PatcherOptionForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Functions\PatcherOptionForm.Designer.cs">
+      <DependentUpon>PatcherOptionForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\ListViewItemComparer.cs" />
+    <Compile Include="Functions\TargetFileControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Functions\TargetFileControl.Designer.cs">
+      <DependentUpon>TargetFileControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\PatcherControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Functions\PatcherControl.Designer.cs">
+      <DependentUpon>PatcherControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Model\PageRangeCollection.cs" />
+    <Compile Include="Options\MergerOptions.cs" />
+    <Compile Include="Processor\PdfContentExport.cs" />
+    <Compile Include="Processor\PdfDocumentCreator.cs" />
+    <Compile Include="Processor\InfoDocProcessor\ShiftPageProcessor.cs" />
+    <Compile Include="Model\TextLine.cs" />
+    <Compile Include="Processor\SourceItemSerializer.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Toolkit.cs" />
+    <Compile Include="Tracker.cs" />
+    <Compile Include="AppContext.cs" />
+    <Compile Include="Common\FormHelper.cs" />
+    <Compile Include="Common\DualKeyDictionary.cs" />
+    <Compile Include="Constants.cs" />
+    <Compile Include="Functions\InfoFileOptionControl.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Functions\InfoFileOptionControl.Designer.cs">
+      <DependentUpon>InfoFileOptionControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Options\ExporterOptions.cs" />
+    <Compile Include="Processor\NullXmlWriter.cs" />
+    <Compile Include="Functions\PasswordEntryForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Functions\PasswordEntryForm.Designer.cs">
+      <DependentUpon>PasswordEntryForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Processor\DocInfoExporter.cs" />
+    <Compile Include="Processor\PdfHelper.cs" />
+    <Compile Include="Processor\DocInfoImporter.cs" />
+    <Compile Include="Processor\Worker.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="ChineseCharMap.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ChineseCharMap.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\DocumentOption\FontCharSubstitutionForm.resx">
+      <DependentUpon>FontCharSubstitutionForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\Editor\AddBookmarkConditionForm.resx">
+      <DependentUpon>AddBookmarkConditionForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\Editor\AutoBookmarkForm.resx">
+      <DependentUpon>AutoBookmarkForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\Editor\DocumentInfoForm.resx">
+      <DependentUpon>DocumentInfoForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\Editor\InsertBookmarkForm.resx">
+      <DependentUpon>InsertBookmarkForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\CustomizeToolbarForm.resx">
+      <DependentUpon>CustomizeToolbarForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\Editor\InsertPageLabelForm.resx">
+      <DependentUpon>InsertPageLabelForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\Editor\PagePropertyForm.resx">
+      <DependentUpon>PagePropertyForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\FrontPageControl.resx">
+      <DependentUpon>FrontPageControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\AboutControl.resx">
+      <DependentUpon>AboutControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\Editor\ActionEditorForm.resx">
+      <DependentUpon>ActionEditorForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\Editor\BookmarkEditorView.resx">
+      <DependentUpon>BookmarkEditorView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\EditorControl.resx">
+      <DependentUpon>EditorControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\DocumentOption\DocumentInfoEditor.resx">
+      <DependentUpon>DocumentInfoEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\AutoBookmark\EditAdjustmentForm.resx">
+      <DependentUpon>EditAdjustmentForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\InfoFileOptionControl.resx">
+      <DependentUpon>InfoFileOptionControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\InfoExchangerControl.resx">
+      <DependentUpon>InfoExchangerControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\RenameControl.resx">
+      <DependentUpon>RenameControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\PatcherControl.resx">
+      <DependentUpon>PatcherControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\BookmarkControl.resx">
+      <DependentUpon>BookmarkControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\PatcherOptionForm.resx">
+      <DependentUpon>PatcherOptionForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\AutoBookmark\FontFilterForm.resx">
+      <DependentUpon>FontFilterForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\AutoBookmark\FontNameConditionEditor.resx">
+      <DependentUpon>FontNameConditionEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\DocumentInspector\ImageViewerForm.resx">
+      <DependentUpon>ImageViewerForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\Editor\SavePdfForm.resx">
+      <DependentUpon>SavePdfForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\AutoBookmark\TextSizeConditionEditor.resx">
+      <DependentUpon>TextSizeConditionEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\Editor\NewCoordinateEntryForm.resx">
+      <DependentUpon>NewCoordinateEntryForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\DocumentOption\PageLabelEditor.resx">
+      <DependentUpon>PageLabelEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\RenamePreviewForm.resx">
+      <DependentUpon>RenamePreviewForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\Editor\SearchBookmarkForm.resx">
+      <DependentUpon>SearchBookmarkForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\Editor\ShiftPageNumberEntryForm.resx">
+      <DependentUpon>ShiftPageNumberEntryForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\TargetFileControl.resx">
+      <DependentUpon>TargetFileControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\ExtractImageControl.resx">
+      <DependentUpon>ExtractImageControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\SourceImageOptionForm.resx">
+      <DependentUpon>SourceImageOptionForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\AppOptionForm.resx">
+      <DependentUpon>AppOptionForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\ViewerPreferenceEditor.resx">
+      <DependentUpon>ViewerPreferenceEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\AutoBookmarkControl.resx">
+      <DependentUpon>AutoBookmarkControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\PasswordEntryForm.resx">
+      <DependentUpon>PasswordEntryForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\Editor\ZoomRateEntryForm.resx">
+      <DependentUpon>ZoomRateEntryForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\OcrControl.resx">
+      <DependentUpon>OcrControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\AutoBookmark\PageRangeConditionEditor.resx">
+      <DependentUpon>PageRangeConditionEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\AutoBookmark\TextConditionEditor.resx">
+      <DependentUpon>TextConditionEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\DocumentInspectorControl.resx">
+      <DependentUpon>DocumentInspectorControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\SourceFileControl.resx">
+      <DependentUpon>SourceFileControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\ExtractPageControl.resx">
+      <DependentUpon>ExtractPageControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\ReportControl.resx">
+      <DependentUpon>ReportControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Model\PageRange.cs" />
+    <Compile Include="Functions\SourceFileControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Functions\SourceFileControl.Designer.cs">
+      <DependentUpon>SourceFileControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\ExtractPageControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Functions\ExtractPageControl.Designer.cs">
+      <DependentUpon>ExtractPageControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Options\ImporterOptions.cs" />
+    <Compile Include="Functions\ReportControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Functions\ReportControl.Designer.cs">
+      <DependentUpon>ReportControl.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\授权协议.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\更新历史.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="Common\app.manifest" />
+    <None Include="donation.png" />
+    <Content Include="Functions\AboutPage.html">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Functions\FrontPage.html">
+      <SubType>Designer</SubType>
+    </Content>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+    <None Include="Resources\pdf.png" />
+    <None Include="wmjordan.snk" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Functions\DocumentOption\DocumentFontListForm.resx">
+      <DependentUpon>DocumentFontListForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\DocumentInspector\AddPdfObjectForm.resx">
+      <DependentUpon>AddPdfObjectForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\DocumentOption\PageSettingsEditor.resx">
+      <DependentUpon>PageSettingsEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\DocumentOption\FontSubstitutionsEditor.resx">
+      <DependentUpon>FontSubstitutionsEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\MergerOptionForm.resx">
+      <DependentUpon>MergerOptionForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\AutoBookmark\TextPositionConditionEditor.resx">
+      <DependentUpon>TextPositionConditionEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\DocumentInspector\TextViewerForm.resx">
+      <DependentUpon>TextViewerForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\RenderImageControl.resx">
+      <DependentUpon>RenderImageControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\MergerControl.resx">
+      <DependentUpon>MergerControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\SourcePdfOptionForm.resx">
+      <DependentUpon>SourcePdfOptionForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\UpdateForm.resx">
+      <DependentUpon>UpdateForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Model\PDFStructInfo.xml" />
+    <Content Include="pdf_icon.ico" />
+    <None Include="Resources\096.png" />
+    <None Include="Resources\107.png" />
+    <None Include="Resources\108.png" />
+    <None Include="Resources\101.png" />
+    <None Include="Resources\103.png" />
+    <None Include="Resources\layer-rotate-left.png" />
+    <None Include="Resources\layer-rotate.png" />
+    <None Include="Resources\document-bookmark.png" />
+    <None Include="Resources\document-pdf-text.png" />
+    <None Include="Resources\document-export.png" />
+    <None Include="Resources\document-pdf.png" />
+    <None Include="Resources\document-import.png" />
+    <None Include="Resources\document-text.png" />
+    <None Include="Resources\document-convert.png" />
+    <None Include="Resources\image--arrow.png" />
+    <None Include="Resources\document--arrow.png" />
+    <None Include="Resources\arrow-stop-180.png" />
+    <None Include="Resources\edit-list-order.png" />
+    <None Include="Resources\table-select-row.png" />
+    <None Include="Resources\document.png" />
+    <None Include="Resources\document-number.png" />
+    <None Include="Resources\documents.png" />
+    <None Include="Resources\document-bookmark-export.png" />
+    <None Include="Resources\document-bookmark-import.png" />
+    <None Include="Resources\book-open-text-image.png" />
+    <None Include="Resources\document-pdf-number.png" />
+    <None Include="Resources\folder-open-image.png" />
+    <None Include="Resources\ui-text-field-select.png" />
+    <None Include="Resources\arrow-circle-double.png" />
+    <None Include="Resources\blue-folder-open-document.png" />
+    <None Include="Resources\arrow-000-medium.png" />
+    <None Include="Resources\arrow-180-medium.png" />
+    <None Include="Resources\palette.png" />
+    <None Include="Resources\edit-italic.png" />
+    <None Include="Resources\edit-bold.png" />
+    <None Include="Resources\notebook--pencil.png" />
+    <None Include="Resources\magnifier--pencil.png" />
+    <None Include="Resources\arrow-circle-225-left.png" />
+    <None Include="Resources\exclamation-red-frame.png" />
+    <None Include="Resources\table-select-all.png" />
+    <None Include="Resources\bookmark--pencil.png" />
+    <None Include="Resources\bookmarks.png" />
+    <None Include="Resources\bookmark--minus.png" />
+    <None Include="Resources\folder-open.png" />
+    <None Include="Resources\edit-uppercase.png" />
+    <None Include="Resources\arrow-merge-180-left.png" />
+    <None Include="Resources\ui-scroll-pane-both.png" />
+    <None Include="Resources\magnifier-zoom.png" />
+    <None Include="Resources\edit-replace.png" />
+    <None Include="Resources\document-copy.png" />
+    <None Include="Resources\clipboard-paste.png" />
+    <None Include="Resources\Ocr.png" />
+    <None Include="Resources\inbox-document-text.png" />
+    <None Include="Resources\ImportOcr.png" />
+    <None Include="Resources\toggle.png" />
+    <None Include="Resources\toggle-expand.png" />
+    <None Include="Resources\document-text-image.png" />
+    <None Include="Resources\application-list.png" />
+    <None Include="Resources\application-task.png" />
+    <None Include="Resources\DocumentInspector.png" />
+    <None Include="Resources\PdfOptions.png" />
+    <None Include="Resources\InfoFileOptions.png" />
+    <None Include="Resources\wand-magic.png" />
+    <None Include="Resources\document-processor.png" />
+    <None Include="Resources\page-processor.png" />
+    <None Include="Resources\document-merge.png" />
+    <None Include="Resources\node-insert-next.png" />
+    <None Include="Resources\document-image.png" />
+    <None Include="Resources\fonts.png" />
+    <None Include="Resources\arrow-stop-090.png" />
+    <None Include="Resources\arrow-stop-270.png" />
+    <None Include="Resources\alphabetic-sort.png" />
+    <None Include="Resources\natural-sort.png" />
+    <None Include="Resources\document-number-1.png" />
+    <None Include="Resources\document-number-2.png" />
+    <None Include="Resources\image.png" />
+    <None Include="Resources\image-vertical.png" />
+    <None Include="Resources\home.png" />
+    <None Include="Resources\arrow-045-small.png" />
+    <None Include="Resources\xfn-colleague-met.png" />
+    <None Include="Resources\user-black.png" />
+    <None Include="Resources\application-home.png" />
+    <None Include="Resources\document-rename.png" />
+    <None Include="Resources\ui-scroll-bar.png" />
+    <None Include="Resources\ui-scroll-bar-horizontal.png" />
+    <None Include="Resources\disk-rename.png" />
+    <None Include="Resources\color.png" />
+    <None Include="Resources\grayscale.png" />
+    <None Include="Resources\ui-color-picker-switch.png" />
+    <None Include="Resources\cursor.png" />
+    <None Include="Resources\arrow-move.png" />
+    <None Include="Resources\ui-check-boxes-series.png" />
+    <None Include="Resources\property.png" />
+    <None Include="Resources\pin.png" />
+    <None Include="Resources\spectacle-sunglass.png" />
+    <None Include="Resources\leaf.png" />
+    <None Include="Resources\document-bookmark-wand.png" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <Import Project="..\packages\ILRepack.Lib.MSBuild.Task.2.0.18.2\build\ILRepack.Lib.MSBuild.Task.targets" Condition="Exists('..\packages\ILRepack.Lib.MSBuild.Task.2.0.18.2\build\ILRepack.Lib.MSBuild.Task.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>此项目引用这台计算机上缺少的 NuGet 程序包。使用 NuGet 程序包还原可下载这些程序包。有关详细信息，请参阅 http://go.microsoft.com/fwlink/?LinkID=322105。缺少的文件是 {0}。</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\ILRepack.Lib.MSBuild.Task.2.0.18.2\build\ILRepack.Lib.MSBuild.Task.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\ILRepack.Lib.MSBuild.Task.2.0.18.2\build\ILRepack.Lib.MSBuild.Task.targets'))" />
+  </Target>
+  <Target Name="BeforeBuild">
+  </Target>
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
+</Project>

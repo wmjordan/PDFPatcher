@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="GB2312"?>
+<!-- edited with XMLSpy v2007 (http://www.altova.com) by WMJ (private) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="PDF">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Global" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element ref="Info" maxOccurs="unbounded"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element ref="Info" maxOccurs="unbounded"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Info">
+		<xs:complexType>
+			<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:element ref="Info" minOccurs="0"/>
+				<xs:element ref="RefInfo" minOccurs="0"/>
+			</xs:choice>
+			<xs:attribute name="Token" type="xs:NMTOKEN" use="required"/>
+			<xs:attribute name="Name" type="xs:NMTOKEN" use="optional"/>
+			<xs:attribute name="Required" type="xs:boolean" use="optional" default="false"/>
+			<xs:attribute name="Description"/>
+			<xs:attribute name="ImageKey"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="RefInfo">
+		<xs:complexType>
+			<xs:attribute name="Token" type="xs:NMTOKEN" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:simpleType name="ImageKeyTypes">
+		<xs:restriction base="xs:NMTOKEN">
+			<xs:enumeration value="Document"/>
+			<xs:enumeration value="Trailer"/>
+			<xs:enumeration value="Outlines"/>
+			<xs:enumeration value="Resources"/>
+			<xs:enumeration value="Outline"/>
+			<xs:enumeration value="Pages"/>
+			<xs:enumeration value="Page"/>
+			<xs:enumeration value="GoToPage"/>
+			<xs:enumeration value="Stream"/>
+			<xs:enumeration value="Image"/>
+			<xs:enumeration value="Font"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

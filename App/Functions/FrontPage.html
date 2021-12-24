@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<html>
+	<head>
+		<title>$appName</title>
+		<style>
+body {
+	margin: 0;
+	padding: 5pt;
+}
+h1 {
+	font-size: 15pt;
+	color: #6666cc;
+	border-bottom: 1px dashed #9900ff;
+	margin: 5pt 0;
+}
+p {
+	padding: 3pt 10pt;
+	margin: 0pt;
+	font-size: 11pt;
+	color: #999999;
+}
+h2 {
+	font-size: 12pt;
+	padding: 3pt 0;
+	margin: 0;
+	color: #6666cc;
+}
+td {
+	vertical-align: top;
+}
+		</style>
+	</head>
+	<body>
+		<h1><a href="func:About">$appName</a></h1>
+		<table>
+			<tr>
+				<td style="border-right: 1px solid blue; padding-right: 5pt; width: 160pt;">
+					<h2>处理 PDF 文档</h2>
+					<div>Editor;BookmarkEditor;修改 PDF 文件;创建或修改 PDF 文档的书签，修改 PDF 文档的设置</div>
+					<div>DocumentProcessor;Patcher;批量修改 PDF 文件;根据配置批量处理 PDF 文档，生成新的文档</div>
+					<div>Merger;Merger;合并 PDF 和图片文件;将多个图片和 PDF 文档合并为新的 PDF 文档</div>
+					<div>Ocr;Ocr;识别图像文本;识别扫描 PDF 文档的文字（需微软 Office 2003或2007的光学字符识别<i>（OCR）</i>引擎支持）</div>
+					<div>AutoBookmark;BookmarkGenerator;自动生成书签;根据 PDF 的文本样式生成书签文件</div>
+					<div>Rename;Rename;批量重命名文件;根据 PDF 的文本属性更改文件名</div>
+					<h2>提取文档内容</h2>
+					<div>ExtractPages;ExtractPages;提取页面或拆分文档;提取 PDF 文档的页面或重排页面</div>
+					<div>ExtractImage;ExtractImages;提取图片;无损提取 PDF 文档中的图片</div>
+					<div>RenderDocument;RenderPages;转换页面为图片;将 PDF 文档的页面转换为图片</div>
+					<h2>高手工具</h2>
+					<div>DocumentInspector;Inspector;文档结构探查器;探查 PDF 文档的内部结构</div>
+					<div>ExportInfoFile;InfoExchanger;导出或导入信息文件;导出书签、文档元数据、阅读器设定等信息到信息文件</div>
+					<div>AppOptions;Options;程序配置;修改 PDF 补丁丁的程序配置</div>
+					<h2>支持作者</h2>
+					<div>About;About;捐赠通道;支持软件发展</div>
+				</td>
+				<td style="padding-left: 5pt;">
+					<div>请点击左边的功能，或<a href="exec:_Open">打开需要修改的文件</a>。</div>
+					<ol style="margin-top: 5pt;">
+						<li></li>
+					</ol>
+					<div>点击此处 <a href="exec:_CleanUpInexistentFiles">清理不存在的文件记录</a>。</div>
+				</td>
+			</tr>
+		</table>
+        <div style="font-size: 9pt">著作权所有：WMJordan；主页：<a href="$AppHomePage">$AppHomePage</a>；电邮：wmjordan@163.com</div>
+	</body>
+</html>

@@ -1,0 +1,24 @@
+LIBRARY JBig2Dec
+EXPORTS
+
+; jBig2Enc
+
+;	jbig2_init
+;	jbig2_destroy
+;	jbig2_add_page
+;	jbig2_pages_complete
+;	jbig2_produce_page
+	jbig2_encode
+	jbig2_encode_generic
+	jbig2_freemem
+
+; jBig2Dec
+
+	jbig2_ctx_new_imp
+	jbig2_data_in
+	jbig2_make_global_ctx
+	jbig2_complete_page
+	jbig2_global_ctx_free
+	jbig2_release_page
+	jbig2_ctx_free
+	jbig2_page_out
