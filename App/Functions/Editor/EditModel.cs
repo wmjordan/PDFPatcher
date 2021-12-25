@@ -10,7 +10,7 @@ namespace PDFPatcher.Functions.Editor
 	internal sealed class EditModel
 	{
 		public EditModel () {
-			Undo = new UndoManager (100);
+			Undo = new UndoManager();
 			TitleStyles = new List<AutoBookmarkStyle> ();
 		}
 

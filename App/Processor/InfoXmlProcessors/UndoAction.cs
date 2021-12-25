@@ -17,16 +17,10 @@ namespace PDFPatcher.Processor
 		
 		public delegate void OnUndoDelegate (UndoManager undoManager, IUndoAction action);
 
-		public int Capacity { get; private set; }
-
 		public bool CanUndo => _names.Count > 0;
 
 		public OnUndoDelegate OnAddUndo = null;
 		public OnUndoDelegate OnUndo = null;
-
-		public UndoManager (int capacity) {
-			Capacity = capacity;
-		}
 
 		public void Clear () {
 			_names.Clear ();
@@ -34,15 +28,12 @@ namespace PDFPatcher.Processor
 		}
 
 		public void AddUndo (string name, IUndoAction action) {
-			if (action == null || _names.Count >= Capacity) {
+			if (action == null) {
 				return;
 			}
-			Capacity++;
 			_names.Add (name);
 			_undoActions.Push (action);
-			if (OnAddUndo != null) {
-				OnAddUndo (this, action);
-			}
+			OnAddUndo?.Invoke(this, action);
 		}
 
 		public IList<string> GetActionNames (int limit) {
@@ -57,11 +48,12 @@ namespace PDFPatcher.Processor
 		public IEnumerable<XmlNode> Undo () {
 			if (CanUndo) {
 				_names.RemoveAt (_names.Count - 1);
+				if (_names.Count > 100 && _names.Capacity > 200) {
+					_names.TrimExcess();
+				}
 				var a = _undoActions.Pop ();
 				a.Undo ();
-				if (OnUndo != null) {
-					OnUndo (this, a);
-				}
+				OnUndo?.Invoke(this, a);
 				return a.AffectedElements;
 			}
 			return null;
@@ -86,12 +78,11 @@ namespace PDFPatcher.Processor
 			if (action == null) {
 				return;
 			}
-			var g = action as UndoActionGroup;
-			if (g != null) {
-				_actions.AddRange (g._actions);
+			if (action is UndoActionGroup g) {
+				_actions.AddRange(g._actions);
 			}
 			else {
-				_actions.Add (action);
+				_actions.Add(action);
 			}
 		}
 
