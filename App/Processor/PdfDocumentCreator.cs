@@ -159,6 +159,15 @@ namespace PDFPatcher.Processor
 			var ext = source.FilePath.FileExtension.ToLowerInvariant ();
 			if (__BuiltInImageTypes.Contains (ext)) {
 				iTextImage image = LoadImage (source, ext);
+				if (ext == Constants.FileExtensions.Jpg || ext == Constants.FileExtensions.Jpeg) {
+					if (Processor.Imaging.JpgHelper.TryGetExifOrientation(source.FilePath, out var o) && o != 0) {
+						switch (o) {
+							case 6: image.RotationDegrees = -90; break;
+							case 3: image.RotationDegrees = 180; break;
+							case 8: image.RotationDegrees = 90; break;
+						}
+					}
+				}
 				if (image == null) {
 					Tracker.TraceMessage ("无法添加文件：" + source.FilePath);
 				}
@@ -447,37 +456,34 @@ namespace PDFPatcher.Processor
 			if (imageItem == null || cropOptions.NeedCropping == false) {
 				return Image.GetInstance (sourceFile.FilePath.ToString());
 			}
-			else {
-				ext = ext.ToLowerInvariant ();
-				using (var fi = new FreeImageBitmap (sourceFile.FilePath)) {
-					if (fi.Height < cropOptions.MinHeight // 不满足尺寸限制
-						|| fi.Width < cropOptions.MinWidth
-						|| fi.Height <= cropOptions.Top + cropOptions.Bottom // 裁剪后尺寸小于 0
-						|| fi.Width <= cropOptions.Left + cropOptions.Right
-						) {
-						return Image.GetInstance (sourceFile.FilePath.ToString());
-					}
-					else if (ext == Constants.FileExtensions.Jpg || ext == ".jpeg") {
-						// is JPEG file
-						var t = sourceFile.FilePath.EnsureExtension(Constants.FileExtensions.Jpg);
-						if (FreeImageBitmap.JPEGCrop (sourceFile.FilePath, t, cropOptions.Left, cropOptions.Top, fi.Width - cropOptions.Right, fi.Height - cropOptions.Bottom)) {
-							iTextImage image;
-							using (var fs = new FileStream (t, FileMode.Open)) {
-								image = Image.GetInstance (fs);
-							}
-							File.Delete (t);
-							return image;
+			ext = ext.ToLowerInvariant ();
+			using (var fi = new FreeImageBitmap (sourceFile.FilePath)) {
+				if (fi.Height < cropOptions.MinHeight // 不满足尺寸限制
+					|| fi.Width < cropOptions.MinWidth
+					|| fi.Height <= cropOptions.Top + cropOptions.Bottom // 裁剪后尺寸小于 0
+					|| fi.Width <= cropOptions.Left + cropOptions.Right
+					) {
+					return Image.GetInstance (sourceFile.FilePath.ToString());
+				}
+				if (ext == Constants.FileExtensions.Jpg || ext == ".jpeg") {
+					// is JPEG file
+					var t = sourceFile.FilePath.EnsureExtension(Constants.FileExtensions.Jpg);
+					if (FreeImageBitmap.JPEGCrop (sourceFile.FilePath, t, cropOptions.Left, cropOptions.Top, fi.Width - cropOptions.Right, fi.Height - cropOptions.Bottom)) {
+						iTextImage image;
+						using (var fs = new FileStream (t, FileMode.Open)) {
+							image = Image.GetInstance (fs);
 						}
+						File.Delete (t);
+						return image;
 					}
+				}
 
-					using (var tmp = fi.Copy (cropOptions.Left, cropOptions.Top, fi.Width - cropOptions.Right, fi.Height - cropOptions.Bottom)) {
-						using (MemoryStream ms = new MemoryStream ()) {
-							tmp.Save (ms, fi.ImageFormat);
-							ms.Flush ();
-							ms.Position = 0;
-							return Image.GetInstance (ms);
-						}
-					}
+				using (var tmp = fi.Copy (cropOptions.Left, cropOptions.Top, fi.Width - cropOptions.Right, fi.Height - cropOptions.Bottom))
+				using (MemoryStream ms = new MemoryStream ()) {
+					tmp.Save (ms, fi.ImageFormat);
+					ms.Flush ();
+					ms.Position = 0;
+					return Image.GetInstance (ms);
 				}
 			}
 		}
@@ -497,17 +503,14 @@ namespace PDFPatcher.Processor
 			if (_option.AutoMaskBWImages && image.IsMaskCandidate ()) {
 				image.MakeMask ();
 			}
-			image.ScaleAbsolute(image.ScaledWidth * 72f / image.DpiX.SubstituteDefault(72), image.ScaledHeight * 72f / image.DpiY.SubstituteDefault(72));
+			image.ScalePercent(72f / image.DpiX.SubstituteDefault(72) * 100f, 72f / image.DpiY.SubstituteDefault(72) * 100f);
 			if (_content.SpecialSize == SpecialPaperSize.AsPageSize) {
 				_doc.SetPageSize (new Rectangle (image.ScaledWidth + _doc.LeftMargin + _doc.RightMargin, image.ScaledHeight + _doc.TopMargin + _doc.BottomMargin));
 			}
 			else if (_content.SpecialSize == SpecialPaperSize.FixedWidthAutoHeight) {
-				float ratio =
-					(scaleDown && image.ScaledWidth > _content.Width) ||
-					(scaleUp && image.ScaledWidth < _content.Width) ? _content.Width / image.ScaledWidth : 1;
-				if (ratio != 1) {
-					image.ScaleAbsoluteWidth (_content.Width);
-					image.ScaleAbsoluteHeight (image.ScaledHeight * ratio);
+				if ((scaleDown && image.ScaledWidth > _content.Width) ||
+					(scaleUp && image.ScaledWidth < _content.Width)) {
+					image.ScaleToFit(_content.Width, 999999);
 				}
 				_doc.SetPageSize (new Rectangle (_content.Width, image.ScaledHeight + _doc.TopMargin + _doc.BottomMargin));
 			}
@@ -540,10 +543,7 @@ namespace PDFPatcher.Processor
 				}
 				if ((scaleDown && (image.ScaledHeight > _content.Height || image.ScaledWidth > _content.Width))
 					|| (scaleUp && image.ScaledHeight < _content.Height && image.ScaledWidth < _content.Width)) {
-					float percentX = _content.Width / image.ScaledWidth;
-					float percentY = _content.Height / image.ScaledHeight;
-					image.ScaleAbsoluteHeight (image.ScaledHeight * (percentX < percentY ? percentX : percentY));
-					image.ScaleAbsoluteWidth (image.ScaledWidth * (percentX < percentY ? percentX : percentY));
+					image.ScaleToFit(_content.Width, _content.Height);
 				}
 				float px = 0, py = 0;
 				if (hAlign == HorizontalAlignment.Center) {
