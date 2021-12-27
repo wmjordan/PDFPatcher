@@ -120,6 +120,26 @@ namespace PDFPatcher.Functions
 			base.OnItemActivate (e);
 			EditSubItem (SelectedItem, 0);
 		}
+		protected override void OnCellEditStarting(CellEditEventArgs e) {
+			if (e.Column == _BookmarkPageColumn) {
+				var b = e.CellBounds;
+				if (b.Width < 60) {
+					b.Width = 60;
+				}
+				e.Control = new NumericUpDown {
+					Location = b.Location,
+					Bounds = b,
+					Value = Convert.ToDecimal(e.Value)
+				};
+			}
+			base.OnCellEditStarting(e);
+		}
+		protected override void OnCellEditFinished(CellEditEventArgs e) {
+			if (e.Column == _BookmarkPageColumn) {
+				e.NewValue = ((NumericUpDown)e.Control).Value;
+			}
+			base.OnCellEditFinished(e);
+		}
 		#region 拖放操作
 		protected override void OnCanDrop (OlvDropEventArgs args) {
 			var o = args.DataObject as DataObject;
