@@ -13,10 +13,10 @@ h1 {
 	border-bottom: 1px dashed #9900ff;
 	margin: 5pt 0;
 }
-p {
+p, td {
 	padding: 3pt 0pt;
 	margin: 0pt;
-	font-size: 10pt;
+	font-size: 11pt;
 }
 h2 {
 	font-size: 12pt;
@@ -35,17 +35,28 @@ span {
 		<div style="padding: 0 10pt;">
 			<table style="width: 100%; max-width: 800px">
 				<tr>
-					<td style="width: 50%">$AssemblyCopyright</td>
-					<td style="width: 50%">版本：$AssemblyVersion <a href="exec:_CheckUpdate">检查新版本</a></td>
+					<td rowspan="5"><img src="res:Logo" /></td>
+					<td colspan="2">$AssemblyCopyright</td>
 				</tr>
 				<tr>
-					<td>主页网址：<a href="$AppHomePage">$AppHomePage</a></td>
-					<td>电邮：$AssemblyCompany</td>
+					<td>软件版本：</td>
+					<td>$AssemblyVersion <a href="exec:_CheckUpdate">检查新版本</a></td>
+				</tr>
+				<tr>
+					<td>主页网址：</td>
+					<td><a href="$AppHomePage">$AppHomePage</a></td>
+				</tr>
+				<tr>
+					<td>源代码网址：</td>
+					<td><a href="$AppHubPage">$AppHubPage</a></td>
+				</tr>
+				<tr>
+					<td>作者电邮：</td>
+					<td>$AssemblyCompany</td>
 				</tr>
 			</table>
-			<p><img src="res:Donation" /></p>
-			<p>PDF 补丁丁是免费软件。在使用该软件之前，您必须同意此软件附带的使用协议。使用此软件表示您同意并遵守该软件使用协议的条款，并清楚使用该软件的责任。</p>
-			<p><strong>对于因安装、复制、使用本软件而引致的任何损失，本软件及其著作权人不负任何责任。</strong></p>
+			<p>PDF 补丁丁是开放源代码的免费软件。在使用该软件之前，您必须同意此软件附带的使用协议。使用此软件表示您同意并遵守该软件使用协议的条款，并清楚使用该软件的责任。</p>
+			<p>本软件及源代码采用“<strong>良心授权</strong>”协议——<strong>用户每次使用本软件后如有所获益，应行一善事；如使用源代码开发了新的软件并获得收益，应将收益中不低于千分之一的金额捐赠给社会的弱势群体。</strong>对于因安装、复制、使用本软件而引致的任何损失，本软件及其著作权人不负任何责任。</p>
 			<p>本软件使用了如下开放源代码项目的成果，特此致谢：</p>
 			<ol>
 				<li>PDF 组件：<a href="http://itextsharp.sourceforge.net">http://itextsharp.sourceforge.net</a></li>

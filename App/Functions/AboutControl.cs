@@ -16,11 +16,12 @@ namespace PDFPatcher
 
 		public AboutControl () {
 			InitializeComponent ();
-			Text = string.Format ("关于 {0}", AssemblyTitle);
+			Text = $"关于 {AssemblyTitle}";
 			_FrontPageBox.Text = Properties.Resources.AboutPage
 				.Replace ("$AppName", Constants.AppName)
 				.Replace ("$AssemblyCopyright", AssemblyCopyright)
 				.Replace ("$AppHomePage", Constants.AppHomePage)
+				.Replace ("$AppHubPage", Constants.AppHubPage)
 				.Replace ("$AssemblyCompany", AssemblyCompany)
 				.Replace ("$AssemblyVersion", AssemblyVersion);
 		}

@@ -44,12 +44,11 @@ namespace PDFPatcher
 
 		protected override void OnDragEnter (DragEventArgs drgevent) {
 			base.OnDragEnter (drgevent);
-			FormHelper.FeedbackDragFileOver (drgevent, Constants.FileExtensions.PdfAndAllBookmarkExtension);
+			drgevent.FeedbackDragFileOver (Constants.FileExtensions.PdfAndAllBookmarkExtension);
 		}
 		protected override void OnDragDrop (DragEventArgs drgevent) {
 			base.OnDragDrop (drgevent);
-			var files = FormHelper.DropFileOver (drgevent, Constants.FileExtensions.PdfAndAllBookmarkExtension);
-			foreach (var item in files) {
+			foreach (var item in drgevent.DropFileOver (Constants.FileExtensions.PdfAndAllBookmarkExtension)) {
 				AppContext.MainForm.OpenFileWithEditor (item);
 			}
 		}
