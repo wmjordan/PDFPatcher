@@ -1,0 +1,475 @@
+﻿1.0.0.0 December 23, 2021
+New features.
+First open source release.
+Modified the license agreement.
+Merge images feature uses JPEG image EXIF rotation angle.
+Modified features.
+Updated JBIG2 decoding component.
+Optimized the main program code of PDF Patcher.
+No longer supports Windows XP, 2003.
+Removed support for XML program configuration files (versions from several years ago have switched to JSON configuration files).
+NET Framework 4.0 runtime required (comes with Windows 8 and above).
+Fixes issues.
+Bookmarks editor page number edit box was too narrow.
+
+0.6.2.0 November 9, 2021
+New feature.
+Support opening PDF documents by command line or by dragging and dropping files to the main form.
+Add the function of deleting several output commands at the beginning or end of the page, which can be used to remove some contents that interfere with reading.
+Whether the function of automatically generating bookmarks merges adjacent headings.
+Add the option to delete text trailing blanks to the embed replace font function, which can be used to upgrade some old PDF documents.
+Add the function of exporting images to avoid exporting the same images.
+Add the function of naming the output file using alternative characters for exporting images.
+Modify document to add the ability to adjust the page margin according to the page ratio.
+Add the function of whether to display document annotations in the document editor.
+The bookmark editor will be positioned to the corresponding document location of the bookmark while editing the bookmark text.
+Add the function of forcing to call the text recognition engine to recognize text when inserting bookmarks.
+The function of splitting documents adds the function of adding a number to the first file name as well.
+Compatible with the unembedded fonts used in electronic invoices.
+Bug fix.
+The page content was misaligned after resizing the page in some cases.
+The problem that the document editor could not save the bookmarks to PDF documents properly after changing the bookmark color.
+The problem that the automatic bookmark generation function generates wrong jump coordinates when the page has an offset value.
+Fix the problem that the exported pictures are all black in some cases in the exported picture function.
+Fix the problem that the old PDF document without embedded font cannot be displayed properly in the previous version.
+The problem that when the output directory is the root directory of the partition where the program is located, the output directory will become the directory where the program is located.
+Unable to handle the problem of named connection scaling.
+The export image function cannot export images in nested forms.
+The last page is missing when extracting page split documents by page split.
+The merge file feature cannot import some TIFF images.
+The problem that the document editor and the function of converting page to picture cannot display some PDF documents normally.
+Fix the problem that JPEG 2000 images cannot be imported.
+
+0.6.1.3498 May 6, 2018
+New feature.
+Editor adds automatic bookmark generation command to quickly match the style of text PDF to generate bookmarks.
+Mouse double-click on a tab to close the corresponding function tab.
+Automatically check for program updates (this feature does not upload any user information, you can adjust the check interval in "Help"-"Check for new version" or disable it).
+Add the function of unifying page size to the widest page, narrowest page, largest page and smallest page.
+Modified features.
+Updated PDF rendering engine.
+When extracting images encounters an image loading error, the export process will continue without interruption.
+Extract images to PNG images when JPEG images cannot be rotated perfectly and losslessly.
+Fixes errors.
+Memory bugs when extracting images or analyzing documents.
+When extracting images with multiple images on a page, the output file number was incorrect after ignoring the images.
+Merging files did not sort the file names properly in some cases.
+The problem of not using the correct color palette when extracting images.
+Image extraction reverses the image in some cases.
+The editor cannot delete bookmark properties in some cases.
+Some minor issues with the Import Info File feature.
+The problem of incorrect positioning of bookmark editor coordinates when CropBox and MediaBox do not match.
+Wrong rotation direction of saved images in the image extraction function.
+Export image data function has an error when InlineImage data is NUL.
+
+0.5.0.2990 April 13, 2017
+New features.
+Simplify the interface and highlight PDF editor functions.
+Multiple PDF editors can be opened at the same time to edit documents.
+Can put frequently used tools into custom toolbar.
+Add right-click menu to PDF editor (identify text to insert bookmarks, copy selected content and other functions).
+Add support for multiple recognition language engines such as Japanese and Korean.
+After recognition, list the page numbers of errors in the recognition process.
+The conversion picture function supports specifying the resolution of output pictures and supports outputting black and white two-color TIFF pictures.
+Clean up non-existent source files.
+Merge files can unify the original page rotation direction.
+Merge files function can save and load file list.
+Merge files function can copy and paste bookmark text items.
+Bookmark editor to quickly select titles by chapter number.
+Replace font function to add replacement character function.
+Clear PDF form function.
+Clear page link annotation function.
+Modify function.
+Modified the compatibility settings of the program so that it can run directly on Windows 8 or above.
+Click on the bookmark in the editor interface to jump to the exact page location.
+Optimized the editing experience of the bookmark editor.
+Replace font function uses the replaced character width.
+Configure file format.
+Ability to save the bookmark editor color markers to the bookmark file and reload it.
+Jump to the corresponding page only after clicking the bookmark text of the Bookmark Editor with the left mouse button, hold down the Ctrl key and click to avoid jumping.
+Bug fix.
+Bookmark Editor did not apply actions to deep subbookmarks.
+Bookmark Editor does not hide the context menu after clicking on a right-click menu item.
+Adding an item to the list of recently used files caused the program to crash.
+Uniform page size feature does not handle page rotation angle correctly.
+Unable to call English text recognition engine.
+Text recognition feature such as unoverwriting existing files crashes the program.
+The replace fonts feature loses text in some cases.
+The export image and extract image functions do not save file masks.
+Import Info File feature writes wrong target location coordinates in some cases.
+Bookmark Editor may display bookmarks incorrectly after moving them.
+An "external component" error occurred when exporting monochrome images.
+Blurred fonts in the program interface on high-resolution monitors.
+GDI+ error when exporting images or extracting images with blank file paths.
+Misplaced controls on high-resolution monitors.
+Some monochrome images are not exported properly.
+Pressing the Delete key in the Document Editor page number box deletes bookmarks.
+Color error when exporting images in CMYK color gamut.
+The problem that the merged document "Equal to original content size" does not use the original image resolution in the calculation.
+The problem of jumping to page number 0 in the merged document folder.
+Enhanced tolerance for document Pages node errors.
+PDF editor jumped to incorrect position when XYZ coordinates were too large.
+Merge documents feature when the folder path contains "." and sorted by value and text separately, it did not sort properly.
+The export bookmark function does not output the named location properly.
+When merging folders, the page pointed by the bookmark corresponding to the folder is not the first page of the document in the folder.
+Fix beta bugs.
+The problem that the bookmark nesting relationship of the merge document function was incorrect in the last few beta versions.
+The problem of incorrect jumping position after clicking bookmark in document editor.
+
+0.4.3.1582 October 15, 2014
+New feature.
+PDF rendering engine.
+New tab and toolbar interface.
+Standalone, enhanced merge documents feature that generates hierarchical bookmarks, supports specifying bookmark text styles, and supports adding folders directly to merge all images and PDF documents within them.
+Merge documents feature can be merged by folder to create a separate PDF file.
+Embedded Chinese character font (support Song, imitation Song, italics and bold).
+Replace document font function.
+Browse interface of bookmark editor.
+Bookmark Editor adds the functions of upgrading bookmarks, importing bookmarks and saving simple bookmarks.
+Automatic detection of file encoding when importing simple bookmark files (supported encoding methods are: system default encoding, UTF-8, UTF-16, BIG5).
+Automatic bookmark generation function supports filtering text by text position.
+The export image function can export mask images.
+Document Structure Probe supports exporting ToUnicode mapping table data.
+Clear page text.
+Clear page thumbnails.
+Ability to enter document metadata properties directly in the patch function interface.
+Patching interface supports refreshing document metadata properties with specified encoding.
+Patching and merge document functions support modifying the page white space of PDF documents.
+The patch function supports modifying the page rotation direction.
+Patching feature supports rewriting document XML metadata properties.
+Quickly display the startup screen after launch.
+Create program shortcuts on the desktop.
+Detect program update version.
+Extract page add split document function, page number range semicolon (";" or ";") means split into multiple documents, another support split by first bookmark, specify the number of page numbers split.
+Modify function.
+Separated patch, merge, rename document, export information file functions.
+Patch function supports overwriting the original document.
+Speed up the display of image file information in the merge PDF document interface.
+Changed Bookmark Editor merge bookmark function to add spaces between text when merging bookmark text that starts with English characters.
+Use pop-up windows in the Document Structure Probe to display data from the text stream.
+Updated PDF component library.
+Updated JBIG2 decoding library.
+Enhanced PDF reader fault tolerance.
+Hold down the Shift key in the Overwrite File dialog box to repeat the dialog box response and avoid repeated popups of the overwrite file prompt.
+Bug fix.
+The export image function did not take into account the page rotation angle.
+The export image function could not merge images smaller than 256 colors.
+Bookmark Editor could not change the page number in some cases.
+Bookmarks cannot be exported when the file path contains special control characters.
+The structure of the exported XML file is wrong when the page content contains embedded images.
+The Refactor page command option breaks the document when the page contains embedded images.
+Disabling the option to merge different fonts when automatically generating bookmarks may not work.
+Problem with copy text content filter for auto-generated bookmarks.
+An issue with errors when recognizing image text.
+CMYK color gamut images are not exported correctly.
+The page number tag is not correctly specified when merging images.
+A problem when reconstructing instructions of a page causes another page to lose instructions.
+Unable to delete page annotations in some cases.
+Problem with exporting black and white images with reverse color.
+The Merge PDF Documents feature does not import some page link annotations correctly.
+Merge PDF documents feature writes the same objects repeatedly when merging the same documents.
+The export image feature may incorrectly change the image color when merging images of the same page.
+Bookmark Editor mixes bookmarks from the previous document into the current document.
+
+0.3.3.100 March 13, 2012
+New feature.
+PDF file structure explorer.
+Write the result of optical character recognition to PDF documents.
+Optimize the compression of PDF black and white images using JBIG2 compression algorithm.
+Export image function supports merging JPEG images.
+Export image function supports exporting images within annotations.
+Page range supports negative page numbers (page numbers from the end).
+Export and import bookmarks support exporting Javascript scripts.
+Support writing and reading PDF files over 2G.
+Modify features.
+Auto-generated bookmarks feature ignores font subset names when extracting fonts.
+Bookmark Editor can drag and drop files to open PDF documents.
+Enhanced compatibility with automatic text encoding determination.
+Consider the position of images when exporting images, according to the reading habits of horizontal text, first export the top image and then export the bottom image.
+Fix bugs.
+Floating point error caused an error in automatically generating bookmark levels.
+When exporting images, there is an error when encountering inline images on the page.
+The LZWDecode image was not recognized when exporting images.
+When exporting black and white images, the color could not be reversed correctly in some cases.
+The bookmark editor cannot change the page number in some cases.
+Bookmark Editor jittered when expanding or collapsing nodes.
+The target page number is one page short after forcing a page join to an internal join.
+Unable to disable compressed document index table.
+Wrong value of progress bar causes program exception.
+Pages cannot be extracted when there is a bookmark error.
+Imported bookmark automatically sets incorrect vertical offset when the page rotation angle is not 0.
+The page edges cannot be aligned to the specified position when the original page is stretched by modifying the page size.
+Bookmarks cannot be exported when the jump target is empty.
+Incorrect orientation of stretched PDF pages when the page rotation angle is not 0.
+Problem of missing scaling in exported information files.
+
+0.3.2.41 July 5, 2011
+New feature.
+Use optical character recognition for image text.
+Export image function supports automatic selection of export directory.
+Support AES-256 encryption.
+Add the condition of filtering title by page number, font name, font size and text content in auto-generated bookmark function.
+Add the options of whether to merge titles and whether to ignore overlapping text in the auto-generated bookmarks function.
+Export or import application configuration.
+Reset application settings.
+Bookmark Editor adds the functions of copy, paste, convert full and half corners, convert simple and traditional Chinese characters text.
+Bookmark Editor adds shortcut keys for indentation function and patch function to optimize the editing process.
+Rewrite the extract page function to retain more contents of the original document and support excluding page ranges.
+Merge file function supports adding JPEG2000 images.
+Modified features.
+Removed the dependency on PDFLibNet.
+Bookmark Editor's merge bookmark feature supports bookmarks containing subbookmarks.
+Ability to drag and drop files into the Bookmark Editor.
+Automatically switch to merge mode when adding image files by dragging and dropping them to the file list of the processing function.
+Rewrite the extract page function.
+Default export information file directory is the source file directory.
+Automatically add extensions to exported files.
+Fix bugs.
+Disable the "Merge adjacent titles" option of the auto-generated bookmarks function, but the titles are still merged.
+In some cases, the auto-generated bookmarks function did not recognize shift spaces.
+The image dictionary could not export images when byte bit information was missing.
+Bookmark Editor cannot insert a new bookmark when there is no bookmark.
+Clicking on the right side of a text label with the mouse in the bookmark editor does not allow you to enter the editing state.
+Cannot edit a bookmark when the source document does not contain a bookmark.
+Error when the destination path is a relative path.
+Cannot enter a file name in the Browse Info File dialog box during PDF processing.
+Cannot interrupt a batch operation with multiple input files.
+When retaining bookmarks while extracting pages, the retained bookmarks may point to the wrong page.
+Cannot export simple text bookmarks.
+Cannot export images in forms.
+Bookmark Editor error when undoing too many steps.
+
+0.3.1.24 March 18, 2011
+New features.
+Support for modifying PDF bookmark styles with various thoughtful processing features and the ability to perform batch search and replace bookmark editor.
+Identify title as bookmark function add debug option whether to export text location information.
+Force to change external links to internal links of documents.
+Simple patch to add open first level bookmark setting.
+Merge files (make image PDF) function add option whether to set black and white images as transparent.
+Optionally set the compression rate of the output PDF file.
+Export image function can automatically detect vertically flipped images.
+Support exporting JBIG2 compressed images.
+Modify function.
+The function of converting simple bookmarks to info files is replaced by Bookmark Editor.
+Automatic tag recognition function optimizes the post-processing of text layout.
+Enhanced the fault tolerance of the export bookmarks function.
+Optimized recognition of bookmark text whose fonts lack ToUnicode information.
+Slightly faster export of images.
+Bug fix.
+Merge mode merge may cause bookmarks to point to the wrong page number.
+Unable to export characters and wrong font name when generating bookmarks automatically.
+Wrong characters were exported by auto-generate bookmark function.
+The patch function imported external page links incorrectly.
+Unable to export some bookmark page numbers.
+The automatic bookmark generation function cannot read pages with embedded images.
+Bookmark information cannot be written properly in some cases.
+Rotated pages do not generate bookmarks automatically.
+Incorrect text font information prevents proper export of images.
+
+0.3.0.8 January 17, 2011
+New features.
+Add the function of automatically extracting the title text of text PDF to generate bookmark files.
+Non-destructive scaling of page content (after scaling page content, bookmarks and page coordinates are scaled simultaneously).
+Parse and export page content flow instructions.
+No longer ask for password when opening the same encrypted PDF document repeatedly.
+Compress PDF index tables to slightly reduce file size.
+Automatically save application settings.
+Modify functions.
+Combine patching, making PDF documents, renaming files, and viewing PDF document properties into one interface.
+Adopt new information file format. iTextSharp's easy bookmarks are no longer supported. Split the target coordinates of bookmarks and page links into separate property values for modification.
+Rewrite the export and import code of bookmarks.
+Default state of bookmarks for XML message files is off.
+Bug fix.
+Unable to merge PDF documents in some cases.
+Cannot retain original PDF page links.
+Bookmarks cannot be exported when the bookmark text contains control words.
+Known issue.
+Page links in merge mode are misaligned after stretching pages.
+
+0.2.9.1 November 10, 2010
+Modified function.
+When exporting information files in batch, specifying a text file suffix ".txt" will export the simple bookmark file.
+The document properties of the simple patch can be mixed to specify substitution characters and normal text.
+
+0.2.9.0 October 29, 2010
+New features.
+Export information files, import information files, simple patch, extract content, extract images and other functions support batch operation (multiple files can be selected at once when browsing the original PDF file).
+Some functions output PDF files support the original file name and document properties naming (in the output file name using "<title>", "<subject>", "<author>" or "<keyword>" in the output file name).
+Add the function of renaming PDF files according to PDF document properties.
+Patch function to import document properties supporting "<source filename>" and "<source directory name>" filename substitutes (can rewrite PDF document title properties using PDF filename).
+Ability to open the program's exported files or directories in the log screen
+Support for exporting images in 4 levels of grayscale.
+Extract page feature supports preserving the metadata and bookmarks of the original document.
+View document properties.
+Modify function.
+Option to extract the text content of a page or not when exporting page content.
+Read encoding option for PDF files changed to global option.
+Patch function when importing document properties, if the properties are empty, the properties of the original PDF document are retained; if the properties consist of blank characters only, the properties in the original PDF document are deleted.
+Bug fix.
+After specifying document properties with the Simple Patch feature, the output document properties have only one character.
+The Simple Patch feature specified some document properties and did not use the encoding settings to read the remaining unspecified value properties.
+Simple patching function incorrectly changed link positioning.
+The patching process lost some page link styles.
+An error is thrown when the page range exceeds the actual page.
+Exported simple bookmark file does not read document properties using encoding settings.
+Exported image function incorrectly deletes exported image files in some cases.
+Unable to extract last page content and images from PDF document.
+
+0.2.8.3 October 13, 2010
+New features.
+Simple patch and generate PDF file functions support specified reader settings.
+Add the function of removing automatic document and page actions.
+Add the function of removing page metadata.
+Update PDF component library to iTextSharp 5.0.4.
+Read encoding option is also supported for simple patches without information files.
+Add option to specify the way to load PDF documents (efficiency first or memory first).
+Add the option to read encoding of PDF document information, bookmark text (for trying to export some encoding errors in PDF document information).
+Bug fix.
+Simple patching feature would lose bookmarks.
+Pressing "Back" button when the progress bar is empty after starting the work process will jump back to the function interface.
+The file could not be saved when exporting images.
+Pressing "Back" button when the progress bar is empty after starting the work process will jump back to the function interface.
+
+0.2.8 October 4, 2010
+New feature.
+Easy patch operation for uninformed files.
+Significant enhancements to the Generate Document feature.
+Optional automatic document bookmark generation.
+Option to keep bookmarks and page links of the source PDF file.
+Option to disable bookmarks.
+Option to specify document reader settings and metadata properties.
+Support extracting images from the source PDF file and importing only the extracted images.
+Support source image crop edge import.
+Support crop or scale source PDF file size to page size.
+Optional unscaling of bookmark links.
+Exported images can be filtered by size.
+Simple bookmark file supports importing page number tags.
+Support for exporting images in CMYK color gamut (save as CMYK TIFF).
+Automatic extraction of text content when exporting page content to information files.
+Modified functions.
+Optimize the export method for images that are referenced multiple times.
+Automatic renaming of files in order after merging images.
+Export simple bookmark file function supports exporting bookmark items without page numbers.
+Export the contents of document table of contents when exporting detailed document contents.
+Bug fix.
+Abnormally large output file when exporting page content or generating files.
+Improperly rotated page orientation when generating PDF files from images.
+File and directory names could not be edited properly.
+Improper color palette of source file images prevented normal export of images.
+Misaligned colors after merging index color images.
+Exporting a simple bookmark file does not export some bookmark items.
+Page size cannot be modified.
+
+0.2.7 May 27, 2010
+Added new features.
+Wrote the usage documentation.
+Combine the functions of exporting information and importing information into one interface.
+Provide file mask preview of exported images.
+Add the option of flipping exported pictures vertically.
+Add the option of reversing the color of black and white pictures.
+Add the function of trying to automatically merge pictures of the same width and format after exporting pictures.
+The export function supports exporting simple text bookmark files.
+The simple bookmark file supports specifying document metadata information.
+Record the recently used file names.
+Modify function.
+Made a new 16*16 program icon.
+Bug fix.
+Unable to terminate the export image process.
+
+0.2.6 May 13, 2010
+New feature.
+Enhance the import image function to "Generate File".
+The Generate File feature supports combining existing PDF files and images into a PDF file of a specified page size.
+This feature allows you to split and merge PDF files and change the page size of the document.
+Improved support for importing TIFF images.
+Add more options to the Generate PDF file feature.
+Support for using file masks when exporting images.
+Specify length in centimeters, millimeters, inches or dots (72 dots equals 1 inch or 2.54 cm) when exporting information files.
+Modify function.
+Remove page link annotations when exporting pages.
+Exporting pages and exporting images are separated into two separate screens.
+Changed the default export information file units from points to centimeters.
+Bug fixes.
+Improve and fix exporting TIFF images.
+
+0.2.5 May 2, 2010
+New features.
+Import a batch of images to generate PDF files (can be bookmarked, metadata and page number settings at the same time), can specify the size of PDF pages in the generation options.
+Separate export function for images (no export of information files).
+Use background processes to execute tasks, the program no longer stops responding when working.
+Add work log information and progress bar.
+Support exporting JPXDecode (JPEG2000) images from PDF files.
+Modify function.
+Modify the program layout.
+Speed up the speed of opening PDF files.
+Simplified the format of exported page content information file and fixed the error of exported text stream.
+Refactored the internal code.
+Bug fixes.
+Improved and fixed exporting images.
+
+0.2.4 October 9, 2009
+New feature.
+When importing a simple bookmark file, you can use the "Open Bookmark" command to indicate whether to open the bookmark. This command affects all subsequent bookmarks.
+Prompt for a password when opening a PDF file that requires open permissions.
+When importing a bookmark file, you can force the bookmark to be open or closed, and force the unscaling of the bookmark link target.
+When importing information files, you can force the initial page view to be specified.
+Modify function.
+When importing a simple bookmark file, the open and closed state of the bookmark is changed to closed by default.
+Negative numbers are allowed for the link coordinates of the imported info file.
+
+0.2.3 September 2, 2009
+Modified function.
+The "#" sign in the simple bookmark command can be replaced by a full-colon "#" sign, and the "=" sign can be replaced by a colon or a full-colon equal sign.
+The "bookmark" element in the message file can ignore the "action" attribute. The default value is "Go to page".
+Bug fix.
+Unable to export some PDF file images.
+
+0.2.2 May 17, 2009
+New feature.
+Border and rotation angle settings for importing or exporting pages.
+Simple text bookmark file supports full-corner numeric page number or no page number bookmark (no page number bookmark will be considered as bookmark that does not go to new page).
+Support exporting FlateDecode (PNG, color gamut: DeviceRGB, DeviceGray, Indexed DeviceRGB), CCITTFaxDecode (TIFF), DCTDecode (JPEG) images from PDF files.
+After importing bookmarks, if the original PDF document does not specify an initial mode, it will be automatically assigned to display document bookmarks.
+Provide the function of resolving named locations to facilitate complete export of bookmarks and page link target locations.
+Modify function.
+After using the "Browse" button to specify the input file, clear the exported file name to avoid inadvertently overwriting the last exported file.
+The imported simple bookmark will jump to the top of the page when clicked.
+If the information file has a named location, it will be imported with the original PDF file with the same name location, the original PDF file does not have a named location will not be imported.
+Bug fix.
+Unable to import info files without bookmarks.
+When specifying the initial page layout in a PDF file, the initial settings of the reader cannot be exported.
+
+0.2.1 May 3, 2009
+New feature.
+Import simple text bookmark file.
+You can specify the first page number in the information file or simple bookmark file.
+Extract pages in PDF files with specified page numbers.
+Import document attribute information (title, subject, author, keywords).
+Allows the option to import parts of the message file.
+Modify function.
+Allows you to export the PDF content of the specified pages as an XML information file (set in "Advanced Export Options").
+Separate the import information file and export information file into two interfaces to avoid confusion for first-time users of this tool.
+Beautify the interface.
+Delete function.
+Export annotation information (replace with exported page content).
+Bug fix.
+Unable to export PDF files containing special characters (Unicode code 0x00~0x1F).
+Error when exporting some PDF files with invalid page links.
+Unable to export the initial settings of the reader.
+Named locations in information files are not imported.
+
+0.2 Change name to PDF Patcher
+
+New feature.
+Import links in exported document pages.
+Specify the default settings of the reader in the information file (e.g. default double page folio, right-to-left reading order).
+Specify the logical page number of the document in the information file to facilitate jumping directly to the specified page according to the table of contents.
+XML information files exported from PDF documents now use Chinese tags, which are easier to read and modify (old bookmark files are still available).
+You can set which information is exported.
+Specify the encoding to be used for XML information files.
+All annotation information of the document can be exported (for studying PDF document annotations).
+Bug fixes.
+Chinese characters in the file name were lost when using the "File" attribute to link external files within the "Title" element.
+Some bookmarks' targets were lost when exporting (missing "Page" property).
+
+0.1 PDF bookmark import and export tool

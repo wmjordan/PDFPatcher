@@ -1,0 +1,28 @@
+﻿PDF Patcher Software End User License Agreement
+
+--------------------------------------------------------------------------------
+
+The PDF Patcher software (hereinafter referred to as the Software) is protected by copyright laws and international treaty provisions and other intellectual property laws and treaties.
+The Software is free for end users, but comes with additional conditions. Subject to the prerequisites of the Software, you are free to use and distribute it in compliance with this Agreement, and by installing, copying or using the Software, you agree to the terms of this Agreement. If you do not agree to this Agreement, please do not install and use the Software and you should not exploit its source code.
+
+Additional Conditions.
+Every user of this software, if this software helps you, you must do one good deed for every time you use this software. No good deed is too big or too small, if you want to do it, you have to do it. For example:
+1. If your parents are around, you can cook a delicious meal for your parents, or give them a massage or wash their feet; if they are far away, you can initiate a call to them to ask about their health and life.
+2. When the rain is pouring down, if you have an umbrella, you can share it with someone on the same road; if you see sanitation workers working under the sun in the hot sun, you can buy a bottle of water for them and give it to them; on crowded public transportation or while waiting in line at a public place, if you have a seat, you can give it to the elderly, pregnant women or people carrying heavy things.
+3. You can use your skills to help people around you; you can share your knowledge with others so that they can benefit from it; you can donate money to those who are in greater difficulty than you.
+4. If you think this software is really useful, please introduce its usage to others, so that others can also benefit from using this software; or introduce other software that you think is useful to others.
+
+If you are unable to do one good deed after using this software, please keep it in mind. When you have the opportunity, do more good deeds. Your conscience is the only way to follow or not follow this User Agreement. This is the "Conscience License".
+
+Related definitions.
+
+1. Software: Software refers to the "PDF Patcher" software and its updates, product manuals, and related vehicles such as online documentation.
+2. Restrictions: You may use the source code of the Software to develop applications (free, shared or commercial), or distribute an unlimited number of complete copies of the Software in any manner, provided that
+(1) You must provide the full version of the Software when you distribute it, and you may not make any modifications to the Software or even its installer without permission.
+(2) You do not alter this License Agreement when you distribute the Software.
+(3) If you attach the Software to commercial promotional activities or products, you shall obtain written permission from the copyright owner.
+(4) If you write other software using the code of the Software and generate sales revenue, you shall donate no less than one thousandth of the sales revenue of the Software to the disadvantaged groups in the society.
+3. Support: The software will be continuously updated due to the needs of users, and the copyright holder will provide support with various relevant information including user manuals and emails, but the software does not ensure that the support contents and functions will not change.
+4. Termination: When you do not agree or violate this agreement, the agreement will be automatically terminated and you must delete the Software product immediately.
+5. Copyright: The Software and the source code are protected by copyright laws and international treaty provisions and other intellectual property laws and treaties.
+6. Disclaimer: The Software and the copyright holder are not responsible for any damage caused by the installation, copying, or use of the Software.
