@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Text;
@@ -774,26 +774,26 @@ namespace Devcorp.Controls.Design
 
 		#region CMYK convert
 		/// <summary>
-		/// ½«ËÄÉ«·ÖÁ¿£¨±ØĞëÎª 0¡«1£©×ª»»Îª RGB ÑÕÉ«¡£
+		/// å°†å››è‰²åˆ†é‡ï¼ˆå¿…é¡»ä¸º 0ï½1ï¼‰è½¬æ¢ä¸º RGB é¢œè‰²ã€‚
 		/// </summary>
-		/// <param name="c">Çà</param>
-		/// <param name="m">×Ï</param>
-		/// <param name="y">»Æ</param>
-		/// <param name="k">ºÚ</param>
-		/// <returns>ÑÕÉ«¡£</returns>
+		/// <param name="c">é’</param>
+		/// <param name="m">ç´«</param>
+		/// <param name="y">é»„</param>
+		/// <param name="k">é»‘</param>
+		/// <returns>é¢œè‰²ã€‚</returns>
 		public static Color CMYKtoColor (float c, float m, float y, float k)
 		{
 			return CMYKtoColor((double)c, (double)m, (double)y, (double)k);
 		}
 
 		/// <summary>
-		/// ½«ËÄÉ«·ÖÁ¿£¨±ØĞëÎª 0¡«1£©×ª»»Îª RGB ÑÕÉ«¡£
+		/// å°†å››è‰²åˆ†é‡ï¼ˆå¿…é¡»ä¸º 0ï½1ï¼‰è½¬æ¢ä¸º RGB é¢œè‰²ã€‚
 		/// </summary>
-		/// <param name="c">Çà</param>
-		/// <param name="m">×Ï</param>
-		/// <param name="y">»Æ</param>
-		/// <param name="k">ºÚ</param>
-		/// <returns>ÑÕÉ«¡£</returns>
+		/// <param name="c">é’</param>
+		/// <param name="m">ç´«</param>
+		/// <param name="y">é»„</param>
+		/// <param name="k">é»‘</param>
+		/// <returns>é¢œè‰²ã€‚</returns>
 		public static Color CMYKtoColor (double c, double m, double y, double k)
 		{
 			return CMYKtoColor(new CMYK(c,m,y,k));
