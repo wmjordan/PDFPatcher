@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -32,9 +32,9 @@ namespace MuPdfSharp
 		}
 	
 		/// <summary>
-		/// ����ҳ���ǩ���缯���д�����ͬҳ���ҳ���ǩ�����Ƚ��ɵı�ǩɾ�����������µ�ҳ���ǩ��
+		/// 添加页码标签。如集合中存在相同页码的页码标签，则先将旧的标签删除，再添加新的页码标签。
 		/// </summary>
-		/// <param name="label">��Ҫ���ӵ�ҳ���ǩ��</param>
+		/// <param name="label">需要添加的页码标签。</param>
 		public void Add (PageLabel label) {
 			Remove (label);
 			_labels.Add (label);
@@ -42,10 +42,10 @@ namespace MuPdfSharp
 		}
 	
 		/// <summary>
-		/// ���ݴ����ҳ�룬���ص�ǰҳ���ǩ���ϸ�ʽ�������ɵ�ҳ�롣
+		/// 根据传入的页码，返回当前页码标签集合格式化后生成的页码。
 		/// </summary>
-		/// <param name="pageNumber">����ҳ�롣</param>
-		/// <returns>��ʽ�����ҳ���ı���</returns>
+		/// <param name="pageNumber">绝对页码。</param>
+		/// <returns>格式化后的页码文本。</returns>
 		public string Format (int pageNumber) {
 			var l = _labels.Count;
 			if (l == 0) {
@@ -75,10 +75,10 @@ namespace MuPdfSharp
 		}
 	
 		/// <summary>
-		/// ���ؼ������Ƿ���������� <paramref name="item"/> ��ͬ��ʼҳ���ҳ���ǩ��
+		/// 返回集合中是否包含具有与 <paramref name="item"/> 相同起始页码的页码标签。
 		/// </summary>
-		/// <param name="item">��Ҫ�����ʼҳ���ҳ���ǩ��</param>
-		/// <returns>�������ͬҳ���ҳ���ǩ������ true�����򷵻� false��</returns>
+		/// <param name="item">需要检查起始页码的页码标签。</param>
+		/// <returns>如包含相同页码的页码标签，返回 true，否则返回 false。</returns>
 		public bool Contains (PageLabel item) {
 			for (int i = _labels.Count - 1; i >= 0; i--) {
 				if (_labels[i].FromPageNumber == item.FromPageNumber) {
@@ -101,10 +101,10 @@ namespace MuPdfSharp
 		}
 	
 		/// <summary>
-		/// ɾ�������о����� <paramref name="item"/> ��ͬ��ʼҳ���ҳ���ǩ��
+		/// 删除集合中具有与 <paramref name="item"/> 相同起始页码的页码标签。
 		/// </summary>
-		/// <param name="item">��Ҫɾ����ҳ���ǩ��</param>
-		/// <returns>�������ͬҳ���ҳ���ǩ������ true�����򷵻� false��</returns>
+		/// <param name="item">需要删除的页码标签。</param>
+		/// <returns>如包含相同页码的页码标签，返回 true，否则返回 false。</returns>
 		public bool Remove (PageLabel item) {
 			for (int i = _labels.Count - 1; i >= 0; i--) {
 				if (_labels[i].FromPageNumber == item.FromPageNumber) {
