@@ -25,7 +25,7 @@ var sh = WScript.CreateObject ("WScript.Shell");
 sh.CurrentDirectory = p;
 	s.Open();
 	s.Type = 2;
-	s.CharSet = "GBK";
+	s.CharSet = "UTF-8";
 	s.LoadFromFile ("更新历史.txt");
 	t = s.ReadText ();
 	r = /\d+\.\d+\.\d+\.\d+ \d+年\d+月\d+日/;
@@ -39,7 +39,7 @@ sh.CurrentDirectory = p;
 
 	s.Open();
 	s.Type = 2;
-	s.CharSet = "GBK";
+	s.CharSet = "UTF-8";
 	s.LoadFromFile ("更新历史.txt");
 	t = s.ReadText ();
 	s.Position = 0;
