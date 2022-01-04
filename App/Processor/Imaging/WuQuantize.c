@@ -1,4 +1,4 @@
-Having received many constructive comments and bug reports about my previous
+﻿Having received many constructive comments and bug reports about my previous
 C implementation of my color quantizer (Graphics Gems vol. II, p. 126-133),
 I am posting the following second version of my program (hopefully 100%
 healthy) as a reply to all those who are interested in the problem.

@@ -1,32 +1,32 @@
-using System;
+ï»¿using System;
 using System.Drawing;
 
 namespace MuPdfSharp
 {
 	public sealed class MuPage : IDisposable
 	{
-		#region ·ÇÍĞ¹Ü×ÊÔ´³ÉÔ±
+		#region éæ‰˜ç®¡èµ„æºæˆå‘˜
 		private ContextHandle _context;
 		private DocumentHandle _document;
 		private PageHandle _page;
 		private DisplayListHandle _displayList;
 		#endregion
 
-		#region ÍĞ¹Ü×ÊÔ´³ÉÔ±
+		#region æ‰˜ç®¡èµ„æºæˆå‘˜
 		static readonly ImageRendererOptions __defaultOptions = new ImageRendererOptions ();
 		MuCookie _cookie;
 		MuTextPage _TextPage;
 		bool _flattened;
 
-		/// <summary>»ñÈ¡µ±Ç°Ò³ÃæµÄÒ³Âë¡£</summary>
+		/// <summary>è·å–å½“å‰é¡µé¢çš„é¡µç ã€‚</summary>
 		public int PageNumber { get; private set; }
-		/// <summary>»ñÈ¡µ±Ç°Ò³ÃæµÄ³ß´ç£¨×óÏÂ½Ç×ø±êÖÃÎª¡°0,0¡±£©¡£ÈçĞè»ñÈ¡Ò³Ãæ×ÖµäÖĞµÄÔ­Ê¼¿ÉÊÓÇøÓò£¬ÇëÊ¹ÓÃ <see cref="VisualBound"/> ÊôĞÔ¡£</summary>
+		/// <summary>è·å–å½“å‰é¡µé¢çš„å°ºå¯¸ï¼ˆå·¦ä¸‹è§’åæ ‡ç½®ä¸ºâ€œ0,0â€ï¼‰ã€‚å¦‚éœ€è·å–é¡µé¢å­—å…¸ä¸­çš„åŸå§‹å¯è§†åŒºåŸŸï¼Œè¯·ä½¿ç”¨ <see cref="VisualBound"/> å±æ€§ã€‚</summary>
 		public Rectangle Bound {
 			get {
 				return NativeMethods.BoundPage (_context, _page);
 			}
 		}
-		/// <summary>»ñÈ¡µ±Ç°Ò³Ãæ¿ÉÊÓÇøÓòµÄ×ø±ê¼°³ß´ç¡£</summary>
+		/// <summary>è·å–å½“å‰é¡µé¢å¯è§†åŒºåŸŸçš„åæ ‡åŠå°ºå¯¸ã€‚</summary>
 		public Rectangle VisualBound => Matrix.Identity.RotateTo(Rotation).Transform(VisualBox);
 
 		public Rectangle ArtBox => LookupPageBox("ArtBox");
@@ -70,46 +70,46 @@ namespace MuPdfSharp
 			}
 			catch (AccessViolationException) {
 				_page.DisposeHandle ();
-				throw new MuPdfException ("ÎŞ·¨¼ÓÔØµÚ " + pageNumber + " Ò³¡£");
+				throw new MuPdfException ("æ— æ³•åŠ è½½ç¬¬ " + pageNumber + " é¡µã€‚");
 			}
 		}
 
 		///// <summary>
-		///// »ñÈ¡Ö¸¶¨ÇøÓòµÄÎÄ±¾¡£
+		///// è·å–æŒ‡å®šåŒºåŸŸçš„æ–‡æœ¬ã€‚
 		///// </summary>
-		///// <param name="selection">ÇøÓò¡£</param>
-		///// <returns>ÇøÓòÄÚµÄÎÄ±¾¡£</returns>
+		///// <param name="selection">åŒºåŸŸã€‚</param>
+		///// <returns>åŒºåŸŸå†…çš„æ–‡æœ¬ã€‚</returns>
 		//public string GetSelection (Rectangle selection) {
 		//    return Interop.DecodeUtf8String (NativeMethods.CopySelection (_context, GetTextPage (), selection));
 		//}
 
 		///// <summary>
-		///// »ñÈ¡Ö¸¶¨ÇøÓòµÄÎÄ±¾¡£
+		///// è·å–æŒ‡å®šåŒºåŸŸçš„æ–‡æœ¬ã€‚
 		///// </summary>
-		///// <param name="selection">ÇøÓò¡£</param>
-		///// <returns>ÇøÓòÄÚµÄÎÄ±¾¡£</returns>
+		///// <param name="selection">åŒºåŸŸã€‚</param>
+		///// <returns>åŒºåŸŸå†…çš„æ–‡æœ¬ã€‚</returns>
 		//public List<Rectangle> HighlightSelection (Rectangle selection) {
 		//	var l = 
 		//	return Interop.DecodeUtf8String (NativeMethods.HighlightSelection (_context, _page, selection));
 		//}
 
 		/// <summary>
-		/// Ê¹ÓÃÄ¬ÈÏµÄÅäÖÃäÖÈ¾Ò³Ãæ¡£
+		/// ä½¿ç”¨é»˜è®¤çš„é…ç½®æ¸²æŸ“é¡µé¢ã€‚
 		/// </summary>
-		/// <param name="width">Ò³ÃæµÄ¿í¶È¡£</param>
-		/// <param name="height">Ò³ÃæµÄ¸ß¶È¡£</param>
-		/// <returns>äÖÈ¾ºóÉú³ÉµÄ <see cref="Bitmap"/>¡£</returns>
+		/// <param name="width">é¡µé¢çš„å®½åº¦ã€‚</param>
+		/// <param name="height">é¡µé¢çš„é«˜åº¦ã€‚</param>
+		/// <returns>æ¸²æŸ“åç”Ÿæˆçš„ <see cref="Bitmap"/>ã€‚</returns>
 		public FreeImageAPI.FreeImageBitmap RenderPage (int width, int height) {
 			return RenderPage (width, height, __defaultOptions);
 		}
 
 		/// <summary>
-		/// Ê¹ÓÃÖ¸¶¨µÄÅäÖÃäÖÈ¾Ò³Ãæ¡£
+		/// ä½¿ç”¨æŒ‡å®šçš„é…ç½®æ¸²æŸ“é¡µé¢ã€‚
 		/// </summary>
-		/// <param name="width">Ò³ÃæµÄ¿í¶È¡£</param>
-		/// <param name="height">Ò³ÃæµÄ¸ß¶È¡£</param>
-		/// <param name="options">äÖÈ¾Ñ¡Ïî¡£</param>
-		/// <returns>äÖÈ¾ºóÉú³ÉµÄ <see cref="FreeImageAPI.FreeImageBitmap"/>¡£</returns>
+		/// <param name="width">é¡µé¢çš„å®½åº¦ã€‚</param>
+		/// <param name="height">é¡µé¢çš„é«˜åº¦ã€‚</param>
+		/// <param name="options">æ¸²æŸ“é€‰é¡¹ã€‚</param>
+		/// <returns>æ¸²æŸ“åç”Ÿæˆçš„ <see cref="FreeImageAPI.FreeImageBitmap"/>ã€‚</returns>
 		public FreeImageAPI.FreeImageBitmap RenderPage (int width, int height, ImageRendererOptions options) {
 			using (var pix = InternalRenderPage (width, height, options)) {
 				if (pix != null) {
@@ -120,12 +120,12 @@ namespace MuPdfSharp
 		}
 
 		/// <summary>
-		/// Ê¹ÓÃÖ¸¶¨µÄÅäÖÃäÖÈ¾Ò³Ãæ¡£
+		/// ä½¿ç”¨æŒ‡å®šçš„é…ç½®æ¸²æŸ“é¡µé¢ã€‚
 		/// </summary>
-		/// <param name="width">Ò³ÃæµÄ¿í¶È¡£</param>
-		/// <param name="height">Ò³ÃæµÄ¸ß¶È¡£</param>
-		/// <param name="options">äÖÈ¾Ñ¡Ïî¡£</param>
-		/// <returns>äÖÈ¾ºóÉú³ÉµÄ <see cref="Bitmap"/>¡£</returns>
+		/// <param name="width">é¡µé¢çš„å®½åº¦ã€‚</param>
+		/// <param name="height">é¡µé¢çš„é«˜åº¦ã€‚</param>
+		/// <param name="options">æ¸²æŸ“é€‰é¡¹ã€‚</param>
+		/// <returns>æ¸²æŸ“åç”Ÿæˆçš„ <see cref="Bitmap"/>ã€‚</returns>
 		public Bitmap RenderBitmapPage (int width, int height, ImageRendererOptions options) {
 			using (var pix = InternalRenderPage (width, height, options)) {
 				if (pix != null) {
@@ -156,7 +156,7 @@ namespace MuPdfSharp
 				//}
 			}
 			if (_cookie.ErrorCount > 0) {
-				System.Diagnostics.Debug.WriteLine("ÔÚµÚ " + PageNumber + " Ò³ÓĞ " + _cookie.ErrorCount + " ¸ö´íÎó¡£");
+				System.Diagnostics.Debug.WriteLine("åœ¨ç¬¬ " + PageNumber + " é¡µæœ‰ " + _cookie.ErrorCount + " ä¸ªé”™è¯¯ã€‚");
 			}
 			return _displayList;
 		}
@@ -225,7 +225,7 @@ namespace MuPdfSharp
 			}
 			catch (AccessViolationException) {
 				pix.DisposeHandle ();
-				throw new MuPdfException ("ÎŞ·¨äÖÈ¾Ò³Ãæ£º" + PageNumber);
+				throw new MuPdfException ("æ— æ³•æ¸²æŸ“é¡µé¢ï¼š" + PageNumber);
 			}
 		}
 
@@ -276,9 +276,9 @@ namespace MuPdfSharp
 		}
 
 		/// <summary>
-		/// »ñÈ¡Ò³ÃæÄÚÈİµÄÊµ¼Ê¸²¸Ç·¶Î§¡£
+		/// è·å–é¡µé¢å†…å®¹çš„å®é™…è¦†ç›–èŒƒå›´ã€‚
 		/// </summary>
-		/// <returns>°üº¬Ò³ÃæÄÚÈİµÄ×îĞ¡ <see cref="BBox"/>¡£</returns>
+		/// <returns>åŒ…å«é¡µé¢å†…å®¹çš„æœ€å° <see cref="BBox"/>ã€‚</returns>
 		public Rectangle GetContentBoundary () {
 			var b = Bound;
 			var o = b;
@@ -292,25 +292,25 @@ namespace MuPdfSharp
 					return o;
 				}
 				catch (AccessViolationException) {
-					throw new MuPdfException ("ÎŞ·¨»ñÈ¡Ò³ÃæÄÚÈİ±ß¿ò£º" + PageNumber);
+					throw new MuPdfException ("æ— æ³•è·å–é¡µé¢å†…å®¹è¾¹æ¡†ï¼š" + PageNumber);
 				}
 			}
 		}
 
-		#region ÊµÏÖ IDisposable ½Ó¿ÚµÄÊôĞÔºÍ·½·¨
+		#region å®ç° IDisposable æ¥å£çš„å±æ€§å’Œæ–¹æ³•
 		private bool disposed;
 		public void Dispose () {
 			Dispose (true);
-			GC.SuppressFinalize (this);	// ÒÖÖÆÎö¹¹º¯Êı
+			GC.SuppressFinalize (this);	// æŠ‘åˆ¶ææ„å‡½æ•°
 		}
 
-		/// <summary>ÊÍ·ÅÓÉ MuPdfPage Õ¼ÓÃµÄ×ÊÔ´¡£</summary>
-		/// <param name="disposing">ÊÇ·ñÊÖ¶¯ÊÍ·ÅÍĞ¹Ü×ÊÔ´¡£</param>
+		/// <summary>é‡Šæ”¾ç”± MuPdfPage å ç”¨çš„èµ„æºã€‚</summary>
+		/// <param name="disposing">æ˜¯å¦æ‰‹åŠ¨é‡Šæ”¾æ‰˜ç®¡èµ„æºã€‚</param>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage ("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "_page")]
 		void Dispose (bool disposing) {
 			if (!disposed) {
 				if (disposing) {
-					#region ÊÍ·ÅÍĞ¹Ü×ÊÔ´
+					#region é‡Šæ”¾æ‰˜ç®¡èµ„æº
 					if (_TextPage != null) {
 						_TextPage.Dispose();
 					}
@@ -318,8 +318,8 @@ namespace MuPdfSharp
 					#endregion
 				}
 
-				#region ÊÍ·Å·ÇÍĞ¹Ü×ÊÔ´
-				// ×¢ÒâÕâÀï²»ÊÇÏß³Ì°²È«µÄ
+				#region é‡Šæ”¾éæ‰˜ç®¡èµ„æº
+				// æ³¨æ„è¿™é‡Œä¸æ˜¯çº¿ç¨‹å®‰å…¨çš„
 				//int retry = 0;
 				//_cookie.CancelAsync ();
 				//while (_cookie.IsRunning && ++retry < 10) {
@@ -333,8 +333,8 @@ namespace MuPdfSharp
 			disposed = true;
 		}
 
-		// Îö¹¹º¯ÊıÖ»ÔÚÎ´µ÷ÓÃ Dispose ·½·¨Ê±µ÷ÓÃ
-		// ÅÉÉúÀàÖĞ²»±ØÔÙÌá¹©Îö¹¹º¯Êı
+		// ææ„å‡½æ•°åªåœ¨æœªè°ƒç”¨ Dispose æ–¹æ³•æ—¶è°ƒç”¨
+		// æ´¾ç”Ÿç±»ä¸­ä¸å¿…å†æä¾›ææ„å‡½æ•°
 		~MuPage () {
 			Dispose (false);
 		}
