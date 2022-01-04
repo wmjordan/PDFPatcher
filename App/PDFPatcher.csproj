@@ -15,29 +15,9 @@
     <ApplicationIcon>pdf_icon.ico</ApplicationIcon>
     <SignAssembly>true</SignAssembly>
     <IsWebBootstrapper>true</IsWebBootstrapper>
-    <AssemblyOriginatorKeyFile>wmjordan.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile Condition=" '$(Configuration)' == 'Release' ">wmjordan.snk</AssemblyOriginatorKeyFile>
     <StartupObject>PDFPatcher.Program</StartupObject>
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <UpgradeBackupLocation>
-    </UpgradeBackupLocation>
-    <OldToolsVersion>3.5</OldToolsVersion>
-    <TargetFrameworkProfile />
-    <PublishUrl>http://localhost/PDFPatcher/</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Web</InstallFrom>
-    <UpdateEnabled>true</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
   </PropertyGroup>
@@ -81,6 +61,9 @@
     </Reference>
     <Reference Include="HtmlRenderer.WinForms">
       <HintPath>Lib\HtmlRenderer.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="itextAsian">
+      <HintPath>Lib\itextAsian.dll</HintPath>
     </Reference>
     <Reference Include="itextsharp">
       <HintPath>Lib\itextsharp.dll</HintPath>
@@ -906,7 +889,7 @@
     <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Resources\pdf.png" />
-    <None Include="wmjordan.snk" />
+    <None Include="wmjordan.snk" Condition=" '$(Configuration)' == 'Release' "/>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Functions\DocumentOption\DocumentFontListForm.resx">
@@ -1059,7 +1042,8 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\ILRepack.Lib.MSBuild.Task.2.0.18.2\build\ILRepack.Lib.MSBuild.Task.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\ILRepack.Lib.MSBuild.Task.2.0.18.2\build\ILRepack.Lib.MSBuild.Task.targets'))" />
   </Target>
-  <Target Name="BeforeBuild">
+  <Target Name="CopyCustomContent" AfterTargets="BeforeBuild">
+    <Copy SourceFiles="Lib\MuPDFLib.dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
   </Target>
   <PropertyGroup>
     <PostBuildEvent>
