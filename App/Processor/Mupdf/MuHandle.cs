@@ -4,47 +4,47 @@ using System.Security.Permissions;
 
 namespace MuPdfSharp
 {
-	[SecurityPermission (SecurityAction.InheritanceDemand, UnmanagedCode = true)]
-	[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
+	[SecurityPermission(SecurityAction.InheritanceDemand, UnmanagedCode = true)]
+	[SecurityPermission(SecurityAction.Demand, UnmanagedCode = true)]
 	abstract class MuHandle : System.Runtime.InteropServices.SafeHandle
 	{
-		protected MuHandle () : base (IntPtr.Zero, true) { }
+		protected MuHandle() : base(IntPtr.Zero, true) { }
 
 		public override bool IsInvalid => handle == IntPtr.Zero;
 
-		public T MarshalAs<T> () where T : struct {
-			return handle.MarshalAs<T> ();
+		public T MarshalAs<T>() where T : struct {
+			return handle.MarshalAs<T>();
 		}
 	}
 
 	sealed class ContextHandle : MuHandle
 	{
-		private ContextHandle () { }
+		private ContextHandle() { }
 
 		/// <summary>
 		/// 创建 MuPDF 的 Context 实例。
 		/// </summary>
 		/// <returns>指向 Context 的指针。</returns>
-		internal static ContextHandle Create () {
-			return NativeMethods.NewContext ();
+		internal static ContextHandle Create() {
+			return NativeMethods.NewContext();
 		}
 
-		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.None)]
-		protected override bool ReleaseHandle () {
-			NativeMethods.DropContext (handle);
-			SetHandleAsInvalid ();
+		[ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
+		protected override bool ReleaseHandle() {
+			NativeMethods.DropContext(handle);
+			SetHandleAsInvalid();
 			return true;
 		}
 
-		internal PixmapHandle CreatePixmap (ColorSpace colorspace, int width, int height) {
-			return new PixmapHandle (this, FindDeviceColorSpace (colorspace), width, height);
+		internal PixmapHandle CreatePixmap(ColorSpace colorspace, int width, int height) {
+			return new PixmapHandle(this, FindDeviceColorSpace(colorspace), width, height);
 		}
 
-		internal PixmapHandle CreatePixmap (ColorSpace colorspace, BBox box) {
-			return new PixmapHandle (this, FindDeviceColorSpace (colorspace), box);
+		internal PixmapHandle CreatePixmap(ColorSpace colorspace, BBox box) {
+			return new PixmapHandle(this, FindDeviceColorSpace(colorspace), box);
 		}
-		internal DisplayListHandle CreateDisplayList (Rectangle mediaBox) {
-			return new DisplayListHandle (this, mediaBox);
+		internal DisplayListHandle CreateDisplayList(Rectangle mediaBox) {
+			return new DisplayListHandle(this, mediaBox);
 		}
 		internal PixmapHandle LoadJpeg2000(byte[] data) {
 			var p = NativeMethods.LoadJpeg2000(this, data, data.Length, IntPtr.Zero);
@@ -80,9 +80,9 @@ namespace MuPdfSharp
 
 		internal ContextHandle Context => _context;
 
-		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.None)]
-		protected override bool ReleaseHandle () {
-			NativeMethods.DropDocument (_context, handle);
+		[ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
+		protected override bool ReleaseHandle() {
+			NativeMethods.DropDocument(_context, handle);
 			if (_releaseContext) {
 				_context.DangerousRelease();
 			}
@@ -107,17 +107,17 @@ namespace MuPdfSharp
 		}
 		internal ContextHandle Context { get; }
 
-		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.None)]
-		protected override bool ReleaseHandle () {
-			NativeMethods.DropStream (Context, handle);
+		[ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
+		protected override bool ReleaseHandle() {
+			NativeMethods.DropStream(Context, handle);
 			if (_releaseContext) {
 				Context.DangerousRelease();
 			}
 			return true;
 		}
 
-		internal void CloseStream () {
-			NativeMethods.DropStream (Context, handle);
+		internal void CloseStream() {
+			NativeMethods.DropStream(Context, handle);
 		}
 	}
 
@@ -138,7 +138,7 @@ namespace MuPdfSharp
 		}
 		[ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
 		internal DeviceHandle(ContextHandle context, PixmapHandle pixmap, Matrix matrix)
-			: this (context, NativeMethods.NewDrawDevice(context, matrix, pixmap)) {
+			: this(context, NativeMethods.NewDrawDevice(context, matrix, pixmap)) {
 		}
 		[ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
 		internal DeviceHandle(ContextHandle context, PixmapHandle pixmap, Matrix matrix, ref BBox box)
@@ -156,9 +156,9 @@ namespace MuPdfSharp
 			NativeMethods.CloseDevice(_context, handle);
 		}
 
-		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.None)]
-		protected override bool ReleaseHandle () {
-			NativeMethods.DropDevice (_context, handle);
+		[ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
+		protected override bool ReleaseHandle() {
+			NativeMethods.DropDevice(_context, handle);
 			if (_releaseContext) {
 				_context.DangerousRelease();
 			}
@@ -170,20 +170,20 @@ namespace MuPdfSharp
 	{
 		readonly DocumentHandle _document;
 		readonly bool _releaseDocument;
-		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.None)]
-		public PageHandle (DocumentHandle document, int pageNumber) {
-			handle = NativeMethods.LoadPage (document.Context, document, pageNumber);
+		[ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
+		public PageHandle(DocumentHandle document, int pageNumber) {
+			handle = NativeMethods.LoadPage(document.Context, document, pageNumber);
 			_document = document;
-			document.DangerousAddRef (ref _releaseDocument);
+			document.DangerousAddRef(ref _releaseDocument);
 		}
 
 		internal unsafe IntPtr PageDictionary => ((NativePage*)handle)->PageDictionary;
 
-		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.None)]
-		protected override bool ReleaseHandle () {
-			NativeMethods.DropPage (_document.Context, handle);
+		[ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
+		protected override bool ReleaseHandle() {
+			NativeMethods.DropPage(_document.Context, handle);
 			if (_releaseDocument) {
-				_document.DangerousRelease ();
+				_document.DangerousRelease();
 			}
 			return true;
 		}
@@ -191,37 +191,35 @@ namespace MuPdfSharp
 #pragma warning disable 649, 169
 		struct NativePage
 		{
-			NativeFzPage FzPage;
-			IntPtr Document;
+			readonly NativeFzPage FzPage;
+			readonly IntPtr Document;
 			internal IntPtr PageDictionary;
-
-			int Transparency;
-			int Overprint;
-
-			IntPtr Links;
-			IntPtr Annots, AnnotTailp;
-			IntPtr Widgets, WidgetTailp;
+			readonly int Transparency;
+			readonly int Overprint;
+			readonly IntPtr Links;
+			readonly IntPtr Annots, AnnotTailp;
+			readonly IntPtr Widgets, WidgetTailp;
 		}
 		struct NativeFzPage
 		{
-			int Refs;
-			IntPtr Document;
-			int Chapter;
-			int Number;
-			int Incomplete;
-			IntPtr /*fz_page_drop_page_fn*/ DropPage;
-			IntPtr /*fz_page_bound_page_fn*/ BoundPage;
-			IntPtr /*fz_page_run_page_fn*/ RunPageContents;
-			IntPtr /*fz_page_run_page_fn*/ RunPageAnnots;
-			IntPtr /*fz_page_run_page_fn*/ RunPageWidgets;
-			IntPtr /*fz_page_load_links_fn*/ LoadLinks;
-			IntPtr /*fz_page_page_presentation_fn*/ PagePresentation;
-			IntPtr /*fz_page_control_separation_fn*/ ControlSeparation;
-			IntPtr /*fz_page_separation_disabled_fn*/ SeparationDisabled;
-			IntPtr /*fz_page_separations_fn*/ GetSeparations;
-			IntPtr /*fz_page_uses_overprint_fn*/ GetOverprint;
-			IntPtr /*fz_page_create_link_fn*/ CreateLink;
-			IntPtr /*fz_page ** prev, *next*/ Prev, Next;
+			readonly int Refs;
+			readonly IntPtr Document;
+			readonly int Chapter;
+			readonly int Number;
+			readonly int Incomplete;
+			readonly IntPtr /*fz_page_drop_page_fn*/ DropPage;
+			readonly IntPtr /*fz_page_bound_page_fn*/ BoundPage;
+			readonly IntPtr /*fz_page_run_page_fn*/ RunPageContents;
+			readonly IntPtr /*fz_page_run_page_fn*/ RunPageAnnots;
+			readonly IntPtr /*fz_page_run_page_fn*/ RunPageWidgets;
+			readonly IntPtr /*fz_page_load_links_fn*/ LoadLinks;
+			readonly IntPtr /*fz_page_page_presentation_fn*/ PagePresentation;
+			readonly IntPtr /*fz_page_control_separation_fn*/ ControlSeparation;
+			readonly IntPtr /*fz_page_separation_disabled_fn*/ SeparationDisabled;
+			readonly IntPtr /*fz_page_separations_fn*/ GetSeparations;
+			readonly IntPtr /*fz_page_uses_overprint_fn*/ GetOverprint;
+			readonly IntPtr /*fz_page_create_link_fn*/ CreateLink;
+			readonly IntPtr /*fz_page ** prev, *next*/ Prev, Next;
 		}
 #pragma warning restore 649, 169
 	}
@@ -230,18 +228,18 @@ namespace MuPdfSharp
 	{
 		readonly ContextHandle _context;
 		readonly bool _releaseContext;
-		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.None)]
-		internal DisplayListHandle (ContextHandle context, Rectangle mediaBox) {
-			handle = NativeMethods.NewDisplayList (context, mediaBox);
+		[ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
+		internal DisplayListHandle(ContextHandle context, Rectangle mediaBox) {
+			handle = NativeMethods.NewDisplayList(context, mediaBox);
 			_context = context;
-			context.DangerousAddRef (ref _releaseContext);
+			context.DangerousAddRef(ref _releaseContext);
 		}
 
-		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.None)]
-		protected override bool ReleaseHandle () {
-			NativeMethods.DropDisplayList (_context, handle);
+		[ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
+		protected override bool ReleaseHandle() {
+			NativeMethods.DropDisplayList(_context, handle);
 			if (_releaseContext) {
-				_context.DangerousRelease ();
+				_context.DangerousRelease();
 			}
 			return true;
 		}
@@ -257,25 +255,25 @@ namespace MuPdfSharp
 			_context = context;
 			context.DangerousAddRef(ref _releaseContext);
 		}
-		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.None)]
-		internal PixmapHandle (ContextHandle context, IntPtr colorspace, int width, int height) {
-			handle = NativeMethods.NewPixmap (context, colorspace, width, height, IntPtr.Zero, 0);
+		[ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
+		internal PixmapHandle(ContextHandle context, IntPtr colorspace, int width, int height) {
+			handle = NativeMethods.NewPixmap(context, colorspace, width, height, IntPtr.Zero, 0);
 			_context = context;
-			context.DangerousAddRef (ref _releaseContext);
+			context.DangerousAddRef(ref _releaseContext);
 		}
 
-		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.None)]
-		internal PixmapHandle (ContextHandle context, IntPtr colorspace, BBox box) {
-			handle = NativeMethods.NewPixmap (context, colorspace, box, IntPtr.Zero, 0);
+		[ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
+		internal PixmapHandle(ContextHandle context, IntPtr colorspace, BBox box) {
+			handle = NativeMethods.NewPixmap(context, colorspace, box, IntPtr.Zero, 0);
 			_context = context;
-			context.DangerousAddRef (ref _releaseContext);
+			context.DangerousAddRef(ref _releaseContext);
 		}
 
-		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.None)]
-		protected override bool ReleaseHandle () {
-			NativeMethods.DropPixmap (_context, handle);
+		[ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
+		protected override bool ReleaseHandle() {
+			NativeMethods.DropPixmap(_context, handle);
 			if (_releaseContext) {
-				_context.DangerousRelease ();
+				_context.DangerousRelease();
 			}
 			return true;
 		}
@@ -292,11 +290,11 @@ namespace MuPdfSharp
 			context.DangerousAddRef(ref _releaseContext);
 		}
 
-		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.None)]
-		protected override bool ReleaseHandle () {
-			NativeMethods.DropTextPage (_context, handle);
+		[ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
+		protected override bool ReleaseHandle() {
+			NativeMethods.DropTextPage(_context, handle);
 			if (_releaseContext) {
-				_context.DangerousRelease ();
+				_context.DangerousRelease();
 			}
 			return true;
 		}

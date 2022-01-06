@@ -3,31 +3,31 @@ using System.Collections.Generic;
 
 namespace PDFPatcher.Processor
 {
-	[System.Diagnostics.DebuggerDisplay ("FontName = {FontName}; MatchFullName = {MatchFullName}")]
+	[System.Diagnostics.DebuggerDisplay("FontName = {FontName}; MatchFullName = {MatchFullName}")]
 	public class FontNameFilter : AutoBookmarkFilter
 	{
 		public string FontName { get; set; }
 		public bool MatchFullName { get; set; }
 
-		Dictionary<int, bool> _matchResultCache;
+		readonly Dictionary<int, bool> _matchResultCache;
 
-		public FontNameFilter () {
-			this._matchResultCache = new Dictionary<int, bool> ();
+		public FontNameFilter() {
+			_matchResultCache = new Dictionary<int, bool>();
 		}
 
-		public FontNameFilter (string fontName, bool matchFullName) : this () {
-			this.FontName = fontName;
-			this.MatchFullName = matchFullName;
+		public FontNameFilter(string fontName, bool matchFullName) : this() {
+			FontName = fontName;
+			MatchFullName = matchFullName;
 		}
 
-		internal override bool Matches (PDFPatcher.Model.AutoBookmarkContext context) {
+		internal override bool Matches(PDFPatcher.Model.AutoBookmarkContext context) {
 			if (context.TextLine == null) {
 				var font = context.TextInfo.Font;
-				return MatchFont (font);
+				return MatchFont(font);
 			}
 			else {
 				foreach (var item in context.TextLine.Texts) {
-					if (MatchFont (item.Font)) {
+					if (MatchFont(item.Font)) {
 						return true;
 					}
 				}
@@ -35,27 +35,27 @@ namespace PDFPatcher.Processor
 			}
 		}
 
-		private bool MatchFont (PDFPatcher.Model.FontInfo font) {
+		private bool MatchFont(PDFPatcher.Model.FontInfo font) {
 			if (font == null) {
 				return true;
 			}
 			bool result;
-			if (_matchResultCache.TryGetValue (font.FontID, out result)) {
+			if (_matchResultCache.TryGetValue(font.FontID, out result)) {
 				return result;
 			}
 
-			if (this.MatchFullName) {
+			if (MatchFullName) {
 				//_matchResultCache[font.FontID] = String.Compare (this.FontName, font.PostscriptFontName, StringComparison.OrdinalIgnoreCase) == 0;
-				_matchResultCache[font.FontID] = String.Compare (this.FontName, font.FontName, StringComparison.OrdinalIgnoreCase) == 0;
+				_matchResultCache[font.FontID] = String.Compare(FontName, font.FontName, StringComparison.OrdinalIgnoreCase) == 0;
 			}
 			else {
-				_matchResultCache[font.FontID] = font.PostscriptFontName.IndexOf (this.FontName, StringComparison.OrdinalIgnoreCase) > -1;
+				_matchResultCache[font.FontID] = font.PostscriptFontName.IndexOf(FontName, StringComparison.OrdinalIgnoreCase) > -1;
 			}
 			return _matchResultCache[font.FontID];
 		}
 
-		internal override void Reset () {
-			_matchResultCache.Clear ();
+		internal override void Reset() {
+			_matchResultCache.Clear();
 		}
 
 	}

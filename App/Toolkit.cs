@@ -21,7 +21,7 @@ namespace PDFPatcher
 			new Toolkit ("导出或导入信息文件","InfoExchanger","ExportInfoFile","导出书签、文档元数据、阅读器设定等信息到信息文件"),
 			new Toolkit ("程序配置","Options","AppOptions","修改 PDF 补丁丁的程序配置", false, false)
 		};
-		internal static Toolkit Get (string id) {
+		internal static Toolkit Get(string id) {
 			foreach (var item in Toolkits) {
 				if (item.Identifier == id) {
 					return item;
@@ -37,13 +37,13 @@ namespace PDFPatcher
 		public bool ShowText { get; }
 		public bool DefaultVisisble { get; }
 
-		private Toolkit (string name, string id, string icon, string description)
-			: this (name, id, icon, description, false, true) {
+		private Toolkit(string name, string id, string icon, string description)
+			: this(name, id, icon, description, false, true) {
 		}
-		private Toolkit (string name, string id, string icon, string description, bool showText)
-			: this (name, id, icon, description, showText, true) {
+		private Toolkit(string name, string id, string icon, string description, bool showText)
+			: this(name, id, icon, description, showText, true) {
 		}
-		private Toolkit (string name, string id, string icon, string description, bool showText, bool defaultVisible) {
+		private Toolkit(string name, string id, string icon, string description, bool showText, bool defaultVisible) {
 			Name = name;
 			Identifier = id;
 			Icon = icon;
@@ -52,7 +52,7 @@ namespace PDFPatcher
 			DefaultVisisble = defaultVisible;
 		}
 
-		internal ToolStripButton CreateButton () {
+		internal ToolStripButton CreateButton() {
 			return new ToolStripButton(Name, Properties.Resources.ResourceManager.GetObject(Icon) as System.Drawing.Image) {
 				Name = Identifier,
 				Tag = Identifier,

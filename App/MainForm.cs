@@ -9,16 +9,16 @@ namespace PDFPatcher
 {
 	public partial class MainForm : Form
 	{
-		static readonly Dictionary<Function, FunctionControl> __FunctionControls = new Dictionary<Function, FunctionControl> ();
+		static readonly Dictionary<Function, FunctionControl> __FunctionControls = new Dictionary<Function, FunctionControl>();
 
 		ReportControl _LogControl;
 		#region 公共功能
 		private BackgroundWorker _Worker;
-		private FormState _formState = new FormState ();
+		private readonly FormState _formState = new FormState();
 		private bool _FullScreen;
 		///<summary>获取或指定全屏显示的值。</summary>
 		public bool FullScreen {
-			get { return _FullScreen; }
+			get => _FullScreen;
 			set {
 				if (value == _FullScreen) {
 					return;
@@ -26,12 +26,12 @@ namespace PDFPatcher
 				_FullScreen = value;
 				if (value) {
 					_MainMenu.Visible = _GeneralToolbar.Visible = false;
-					_formState.Maximize (this);
+					_formState.Maximize(this);
 				}
 				else {
 					_MainMenu.Visible = true;
 					_GeneralToolbar.Visible = AppContext.Toolbar.ShowGeneralToolbar;
-					_formState.Restore (this);
+					_formState.Restore(this);
 				}
 			}
 		}
@@ -39,21 +39,21 @@ namespace PDFPatcher
 		/// <summary>
 		/// 设置控件的提示信息。
 		/// </summary>
-		internal void SetTooltip (Control control, string text) {
-			_ToolTip.SetToolTip (control, text);
+		internal void SetTooltip(Control control, string text) {
+			_ToolTip.SetToolTip(control, text);
 		}
 
 		/// <summary>
 		/// 获取或设置状态栏文本。
 		/// </summary>
 		internal string StatusText {
-			get { return _MainStatusLabel.Text; }
-			set { _MainStatusLabel.Text = value; }
+			get => _MainStatusLabel.Text;
+			set => _MainStatusLabel.Text = value;
 		}
 
 		#region Worker
 		///<summary>获取或指定后台进程。</summary>
-		internal BackgroundWorker GetWorker () {
+		internal BackgroundWorker GetWorker() {
 			if (_Worker == null) {
 				_Worker = new BackgroundWorker {
 					WorkerReportsProgress = true,
@@ -127,46 +127,46 @@ namespace PDFPatcher
 		}
 		#endregion
 
-		internal FunctionControl GetFunctionControl (Function functionName) {
+		internal FunctionControl GetFunctionControl(Function functionName) {
 			if (__FunctionControls.TryGetValue(functionName, out FunctionControl f) && f.IsDisposed == false) {
 				return f;
 			}
 			switch (functionName) {
 				case Function.FrontPage:
-					__FunctionControls[functionName] = new FrontPageControl ();
+					__FunctionControls[functionName] = new FrontPageControl();
 					break;
 				case Function.Patcher:
-					__FunctionControls[functionName] = new PatcherControl ();
+					__FunctionControls[functionName] = new PatcherControl();
 					break;
 				case Function.Merger:
-					__FunctionControls[functionName] = new MergerControl ();
+					__FunctionControls[functionName] = new MergerControl();
 					break;
 				case Function.BookmarkGenerator:
-					__FunctionControls[functionName] = new AutoBookmarkControl ();
+					__FunctionControls[functionName] = new AutoBookmarkControl();
 					break;
 				case Function.InfoExchanger:
-					__FunctionControls[functionName] = new InfoExchangerControl ();
+					__FunctionControls[functionName] = new InfoExchangerControl();
 					break;
 				case Function.ExtractPages:
-					__FunctionControls[functionName] = new ExtractPageControl ();
+					__FunctionControls[functionName] = new ExtractPageControl();
 					break;
 				case Function.ExtractImages:
-					__FunctionControls[functionName] = new ExtractImageControl ();
+					__FunctionControls[functionName] = new ExtractImageControl();
 					break;
 				case Function.BookmarkEditor:
 					//__FunctionControls[functionName] = new BookmarkEditorControl ();
 					//break;
-					var b = new EditorControl ();
+					var b = new EditorControl();
 					b.DocumentChanged += OnDocumentChanged;
 					return b;
 				//case FormHelper.Functions.InfoFileOptions:
 				//    __FunctionControls[functionName] = new InfoFileOptionControl ();
 				//    break;
 				case Function.Ocr:
-					__FunctionControls[functionName] = new OcrControl ();
+					__FunctionControls[functionName] = new OcrControl();
 					break;
 				case Function.RenderPages:
-					__FunctionControls[functionName] = new RenderImageControl ();
+					__FunctionControls[functionName] = new RenderImageControl();
 					break;
 				//case Form.Functions.ImportOptions:
 				//    __FunctionControls[functionName] = new ImportOptionControl ();
@@ -175,7 +175,7 @@ namespace PDFPatcher
 				//    __FunctionControls[functionName] = new AppOptionControl ();
 				//    break;
 				case Function.About:
-					__FunctionControls[functionName] = new AboutControl ();
+					__FunctionControls[functionName] = new AboutControl();
 					break;
 				//case FormHelper.Functions.Log:
 				//    __FunctionControls[functionName] = new ReportControl ();
@@ -183,11 +183,11 @@ namespace PDFPatcher
 				case Function.Inspector:
 					//__FunctionControls[functionName] = new DocumentInspectorControl ();
 					//break;
-					var d = new DocumentInspectorControl ();
+					var d = new DocumentInspectorControl();
 					d.DocumentChanged += OnDocumentChanged;
 					return d;
 				case Function.Rename:
-					__FunctionControls[functionName] = new RenameControl ();
+					__FunctionControls[functionName] = new RenameControl();
 					break;
 				default:
 					return null;
@@ -198,13 +198,13 @@ namespace PDFPatcher
 			return __FunctionControls[functionName];
 		}
 
-		void OnDocumentChanged (object sender, DocumentChangedEventArgs args) {
+		void OnDocumentChanged(object sender, DocumentChangedEventArgs args) {
 			var p = args.Path;
 			_MainStatusLabel.Text = p ?? String.Empty;
-			if (FileHelper.IsPathValid (p)) {
-				p = System.IO.Path.GetFileNameWithoutExtension (p);
+			if (FileHelper.IsPathValid(p)) {
+				p = System.IO.Path.GetFileNameWithoutExtension(p);
 				if (p.Length > 20) {
-					p = p.Substring (0, 17) + "...";
+					p = p.Substring(0, 17) + "...";
 				}
 				if (sender is Control f) {
 					f = f.Parent;
@@ -218,11 +218,11 @@ namespace PDFPatcher
 
 		#endregion
 
-		public MainForm () {
-			InitializeComponent ();
+		public MainForm() {
+			InitializeComponent();
 		}
 
-		protected override void OnLoad (EventArgs e) {
+		protected override void OnLoad(EventArgs e) {
 			base.OnLoad(e);
 			Processor.PdfHelper.ToggleReaderDebugMode(true); // 打开容错模式
 			Processor.PdfHelper.ToggleUnethicalMode(true); // 打开强制读取加密文档模式
@@ -337,11 +337,11 @@ namespace PDFPatcher
 				catch (Exception) {
 					FormHelper.ErrorBox("版本信息文件格式错误，请稍候重试。");
 				}
-				Exit:
+			Exit:
 				client.Dispose();
 				client = null;
 			};
-			client.DownloadDataAsync (new Uri (Constants.AppUpdateFile));
+			client.DownloadDataAsync(new Uri(Constants.AppUpdateFile));
 		}
 
 		void ClickCloseTab(MouseEventArgs args) {
@@ -355,73 +355,73 @@ namespace PDFPatcher
 			}
 		}
 
-		void MenuCommand (object sender, ToolStripItemClickedEventArgs e) {
+		void MenuCommand(object sender, ToolStripItemClickedEventArgs e) {
 			var ci = e.ClickedItem;
 			var t = ci.Tag as string;
-			if (String.IsNullOrEmpty (t) == false) {
-				var func = (Function)Enum.Parse (typeof (Function), t);
-				SelectFunctionList (func);
+			if (String.IsNullOrEmpty(t) == false) {
+				var func = (Function)Enum.Parse(typeof(Function), t);
+				SelectFunctionList(func);
 				return;
 			}
-			ci.HidePopupMenu ();
+			ci.HidePopupMenu();
 			if (ci.OwnerItem == _RecentFiles) {
-				var f = GetActiveFunctionControl () as FunctionControl;
+				var f = GetActiveFunctionControl() as FunctionControl;
 				f.RecentFileItemClicked?.Invoke(_MainMenu, e);
 			}
 			else {
-				ExecuteCommand (ci.Name);
+				ExecuteCommand(ci.Name);
 			}
 		}
 
-		internal void ExecuteCommand (string commandName) {
+		internal void ExecuteCommand(string commandName) {
 			if (commandName == Commands.ResetOptions) {
 				if (GetActiveFunctionControl() is IResettableControl f
 					&& FormHelper.YesNoBox("是否将当前功能恢复为默认设置？") == DialogResult.Yes) {
 					f.Reset();
 				}
 			}
-			else if (commandName == Commands.RestoreOptions && _OpenConfigDialog.ShowDialog () == DialogResult.OK) {
-				if (AppContext.Load (_OpenConfigDialog.FileName) == false) {
-					FormHelper.ErrorBox ("无法加载指定的配置文件。");
+			else if (commandName == Commands.RestoreOptions && _OpenConfigDialog.ShowDialog() == DialogResult.OK) {
+				if (AppContext.Load(_OpenConfigDialog.FileName) == false) {
+					FormHelper.ErrorBox("无法加载指定的配置文件。");
 					return;
 				}
 				foreach (Control item in __FunctionControls.Values) {
-					(item as IResettableControl)?.Reload ();
+					(item as IResettableControl)?.Reload();
 				}
-				SetupCustomizeToolbar ();
+				SetupCustomizeToolbar();
 			}
-			else if (commandName == Commands.SaveOptions && _SaveConfigDialog.ShowDialog () == DialogResult.OK) {
-				AppContext.Save (_SaveConfigDialog.FileName, false);
+			else if (commandName == Commands.SaveOptions && _SaveConfigDialog.ShowDialog() == DialogResult.OK) {
+				AppContext.Save(_SaveConfigDialog.FileName, false);
 			}
 			else if (commandName == Commands.LogWindow) {
-				ShowLogControl ();
+				ShowLogControl();
 			}
 			else if (commandName == Commands.CreateShortcut) {
-				CommonCommands.CreateShortcut ();
+				CommonCommands.CreateShortcut();
 			}
 			else if (commandName == Commands.VisitHomePage) {
-				CommonCommands.VisitHomePage ();
+				CommonCommands.VisitHomePage();
 			}
 			else if (commandName == Commands.CheckUpdate) {
-				ShowDialogWindow (new UpdateForm ());
+				ShowDialogWindow(new UpdateForm());
 			}
 			else if (commandName == Commands.Close) {
 				if (_FunctionContainer.SelectedTab.Tag.CastOrDefault<Function>() == Function.FrontPage) {
 					return;
 				}
-				_FunctionContainer.SelectedTab.Dispose ();
+				_FunctionContainer.SelectedTab.Dispose();
 			}
 			else if (commandName == Commands.CustomizeToolbar || commandName == "_CustomizeToolbarCommand") {
-				ShowDialogWindow (new CustomizeToolbarForm ());
-				SetupCustomizeToolbar ();
+				ShowDialogWindow(new CustomizeToolbarForm());
+				SetupCustomizeToolbar();
 			}
 			else if (commandName == Commands.ShowGeneralToolbar) {
-				_FunctionContainer.SuspendLayout ();
+				_FunctionContainer.SuspendLayout();
 				_GeneralToolbar.Visible = AppContext.Toolbar.ShowGeneralToolbar = !AppContext.Toolbar.ShowGeneralToolbar;
-				_FunctionContainer.PerformLayout ();
+				_FunctionContainer.PerformLayout();
 			}
 			else if (commandName == Commands.Exit) {
-				Close ();
+				Close();
 			}
 			else if (GetActiveFunctionControl() is FunctionControl f) {
 				if (commandName == Commands.Action && f.DefaultButton != null) {
@@ -433,27 +433,27 @@ namespace PDFPatcher
 			}
 		}
 
-		void SetupCustomizeToolbar () {
-			AppContext.Toolbar.RemoveInvalidButtons ();
+		void SetupCustomizeToolbar() {
+			AppContext.Toolbar.RemoveInvalidButtons();
 			for (int i = _GeneralToolbar.Items.Count - 1; i > 0; i--) {
-				_GeneralToolbar.Items[i].Dispose ();
+				_GeneralToolbar.Items[i].Dispose();
 			}
 			foreach (var item in AppContext.Toolbar.Buttons) {
 				if (item.Visible == false) {
 					continue;
 				}
-				_GeneralToolbar.Items.Add (item.CreateButton ());
+				_GeneralToolbar.Items.Add(item.CreateButton());
 			}
 		}
 
-		DialogResult ShowDialogWindow (Form window) {
+		DialogResult ShowDialogWindow(Form window) {
 			using (var f = window) {
 				f.StartPosition = FormStartPosition.CenterParent;
-				return f.ShowDialog (this);
+				return f.ShowDialog(this);
 			}
 		}
 
-		Control GetActiveFunctionControl () {
+		Control GetActiveFunctionControl() {
 			var t = _FunctionContainer.SelectedTab;
 			if (t == null || t.HasChildren == false) {
 				return null;
@@ -461,37 +461,37 @@ namespace PDFPatcher
 			return t.Controls[0];
 		}
 
-		internal void OpenFileWithEditor (string path) {
-			SelectFunctionList (Function.BookmarkEditor);
-			var c = GetActiveFunctionControl () as EditorControl;
-			if (String.IsNullOrEmpty (path)) {
-				c.ExecuteCommand (Commands.Open);
+		internal void OpenFileWithEditor(string path) {
+			SelectFunctionList(Function.BookmarkEditor);
+			var c = GetActiveFunctionControl() as EditorControl;
+			if (String.IsNullOrEmpty(path)) {
+				c.ExecuteCommand(Commands.Open);
 			}
 			else {
-				c.ExecuteCommand (Commands.OpenFile, path);
+				c.ExecuteCommand(Commands.OpenFile, path);
 			}
 		}
 
-		internal void SelectFunctionList (Function func) {
+		internal void SelectFunctionList(Function func) {
 			if (func == Function.PatcherOptions) {
-				ShowDialogWindow (new PatcherOptionForm(false) { Options = AppContext.Patcher });
+				ShowDialogWindow(new PatcherOptionForm(false) { Options = AppContext.Patcher });
 			}
 			else if (func == Function.MergerOptions) {
-				ShowDialogWindow (new MergerOptionForm());
+				ShowDialogWindow(new MergerOptionForm());
 			}
 			else if (func == Function.InfoFileOptions) {
-				ShowDialogWindow (new InfoFileOptionControl());
+				ShowDialogWindow(new InfoFileOptionControl());
 			}
 			else if (func == Function.EditorOptions) {
-				ShowDialogWindow (new PatcherOptionForm(true) { Options = AppContext.Editor });
+				ShowDialogWindow(new PatcherOptionForm(true) { Options = AppContext.Editor });
 			}
 			else if (func == Function.Options) {
-				ShowDialogWindow (new AppOptionForm());
+				ShowDialogWindow(new AppOptionForm());
 			}
 			else {
-				HideLogControl ();
+				HideLogControl();
 				var p = (GetActiveFunctionControl() as IDocumentEditor)?.DocumentPath;
-				var c = GetFunctionControl (func);
+				var c = GetFunctionControl(func);
 				foreach (TabPage item in _FunctionContainer.TabPages) {
 					if (item.Controls.Count > 0 && item.Controls[0] == c) {
 						_FunctionContainer.SelectedTab = item;
@@ -519,12 +519,12 @@ namespace PDFPatcher
 				_FunctionContainer.TabPages.Add(t);
 				c.Size = t.ClientSize;
 				c.Dock = DockStyle.Fill;
-				t.Controls.Add (c);
+				t.Controls.Add(c);
 				_FunctionContainer.SelectedTab = t;
 				AcceptButton = c.DefaultButton;
 
-				if (String.IsNullOrEmpty (p) == false) {
-					c.ExecuteCommand (Commands.OpenFile, p);
+				if (String.IsNullOrEmpty(p) == false) {
+					c.ExecuteCommand(Commands.OpenFile, p);
 				}
 
 				//c.HideOnClose = true;
@@ -532,50 +532,50 @@ namespace PDFPatcher
 			}
 		}
 
-		void FunctionDeselected (object sender, TabControlEventArgs args) {
+		void FunctionDeselected(object sender, TabControlEventArgs args) {
 			if (GetActiveFunctionControl() is FunctionControl c) {
-				c.OnDeselected ();
+				c.OnDeselected();
 			}
 		}
 
-		void SelectedFunctionChanged (object sender, TabControlEventArgs args) {
+		void SelectedFunctionChanged(object sender, TabControlEventArgs args) {
 			if (GetActiveFunctionControl() is FunctionControl c) {
 				//foreach (ToolStripMenuItem item in _MainMenu.Items) {
 				//	c.SetupMenu (item);
 				//}
-				c.OnSelected ();
+				c.OnSelected();
 				_MainStatusLabel.Text = c is IDocumentEditor b ? b.DocumentPath : Messages.Welcome;
 				AcceptButton = c.DefaultButton;
 			}
 		}
 
-		internal string ShowPdfFileDialog () {
-			return _OpenPdfDialog.ShowDialog () == DialogResult.OK ? _OpenPdfDialog.FileName : null;
+		internal string ShowPdfFileDialog() {
+			return _OpenPdfDialog.ShowDialog() == DialogResult.OK ? _OpenPdfDialog.FileName : null;
 		}
 
-		void MainForm_FormClosed (object sender, FormClosedEventArgs e) {
+		void MainForm_FormClosed(object sender, FormClosedEventArgs e) {
 			try {
-				AppContext.Save (null, true);
+				AppContext.Save(null, true);
 			}
 			catch (Exception ex) {
 				// ignore error
 			}
 		}
 
-		void HideLogControl () {
-			_LogControl.Hide ();
+		void HideLogControl() {
+			_LogControl.Hide();
 		}
-		void ShowLogControl () {
-			_LogControl.Show ();
+		void ShowLogControl() {
+			_LogControl.Show();
 		}
 
-		void MenuOpening (object sender, EventArgs e) {
+		void MenuOpening(object sender, EventArgs e) {
 			if (GetActiveFunctionControl() is FunctionControl f) {
-				f.SetupMenu (sender as ToolStripMenuItem);
+				f.SetupMenu(sender as ToolStripMenuItem);
 			}
 		}
 
-		void RecentFileMenuOpening (object sender, EventArgs e) {
+		void RecentFileMenuOpening(object sender, EventArgs e) {
 			if (GetActiveFunctionControl() is FunctionControl f && f.ListRecentFiles != null) {
 				f.ListRecentFiles(sender, e);
 			}

@@ -8,32 +8,32 @@ namespace PDFPatcher.Functions.Editor
 	{
 		readonly string _command;
 
-		public BookmarkSelectionCommand (string command) {
+		public BookmarkSelectionCommand(string command) {
 			_command = command;
 		}
 
-		public void Process (Controller controller, params string[] parameters) {
+		public void Process(Controller controller, params string[] parameters) {
 			var b = controller.View.Bookmark;
 			switch (_command) {
 				case Commands.SelectAllItems:
-					b.SelectAll ();
+					b.SelectAll();
 					break;
 				case Commands.SelectNone:
-					b.DeselectAll ();
+					b.DeselectAll();
 					break;
 				case Commands.InvertSelectItem:
-					b.InvertSelect ();
+					b.InvertSelect();
 					break;
 				case "_CollapseAll":
-					b.CollapseAll ();
+					b.CollapseAll();
 					break;
 				case "_ExpandAll":
-					b.ExpandAll ();
+					b.ExpandAll();
 					break;
 				case "_CollapseChildren":
 					foreach (var item in b.GetSelectedElements(false)) {
 						foreach (XmlNode ci in item.SubBookmarks) {
-							b.Collapse (ci);
+							b.Collapse(ci);
 						}
 					}
 					break;

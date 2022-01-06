@@ -12,9 +12,9 @@ namespace PDFPatcher.Common
 		/// <typeparam name="T">传出类型实例。</typeparam>
 		/// <param name="ptr">指向数据的指针。</param>
 		/// <returns>指针封装后的托管实例。</returns>
-		internal static T Unwrap<T> (this IntPtr ptr) where T : class, new () {
-			var t = new T ();
-			Marshal.PtrToStructure (ptr, t);
+		internal static T Unwrap<T>(this IntPtr ptr) where T : class, new() {
+			var t = new T();
+			Marshal.PtrToStructure(ptr, t);
 			return t;
 		}
 

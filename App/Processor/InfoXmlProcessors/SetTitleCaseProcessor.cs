@@ -4,18 +4,18 @@ namespace PDFPatcher.Processor
 {
 	sealed class SetTitleCaseProcessor : IPdfInfoXmlProcessor
 	{
-		static System.Globalization.TextInfo __currentTextInfo = System.Globalization.CultureInfo.CurrentCulture.TextInfo;
-		static char[] SimplifiedChars = ChineseCharMap.Simplified.ToCharArray ();
-		static char[] TraditionalChars = ChineseCharMap.Traditional.ToCharArray ();
-		static char[] FullWidthNumbers = "０１２３４５６７８９０".ToCharArray ();
-		static char[] HalfWidthNumbers = "01234567890".ToCharArray ();
-		static char[] ChineseNumbers = "○一二三四五六七八九〇".ToCharArray ();
-		static char[] TraditionalChineseNumbers = "零壹贰叁肆伍陆柒捌玖零".ToCharArray ();
+		static readonly System.Globalization.TextInfo __currentTextInfo = System.Globalization.CultureInfo.CurrentCulture.TextInfo;
+		static readonly char[] SimplifiedChars = ChineseCharMap.Simplified.ToCharArray();
+		static readonly char[] TraditionalChars = ChineseCharMap.Traditional.ToCharArray();
+		static readonly char[] FullWidthNumbers = "０１２３４５６７８９０".ToCharArray();
+		static readonly char[] HalfWidthNumbers = "01234567890".ToCharArray();
+		static readonly char[] ChineseNumbers = "○一二三四五六七八九〇".ToCharArray();
+		static readonly char[] TraditionalChineseNumbers = "零壹贰叁肆伍陆柒捌玖零".ToCharArray();
 
-		static char[] FullWidthAlphabetics = "ａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺ".ToCharArray ();
-		static char[] HalfWidthAlphabetics = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray ();
-		static char[] FullWidthPunctuations = "！＂＃＄％＆＇（）＊＋，－．／：；＜＝＞？＠［＼］＾＿｀｛｜｝～".ToCharArray ();
-		static char[] HalfWidthPunctuations = "!\"#$%&'()*+,-./;:<=>?@[\\]^_`{|}~".ToCharArray ();
+		static readonly char[] FullWidthAlphabetics = "ａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺ".ToCharArray();
+		static readonly char[] HalfWidthAlphabetics = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
+		static readonly char[] FullWidthPunctuations = "！＂＃＄％＆＇（）＊＋，－．／：；＜＝＞？＠［＼］＾＿｀｛｜｝～".ToCharArray();
+		static readonly char[] HalfWidthPunctuations = "!\"#$%&'()*+,-./;:<=>?@[\\]^_`{|}~".ToCharArray();
 
 		internal static string[] CaseNames = new string[]{
 			"首字母大写", "英文大写", "英文小写",
@@ -36,71 +36,69 @@ namespace PDFPatcher.Processor
 
 		public LetterCase Case { get; private set; }
 
-		public SetTitleCaseProcessor (LetterCase letterCase) {
-			this.Case = letterCase;
+		public SetTitleCaseProcessor(LetterCase letterCase) {
+			Case = letterCase;
 		}
 
-		static string Translate (string s, char[] source, char[] target) {
-			var cs = s.ToCharArray ();
+		static string Translate(string s, char[] source, char[] target) {
+			var cs = s.ToCharArray();
 			int p;
 			for (int i = 0; i < cs.Length; i++) {
-				p = Array.IndexOf (source, cs[i]);
+				p = Array.IndexOf(source, cs[i]);
 				if (p != -1) {
 					cs[i] = target[p];
 				}
 			}
-			return new string (cs);
+			return new string(cs);
 		}
 
 		#region IInfoDocProcessor 成员
 
-		public string Name {
-			get { return "设置书签文本为" + CaseNames[(int)this.Case]; }
-		}
+		public string Name => "设置书签文本为" + CaseNames[(int)Case];
 
-		public IUndoAction Process (System.Xml.XmlElement item) {
-			var a = item.GetAttributeNode (Constants.BookmarkAttributes.Title);
+		public IUndoAction Process(System.Xml.XmlElement item) {
+			var a = item.GetAttributeNode(Constants.BookmarkAttributes.Title);
 			if (a == null) {
 				return null;
 			}
 			string value;
-			switch (this.Case) {
-				case LetterCase.Lower: value = a.Value.ToLowerInvariant (); break;
-				case LetterCase.Upper: value = a.Value.ToUpperInvariant (); break;
-				case LetterCase.Title: value = __currentTextInfo.ToTitleCase (a.Value.ToLowerInvariant ()); break;
-				case LetterCase.FullWidthAlphabetic: value = Translate (a.Value, HalfWidthAlphabetics, FullWidthAlphabetics); break;
+			switch (Case) {
+				case LetterCase.Lower: value = a.Value.ToLowerInvariant(); break;
+				case LetterCase.Upper: value = a.Value.ToUpperInvariant(); break;
+				case LetterCase.Title: value = __currentTextInfo.ToTitleCase(a.Value.ToLowerInvariant()); break;
+				case LetterCase.FullWidthAlphabetic: value = Translate(a.Value, HalfWidthAlphabetics, FullWidthAlphabetics); break;
 				case LetterCase.FullWidthNumber:
-					value = Translate (a.Value, HalfWidthNumbers, FullWidthNumbers);
-					value = Translate (value, ChineseNumbers, FullWidthNumbers);
+					value = Translate(a.Value, HalfWidthNumbers, FullWidthNumbers);
+					value = Translate(value, ChineseNumbers, FullWidthNumbers);
 					break;
-				case LetterCase.FullWidthPunctuation: value = Translate (a.Value, HalfWidthNumbers, FullWidthPunctuations); break;
-				case LetterCase.HalfWidthAlphabetic: value = Translate (a.Value, FullWidthAlphabetics, HalfWidthAlphabetics); break;
+				case LetterCase.FullWidthPunctuation: value = Translate(a.Value, HalfWidthNumbers, FullWidthPunctuations); break;
+				case LetterCase.HalfWidthAlphabetic: value = Translate(a.Value, FullWidthAlphabetics, HalfWidthAlphabetics); break;
 				case LetterCase.HalfWidthNumber:
-					value = Translate (a.Value, FullWidthNumbers, HalfWidthNumbers);
-					value = Translate (value, ChineseNumbers, HalfWidthNumbers);
+					value = Translate(a.Value, FullWidthNumbers, HalfWidthNumbers);
+					value = Translate(value, ChineseNumbers, HalfWidthNumbers);
 					break;
-				case LetterCase.HalfWidthPunctuation: value = Translate (a.Value, FullWidthPunctuations, HalfWidthPunctuations); break;
+				case LetterCase.HalfWidthPunctuation: value = Translate(a.Value, FullWidthPunctuations, HalfWidthPunctuations); break;
 				case LetterCase.ChineseNumber:
-					value = Translate (a.Value, FullWidthNumbers, ChineseNumbers);
-					value = Translate (value, HalfWidthNumbers, ChineseNumbers);
+					value = Translate(a.Value, FullWidthNumbers, ChineseNumbers);
+					value = Translate(value, HalfWidthNumbers, ChineseNumbers);
 					break;
 				case LetterCase.TraditionalChineseNumbers:
-					value = Translate (a.Value, FullWidthNumbers, TraditionalChineseNumbers);
-					value = Translate (value, HalfWidthNumbers, TraditionalChineseNumbers);
-					value = Translate (value, ChineseNumbers, TraditionalChineseNumbers);
+					value = Translate(a.Value, FullWidthNumbers, TraditionalChineseNumbers);
+					value = Translate(value, HalfWidthNumbers, TraditionalChineseNumbers);
+					value = Translate(value, ChineseNumbers, TraditionalChineseNumbers);
 					break;
 				case LetterCase.SimplifiedToTraditionalCjk:
-					value = Translate (a.Value, SimplifiedChars, TraditionalChars);
+					value = Translate(a.Value, SimplifiedChars, TraditionalChars);
 					break;
 				case LetterCase.TraditionalToSimplifiedCjk:
-					value = Translate (a.Value, TraditionalChars, SimplifiedChars);
+					value = Translate(a.Value, TraditionalChars, SimplifiedChars);
 					break;
-				default: throw new System.ArgumentOutOfRangeException ("LetterCase");
+				default: throw new System.ArgumentOutOfRangeException("LetterCase");
 			}
 			if (a.Value == value) {
 				return null;
 			}
-			return UndoAttributeAction.GetUndoAction (item, Constants.BookmarkAttributes.Title, value);
+			return UndoAttributeAction.GetUndoAction(item, Constants.BookmarkAttributes.Title, value);
 		}
 
 		#endregion

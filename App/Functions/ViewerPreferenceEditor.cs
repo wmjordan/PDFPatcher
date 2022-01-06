@@ -36,8 +36,8 @@ namespace PDFPatcher.Functions
 			}
 		}
 
-		public ViewerPreferenceEditor () {
-			InitializeComponent ();
+		public ViewerPreferenceEditor() {
+			InitializeComponent();
 
 			_settingsLockdown = true;
 			_ForceBookmarkOpenBox.FormattingEnabled
@@ -45,15 +45,15 @@ namespace PDFPatcher.Functions
 				= _ForceInitialModeBox.FormattingEnabled
 				= _ForceInitialViewBox.FormattingEnabled
 				= false;
-			_ForceBookmarkOpenBox.AddRange (__bookmarkStatus).Select (0);
-			_ForceInitialViewBox.AddRange (Constants.PageLayoutType.Names).Select (0);
-			_ForceDirectionBox.AddRange (Constants.ViewerPreferencesType.DirectionType.Names).Select (0);
-			_ForceInitialModeBox.AddRange (Constants.PageModes.Names).Select (0);
+			_ForceBookmarkOpenBox.AddRange(__bookmarkStatus).Select(0);
+			_ForceInitialViewBox.AddRange(Constants.PageLayoutType.Names).Select(0);
+			_ForceDirectionBox.AddRange(Constants.ViewerPreferencesType.DirectionType.Names).Select(0);
+			_ForceInitialModeBox.AddRange(Constants.PageModes.Names).Select(0);
 			_settingsLockdown = false;
 		}
 
 
-		void DocumentInfoChanged (object sender, EventArgs e) {
+		void DocumentInfoChanged(object sender, EventArgs e) {
 			if (_settingsLockdown) {
 				return;
 			}

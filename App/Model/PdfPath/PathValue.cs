@@ -7,17 +7,17 @@ namespace PDFPatcher.Model.PdfPath
 {
 	public static class PathValue
 	{
-		public static double ToNumber (DocumentObject source, IPathValue value) {
+		public static double ToNumber(DocumentObject source, IPathValue value) {
 			double d;
 			switch (value.ValueType) {
 				case PathValueType.Expression:
-					var p = (value as IPathExpression).SelectObject (source);
+					var p = (value as IPathExpression).SelectObject(source);
 					if (p == null) {
 						return Double.NaN;
 					}
-					return Double.TryParse (p.FriendlyValue ?? p.LiteralValue, out d) ? d : Double.NaN;
+					return Double.TryParse(p.FriendlyValue ?? p.LiteralValue, out d) ? d : Double.NaN;
 				case PathValueType.String:
-					return Double.TryParse ((value as PathStringValue).Value, out d) ? d : Double.NaN;
+					return Double.TryParse((value as PathStringValue).Value, out d) ? d : Double.NaN;
 				case PathValueType.Number:
 					return (value as PathNumberValue).Value;
 				case PathValueType.Boolean:
@@ -27,10 +27,10 @@ namespace PDFPatcher.Model.PdfPath
 			}
 		}
 
-		public static string ToString (DocumentObject source, IPathValue value) {
+		public static string ToString(DocumentObject source, IPathValue value) {
 			switch (value.ValueType) {
 				case PathValueType.Expression:
-					var p = (value as IPathExpression).SelectObject (source);
+					var p = (value as IPathExpression).SelectObject(source);
 					if (p == null) {
 						return String.Empty;
 					}
@@ -40,16 +40,16 @@ namespace PDFPatcher.Model.PdfPath
 				case PathValueType.Number:
 					return (value as PathNumberValue).Value.ToText();
 				case PathValueType.Boolean:
-					return (value as PathBooleanValue).ToString ();
+					return (value as PathBooleanValue).ToString();
 				default:
 					return String.Empty;
 			}
 		}
 
-		public static bool ToBoolean (DocumentObject source, IPathValue value) {
+		public static bool ToBoolean(DocumentObject source, IPathValue value) {
 			switch (value.ValueType) {
 				case PathValueType.Expression:
-					return (value as IPathExpression).SelectObject (source) != null;
+					return (value as IPathExpression).SelectObject(source) != null;
 				case PathValueType.String:
 					return (value as PathStringValue).Value.Length > 0;
 				case PathValueType.Number:
@@ -64,40 +64,40 @@ namespace PDFPatcher.Model.PdfPath
 
 		sealed class PathStringValue : IConstantPathValue
 		{
-			public PathValueType ValueType { get { return PathValueType.String; } }
+			public PathValueType ValueType => PathValueType.String;
 
 			public string Value { get; private set; }
 
-			public string LiteralValue { get { return this.Value; } }
+			public string LiteralValue => Value;
 
-			public PathStringValue (string value) {
-				this.Value = value;
+			public PathStringValue(string value) {
+				Value = value;
 			}
 		}
 
 		sealed class PathNumberValue : IConstantPathValue
 		{
-			public PathValueType ValueType { get { return PathValueType.Number; } }
+			public PathValueType ValueType => PathValueType.Number;
 
 			public double Value { get; private set; }
 
-			public string LiteralValue { get { return Value.ToText(); } }
+			public string LiteralValue => Value.ToText();
 
-			public PathNumberValue (double value) {
-				this.Value = value;
+			public PathNumberValue(double value) {
+				Value = value;
 			}
 		}
 
 		sealed class PathBooleanValue : IConstantPathValue
 		{
-			public PathValueType ValueType { get { return PathValueType.Boolean; } }
+			public PathValueType ValueType => PathValueType.Boolean;
 
 			public bool Value { get; private set; }
 
-			public string LiteralValue { get { return this.Value.ToString (); } }
+			public string LiteralValue => Value.ToString();
 
-			public PathBooleanValue (bool value) {
-				this.Value = value;
+			public PathBooleanValue(bool value) {
+				Value = value;
 			}
 		}
 

@@ -20,11 +20,11 @@ namespace PDFPatcher.Functions
 			set => _TextBox.Text = value;
 		}
 
-		public TextViewerForm () {
-			InitializeComponent ();
+		public TextViewerForm() {
+			InitializeComponent();
 		}
 
-		public TextViewerForm (string textContent, bool isTextReadonly) : this () {
+		public TextViewerForm(string textContent, bool isTextReadonly) : this() {
 			TextContent = textContent;
 			IsTextReadOnly = isTextReadonly;
 		}

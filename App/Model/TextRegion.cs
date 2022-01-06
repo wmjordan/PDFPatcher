@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PDFPatcher.Model
 {
-	[System.Diagnostics.DebuggerDisplay ("{Direction}({Region.Top},{Region.Left})Lines={Lines.Count}")]
+	[System.Diagnostics.DebuggerDisplay("{Direction}({Region.Top},{Region.Left})Lines={Lines.Count}")]
 	sealed class TextRegion
 	{
 		internal WritingDirection Direction { get; set; }
@@ -16,26 +16,26 @@ namespace PDFPatcher.Model
 		/// </summary>
 		internal List<TextLine> Lines { get; private set; }
 
-		internal TextRegion () {
-			this.Lines = new List<TextLine> ();
+		internal TextRegion() {
+			Lines = new List<TextLine>();
 		}
 
-		internal TextRegion (TextLine text) : this () {
-			this.Region = new Bound (text.Region);
-			this.AddLine (text);
+		internal TextRegion(TextLine text) : this() {
+			Region = new Bound(text.Region);
+			AddLine(text);
 		}
 
-		internal void AddLine (TextLine line) {
-			if (this.Direction == WritingDirection.Unknown) {
-				var d = this.Region.GetDistance (line.Region, WritingDirection.Unknown);
-				this.Direction = (d.Location == DistanceInfo.Placement.Up || d.Location == DistanceInfo.Placement.Down)
+		internal void AddLine(TextLine line) {
+			if (Direction == WritingDirection.Unknown) {
+				var d = Region.GetDistance(line.Region, WritingDirection.Unknown);
+				Direction = (d.Location == DistanceInfo.Placement.Up || d.Location == DistanceInfo.Placement.Down)
 					? WritingDirection.Vertical
 					: (d.Location == DistanceInfo.Placement.Left || d.Location == DistanceInfo.Placement.Right)
 					? WritingDirection.Hortizontal
 					: WritingDirection.Unknown;
 			}
-			this.Lines.Add (line);
-			this.Region.Merge (line.Region);
+			Lines.Add(line);
+			Region.Merge(line.Region);
 		}
 
 

@@ -5,12 +5,12 @@ namespace PDFPatcher.Processor.Imaging
 {
 	static class TiffHelper
 	{
-		static ImageCodecInfo _tiffCodec = BitmapHelper.GetCodec ("image/tiff");
-		static EncoderParameters _encoderParameters = new EncoderParameters (1) {
-			Param = new EncoderParameter[] { new EncoderParameter (Encoder.Compression, (long)EncoderValue.CompressionCCITT4) }
+		static readonly ImageCodecInfo _tiffCodec = BitmapHelper.GetCodec("image/tiff");
+		static readonly EncoderParameters _encoderParameters = new EncoderParameters(1) {
+			Param = new EncoderParameter[] { new EncoderParameter(Encoder.Compression, (long)EncoderValue.CompressionCCITT4) }
 		};
 
-		internal static void Save (FreeImageBitmap bmp, string fileName) {
+		internal static void Save(FreeImageBitmap bmp, string fileName) {
 			// 使用 .NET 的 TIFF 保存方式，文件尺寸较小
 			if (_tiffCodec != null) {
 				if (bmp.ColorType == FREE_IMAGE_COLOR_TYPE.FIC_MINISWHITE) {
@@ -31,19 +31,19 @@ namespace PDFPatcher.Processor.Imaging
 		/// </summary>
 		/// <param name="bmp">要保存的图片。</param>
 		/// <param name="fileName">保存路径。</param>
-		internal static void SaveBinaryImage (this System.Drawing.Image bmp, string fileName) {
+		internal static void SaveBinaryImage(this System.Drawing.Image bmp, string fileName) {
 			if (bmp.PixelFormat == PixelFormat.Format1bppIndexed) {
-				bmp.Save (fileName, _tiffCodec, _encoderParameters);
+				bmp.Save(fileName, _tiffCodec, _encoderParameters);
 			}
 			else {
-				bmp.Save (fileName, ImageFormat.Tiff);
+				bmp.Save(fileName, ImageFormat.Tiff);
 			}
 		}
 
-		internal static byte[] Decode (ImageInfo info, byte[] bytes, int k, bool endOfLine, bool encodedByteAlign, bool endOfBlock, bool blackIs1) {
-			using (var s = new MuPdfSharp.MuStream (bytes))
-			using (var img = s.DecodeTiffFax (info.Width, info.Height, k, endOfLine, encodedByteAlign, endOfBlock, blackIs1)) {
-				return img.ReadAll (bytes.Length);
+		internal static byte[] Decode(ImageInfo info, byte[] bytes, int k, bool endOfLine, bool encodedByteAlign, bool endOfBlock, bool blackIs1) {
+			using (var s = new MuPdfSharp.MuStream(bytes))
+			using (var img = s.DecodeTiffFax(info.Width, info.Height, k, endOfLine, encodedByteAlign, endOfBlock, blackIs1)) {
+				return img.ReadAll(bytes.Length);
 			}
 			//var outBuf = new byte[(info.Width + 7) / 8 * info.Height];
 			//var decoder = new TIFFFaxDecoder (1, info.Width, info.Height);

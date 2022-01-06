@@ -7,7 +7,7 @@ namespace PDFPatcher.Model.PdfPath
 {
 	static class PathAxes
 	{
-		static bool MatchesPredicate (DocumentObject source, string name, IEnumerable<IPathPredicate> predicates) {
+		static bool MatchesPredicate(DocumentObject source, string name, IEnumerable<IPathPredicate> predicates) {
 			if (source == null) {
 				return false;
 			}
@@ -18,17 +18,17 @@ namespace PDFPatcher.Model.PdfPath
 				return true;
 			}
 			foreach (var p in predicates) {
-				if (p.Match (source, p.Operand1, p.Operand2) == false) {
+				if (p.Match(source, p.Operand1, p.Operand2) == false) {
 					return false;
 				}
 			}
 			return true;
 		}
-		static IList<DocumentObject> CompriseSingleObjectCollection (DocumentObject source) {
+		static IList<DocumentObject> CompriseSingleObjectCollection(DocumentObject source) {
 			return source == null ? PathExpression.EmptyMatchResult : new DocumentObject[] { source };
 		}
 
-		private static string GetLiteralValue (object operand) {
+		private static string GetLiteralValue(object operand) {
 			if (operand == null) {
 				return String.Empty;
 			}
@@ -46,30 +46,28 @@ namespace PDFPatcher.Model.PdfPath
 					return String.Empty;
 				}
 			}
-			return ((double)operand).ToText ();
+			return ((double)operand).ToText();
 		}
 
-		static readonly SelfAxis __Self = new SelfAxis ();
-		static readonly ParentAxis __Parent = new ParentAxis ();
-		static readonly ChildrenAxis __Children = new ChildrenAxis ();
-		static readonly RootAxis __Root = new RootAxis ();
-		static readonly AncestorsAxis __Ancestors = new AncestorsAxis ();
-		static readonly DecendantsAxis __Decendants = new DecendantsAxis ();
+		static readonly SelfAxis __Self = new SelfAxis();
+		static readonly ParentAxis __Parent = new ParentAxis();
+		static readonly ChildrenAxis __Children = new ChildrenAxis();
+		static readonly RootAxis __Root = new RootAxis();
+		static readonly AncestorsAxis __Ancestors = new AncestorsAxis();
+		static readonly DecendantsAxis __Decendants = new DecendantsAxis();
 
 		sealed class SelfAxis : IPathAxis
 		{
 			#region IPathAxis 成员
 
-			public PathAxisType Type {
-				get { return PathAxisType.None; }
+			public PathAxisType Type => PathAxisType.None;
+
+			public DocumentObject SelectObject(DocumentObject source, string name, IEnumerable<IPathPredicate> predicates) {
+				return source != null && MatchesPredicate(source, name, predicates) ? source : null;
 			}
 
-			public DocumentObject SelectObject (DocumentObject source, string name, IEnumerable<IPathPredicate> predicates) {
-				return source != null && MatchesPredicate (source, name, predicates) ? source : null;
-			}
-
-			public IList<DocumentObject> SelectObjects (DocumentObject source, string name, IEnumerable<IPathPredicate> predicates) {
-				return CompriseSingleObjectCollection (SelectObject (source, name, predicates));
+			public IList<DocumentObject> SelectObjects(DocumentObject source, string name, IEnumerable<IPathPredicate> predicates) {
+				return CompriseSingleObjectCollection(SelectObject(source, name, predicates));
 			}
 
 			#endregion
@@ -79,16 +77,14 @@ namespace PDFPatcher.Model.PdfPath
 		{
 			#region IPathAxis 成员
 
-			public PathAxisType Type {
-				get { return PathAxisType.Parent; }
+			public PathAxisType Type => PathAxisType.Parent;
+
+			public DocumentObject SelectObject(DocumentObject source, string name, IEnumerable<IPathPredicate> predicates) {
+				return source != null && MatchesPredicate(source, name, predicates) ? source.Parent : null;
 			}
 
-			public DocumentObject SelectObject (DocumentObject source, string name, IEnumerable<IPathPredicate> predicates) {
-				return source != null && MatchesPredicate (source, name, predicates) ? source.Parent : null;
-			}
-
-			public IList<DocumentObject> SelectObjects (DocumentObject source, string name, IEnumerable<IPathPredicate> predicates) {
-				return CompriseSingleObjectCollection (SelectObject (source, name, predicates));
+			public IList<DocumentObject> SelectObjects(DocumentObject source, string name, IEnumerable<IPathPredicate> predicates) {
+				return CompriseSingleObjectCollection(SelectObject(source, name, predicates));
 			}
 
 			#endregion
@@ -98,15 +94,13 @@ namespace PDFPatcher.Model.PdfPath
 		{
 			#region IPathAxis 成员
 
-			public PathAxisType Type {
-				get { return PathAxisType.Children; }
-			}
+			public PathAxisType Type => PathAxisType.Children;
 
-			public DocumentObject SelectObject (DocumentObject source, string name, IEnumerable<IPathPredicate> predicates) {
+			public DocumentObject SelectObject(DocumentObject source, string name, IEnumerable<IPathPredicate> predicates) {
 				if (source != null && source.HasChildren) {
-					var r = new List<DocumentObject> ();
+					var r = new List<DocumentObject>();
 					foreach (var item in source.Children) {
-						if (MatchesPredicate (item, name, predicates)) {
+						if (MatchesPredicate(item, name, predicates)) {
 							return item;
 						}
 					}
@@ -114,15 +108,15 @@ namespace PDFPatcher.Model.PdfPath
 				return null;
 			}
 
-			public IList<DocumentObject> SelectObjects (DocumentObject source, string name, IEnumerable<IPathPredicate> predicates) {
+			public IList<DocumentObject> SelectObjects(DocumentObject source, string name, IEnumerable<IPathPredicate> predicates) {
 				if (source != null && source.HasChildren) {
-					var r = new List<DocumentObject> ();
+					var r = new List<DocumentObject>();
 					foreach (var item in source.Children) {
-						if (MatchesPredicate (item, name, predicates)) {
-							r.Add (item);
+						if (MatchesPredicate(item, name, predicates)) {
+							r.Add(item);
 						}
 					}
-					return r.ToArray ();
+					return r.ToArray();
 				}
 				else {
 					return PathExpression.EmptyMatchResult;
@@ -136,25 +130,23 @@ namespace PDFPatcher.Model.PdfPath
 		{
 			#region IPathAxis 成员
 
-			public PathAxisType Type {
-				get { return PathAxisType.Root; }
-			}
+			public PathAxisType Type => PathAxisType.Root;
 
-			public DocumentObject SelectObject (DocumentObject source, string name, IEnumerable<IPathPredicate> predicates) {
+			public DocumentObject SelectObject(DocumentObject source, string name, IEnumerable<IPathPredicate> predicates) {
 				if (source == null) {
 					return null;
 				}
 				while (source.Parent != null) {
 					source = source.Parent;
 				}
-				if (MatchesPredicate (source, name, predicates)) {
+				if (MatchesPredicate(source, name, predicates)) {
 					return source;
 				}
 				return null;
 			}
 
-			public IList<DocumentObject> SelectObjects (DocumentObject source, string name, IEnumerable<IPathPredicate> predicates) {
-				return CompriseSingleObjectCollection (SelectObject (source, name, predicates));
+			public IList<DocumentObject> SelectObjects(DocumentObject source, string name, IEnumerable<IPathPredicate> predicates) {
+				return CompriseSingleObjectCollection(SelectObject(source, name, predicates));
 			}
 
 			#endregion
@@ -164,36 +156,34 @@ namespace PDFPatcher.Model.PdfPath
 		{
 			#region IPathAxis 成员
 
-			public PathAxisType Type {
-				get { return PathAxisType.Ancestors; }
-			}
+			public PathAxisType Type => PathAxisType.Ancestors;
 
-			public DocumentObject SelectObject (DocumentObject source, string name, IEnumerable<IPathPredicate> predicates) {
+			public DocumentObject SelectObject(DocumentObject source, string name, IEnumerable<IPathPredicate> predicates) {
 				if (source == null) {
 					return null;
 				}
-				var r = new List<DocumentObject> ();
+				var r = new List<DocumentObject>();
 				while (source.Parent != null) {
 					source = source.Parent;
-					if (MatchesPredicate (source, name, predicates)) {
+					if (MatchesPredicate(source, name, predicates)) {
 						return source;
 					}
 				}
 				return null;
 			}
 
-			public IList<DocumentObject> SelectObjects (DocumentObject source, string name, IEnumerable<IPathPredicate> predicates) {
+			public IList<DocumentObject> SelectObjects(DocumentObject source, string name, IEnumerable<IPathPredicate> predicates) {
 				if (source == null) {
 					return PathExpression.EmptyMatchResult;
 				}
-				var r = new List<DocumentObject> ();
+				var r = new List<DocumentObject>();
 				while (source.Parent != null) {
 					source = source.Parent;
-					if (MatchesPredicate (source, name, predicates)) {
-						r.Add (source);
+					if (MatchesPredicate(source, name, predicates)) {
+						r.Add(source);
 					}
 				}
-				return r.ToArray ();
+				return r.ToArray();
 			}
 
 			#endregion
@@ -201,58 +191,56 @@ namespace PDFPatcher.Model.PdfPath
 
 		sealed class DecendantsAxis : IPathAxis
 		{
-			void SelectObjects (DocumentObject source, string name, IEnumerable<IPathPredicate> predicates, List<DocumentObject> list) {
+			void SelectObjects(DocumentObject source, string name, IEnumerable<IPathPredicate> predicates, List<DocumentObject> list) {
 				if (source == null || source.HasChildren == false) {
 					return;
 				}
 				foreach (var item in source.Children) {
-					if (MatchesPredicate (item, name, predicates)) {
-						list.Add (item);
+					if (MatchesPredicate(item, name, predicates)) {
+						list.Add(item);
 					}
-					SelectObjects (item, name, predicates, list);
+					SelectObjects(item, name, predicates, list);
 				}
 			}
 
 			#region IPathAxis 成员
 
-			public PathAxisType Type {
-				get { return PathAxisType.Decendants; }
-			}
+			public PathAxisType Type => PathAxisType.Decendants;
 
-			public DocumentObject SelectObject (DocumentObject source, string name, IEnumerable<IPathPredicate> predicates) {
+			public DocumentObject SelectObject(DocumentObject source, string name, IEnumerable<IPathPredicate> predicates) {
 				if (source == null || source.HasChildren == false) {
 					return null;
 				}
 				foreach (var item in source.Children) {
-					if (MatchesPredicate (item, name, predicates)) {
+					if (MatchesPredicate(item, name, predicates)) {
 						return item;
 					}
 					DocumentObject o;
-					if ((o = SelectObject (item, name, predicates)) != null) {
+					if ((o = SelectObject(item, name, predicates)) != null) {
 						return o;
 					}
 				}
 				return null;
 			}
 
-			public IList<DocumentObject> SelectObjects (DocumentObject source, string name, IEnumerable<IPathPredicate> predicates) {
+			public IList<DocumentObject> SelectObjects(DocumentObject source, string name, IEnumerable<IPathPredicate> predicates) {
 				if (source == null || source.HasChildren == false) {
 					return PathExpression.EmptyMatchResult;
 				}
-				var r = new List<DocumentObject> ();
+				var r = new List<DocumentObject>();
 				foreach (var item in source.Children) {
-					if (MatchesPredicate (item, name, predicates)) {
-						r.Add (item);
-						SelectObjects (item, name, predicates, r);
+					if (MatchesPredicate(item, name, predicates)) {
+						r.Add(item);
+						SelectObjects(item, name, predicates, r);
 					}
 				}
-				return r.ToArray ();
+				return r.ToArray();
 			}
 
 			#endregion
 		}
 
-		public static IPathAxis Create (PathAxisType axisType) {
+		public static IPathAxis Create(PathAxisType axisType) {
 			switch (axisType) {
 				case PathAxisType.None: return __Self;
 				case PathAxisType.Children: return __Children;

@@ -21,36 +21,36 @@ namespace PDFPatcher.Model.PdfPath
 			internal PathAxisType Axis { get; set; }
 		}
 
-		public static IEnumerable<IPathExpression> Compile (string path) {
-			var r = new Queue<IPathExpression> ();
-			if (String.IsNullOrEmpty (path)) {
-				return r.ToArray ();
+		public static IEnumerable<IPathExpression> Compile(string path) {
+			var r = new Queue<IPathExpression>();
+			if (String.IsNullOrEmpty(path)) {
+				return r.ToArray();
 			}
 			var l = path.Length;
 			var i = 0;
 			string n;
 			var ctx = new Context();
 			while (i < l) {
-				ctx.Axis = ExtractAxis (path, l, ctx.CanBeRoot, ref i);
+				ctx.Axis = ExtractAxis(path, l, ctx.CanBeRoot, ref i);
 				if (ctx.Axis == PathAxisType.Root) {
 					ctx.CanBeRoot = false;
-					r.Enqueue (new PathExpression (ctx.Axis));
+					r.Enqueue(new PathExpression(ctx.Axis));
 					continue;
 				}
-				n = ExtractName (path, l, ref i);
-				r.Enqueue (new PathExpression (ctx.Axis, n));
+				n = ExtractName(path, l, ref i);
+				r.Enqueue(new PathExpression(ctx.Axis, n));
 			}
-			return r.ToArray ();
+			return r.ToArray();
 		}
 
-		private static PathAxisType ExtractAxis (string path, int length, bool canBeRoot, ref int index) {
+		private static PathAxisType ExtractAxis(string path, int length, bool canBeRoot, ref int index) {
 			char c = path[index];
-			if (__PredicateChars.Contains (c)) {
-				throw new FormatException ("“[]”筛选表达式前缺少节点轴及节点名称标识。");
+			if (__PredicateChars.Contains(c)) {
+				throw new FormatException("“[]”筛选表达式前缺少节点轴及节点名称标识。");
 			}
 
 			if (c == PathSeparator) {
-				if (MatchNextChar (path, length, index, PathSeparator)) {
+				if (MatchNextChar(path, length, index, PathSeparator)) {
 					++index;
 					return PathAxisType.Decendants;
 				}
@@ -62,7 +62,7 @@ namespace PDFPatcher.Model.PdfPath
 				}
 			}
 			else if (c == SelfChar) {
-				if (MatchNextChar (path, length, index, SelfChar)) {
+				if (MatchNextChar(path, length, index, SelfChar)) {
 					++index;
 					return PathAxisType.Parent;
 				}
@@ -75,17 +75,17 @@ namespace PDFPatcher.Model.PdfPath
 			}
 		}
 
-		private static string ExtractName (string path, int length, ref int index) {
+		private static string ExtractName(string path, int length, ref int index) {
 			char c = path[index];
-			if (__PredicateChars.Contains (c)) {
-				throw new FormatException ("“[]”筛选表达式前缺少节点名称。");
+			if (__PredicateChars.Contains(c)) {
+				throw new FormatException("“[]”筛选表达式前缺少节点名称。");
 			}
 			if (c == UniversalName) {
 				return null;
 			}
-			var n = new List<char> ();
-			while (Char.IsLetter (c) || n.Count > 0 && Char.IsLetterOrDigit (c)) {
-				n.Add (c);
+			var n = new List<char>();
+			while (Char.IsLetter(c) || n.Count > 0 && Char.IsLetterOrDigit(c)) {
+				n.Add(c);
 				++index;
 				if (index < length) {
 					c = path[index];
@@ -94,10 +94,10 @@ namespace PDFPatcher.Model.PdfPath
 					break;
 				}
 			}
-			return n.Count > 0 ? new String (n.ToArray ()) : null;
+			return n.Count > 0 ? new String(n.ToArray()) : null;
 		}
 
-		private static bool MatchNextChar (string path, int length, int index, char ch) {
+		private static bool MatchNextChar(string path, int length, int index, char ch) {
 			return index + 1 < length && path[index + 1] == ch;
 		}
 	}

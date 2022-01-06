@@ -4,100 +4,89 @@ using System.Drawing;
 
 namespace Cyotek.Windows.Forms.Demo
 {
-  // Cyotek ImageBox
-  // Copyright (c) 2010-2015 Cyotek Ltd.
-  // http://cyotek.com
-  // http://cyotek.com/blog/tag/imagebox
+	// Cyotek ImageBox
+	// Copyright (c) 2010-2015 Cyotek Ltd.
+	// http://cyotek.com
+	// http://cyotek.com/blog/tag/imagebox
 
-  // Licensed under the MIT License. See license.txt for the full text.
+	// Licensed under the MIT License. See license.txt for the full text.
 
-  // If you use this control in your applications, attribution, donations or contributions are welcome.
+	// If you use this control in your applications, attribution, donations or contributions are welcome.
 
-  internal sealed class DragHandleCollection : IEnumerable<DragHandle>
-  {
-    #region Instance Fields
+	internal sealed class DragHandleCollection : IEnumerable<DragHandle>
+	{
+		#region Instance Fields
 
-    private readonly IDictionary<DragHandleAnchor, DragHandle> _items;
+		private readonly IDictionary<DragHandleAnchor, DragHandle> _items;
 
-    #endregion
+		#endregion
 
-    #region Public Constructors
+		#region Public Constructors
 
-    public DragHandleCollection()
-    {
-      _items = new Dictionary<DragHandleAnchor, DragHandle>();
-      _items.Add(DragHandleAnchor.TopLeft, new DragHandle(DragHandleAnchor.TopLeft));
-      _items.Add(DragHandleAnchor.TopCenter, new DragHandle(DragHandleAnchor.TopCenter));
-      _items.Add(DragHandleAnchor.TopRight, new DragHandle(DragHandleAnchor.TopRight));
-      _items.Add(DragHandleAnchor.MiddleLeft, new DragHandle(DragHandleAnchor.MiddleLeft));
-      _items.Add(DragHandleAnchor.MiddleRight, new DragHandle(DragHandleAnchor.MiddleRight));
-      _items.Add(DragHandleAnchor.BottomLeft, new DragHandle(DragHandleAnchor.BottomLeft));
-      _items.Add(DragHandleAnchor.BottomCenter, new DragHandle(DragHandleAnchor.BottomCenter));
-      _items.Add(DragHandleAnchor.BottomRight, new DragHandle(DragHandleAnchor.BottomRight));
-    }
+		public DragHandleCollection() {
+			_items = new Dictionary<DragHandleAnchor, DragHandle> {
+				{ DragHandleAnchor.TopLeft, new DragHandle(DragHandleAnchor.TopLeft) },
+				{ DragHandleAnchor.TopCenter, new DragHandle(DragHandleAnchor.TopCenter) },
+				{ DragHandleAnchor.TopRight, new DragHandle(DragHandleAnchor.TopRight) },
+				{ DragHandleAnchor.MiddleLeft, new DragHandle(DragHandleAnchor.MiddleLeft) },
+				{ DragHandleAnchor.MiddleRight, new DragHandle(DragHandleAnchor.MiddleRight) },
+				{ DragHandleAnchor.BottomLeft, new DragHandle(DragHandleAnchor.BottomLeft) },
+				{ DragHandleAnchor.BottomCenter, new DragHandle(DragHandleAnchor.BottomCenter) },
+				{ DragHandleAnchor.BottomRight, new DragHandle(DragHandleAnchor.BottomRight) }
+			};
+		}
 
-    #endregion
+		#endregion
 
-    #region Public Properties
+		#region Public Properties
 
-    public int Count
-    {
-      get { return _items.Count; }
-    }
+		public int Count => _items.Count;
 
-    public DragHandle this[DragHandleAnchor index]
-    {
-      get { return _items[index]; }
-    }
+		public DragHandle this[DragHandleAnchor index] => _items[index];
 
-    #endregion
+		#endregion
 
-    #region Public Members
+		#region Public Members
 
-    /// <summary>
-    /// Returns an enumerator that iterates through the collection.
-    /// </summary>
-    /// <returns>
-    /// A <see cref="T:System.Collections.Generic.IEnumerator`1"/> that can be used to iterate through the collection.
-    /// </returns>
-    public IEnumerator<DragHandle> GetEnumerator()
-    {
-      return _items.Values.GetEnumerator();
-    }
+		/// <summary>
+		/// Returns an enumerator that iterates through the collection.
+		/// </summary>
+		/// <returns>
+		/// A <see cref="T:System.Collections.Generic.IEnumerator`1"/> that can be used to iterate through the collection.
+		/// </returns>
+		public IEnumerator<DragHandle> GetEnumerator() {
+			return _items.Values.GetEnumerator();
+		}
 
-    public DragHandleAnchor HitTest(Point point)
-    {
-      DragHandleAnchor result;
+		public DragHandleAnchor HitTest(Point point) {
+			DragHandleAnchor result;
 
-      result = DragHandleAnchor.None;
+			result = DragHandleAnchor.None;
 
-      foreach (DragHandle handle in this)
-      {
-        if (handle.Visible && handle.Bounds.Contains(point))
-        {
-          result = handle.Anchor;
-          break;
-        }
-      }
+			foreach (DragHandle handle in this) {
+				if (handle.Visible && handle.Bounds.Contains(point)) {
+					result = handle.Anchor;
+					break;
+				}
+			}
 
-      return result;
-    }
+			return result;
+		}
 
-    #endregion
+		#endregion
 
-    #region IEnumerable<DragHandle> Members
+		#region IEnumerable<DragHandle> Members
 
-    /// <summary>
-    /// Returns an enumerator that iterates through a collection.
-    /// </summary>
-    /// <returns>
-    /// An <see cref="T:System.Collections.IEnumerator"/> object that can be used to iterate through the collection.
-    /// </returns>
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-      return this.GetEnumerator();
-    }
+		/// <summary>
+		/// Returns an enumerator that iterates through a collection.
+		/// </summary>
+		/// <returns>
+		/// An <see cref="T:System.Collections.IEnumerator"/> object that can be used to iterate through the collection.
+		/// </returns>
+		IEnumerator IEnumerable.GetEnumerator() {
+			return GetEnumerator();
+		}
 
-    #endregion
-  }
+		#endregion
+	}
 }

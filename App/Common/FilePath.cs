@@ -5,8 +5,8 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
-using SysDirectory = System.IO.Directory;
 using NameList = System.Collections.Generic.List<string>;
+using SysDirectory = System.IO.Directory;
 
 namespace PDFPatcher.Common
 {
@@ -793,7 +793,7 @@ namespace PDFPatcher.Common
 		/// <param name="encoding">用于读取文件的编码。编码为 null 时采用 UTF-8 编码。</param>
 		/// <returns>读取文件的 <see cref="StreamReader"/> 实例。</returns>
 		public StreamReader OpenTextReader(Encoding encoding) {
-			return new StreamReader(ToFullPath ()._value, encoding ?? Encoding.UTF8, true);
+			return new StreamReader(ToFullPath()._value, encoding ?? Encoding.UTF8, true);
 		}
 
 		/// <summary>创建以指定编码写入文件的 <see cref="StreamWriter"/> 实例。</summary>
@@ -820,7 +820,7 @@ namespace PDFPatcher.Common
 				return new byte[0];
 #endif
 			}
-			using (var s = new FileStream(ToFullPath ()._value, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) {
+			using (var s = new FileStream(ToFullPath()._value, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) {
 				if (s.CanRead == false) {
 #if LIB
 					return CollectionHelper.GetEmptyArray<byte>();
@@ -1061,9 +1061,9 @@ namespace PDFPatcher.Common
 		public static implicit operator Uri(FilePath path) {
 			return new Uri(path._value);
 		}
-#endregion
+		#endregion
 
-#region IEquatable<FilePath> 实现
+		#region IEquatable<FilePath> 实现
 
 		/// <summary>比较两个文件路径是否相同。</summary>
 		/// <param name="path1">需要比较的第一个路径。</param>
@@ -1107,7 +1107,7 @@ namespace PDFPatcher.Common
 		public override int GetHashCode() {
 			return _value == null ? 0 : _value.GetHashCode();
 		}
-#endregion
+		#endregion
 
 		/// <summary>返回表示当前文件路径的 <see cref="string"/> 实例。</summary>
 		/// <returns>表示当前文件路径的 <see cref="string"/> 实例。</returns>

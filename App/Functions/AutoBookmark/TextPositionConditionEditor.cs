@@ -9,8 +9,8 @@ namespace PDFPatcher.Functions
 		AutoBookmarkCondition.TextPositionCondition _condition;
 		bool _lock;
 
-		public TextPositionConditionEditor () {
-			InitializeComponent ();
+		public TextPositionConditionEditor() {
+			InitializeComponent();
 			_lock = true;
 			_PositionBox.SelectedIndex = 0;
 			_lock = false;
@@ -42,8 +42,8 @@ namespace PDFPatcher.Functions
 
 		#endregion
 
-		private void ControlChanged (object sender, EventArgs e) {
-			ToggleControlState ();
+		private void ControlChanged(object sender, EventArgs e) {
+			ToggleControlState();
 			if (_lock) {
 				return;
 			}
@@ -55,11 +55,11 @@ namespace PDFPatcher.Functions
 				min = (float)_MinBox.Value;
 				max = (float)_MaxBox.Value;
 			}
-			_condition.SetRange ((byte)(_PositionBox.SelectedIndex + 1), min, max);
-			EditAdjustmentForm.UpdateFilter (this);
+			_condition.SetRange((byte)(_PositionBox.SelectedIndex + 1), min, max);
+			EditAdjustmentForm.UpdateFilter(this);
 		}
 
-		private void ToggleControlState () {
+		private void ToggleControlState() {
 			_MinBox.Enabled = _MaxBox.Enabled = _RangeBox.Checked;
 			_SpecificValueBox.Enabled = _SpecificBox.Checked;
 		}

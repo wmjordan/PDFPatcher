@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Diagnostics;
 using System.ComponentModel;
+using System.Diagnostics;
 
 namespace PDFPatcher
 {
@@ -20,62 +20,62 @@ namespace PDFPatcher
 		///<summary>获取或指定后台工作进程。</summary>
 		internal static BackgroundWorker Worker { get; set; }
 
-		internal static void TrackProgress (int progress) {
+		internal static void TrackProgress(int progress) {
 			if (Worker == null) {
 				return;
 			}
 			if (Worker.CancellationPending) {
-				throw new OperationCanceledException ();
+				throw new OperationCanceledException();
 			}
 			if (progress >= 0) {
-				Worker.ReportProgress (progress);
+				Worker.ReportProgress(progress);
 			}
 		}
-		internal static void IncrementProgress (int progress) {
+		internal static void IncrementProgress(int progress) {
 			if (Worker == null) {
 				return;
 			}
 			if (Worker.CancellationPending) {
-				throw new OperationCanceledException ();
+				throw new OperationCanceledException();
 			}
-			Worker.ReportProgress (progress, "INC");
+			Worker.ReportProgress(progress, "INC");
 		}
-		internal static void IncrementTotalProgress () {
+		internal static void IncrementTotalProgress() {
 			if (Worker == null) {
 				return;
 			}
-			Worker.ReportProgress (1, "TINC");
+			Worker.ReportProgress(1, "TINC");
 		}
-		internal static void SetProgressGoal (int goalNumber) {
+		internal static void SetProgressGoal(int goalNumber) {
 			if (Worker == null) {
 				return;
 			}
-			Worker.ReportProgress (goalNumber, "GOAL");
+			Worker.ReportProgress(goalNumber, "GOAL");
 		}
-		internal static void SetTotalProgressGoal (int goalNumber) {
+		internal static void SetTotalProgressGoal(int goalNumber) {
 			if (Worker == null) {
 				return;
 			}
-			Worker.ReportProgress (goalNumber, "TGOAL");
+			Worker.ReportProgress(goalNumber, "TGOAL");
 		}
-		internal static void DebugMessage (string message) {
-			Debug.Write (DateTime.Now.ToString ("HH:mm:ss.fff "));
-			Debug.WriteLine (message);
+		internal static void DebugMessage(string message) {
+			Debug.Write(DateTime.Now.ToString("HH:mm:ss.fff "));
+			Debug.WriteLine(message);
 		}
-		internal static void TraceMessage (Category level, string message) {
-			Trace.Write (DateTime.Now.ToString ("HH:mm:ss.fff "));
-			Trace.WriteLine (message);
+		internal static void TraceMessage(Category level, string message) {
+			Trace.Write(DateTime.Now.ToString("HH:mm:ss.fff "));
+			Trace.WriteLine(message);
 			if (Worker != null && Worker.IsBusy) {
-				Worker.ReportProgress ((int)level, message);
+				Worker.ReportProgress((int)level, message);
 			}
 		}
-		internal static void TraceMessage (string message) {
-			TraceMessage (Category.Message, message);
+		internal static void TraceMessage(string message) {
+			TraceMessage(Category.Message, message);
 		}
-		internal static void TraceMessage (Exception exception) {
-			TraceMessage (Category.Error, exception.Message);
+		internal static void TraceMessage(Exception exception) {
+			TraceMessage(Category.Error, exception.Message);
 #if DEBUG
-			TraceMessage (Category.Message, exception.StackTrace);
+			TraceMessage(Category.Message, exception.StackTrace);
 #endif
 		}
 	}

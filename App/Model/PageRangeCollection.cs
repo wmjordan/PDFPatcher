@@ -6,7 +6,7 @@ namespace PDFPatcher.Model
 {
 	internal sealed class PageRangeCollection : List<PageRange>
 	{
-		private PageRangeCollection () { }
+		private PageRangeCollection() { }
 
 		public int TotalPages {
 			get {
@@ -18,7 +18,7 @@ namespace PDFPatcher.Model
 			}
 		}
 
-		public bool IsInRange (int value) {
+		public bool IsInRange(int value) {
 			foreach (var item in this) {
 				if (item.StartValue < item.EndValue && value >= item.StartValue && value <= item.EndValue
 					|| value >= item.EndValue && value <= item.StartValue) {
@@ -28,17 +28,17 @@ namespace PDFPatcher.Model
 			return false;
 		}
 
-		internal void Collapse (int minValue, int maxValue) {
+		internal void Collapse(int minValue, int maxValue) {
 			if (maxValue < minValue) {
-				throw new ArgumentException ("maxValue must greater than minValue");
+				throw new ArgumentException("maxValue must greater than minValue");
 			}
-			for (int i = this.Count - 1; i >= 0; i--) {
+			for (int i = Count - 1; i >= 0; i--) {
 				var r = this[i];
-				SetReverseNumber (ref r.StartValue, maxValue);
-				SetReverseNumber (ref r.EndValue, maxValue);
+				SetReverseNumber(ref r.StartValue, maxValue);
+				SetReverseNumber(ref r.EndValue, maxValue);
 				if (r.StartValue < r.EndValue) {
 					if (r.EndValue < minValue || maxValue < r.StartValue) {
-						this.RemoveAt (i);
+						RemoveAt(i);
 						continue;
 					}
 					if (minValue <= r.StartValue && r.EndValue <= maxValue) {
@@ -53,7 +53,7 @@ namespace PDFPatcher.Model
 				}
 				else /*if (r.StartValue >= r.EndValue)*/ {
 					if (r.StartValue < minValue || maxValue < r.EndValue) {
-						this.RemoveAt (i);
+						RemoveAt(i);
 						continue;
 					}
 					if (maxValue >= r.StartValue && r.EndValue >= minValue) {
@@ -70,16 +70,17 @@ namespace PDFPatcher.Model
 			}
 		}
 
-		internal static PageRangeCollection CreateSingle (int minValue, int maxValue) {
-			var r = new PageRangeCollection ();
-			r.Add (new PageRange (minValue, maxValue));
+		internal static PageRangeCollection CreateSingle(int minValue, int maxValue) {
+			var r = new PageRangeCollection {
+				new PageRange(minValue, maxValue)
+			};
 			return r;
 		}
 
-		internal static PageRangeCollection Parse (string rangeText, int minValue, int maxValue, bool addDefaultRange) {
-			var r = new PageRangeCollection ();
-			if (String.IsNullOrEmpty (rangeText) == false) {
-				var ranges = rangeText.Split (',', ';', ' ', '\t');
+		internal static PageRangeCollection Parse(string rangeText, int minValue, int maxValue, bool addDefaultRange) {
+			var r = new PageRangeCollection();
+			if (String.IsNullOrEmpty(rangeText) == false) {
+				var ranges = rangeText.Split(',', ';', ' ', '\t');
 				string startRange, endRange;
 				int startNum, endNum;
 
@@ -88,45 +89,45 @@ namespace PDFPatcher.Model
 						continue;
 					}
 					startNum = endNum = 0;
-					int rangeIndicator = range.Length > 1 ? range.IndexOf ('-', 1) /*排除首位可能是负数页码的可能*/ : -1;
+					int rangeIndicator = range.Length > 1 ? range.IndexOf('-', 1) /*排除首位可能是负数页码的可能*/ : -1;
 					if (rangeIndicator > 0) {
-						startRange = range.Substring (0, rangeIndicator);
-						endRange = range.Substring (rangeIndicator + 1, range.Length - rangeIndicator - 1);
-						if (startRange.TryParse (out startNum) && endRange.TryParse (out endNum) && startNum != 0 && endNum != 0) {
-							SetReverseNumber (ref startNum, maxValue);
-							SetReverseNumber (ref endNum, maxValue);
+						startRange = range.Substring(0, rangeIndicator);
+						endRange = range.Substring(rangeIndicator + 1, range.Length - rangeIndicator - 1);
+						if (startRange.TryParse(out startNum) && endRange.TryParse(out endNum) && startNum != 0 && endNum != 0) {
+							SetReverseNumber(ref startNum, maxValue);
+							SetReverseNumber(ref endNum, maxValue);
 							if (startNum < 0 || endNum < 0) {
 								continue;
 							}
-							r.Add (new PageRange (startNum, endNum));
+							r.Add(new PageRange(startNum, endNum));
 						}
 					}
-					else if (range.TryParse (out startNum)) {
-						SetReverseNumber (ref startNum, maxValue);
+					else if (range.TryParse(out startNum)) {
+						SetReverseNumber(ref startNum, maxValue);
 						if (startNum < 0) {
 							continue;
 						}
-						r.Add (new PageRange (startNum, startNum));
+						r.Add(new PageRange(startNum, startNum));
 					}
 				}
 			}
 			if (r.Count == 0 && addDefaultRange) {
-				r.Add (new PageRange (minValue, maxValue));
+				r.Add(new PageRange(minValue, maxValue));
 			}
 			else {
-				r.Collapse (minValue, maxValue);
+				r.Collapse(minValue, maxValue);
 			}
 			return r;
 		}
 
-		static void SetReverseNumber (ref int refNum, int maxNum) {
+		static void SetReverseNumber(ref int refNum, int maxNum) {
 			if (refNum < 0) {
 				refNum = refNum + maxNum + 1;
 			}
 		}
 
-		public override string ToString () {
-			return String.Join (";", this.ConvertAll ((r) => { return r.ToString ();}).ToArray ());
+		public override string ToString() {
+			return String.Join(";", ConvertAll((r) => { return r.ToString(); }).ToArray());
 		}
 	}
 }

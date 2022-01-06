@@ -10,21 +10,21 @@ namespace PDFPatcher.Model
 {
 	public abstract class AutoBookmarkCondition : ICloneable
 	{
-		[XmlAttribute (Constants.AutoBookmark.IsInclusive)]
+		[XmlAttribute(Constants.AutoBookmark.IsInclusive)]
 		public bool IsInclusive { get; set; }
 
 		public abstract string Description { get; }
 		public abstract string Name { get; }
 
-		public abstract object Clone ();
-		internal abstract AutoBookmarkFilter CreateFilter ();
+		public abstract object Clone();
+		internal abstract AutoBookmarkFilter CreateFilter();
 		internal abstract bool IsTextLineFilter { get; }
 
 		[JsonTypeAlias(ThisName)]
 		public class MultiCondition : AutoBookmarkCondition
 		{
 			internal const string ThisName = "条件组";
-			readonly Collection<AutoBookmarkCondition> _Conditions = new Collection<AutoBookmarkCondition> ();
+			readonly Collection<AutoBookmarkCondition> _Conditions = new Collection<AutoBookmarkCondition>();
 
 			[XmlElement(FontNameCondition.ThisName, typeof(FontNameCondition))]
 			[XmlElement(TextSizeCondition.ThisName, typeof(TextSizeCondition))]
@@ -33,17 +33,17 @@ namespace PDFPatcher.Model
 			[JsonField("条件")]
 			public Collection<AutoBookmarkCondition> Conditions => _Conditions;
 
-			public MultiCondition () { }
+			public MultiCondition() { }
 
-			public MultiCondition (AutoBookmarkCondition condition) {
+			public MultiCondition(AutoBookmarkCondition condition) {
 				var m = condition as MultiCondition;
 				if (m != null) {
 					foreach (var item in m.Conditions) {
-						Conditions.Add (item.Clone () as AutoBookmarkCondition);
+						Conditions.Add(item.Clone() as AutoBookmarkCondition);
 					}
 				}
 				else {
-					Conditions.Add (condition);
+					Conditions.Add(condition);
 				}
 			}
 
@@ -53,7 +53,7 @@ namespace PDFPatcher.Model
 					for (int i = 0; i < s.Length; i++) {
 						s[i] = _Conditions[i].Description;
 					}
-					return String.Join (";", s);
+					return String.Join(";", s);
 				}
 			}
 
@@ -70,16 +70,16 @@ namespace PDFPatcher.Model
 				}
 			}
 
-			public override object Clone () {
-				var m = new MultiCondition ();
+			public override object Clone() {
+				var m = new MultiCondition();
 				foreach (var item in Conditions) {
-					m.Conditions.Add (item.Clone () as AutoBookmarkCondition);
+					m.Conditions.Add(item.Clone() as AutoBookmarkCondition);
 				}
 				return m;
 			}
 
-			internal override AutoBookmarkFilter CreateFilter () {
-				return new MultiConditionFilter (this);
+			internal override AutoBookmarkFilter CreateFilter() {
+				return new MultiConditionFilter(this);
 			}
 		}
 		[JsonTypeAlias(ThisName)]
@@ -89,13 +89,13 @@ namespace PDFPatcher.Model
 			/// <summary>
 			/// 需要调整级别的字体名称。
 			/// </summary>
-			[XmlAttribute (ThisName)]
+			[XmlAttribute(ThisName)]
 			public string FontName { get; set; }
 
 			/// <summary>
 			/// 是否匹配字体全名。
 			/// </summary>
-			[XmlAttribute ("匹配字体全名")]
+			[XmlAttribute("匹配字体全名")]
 			public bool MatchFullName { get; set; }
 
 			public override string Description => String.Concat(ThisName, (MatchFullName ? "为" : "包含"), "“", FontName, "”");
@@ -104,18 +104,18 @@ namespace PDFPatcher.Model
 
 			internal override bool IsTextLineFilter => false;
 
-			public FontNameCondition () { }
+			public FontNameCondition() { }
 
-			internal FontNameCondition (string fontName, bool matchFullName) {
+			internal FontNameCondition(string fontName, bool matchFullName) {
 				FontName = fontName;
 				MatchFullName = matchFullName;
 			}
 
-			internal override AutoBookmarkFilter CreateFilter () {
-				return new FontNameFilter (FontName, MatchFullName);
+			internal override AutoBookmarkFilter CreateFilter() {
+				return new FontNameFilter(FontName, MatchFullName);
 			}
-			public override object Clone () {
-				return new FontNameCondition (FontName, MatchFullName);
+			public override object Clone() {
+				return new FontNameCondition(FontName, MatchFullName);
 			}
 
 		}
@@ -126,8 +126,8 @@ namespace PDFPatcher.Model
 			float _minSize, _maxSize;
 			string _description;
 
-			[XmlAttribute ("最小尺寸")]
-			[DefaultValue (0)]
+			[XmlAttribute("最小尺寸")]
+			[DefaultValue(0)]
 			public float MinSize {
 				get => _minSize;
 				set {
@@ -135,8 +135,8 @@ namespace PDFPatcher.Model
 					_description = null;
 				}
 			}
-			[XmlAttribute ("最大尺寸")]
-			[DefaultValue (0)]
+			[XmlAttribute("最大尺寸")]
+			[DefaultValue(0)]
 			public float MaxSize {
 				get => _maxSize;
 				set {
@@ -148,7 +148,7 @@ namespace PDFPatcher.Model
 			public override string Description {
 				get {
 					if (_description == null) {
-						UpdateRangeDescription ();
+						UpdateRangeDescription();
 					}
 					return _description;
 				}
@@ -157,27 +157,27 @@ namespace PDFPatcher.Model
 
 			internal override bool IsTextLineFilter => false;
 
-			public TextSizeCondition () { }
+			public TextSizeCondition() { }
 
-			internal TextSizeCondition (float size) {
-				SetRange (size, size);
+			internal TextSizeCondition(float size) {
+				SetRange(size, size);
 			}
 
-			internal TextSizeCondition (float minSize, float maxSize) {
-				SetRange (minSize, maxSize);
+			internal TextSizeCondition(float minSize, float maxSize) {
+				SetRange(minSize, maxSize);
 			}
 
-			private void UpdateRangeDescription () {
+			private void UpdateRangeDescription() {
 				_description = ThisName + (_minSize == _maxSize ? "等于" + _minSize.ToText() : "介于" + _minSize.ToText() + "和" + _maxSize.ToText());
 			}
 
-			public override object Clone () {
-				var f = new TextSizeCondition () { _minSize = _minSize, _maxSize = _maxSize };
-				f.UpdateRangeDescription ();
+			public override object Clone() {
+				var f = new TextSizeCondition() { _minSize = _minSize, _maxSize = _maxSize };
+				f.UpdateRangeDescription();
 				return f;
 			}
 
-			internal void SetRange (float a, float b) {
+			internal void SetRange(float a, float b) {
 				if (a > b) {
 					_minSize = b;
 					_maxSize = a;
@@ -190,8 +190,8 @@ namespace PDFPatcher.Model
 			}
 
 
-			internal override AutoBookmarkFilter CreateFilter () {
-				return new TextSizeFilter (_minSize, _maxSize);
+			internal override AutoBookmarkFilter CreateFilter() {
+				return new TextSizeFilter(_minSize, _maxSize);
 			}
 		}
 		[JsonTypeAlias(ThisName)]
@@ -202,8 +202,8 @@ namespace PDFPatcher.Model
 			float _minValue, _maxValue;
 			string _description;
 
-			[XmlAttribute ("坐标值")]
-			[DefaultValue (0)]
+			[XmlAttribute("坐标值")]
+			[DefaultValue(0)]
 			public byte Position {
 				get => _position;
 				set {
@@ -212,8 +212,8 @@ namespace PDFPatcher.Model
 				}
 			}
 
-			[XmlAttribute ("坐标最小值")]
-			[DefaultValue (0)]
+			[XmlAttribute("坐标最小值")]
+			[DefaultValue(0)]
 			public float MinValue {
 				get => _minValue;
 				set {
@@ -221,8 +221,8 @@ namespace PDFPatcher.Model
 					_description = null;
 				}
 			}
-			[XmlAttribute ("坐标最大值")]
-			[DefaultValue (0)]
+			[XmlAttribute("坐标最大值")]
+			[DefaultValue(0)]
 			public float MaxValue {
 				get => _maxValue;
 				set {
@@ -234,7 +234,7 @@ namespace PDFPatcher.Model
 			public override string Description {
 				get {
 					if (_description == null) {
-						UpdateRangeDescription ();
+						UpdateRangeDescription();
 					}
 					return _description;
 				}
@@ -243,18 +243,18 @@ namespace PDFPatcher.Model
 
 			internal override bool IsTextLineFilter => false;
 
-			public TextPositionCondition () { }
+			public TextPositionCondition() { }
 
-			internal TextPositionCondition (byte position, float value) {
-				SetRange (position, value, value);
+			internal TextPositionCondition(byte position, float value) {
+				SetRange(position, value, value);
 			}
 
-			internal TextPositionCondition (byte position, float value1, float value2) {
-				SetRange (position, value1, value2);
+			internal TextPositionCondition(byte position, float value1, float value2) {
+				SetRange(position, value1, value2);
 			}
 
-			private void UpdateRangeDescription () {
-				_description = String.Concat (ThisName,
+			private void UpdateRangeDescription() {
+				_description = String.Concat(ThisName,
 					_position == 1 ? "上" : _position == 2 ? "下" : _position == 3 ? "左" : _position == 4 ? "右" : String.Empty,
 					"坐标",
 					_minValue == _maxValue
@@ -263,17 +263,17 @@ namespace PDFPatcher.Model
 				);
 			}
 
-			public override object Clone () {
-				var f = new TextPositionCondition () {
+			public override object Clone() {
+				var f = new TextPositionCondition() {
 					_position = _position,
 					_minValue = _minValue,
 					_maxValue = _maxValue
 				};
-				f.UpdateRangeDescription ();
+				f.UpdateRangeDescription();
 				return f;
 			}
 
-			internal void SetRange (byte position, float value1, float value2) {
+			internal void SetRange(byte position, float value1, float value2) {
 				_position = position;
 				if (value1 > value2) {
 					_minValue = value2;
@@ -287,8 +287,8 @@ namespace PDFPatcher.Model
 			}
 
 
-			internal override AutoBookmarkFilter CreateFilter () {
-				return new TextPositionFilter (_position, _minValue, _maxValue);
+			internal override AutoBookmarkFilter CreateFilter() {
+				return new TextPositionFilter(_position, _minValue, _maxValue);
 			}
 		}
 		[JsonTypeAlias(ThisName)]
@@ -296,7 +296,7 @@ namespace PDFPatcher.Model
 		{
 			internal const string ThisName = "页码范围";
 
-			[XmlAttribute (ThisName)]
+			[XmlAttribute(ThisName)]
 			public string PageRange { get; set; }
 
 			public override string Description => "页码范围为“" + PageRange + "”";
@@ -305,12 +305,12 @@ namespace PDFPatcher.Model
 
 			internal override bool IsTextLineFilter => false;
 
-			public override object Clone () {
-				return new PageRangeCondition () { PageRange = PageRange };
+			public override object Clone() {
+				return new PageRangeCondition() { PageRange = PageRange };
 			}
 
-			internal override AutoBookmarkFilter CreateFilter () {
-				return new PageRangeFilter (PageRange);
+			internal override AutoBookmarkFilter CreateFilter() {
+				return new PageRangeFilter(PageRange);
 			}
 		}
 		[JsonTypeAlias(ThisName)]
@@ -318,7 +318,7 @@ namespace PDFPatcher.Model
 		{
 			internal const string ThisName = "文本内容";
 
-			[XmlElement ("文本模式")]
+			[XmlElement("文本模式")]
 			public MatchPattern Pattern { get; set; }
 
 			public override string Description => String.Concat(ThisName,
@@ -331,19 +331,19 @@ namespace PDFPatcher.Model
 
 			internal override bool IsTextLineFilter => true;
 
-			public override object Clone () {
-				return new TextCondition (Pattern);
+			public override object Clone() {
+				return new TextCondition(Pattern);
 			}
 
-			internal override AutoBookmarkFilter CreateFilter () {
-				return new TextFilter (Pattern);
+			internal override AutoBookmarkFilter CreateFilter() {
+				return new TextFilter(Pattern);
 			}
 
-			public TextCondition () {
-				Pattern = new MatchPattern ();
+			public TextCondition() {
+				Pattern = new MatchPattern();
 			}
-			private TextCondition (MatchPattern pattern) {
-				Pattern = pattern.Clone () as MatchPattern;
+			private TextCondition(MatchPattern pattern) {
+				Pattern = pattern.Clone() as MatchPattern;
 			}
 		}
 

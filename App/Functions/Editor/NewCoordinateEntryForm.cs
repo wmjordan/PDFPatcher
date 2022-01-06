@@ -10,19 +10,19 @@ namespace PDFPatcher.Functions
 		public bool IsAbsolute => _AbsoluteBox.Checked;
 		public bool IsProportional => _ProportionBox.Checked;
 
-		public NewCoordinateEntryForm () {
-			InitializeComponent ();
+		public NewCoordinateEntryForm() {
+			InitializeComponent();
 			_CoordinateBox.SelectedIndex = 0;
 		}
 
-		private void _OkButton_Click (object sender, EventArgs e) {
+		private void _OkButton_Click(object sender, EventArgs e) {
 			DialogResult = DialogResult.OK;
-			Close ();
+			Close();
 		}
 
-		private void _CancelButton_Click (object sender, EventArgs e) {
+		private void _CancelButton_Click(object sender, EventArgs e) {
 			DialogResult = DialogResult.Cancel;
-			Close ();
+			Close();
 		}
 	}
 }

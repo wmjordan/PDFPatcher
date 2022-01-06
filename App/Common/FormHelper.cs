@@ -123,23 +123,23 @@ namespace PDFPatcher.Common
 			return toolStrip;
 		}
 
-		internal static void InsertLinkedText (this RichTextBoxLinks.RichTextBoxEx textBox, string text) {
+		internal static void InsertLinkedText(this RichTextBoxLinks.RichTextBoxEx textBox, string text) {
 			const int TokenLength = 2;
-			int p1 = text.IndexOf ("<<");
-			int p2 = text.IndexOf (">>");
+			int p1 = text.IndexOf("<<");
+			int p2 = text.IndexOf(">>");
 			if (p1 != -1 && p2 != -1 && p2 > p1) {
-				textBox.AppendText (text.Substring (0, p1));
+				textBox.AppendText(text.Substring(0, p1));
 				var c = textBox.SelectionColor;
 				var f = textBox.SelectionFont;
-				textBox.InsertLink (text.Substring (p1 + TokenLength, p2 - p1 - TokenLength));
+				textBox.InsertLink(text.Substring(p1 + TokenLength, p2 - p1 - TokenLength));
 				if (p2 < text.Length - TokenLength) {
 					textBox.SelectionColor = c;
 					textBox.SelectionFont = f;
-					textBox.AppendText (text.Substring (p2 + TokenLength));
+					textBox.AppendText(text.Substring(p2 + TokenLength));
 				}
 			}
 			else {
-				textBox.AppendText (text);
+				textBox.AppendText(text);
 			}
 		}
 
@@ -245,8 +245,8 @@ namespace PDFPatcher.Common
 			}
 		}
 
-		internal static void ErrorBox (string text) {
-			MessageBox.Show (text, Constants.AppName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+		internal static void ErrorBox(string text) {
+			MessageBox.Show(text, Constants.AppName, MessageBoxButtons.OK, MessageBoxIcon.Error);
 		}
 		public static void ErrorBox(this Control control, string text) {
 			MessageBox.Show(text, control.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -261,14 +261,14 @@ namespace PDFPatcher.Common
 			}
 			MessageBox.Show(s.ToString(), control.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
 		}
-		internal static void InfoBox (string text) {
-			MessageBox.Show (text, Constants.AppName, MessageBoxButtons.OK, MessageBoxIcon.Information);
+		internal static void InfoBox(string text) {
+			MessageBox.Show(text, Constants.AppName, MessageBoxButtons.OK, MessageBoxIcon.Information);
 		}
-		internal static DialogResult YesNoBox (string text) {
-			return MessageBox.Show (text, Constants.AppName, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+		internal static DialogResult YesNoBox(string text) {
+			return MessageBox.Show(text, Constants.AppName, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 		}
-		internal static DialogResult YesNoCancelBox (string text) {
-			return MessageBox.Show (text, Constants.AppName, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+		internal static DialogResult YesNoCancelBox(string text) {
+			return MessageBox.Show(text, Constants.AppName, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
 		}
 		public static bool ConfirmOKBox(this Control control, string text) {
 			return MessageBox.Show(text, control.Text, MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK;

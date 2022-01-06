@@ -6,20 +6,20 @@ namespace PDFPatcher.Processor
 {
 	sealed class TextFilter : AutoBookmarkFilter
 	{
-		MatchPattern.IMatcher _matcher;
-		public TextFilter (MatchPattern pattern) {
-			_matcher = pattern.CreateMatcher ();
+		readonly MatchPattern.IMatcher _matcher;
+		public TextFilter(MatchPattern pattern) {
+			_matcher = pattern.CreateMatcher();
 		}
-		internal override bool Matches (PDFPatcher.Model.AutoBookmarkContext context) {
+		internal override bool Matches(PDFPatcher.Model.AutoBookmarkContext context) {
 			if (context.TextLine == null) {
-				return _matcher.Matches (context.TextInfo.Text);
+				return _matcher.Matches(context.TextInfo.Text);
 			}
 			else {
-				return _matcher.Matches (context.TextLine.Text);
+				return _matcher.Matches(context.TextLine.Text);
 			}
 		}
 
-		internal override void Reset () {
+		internal override void Reset() {
 		}
 	}
 }

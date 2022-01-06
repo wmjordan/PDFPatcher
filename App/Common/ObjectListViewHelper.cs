@@ -7,7 +7,7 @@ namespace BrightIdeasSoftware
 {
 	static class ObjectListViewHelper
 	{
-		public static void SetTreeViewLine (this TreeListView view) {
+		public static void SetTreeViewLine(this TreeListView view) {
 			var tcr = view.TreeColumnRenderer as TreeListView.TreeRenderer;
 			tcr.LinePen = new Pen(SystemColors.ControlDark) {
 				DashCap = DashCap.Round,
@@ -15,10 +15,10 @@ namespace BrightIdeasSoftware
 			};
 		}
 
-		public static void ExpandSelected (this TreeListView view) {
+		public static void ExpandSelected(this TreeListView view) {
 			var so = view.SelectedObjects;
 			foreach (var item in so) {
-				view.Expand (item);
+				view.Expand(item);
 			}
 		}
 		public static TypedObjectListView<T> AsTyped<T>(this ObjectListView view) where T : class {
@@ -40,56 +40,56 @@ namespace BrightIdeasSoftware
 			configurator(t);
 			return t;
 		}
-		public static T GetParentModel<T> (this TreeListView view, T model) where T : class {
-			return view.GetParent (model) as T;
+		public static T GetParentModel<T>(this TreeListView view, T model) where T : class {
+			return view.GetParent(model) as T;
 		}
 
-		public static List<T> GetAncestorsOrSelf<T> (this TreeListView view, T model) where T : class {
-			var r = new List<T> ();
+		public static List<T> GetAncestorsOrSelf<T>(this TreeListView view, T model) where T : class {
+			var r = new List<T>();
 			do {
-				r.Add (model);
-			} while ((model = view.GetParent (model) as T) != null);
+				r.Add(model);
+			} while ((model = view.GetParent(model) as T) != null);
 			return r;
 		}
 
-		public static void CollapseSelected (this TreeListView view) {
+		public static void CollapseSelected(this TreeListView view) {
 			var so = view.SelectedObjects;
 			foreach (var item in so) {
-				view.Collapse (item);
+				view.Collapse(item);
 			}
 		}
 
-		public static void MoveUpSelection (this ObjectListView view) {
-			var si = view.GetFirstSelectedIndex ();
+		public static void MoveUpSelection(this ObjectListView view) {
+			var si = view.GetFirstSelectedIndex();
 			if (si < 1) {
 				return;
 			}
 			var so = view.SelectedObjects;
-			view.MoveObjects (--si, so);
+			view.MoveObjects(--si, so);
 			view.SelectedObjects = so;
 		}
 
-		public static void MoveDownSelection (this ObjectListView view) {
-			var ls = view.GetLastItemInDisplayOrder ();
+		public static void MoveDownSelection(this ObjectListView view) {
+			var ls = view.GetLastItemInDisplayOrder();
 			if (ls == null || ls.Selected == true) {
 				return;
 			}
-			var si = view.GetFirstSelectedIndex ();
+			var si = view.GetFirstSelectedIndex();
 			if (si < 0) {
 				return;
 			}
 			var so = view.SelectedObjects;
-			view.MoveObjects (si + 2, so);
+			view.MoveObjects(si + 2, so);
 			view.SelectedObjects = so;
 		}
 
-		public static T GetFirstSelectedModel<T> (this ObjectListView view) where T : class {
-			return view.GetModelObject (view.GetFirstSelectedIndex ()) as T;
+		public static T GetFirstSelectedModel<T>(this ObjectListView view) where T : class {
+			return view.GetModelObject(view.GetFirstSelectedIndex()) as T;
 		}
 
 		/// <remarks>树视图存在子节点且多选节点时，在 SelectedIndexChanged 事件中，SelectedIndices属性可能返回无内容的集合。</remarks>
-		public static int GetFirstSelectedIndex (this ObjectListView view) {
-			var c = view.GetItemCount ();
+		public static int GetFirstSelectedIndex(this ObjectListView view) {
+			var c = view.GetItemCount();
 			int i = c;
 			foreach (int item in view.SelectedIndices) {
 				if (item < i) {
@@ -99,7 +99,7 @@ namespace BrightIdeasSoftware
 			return i == c ? -1 : i;
 		}
 
-		public static int GetLastSelectedIndex (this ObjectListView view) {
+		public static int GetLastSelectedIndex(this ObjectListView view) {
 			int i = -1;
 			foreach (int item in view.SelectedIndices) {
 				if (item > i) {
@@ -109,12 +109,12 @@ namespace BrightIdeasSoftware
 			return i;
 		}
 
-		public static List<T> GetSelectedModels<T> (this ObjectListView view) where T : class {
+		public static List<T> GetSelectedModels<T>(this ObjectListView view) where T : class {
 			var s = view.SelectedObjects;
-			var r = new List<T> (s.Count);
+			var r = new List<T>(s.Count);
 			foreach (T item in s) {
 				if (item != null) {
-					r.Add (item);
+					r.Add(item);
 				}
 			}
 			return r;
@@ -148,7 +148,7 @@ namespace BrightIdeasSoftware
 				return new GridTestResult(c.DisplayIndex, r.Index, ob);
 			}
 			// 当列表框滚动时，上述方法失效，使用此替补方法
-			r = view.GetNthItemInDisplayOrder ((y - 1 - cr.Top) / view.RowHeightEffective);
+			r = view.GetNthItemInDisplayOrder((y - 1 - cr.Top) / view.RowHeightEffective);
 			var w = cr.Left;
 			var cl = view.ColumnsInDisplayOrder;
 			for (int i = 0; i < cl.Count; i++) {
@@ -168,14 +168,14 @@ namespace BrightIdeasSoftware
 			return new GridTestResult(c.DisplayIndex, y, ob);
 		}
 
-		public static void InvertSelect (this ObjectListView view) {
-			view.Freeze ();
-			var l = view.GetItemCount ();
+		public static void InvertSelect(this ObjectListView view) {
+			view.Freeze();
+			var l = view.GetItemCount();
 			for (int i = 0; i < l; i++) {
-				var oi = view.GetItem (i);
+				var oi = view.GetItem(i);
 				oi.Selected = !oi.Selected;
 			}
-			view.Unfreeze ();
+			view.Unfreeze();
 		}
 
 	}

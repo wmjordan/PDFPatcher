@@ -14,7 +14,7 @@ namespace PDFPatcher.Common
 		public static bool HasExtension(FilePath fileName, string extension) {
 			return fileName.HasExtension(extension);
 		}
-		public static bool HasFileNameMacro (string fileName) {
+		public static bool HasFileNameMacro(string fileName) {
 			var c = '<';
 			foreach (var item in fileName) {
 				if (item == c) {
@@ -111,11 +111,11 @@ namespace PDFPatcher.Common
 			return c >= 'A' && c <= 'Z' ? (char)(c + ('a' - 'A')) : c;
 		}
 
-		internal static bool CheckOverwrite (string targetFile) {
-			if (File.Exists (targetFile)) {
+		internal static bool CheckOverwrite(string targetFile) {
+			if (File.Exists(targetFile)) {
 				switch (__OverwriteMode) {
 					case OverwriteType.Prompt:
-						var r = Common.FormHelper.YesNoCancelBox (String.Join ("\n", new string[] {
+						var r = Common.FormHelper.YesNoCancelBox(String.Join("\n", new string[] {
 							"是否覆盖目标文件？", targetFile, "\n按住 Shift 键重复此对话框的选择，本次操作不再弹出覆盖文件提示。"
 						}));
 						if (r == System.Windows.Forms.DialogResult.No) {
@@ -125,7 +125,7 @@ namespace PDFPatcher.Common
 							goto case OverwriteType.Skip;
 						}
 						else if (r == System.Windows.Forms.DialogResult.Cancel) {
-							throw new OperationCanceledException ();
+							throw new OperationCanceledException();
 						}
 						if (FormHelper.IsShiftKeyDown) {
 							__OverwriteMode = OverwriteType.Overwrite;
@@ -134,7 +134,7 @@ namespace PDFPatcher.Common
 					case OverwriteType.Overwrite:
 						return true;
 					case OverwriteType.Skip:
-						Tracker.TraceMessage (Tracker.Category.ImportantMessage, "取消覆盖文件：" + targetFile);
+						Tracker.TraceMessage(Tracker.Category.ImportantMessage, "取消覆盖文件：" + targetFile);
 						return false;
 					default:
 						goto case OverwriteType.Prompt;
@@ -174,7 +174,7 @@ namespace PDFPatcher.Common
 			return c == Path.DirectorySeparatorChar || c == Path.AltDirectorySeparatorChar;
 		}
 
-		internal static void ResetOverwriteMode () {
+		internal static void ResetOverwriteMode() {
 			__OverwriteMode = OverwriteType.Prompt;
 		}
 

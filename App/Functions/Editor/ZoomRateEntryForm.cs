@@ -7,22 +7,22 @@ namespace PDFPatcher.Functions
 	{
 		internal string ZoomRate => _ZoomRateBox.Text;
 
-		public ZoomRateEntryForm () {
-			InitializeComponent ();
+		public ZoomRateEntryForm() {
+			InitializeComponent();
 		}
 
-		private void ZoomRateEntryForm_Load (object sender, EventArgs e) {
+		private void ZoomRateEntryForm_Load(object sender, EventArgs e) {
 
 		}
 
-		protected void _OkButton_Click (Object source, EventArgs args) {
+		protected void _OkButton_Click(Object source, EventArgs args) {
 			DialogResult = DialogResult.OK;
-			Close ();
+			Close();
 		}
 
-		protected void _CancelButton_Click (Object source, EventArgs args) {
+		protected void _CancelButton_Click(Object source, EventArgs args) {
 			DialogResult = DialogResult.Cancel;
-			Close ();
+			Close();
 		}
 	}
 }

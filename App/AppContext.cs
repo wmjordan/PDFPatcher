@@ -11,9 +11,9 @@ namespace PDFPatcher
 {
 	internal static class AppContext
 	{
-		static readonly string AppConfigFilePath = FileHelper.CombinePath (
-				Path.GetDirectoryName (System.Windows.Forms.Application.ExecutablePath),
-			//"config.json");
+		static readonly string AppConfigFilePath = FileHelper.CombinePath(
+				Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath),
+				//"config.json");
 				"AppConfig.json");
 		static readonly SerializationManager JsonSm = new SerializationManager(new JsonReflectionController(true)) {
 			UseExtensions = false,
@@ -28,25 +28,25 @@ namespace PDFPatcher
 
 		internal static MainForm MainForm { get; set; }
 
-		static AppContext () {
+		static AppContext() {
 			SaveAppSettings = true;
 			BookmarkFile = String.Empty;
 			TargetFile = String.Empty;
 			CheckUpdateDate = DateTime.Now;
 			CheckUpdateInterval = 14;
-			Exporter = new ExporterOptions ();
-			Importer = new ImporterOptions ();
-			Merger = new MergerOptions ();
-			Patcher = new PatcherOptions ();
-			Editor = new PatcherOptions ();
-			AutoBookmarker = new AutoBookmarkOptions ();
-			Encodings = new EncodingOptions ();
-			ImageExtracter = new ImageExtracterOptions ();
-			ImageRenderer = new ImageRendererOptions ();
-			ExtractPage = new ExtractPageOptions ();
-			Ocr = new OcrOptions ();
-			Toolbar = new ToolbarOptions ();
-			Recent = new RecentItems ();
+			Exporter = new ExporterOptions();
+			Importer = new ImporterOptions();
+			Merger = new MergerOptions();
+			Patcher = new PatcherOptions();
+			Editor = new PatcherOptions();
+			AutoBookmarker = new AutoBookmarkOptions();
+			Encodings = new EncodingOptions();
+			ImageExtracter = new ImageExtracterOptions();
+			ImageRenderer = new ImageRendererOptions();
+			ExtractPage = new ExtractPageOptions();
+			Ocr = new OcrOptions();
+			Toolbar = new ToolbarOptions();
+			Recent = new RecentItems();
 		}
 		public static bool SaveAppSettings { get; set; }
 
@@ -56,12 +56,8 @@ namespace PDFPatcher
 		private static string[] _SourceFiles = new string[0];
 		///<summary>获取或指定要处理的源文件路径列表。</summary>
 		public static string[] SourceFiles {
-			get {
-				return _SourceFiles;
-			}
-			set {
-				_SourceFiles = value ?? new string[0];
-			}
+			get => _SourceFiles;
+			set => _SourceFiles = value ?? new string[0];
 		}
 
 		///<summary>获取或指定检查更新的日期。</summary>
@@ -130,15 +126,15 @@ namespace PDFPatcher
 			[JsonField("替换项")]
 			public List<string> ReplacePatterns { get; } = new List<string>();
 
-			internal static void AddHistoryItem (IList<string> list, string item) {
-				if (String.IsNullOrEmpty (item)) {
+			internal static void AddHistoryItem(IList<string> list, string item) {
+				if (String.IsNullOrEmpty(item)) {
 					return;
 				}
 				var i = -1;
 				var m = false;
 				foreach (var li in list) {
 					i++;
-					if (String.Equals (li, item, StringComparison.OrdinalIgnoreCase)) {
+					if (String.Equals(li, item, StringComparison.OrdinalIgnoreCase)) {
 						m = true;
 						break;
 					}
@@ -148,53 +144,53 @@ namespace PDFPatcher
 						return;
 					}
 					if (i != -1) {
-						list.RemoveAt (i);
+						list.RemoveAt(i);
 					}
 				}
-				list.Insert (0, item);
+				list.Insert(0, item);
 				while (list.Count > MaxHistoryItemCount) {
-					list.RemoveAt (list.Count - 1);
+					list.RemoveAt(list.Count - 1);
 				}
 			}
 
 		}
 
-		internal static void CleanUpInexistentFiles (IList<string> list) {
-			var s = new List<string> (list.Count);
+		internal static void CleanUpInexistentFiles(IList<string> list) {
+			var s = new List<string>(list.Count);
 			foreach (var item in list) {
-				if (FileHelper.HasFileNameMacro (item) || File.Exists (item)) {
-					s.Add (item);
+				if (FileHelper.HasFileNameMacro(item) || File.Exists(item)) {
+					s.Add(item);
 				}
 			}
-			list.Clear ();
-			list.AddRange (s);
+			list.Clear();
+			list.AddRange(s);
 		}
 
-		internal static void CleanUpInexistentFolders (IList<string> list) {
-			var s = new List<string> (list.Count);
+		internal static void CleanUpInexistentFolders(IList<string> list) {
+			var s = new List<string>(list.Count);
 			foreach (var item in list) {
-				if (FileHelper.HasFileNameMacro (item) || Directory.Exists (item)) {
-					s.Add (item);
+				if (FileHelper.HasFileNameMacro(item) || Directory.Exists(item)) {
+					s.Add(item);
 				}
 			}
-			list.Clear ();
-			list.AddRange (s);
+			list.Clear();
+			list.AddRange(s);
 		}
 
 		internal static bool Load(string path) {
-			return LoadJson (path);
+			return LoadJson(path);
 		}
 
-		internal static bool LoadJson (string path) {
-			if (String.IsNullOrEmpty (path)) {
+		internal static bool LoadJson(string path) {
+			if (String.IsNullOrEmpty(path)) {
 				path = AppConfigFilePath;
 			}
-			if (File.Exists (path) == false) {
+			if (File.Exists(path) == false) {
 				return false;
 			}
 			ConfigurationSerialization conf;
 			try {
-				conf = Json.ToObject<ConfigurationSerialization> (File.ReadAllText (path, Encoding.UTF8), JsonSm);
+				conf = Json.ToObject<ConfigurationSerialization>(File.ReadAllText(path, Encoding.UTF8), JsonSm);
 				if (conf == null || conf.SaveAppSettings == false) {
 					SaveAppSettings = false;
 					return false;
@@ -253,18 +249,18 @@ namespace PDFPatcher
 		/// </summary>
 		/// <param name="path">保存路径。路径为空时，保存到默认位置。</param>
 		/// <param name="saveHistoryFileList">是否保存历史文件列表。</param>
-		internal static void Save (string path, bool saveHistoryFileList) {
+		internal static void Save(string path, bool saveHistoryFileList) {
 			try {
-				SaveJson (path ?? AppConfigFilePath, saveHistoryFileList);
+				SaveJson(path ?? AppConfigFilePath, saveHistoryFileList);
 			}
 			catch (Exception ex) {
-				FormHelper.ErrorBox ("在保存程序设置时出错" + ex.Message);
+				FormHelper.ErrorBox("在保存程序设置时出错" + ex.Message);
 			}
 		}
 
-		static void SaveJson (string path, bool saveHistoryFileList) {
+		static void SaveJson(string path, bool saveHistoryFileList) {
 			var s = SaveAppSettings
-				? new ConfigurationSerialization  {
+				? new ConfigurationSerialization {
 					SaveAppSettings = true,
 					CheckUpdateDate = CheckUpdateDate,
 					CheckUpdateInterval = CheckUpdateInterval,
@@ -284,14 +280,14 @@ namespace PDFPatcher
 					Recent = saveHistoryFileList ? Recent : null
 				}
 				: new ConfigurationSerialization { SaveAppSettings = false };
-			File.WriteAllText (path, Json.ToJson (s, JsonSm), Encoding.UTF8);
+			File.WriteAllText(path, Json.ToJson(s, JsonSm), Encoding.UTF8);
 		}
 
-		private static void WriteRecentFiles (XmlWriter writer, IList<string> list, string name) {
+		private static void WriteRecentFiles(XmlWriter writer, IList<string> list, string name) {
 			foreach (var item in list) {
-				writer.WriteStartElement (name);
-				writer.WriteAttributeString (Configuration.Path, item);
-				writer.WriteEndElement ();
+				writer.WriteStartElement(name);
+				writer.WriteAttributeString(Configuration.Path, item);
+				writer.WriteEndElement();
 			}
 		}
 	}

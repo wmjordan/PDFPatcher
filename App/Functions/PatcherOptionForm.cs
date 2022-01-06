@@ -6,26 +6,26 @@ using PDFPatcher.Model;
 
 namespace PDFPatcher.Functions
 {
-	[ToolboxItem (false)]
+	[ToolboxItem(false)]
 	public partial class PatcherOptionForm : Form, IResettableControl
 	{
 		const float cm2point = (72f / 2.54f);
 		string paperName;
 		bool _uiLockDown;
-		bool _editorOptions;
+		readonly bool _editorOptions;
 
 		public PatcherOptions Options { get; set; }
 
-		public PatcherOptionForm (bool editorOptions) {
-			InitializeComponent ();
-			this.SetIcon (Properties.Resources.PdfOptions);
-			_PageSizeBox.Items.AddRange (Processor.PdfDocumentCreator.PaperSizes);
-			_ImageHAlignBox.Items.Add ("水平居中");
-			_ImageHAlignBox.Items.Add ("左对齐");
-			_ImageHAlignBox.Items.Add ("右对齐");
-			_ImageVAlignBox.Items.Add ("垂直居中");
-			_ImageVAlignBox.Items.Add ("置顶");
-			_ImageVAlignBox.Items.Add ("置底");
+		public PatcherOptionForm(bool editorOptions) {
+			InitializeComponent();
+			this.SetIcon(Properties.Resources.PdfOptions);
+			_PageSizeBox.Items.AddRange(Processor.PdfDocumentCreator.PaperSizes);
+			_ImageHAlignBox.Items.Add("水平居中");
+			_ImageHAlignBox.Items.Add("左对齐");
+			_ImageHAlignBox.Items.Add("右对齐");
+			_ImageVAlignBox.Items.Add("垂直居中");
+			_ImageVAlignBox.Items.Add("置顶");
+			_ImageVAlignBox.Items.Add("置底");
 			_editorOptions = editorOptions;
 			_ResetButton.Click += (s, args) => {
 				if (this.ConfirmYesBox("是否将选项配置还原为默认值？")) {
@@ -34,25 +34,25 @@ namespace PDFPatcher.Functions
 			};
 		}
 
-		void PatcherOptionForm_Load (object sender, EventArgs e) {
-			Reload ();
+		void PatcherOptionForm_Load(object sender, EventArgs e) {
+			Reload();
 			if (_editorOptions) {
-				_MainTab.TabPages.Remove (_DocumentInfoPage);
+				_MainTab.TabPages.Remove(_DocumentInfoPage);
 				Options.MetaData.SpecifyMetaData = false;
 			}
 		}
 
-		public void Reset () {
+		public void Reset() {
 			if (_editorOptions) {
-				Options = AppContext.Editor = new PatcherOptions ();
+				Options = AppContext.Editor = new PatcherOptions();
 			}
 			else {
-				Options = AppContext.Patcher = new PatcherOptions ();
+				Options = AppContext.Patcher = new PatcherOptions();
 			}
-			Reload ();
+			Reload();
 		}
 
-		public void Reload () {
+		public void Reload() {
 			_uiLockDown = true;
 			var settings = Options;
 			_DocumentInfoEditor.Options = settings.MetaData;
@@ -83,12 +83,12 @@ namespace PDFPatcher.Functions
 			_AutoRotateBox.Checked = ps.AutoRotation;
 			_MarginUnitBox.SelectedIndex = ps.Margins.IsRelative ? 1 : 0;
 			var marginScale = ps.Margins.IsRelative ? 1 : Constants.Units.CmToPoint;
-			_BottomMarginBox.SetValue (ps.Margins.Bottom / marginScale);
-			_LeftMarginBox.SetValue (ps.Margins.Left / marginScale);
-			_RightMarginBox.SetValue (ps.Margins.Right / marginScale);
-			_TopMarginBox.SetValue (ps.Margins.Top / marginScale);
-			_HeightBox.SetValue (ps.PaperSize.Height / Constants.Units.CmToPoint);
-			_WidthBox.SetValue (ps.PaperSize.Width / Constants.Units.CmToPoint);
+			_BottomMarginBox.SetValue(ps.Margins.Bottom / marginScale);
+			_LeftMarginBox.SetValue(ps.Margins.Left / marginScale);
+			_RightMarginBox.SetValue(ps.Margins.Right / marginScale);
+			_TopMarginBox.SetValue(ps.Margins.Top / marginScale);
+			_HeightBox.SetValue(ps.PaperSize.Height / Constants.Units.CmToPoint);
+			_WidthBox.SetValue(ps.PaperSize.Width / Constants.Units.CmToPoint);
 			_ImageHAlignBox.SelectedIndex = (int)ps.HorizontalAlign;
 			_ImageVAlignBox.SelectedIndex = (int)ps.VerticalAlign;
 			for (int i = 0; i < _PageSizeBox.Items.Count; i++) {
@@ -109,8 +109,8 @@ namespace PDFPatcher.Functions
 			_uiLockDown = false;
 		}
 
-		protected override void OnClosing (CancelEventArgs e) {
-			base.OnClosing (e);
+		protected override void OnClosing(CancelEventArgs e) {
+			base.OnClosing(e);
 			var settings = Options;
 			var ps = settings.UnifiedPageSettings;
 			ps.AutoRotation = _AutoRotateBox.Checked;
@@ -121,8 +121,8 @@ namespace PDFPatcher.Functions
 			ps.Margins.Left = (float)_LeftMarginBox.Value * marginScale;
 			ps.Margins.Right = (float)_RightMarginBox.Value * marginScale;
 			ps.PaperSize.PaperName = paperName;
-			ps.PaperSize.Width = CmToPoint (_WidthBox);
-			ps.PaperSize.Height = CmToPoint (_HeightBox);
+			ps.PaperSize.Width = CmToPoint(_WidthBox);
+			ps.PaperSize.Height = CmToPoint(_HeightBox);
 			ps.HorizontalAlign = (Model.HorizontalAlignment)_ImageHAlignBox.SelectedIndex;
 			ps.VerticalAlign = (Model.VerticalAlignment)_ImageVAlignBox.SelectedIndex;
 			ps.ScaleContent = _ScalePdfPagesBox.Checked;
@@ -144,18 +144,18 @@ namespace PDFPatcher.Functions
 			settings.FullCompression = _FullCompressionBox.Checked;
 		}
 
-		private float CmToPoint (NumericUpDown box) {
+		private float CmToPoint(NumericUpDown box) {
 			return (float)box.Value * Constants.Units.CmToPoint;
 		}
 
-		private void _PageSizeBox_SelectedIndexChanged (object sender, EventArgs e) {
+		private void _PageSizeBox_SelectedIndexChanged(object sender, EventArgs e) {
 			if (_PageSizeBox.SelectedIndex == -1) {
 				return;
 			}
 			var p = _PageSizeBox.SelectedItem as PaperSize;
 			if (p.Width > 0 && p.Height > 0) {
-				_WidthBox.SetValue ((decimal)p.Width / 100);
-				_HeightBox.SetValue ((decimal)p.Height / 100);
+				_WidthBox.SetValue((decimal)p.Width / 100);
+				_HeightBox.SetValue((decimal)p.Height / 100);
 			}
 			paperName = p.PaperName;
 			switch (paperName) {
@@ -213,7 +213,7 @@ namespace PDFPatcher.Functions
 			}
 		}
 
-		private void MarginBox_ValueChanged (object sender, EventArgs e) {
+		private void MarginBox_ValueChanged(object sender, EventArgs e) {
 			if (_SyncMarginsBox.Checked == false || _uiLockDown) {
 				return;
 			}

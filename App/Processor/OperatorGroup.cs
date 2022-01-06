@@ -13,18 +13,18 @@ namespace PDFPatcher.Processor
 		/// </summary>
 		public List<PdfContentStreamProcessor.IContentOperator> Operators { get; private set; }
 
-		public OperatorGroup (IEnumerable<PdfContentStreamProcessor.IContentOperator> operators) {
-			this.Operators = new List<PdfContentStreamProcessor.IContentOperator> ();
+		public OperatorGroup(IEnumerable<PdfContentStreamProcessor.IContentOperator> operators) {
+			Operators = new List<PdfContentStreamProcessor.IContentOperator>();
 			if (operators != null) {
-				this.Operators.AddRange (operators);
+				Operators.AddRange(operators);
 			}
 		}
 
 		#region IContentOperator 成员
 
-		public void Invoke (PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
-			foreach (var item in this.Operators) {
-				item.Invoke (processor, oper, operands);
+		public void Invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
+			foreach (var item in Operators) {
+				item.Invoke(processor, oper, operands);
 			}
 		}
 

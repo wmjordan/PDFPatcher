@@ -889,7 +889,7 @@
     <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Resources\pdf.png" />
-    <None Include="wmjordan.snk" Condition=" '$(Configuration)' == 'Release' "/>
+    <None Include="wmjordan.snk" Condition=" '$(Configuration)' == 'Release' " />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Functions\DocumentOption\DocumentFontListForm.resx">

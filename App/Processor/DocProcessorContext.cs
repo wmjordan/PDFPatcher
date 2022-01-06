@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using iTextSharp.text.pdf;
 using iTextSharp.text;
+using iTextSharp.text.pdf;
 
 namespace PDFPatcher.Processor
 {
@@ -17,15 +17,15 @@ namespace PDFPatcher.Processor
 		public bool IsModified { get; set; }
 		public Dictionary<int, object> ExtraData { get; }
 
-		public DocProcessorContext (PdfProcessingEngine engine, PdfWriter writer, Document outputDocument) {
+		public DocProcessorContext(PdfProcessingEngine engine, PdfWriter writer, Document outputDocument) {
 			Pdf = engine.Pdf;
 			Writer = writer;
 			OutputDocument = outputDocument;
 			ExtraData = engine.ExtraData;
 		}
 
-		public DocProcessorContext (PdfProcessingEngine engine, PdfWriter writer)
-			: this (engine, writer, null) {
+		public DocProcessorContext(PdfProcessingEngine engine, PdfWriter writer)
+			: this(engine, writer, null) {
 		}
 	}
 }

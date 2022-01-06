@@ -10,14 +10,14 @@ namespace PDFPatcher.Processor
 	/// </summary>
 	sealed class DocumentSink
 	{
-		readonly Dictionary<string, PdfReaderReference> _sink = new Dictionary<string, PdfReaderReference> (StringComparer.OrdinalIgnoreCase);
+		readonly Dictionary<string, PdfReaderReference> _sink = new Dictionary<string, PdfReaderReference>(StringComparer.OrdinalIgnoreCase);
 		public int Workload { get; private set; }
 		public bool HasDuplicateFiles { get; private set; }
-		public DocumentSink (IEnumerable<SourceItem> items, bool useSink) {
-			EvaluateWorkload (items, useSink);
+		public DocumentSink(IEnumerable<SourceItem> items, bool useSink) {
+			EvaluateWorkload(items, useSink);
 		}
 
-		public PdfReader GetPdfReader (string path) {
+		public PdfReader GetPdfReader(string path) {
 			if (_sink.TryGetValue(path, out PdfReaderReference rr)) {
 				if (rr.Reader == null) {
 					rr.Reader = PdfHelper.OpenPdfFile(path, AppContext.LoadPartialPdfFile, false);
@@ -27,7 +27,7 @@ namespace PDFPatcher.Processor
 			return null;
 		}
 
-		public int DecrementReference (string path) {
+		public int DecrementReference(string path) {
 			if (_sink.TryGetValue(path, out PdfReaderReference r)) {
 				var c = --r.Reference;
 				if (c == 0) {
@@ -38,21 +38,21 @@ namespace PDFPatcher.Processor
 			return 0;
 		}
 
-		private void EvaluateWorkload (IEnumerable<SourceItem> items, bool useSink) {
+		private void EvaluateWorkload(IEnumerable<SourceItem> items, bool useSink) {
 			foreach (var item in items) {
 				switch (item.Type) {
 					case SourceItem.ItemType.Empty:
 						break;
 					case SourceItem.ItemType.Pdf:
 						var p = item as SourceItem.Pdf;
-						Workload += PageRangeCollection.Parse (p.PageRanges, 1, p.PageCount, true).TotalPages;
+						Workload += PageRangeCollection.Parse(p.PageRanges, 1, p.PageCount, true).TotalPages;
 						if (useSink) {
 							if (_sink.TryGetValue(item.FilePath.ToString(), out PdfReaderReference r)) {
 								r.Reference++;
 								HasDuplicateFiles = true;
 								break;
 							}
-							_sink.Add (item.FilePath.ToString(), new PdfReaderReference ());
+							_sink.Add(item.FilePath.ToString(), new PdfReaderReference());
 						}
 						Workload += item.FileSize;
 						break;
@@ -63,7 +63,7 @@ namespace PDFPatcher.Processor
 						break;
 				}
 				if (item.HasSubItems) {
-					EvaluateWorkload (item.Items, useSink);
+					EvaluateWorkload(item.Items, useSink);
 				}
 			}
 		}

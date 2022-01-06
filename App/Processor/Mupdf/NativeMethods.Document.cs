@@ -66,7 +66,7 @@ namespace MuPdfSharp
 		internal static extern int GetAntiAliasLevel(ContextHandle ctx);
 
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_set_aa_level")]
-		internal static extern void SetAntiAliasLevel(ContextHandle ctx, int level); 
+		internal static extern void SetAntiAliasLevel(ContextHandle ctx, int level);
 		#endregion
 
 		#region Fonts

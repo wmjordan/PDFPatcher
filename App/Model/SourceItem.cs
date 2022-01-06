@@ -24,11 +24,7 @@ namespace PDFPatcher.Model
 			}
 		}
 
-		public bool HasSubItems {
-			get {
-				return _Items.HasContent();
-			}
-		}
+		public bool HasSubItems => _Items.HasContent();
 
 		public abstract ItemType Type { get; }
 		public static void SortFileList(string[] fileList) {
@@ -145,11 +141,9 @@ namespace PDFPatcher.Model
 
 		internal sealed class Empty : SourceItem
 		{
-			public override ItemType Type { get { return ItemType.Empty; } }
+			public override ItemType Type => ItemType.Empty;
 
-			public override int FileSize {
-				get { return 0; }
-			}
+			public override int FileSize => 0;
 
 			public void SetPageCount(int pageCount) {
 				PageCount = pageCount;
@@ -178,7 +172,7 @@ namespace PDFPatcher.Model
 			public int MinHeight { get; set; }
 			public int MinWidth { get; set; }
 
-			public bool NeedCropping { get { return Left > 0 || Right > 0 || Top > 0 || Bottom > 0; } }
+			public bool NeedCropping => Left > 0 || Right > 0 || Top > 0 || Bottom > 0;
 
 			public bool Equals(CropOptions i) {
 				return Top == i.Top && Bottom == i.Bottom && Left == i.Left && Right == i.Right &&
@@ -205,7 +199,7 @@ namespace PDFPatcher.Model
 			}
 
 			public CropOptions Cropping { get; set; }
-			public override ItemType Type { get { return ItemType.Image; } }
+			public override ItemType Type => ItemType.Image;
 			public override int FileSize {
 				get {
 					if (_FileSize == -1) {
@@ -248,7 +242,7 @@ namespace PDFPatcher.Model
 			public bool ImportImagesOnly { get; set; }
 			public ImageExtracterOptions ExtractImageOptions { get; private set; }
 			public Model.GeneralInfo DocInfo { get; private set; }
-			public override ItemType Type { get { return ItemType.Pdf; } }
+			public override ItemType Type => ItemType.Pdf;
 			public override int FileSize {
 				get {
 					if (_FileSize == -1) {
@@ -303,13 +297,9 @@ namespace PDFPatcher.Model
 				}
 			}
 
-			public override ItemType Type {
-				get { return ItemType.Folder; }
-			}
+			public override ItemType Type => ItemType.Folder;
 
-			public override int FileSize {
-				get { return 0; }
-			}
+			public override int FileSize => 0;
 
 			public void Reload() {
 				Items.Clear();
@@ -412,27 +402,27 @@ namespace PDFPatcher.Model
 		}
 
 		List<SourceItem> _Items;
-		private static BookmarkSettings CreateBookmarkSettings (string t) {
+		private static BookmarkSettings CreateBookmarkSettings(string t) {
 			if (AppContext.Merger.CajSort && t.Length == 6) {
-				if (MatchCajPattern (t, Constants.CajNaming.Cover)) {
-					return t.EndsWith ("001") ? new BookmarkSettings ("封面")
-						: t.EndsWith ("002") ? new BookmarkSettings ("封底")
+				if (MatchCajPattern(t, Constants.CajNaming.Cover)) {
+					return t.EndsWith("001") ? new BookmarkSettings("封面")
+						: t.EndsWith("002") ? new BookmarkSettings("封底")
 						: null; // 超过2页的，只为第一页和第二页生成书签
 				}
-				else if (MatchCajPattern (t, Constants.CajNaming.TitlePage)) {
-					return t.EndsWith ("001") ? new BookmarkSettings ("书名") : null;
+				else if (MatchCajPattern(t, Constants.CajNaming.TitlePage)) {
+					return t.EndsWith("001") ? new BookmarkSettings("书名") : null;
 				}
-				else if (MatchCajPattern (t, Constants.CajNaming.CopyrightPage)) {
-					return t.EndsWith ("001") ? new BookmarkSettings ("版权") : null;
+				else if (MatchCajPattern(t, Constants.CajNaming.CopyrightPage)) {
+					return t.EndsWith("001") ? new BookmarkSettings("版权") : null;
 				}
-				else if (MatchCajPattern (t, Constants.CajNaming.Foreword)) {
-					return t.EndsWith ("001") ? new BookmarkSettings ("前言") : null;
+				else if (MatchCajPattern(t, Constants.CajNaming.Foreword)) {
+					return t.EndsWith("001") ? new BookmarkSettings("前言") : null;
 				}
-				else if (MatchCajPattern (t, Constants.CajNaming.Contents)) {
-					return t.EndsWith ("00001") ? new BookmarkSettings ("目录") : null;
+				else if (MatchCajPattern(t, Constants.CajNaming.Contents)) {
+					return t.EndsWith("00001") ? new BookmarkSettings("目录") : null;
 				}
-				else if (MatchCajPattern (t, String.Empty) && t == "000001") {
-					return new BookmarkSettings ("正文");
+				else if (MatchCajPattern(t, String.Empty) && t == "000001") {
+					return new BookmarkSettings("正文");
 				}
 			}
 			if (AppContext.Merger.IgnoreLeadingNumbers) {
@@ -442,96 +432,96 @@ namespace PDFPatcher.Model
 						break;
 					}
 				}
-				t = t.Substring (i);
+				t = t.Substring(i);
 			}
-			return new BookmarkSettings (t);
+			return new BookmarkSettings(t);
 		}
-		private static bool CajSort (string[] fileList) {
+		private static bool CajSort(string[] fileList) {
 			var m = false; // match Caj naming
-			var cov = new List<string> (1);
-			var bok = new List<string> (2);
-			var leg = new List<string> (1);
-			var fow = new List<string> (3);
-			var cnt = new List<string> (5);
-			var body = new List<string> (fileList.Length);
+			var cov = new List<string>(1);
+			var bok = new List<string>(2);
+			var leg = new List<string>(1);
+			var fow = new List<string>(3);
+			var cnt = new List<string>(5);
+			var body = new List<string>(fileList.Length);
 			foreach (var path in fileList) {
-				var f = Path.GetFileNameWithoutExtension (path);
+				var f = Path.GetFileNameWithoutExtension(path);
 				if (f.Length == 6) {
-					if (MatchCajPatternAddPath (path, f, Constants.CajNaming.Cover, cov)
-						|| MatchCajPatternAddPath (path, f, Constants.CajNaming.TitlePage, bok)
-						|| MatchCajPatternAddPath (path, f, Constants.CajNaming.CopyrightPage, leg)
-						|| MatchCajPatternAddPath (path, f, Constants.CajNaming.Foreword, fow)
-						|| MatchCajPatternAddPath (path, f, Constants.CajNaming.Contents, cnt)
+					if (MatchCajPatternAddPath(path, f, Constants.CajNaming.Cover, cov)
+						|| MatchCajPatternAddPath(path, f, Constants.CajNaming.TitlePage, bok)
+						|| MatchCajPatternAddPath(path, f, Constants.CajNaming.CopyrightPage, leg)
+						|| MatchCajPatternAddPath(path, f, Constants.CajNaming.Foreword, fow)
+						|| MatchCajPatternAddPath(path, f, Constants.CajNaming.Contents, cnt)
 						) {
 						m = true;
 						continue;
 					}
 				}
-				body.Add (path);
+				body.Add(path);
 			}
 			if (m == false) {
 				return false;
 			}
-			cov.Sort (StringComparer.OrdinalIgnoreCase);
-			bok.Sort (StringComparer.OrdinalIgnoreCase);
-			leg.Sort (StringComparer.OrdinalIgnoreCase);
-			fow.Sort (StringComparer.OrdinalIgnoreCase);
-			cnt.Sort (StringComparer.OrdinalIgnoreCase);
-			body.Sort (StringComparer.OrdinalIgnoreCase);
+			cov.Sort(StringComparer.OrdinalIgnoreCase);
+			bok.Sort(StringComparer.OrdinalIgnoreCase);
+			leg.Sort(StringComparer.OrdinalIgnoreCase);
+			fow.Sort(StringComparer.OrdinalIgnoreCase);
+			cnt.Sort(StringComparer.OrdinalIgnoreCase);
+			body.Sort(StringComparer.OrdinalIgnoreCase);
 			int p = 0;
 			if (cov.Count == 2) {
 				fileList[0] = cov[0];
 				++p;
 			}
 			else {
-				p = CopyItem (fileList, cov, p);
+				p = CopyItem(fileList, cov, p);
 			}
-			p = CopyItem (fileList, bok, p);
-			p = CopyItem (fileList, leg, p);
-			p = CopyItem (fileList, fow, p);
-			p = CopyItem (fileList, cnt, p);
-			p = CopyItem (fileList, body, p);
+			p = CopyItem(fileList, bok, p);
+			p = CopyItem(fileList, leg, p);
+			p = CopyItem(fileList, fow, p);
+			p = CopyItem(fileList, cnt, p);
+			p = CopyItem(fileList, body, p);
 			if (cov.Count == 2) {
 				fileList[p] = cov[1];
 			}
 			return true;
 		}
 
-		private static int CopyItem (string[] fileList, List<string> list, int position) {
-			list.CopyTo (fileList, position);
+		private static int CopyItem(string[] fileList, List<string> list, int position) {
+			list.CopyTo(fileList, position);
 			position += list.Count;
 			return position;
 		}
 
-		private static bool MatchCajPatternAddPath (string path, string text, string pattern, List<string> container) {
-			if (MatchCajPattern (text, pattern)) {
-				container.Add (path);
+		private static bool MatchCajPatternAddPath(string path, string text, string pattern, List<string> container) {
+			if (MatchCajPattern(text, pattern)) {
+				container.Add(path);
 				return true;
 			}
 			return false;
 		}
 
-		private static BookmarkSettings CreateCajBookmark (string text, string pattern, string title) {
-			if (MatchCajPattern (text, pattern) && text.EndsWith ("001")) {
-				if (text.EndsWith ("001")) {
-					return new BookmarkSettings (title);
+		private static BookmarkSettings CreateCajBookmark(string text, string pattern, string title) {
+			if (MatchCajPattern(text, pattern) && text.EndsWith("001")) {
+				if (text.EndsWith("001")) {
+					return new BookmarkSettings(title);
 				}
 				else {
 					return null;
 				}
 			}
-			return new BookmarkSettings (text);
+			return new BookmarkSettings(text);
 		}
 
-		private static bool MatchCajPattern (string text, string pattern) {
-			if (text.StartsWith (pattern, StringComparison.OrdinalIgnoreCase) == false) {
+		private static bool MatchCajPattern(string text, string pattern) {
+			if (text.StartsWith(pattern, StringComparison.OrdinalIgnoreCase) == false) {
 				return false;
 			}
 			int l = pattern.Length;
 			if (text.Length == l) {
 				return false;
 			}
-			foreach (var ch in text.Substring (l)) {
+			foreach (var ch in text.Substring(l)) {
 				if (ch < '0' || ch > '9') {
 					return false;
 				}

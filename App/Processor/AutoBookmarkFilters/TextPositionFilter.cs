@@ -4,26 +4,26 @@ using System.Text;
 
 namespace PDFPatcher.Processor
 {
-	[System.Diagnostics.DebuggerDisplay ("P {Position}: {MinValue}->{MaxValue}")]
+	[System.Diagnostics.DebuggerDisplay("P {Position}: {MinValue}->{MaxValue}")]
 	sealed class TextPositionFilter : AutoBookmarkFilter
 	{
 		public byte Position { get; private set; }
 		public float MaxValue { get; private set; }
 		public float MinValue { get; private set; }
 
-		public TextPositionFilter (byte position, float min, float max) {
-			this.Position = position;
-			this.MaxValue = max;
-			this.MinValue = min;
+		public TextPositionFilter(byte position, float min, float max) {
+			Position = position;
+			MaxValue = max;
+			MinValue = min;
 		}
 
-		internal override bool Matches (PDFPatcher.Model.AutoBookmarkContext context) {
+		internal override bool Matches(PDFPatcher.Model.AutoBookmarkContext context) {
 			if (context.TextLine == null) {
-				return MatchPosition (context.TextInfo.Region);
+				return MatchPosition(context.TextInfo.Region);
 			}
 			else {
 				foreach (var item in context.TextLine.Texts) {
-					if (MatchPosition (item.Region)) {
+					if (MatchPosition(item.Region)) {
 						return true;
 					}
 				}
@@ -31,7 +31,7 @@ namespace PDFPatcher.Processor
 			}
 		}
 
-		private bool MatchPosition (PDFPatcher.Model.Bound bound) {
+		private bool MatchPosition(PDFPatcher.Model.Bound bound) {
 			switch (Position) {
 				case 1: return bound.Top > MinValue && bound.Top < MaxValue;
 				case 2: return bound.Bottom > MinValue && bound.Bottom < MaxValue;
@@ -42,7 +42,7 @@ namespace PDFPatcher.Processor
 			}
 		}
 
-		internal override void Reset () {
+		internal override void Reset() {
 		}
 	}
 }

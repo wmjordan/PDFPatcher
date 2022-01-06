@@ -1,6 +1,6 @@
 ﻿using System;
-using PDFPatcher.Processor;
 using BrightIdeasSoftware;
+using PDFPatcher.Processor;
 
 namespace PDFPatcher.Functions.Editor
 {
@@ -8,20 +8,20 @@ namespace PDFPatcher.Functions.Editor
 	{
 		readonly SetTextStyleProcessor.Style _style;
 
-		public BookmarkStyleCommand (SetTextStyleProcessor.Style style) {
+		public BookmarkStyleCommand(SetTextStyleProcessor.Style style) {
 			_style = style;
 		}
 
-		public void Process (Controller controller, params string[] parameters) {
+		public void Process(Controller controller, params string[] parameters) {
 			var b = controller.View.Bookmark;
 			if (b.FocusedItem == null) {
 				return;
 			}
-			var i = b.GetFirstSelectedModel<Model.BookmarkElement> ();
+			var i = b.GetFirstSelectedModel<Model.BookmarkElement>();
 			if (i == null) {
 				return;
 			}
-			controller.ProcessBookmarks (new SetTextStyleProcessor (i, _style));
+			controller.ProcessBookmarks(new SetTextStyleProcessor(i, _style));
 		}
 
 	}

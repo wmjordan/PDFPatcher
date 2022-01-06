@@ -8,12 +8,12 @@ namespace PDFPatcher.Processor
 	{
 		#region IInfoDocProcessor 成员
 
-		public bool Process (System.Xml.XmlElement item) {
-			var d = item.GetAttributeNode (Constants.DestinationAttributes.View);
+		public bool Process(System.Xml.XmlElement item) {
+			var d = item.GetAttributeNode(Constants.DestinationAttributes.View);
 			if (d != null && d.Value != Constants.DestinationAttributes.ViewType.XYZ) {
 				d.Value = Constants.DestinationAttributes.ViewType.XYZ;
 			}
-			item.RemoveAttribute (Constants.Coordinates.ScaleFactor);
+			item.RemoveAttribute(Constants.Coordinates.ScaleFactor);
 			return true;
 		}
 

@@ -13,24 +13,24 @@ namespace PDFPatcher.Functions
 	{
 		System.Net.WebClient _UpdateChecker;
 
-		public UpdateForm () {
-			InitializeComponent ();
-			this.SetIcon (Properties.Resources.CheckUpdate);
+		public UpdateForm() {
+			InitializeComponent();
+			this.SetIcon(Properties.Resources.CheckUpdate);
 			Load += (s, args) => {
-				CheckNewVersion ();
+				CheckNewVersion();
 				var i = AppContext.CheckUpdateInterval;
 				_CheckUpdateIntervalBox.Select(i == 7 ? 0 : i == 14 ? 1 : i == 30 ? 2 : 3);
 			};
 			FormClosed += (s, args) => {
 				if (_UpdateChecker != null) {
-					_UpdateChecker.Dispose ();
+					_UpdateChecker.Dispose();
 				}
 			};
 			_HomePageButton.Click += (s, args) => {
-				CommonCommands.VisitHomePage ();
+				CommonCommands.VisitHomePage();
 			};
 			_DownloadButton.Click += (s, args) => {
-				System.Diagnostics.Process.Start (_DownloadButton.Tag.ToString ());
+				System.Diagnostics.Process.Start(_DownloadButton.Tag.ToString());
 			};
 			_CheckUpdateIntervalBox.SelectedIndexChanged += (s, args) => {
 				switch (_CheckUpdateIntervalBox.SelectedIndex) {
@@ -45,13 +45,13 @@ namespace PDFPatcher.Functions
 			};
 		}
 
-		private void CheckNewVersion () {
-			_UpdateChecker = new System.Net.WebClient ();
-			_InfoBox.AppendLine ("正在检查新版本，请稍候……");
+		private void CheckNewVersion() {
+			_UpdateChecker = new System.Net.WebClient();
+			_InfoBox.AppendLine("正在检查新版本，请稍候……");
 			_UpdateChecker.DownloadDataCompleted += (s, args) => {
-				_InfoBox.Clear ();
+				_InfoBox.Clear();
 				if (args.Error != null) {
-					_InfoBox.AppendText ("检查新版本失败：" + args.Error.Message);
+					_InfoBox.AppendText("检查新版本失败：" + args.Error.Message);
 					goto Exit;
 				}
 				try {
@@ -60,13 +60,13 @@ namespace PDFPatcher.Functions
 					CheckResult(x);
 				}
 				catch (Exception) {
-					Common.FormHelper.ErrorBox ("版本信息文件格式错误，请稍候重试。");
+					Common.FormHelper.ErrorBox("版本信息文件格式错误，请稍候重试。");
 				}
 			Exit:
-				_UpdateChecker.Dispose ();
+				_UpdateChecker.Dispose();
 				_UpdateChecker = null;
 			};
-			_UpdateChecker.DownloadDataAsync (new Uri (Constants.AppUpdateFile));
+			_UpdateChecker.DownloadDataAsync(new Uri(Constants.AppUpdateFile));
 		}
 
 		private void CheckResult(System.Xml.XmlDocument x) {

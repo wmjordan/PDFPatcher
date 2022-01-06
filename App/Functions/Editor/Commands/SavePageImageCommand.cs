@@ -9,10 +9,10 @@ namespace PDFPatcher.Functions.Editor
 	{
 		static SaveFileDialog _dialog;
 
-		public void Process (Controller controller, params string[] parameters) {
+		public void Process(Controller controller, params string[] parameters) {
 			var v = controller.View.Viewer;
 			var l = v.PinPoint;
-			var p = v.TransposeVirtualImageToPagePosition (l.X, l.Y);
+			var p = v.TransposeVirtualImageToPagePosition(l.X, l.Y);
 			_dialog = InitDialog();
 			_dialog.FileName = ((FilePath)controller.Model.DocumentPath).FileNameWithoutExtension + "." + p.Page;
 
