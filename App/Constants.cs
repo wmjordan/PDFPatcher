@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using E = System.Text.Encoding;
 using iTextSharp.text.pdf;
+using E = System.Text.Encoding;
 
 namespace PDFPatcher
 {
@@ -298,7 +298,8 @@ namespace PDFPatcher
 
 		#region 页码范围
 		internal const string PageRange = "页码范围";
-		internal static class PageFilterTypes {
+		internal static class PageFilterTypes
+		{
 			internal const string ThisName = "页码筛选";
 			internal const string AllPages = "所有页";
 			internal static readonly string[] Names = { AllPages, "单数页", "双数页" };

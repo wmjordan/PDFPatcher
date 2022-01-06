@@ -15,26 +15,26 @@ namespace PDFPatcher.Functions
 
 		bool IsMaximized;
 
-		public void Maximize (Form targetForm) {
+		public void Maximize(Form targetForm) {
 			if (!IsMaximized) {
 				IsMaximized = true;
 				if (targetForm.WindowState == FormWindowState.Maximized) {
 					targetForm.WindowState = FormWindowState.Normal;
 				}
-				Save (targetForm);
+				Save(targetForm);
 				targetForm.FormBorderStyle = FormBorderStyle.None;
 				targetForm.TopMost = true;
-				targetForm.Bounds = Screen.FromControl (targetForm).Bounds;
+				targetForm.Bounds = Screen.FromControl(targetForm).Bounds;
 			}
 		}
 
-		void Save (Form targetForm) {
+		void Save(Form targetForm) {
 			brdStyle = targetForm.FormBorderStyle;
 			topMost = targetForm.TopMost;
 			bounds = targetForm.Bounds;
 		}
 
-		public void Restore (Form targetForm) {
+		public void Restore(Form targetForm) {
 			targetForm.FormBorderStyle = brdStyle;
 			targetForm.TopMost = topMost;
 			targetForm.Bounds = bounds;

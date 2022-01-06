@@ -13,7 +13,7 @@ namespace PDFPatcher.Functions
 		string _copiedFont;
 
 		FontUtility.FriendlyFontName[] _Fonts;
-		TypedObjectListView<FontSubstitution> _SubstitutionsBox;
+		readonly TypedObjectListView<FontSubstitution> _SubstitutionsBox;
 		List<FontSubstitution> _Substitutions;
 		[Browsable(false)]
 		public List<FontSubstitution> Substitutions {
@@ -22,21 +22,21 @@ namespace PDFPatcher.Functions
 		}
 		public PatcherOptions Options { get; set; }
 
-		public FontSubstitutionsEditor () {
-			InitializeComponent ();
+		public FontSubstitutionsEditor() {
+			InitializeComponent();
 			_FontSubstitutionsBox.FormatRow += (s, args) => args.Item.SubItems[0].Text = ValueHelper.ToText(args.RowIndex + 1);
 
 			_FontSubstitutionsBox.FullRowSelect = true;
 			_FontSubstitutionsBox.HideSelection = false;
 			_FontSubstitutionsBox.LabelEdit = false;
-			_SubstitutionsBox = new TypedObjectListView<FontSubstitution> (_FontSubstitutionsBox);
+			_SubstitutionsBox = new TypedObjectListView<FontSubstitution>(_FontSubstitutionsBox);
 			_FontSubstitutionsBox.CellEditStarting += (s, args) => {
 				if (args.Column == _SubstitutionColumn) {
-					EditSubstitutionItem (args);
+					EditSubstitutionItem(args);
 				}
 				else if (args.Column == _CharSubstitutionColumn) {
-					using (var f = new FontCharSubstitutionForm (args.RowObject as FontSubstitution)) {
-						f.ShowDialog (this);
+					using (var f = new FontCharSubstitutionForm(args.RowObject as FontSubstitution)) {
+						f.ShowDialog(this);
 					}
 					args.Cancel = true;
 				}
@@ -44,47 +44,45 @@ namespace PDFPatcher.Functions
 			_FontSubstitutionsBox.CellEditFinishing += (s, args) => {
 				if (args.Column == _SubstitutionColumn) {
 					var c = args.Control as ComboBox;
-					if (c.FindString (c.Text) != -1) {
+					if (c.FindString(c.Text) != -1) {
 						args.NewValue = c.Text;
 					}
 				}
 			};
-			new TypedColumn<FontSubstitution> (_OriginalFontColumn)
-			{
+			new TypedColumn<FontSubstitution>(_OriginalFontColumn) {
 				AspectGetter = (o) => o.OriginalFont,
 				AspectPutter = (o, v) => o.OriginalFont = v as string
 			};
-			new TypedColumn<FontSubstitution> (_SubstitutionColumn)
-			{
+			new TypedColumn<FontSubstitution>(_SubstitutionColumn) {
 				AspectGetter = (o) => o.Substitution,
 				AspectPutter = (o, v) => o.Substitution = v as string
 			};
-			new TypedColumn<FontSubstitution> (_CharSubstitutionColumn) {
+			new TypedColumn<FontSubstitution>(_CharSubstitutionColumn) {
 				AspectGetter = (o) => String.IsNullOrEmpty(o.OriginalCharacters) ? "添加" : "修改"
 			};
 		}
 
-		void EditSubstitutionItem (CellEditEventArgs args) {
+		void EditSubstitutionItem(CellEditEventArgs args) {
 			var cb = new ComboBox {
 				AutoCompleteSource = AutoCompleteSource.ListItems,
 				AutoCompleteMode = AutoCompleteMode.SuggestAppend,
 				Bounds = args.CellBounds
 			};
 			var b = cb.Items;
-			b.Add (String.Empty);
+			b.Add(String.Empty);
 			var sf = (args.RowObject as FontSubstitution).Substitution;
-			bool cf = String.IsNullOrEmpty (sf) == false;
+			bool cf = String.IsNullOrEmpty(sf) == false;
 			if (cf) {
-				sf = sf.ToUpperInvariant ();
+				sf = sf.ToUpperInvariant();
 			}
-			if (_Fonts.HasContent () == false) {
+			if (_Fonts.HasContent() == false) {
 				_Fonts = FontUtility.InstalledFonts;
 			}
 			var l = _Fonts.Length;
 			string fn;
 			for (int i = 0; i < l; i++) {
-				fn = _Fonts[i].ToString ();
-				b.Add (fn);
+				fn = _Fonts[i].ToString();
+				b.Add(fn);
 				if (String.Equals(fn, sf, StringComparison.OrdinalIgnoreCase)) {
 					cb.SelectedIndex = i + 1;
 				}
@@ -101,10 +99,10 @@ namespace PDFPatcher.Functions
 			};
 		}
 
-		void FontSubstitutionsEditor_Load (object sender, EventArgs e) {
-            if (DesignMode) {
-                return;
-            }
+		void FontSubstitutionsEditor_Load(object sender, EventArgs e) {
+			if (DesignMode) {
+				return;
+			}
 			_EmbedLegacyCjkFontsBox.Checked = Options.EmbedFonts;
 			_EmbedLegacyCjkFontsBox.CheckedChanged += (s, args) => Options.EmbedFonts = _EmbedLegacyCjkFontsBox.Checked;
 			_TrimTrailingWhiteSpaceBox.Checked = Options.TrimTrailingWhiteSpace;
@@ -119,58 +117,58 @@ namespace PDFPatcher.Functions
 					= _EnableFontSubstitutionsBox.Checked;
 			};
 			_EnableFontSubstitutionsBox.Checked = Options.EnableFontSubstitutions;
-			_FontSubstitutionMenu.Invalidate ();
+			_FontSubstitutionMenu.Invalidate();
 		}
 
-		void _AddPageLabelButton_Click (object sender, EventArgs e) {
+		void _AddPageLabelButton_Click(object sender, EventArgs e) {
 			var s = new FontSubstitution { OriginalFont = "请输入原字体名称" };
-			_Substitutions.Add (s);
-			_FontSubstitutionsBox.AddObject (s);
-			_FontSubstitutionsBox.EditSubItem (_FontSubstitutionsBox.GetLastItemInDisplayOrder (), 1);
+			_Substitutions.Add(s);
+			_FontSubstitutionsBox.AddObject(s);
+			_FontSubstitutionsBox.EditSubItem(_FontSubstitutionsBox.GetLastItemInDisplayOrder(), 1);
 		}
 
-		void _RemovePageLabelButton_Click (object sender, EventArgs e) {
-			_FontSubstitutionsBox.RemoveObjects (_FontSubstitutionsBox.SelectedObjects);
-			_Substitutions.Clear ();
-			_Substitutions.AddRange (_SubstitutionsBox.Objects);
+		void _RemovePageLabelButton_Click(object sender, EventArgs e) {
+			_FontSubstitutionsBox.RemoveObjects(_FontSubstitutionsBox.SelectedObjects);
+			_Substitutions.Clear();
+			_Substitutions.AddRange(_SubstitutionsBox.Objects);
 		}
 
-		void _ListDocumentFontButton_Click (object sender, EventArgs e) {
-			using (var f = new DocumentFontListForm ()) {
+		void _ListDocumentFontButton_Click(object sender, EventArgs e) {
+			using (var f = new DocumentFontListForm()) {
 				f.SubstitutionsEditor = this;
-				f.ShowDialog ();
+				f.ShowDialog();
 			}
 		}
 
-		internal void AddFonts (IEnumerable<string> fonts) {
-			var s = new HashSet<string> (StringComparer.CurrentCultureIgnoreCase);
+		internal void AddFonts(IEnumerable<string> fonts) {
+			var s = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
 			foreach (var item in _Substitutions) {
-				s.Add (item.OriginalFont);
+				s.Add(item.OriginalFont);
 			}
 			foreach (var item in fonts) {
-				if (s.Contains (item)) {
+				if (s.Contains(item)) {
 					continue;
 				}
-				_Substitutions.Add (new FontSubstitution () { OriginalFont = item });
+				_Substitutions.Add(new FontSubstitution() { OriginalFont = item });
 			}
 			_SubstitutionsBox.Objects = _Substitutions;
 		}
 
-		void _FontSubstitutionMenu_ItemClicked (object sender, ToolStripItemClickedEventArgs e) {
+		void _FontSubstitutionMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e) {
 			if (e.ClickedItem == _CopySubstitutionFont) {
-				_copiedFont = _FontSubstitutionsBox.GetFirstSelectedModel<FontSubstitution> ().Substitution;
+				_copiedFont = _FontSubstitutionsBox.GetFirstSelectedModel<FontSubstitution>().Substitution;
 			}
 			else if (e.ClickedItem == _PasteSubstitutionFont) {
 				foreach (var item in _SubstitutionsBox.SelectedObjects) {
 					item.Substitution = _copiedFont;
 				}
-				_FontSubstitutionsBox.RefreshSelectedObjects ();
+				_FontSubstitutionsBox.RefreshSelectedObjects();
 			}
 		}
 
-		void _FontSubstitutionMenu_Opening (object sender, CancelEventArgs e) {
+		void _FontSubstitutionMenu_Opening(object sender, CancelEventArgs e) {
 			_CopySubstitutionFont.Enabled = (_FontSubstitutionsBox.SelectedIndex != -1);
-			_PasteSubstitutionFont.Enabled = String.IsNullOrEmpty (_copiedFont) == false;
+			_PasteSubstitutionFont.Enabled = String.IsNullOrEmpty(_copiedFont) == false;
 		}
 
 	}

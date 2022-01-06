@@ -8,9 +8,10 @@ using CC = System.Runtime.InteropServices.CallingConvention;
 namespace MuPdfSharp
 {
 	[DebuggerDisplay("Name={Name}")]
-	public sealed class MuFont {
-		ContextHandle _context;
-		IntPtr _Font;
+	public sealed class MuFont
+	{
+		readonly ContextHandle _context;
+		readonly IntPtr _Font;
 
 		public unsafe string Name => new string(NativeMethods.GetFontName(_context, _Font));
 		public MuFontFlags Attributes => NativeMethods.GetFontFlags(_Font);
@@ -23,7 +24,8 @@ namespace MuPdfSharp
 	}
 
 	[Flags]
-	public enum MuFontFlags : uint {
+	public enum MuFontFlags : uint
+	{
 		None = 0,
 		IsMono = 1,
 		IsSerif = 1 << 1,
@@ -41,14 +43,14 @@ namespace MuPdfSharp
 	[DebuggerDisplay("BBox={BBox}")]
 	public sealed class MuTextPage : IMuBoundedElement, IDisposable
 	{
-		TextPageHandle _handle;
+		readonly TextPageHandle _handle;
 		NativeTextPage _TextPage;
 		IEnumerable<MuTextBlock> _Blocks;
 
 		public Rectangle BBox => _TextPage.MediaBox;
 		public IEnumerable<MuTextBlock> Blocks => _Blocks ?? (_Blocks = MuContentBlock.GetTextBlocks(_TextPage._FirstBlock));
 
-		internal MuTextPage (TextPageHandle nativePage) {
+		internal MuTextPage(TextPageHandle nativePage) {
 			_handle = nativePage;
 			_TextPage = _handle.MarshalAs<NativeTextPage>();
 		}
@@ -68,8 +70,8 @@ namespace MuPdfSharp
 
 		struct NativeTextPage
 		{
-			IntPtr /*fz_pool*/ _Pool;
-			Rectangle _MediaBox;
+			readonly IntPtr /*fz_pool*/ _Pool;
+			readonly Rectangle _MediaBox;
 			/* fz_text_block */
 			internal IntPtr _FirstBlock, _LastBlock;
 
@@ -111,9 +113,11 @@ namespace MuPdfSharp
 		internal static IEnumerable<MuContentBlock> GetBlocks(IntPtr firstBlock) {
 			foreach (var item in firstBlock.EnumerateLinkedList<NativeContentBlock>()) {
 				switch (item.Data.Type) {
-					case ContentBlockType.Text: yield return item.Data.ToMuBlock();
+					case ContentBlockType.Text:
+						yield return item.Data.ToMuBlock();
 						break;
-					case ContentBlockType.Image: yield return item.Ptr.MarshalAs<NativeImageBlock>().ToMuBlock();
+					case ContentBlockType.Image:
+						yield return item.Ptr.MarshalAs<NativeImageBlock>().ToMuBlock();
 						break;
 				}
 			}
@@ -128,32 +132,34 @@ namespace MuPdfSharp
 
 		struct NativeImageBlock
 		{
-			ContentBlockType _Type;
-			Rectangle _BBox;
+			readonly ContentBlockType _Type;
+			readonly Rectangle _BBox;
+
 			/* union {
 				struct { fz_stext_line *first_line, *last_line; } t;
 				struct { fz_matrix transform; fz_image *image; } i;
 			} u; */
-			Matrix _Transform;
-			IntPtr _Image;
-			IntPtr _PreviousBlock, _NextBlock;
+			readonly Matrix _Transform;
+			readonly IntPtr _Image;
+			readonly IntPtr _PreviousBlock, _NextBlock;
 			internal MuContentBlock ToMuBlock() {
 				return new MuImageBlock(_BBox, _Transform, _Image);
 			}
 		}
 		struct NativeContentBlock : Interop.ILinkedList
 		{
-			ContentBlockType _Type;
-			Rectangle _BBox;
+			readonly ContentBlockType _Type;
+			readonly Rectangle _BBox;
+
 			/* union {
 				struct { fz_stext_line *first_line, *last_line; } t;
 				struct { fz_matrix transform; fz_image *image; } i;
 			} u; */
-			IntPtr _Ptr1, _Ptr2, a,b,c,d,e;
-			IntPtr _PreviousBlock, _NextBlock;
+			readonly IntPtr _Ptr1, _Ptr2, a, b, c, d, e;
+			readonly IntPtr _PreviousBlock, _NextBlock;
 
-			IntPtr Interop.ILinkedList.Next { get { return _NextBlock; } }
-			internal ContentBlockType Type { get { return _Type; } }
+			IntPtr Interop.ILinkedList.Next => _NextBlock;
+			internal ContentBlockType Type => _Type;
 			internal MuContentBlock ToMuBlock() {
 				return new MuTextBlock(_BBox, _Ptr1, _Ptr2);
 			}
@@ -162,9 +168,9 @@ namespace MuPdfSharp
 
 	public sealed class MuImageBlock : MuContentBlock, IMuBoundedElement
 	{
-		Rectangle _BBox;
-		Matrix _Matrix;
-		IntPtr _Image;
+		readonly Rectangle _BBox;
+		readonly Matrix _Matrix;
+		readonly IntPtr _Image;
 
 		internal MuImageBlock(Rectangle bbox, Matrix matrix, IntPtr image) {
 			_BBox = bbox;
@@ -178,8 +184,8 @@ namespace MuPdfSharp
 
 	public sealed class MuTextBlock : MuContentBlock, IMuBoundedElement
 	{
-		Rectangle _BBox;
-		IntPtr _FirstLine, _LastLine;
+		readonly Rectangle _BBox;
+		readonly IntPtr _FirstLine, _LastLine;
 
 		IEnumerable<MuTextLine> _Lines;
 		public override Rectangle BBox => _BBox;
@@ -206,19 +212,19 @@ namespace MuPdfSharp
 		public string Text => _Text ?? (_Text = GetText());
 		public MuTextChar FirstCharacter => MuTextChar.GetChar(_textLine._FirstChar);
 
-		MuTextLine (IntPtr textLine) {
-			_textLine = textLine.MarshalAs<NativeTextLine> ();
+		MuTextLine(IntPtr textLine) {
+			_textLine = textLine.MarshalAs<NativeTextLine>();
 		}
 
-		string GetText () {
-			var sb = new System.Text.StringBuilder (50);
+		string GetText() {
+			var sb = new System.Text.StringBuilder(50);
 			foreach (var ch in Characters) {
-				sb.Append (char.ConvertFromUtf32 (ch.Unicode));
+				sb.Append(char.ConvertFromUtf32(ch.Unicode));
 			}
-			return sb.ToString ();
+			return sb.ToString();
 		}
 
-		internal static IEnumerable<MuTextLine> GetLines (IntPtr firstLine) {
+		internal static IEnumerable<MuTextLine> GetLines(IntPtr firstLine) {
 			foreach (var item in firstLine.EnumerateLinkedList<NativeTextLine>()) {
 				yield return new MuTextLine(item.Ptr);
 			}
@@ -227,15 +233,18 @@ namespace MuPdfSharp
 		internal struct NativeTextLine : IMuBoundedElement, Interop.ILinkedList
 		{
 			//int wmode; /* 0 for horizontal, 1 for vertical */
-			int _WMode;
+			readonly int _WMode;
+
 			//fz_point dir; /* normalized direction of baseline */
-			Point _Point;
+			readonly Point _Point;
+
 			//fz_rect bbox;
-			Rectangle _BBox;
+			readonly Rectangle _BBox;
 			//fz_stext_char *first_char, *last_char;
 			internal IntPtr _FirstChar, _LastChar;
+
 			//fz_stext_line *prev, *next;
-			IntPtr _PrevLine, _NextLine;
+			readonly IntPtr _PrevLine, _NextLine;
 
 			IntPtr Interop.ILinkedList.Next => _NextLine;
 
@@ -243,11 +252,11 @@ namespace MuPdfSharp
 		}
 	}
 
-	[DebuggerDisplay ("Point={Point}; Size={Size}, Char={System.Char.ConvertFromUtf32(Unicode)}({Unicode}); Font={FontID}")]
+	[DebuggerDisplay("Point={Point}; Size={Size}, Char={System.Char.ConvertFromUtf32(Unicode)}({Unicode}); Font={FontID}")]
 	public sealed class MuTextChar : IMuBoundedElement
 	{
 		NativeTextChar _textChar;
-		Rectangle _Box;
+		readonly Rectangle _Box;
 
 		public Point Point => _textChar._Point;
 		public Rectangle BBox => _Box.IsEmpty ? Quad.ToRectangle() : _Box;
@@ -256,7 +265,7 @@ namespace MuPdfSharp
 		public float Size => _textChar._Size;
 		public IntPtr FontID => _textChar._Font;
 
-		MuTextChar (NativeTextChar textChar) {
+		MuTextChar(NativeTextChar textChar) {
 			_textChar = textChar;
 		}
 		internal static MuTextChar GetChar(IntPtr charPtr) {
@@ -311,7 +320,7 @@ namespace MuPdfSharp
 			internal int _Unicode;
 			// color
 			internal int _Color; // sRGB hex value
-			//fz_point origin;
+								 //fz_point origin;
 			internal Point _Point;
 			//fz_quad quad;
 			internal Quad _Quad;

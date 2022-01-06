@@ -15,11 +15,11 @@ namespace PDFPatcher
 		public bool RemoveOrphanBookmarks { get; set; }
 		[XmlAttribute("解除文档限制")]
 		public bool RemoveDocumentRestrictions { get; set; }
-		[XmlAttribute ("添加编号")]
+		[XmlAttribute("添加编号")]
 		public bool NumberFileNames { get; set; }
 		[XmlAttribute("拆分方式")]
 		public int SeparatingMode { get; set; }
-		[XmlAttribute ("按页数拆分")]
+		[XmlAttribute("按页数拆分")]
 		public int SeperateByPage { get; set; }
 
 		[XmlIgnore]
@@ -27,7 +27,7 @@ namespace PDFPatcher
 		[XmlIgnore]
 		public string ExcludePageRanges { get; set; }
 
-		public ExtractPageOptions () {
+		public ExtractPageOptions() {
 			KeepBookmarks = true;
 			KeepDocumentProperties = true;
 			RemoveDocumentRestrictions = true;

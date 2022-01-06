@@ -3,21 +3,21 @@ using System.Xml.Serialization;
 
 namespace PDFPatcher.Model
 {
-	[XmlRoot (Constants.Info.ThisName)]
+	[XmlRoot(Constants.Info.ThisName)]
 	public class GeneralInfo
 	{
-		[XmlAttribute ("指定文档元数据属性")]
+		[XmlAttribute("指定文档元数据属性")]
 		public bool SpecifyMetaData { get; set; }
-		[XmlAttribute ("重写XML元数据属性")]
+		[XmlAttribute("重写XML元数据属性")]
 		public bool RewriteXmp { get; set; }
 
-		[XmlAttribute (Constants.Info.Title)]
+		[XmlAttribute(Constants.Info.Title)]
 		public string Title { get; set; }
-		[XmlAttribute (Constants.Info.Author)]
+		[XmlAttribute(Constants.Info.Author)]
 		public string Author { get; set; }
-		[XmlAttribute (Constants.Info.Subject)]
+		[XmlAttribute(Constants.Info.Subject)]
 		public string Subject { get; set; }
-		[XmlAttribute (Constants.Info.Keywords)]
+		[XmlAttribute(Constants.Info.Keywords)]
 		public string Keywords { get; set; }
 
 		[XmlIgnore]

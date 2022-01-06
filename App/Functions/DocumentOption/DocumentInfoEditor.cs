@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
 using System.Data;
+using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using PDFPatcher.Model;
@@ -28,24 +28,24 @@ namespace PDFPatcher.Functions
 			}
 		}
 
-		public DocumentInfoEditor () {
-			InitializeComponent ();
+		public DocumentInfoEditor() {
+			InitializeComponent();
 
 		}
 
-		void DocumentInfoEditor_Load (object sender, EventArgs e) {
+		void DocumentInfoEditor_Load(object sender, EventArgs e) {
 			if (DesignMode) {
 				return;
 			}
 			_settingsLockdown = true;
 			_TitleBox.ContextMenuStrip = _SubjectBox.ContextMenuStrip = _AuthorBox.ContextMenuStrip = _KeywordsBox.ContextMenuStrip = _PropertyMacroMenu;
-			_PropertyMacroMenu.AddInsertMacroMenuItem (Constants.FileNameMacros.FileName);
-			_PropertyMacroMenu.AddInsertMacroMenuItem (Constants.FileNameMacros.FolderName);
+			_PropertyMacroMenu.AddInsertMacroMenuItem(Constants.FileNameMacros.FileName);
+			_PropertyMacroMenu.AddInsertMacroMenuItem(Constants.FileNameMacros.FolderName);
 			_PropertyMacroMenu.ItemClicked += _PropertyMacroMenu.ProcessInsertMacroCommand;
 			_settingsLockdown = false;
 		}
 
-		void DocumentInfoChanged (object sender, EventArgs e) {
+		void DocumentInfoChanged(object sender, EventArgs e) {
 			if (_settingsLockdown) {
 				return;
 			}

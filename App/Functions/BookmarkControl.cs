@@ -11,8 +11,8 @@ namespace PDFPatcher
 		//private string[] supportedBookmarkTypes;
 		internal event EventHandler<EventArgs> BrowseForFile;
 
-		public BookmarkControl () {
-			InitializeComponent ();
+		public BookmarkControl() {
+			InitializeComponent();
 			//supportedBookmarkTypes = defaultBookmarkTypes;
 		}
 
@@ -21,7 +21,7 @@ namespace PDFPatcher
 
 		internal FileDialog FileDialog => _UseForBookmarkExport ? (FileDialog)_SaveBookmarkBox : _OpenBookmarkBox;
 
-		[Description ("标签文本上显示的文本")]
+		[Description("标签文本上显示的文本")]
 		public string LabelText {
 			get => label1.Text;
 			set => label1.Text = value;
@@ -36,8 +36,8 @@ namespace PDFPatcher
 
 		private bool _UseForBookmarkExport;
 		///<summary>获取或指定是否用于导出书签。</summary>
-		[DefaultValue (false)]
-		[Description ("点击浏览按钮时是否打开保存对话框")]
+		[DefaultValue(false)]
+		[Description("点击浏览按钮时是否打开保存对话框")]
 		public bool UseForBookmarkExport {
 			get => _UseForBookmarkExport;
 			set =>
@@ -45,10 +45,10 @@ namespace PDFPatcher
 				_UseForBookmarkExport = value;
 		}
 
-		private void _BrowseSourcePdfButton_Click (object sender, EventArgs e) {
+		private void _BrowseSourcePdfButton_Click(object sender, EventArgs e) {
 			BrowseForFile?.Invoke(sender, e);
 			var sourceFile = (AppContext.SourceFiles != null && AppContext.SourceFiles.Length > 0) ? AppContext.SourceFiles[0] : String.Empty;
-			if (FileHelper.IsPathValid (_BookmarkBox.Text) && System.IO.Path.GetFileName (_BookmarkBox.Text).Length > 0) {
+			if (FileHelper.IsPathValid(_BookmarkBox.Text) && System.IO.Path.GetFileName(_BookmarkBox.Text).Length > 0) {
 				var p = new FilePath(_BookmarkBox.Text);
 				_OpenBookmarkBox.SetLocation(p);
 				_SaveBookmarkBox.SetLocation(p);
@@ -59,11 +59,11 @@ namespace PDFPatcher
 				_OpenBookmarkBox.SetLocation(p);
 			}
 			if (_UseForBookmarkExport) {
-				if (_SaveBookmarkBox.ShowDialog () == DialogResult.OK) {
+				if (_SaveBookmarkBox.ShowDialog() == DialogResult.OK) {
 					_BookmarkBox.Text = _SaveBookmarkBox.FileName;
 				}
 			}
-			else if (_OpenBookmarkBox.ShowDialog () == DialogResult.OK) {
+			else if (_OpenBookmarkBox.ShowDialog() == DialogResult.OK) {
 				if (_OpenBookmarkBox.FileName == _BookmarkBox.Text) {
 					return;
 				}
@@ -71,21 +71,21 @@ namespace PDFPatcher
 			}
 		}
 
-		private void _BookmarkBox_DragEnter (object sender, DragEventArgs e) {
+		private void _BookmarkBox_DragEnter(object sender, DragEventArgs e) {
 			//Common.Form.FeedbackDragFileOver (e, supportedBookmarkTypes);
-			e.FeedbackDragFileOver (Constants.FileExtensions.AllBookmarkExtension);
+			e.FeedbackDragFileOver(Constants.FileExtensions.AllBookmarkExtension);
 		}
 
-		private void _BookmarkBox_DragDrop (object sender, DragEventArgs e) {
+		private void _BookmarkBox_DragDrop(object sender, DragEventArgs e) {
 			//Common.Form.DropFileOver ((Control)sender, e, supportedBookmarkTypes);
-			((Control)sender).DropFileOver (e, Constants.FileExtensions.AllBookmarkExtension);
+			((Control)sender).DropFileOver(e, Constants.FileExtensions.AllBookmarkExtension);
 		}
 
-		private void _BookmarkBox_TextChanged (object sender, EventArgs e) {
+		private void _BookmarkBox_TextChanged(object sender, EventArgs e) {
 			AppContext.BookmarkFile = _BookmarkBox.Text;
 		}
 
-		private void BookmarkControl_Show (object sender, EventArgs e) {
+		private void BookmarkControl_Show(object sender, EventArgs e) {
 			var t = _BookmarkBox.Text;
 			if (Visible && AppContext.MainForm != null) {
 				// _BookmarkBox.DataSource = new BindingList<string> (_UseForBookmarkExport ? ContextData.Recent.SavedInfoDocuments : ContextData.Recent.InfoDocuments);

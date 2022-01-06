@@ -320,10 +320,10 @@ namespace PDFPatcher.Processor.Imaging
 
 			int w = b.Width, h = b.Height;
 			var hbm = b.GetHbitmap(); // this is step (1)
-			//
-			// Step (2): create the monochrome bitmap.
-			// "BITMAPINFO" is an interop-struct which we define below.
-			// In GDI terms, it's a BITMAPHEADERINFO followed by an array of two RGBQUADs
+									  //
+									  // Step (2): create the monochrome bitmap.
+									  // "BITMAPINFO" is an interop-struct which we define below.
+									  // In GDI terms, it's a BITMAPHEADERINFO followed by an array of two RGBQUADs
 			var bmi = new NativeMethods.BITMAPINFO {
 				biSize = 40,  // the size of the BITMAPHEADERINFO struct
 				biWidth = w,

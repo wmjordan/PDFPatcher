@@ -1,32 +1,32 @@
 ﻿namespace Cyotek.Windows.Forms.Demo
 {
-  // Cyotek ImageBox
-  // Copyright (c) 2010-2015 Cyotek Ltd.
-  // http://cyotek.com
-  // http://cyotek.com/blog/tag/imagebox
+	// Cyotek ImageBox
+	// Copyright (c) 2010-2015 Cyotek Ltd.
+	// http://cyotek.com
+	// http://cyotek.com/blog/tag/imagebox
 
-  // Licensed under the MIT License. See license.txt for the full text.
+	// Licensed under the MIT License. See license.txt for the full text.
 
-  // If you use this control in your applications, attribution, donations or contributions are welcome.
+	// If you use this control in your applications, attribution, donations or contributions are welcome.
 
-  internal enum DragHandleAnchor
-  {
-    None,
+	internal enum DragHandleAnchor
+	{
+		None,
 
-    TopLeft,
+		TopLeft,
 
-    TopCenter,
+		TopCenter,
 
-    TopRight,
+		TopRight,
 
-    MiddleLeft,
+		MiddleLeft,
 
-    MiddleRight,
+		MiddleRight,
 
-    BottomLeft,
+		BottomLeft,
 
-    BottomCenter,
+		BottomCenter,
 
-    BottomRight
-  }
+		BottomRight
+	}
 }

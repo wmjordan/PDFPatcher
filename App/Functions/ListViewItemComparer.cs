@@ -13,18 +13,18 @@ namespace PDFPatcher
 		///<summary>获取或指定列表排序的方式。</summary>
 		public SortOrder SortOrder { get; }
 
-		public ListViewItemComparer () {
+		public ListViewItemComparer() {
 			Col = 0;
 		}
-		public ListViewItemComparer (int column) {
+		public ListViewItemComparer(int column) {
 			Col = column;
 		}
-		public ListViewItemComparer (int column, bool useSmartSort) {
+		public ListViewItemComparer(int column, bool useSmartSort) {
 			Col = column;
 			UseSmartSort = useSmartSort;
 			SortOrder = SortOrder.Ascending;
 		}
-		public ListViewItemComparer (int column, bool useSmartSort, SortOrder sortOrder) {
+		public ListViewItemComparer(int column, bool useSmartSort, SortOrder sortOrder) {
 			Col = column;
 			UseSmartSort = useSmartSort;
 			SortOrder = sortOrder;
@@ -32,13 +32,13 @@ namespace PDFPatcher
 
 		#region IComparer 成员
 
-		int System.Collections.IComparer.Compare (object x, object y) {
+		int System.Collections.IComparer.Compare(object x, object y) {
 			if (SortOrder == SortOrder.None) {
 				return 0;
 			}
 			var a = ((ListViewItem)x).SubItems[Col].Text;
 			var b = ((ListViewItem)y).SubItems[Col].Text;
-			int r = UseSmartSort ? FileHelper.NumericAwareComparePath(a, b) : String.Compare (a, b);
+			int r = UseSmartSort ? FileHelper.NumericAwareComparePath(a, b) : String.Compare(a, b);
 			return (SortOrder == SortOrder.Ascending) ? r : -r;
 		}
 
@@ -53,19 +53,19 @@ namespace PDFPatcher
 		///<summary>获取列表排序的方式。</summary>
 		public SortOrder SortOrder { get; }
 
-		public OlvColumnSmartComparer (BrightIdeasSoftware.OLVColumn column, SortOrder sortOrder) {
+		public OlvColumnSmartComparer(BrightIdeasSoftware.OLVColumn column, SortOrder sortOrder) {
 			Column = column;
 			SortOrder = sortOrder;
 		}
 
 		#region IComparer 成员
 
-		int System.Collections.IComparer.Compare (object x, object y) {
+		int System.Collections.IComparer.Compare(object x, object y) {
 			if (SortOrder == SortOrder.None) {
 				return 0;
 			}
-			var a = Column.GetStringValue (x);
-			var b = Column.GetStringValue (y);
+			var a = Column.GetStringValue(x);
+			var b = Column.GetStringValue(y);
 			int r = FileHelper.NumericAwareComparePath(a, b);
 			return (SortOrder == SortOrder.Ascending) ? r : -r;
 		}

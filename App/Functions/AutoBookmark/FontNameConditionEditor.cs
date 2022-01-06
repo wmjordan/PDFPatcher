@@ -5,14 +5,14 @@ using PDFPatcher.Model;
 
 namespace PDFPatcher.Functions
 {
-	[ToolboxItem (false)]
+	[ToolboxItem(false)]
 	public partial class FontNameConditionEditor : UserControl, IFilterConditionEditor
 	{
 		AutoBookmarkCondition.FontNameCondition _filter;
 		bool _lock;
 
-		public FontNameConditionEditor () {
-			InitializeComponent ();
+		public FontNameConditionEditor() {
+			InitializeComponent();
 		}
 
 		#region ITextInfoFilterEditor 成员
@@ -31,7 +31,7 @@ namespace PDFPatcher.Functions
 
 		#endregion
 
-		private void ControlChanged (object sender, EventArgs e) {
+		private void ControlChanged(object sender, EventArgs e) {
 			if (_lock == false) {
 				if (sender == _FontNameBox) {
 					_filter.FontName = _FontNameBox.Text;
@@ -39,7 +39,7 @@ namespace PDFPatcher.Functions
 				else if (sender == _FullMatchBox) {
 					_filter.MatchFullName = _FullMatchBox.Checked;
 				}
-				EditAdjustmentForm.UpdateFilter (this);
+				EditAdjustmentForm.UpdateFilter(this);
 			}
 		}
 	}

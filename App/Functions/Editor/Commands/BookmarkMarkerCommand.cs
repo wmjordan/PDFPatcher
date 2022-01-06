@@ -22,38 +22,39 @@ namespace PDFPatcher.Functions.Editor
 			"_SelectCyanMarks",
 			"_SelectPurpleMarks"
 		};
-		internal static void RegisterCommands (CommandRegistry<Controller> registry) {
+		internal static void RegisterCommands(CommandRegistry<Controller> registry) {
 			foreach (var item in __commands) {
-				registry.Register (new BookmarkMarkerCommand (item), item);
+				registry.Register(new BookmarkMarkerCommand(item), item);
 			}
 		}
-		string _command;
 
-		public BookmarkMarkerCommand (string command) {
+		readonly string _command;
+
+		public BookmarkMarkerCommand(string command) {
 			_command = command;
 		}
 
-		public void Process (Controller controller, params string[] parameters) {
+		public void Process(Controller controller, params string[] parameters) {
 			var b = controller.View.Bookmark;
 			switch (_command) {
-				case "_MarkBookmarkRed": b.MarkItems (b.GetSelectedElements (true), Color.PeachPuff); break;
-				case "_MarkBookmarkYellow": b.MarkItems (b.GetSelectedElements (true), Color.Yellow); break;
-				case "_MarkBookmarkGreen": b.MarkItems (b.GetSelectedElements (true), Color.GreenYellow); break;
-				case "_MarkBookmarkBlue": b.MarkItems (b.GetSelectedElements (true), Color.LightSkyBlue); break;
-				case "_MarkBookmarkCyan": b.MarkItems (b.GetSelectedElements (true), Color.Aqua); break;
-				case "_MarkBookmarkPurple": b.MarkItems (b.GetSelectedElements (true), Color.Violet); break;
-				case "_UnmarkBookmark": b.UnmarkItems (b.GetSelectedElements (true)); break;
+				case "_MarkBookmarkRed": b.MarkItems(b.GetSelectedElements(true), Color.PeachPuff); break;
+				case "_MarkBookmarkYellow": b.MarkItems(b.GetSelectedElements(true), Color.Yellow); break;
+				case "_MarkBookmarkGreen": b.MarkItems(b.GetSelectedElements(true), Color.GreenYellow); break;
+				case "_MarkBookmarkBlue": b.MarkItems(b.GetSelectedElements(true), Color.LightSkyBlue); break;
+				case "_MarkBookmarkCyan": b.MarkItems(b.GetSelectedElements(true), Color.Aqua); break;
+				case "_MarkBookmarkPurple": b.MarkItems(b.GetSelectedElements(true), Color.Violet); break;
+				case "_UnmarkBookmark": b.UnmarkItems(b.GetSelectedElements(true)); break;
 				case "_ClearBookmarkMarks":
-					if (b.HasMarker && FormHelper.YesNoBox ("是否确定清除书签标记？") == DialogResult.Yes) {
-						b.ClearMarks (true);
+					if (b.HasMarker && FormHelper.YesNoBox("是否确定清除书签标记？") == DialogResult.Yes) {
+						b.ClearMarks(true);
 					}
 					break;
-				case "_SelectRedMarks": b.SelectMarkedItems (Color.PeachPuff); break;
-				case "_SelectYellowMarks": b.SelectMarkedItems (Color.Yellow); break;
-				case "_SelectGreenMarks": b.SelectMarkedItems (Color.GreenYellow); break;
-				case "_SelectBlueMarks": b.SelectMarkedItems (Color.LightSkyBlue); break;
-				case "_SelectCyanMarks": b.SelectMarkedItems (Color.Aqua); break;
-				case "_SelectPurpleMarks": b.SelectMarkedItems (Color.Violet); break;
+				case "_SelectRedMarks": b.SelectMarkedItems(Color.PeachPuff); break;
+				case "_SelectYellowMarks": b.SelectMarkedItems(Color.Yellow); break;
+				case "_SelectGreenMarks": b.SelectMarkedItems(Color.GreenYellow); break;
+				case "_SelectBlueMarks": b.SelectMarkedItems(Color.LightSkyBlue); break;
+				case "_SelectCyanMarks": b.SelectMarkedItems(Color.Aqua); break;
+				case "_SelectPurpleMarks": b.SelectMarkedItems(Color.Violet); break;
 			}
 		}
 

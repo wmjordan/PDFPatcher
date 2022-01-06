@@ -10,10 +10,10 @@ namespace PDFPatcher.Functions
 {
 	sealed class FileListHelper
 	{
-		public delegate void AddFilesCallback (string[] files, bool alertInvalidFiles);
+		public delegate void AddFilesCallback(string[] files, bool alertInvalidFiles);
 
-		ObjectListView _fileList;
-		public FileListHelper (ObjectListView fileList) {
+		readonly ObjectListView _fileList;
+		public FileListHelper(ObjectListView fileList) {
 			_fileList = fileList;
 		}
 
@@ -21,27 +21,27 @@ namespace PDFPatcher.Functions
 		/// 设置 PDF 文件列表的拖放操作。
 		/// </summary>
 		/// <param name="addFilesCallback">添加文件的回调函数。</param>
-		public void SetupDragAndDrop (AddFilesCallback addFilesCallback) {
-			_fileList.DragSource = new SimpleDragSource (true);
-			var ds = new RearrangingDropSink (false);
+		public void SetupDragAndDrop(AddFilesCallback addFilesCallback) {
+			_fileList.DragSource = new SimpleDragSource(true);
+			var ds = new RearrangingDropSink(false);
 			_fileList.DropSink = ds;
 
 			ds.CanDrop += (s, args) => {
-				var files = FormHelper.DropFileOver (args.DragEventArgs, Constants.FileExtensions.Pdf);
+				var files = FormHelper.DropFileOver(args.DragEventArgs, Constants.FileExtensions.Pdf);
 				if (files.Length > 0) {
 					args.Effect = DragDropEffects.Link;
-					args.InfoMessage = "添加 " + files.Length.ToString () + " 个文件";
+					args.InfoMessage = "添加 " + files.Length.ToString() + " 个文件";
 					args.Handled = true;
 				}
 			};
 			ds.Dropped += (s, args) => {
-				var files = FormHelper.DropFileOver (args.DragEventArgs, Constants.FileExtensions.Pdf);
+				var files = FormHelper.DropFileOver(args.DragEventArgs, Constants.FileExtensions.Pdf);
 				if (files.Length > 0) {
 					_fileList.SelectedIndex
 						= args.DropTargetLocation == DropTargetLocation.Background
-						? _fileList.GetItemCount () - 1
+						? _fileList.GetItemCount() - 1
 						: args.DropTargetIndex + (args.DropTargetLocation == DropTargetLocation.AboveItem ? -1 : 0);
-					addFilesCallback (files, false);
+					addFilesCallback(files, false);
 					args.Handled = true;
 				}
 			};
@@ -52,15 +52,15 @@ namespace PDFPatcher.Functions
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		public static void OpenPdfButtonDropDownOpeningHandler (object sender, EventArgs e) {
+		public static void OpenPdfButtonDropDownOpeningHandler(object sender, EventArgs e) {
 			var b = sender as ToolStripSplitButton;
 			var l = b.DropDown.Items;
-			l.ClearDropDownItems ();
+			l.ClearDropDownItems();
 			foreach (var item in AppContext.Recent.SourcePdfFiles) {
-				l.Add (FileHelper.GetEllipticPath (item, 50)).ToolTipText = item;
+				l.Add(FileHelper.GetEllipticPath(item, 50)).ToolTipText = item;
 			}
 			if (l.Count == 0) {
-				b.PerformButtonClick ();
+				b.PerformButtonClick();
 			}
 		}
 
@@ -68,109 +68,109 @@ namespace PDFPatcher.Functions
 		/// 以指定编码刷新文件列表的选定项目。
 		/// </summary>
 		/// <param name="encoding">用于读取文档元数据的 <see cref="Enocding"/>。</param>
-		public void RefreshInfo (Encoding encoding) {
+		public void RefreshInfo(Encoding encoding) {
 			var ol = _fileList.SelectedObjects;
 			if (ol.Count == 0) {
-				_fileList.SelectAll ();
+				_fileList.SelectAll();
 				ol = _fileList.SelectedObjects;
 			}
 			foreach (SourceItem.Pdf item in ol) {
-				item.Refresh (encoding);
+				item.Refresh(encoding);
 			}
-			_fileList.RefreshObjects (ol);
+			_fileList.RefreshObjects(ol);
 		}
 
 		/// <summary>
 		/// 为 <see cref="OLVColumn"/> 设置读写处理函数。
 		/// </summary>
 		/// <param name="columns">需要设置的列。</param>
-		public static void SetupCommonPdfColumns (params OLVColumn[] columns) {
+		public static void SetupCommonPdfColumns(params OLVColumn[] columns) {
 			foreach (var item in columns) {
 				switch (item.Text) {
-					case "源文件名": SetupFileNameColumn (item); break;
-					case "文件夹": SetupFolderNameColumn (item); break;
-					case "标题": SetupTitleColumn (item); break;
-					case "作者": SetupAuthorColumn (item); break;
-					case "主题": SetupSubjectColumn (item); break;
-					case "关键词": SetupKeywordsColumn (item); break;
-					case "页数": SetupPageCountColumn (item); break;
+					case "源文件名": SetupFileNameColumn(item); break;
+					case "文件夹": SetupFolderNameColumn(item); break;
+					case "标题": SetupTitleColumn(item); break;
+					case "作者": SetupAuthorColumn(item); break;
+					case "主题": SetupSubjectColumn(item); break;
+					case "关键词": SetupKeywordsColumn(item); break;
+					case "页数": SetupPageCountColumn(item); break;
 				}
 			}
 		}
-		static void SetupAuthorColumn (OLVColumn column) {
+		static void SetupAuthorColumn(OLVColumn column) {
 			column.AsTyped<SourceItem.Pdf>(c => {
 				c.AspectGetter = o => o.DocInfo.Author;
 				c.AspectPutter = (o, value) => o.DocInfo.Author = value as string;
 			});
 		}
-		static void SetupKeywordsColumn (OLVColumn column) {
+		static void SetupKeywordsColumn(OLVColumn column) {
 			column.AsTyped<SourceItem.Pdf>(c => {
 				c.AspectGetter = o => o.DocInfo.Keywords;
 				c.AspectPutter = (o, value) => o.DocInfo.Keywords = value as string;
 			});
 		}
-		static void SetupSubjectColumn (OLVColumn column) {
+		static void SetupSubjectColumn(OLVColumn column) {
 			column.AsTyped<SourceItem.Pdf>(c => {
 				c.AspectGetter = o => o.DocInfo.Subject;
 				c.AspectPutter = (o, value) => o.DocInfo.Subject = value as string;
 			});
 		}
-		static void SetupTitleColumn (OLVColumn column) {
+		static void SetupTitleColumn(OLVColumn column) {
 			column.AsTyped<SourceItem.Pdf>(c => {
 				c.AspectGetter = o => o.DocInfo.Title;
 				c.AspectPutter = (o, value) => o.DocInfo.Title = value as string;
 			});
 		}
-		static void SetupPageCountColumn (OLVColumn column) {
+		static void SetupPageCountColumn(OLVColumn column) {
 			column.AsTyped<SourceItem.Pdf>(c => {
 				c.AspectGetter = o => o.PageCount.ToText();
 			});
 		}
-		static void SetupFileNameColumn (OLVColumn column) {
+		static void SetupFileNameColumn(OLVColumn column) {
 			column.AsTyped<SourceItem.Pdf>(c => {
 				c.AspectGetter = o => o.Type == SourceItem.ItemType.Empty ? "<空白页面>" : o.FileName;
 				c.ImageGetter = o => 0;
 			});
 		}
-		static void SetupFolderNameColumn (OLVColumn column) {
+		static void SetupFolderNameColumn(OLVColumn column) {
 			column.AsTyped<SourceItem>(c => {
 				c.AspectGetter = o => o.Type != SourceItem.ItemType.Empty ? o.FolderName : String.Empty;
 			});
 		}
 
-		public void SetupHotkeys () {
+		public void SetupHotkeys() {
 			_fileList.KeyUp += (s, args) => {
 				switch (args.KeyCode) {
 					case Keys.Delete:
 						if (_fileList.IsCellEditing || _fileList.Focused == false) {
 							return;
 						}
-						ProcessCommonMenuCommand (Commands.Delete);
+						ProcessCommonMenuCommand(Commands.Delete);
 						break;
 				}
 			};
 		}
 
-		public bool ProcessCommonMenuCommand (string commandID) {
+		public bool ProcessCommonMenuCommand(string commandID) {
 			switch (commandID) {
 				case Commands.Delete:
-					if (_fileList.GetItemCount () == 0) {
+					if (_fileList.GetItemCount() == 0) {
 						return true;
 					}
 					var l = _fileList.SelectedObjects;
 					if (l.Count == 0) {
-						if (FormHelper.YesNoBox ("是否清空文件列表？") == DialogResult.Yes) {
-							_fileList.ClearObjects ();
+						if (FormHelper.YesNoBox("是否清空文件列表？") == DialogResult.Yes) {
+							_fileList.ClearObjects();
 						}
 					}
 					else {
-						_fileList.RemoveObjects (_fileList.SelectedObjects);
+						_fileList.RemoveObjects(_fileList.SelectedObjects);
 					}
 					break;
 				case "_Copy":
-					var sb = new StringBuilder ();
+					var sb = new StringBuilder();
 					foreach (SourceItem.Pdf item in GetSourceItems<SourceItem>(true)) {
-						sb.AppendLine (String.Join ("\t", new string[] {
+						sb.AppendLine(String.Join("\t", new string[] {
 							item.FilePath.ToString(),
 							item.PageCount.ToText (),
 							item.DocInfo.Title,
@@ -180,11 +180,11 @@ namespace PDFPatcher.Functions
 						}));
 					}
 					if (sb.Length > 0) {
-						Clipboard.SetText (sb.ToString ());
+						Clipboard.SetText(sb.ToString());
 					}
 					break;
 				case Commands.SelectAllItems:
-					_fileList.SelectAll ();
+					_fileList.SelectAll();
 					break;
 				case Commands.InvertSelectItem:
 					foreach (ListViewItem item in _fileList.Items) {
@@ -192,7 +192,7 @@ namespace PDFPatcher.Functions
 					}
 					break;
 				case Commands.SelectNone:
-					_fileList.SelectObjects (null);
+					_fileList.SelectObjects(null);
 					break;
 				default:
 					return false;
@@ -200,23 +200,23 @@ namespace PDFPatcher.Functions
 			return true;
 		}
 
-		public List<T> GetSourceItems<T> (bool selectedOnly) where T : SourceItem {
-			if (_fileList.GetItemCount () == 0) {
+		public List<T> GetSourceItems<T>(bool selectedOnly) where T : SourceItem {
+			if (_fileList.GetItemCount() == 0) {
 				return null;
 			}
 			var l = (selectedOnly ? _fileList.SelectedObjects : _fileList.Objects);
-			var items = new List<T> (selectedOnly ? 10 : _fileList.GetItemCount ());
+			var items = new List<T>(selectedOnly ? 10 : _fileList.GetItemCount());
 			foreach (T item in l) {
 				if (item == null) {
 					continue;
 				}
-				items.Add (item);
+				items.Add(item);
 			}
 			return items;
 		}
 
-		public void PrepareSourceFiles () {
-			var c = _fileList.GetItemCount ();
+		public void PrepareSourceFiles() {
+			var c = _fileList.GetItemCount();
 			if (c == 0) {
 				return;
 			}
@@ -227,13 +227,13 @@ namespace PDFPatcher.Functions
 					f[i++] = item.FilePath.ToString();
 				}
 			}
-			Array.Resize (ref f, i);
+			Array.Resize(ref f, i);
 			AppContext.SourceFiles = f;
 		}
 
-		public void ResizeItemListColumns () {
+		public void ResizeItemListColumns() {
 			var c = _fileList.Columns[0];
-			_fileList.AutoResizeColumns (ColumnHeaderAutoResizeStyle.ColumnContent);
+			_fileList.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
 			if (c.Width < 100) {
 				c.Width = 100;
 			}

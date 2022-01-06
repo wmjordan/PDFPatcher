@@ -7,23 +7,24 @@ namespace PDFPatcher.Processor
 		{
 			SetBold = 0, SetItalic = 1, RemoveBold = 10, RemoveItalic = 11
 		}
-		Style _style;
-		public SetTextStyleProcessor (System.Xml.XmlElement element, Style style) {
-			var s = element.GetAttribute (Constants.BookmarkAttributes.Style);
+
+		readonly Style _style;
+		public SetTextStyleProcessor(System.Xml.XmlElement element, Style style) {
+			var s = element.GetAttribute(Constants.BookmarkAttributes.Style);
 			if (style == Style.SetBold) {
 				if (s != Constants.BookmarkAttributes.StyleType.Bold && s != Constants.BookmarkAttributes.StyleType.BoldItalic) {
-					this._style = Style.SetBold;
+					_style = Style.SetBold;
 				}
 				else {
-					this._style = Style.RemoveBold;
+					_style = Style.RemoveBold;
 				}
 			}
 			else if (style == Style.SetItalic) {
 				if (s != Constants.BookmarkAttributes.StyleType.Italic && s != Constants.BookmarkAttributes.StyleType.BoldItalic) {
-					this._style = Style.SetItalic;
+					_style = Style.SetItalic;
 				}
 				else {
-					this._style = Style.RemoveItalic;
+					_style = Style.RemoveItalic;
 				}
 			}
 		}
@@ -32,7 +33,7 @@ namespace PDFPatcher.Processor
 
 		public string Name {
 			get {
-				switch (this._style) {
+				switch (_style) {
 					case Style.SetBold:
 						return "设置书签文本为粗体";
 					case Style.SetItalic:
@@ -47,8 +48,8 @@ namespace PDFPatcher.Processor
 			}
 		}
 
-		public IUndoAction Process (System.Xml.XmlElement item) {
-			var value = item.GetAttribute (Constants.BookmarkAttributes.Style);
+		public IUndoAction Process(System.Xml.XmlElement item) {
+			var value = item.GetAttribute(Constants.BookmarkAttributes.Style);
 			var style = 0;
 			switch (value) {
 				case Constants.BookmarkAttributes.StyleType.Bold: style = 1; break;
@@ -57,7 +58,7 @@ namespace PDFPatcher.Processor
 				default:
 					break;
 			}
-			switch (this._style) {
+			switch (_style) {
 				case Style.SetBold:
 					if ((style & 0x01) > 0) {
 						return null;
@@ -82,16 +83,17 @@ namespace PDFPatcher.Processor
 					}
 					style ^= 0x02;
 					break;
-				default: throw new System.ArgumentOutOfRangeException ("Style");
+				default: throw new System.ArgumentOutOfRangeException("Style");
 			}
 			switch (style) {
 				case 1: value = Constants.BookmarkAttributes.StyleType.Bold; break;
 				case 2: value = Constants.BookmarkAttributes.StyleType.Italic; break;
 				case 3: value = Constants.BookmarkAttributes.StyleType.BoldItalic; break;
-				default: value = null;
+				default:
+					value = null;
 					break;
 			}
-			return UndoAttributeAction.GetUndoAction (item, Constants.BookmarkAttributes.Style, value);
+			return UndoAttributeAction.GetUndoAction(item, Constants.BookmarkAttributes.Style, value);
 		}
 
 		#endregion

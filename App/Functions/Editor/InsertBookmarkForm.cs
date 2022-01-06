@@ -25,28 +25,24 @@ namespace PDFPatcher.Functions.Editor
 		/// <summary>
 		/// 获取新书签的插入位置（当前书签后：1；子书签：2；父书签后：3；当前书签前：4）
 		/// </summary>
-		public int InsertMode {
-			get {
-				return _AfterCurrentBox.Checked ? 1
+		public int InsertMode => _AfterCurrentBox.Checked ? 1
 					: _AsChildBox.Checked ? 2
 					: _AfterParentBox.Checked ? 3
 					: _BeforeCurrentBox.Checked ? 4
 					: 0;
-			}
-		}
 
-		[Browsable (false)]
+		[Browsable(false)]
 		internal Controller Controller { get; set; }
 
-		public InsertBookmarkForm () {
-			InitializeComponent ();
+		public InsertBookmarkForm() {
+			InitializeComponent();
 
 			VisibleChanged += (s, args) => {
 				if (!Visible) {
 					return;
 				}
-				_TitleBox.Focus ();
-				_TitleBox.SelectAll ();
+				_TitleBox.Focus();
+				_TitleBox.SelectAll();
 			};
 			_AfterCurrentBox.DoubleClick += InsertModeBox_DoubleClick;
 			_AfterParentBox.DoubleClick += InsertModeBox_DoubleClick;
@@ -58,18 +54,18 @@ namespace PDFPatcher.Functions.Editor
 				if (_AsChildBox.Checked || _AfterParentBox.Checked) {
 					_AfterCurrentBox.Checked = true;
 				}
-				Hide ();
+				Hide();
 			};
 			_CancelButton.Click += (s, args) => Hide();
 		}
 
-		void InsertModeBox_DoubleClick (object sender, EventArgs e) {
-			_OkButton.PerformClick ();
+		void InsertModeBox_DoubleClick(object sender, EventArgs e) {
+			_OkButton.PerformClick();
 		}
 
-		protected override void OnDeactivate (EventArgs e) {
-			Hide ();
-			base.OnDeactivate (e);
+		protected override void OnDeactivate(EventArgs e) {
+			Hide();
+			base.OnDeactivate(e);
 		}
 
 	}

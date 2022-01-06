@@ -9,9 +9,9 @@ namespace PDFPatcher.Model.PdfPath
 		public DocumentObject Current { get; private set; }
 		public int Position { get; private set; }
 
-		public Context (DocumentObject currentObject, int position) {
-			this.Current = currentObject;
-			this.Position = position;
+		public Context(DocumentObject currentObject, int position) {
+			Current = currentObject;
+			Position = position;
 		}
 	}
 }

@@ -20,7 +20,7 @@ namespace PDFPatcher.Processor
 		public PdfDictionary Page {
 			get {
 				if (_Page == null) {
-					_Page = Pdf.GetPageN (PageNumber);
+					_Page = Pdf.GetPageN(PageNumber);
 				}
 				return _Page;
 			}
@@ -31,22 +31,22 @@ namespace PDFPatcher.Processor
 		public Model.IPdfPageCommandContainer PageCommands {
 			get {
 				if (_processor == null) {
-					_processor = new PdfPageCommandProcessor ();
-					var resources = Page.Locate<PdfDictionary> (PdfName.RESOURCES);
-					_processor.ProcessContent (PdfReader.GetPageContent (Page), resources);
+					_processor = new PdfPageCommandProcessor();
+					var resources = Page.Locate<PdfDictionary>(PdfName.RESOURCES);
+					_processor.ProcessContent(PdfReader.GetPageContent(Page), resources);
 				}
 				return _processor;
 			}
 		}
 
-		public PageProcessorContext (PdfReader pdf, int pageNumber) {
+		public PageProcessorContext(PdfReader pdf, int pageNumber) {
 			Pdf = pdf;
 			PageNumber = pageNumber;
 		}
 
 		/// <summary>写入页面指令到当前处理的页面。</summary>
-		internal void WritePageCommands () {
-			_processor.WritePdfCommands (Pdf, PageNumber);
+		internal void WritePageCommands() {
+			_processor.WritePdfCommands(Pdf, PageNumber);
 		}
 
 		//internal void UpdateContentBytes () {

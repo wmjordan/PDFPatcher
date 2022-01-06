@@ -78,13 +78,13 @@ namespace PDFPatcher
 		#endregion
 		internal static readonly string[] TopMenuItems = { File, Tools, Selection };
 		internal static readonly string[] CommonSelectionCommands = { SelectAllItems, SelectNone, InvertSelectItem };
-		internal static readonly HashSet<string> DefaultDisabledItems = new HashSet<string> (
+		internal static readonly HashSet<string> DefaultDisabledItems = new HashSet<string>(
 			new string[] {
 				SelectAllItems, InvertSelectItem, SelectNone,
 				Copy, Delete,
 				Options
 			});
-		internal static readonly HashSet<string> DefaultHiddenItems = new HashSet<string> (
+		internal static readonly HashSet<string> DefaultHiddenItems = new HashSet<string>(
 			new string[] {
 				ImportBookmark, SaveBookmark, SaveAsInfoFile, DocumentProperties,
 				SelectAllPdf, SelectAllImages, SelectAllFolders, ItemTypeSeparator

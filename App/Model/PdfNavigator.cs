@@ -11,38 +11,38 @@ namespace PDFPatcher.Model
 	{
 		sealed class HtmlNameTable : XmlNameTable
 		{
-			readonly NameTable _nametable = new NameTable ();
-			public override string Add (string array) {
-				return _nametable.Add (array);
+			readonly NameTable _nametable = new NameTable();
+			public override string Add(string array) {
+				return _nametable.Add(array);
 			}
 
-			public override string Add (char[] array, int offset, int length) {
-				return _nametable.Add (array, offset, length);
+			public override string Add(char[] array, int offset, int length) {
+				return _nametable.Add(array, offset, length);
 			}
 
-			public override string Get (string array) {
-				return _nametable.Get (array);
+			public override string Get(string array) {
+				return _nametable.Get(array);
 			}
 
-			public override string Get (char[] array, int offset, int length) {
-				return _nametable.Get (array, offset, length);
+			public override string Get(char[] array, int offset, int length) {
+				return _nametable.Get(array, offset, length);
 			}
 
-			internal string GetOrAdd (string array) {
+			internal string GetOrAdd(string array) {
 				return Get(array) ?? Add(array);
 			}
 		}
 
 		readonly PdfPathDocument _doc;
-		readonly HtmlNameTable _nameTable = new HtmlNameTable ();
+		readonly HtmlNameTable _nameTable = new HtmlNameTable();
 		DocumentObject _currentObject;
 		int _childIndex = -1;
 
-		public PdfNavigator (PdfPathDocument document) {
+		public PdfNavigator(PdfPathDocument document) {
 			_doc = document;
 		}
 
-		public PdfNavigator (PdfNavigator source) {
+		public PdfNavigator(PdfNavigator source) {
 			_doc = source._doc;
 			_currentObject = source._currentObject;
 		}
@@ -52,13 +52,13 @@ namespace PDFPatcher.Model
 		#region XPathNavigator implementation
 		public override string BaseURI => String.Empty;
 
-		public override XPathNavigator Clone () {
-			return new PdfNavigator (this);
+		public override XPathNavigator Clone() {
+			return new PdfNavigator(this);
 		}
 
 		public override bool IsEmptyElement => !_currentObject.HasChildren;
 
-		public override bool IsSamePosition (XPathNavigator other) {
+		public override bool IsSamePosition(XPathNavigator other) {
 			var o = other as PdfNavigator;
 			if (o == null) {
 				return false;
@@ -68,7 +68,7 @@ namespace PDFPatcher.Model
 
 		public override string LocalName => _nameTable.GetOrAdd(_currentObject.FriendlyName ?? _currentObject.Name);
 
-		public override bool MoveTo (XPathNavigator other) {
+		public override bool MoveTo(XPathNavigator other) {
 			var o = other as PdfNavigator;
 			if (o == null) {
 				return false;
@@ -80,12 +80,12 @@ namespace PDFPatcher.Model
 			return true;
 		}
 
-		public override bool MoveToFirstAttribute () {
+		public override bool MoveToFirstAttribute() {
 			return false;
 		}
 
-		public override bool MoveToFirstChild () {
-			_currentObject.PopulateChildren (false);
+		public override bool MoveToFirstChild() {
+			_currentObject.PopulateChildren(false);
 			if (_currentObject.HasChildren == false) {
 				return false;
 			}
@@ -94,12 +94,12 @@ namespace PDFPatcher.Model
 			return true;
 		}
 
-		public override bool MoveToFirstNamespace (XPathNamespaceScope namespaceScope) {
+		public override bool MoveToFirstNamespace(XPathNamespaceScope namespaceScope) {
 			return false;
 		}
 
-		public override bool MoveToId (string id) {
-			if (id.StartsWith ("PAGE", StringComparison.OrdinalIgnoreCase)) {
+		public override bool MoveToId(string id) {
+			if (id.StartsWith("PAGE", StringComparison.OrdinalIgnoreCase)) {
 				if (id.Substring(4).TryParse(out int p) && p < _doc.PageCount) {
 					// 将当前对象设置为该页
 					return true;
@@ -108,7 +108,7 @@ namespace PDFPatcher.Model
 			return false;
 		}
 
-		public override bool MoveToNext () {
+		public override bool MoveToNext() {
 			if (_currentObject.Parent == null) {
 				return false;
 			}
@@ -120,15 +120,15 @@ namespace PDFPatcher.Model
 			return false;
 		}
 
-		public override bool MoveToNextAttribute () {
+		public override bool MoveToNextAttribute() {
 			return false;
 		}
 
-		public override bool MoveToNextNamespace (XPathNamespaceScope namespaceScope) {
+		public override bool MoveToNextNamespace(XPathNamespaceScope namespaceScope) {
 			return false;
 		}
 
-		public override bool MoveToParent () {
+		public override bool MoveToParent() {
 			if (_currentObject.Parent == null) {
 				return false;
 			}
@@ -137,7 +137,7 @@ namespace PDFPatcher.Model
 			return true;
 		}
 
-		public override bool MoveToPrevious () {
+		public override bool MoveToPrevious() {
 			if (_currentObject.Parent == null) {
 				return false;
 			}
@@ -192,11 +192,11 @@ namespace PDFPatcher.Model
 		#endregion
 
 		#region XPathNavigator overrides
-		public override void DeleteSelf () {
+		public override void DeleteSelf() {
 			var p = _currentObject.Parent;
-			p.Children.Remove (_currentObject);
+			p.Children.Remove(_currentObject);
 			_currentObject = p;
-			_childIndex = (p.Parent.Children as IList<DocumentObject>).IndexOf (p);
+			_childIndex = (p.Parent.Children as IList<DocumentObject>).IndexOf(p);
 		}
 
 		public override object UnderlyingObject => _currentObject;

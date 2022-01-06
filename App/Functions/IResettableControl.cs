@@ -5,7 +5,7 @@ namespace PDFPatcher.Functions
 {
 	interface IResettableControl
 	{
-		void Reset ();
-		void Reload ();
+		void Reset();
+		void Reload();
 	}
 }

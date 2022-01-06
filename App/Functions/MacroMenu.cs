@@ -7,7 +7,7 @@ namespace PDFPatcher.Functions
 {
 	internal sealed class MacroMenu : ContextMenuStrip
 	{
-		TextBox __editOperationWrapper = new TextBox ();
+		readonly TextBox __editOperationWrapper = new TextBox();
 
 		internal const string InsertText = "插入";
 		//internal const string Copy = "复制";
@@ -23,23 +23,23 @@ namespace PDFPatcher.Functions
 		//        new ToolStripMenuItem (Delete)
 		//    });
 		//}
-		public MacroMenu () : base() { }
-		public MacroMenu (System.ComponentModel.IContainer container) : base(container) { }
+		public MacroMenu() : base() { }
+		public MacroMenu(System.ComponentModel.IContainer container) : base(container) { }
 
-		internal void AddInsertMacroMenuItem (string text) {
-			this.Items.Add (InsertText + text);
+		internal void AddInsertMacroMenuItem(string text) {
+			Items.Add(InsertText + text);
 		}
 
-		internal void LoadStandardSourceFileMacros () {
-			this.Items.AddRange (new ToolStripItem[] {
+		internal void LoadStandardSourceFileMacros() {
+			Items.AddRange(new ToolStripItem[] {
 				new ToolStripMenuItem (InsertText + Constants.FileNameMacros.PathName),
 				new ToolStripMenuItem (InsertText + Constants.FileNameMacros.FileName),
 				new ToolStripMenuItem (InsertText + Constants.FileNameMacros.FolderName)
 			});
 		}
 
-		internal void LoadStandardInfoMacros () {
-			this.Items.AddRange (new ToolStripItem[] {
+		internal void LoadStandardInfoMacros() {
+			Items.AddRange(new ToolStripItem[] {
 				new ToolStripMenuItem (InsertText + Constants.FileNameMacros.TitleProperty),
 				new ToolStripMenuItem (InsertText + Constants.FileNameMacros.AuthorProperty),
 				new ToolStripMenuItem (InsertText + Constants.FileNameMacros.SubjectProperty),
@@ -47,16 +47,16 @@ namespace PDFPatcher.Functions
 			});
 		}
 
-		internal void ProcessInsertMacroCommand (object sender, ToolStripItemClickedEventArgs e) {
+		internal void ProcessInsertMacroCommand(object sender, ToolStripItemClickedEventArgs e) {
 			var t = e.ClickedItem.Text;
-			if (t.StartsWith (InsertText)) {
-				t = t.Substring (InsertText.Length);
-				var c = this.SourceControl as TextBoxBase;
+			if (t.StartsWith(InsertText)) {
+				t = t.Substring(InsertText.Length);
+				var c = SourceControl as TextBoxBase;
 				if (c != null) {
 					c.SelectedText = t;
 					return;
 				}
-				var cb = this.SourceControl as ComboBox;
+				var cb = SourceControl as ComboBox;
 				if (cb != null) {
 					cb.SelectedText = t;
 				}

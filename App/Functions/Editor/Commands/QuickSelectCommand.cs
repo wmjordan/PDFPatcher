@@ -24,25 +24,25 @@ namespace PDFPatcher.Functions.Editor
 			new MatchPattern ("^" + __S + __ND + __ND + __ND + __ND + "?" + __NN, true, false, true){ Name =  "“N.N.N.N”模式" },
 			new MatchPattern ("^" + __S + __ND + __ND + __ND + __ND + __ND + "?" + __NN, true, false, true){ Name =  "“N.N.N.N.N”模式" }
 		};
-		internal static void RegisterCommands (CommandRegistry<Controller> registry) {
+		internal static void RegisterCommands(CommandRegistry<Controller> registry) {
 			foreach (var item in __commands) {
-				registry.Register (new QuickSelectCommand (item), item.Name);
+				registry.Register(new QuickSelectCommand(item), item.Name);
 			}
 		}
-		internal static void RegisterMenuItems (ToolStripItemCollection container) {
+		internal static void RegisterMenuItems(ToolStripItemCollection container) {
 			foreach (var item in __commands) {
-				container.Add (new ToolStripMenuItem (item.Name) { Name = item.Name });
+				container.Add(new ToolStripMenuItem(item.Name) { Name = item.Name });
 			}
 		}
 
 		readonly BookmarkMatcher _command;
 
-		public QuickSelectCommand (MatchPattern command) {
-			_command = BookmarkMatcher.Create (command.Text, BookmarkMatcher.MatcherType.Regex, command.MatchCase, command.FullMatch);
+		public QuickSelectCommand(MatchPattern command) {
+			_command = BookmarkMatcher.Create(command.Text, BookmarkMatcher.MatcherType.Regex, command.MatchCase, command.FullMatch);
 		}
 
-		public void Process (Controller controller, params string[] parameters) {
-			controller.View.Bookmark.SearchBookmarks (_command);
+		public void Process(Controller controller, params string[] parameters) {
+			controller.View.Bookmark.SearchBookmarks(_command);
 		}
 
 	}

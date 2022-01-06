@@ -9,8 +9,8 @@ namespace PDFPatcher.Functions
 		AutoBookmarkCondition.TextSizeCondition _condition;
 		bool _lock;
 
-		public TextSizeConditionEditor () {
-			InitializeComponent ();
+		public TextSizeConditionEditor() {
+			InitializeComponent();
 		}
 
 		#region ITextInfoFilterEditor 成员
@@ -38,21 +38,21 @@ namespace PDFPatcher.Functions
 
 		#endregion
 
-		private void ControlChanged (object sender, EventArgs e) {
-			ToggleControlState ();
+		private void ControlChanged(object sender, EventArgs e) {
+			ToggleControlState();
 			if (_lock) {
 				return;
 			}
 			if (_SizeBox.Checked) {
-				_condition.SetRange ((float)_SpecificSizeBox.Value, (float)_SpecificSizeBox.Value);
+				_condition.SetRange((float)_SpecificSizeBox.Value, (float)_SpecificSizeBox.Value);
 			}
 			else if (_SizeRangeBox.Checked) {
-				_condition.SetRange ((float)_MinSizeBox.Value, (float)_MaxSizeBox.Value);
+				_condition.SetRange((float)_MinSizeBox.Value, (float)_MaxSizeBox.Value);
 			}
-			EditAdjustmentForm.UpdateFilter (this);
+			EditAdjustmentForm.UpdateFilter(this);
 		}
 
-		private void ToggleControlState () {
+		private void ToggleControlState() {
 			_MinSizeBox.Enabled = _MaxSizeBox.Enabled = _SizeRangeBox.Checked;
 			_SpecificSizeBox.Enabled = _SizeBox.Checked;
 		}

@@ -5,22 +5,22 @@ using PDFPatcher.Common;
 
 namespace PDFPatcher.Functions
 {
-	[ToolboxItem (false)]
+	[ToolboxItem(false)]
 	public partial class InfoFileOptionControl : Form, IResettableControl
 	{
 		ExporterOptions _expOptions;
 		ImporterOptions _impOptions;
 		bool locked;
 
-		public InfoFileOptionControl () {
-			InitializeComponent ();
+		public InfoFileOptionControl() {
+			InitializeComponent();
 
-			this.SetIcon (Properties.Resources.InfoFileOptions);
-			AppContext.MainForm.SetTooltip (_ExtractPageRangeBox, Messages.PageRanges);
+			this.SetIcon(Properties.Resources.InfoFileOptions);
+			AppContext.MainForm.SetTooltip(_ExtractPageRangeBox, Messages.PageRanges);
 
-			_UnitBox.Items.AddRange (Constants.Units.Names);
+			_UnitBox.Items.AddRange(Constants.Units.Names);
 
-			Reload ();
+			Reload();
 
 			_ConsolidateNamedDestBox.CheckedChanged += OptionChanged;
 			_EncodingBox.Leave += _EncodingBox_Leave;
@@ -46,15 +46,15 @@ namespace PDFPatcher.Functions
 			_RemoveOriginalPageLinksBox.CheckedChanged += OptionChanged;
 		}
 
-		public void Reset () {
+		public void Reset() {
 			locked = true;
-			AppContext.Exporter = new ExporterOptions ();
-			AppContext.Importer = new ImporterOptions ();
-			Reload ();
+			AppContext.Exporter = new ExporterOptions();
+			AppContext.Importer = new ImporterOptions();
+			Reload();
 			locked = false;
 		}
 
-		public void Reload () {
+		public void Reload() {
 			_expOptions = AppContext.Exporter;
 			_impOptions = AppContext.Importer;
 
@@ -82,11 +82,11 @@ namespace PDFPatcher.Functions
 			_ImportViewerPreferencesBox.Checked = _impOptions.ImportViewerPreferences;
 			_KeepOriginalPageLinksBox.Checked = _impOptions.KeepPageLinks;
 
-			var i = _UnitBox.Items.IndexOf (_expOptions.UnitConverter.Unit);
+			var i = _UnitBox.Items.IndexOf(_expOptions.UnitConverter.Unit);
 			_UnitBox.SelectedIndex = (i != -1) ? i : 0;
 		}
 
-		void OptionChanged (object sender, EventArgs e) {
+		void OptionChanged(object sender, EventArgs e) {
 			if (locked) {
 				return;
 			}
@@ -119,7 +119,7 @@ namespace PDFPatcher.Functions
 			}
 			else if (sender == _ExtractPageContentBox) {
 				_expOptions.ExtractPageContent = _PageContentBox.Enabled = _ExtractPageContentBox.Checked;
-				_ExtractPageRangeBox.Focus ();
+				_ExtractPageRangeBox.Focus();
 			}
 			else if (sender == _ExportContentOperatorsBox) {
 				_expOptions.ExportContentOperators = _ExportContentOperatorsBox.Checked;
@@ -150,30 +150,30 @@ namespace PDFPatcher.Functions
 			}
 		}
 
-		void _EncodingBox_Leave (object sender, EventArgs e) {
+		void _EncodingBox_Leave(object sender, EventArgs e) {
 			try {
 				_expOptions.Encoding = _EncodingBox.Text;
 				_EncodingBox.Text = _expOptions.Encoding;
 			}
 			catch (Exception) {
-				FormHelper.ErrorBox ("输入的编码无效。");
+				FormHelper.ErrorBox("输入的编码无效。");
 				_EncodingBox.Text = Constants.Encoding.SystemDefault;
 			}
 		}
 
-		void _ExtractPageRangeBox_Leave (object sender, EventArgs e) {
-			_expOptions.ExtractPageRange = _ExtractPageRangeBox.Text.Trim ();
+		void _ExtractPageRangeBox_Leave(object sender, EventArgs e) {
+			_expOptions.ExtractPageRange = _ExtractPageRangeBox.Text.Trim();
 			if (_expOptions.ExtractPageRange.Length > 0) {
 				_ExtractPageContentBox.Checked = true;
 			}
 		}
 
-		private void ExportOptionControl_VisibleChanged (object sender, EventArgs e) {
+		private void ExportOptionControl_VisibleChanged(object sender, EventArgs e) {
 			if (Visible) {
 				_ExtractPageRangeBox.Text = AppContext.Exporter.ExtractPageRange;
 			}
 			else {
-				AppContext.Exporter.UnitConverter.Unit = _UnitBox.SelectedItem.ToString ();
+				AppContext.Exporter.UnitConverter.Unit = _UnitBox.SelectedItem.ToString();
 			}
 		}
 	}

@@ -11,25 +11,25 @@ namespace PDFPatcher.Processor
 	/// </summary>
 	sealed class RemoveDictionaryItemProcessor : IPageProcessor
 	{
-		PdfName _ItemName;
-		public RemoveDictionaryItemProcessor (PdfName itemName) {
+		readonly PdfName _ItemName;
+		public RemoveDictionaryItemProcessor(PdfName itemName) {
 			_ItemName = itemName;
 		}
 
 		#region IPageProcessor 成员
-		public string Name { get { return "删除字典项目"; } }
-		public void BeginProcess (DocProcessorContext context) {
+		public string Name => "删除字典项目";
+		public void BeginProcess(DocProcessorContext context) {
 		}
-		public bool EndProcess (PdfReader pdf) {
+		public bool EndProcess(PdfReader pdf) {
 			return false;
 		}
-		public int EstimateWorkload (PdfReader pdf) {
+		public int EstimateWorkload(PdfReader pdf) {
 			return 0;
 		}
 
-		public bool Process (PageProcessorContext context) {
-			if (context.Page.Contains (_ItemName)) {
-				context.Page.Remove (_ItemName);
+		public bool Process(PageProcessorContext context) {
+			if (context.Page.Contains(_ItemName)) {
+				context.Page.Remove(_ItemName);
 				return true;
 			}
 			return false;
@@ -39,9 +39,9 @@ namespace PDFPatcher.Processor
 
 		#region IDocProcessor 成员
 
-		public bool Process (DocProcessorContext context) {
-			if (context.Pdf.Catalog.Contains (_ItemName)) {
-				context.Pdf.Catalog.Remove (_ItemName);
+		public bool Process(DocProcessorContext context) {
+			if (context.Pdf.Catalog.Contains(_ItemName)) {
+				context.Pdf.Catalog.Remove(_ItemName);
 				return true;
 			}
 			return false;

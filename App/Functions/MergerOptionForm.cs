@@ -10,37 +10,37 @@ using PDFPatcher.Model;
 
 namespace PDFPatcher.Functions
 {
-	[ToolboxItem (false)]
+	[ToolboxItem(false)]
 	public partial class MergerOptionForm : Form, IResettableControl
 	{
 		string paperName;
 		bool _uiLockDown;
 
-		public MergerOptionForm () {
-			InitializeComponent ();
-			this.SetIcon (Properties.Resources.PdfOptions);
-			this.MinimumSize = this.Size;
+		public MergerOptionForm() {
+			InitializeComponent();
+			this.SetIcon(Properties.Resources.PdfOptions);
+			MinimumSize = Size;
 
 			_AutoBookmarkTitleBox.CheckedChanged += CheckBoxChanged;
 			_KeepSourcePdfBookmarkBox.CheckedChanged += CheckBoxChanged;
 			_UnifyOrientationBox.CheckedChanged += CheckBoxChanged;
 			_PageSizeBox.Items.AddRange(Array.FindAll(Processor.PdfDocumentCreator.PaperSizes, i => i.SpecialSize < SpecialPaperSize.AsSpecificPage));
-			_ImageHAlignBox.Items.Add ("水平居中");
-			_ImageHAlignBox.Items.Add ("左对齐");
-			_ImageHAlignBox.Items.Add ("右对齐");
-			_ImageVAlignBox.Items.Add ("垂直居中");
-			_ImageVAlignBox.Items.Add ("置顶");
-			_ImageVAlignBox.Items.Add ("置底");
+			_ImageHAlignBox.Items.Add("水平居中");
+			_ImageHAlignBox.Items.Add("左对齐");
+			_ImageHAlignBox.Items.Add("右对齐");
+			_ImageVAlignBox.Items.Add("垂直居中");
+			_ImageVAlignBox.Items.Add("置顶");
+			_ImageVAlignBox.Items.Add("置底");
 
-			Reload ();
+			Reload();
 		}
 
-		public void Reset () {
-			AppContext.Merger = new MergerOptions ();
-			Reload ();
+		public void Reset() {
+			AppContext.Merger = new MergerOptions();
+			Reload();
 		}
 
-		public void Reload () {
+		public void Reload() {
 			_uiLockDown = true;
 			var options = AppContext.Merger;
 			var ps = options.PageSettings;
@@ -49,14 +49,14 @@ namespace PDFPatcher.Functions
 			_AutoRotateBox.Checked = ps.AutoRotation;
 			_AutoScaleDownBox.Checked = options.AutoScaleDown;
 			_AutoScaleUpBox.Checked = options.AutoScaleUp;
-			_BottomMarginBox.SetValue (ps.Margins.Bottom / Constants.Units.CmToPoint);
+			_BottomMarginBox.SetValue(ps.Margins.Bottom / Constants.Units.CmToPoint);
 			_CajSortBox.Checked = options.CajSort;
-			_HeightBox.SetValue (ps.PaperSize.Height / Constants.Units.CmToPoint);
+			_HeightBox.SetValue(ps.PaperSize.Height / Constants.Units.CmToPoint);
 			_IgnoreLeadingNumbersBox.Checked = options.IgnoreLeadingNumbers;
 			_ImageHAlignBox.SelectedIndex = (int)ps.HorizontalAlign;
 			_ImageVAlignBox.SelectedIndex = (int)ps.VerticalAlign;
 			_KeepSourcePdfBookmarkBox.Checked = options.KeepBookmarks;
-			_LeftMarginBox.SetValue (ps.Margins.Left / Constants.Units.CmToPoint);
+			_LeftMarginBox.SetValue(ps.Margins.Left / Constants.Units.CmToPoint);
 			for (int i = 0; i < _PageSizeBox.Items.Count; i++) {
 				var p = _PageSizeBox.Items[i] as Model.PaperSize;
 				if (p.PaperName == ps.PaperSize.PaperName) {
@@ -69,11 +69,11 @@ namespace PDFPatcher.Functions
 			_NumericAwareSortBox.Checked = options.NumericAwareSort;
 			_RemoveOrphanBoomarksBox.Checked = options.RemoveOrphanBookmarks;
 			_ResizePdfPagesBox.Checked = ps.ScaleContent == false;
-			_RightMarginBox.SetValue (ps.Margins.Right / Constants.Units.CmToPoint);
+			_RightMarginBox.SetValue(ps.Margins.Right / Constants.Units.CmToPoint);
 			_SubFoldersBeforeFilesBox.Checked = options.SubFolderBeforeFiles;
 			_ScalePdfPagesBox.Checked = ps.ScaleContent;
-			_TopMarginBox.SetValue (ps.Margins.Top / Constants.Units.CmToPoint);
-			_WidthBox.SetValue (ps.PaperSize.Width / Constants.Units.CmToPoint);
+			_TopMarginBox.SetValue(ps.Margins.Top / Constants.Units.CmToPoint);
+			_WidthBox.SetValue(ps.PaperSize.Width / Constants.Units.CmToPoint);
 			if (_PageSizeBox.SelectedIndex == 0) {
 				_HeightBox.Value = 26.01M;
 				_WidthBox.Value = 18M;
@@ -98,7 +98,7 @@ namespace PDFPatcher.Functions
 			_uiLockDown = false;
 		}
 
-		protected override void OnClosed (EventArgs e) {
+		protected override void OnClosed(EventArgs e) {
 			var option = AppContext.Merger;
 			var ps = option.PageSettings;
 			option.AutoBookmarkTitle = _AutoBookmarkTitleBox.Checked;
@@ -107,14 +107,14 @@ namespace PDFPatcher.Functions
 			option.AutoScaleDown = _AutoScaleDownBox.Checked;
 			option.AutoScaleUp = _AutoScaleUpBox.Checked;
 			option.CajSort = _CajSortBox.Checked;
-			ps.Margins.Top = CmToPoint (_TopMarginBox);
-			ps.Margins.Bottom = CmToPoint (_BottomMarginBox);
-			ps.Margins.Left = CmToPoint (_LeftMarginBox);
-			ps.Margins.Right = CmToPoint (_RightMarginBox);
+			ps.Margins.Top = CmToPoint(_TopMarginBox);
+			ps.Margins.Bottom = CmToPoint(_BottomMarginBox);
+			ps.Margins.Left = CmToPoint(_LeftMarginBox);
+			ps.Margins.Right = CmToPoint(_RightMarginBox);
 			option.NumericAwareSort = _NumericAwareSortBox.Checked;
 			ps.PaperSize.PaperName = paperName;
-			ps.PaperSize.Width = CmToPoint (_WidthBox);
-			ps.PaperSize.Height = CmToPoint (_HeightBox);
+			ps.PaperSize.Width = CmToPoint(_WidthBox);
+			ps.PaperSize.Height = CmToPoint(_HeightBox);
 			ps.HorizontalAlign = (Model.HorizontalAlignment)_ImageHAlignBox.SelectedIndex;
 			ps.VerticalAlign = (Model.VerticalAlignment)_ImageVAlignBox.SelectedIndex;
 			ps.ScaleContent = _ScalePdfPagesBox.Checked;
@@ -137,18 +137,18 @@ namespace PDFPatcher.Functions
 			//}
 		}
 
-		private float CmToPoint (NumericUpDown box) {
+		private float CmToPoint(NumericUpDown box) {
 			return (float)box.Value * Constants.Units.CmToPoint;
 		}
 
-		private void _PageSizeBox_SelectedIndexChanged (object sender, EventArgs e) {
+		private void _PageSizeBox_SelectedIndexChanged(object sender, EventArgs e) {
 			if (_PageSizeBox.SelectedIndex == -1) {
 				return;
 			}
 			var p = _PageSizeBox.SelectedItem as Model.PaperSize;
 			if (p.Width > 0 && p.Height > 0) {
-				_WidthBox.SetValue ((decimal)p.Width / (decimal)100);
-				_HeightBox.SetValue ((decimal)p.Height / (decimal)100);
+				_WidthBox.SetValue((decimal)p.Width / (decimal)100);
+				_HeightBox.SetValue((decimal)p.Height / (decimal)100);
 			}
 			paperName = p.PaperName;
 			switch (paperName) {
@@ -184,7 +184,7 @@ namespace PDFPatcher.Functions
 			}
 		}
 
-		private void MarginBox_ValueChanged (object sender, EventArgs e) {
+		private void MarginBox_ValueChanged(object sender, EventArgs e) {
 			if (_SyncMarginsBox.Checked == false || _uiLockDown) {
 				return;
 			}
@@ -193,7 +193,7 @@ namespace PDFPatcher.Functions
 			_TopMarginBox.Value = _BottomMarginBox.Value = _LeftMarginBox.Value = _RightMarginBox.Value = d;
 		}
 
-		private void CheckBoxChanged (object sender, EventArgs e) {
+		private void CheckBoxChanged(object sender, EventArgs e) {
 			_IgnoreLeadingNumbersBox.Enabled = _AutoBookmarkTitleBox.Checked;
 			_RemoveOrphanBoomarksBox.Enabled = _KeepSourcePdfBookmarkBox.Checked;
 			_SourceOrientationBox.Enabled = _RotationBox.Enabled = _UnifyOrientationBox.Checked;

@@ -11,11 +11,11 @@ namespace PDFPatcher.Functions
 {
 	internal sealed partial class SourceImageOptionForm : Form
 	{
-		SourceItem.Image _image;
+		readonly SourceItem.Image _image;
 
 
-		internal SourceImageOptionForm (SourceItem.Image image) {
-			InitializeComponent ();
+		internal SourceImageOptionForm(SourceItem.Image image) {
+			InitializeComponent();
 			_SourceFileBox.Text = image.FilePath.ToString();
 
 			_TopMarginBox.Value = image.Cropping.Top;
@@ -28,8 +28,8 @@ namespace PDFPatcher.Functions
 			_image = image;
 		}
 
-		private void _OkButton_Click (Object source, EventArgs args) {
-			this.DialogResult = DialogResult.OK;
+		private void _OkButton_Click(Object source, EventArgs args) {
+			DialogResult = DialogResult.OK;
 			_image.Cropping.Top = (int)_TopMarginBox.Value;
 			_image.Cropping.Left = (int)_LeftMarginBox.Value;
 			_image.Cropping.Right = (int)_RightMarginBox.Value;
@@ -37,12 +37,12 @@ namespace PDFPatcher.Functions
 			_image.Cropping.MinHeight = (int)_MinCropHeightBox.Value;
 			_image.Cropping.MinWidth = (int)_MinCropWidthBox.Value;
 
-			this.Close ();
+			Close();
 		}
 
-		private void _CancelButton_Click (Object source, EventArgs args) {
-			this.DialogResult = DialogResult.Cancel;
-			this.Close ();
+		private void _CancelButton_Click(Object source, EventArgs args) {
+			DialogResult = DialogResult.Cancel;
+			Close();
 		}
 
 	}

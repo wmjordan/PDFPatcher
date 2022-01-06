@@ -10,7 +10,7 @@ namespace PDFPatcher.Common
 	/// <typeparam name="P">处理命令时的上下文类型。</typeparam>
 	interface ICommand<P>
 	{
-		void Process (P context, params string[] parameters);
+		void Process(P context, params string[] parameters);
 	}
 
 	/// <summary>
@@ -19,16 +19,16 @@ namespace PDFPatcher.Common
 	/// <typeparam name="P">命令模式的处理参数类型。</typeparam>
 	sealed class CommandRegistry<P>
 	{
-		Dictionary<string, ICommand<P>> _container = new Dictionary<string, ICommand<P>> (StringComparer.OrdinalIgnoreCase);
+		readonly Dictionary<string, ICommand<P>> _container = new Dictionary<string, ICommand<P>>(StringComparer.OrdinalIgnoreCase);
 
 		/// <summary>
 		/// 注册执行处理的命令处理器。
 		/// </summary>
 		/// <param name="command">执行命令的处理器。</param>
 		/// <param name="commandIDs">触发该命令的命令标识符。</param>
-		public void Register (ICommand<P> command, params string[] commandIDs) {
+		public void Register(ICommand<P> command, params string[] commandIDs) {
 			foreach (var cmd in commandIDs) {
-				_container.Add (cmd, command);
+				_container.Add(cmd, command);
 			}
 		}
 
@@ -39,10 +39,9 @@ namespace PDFPatcher.Common
 		/// <param name="context">处理命令时的上下文变量。</param>
 		/// <param name="parameters">参数。</param>
 		/// <returns>如找到对应的命令处理，则返回 true，否则返回 false。</returns>
-		public bool Process (string commandID, P context, params string[] parameters) {
-			ICommand<P> cmd;
-			if (_container.TryGetValue (commandID, out cmd)) {
-				cmd.Process (context, parameters);
+		public bool Process(string commandID, P context, params string[] parameters) {
+			if (_container.TryGetValue(commandID, out ICommand<P> cmd)) {
+				cmd.Process(context, parameters);
 				return true;
 			}
 			return false;

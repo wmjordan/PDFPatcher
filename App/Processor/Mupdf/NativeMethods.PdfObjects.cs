@@ -122,7 +122,7 @@ namespace MuPdfSharp
 		public static extern int IsIndirectReference(ContextHandle context, IntPtr obj);
 
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_is_stream")]
-		public static extern int IsStream(ContextHandle context, IntPtr document, int number, int generation); 
+		public static extern int IsStream(ContextHandle context, IntPtr document, int number, int generation);
 		#endregion
 
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_objcmp")]
@@ -215,7 +215,7 @@ namespace MuPdfSharp
 				0x00e8, 0x00e9, 0x00ea, 0x00eb, 0x00ec, 0x00ed, 0x00ee, 0x00ef,
 				0x00f0, 0x00f1, 0x00f2, 0x00f3, 0x00f4, 0x00f5, 0x00f6, 0x00f7,
 				0x00f8, 0x00f9, 0x00fa, 0x00fb, 0x00fc, 0x00fd, 0x00fe, 0x00ff
-			}; 
+			};
 		#endregion
 	}
 }

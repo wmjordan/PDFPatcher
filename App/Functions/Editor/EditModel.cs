@@ -1,17 +1,17 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Windows.Forms;
 using PDFPatcher.Common;
 using PDFPatcher.Model;
 using PDFPatcher.Processor;
-using System.Collections.Generic;
 
 namespace PDFPatcher.Functions.Editor
 {
 	internal sealed class EditModel
 	{
-		public EditModel () {
+		public EditModel() {
 			Undo = new UndoManager();
-			TitleStyles = new List<AutoBookmarkStyle> ();
+			TitleStyles = new List<AutoBookmarkStyle>();
 		}
 
 		internal bool IsLoadingDocument { get; set; }
@@ -23,18 +23,18 @@ namespace PDFPatcher.Functions.Editor
 		internal string LastSavedPdfPath { get; set; }
 		internal MuPdfSharp.MuDocument PdfDocument { get; set; }
 		internal List<AutoBookmarkStyle> TitleStyles { get; }
-		internal string GetPdfFilePath () {
+		internal string GetPdfFilePath() {
 			if (DocumentPath == null) {
 				return null;
 			}
-			var s = FileHelper.HasExtension (DocumentPath, Constants.FileExtensions.Pdf) ? DocumentPath : null;
-			if (string.IsNullOrEmpty (s)) {
+			var s = FileHelper.HasExtension(DocumentPath, Constants.FileExtensions.Pdf) ? DocumentPath : null;
+			if (string.IsNullOrEmpty(s)) {
 				s = Document.PdfDocumentPath;
-				if (Path.IsPathRooted (s) == false) {
-					s = Path.Combine (Path.GetDirectoryName (DocumentPath), s);
+				if (Path.IsPathRooted(s) == false) {
+					s = Path.Combine(Path.GetDirectoryName(DocumentPath), s);
 				}
 			}
-			if (File.Exists (s) == false) {
+			if (File.Exists(s) == false) {
 				s = null;
 			}
 			return s;
@@ -53,12 +53,12 @@ namespace PDFPatcher.Functions.Editor
 						case TextSource.OcrText: return "已自动识别图像文本";
 						case TextSource.OcrError: return "当前页面不包含可识别文本，或识别过程出错";
 						default:
-							throw new System.IndexOutOfRangeException ("TextSource");
+							throw new System.IndexOutOfRangeException("TextSource");
 					}
 				}
 			}
 
-			public Region (PagePosition position, string text, TextSource source) {
+			public Region(PagePosition position, string text, TextSource source) {
 				Position = position;
 				Text = text;
 				TextSource = source;
@@ -79,7 +79,7 @@ namespace PDFPatcher.Functions.Editor
 
 			internal int Level;
 
-			public AutoBookmarkStyle (int level, MuPdfSharp.MuFont font, int fontSize) {
+			public AutoBookmarkStyle(int level, MuPdfSharp.MuFont font, int fontSize) {
 				Level = level;
 				Font = font;
 				FontName = PdfDocumentFont.RemoveSubsetPrefix(font.Name);

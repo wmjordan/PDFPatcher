@@ -9,8 +9,8 @@ namespace PDFPatcher.Functions
 		AutoBookmarkCondition.PageRangeCondition _condition;
 		bool _lock;
 
-		public PageRangeConditionEditor () {
-			InitializeComponent ();
+		public PageRangeConditionEditor() {
+			InitializeComponent();
 		}
 
 		#region ITextInfoFilterEditor 成员
@@ -29,12 +29,12 @@ namespace PDFPatcher.Functions
 
 		#endregion
 
-		private void ControlChanged (object sender, EventArgs e) {
+		private void ControlChanged(object sender, EventArgs e) {
 			if (_lock) {
 				return;
 			}
 			_condition.PageRange = _PageRangeBox.Text;
-			EditAdjustmentForm.UpdateFilter (this);
+			EditAdjustmentForm.UpdateFilter(this);
 		}
 	}
 }

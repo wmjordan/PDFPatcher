@@ -7,7 +7,7 @@ namespace PDFPatcher.Processor
 
 		PositionType _type;
 		public PositionType Parameter {
-			get { return _type; }
+			get => _type;
 			set {
 				_type = value;
 				switch (_type) {
@@ -26,9 +26,9 @@ namespace PDFPatcher.Processor
 
 		string _name;
 
-		public ClearDestinationOffsetProcessor () {
+		public ClearDestinationOffsetProcessor() {
 		}
-		public ClearDestinationOffsetProcessor (PositionType type) {
+		public ClearDestinationOffsetProcessor(PositionType type) {
 			Parameter = type;
 			switch (type) {
 				case PositionType.X:
@@ -44,26 +44,24 @@ namespace PDFPatcher.Processor
 		}
 		#region IInfoDocProcessor 成员
 
-		public string Name {
-			get { return "清除" + _name + "坐标定位偏移值"; }
-		}
+		public string Name => "清除" + _name + "坐标定位偏移值";
 
-		public IUndoAction Process (System.Xml.XmlElement item) {
-			if (item.GetAttribute (Constants.DestinationAttributes.View) == Constants.DestinationAttributes.ViewType.FitR) {
+		public IUndoAction Process(System.Xml.XmlElement item) {
+			if (item.GetAttribute(Constants.DestinationAttributes.View) == Constants.DestinationAttributes.ViewType.FitR) {
 				return null;
 			}
 			switch (_type) {
 				case PositionType.X:
-					return ClearPositionOffset (item, Constants.Coordinates.Left);
+					return ClearPositionOffset(item, Constants.Coordinates.Left);
 				case PositionType.Y:
-					return ClearPositionOffset (item, Constants.Coordinates.Top);
+					return ClearPositionOffset(item, Constants.Coordinates.Top);
 				case PositionType.XY:
-					var x = ClearPositionOffset (item, Constants.Coordinates.Left);
-					var y = ClearPositionOffset (item, Constants.Coordinates.Top);
+					var x = ClearPositionOffset(item, Constants.Coordinates.Left);
+					var y = ClearPositionOffset(item, Constants.Coordinates.Top);
 					if (x != null && y != null) {
-						var g = new UndoActionGroup ();
-						g.Add (x);
-						g.Add (y);
+						var g = new UndoActionGroup();
+						g.Add(x);
+						g.Add(y);
 						return g;
 					}
 					else if (x != null) {
@@ -79,14 +77,14 @@ namespace PDFPatcher.Processor
 			return null;
 		}
 
-		private static IUndoAction ClearPositionOffset (System.Xml.XmlElement item, string coordinate) {
-			if (item.HasAttribute (coordinate)) {
-				var l = item.GetAttribute (coordinate);
-				if (l.Trim () == "0") {
+		private static IUndoAction ClearPositionOffset(System.Xml.XmlElement item, string coordinate) {
+			if (item.HasAttribute(coordinate)) {
+				var l = item.GetAttribute(coordinate);
+				if (l.Trim() == "0") {
 					return null;
 				}
-				item.RemoveAttribute (coordinate);
-				return new SetAttributeAction (item, coordinate, l);
+				item.RemoveAttribute(coordinate);
+				return new SetAttributeAction(item, coordinate, l);
 			}
 			return null;
 		}

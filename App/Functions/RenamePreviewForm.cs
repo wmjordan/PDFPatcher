@@ -7,8 +7,8 @@ namespace PDFPatcher.Functions
 {
 	public partial class RenamePreviewForm : Form
 	{
-		public RenamePreviewForm (string[] sourceFiles, string[] targetFiles) {
-			InitializeComponent ();
+		public RenamePreviewForm(string[] sourceFiles, string[] targetFiles) {
+			InitializeComponent();
 			var l = sourceFiles.Length;
 			var c = _RenamePreviewBox.Items;
 			FilePath s, t;
@@ -18,8 +18,8 @@ namespace PDFPatcher.Functions
 				if (t.IsEmpty) {
 					continue;
 				}
-				if (t.ToString().IndexOf ('<') == -1) {
-					c.Add (new ListViewItem (new string[]{
+				if (t.ToString().IndexOf('<') == -1) {
+					c.Add(new ListViewItem(new string[]{
 						s.FileName,
 						t.FileName,
 						s.Directory,
@@ -27,7 +27,7 @@ namespace PDFPatcher.Functions
 					}));
 				}
 				else {
-					var item = c.Add (new ListViewItem (new string[]{
+					var item = c.Add(new ListViewItem(new string[]{
 						s.FileName,
 						t,
 						s.Directory,
@@ -38,12 +38,12 @@ namespace PDFPatcher.Functions
 				}
 			}
 			foreach (ColumnHeader item in _RenamePreviewBox.Columns) {
-				item.AutoResize (ColumnHeaderAutoResizeStyle.ColumnContent);
+				item.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
 			}
 		}
 
-		private void _OKButton_Click (object sender, EventArgs e) {
-			this.Close ();
+		private void _OKButton_Click(object sender, EventArgs e) {
+			Close();
 		}
 	}
 }

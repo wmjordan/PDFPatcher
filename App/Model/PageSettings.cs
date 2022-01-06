@@ -6,62 +6,62 @@ using PDFPatcher.Common;
 
 namespace PDFPatcher.Model
 {
-	[XmlRoot (Constants.Content.Page)]
+	[XmlRoot(Constants.Content.Page)]
 	public class PageSettings
 	{
 		///<summary>获取或指定页面范围的值。</summary>
-		[XmlAttribute (Constants.PageRange)]
+		[XmlAttribute(Constants.PageRange)]
 		public string PageRange { get; set; }
 		///<summary>获取或指定页面筛选的值。</summary>
-		[XmlAttribute (Constants.PageFilterTypes.ThisName)]
+		[XmlAttribute(Constants.PageFilterTypes.ThisName)]
 		public string Filter { get; set; }
 		///<summary>获取或指定页面尺寸的值。</summary>
-		[XmlAttribute (Constants.Content.PageSettings.MediaBox)]
+		[XmlAttribute(Constants.Content.PageSettings.MediaBox)]
 		public string PageSize { get; set; }
 		///<summary>获取或指定裁剪框的值。</summary>
-		[XmlAttribute (Constants.Content.PageSettings.CropBox)]
+		[XmlAttribute(Constants.Content.PageSettings.CropBox)]
 		public string CropBox { get; set; }
 		///<summary>获取或指定修剪框的值。</summary>
-		[XmlAttribute (Constants.Content.PageSettings.TrimBox)]
+		[XmlAttribute(Constants.Content.PageSettings.TrimBox)]
 		public string TrimBox { get; set; }
 		///<summary>获取或指定艺术框的值。</summary>
-		[XmlAttribute (Constants.Content.PageSettings.ArtBox)]
+		[XmlAttribute(Constants.Content.PageSettings.ArtBox)]
 		public string ArtBox { get; set; }
 		///<summary>获取或指定出血框的值。</summary>
-		[XmlAttribute (Constants.Content.PageSettings.BleedBox)]
+		[XmlAttribute(Constants.Content.PageSettings.BleedBox)]
 		public string BleedBox { get; set; }
 		///<summary>获取或指定旋转角度的值。</summary>
-		[XmlAttribute (Constants.Content.PageSettings.Rotation)]
-		[DefaultValue (0)]
+		[XmlAttribute(Constants.Content.PageSettings.Rotation)]
+		[DefaultValue(0)]
 		public int Rotation { get; set; }
 
-		static internal PageSettings FromReader (PdfReader reader, int pageIndex, UnitConverter converter) {
+		static internal PageSettings FromReader(PdfReader reader, int pageIndex, UnitConverter converter) {
 			iTextSharp.text.Rectangle b;
-			var s = new PageSettings ();
-			b = reader.GetPageSize (pageIndex);
-			s.PageSize = ConvertPageSize (b, converter);
-			b = reader.GetCropBox (pageIndex);
-			s.CropBox = (b != null) ? ConvertPageSize (b, converter) : null;
-			b = reader.GetBoxSize (pageIndex, "trim");
-			s.TrimBox = (b != null) ? ConvertPageSize (b, converter) : null;
-			b = reader.GetBoxSize (pageIndex, "art");
-			s.ArtBox = (b != null) ? ConvertPageSize (b, converter) : null;
-			b = reader.GetBoxSize (pageIndex, "bleed");
-			s.BleedBox = (b != null) ? ConvertPageSize (b, converter) : null;
-			s.Rotation = reader.GetPageRotation (pageIndex);
+			var s = new PageSettings();
+			b = reader.GetPageSize(pageIndex);
+			s.PageSize = ConvertPageSize(b, converter);
+			b = reader.GetCropBox(pageIndex);
+			s.CropBox = (b != null) ? ConvertPageSize(b, converter) : null;
+			b = reader.GetBoxSize(pageIndex, "trim");
+			s.TrimBox = (b != null) ? ConvertPageSize(b, converter) : null;
+			b = reader.GetBoxSize(pageIndex, "art");
+			s.ArtBox = (b != null) ? ConvertPageSize(b, converter) : null;
+			b = reader.GetBoxSize(pageIndex, "bleed");
+			s.BleedBox = (b != null) ? ConvertPageSize(b, converter) : null;
+			s.Rotation = reader.GetPageRotation(pageIndex);
 			return s;
 		}
 
-		private static string ConvertPageSize (iTextSharp.text.Rectangle b, UnitConverter converter) {
+		private static string ConvertPageSize(iTextSharp.text.Rectangle b, UnitConverter converter) {
 			var p = new string[4];
-			p[0] = converter.FromPoint (b.Left).ToText("0.###");
-			p[1] = converter.FromPoint (b.Bottom).ToText("0.###");
-			p[2] = converter.FromPoint (b.Right).ToText("0.###");
-			p[3] = converter.FromPoint (b.Top).ToText("0.###");
-			return String.Join (" ", p);
+			p[0] = converter.FromPoint(b.Left).ToText("0.###");
+			p[1] = converter.FromPoint(b.Bottom).ToText("0.###");
+			p[2] = converter.FromPoint(b.Right).ToText("0.###");
+			p[3] = converter.FromPoint(b.Top).ToText("0.###");
+			return String.Join(" ", p);
 		}
 
-		static internal bool HavingSameDimension (PageSettings s1, PageSettings s2) {
+		static internal bool HavingSameDimension(PageSettings s1, PageSettings s2) {
 			if (s1 == null && s2 == null) {
 				return true;
 			}
@@ -76,27 +76,27 @@ namespace PDFPatcher.Model
 			return true;
 		}
 
-		internal void WriteXml (System.Xml.XmlWriter writer) {
-			if (String.IsNullOrEmpty (PageRange)) {
-				System.Diagnostics.Debug.WriteLine ("Empty page range.");
+		internal void WriteXml(System.Xml.XmlWriter writer) {
+			if (String.IsNullOrEmpty(PageRange)) {
+				System.Diagnostics.Debug.WriteLine("Empty page range.");
 				return;
 			}
-			writer.WriteAttributeString (Constants.PageRange, PageRange);
-			writer.WriteAttributeString (Constants.Content.PageSettings.MediaBox, PageSize);
+			writer.WriteAttributeString(Constants.PageRange, PageRange);
+			writer.WriteAttributeString(Constants.Content.PageSettings.MediaBox, PageSize);
 			if (CropBox != null) {
-				writer.WriteAttributeString (Constants.Content.PageSettings.CropBox, CropBox);
+				writer.WriteAttributeString(Constants.Content.PageSettings.CropBox, CropBox);
 			}
 			if (TrimBox != null) {
-				writer.WriteAttributeString (Constants.Content.PageSettings.TrimBox, TrimBox);
+				writer.WriteAttributeString(Constants.Content.PageSettings.TrimBox, TrimBox);
 			}
 			if (ArtBox != null) {
-				writer.WriteAttributeString (Constants.Content.PageSettings.ArtBox, ArtBox);
+				writer.WriteAttributeString(Constants.Content.PageSettings.ArtBox, ArtBox);
 			}
 			if (BleedBox != null) {
-				writer.WriteAttributeString (Constants.Content.PageSettings.BleedBox, BleedBox);
+				writer.WriteAttributeString(Constants.Content.PageSettings.BleedBox, BleedBox);
 			}
 			if (Rotation != 0) {
-				writer.WriteAttributeString (Constants.Content.PageSettings.Rotation, Rotation.ToText());
+				writer.WriteAttributeString(Constants.Content.PageSettings.Rotation, Rotation.ToText());
 			}
 		}
 	}

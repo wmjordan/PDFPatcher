@@ -32,7 +32,7 @@ namespace PDFPatcher.Common
 
 		private string _Unit;
 		///<summary>获取或指定转换使用的单位。</summary>
-		[XmlAttribute ("单位")]
+		[XmlAttribute("单位")]
 		public string Unit {
 			get => _Unit;
 			set {
@@ -45,25 +45,25 @@ namespace PDFPatcher.Common
 			}
 		}
 
-		public UnitConverter () {
+		public UnitConverter() {
 			Unit = Constants.Units.CM;
 			Precision = 3;
 		}
 
-		internal float FromPoint (float point) {
+		internal float FromPoint(float point) {
 			return (point < _PreservedValue && point >= 0) // preserve small fragment
 					? point
-					: (float)Math.Round (point / UnitFactor, _Precision);
+					: (float)Math.Round(point / UnitFactor, _Precision);
 		}
 
-		internal float ToPoint (float value) {
+		internal float ToPoint(float value) {
 			return (value < _PreservedValue && value >= 0 || value >= 10000) // preserve small fragment or extra large values
 					? value
-					: (float)Math.Round (value * UnitFactor, _Precision);
+					: (float)Math.Round(value * UnitFactor, _Precision);
 		}
 
-		internal static string FromPoint (string point, float unitFactor) {
-			if (String.IsNullOrEmpty (point) || point == Null) {
+		internal static string FromPoint(string point, float unitFactor) {
+			if (String.IsNullOrEmpty(point) || point == Null) {
 				return Null;
 			}
 			if (unitFactor == 1) {
@@ -77,14 +77,14 @@ namespace PDFPatcher.Common
 			return point;
 		}
 
-		internal static string FromPoint (float point, float unitFactor) {
+		internal static string FromPoint(float point, float unitFactor) {
 			return ((point < 0.01 && point >= 0) || unitFactor == 1 // preserve small fragment
-				? point.ToString (NumberFormatInfo.InvariantInfo)
-				: (point / unitFactor).ToString (ToStringFormat, NumberFormatInfo.InvariantInfo));
+				? point.ToString(NumberFormatInfo.InvariantInfo)
+				: (point / unitFactor).ToString(ToStringFormat, NumberFormatInfo.InvariantInfo));
 		}
 
-		internal static string ToPoint (string value, float unitFactor) {
-			if (String.IsNullOrEmpty (value) || value == Null) {
+		internal static string ToPoint(string value, float unitFactor) {
+			if (String.IsNullOrEmpty(value) || value == Null) {
 				return Null;
 			}
 			if (value.TryParse(out float v)) {
@@ -95,14 +95,14 @@ namespace PDFPatcher.Common
 			return value;
 		}
 
-		internal static float ToPoint (float value, float unitFactor) {
+		internal static float ToPoint(float value, float unitFactor) {
 			return (value < 0.01 && value >= 0 || value >= 10000) // preserve small fragment or extra large values
 					? value
 					: (value * unitFactor);
 		}
 
-		internal static float[] ConvertUnit (float[] source, float factor) {
-			return Array.ConvertAll (source, i => ToPoint(i, factor));
+		internal static float[] ConvertUnit(float[] source, float factor) {
+			return Array.ConvertAll(source, i => ToPoint(i, factor));
 		}
 
 

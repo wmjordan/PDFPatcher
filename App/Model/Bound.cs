@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 namespace PDFPatcher.Model
 {
-	[DebuggerDisplay ("T={Top},L={Left},B={Bottom},R={Right}; H={Height},W={Width}")]
+	[DebuggerDisplay("T={Top},L={Left},B={Bottom},R={Right}; H={Height},W={Width}")]
 	public class Bound
 	{
 		internal float Top { get; private set; }
@@ -26,73 +26,73 @@ namespace PDFPatcher.Model
 		internal float Middle { get; private set; }
 		internal float Center { get; private set; }
 
-		private Bound () {
-			this.IsTopDown = true;
-			this.IsTopUp = true;
+		private Bound() {
+			IsTopDown = true;
+			IsTopUp = true;
 		}
 
-		public Bound (float left, float bottom, float right, float top) {
+		public Bound(float left, float bottom, float right, float top) {
 			if (right < left) {
-				Debug.WriteLine ("右端坐标不能小于左端坐标。");
+				Debug.WriteLine("右端坐标不能小于左端坐标。");
 				var t = right;
 				right = left;
 				left = t;
 			}
-			this.Left = left;
-			this.Bottom = bottom;
-			this.Right = right;
-			this.Top = top;
-			RecalculateSize ();
+			Left = left;
+			Bottom = bottom;
+			Right = right;
+			Top = top;
+			RecalculateSize();
 		}
 		/// <summary>
 		/// 创建宽度和高度均为 0 的区域（点）实例。
 		/// </summary>
 		/// <param name="x">横坐标。</param>
 		/// <param name="y">纵坐标。</param>
-		public Bound (float x, float y) : this (x,y,x,y) {
+		public Bound(float x, float y) : this(x, y, x, y) {
 		}
 
 		/// <summary>
 		/// 从指定区域复制副本。
 		/// </summary>
 		/// <param name="source">需要复制副本的区域。</param>
-		public Bound (Bound source) : this(source.Left, source.Bottom, source.Right, source.Top) {
+		public Bound(Bound source) : this(source.Left, source.Bottom, source.Right, source.Top) {
 		}
 
-		private void RecalculateSize () {
-			this.IsTopUp = this.Top >= this.Bottom;
-			this.IsTopDown = this.Top <= this.Bottom;
-			this.Height = this.IsTopUp ? this.Top - this.Bottom : this.Bottom - this.Top;
-			this.Middle = (this.Top + this.Bottom) / 2;
-			this.Width = this.Right - this.Left;
-			this.Center = (this.Left + this.Right) / 2;
+		private void RecalculateSize() {
+			IsTopUp = Top >= Bottom;
+			IsTopDown = Top <= Bottom;
+			Height = IsTopUp ? Top - Bottom : Bottom - Top;
+			Middle = (Top + Bottom) / 2;
+			Width = Right - Left;
+			Center = (Left + Right) / 2;
 		}
 
-		internal Bound Merge (Bound source) {
+		internal Bound Merge(Bound source) {
 			// 笛卡尔坐标
-			if (this.IsTopUp) {
-				if (this.Top < source.Top) {
-					this.Top = source.Top;
+			if (IsTopUp) {
+				if (Top < source.Top) {
+					Top = source.Top;
 				}
-				if (this.Bottom > source.Bottom) {
-					this.Bottom = source.Bottom;
+				if (Bottom > source.Bottom) {
+					Bottom = source.Bottom;
 				}
 			}
 			else {
-				if (this.Top > source.Top) {
-					this.Top = source.Top;
+				if (Top > source.Top) {
+					Top = source.Top;
 				}
-				if (this.Bottom < source.Bottom) {
-					this.Bottom = source.Bottom;
+				if (Bottom < source.Bottom) {
+					Bottom = source.Bottom;
 				}
 			}
-			if (this.Left > source.Left) {
-				this.Left = source.Left;
+			if (Left > source.Left) {
+				Left = source.Left;
 			}
-			if (this.Right < source.Right) {
-				this.Right = source.Right;
+			if (Right < source.Right) {
+				Right = source.Right;
 			}
-			RecalculateSize ();
+			RecalculateSize();
 			return this;
 		}
 
@@ -102,32 +102,32 @@ namespace PDFPatcher.Model
 		/// <param name="other">另一个区域。</param>
 		/// <param name="writingDirection">假设书写方向。</param>
 		/// <returns><paramref name="other"/> 相对于此区域的距离关系。</returns>
-		internal DistanceInfo GetDistance (Bound other, WritingDirection writingDirection) {
-			if (this.IsTopDown != other.IsTopDown && this.IsTopUp != other.IsTopUp) {
-				throw new ArgumentException ("区域坐标系不同。");
+		internal DistanceInfo GetDistance(Bound other, WritingDirection writingDirection) {
+			if (IsTopDown != other.IsTopDown && IsTopUp != other.IsTopUp) {
+				throw new ArgumentException("区域坐标系不同。");
 			}
 
 			float hd = float.MaxValue, vd = float.MaxValue;
 			var hp = DistanceInfo.Placement.Unknown;
 			var vp = DistanceInfo.Placement.Unknown;
 			float au, ad, bu, bd;
-			if (this.IsTopDown) {
-				au = this.Top;
-				ad = this.Bottom;
+			if (IsTopDown) {
+				au = Top;
+				ad = Bottom;
 				bu = other.Top;
 				bd = other.Bottom;
 			}
 			else {
-				au = -this.Top;
-				ad = -this.Bottom;
+				au = -Top;
+				ad = -Bottom;
 				bu = -other.Top;
 				bd = -other.Bottom;
 			}
 
 			bool ov = false;
-			if (this.IntersectWith (other)) {
+			if (IntersectWith(other)) {
 				ov = true;
-				hd = other.Center - this.Center;
+				hd = other.Center - Center;
 				if (hd > 0) {
 					hp = DistanceInfo.Placement.Right;
 				}
@@ -135,34 +135,34 @@ namespace PDFPatcher.Model
 					hp = DistanceInfo.Placement.Left;
 					hd = -hd;
 				}
-				vd = other.Middle - this.Middle;
+				vd = other.Middle - Middle;
 				if (vd > 0) {
-					vp = this.IsTopUp ? DistanceInfo.Placement.Up : DistanceInfo.Placement.Down;
+					vp = IsTopUp ? DistanceInfo.Placement.Up : DistanceInfo.Placement.Down;
 				}
 				else if (vd < 0) {
-					vp = this.IsTopUp ? DistanceInfo.Placement.Down : DistanceInfo.Placement.Up;
+					vp = IsTopUp ? DistanceInfo.Placement.Down : DistanceInfo.Placement.Up;
 				}
 				if (vd == 0 && hd == 0) {
-					return new DistanceInfo (DistanceInfo.Placement.Overlapping, 0, 0);
+					return new DistanceInfo(DistanceInfo.Placement.Overlapping, 0, 0);
 				}
 				else if (vd == 0) {
-					return new DistanceInfo (DistanceInfo.Placement.Overlapping | hp, hd, vd);
+					return new DistanceInfo(DistanceInfo.Placement.Overlapping | hp, hd, vd);
 				}
 				else if (hp == 0) {
-					return new DistanceInfo (DistanceInfo.Placement.Overlapping | vp, hd, vd);
+					return new DistanceInfo(DistanceInfo.Placement.Overlapping | vp, hd, vd);
 				}
 				else {
-					return new DistanceInfo (DistanceInfo.Placement.Overlapping, hd, vd);
+					return new DistanceInfo(DistanceInfo.Placement.Overlapping, hd, vd);
 				}
 			}
 
-			if (other.Left >= this.Right) {
+			if (other.Left >= Right) {
 				hp = DistanceInfo.Placement.Right;
-				hd = other.Left - this.Right;
+				hd = other.Left - Right;
 			}
-			else if (other.Right <= this.Left) {
+			else if (other.Right <= Left) {
 				hp = DistanceInfo.Placement.Left;
-				hd = this.Left - other.Right;
+				hd = Left - other.Right;
 			}
 			if (bd <= au) {
 				vp = DistanceInfo.Placement.Up;
@@ -173,10 +173,10 @@ namespace PDFPatcher.Model
 				vd = bu - ad;
 			}
 			if (hp == DistanceInfo.Placement.Unknown && vp == DistanceInfo.Placement.Unknown) {
-				throw new ArgumentOutOfRangeException ("位置错误。");
+				throw new ArgumentOutOfRangeException("位置错误。");
 			}
-			var v = new DistanceInfo (ov ? DistanceInfo.Placement.Overlapping | vp : vp, hd, vd);
-			var h = new DistanceInfo (ov ? DistanceInfo.Placement.Overlapping | hp : hp, hd, vd);
+			var v = new DistanceInfo(ov ? DistanceInfo.Placement.Overlapping | vp : vp, hd, vd);
+			var h = new DistanceInfo(ov ? DistanceInfo.Placement.Overlapping | hp : hp, hd, vd);
 			if (writingDirection == WritingDirection.Vertical) {
 				return hp != DistanceInfo.Placement.Unknown ? h : v;
 			}
@@ -194,54 +194,54 @@ namespace PDFPatcher.Model
 		/// <param name="other">需要比较的区域。</param>
 		/// <param name="direction">比较方向。</param>
 		/// <returns>在同一行上时返回 true。</returns>
-		internal bool IsAlignedWith (Bound other, WritingDirection direction) {
+		internal bool IsAlignedWith(Bound other, WritingDirection direction) {
 			switch (direction) {
 				case WritingDirection.Hortizontal:
-					return this.IsTopDown ? (other.Top < this.Middle && this.Middle < other.Bottom || this.Top < other.Middle && other.Middle < this.Bottom) : (other.Bottom < this.Middle && this.Middle < other.Top || this.Bottom < other.Middle && other.Middle < this.Top);
+					return IsTopDown ? (other.Top < Middle && Middle < other.Bottom || Top < other.Middle && other.Middle < Bottom) : (other.Bottom < Middle && Middle < other.Top || Bottom < other.Middle && other.Middle < Top);
 				case WritingDirection.Vertical:
-					return other.Left < this.Center && this.Center < other.Right
-						|| this.Left < other.Center && other.Center < this.Right;
+					return other.Left < Center && Center < other.Right
+						|| Left < other.Center && other.Center < Right;
 				default:
-					return this.IntersectWith (other);
+					return IntersectWith(other);
 			}
 		}
 
-		internal bool IntersectWith (Bound other) {
-			return other.Left < this.Right && this.Left < other.Right &&
-				(this.IsTopDown
-					? (other.Top < this.Bottom && this.Top < other.Bottom)
-					: (other.Bottom < this.Top && this.Bottom < other.Top));
+		internal bool IntersectWith(Bound other) {
+			return other.Left < Right && Left < other.Right &&
+				(IsTopDown
+					? (other.Top < Bottom && Top < other.Bottom)
+					: (other.Bottom < Top && Bottom < other.Top));
 		}
 
-		internal bool Contains (float x, float y) {
+		internal bool Contains(float x, float y) {
 			float x1, x2, y1, y2;
-			x1 = this.Left;
-			x2 = this.Right;
-			if (this.IsTopUp) {
-				y1 = this.Bottom;
-				y2 = this.Top;
+			x1 = Left;
+			x2 = Right;
+			if (IsTopUp) {
+				y1 = Bottom;
+				y2 = Top;
 			}
 			else {
-				y1 = this.Top;
-				y2 = this.Bottom;
+				y1 = Top;
+				y2 = Bottom;
 			}
 			return x1 <= x && x <= x2 && y1 <= y && y <= y2;
 		}
 
-		public static bool operator == (Bound a, Bound b) {
+		public static bool operator ==(Bound a, Bound b) {
 			return a.Top == b.Top && a.Bottom == b.Bottom && a.Left == b.Left && a.Right == b.Right;
 		}
-		public static bool operator != (Bound a, Bound b) {
+		public static bool operator !=(Bound a, Bound b) {
 			return a.Top != b.Top || a.Bottom != b.Bottom || a.Left != b.Left || a.Right != b.Right;
 		}
-		public override bool Equals (object obj) {
+		public override bool Equals(object obj) {
 			return this == (Bound)obj;
 		}
-		public override int GetHashCode () {
-			return this.Top.GetHashCode () ^ this.Bottom.GetHashCode () ^ this.Left.GetHashCode () ^ this.Right.GetHashCode ();
+		public override int GetHashCode() {
+			return Top.GetHashCode() ^ Bottom.GetHashCode() ^ Left.GetHashCode() ^ Right.GetHashCode();
 		}
-		public static implicit operator System.Drawing.RectangleF (Bound bound) {
-			return new System.Drawing.RectangleF (Math.Min (bound.Left, bound.Right), Math.Min (bound.Top, bound.Bottom), Math.Abs (bound.Left - bound.Right), Math.Abs (bound.Top - bound.Bottom));
+		public static implicit operator System.Drawing.RectangleF(Bound bound) {
+			return new System.Drawing.RectangleF(Math.Min(bound.Left, bound.Right), Math.Min(bound.Top, bound.Bottom), Math.Abs(bound.Left - bound.Right), Math.Abs(bound.Top - bound.Bottom));
 		}
 	}
 }

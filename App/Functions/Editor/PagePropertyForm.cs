@@ -12,22 +12,22 @@ namespace PDFPatcher.Functions.Editor
 	{
 		public int PageNumber { get; set; }
 
-		public PagePropertyForm () {
-			InitializeComponent ();
+		public PagePropertyForm() {
+			InitializeComponent();
 			_PageDimensionBox.SelectedIndexChanged += _PageDimensionBox_SelectedIndexChanged;
 			_CloseButton.Click += (s, args) => Hide();
 			_FontNameColumn.AsTyped<MuFontAndSize>(f => f.AspectGetter = o => o.FontName);
 			_SizeColumn.AsTyped<MuFontAndSize>(f => f.AspectGetter = o => o.Size);
 		}
 
-		public void LoadPage (MuPage page) {
-			_PageDimensionBox.Items.Clear ();
-			AddBox (page, page.CropBox, Constants.Content.PageSettings.CropBox);
-			AddBox (page, page.MediaBox, Constants.Content.PageSettings.MediaBox);
-			AddBox (page, page.TrimBox, Constants.Content.PageSettings.TrimBox);
-			AddBox (page, page.ArtBox, Constants.Content.PageSettings.ArtBox);
-			AddBox (page, page.BleedBox, Constants.Content.PageSettings.BleedBox);
-			_RotationBox.Text = page.Rotation.ToString ();
+		public void LoadPage(MuPage page) {
+			_PageDimensionBox.Items.Clear();
+			AddBox(page, page.CropBox, Constants.Content.PageSettings.CropBox);
+			AddBox(page, page.MediaBox, Constants.Content.PageSettings.MediaBox);
+			AddBox(page, page.TrimBox, Constants.Content.PageSettings.TrimBox);
+			AddBox(page, page.ArtBox, Constants.Content.PageSettings.ArtBox);
+			AddBox(page, page.BleedBox, Constants.Content.PageSettings.BleedBox);
+			_RotationBox.Text = page.Rotation.ToString();
 			if (_PageDimensionBox.Items.Count > 0) {
 				_PageDimensionBox.SelectedIndex = 0;
 			}
@@ -39,23 +39,23 @@ namespace PDFPatcher.Functions.Editor
 				}
 			}
 			_TextStyleBox.Objects = ts;
-			_TextStyleBox.Sort (_SizeColumn, SortOrder.Descending);
+			_TextStyleBox.Sort(_SizeColumn, SortOrder.Descending);
 			PageNumber = page.PageNumber;
 		}
 
-		private void AddBox (MuPage page, MuRectangle rect, string title) {
+		private void AddBox(MuPage page, MuRectangle rect, string title) {
 			if (rect.IsEmpty == false) {
-				_PageDimensionBox.Items.Add (new Box (rect, title));
+				_PageDimensionBox.Items.Add(new Box(rect, title));
 			}
 		}
 
-		private void _PageDimensionBox_SelectedIndexChanged (object sender, EventArgs args) {
+		private void _PageDimensionBox_SelectedIndexChanged(object sender, EventArgs args) {
 			var v = _PageDimensionBox.SelectedItem as Box;
 			if (v == null) {
 				return;
 			}
 			var r = v.Rect;
-			_TopBox.Text = r.Bottom.ToText ();
+			_TopBox.Text = r.Bottom.ToText();
 			_RightBox.Text = r.Right.ToText();
 			_BottomBox.Text = r.Top.ToText();
 			_LeftBox.Text = r.Left.ToText();
@@ -63,20 +63,20 @@ namespace PDFPatcher.Functions.Editor
 			_HeightBox.Text = r.Height.ToText();
 		}
 
-		protected override void OnDeactivate (EventArgs e) {
-			Hide ();
-			base.OnDeactivate (e);
+		protected override void OnDeactivate(EventArgs e) {
+			Hide();
+			base.OnDeactivate(e);
 		}
 
 		sealed class Box
 		{
 			public readonly MuRectangle Rect;
 			public readonly string Title;
-			public Box (MuRectangle rect, string title) {
+			public Box(MuRectangle rect, string title) {
 				Rect = rect;
 				Title = title;
 			}
-			public override string ToString () {
+			public override string ToString() {
 				return Title;
 			}
 		}

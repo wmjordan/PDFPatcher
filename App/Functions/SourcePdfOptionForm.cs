@@ -11,11 +11,11 @@ namespace PDFPatcher.Functions
 {
 	internal sealed partial class SourcePdfOptionForm : Form
 	{
-		SourceItem.Pdf _pdf;
+		readonly SourceItem.Pdf _pdf;
 
 
-		internal SourcePdfOptionForm (SourceItem.Pdf pdf) {
-			InitializeComponent ();
+		internal SourcePdfOptionForm(SourceItem.Pdf pdf) {
+			InitializeComponent();
 			_SourceFileBox.Text = pdf.FilePath.ToString();
 			_PageRangeBox.Text = pdf.PageRanges;
 			_ImportImagesOnlyBox.Checked = pdf.ImportImagesOnly;
@@ -35,9 +35,9 @@ namespace PDFPatcher.Functions
 			_pdf = pdf;
 		}
 
-		private void _OkButton_Click (Object source, EventArgs args) {
-			this.DialogResult = DialogResult.OK;
-			_pdf.PageRanges = Model.PageRangeCollection.Parse (_PageRangeBox.Text, 1, _pdf.PageCount, true).ToString ();
+		private void _OkButton_Click(Object source, EventArgs args) {
+			DialogResult = DialogResult.OK;
+			_pdf.PageRanges = Model.PageRangeCollection.Parse(_PageRangeBox.Text, 1, _pdf.PageCount, true).ToString();
 			_pdf.ImportImagesOnly = _ImportImagesOnlyBox.Checked;
 			//_pdf.Cropping.Top = (int)_TopMarginBox.Value;
 			//_pdf.Cropping.Left = (int)_LeftMarginBox.Value;
@@ -51,15 +51,15 @@ namespace PDFPatcher.Functions
 			_pdf.ExtractImageOptions.VerticalFlipImages = _VerticalFlipImagesBox.Checked;
 			_pdf.ExtractImageOptions.MinHeight = (int)_MinHeightBox.Value;
 			_pdf.ExtractImageOptions.MinWidth = (int)_MinWidthBox.Value;
-			this.Close ();
+			Close();
 		}
 
-		private void _CancelButton_Click (Object source, EventArgs args) {
-			this.DialogResult = DialogResult.Cancel;
-			this.Close ();
+		private void _CancelButton_Click(Object source, EventArgs args) {
+			DialogResult = DialogResult.Cancel;
+			Close();
 		}
 
-		private void _ImportImagesOnlyBox_CheckedChanged (object sender, EventArgs e) {
+		private void _ImportImagesOnlyBox_CheckedChanged(object sender, EventArgs e) {
 			_ExtractImageOptionBox.Enabled = _ImportImagesOnlyBox.Checked;
 		}
 	}

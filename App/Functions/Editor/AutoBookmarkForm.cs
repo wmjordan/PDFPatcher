@@ -13,12 +13,12 @@ namespace PDFPatcher.Functions
 		List<EditModel.AutoBookmarkStyle> _list;
 		readonly Controller _controller;
 
-		internal AutoBookmarkForm (Controller controller) {
-			InitializeComponent ();
+		internal AutoBookmarkForm(Controller controller) {
+			InitializeComponent();
 			_controller = controller;
 		}
 
-		private void AutoBookmarkForm_Load (object sender, EventArgs e) {
+		private void AutoBookmarkForm_Load(object sender, EventArgs e) {
 			MinimumSize = Size;
 			_ConditionColumn.AsTyped<EditModel.AutoBookmarkStyle>(c => {
 				c.AspectGetter = o => String.Concat("字体为", o.FontName, "且尺寸为", o.FontSize);
@@ -67,19 +67,19 @@ namespace PDFPatcher.Functions
 			};
 		}
 
-		internal void SetValues (List<EditModel.AutoBookmarkStyle> list) {
+		internal void SetValues(List<EditModel.AutoBookmarkStyle> list) {
 			_BookmarkConditionBox.Objects = _list = list;
 		}
 
-		private void _RemoveButton_Click (object sender, EventArgs e) {
+		private void _RemoveButton_Click(object sender, EventArgs e) {
 			_BookmarkConditionBox.SelectedObjects.ForEach<EditModel.AutoBookmarkStyle>(i => _list.Remove(i));
-			_BookmarkConditionBox.RemoveObjects (_BookmarkConditionBox.SelectedObjects);
+			_BookmarkConditionBox.RemoveObjects(_BookmarkConditionBox.SelectedObjects);
 		}
 
-		private void _AutoBookmarkButton_Click (object sender, EventArgs e) {
-			_list.Clear ();
-			_list.AddRange (new TypedObjectListView<EditModel.AutoBookmarkStyle> (_BookmarkConditionBox).Objects);
-			_controller.AutoBookmark (_list, _MergeAdjacentTitleBox.Checked);
+		private void _AutoBookmarkButton_Click(object sender, EventArgs e) {
+			_list.Clear();
+			_list.AddRange(new TypedObjectListView<EditModel.AutoBookmarkStyle>(_BookmarkConditionBox).Objects);
+			_controller.AutoBookmark(_list, _MergeAdjacentTitleBox.Checked);
 		}
 	}
 }

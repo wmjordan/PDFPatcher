@@ -8,35 +8,35 @@ namespace PDFPatcher.Functions.Editor
 {
 	sealed class DeleteBookmarkItemCommand : IEditorCommand
 	{
-		public void Process (Controller controller, params string[] parameters) {
-			RemoveItems (controller, controller.View.Bookmark.GetSelectedElements (false));
+		public void Process(Controller controller, params string[] parameters) {
+			RemoveItems(controller, controller.View.Bookmark.GetSelectedElements(false));
 		}
 
-		private void RemoveItems (Controller controller, System.Collections.IList si) {
+		private void RemoveItems(Controller controller, System.Collections.IList si) {
 			if (si.Count == 0) {
 				return;
 			}
 			var b = controller.View.Bookmark;
-			b.RemoveObjects (si);
-			var undo = new UndoActionGroup ();
-			var l = new List<XmlNode> ();
+			b.RemoveObjects(si);
+			var undo = new UndoActionGroup();
+			var l = new List<XmlNode>();
 			foreach (XmlElement item in si) {
 				if (item == null || item.ParentNode == null) {
 					continue;
 				}
-				undo.Add (new AddElementAction (item));
+				undo.Add(new AddElementAction(item));
 				var p = item.ParentNode;
-				p.RemoveChild (item);
-				if (l.Contains (p) == false) {
-					l.Add (p);
+				p.RemoveChild(item);
+				if (l.Contains(p) == false) {
+					l.Add(p);
 				}
 			}
 			foreach (var item in l) {
 				if (item.ParentNode != null) {
-					b.RefreshObject (item);
+					b.RefreshObject(item);
 				}
 			}
-			controller.Model.Undo.AddUndo ("删除书签", undo);
+			controller.Model.Undo.AddUndo("删除书签", undo);
 		}
 
 	}

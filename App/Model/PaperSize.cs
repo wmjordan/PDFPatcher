@@ -14,9 +14,9 @@ namespace PDFPatcher.Model
 		public const string AsSmallestPage = "等同最小页面尺寸";
 
 		string _PaperName;
-		[XmlAttribute ("名称")]
+		[XmlAttribute("名称")]
 		public string PaperName {
-			get { return _PaperName; }
+			get => _PaperName;
 			set {
 				_PaperName = value;
 				switch (_PaperName) {
@@ -37,12 +37,12 @@ namespace PDFPatcher.Model
 
 		private float _Height;
 		///<summary>获取或指定页面高度的值。</summary>
-		[XmlAttribute ("高度")]
+		[XmlAttribute("高度")]
 		public float Height {
-			get { return _Height; }
+			get => _Height;
 			set {
 				if (value < 0) {
-					throw new ArgumentException ("页面高度不可小于 0。");
+					throw new ArgumentException("页面高度不可小于 0。");
 				}
 				_Height = value;
 			}
@@ -50,40 +50,40 @@ namespace PDFPatcher.Model
 
 		private float _Width;
 		///<summary>获取或指定页面宽度的值。</summary>
-		[XmlAttribute ("宽度")]
+		[XmlAttribute("宽度")]
 		public float Width {
-			get { return _Width; }
+			get => _Width;
 			set {
 				if (value < 0) {
-					throw new ArgumentException ("页面宽度不可小于 0。");
+					throw new ArgumentException("页面宽度不可小于 0。");
 				}
 				_Width = value;
 			}
 		}
 
-		public PaperSize () { }
+		public PaperSize() { }
 
-		public PaperSize (float width, float height) : this(null, width, height) {
+		public PaperSize(float width, float height) : this(null, width, height) {
 		}
 
-		public PaperSize (string paperName, float width, float height) {
+		public PaperSize(string paperName, float width, float height) {
 			PaperName = paperName;
 			Width = width;
 			Height = height;
 		}
 
-		internal PaperSize Scale (float xFactor, float yFactor) {
-			return new PaperSize (PaperName, Width * xFactor, Height * yFactor);
+		internal PaperSize Scale(float xFactor, float yFactor) {
+			return new PaperSize(PaperName, Width * xFactor, Height * yFactor);
 		}
-		internal PaperSize Scale (float factor) {
-			return new PaperSize (PaperName, Width * factor, Height * factor);
+		internal PaperSize Scale(float factor) {
+			return new PaperSize(PaperName, Width * factor, Height * factor);
 		}
 
 		internal PaperSize Clone() {
 			return (PaperSize)MemberwiseClone();
 		}
 
-		public override string ToString () {
+		public override string ToString() {
 			return PaperName;
 		}
 

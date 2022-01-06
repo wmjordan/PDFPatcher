@@ -9,13 +9,13 @@ namespace MuPdfSharp
 {
 	internal sealed class PixmapData : IDisposable
 	{
-		ContextHandle _context;
-		PixmapHandle _pixmap;
-		public PixmapData (ContextHandle context, PixmapHandle pixmap) {
-			Width = NativeMethods.GetWidth (context, pixmap);
-			Height = NativeMethods.GetHeight (context, pixmap);
-			Components = NativeMethods.GetComponents (context, pixmap);
-			Samples = NativeMethods.GetSamples (context, pixmap);
+		readonly ContextHandle _context;
+		readonly PixmapHandle _pixmap;
+		public PixmapData(ContextHandle context, PixmapHandle pixmap) {
+			Width = NativeMethods.GetWidth(context, pixmap);
+			Height = NativeMethods.GetHeight(context, pixmap);
+			Components = NativeMethods.GetComponents(context, pixmap);
+			Samples = NativeMethods.GetSamples(context, pixmap);
 			_context = context;
 			_pixmap = pixmap;
 		}
@@ -36,19 +36,19 @@ namespace MuPdfSharp
 		/// <summary>
 		/// 将 Pixmap 的数据转换为 <see cref="Bitmap"/>。
 		/// </summary>
-		public unsafe Bitmap ToBitmap (ImageRendererOptions options) {
+		public unsafe Bitmap ToBitmap(ImageRendererOptions options) {
 			int width = Width;
 			int height = Height;
 			bool grayscale = options.ColorSpace == ColorSpace.Gray;
 			bool invert = options.InvertColor;
-			var bmp = new Bitmap (width, height, grayscale ? PixelFormat.Format8bppIndexed : PixelFormat.Format24bppRgb);
-			var imageData = bmp.LockBits (new System.Drawing.Rectangle (0, 0, width, height), ImageLockMode.ReadWrite, bmp.PixelFormat);
+			var bmp = new Bitmap(width, height, grayscale ? PixelFormat.Format8bppIndexed : PixelFormat.Format24bppRgb);
+			var imageData = bmp.LockBits(new System.Drawing.Rectangle(0, 0, width, height), ImageLockMode.ReadWrite, bmp.PixelFormat);
 			var ptrSrc = (byte*)Samples;
 			var ptrDest = (byte*)imageData.Scan0;
 			if (grayscale) {
 				var palette = bmp.Palette;
 				for (int i = 0; i < 256; ++i)
-					palette.Entries[i] = Color.FromArgb (i, i, i);
+					palette.Entries[i] = Color.FromArgb(i, i, i);
 				bmp.Palette = palette;
 				for (int y = 0; y < height; y++) {
 					var pl = ptrDest;
@@ -88,7 +88,7 @@ namespace MuPdfSharp
 					ptrSrc = sl;
 				}
 			}
-			bmp.UnlockBits (imageData);
+			bmp.UnlockBits(imageData);
 			if (options.Dpi > 0) {
 				bmp.SetResolution(options.Dpi, options.Dpi);
 			}
@@ -98,18 +98,18 @@ namespace MuPdfSharp
 		/// <summary>
 		/// 将 Pixmap 的数据转换为 <see cref="FreeImageBitmap"/>。
 		/// </summary>
-		public unsafe FreeImageBitmap ToFreeImageBitmap (ImageRendererOptions options) {
+		public unsafe FreeImageBitmap ToFreeImageBitmap(ImageRendererOptions options) {
 			int width = Width;
 			int height = Height;
 			bool grayscale = options.ColorSpace == ColorSpace.Gray;
 			bool invert = options.InvertColor;
-			var bmp = new FreeImageBitmap (width, height, grayscale ? PixelFormat.Format8bppIndexed : PixelFormat.Format24bppRgb);
+			var bmp = new FreeImageBitmap(width, height, grayscale ? PixelFormat.Format8bppIndexed : PixelFormat.Format24bppRgb);
 			var ptrSrc = (byte*)Samples;
 			if (grayscale) {
-				bmp.Palette.CreateGrayscalePalette ();
+				bmp.Palette.CreateGrayscalePalette();
 				for (int y = height - 1; y >= 0; y--) {
-					var pDest = bmp.GetScanlinePointer (y);
-					var pl = (byte*)pDest.ToPointer ();
+					var pDest = bmp.GetScanlinePointer(y);
+					var pl = (byte*)pDest.ToPointer();
 					var sl = ptrSrc;
 					for (int x = 0; x < width; x++) {
 						*pl = invert ? (byte)(*sl ^ 0xFF) : *sl;
@@ -121,8 +121,8 @@ namespace MuPdfSharp
 			}
 			else { // DeviceBGR
 				for (int y = height - 1; y >= 0; y--) {
-					var pDest = bmp.GetScanlinePointer (y);
-					var pl = (byte*)pDest.ToPointer ();
+					var pDest = bmp.GetScanlinePointer(y);
+					var pl = (byte*)pDest.ToPointer();
 					var sl = ptrSrc;
 					if (invert) {
 						for (int x = 0; x < width; x++) {
@@ -145,59 +145,59 @@ namespace MuPdfSharp
 					ptrSrc = sl;
 				}
 			}
-			bmp.SetResolution (options.Dpi, options.Dpi);
+			bmp.SetResolution(options.Dpi, options.Dpi);
 			return bmp;
 		}
 
 		/// <summary>
 		/// 反转 Pixmap 的颜色。
 		/// </summary>
-		public void Invert () {
-			NativeMethods.InvertPixmap (_context, _pixmap);
+		public void Invert() {
+			NativeMethods.InvertPixmap(_context, _pixmap);
 		}
 
 		/// <summary>
 		/// 为 Pixmap 蒙上色层。
 		/// </summary>
 		/// <param name="color">需要蒙上的颜色。</param>
-		public void Tint (Color color) {
-			NativeMethods.TintPixmap (_context, _pixmap, 0, color.ToArgb());
+		public void Tint(Color color) {
+			NativeMethods.TintPixmap(_context, _pixmap, 0, color.ToArgb());
 		}
 
 		/// <summary>
 		/// 对 Pixmap 执行 Gamma 校正。
 		/// </summary>
 		/// <param name="gamma">需要应用的 Gamma 值。1.0 表示不更改。</param>
-		public void Gamma (float gamma) {
+		public void Gamma(float gamma) {
 			if (gamma == 1) {
 				return;
 			}
-			NativeMethods.GammaPixmap (_context, _pixmap, gamma);
+			NativeMethods.GammaPixmap(_context, _pixmap, gamma);
 		}
 
 		/// <summary>
 		/// 获取 Pixmap 内的数据。
 		/// </summary>
 		/// <returns>字节数组。</returns>
-		public byte[] GetSampleBytes () {
+		public byte[] GetSampleBytes() {
 			if (Samples == IntPtr.Zero) {
 				return null;
 			}
 			var d = new byte[Width * Height * Components];
-			System.Runtime.InteropServices.Marshal.Copy (Samples, d, 0, d.Length);
+			System.Runtime.InteropServices.Marshal.Copy(Samples, d, 0, d.Length);
 			return d;
 		}
 
 		#region 实现 IDisposable 接口的属性和方法
 		private bool disposed = false;
-		public void Dispose () {
-			Dispose (true);
-			GC.SuppressFinalize (this); // 抑制析构函数
+		public void Dispose() {
+			Dispose(true);
+			GC.SuppressFinalize(this); // 抑制析构函数
 		}
 
 		/// <summary>释放由 MuPdfPage 占用的资源。</summary>
 		/// <param name="disposing">是否手动释放托管资源。</param>
-		void Dispose (bool disposing) {
+		void Dispose(bool disposing) {
 			if (!disposed) {
 				if (disposing) {
 					#region 释放托管资源
@@ -207,7 +207,7 @@ namespace MuPdfSharp
 
 				#region 释放非托管资源
 				// 注意这里不是线程安全的
-				_pixmap.DisposeHandle ();
+				_pixmap.DisposeHandle();
 				#endregion
 			}
 			disposed = true;
@@ -215,8 +215,8 @@ namespace MuPdfSharp
 
 		// 析构函数只在未调用 Dispose 方法时调用
 		// 派生类中不必再提供析构函数
-		~PixmapData () {
-			Dispose (false);
+		~PixmapData() {
+			Dispose(false);
 		}
 		#endregion
 	}

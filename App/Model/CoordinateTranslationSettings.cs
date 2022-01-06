@@ -11,19 +11,19 @@ namespace PDFPatcher.Model
 		internal float XTranslation { get; set; }
 		internal float YTranslation { get; set; }
 
-		public CoordinateTranslationSettings () {
+		public CoordinateTranslationSettings() {
 			XScale = YScale = 1;
 		}
 
-		public CoordinateTranslationSettings (float xScale, float yScale, float xTranslation, float yTranslation) {
-			this.XScale = xScale;
-			this.YScale = yScale;
-			this.XTranslation = xTranslation;
-			this.YTranslation = yTranslation;
+		public CoordinateTranslationSettings(float xScale, float yScale, float xTranslation, float yTranslation) {
+			XScale = xScale;
+			YScale = yScale;
+			XTranslation = xTranslation;
+			YTranslation = yTranslation;
 		}
 
-		internal iTextSharp.text.pdf.parser.Matrix GetMatrix () {
-			return new iTextSharp.text.pdf.parser.Matrix (this.XScale, 0, 0, this.YScale, this.XTranslation, this.YTranslation);
+		internal iTextSharp.text.pdf.parser.Matrix GetMatrix() {
+			return new iTextSharp.text.pdf.parser.Matrix(XScale, 0, 0, YScale, XTranslation, YTranslation);
 		}
 	}
 }

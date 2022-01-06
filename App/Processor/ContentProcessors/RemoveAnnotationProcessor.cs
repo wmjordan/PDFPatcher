@@ -10,48 +10,48 @@ namespace PDFPatcher.Processor
 		readonly PdfName _AnnotationType;
 		int _processedPageCount;
 
-		public RemoveAnnotationProcessor (PdfName annotationType) {
+		public RemoveAnnotationProcessor(PdfName annotationType) {
 			_AnnotationType = annotationType;
 		}
 		#region IPageProcessor 成员
-		public string Name { get { return "删除批注"; } }
-		public void BeginProcess (DocProcessorContext context) {
+		public string Name => "删除批注";
+		public void BeginProcess(DocProcessorContext context) {
 			_processedPageCount = 0;
 		}
-		public bool EndProcess (PdfReader pdf) {
-			Tracker.TraceMessage (Tracker.Category.Notice, this.Name + "功能：");
-			Tracker.TraceMessage ("　　删除了 " + _processedPageCount + " 页的批注。");
+		public bool EndProcess(PdfReader pdf) {
+			Tracker.TraceMessage(Tracker.Category.Notice, Name + "功能：");
+			Tracker.TraceMessage("　　删除了 " + _processedPageCount + " 页的批注。");
 			return false;
 		}
-		public int EstimateWorkload (PdfReader pdf) {
+		public int EstimateWorkload(PdfReader pdf) {
 			return pdf.NumberOfPages;
 		}
 
-		public bool Process (PageProcessorContext context) {
-			Tracker.IncrementProgress (1);
-			var anns = context.Page.GetAsArray (PdfName.ANNOTS);
+		public bool Process(PageProcessorContext context) {
+			Tracker.IncrementProgress(1);
+			var anns = context.Page.GetAsArray(PdfName.ANNOTS);
 			if (anns == null) {
 				return false;
 			}
 			if (_AnnotationType == null) {
-				context.Page.Remove (PdfName.ANNOTS);
+				context.Page.Remove(PdfName.ANNOTS);
 				return true;
 			}
 			bool removed = false;
 			var l = anns.Size;
 			for (int i = l - 1; i >= 0; i--) {
-				var ann = PdfReader.GetPdfObject (anns[i]) as PdfDictionary;
+				var ann = PdfReader.GetPdfObject(anns[i]) as PdfDictionary;
 				if (ann == null) {
 					continue;
 				}
-				if (_AnnotationType.Equals (ann.GetAsName (PdfName.SUBTYPE)) == false) {
+				if (_AnnotationType.Equals(ann.GetAsName(PdfName.SUBTYPE)) == false) {
 					continue;
 				}
-				anns.Remove (i);
+				anns.Remove(i);
 				removed = true;
 			}
 			if (anns.Size == 0) {
-				context.Page.Remove (PdfName.ANNOTS);
+				context.Page.Remove(PdfName.ANNOTS);
 			}
 			if (removed) {
 				context.IsPageContentModified = true;

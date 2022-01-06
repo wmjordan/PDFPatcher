@@ -6,16 +6,16 @@ namespace PDFPatcher.Model
 {
 	public class PageLabel
 	{
-		[XmlAttribute (Constants.PageLabelsAttributes.PageNumber)]
+		[XmlAttribute(Constants.PageLabelsAttributes.PageNumber)]
 		public int PageNumber { get; set; }
 
-		[XmlAttribute (Constants.PageLabelsAttributes.Prefix)]
+		[XmlAttribute(Constants.PageLabelsAttributes.Prefix)]
 		public string Prefix { get; set; }
 
-		[XmlAttribute (Constants.PageLabelsAttributes.StartPage)]
+		[XmlAttribute(Constants.PageLabelsAttributes.StartPage)]
 		public int StartPage { get; set; }
 
-		[XmlAttribute (Constants.PageLabelsAttributes.Style)]
+		[XmlAttribute(Constants.PageLabelsAttributes.Style)]
 		public string Style { get; set; }
 
 	}

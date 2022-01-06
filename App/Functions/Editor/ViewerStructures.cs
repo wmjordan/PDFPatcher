@@ -24,7 +24,7 @@ namespace PDFPatcher.Functions.Editor
 
 		public readonly int Page;
 		public readonly float ImageX, ImageY;
-		public PagePoint (int pageNumber, float imageX, float imageY) {
+		public PagePoint(int pageNumber, float imageX, float imageY) {
 			Page = pageNumber;
 			ImageX = imageX;
 			ImageY = imageY;
@@ -50,11 +50,11 @@ namespace PDFPatcher.Functions.Editor
 		/// 当前点是否在页面上。
 		/// </summary>
 		public readonly bool IsInPage;
-		public MuPdfSharp.Point Location { get { return new MuPdfSharp.Point (PageX, PageY); } }
-		internal PagePosition (int page, PointF position, DrawingPoint imagePosition, bool isInPage)
-			: this (page, position.X, position.Y, imagePosition.X, imagePosition.Y, isInPage) { }
+		public MuPdfSharp.Point Location => new MuPdfSharp.Point(PageX, PageY);
+		internal PagePosition(int page, PointF position, DrawingPoint imagePosition, bool isInPage)
+			: this(page, position.X, position.Y, imagePosition.X, imagePosition.Y, isInPage) { }
 
-		internal PagePosition (int page, float x, float y, int imageX, int imageY, bool isInPage) {
+		internal PagePosition(int page, float x, float y, int imageX, int imageY, bool isInPage) {
 			Page = page;
 			PageX = x;
 			PageY = y;
@@ -66,19 +66,19 @@ namespace PDFPatcher.Functions.Editor
 
 	public struct PageRegion
 	{
-		public static readonly PageRegion Empty = new PageRegion ();
+		public static readonly PageRegion Empty = new PageRegion();
 
 		public readonly int Page;
 		public readonly MuPdfSharp.Rectangle Region;
 
-		internal PageRegion (PagePosition p1, PagePosition p2) {
+		internal PageRegion(PagePosition p1, PagePosition p2) {
 			if (p1.Page != p2.Page) {
 				Page = 0;
-				Region = new MuPdfSharp.Rectangle ();
+				Region = new MuPdfSharp.Rectangle();
 			}
 			else {
 				Page = p1.Page;
-				Region = new MuPdfSharp.Rectangle (p1.PageX, p1.PageY, p2.PageX, p2.PageY);
+				Region = new MuPdfSharp.Rectangle(p1.PageX, p1.PageY, p2.PageX, p2.PageY);
 			}
 		}
 	}
@@ -104,7 +104,7 @@ namespace PDFPatcher.Functions.Editor
 
 	public struct Selection
 	{
-		RenderResultCache _cache;
+		readonly RenderResultCache _cache;
 		public static readonly Selection Empty;
 
 		/// <summary>
@@ -128,19 +128,19 @@ namespace PDFPatcher.Functions.Editor
 		//		return p.GetSelection (PageRegion);
 		//	}
 		//}
-		public Bitmap GetSelectedBitmap () {
-			_cache.LoadPage (Page);
-			var p = _cache.GetBitmap (Page);
-			var clip = new MuPdfSharp.Rectangle (
+		public Bitmap GetSelectedBitmap() {
+			_cache.LoadPage(Page);
+			var p = _cache.GetBitmap(Page);
+			var clip = new MuPdfSharp.Rectangle(
 					ImageRegion.Left < 0 ? 0 : ImageRegion.Left,
 					ImageRegion.Top < 0 ? 0 : ImageRegion.Top,
 					ImageRegion.Right > p.Width ? p.Width : ImageRegion.Right,
 					ImageRegion.Bottom > p.Height ? p.Height : ImageRegion.Bottom
 				);
-			return p.Clone (clip, p.PixelFormat);
+			return p.Clone(clip, p.PixelFormat);
 		}
 
-		public Selection (RenderResultCache cache, int page, MuPdfSharp.Rectangle region, RectangleF imageRegion) {
+		public Selection(RenderResultCache cache, int page, MuPdfSharp.Rectangle region, RectangleF imageRegion) {
 			Page = page;
 			PageRegion = region;
 			ImageRegion = imageRegion;
