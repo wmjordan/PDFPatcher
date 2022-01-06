@@ -66,7 +66,8 @@ namespace PDFPatcher.Functions
 			}
 			#region TreeListView init
 			_ObjectDetailBox.SetTreeViewLine();
-			new BrightIdeasSoftware.TypedColumn<DocumentObject>(_NameColumn) {
+			_ObjectDetailBox.FixEditControlWidth();
+			new TypedColumn<DocumentObject>(_NameColumn) {
 				AspectGetter = (DocumentObject d) => {
 					return d.FriendlyName ?? d.Name;
 				},
@@ -92,9 +93,8 @@ namespace PDFPatcher.Functions
 								return __OpNameIcons["PageCommands"];
 							case PdfObjectType.PageCommand:
 								if (d.ImageKey == null) {
-									int ic;
 									var n = d.ExtensiveObject as string;
-									if ((n != null && __OpNameIcons.TryGetValue(n, out ic))
+									if ((n != null && __OpNameIcons.TryGetValue(n, out int ic))
 										|| (d.Name.StartsWith(Constants.ContentPrefix + ":") && __OpNameIcons.TryGetValue(d.Name, out ic))
 										) {
 										d.ImageKey = ic;
@@ -111,11 +111,10 @@ namespace PDFPatcher.Functions
 					return GetImageKey(d);
 				}
 			};
-			new BrightIdeasSoftware.TypedColumn<DocumentObject>(_ValueColumn) {
+			new TypedColumn<DocumentObject>(_ValueColumn) {
 				AspectGetter = (DocumentObject d) => {
 					return d.FriendlyValue ?? d.LiteralValue;
-				}
-																				   ,
+				},
 				AspectPutter = (DocumentObject d, object value) => {
 					if (d.UpdateDocumentObject(value)) {
 						var r = d.FindReferenceAncestor();
@@ -168,7 +167,7 @@ namespace PDFPatcher.Functions
 				}
 				return d.Children;
 			};
-			_ObjectDetailBox.RowFormatter = (BrightIdeasSoftware.OLVListItem olvItem) => {
+			_ObjectDetailBox.RowFormatter = (OLVListItem olvItem) => {
 				var o = olvItem.RowObject as DocumentObject;
 				if (o == null) {
 					return;
@@ -315,7 +314,7 @@ namespace PDFPatcher.Functions
 					continue;
 				}
 				if (m.Type == PdfObjectType.PageCommands) {
-					i += (_ObjectDetailBox.VirtualListDataSource as BrightIdeasSoftware.TreeListView.Tree).GetVisibleDescendentCount(m);
+					i += (_ObjectDetailBox.VirtualListDataSource as TreeListView.Tree).GetVisibleDescendentCount(m);
 				}
 				if (m.ExtensiveObject != null && m.Value != null && m.Value.Type == PdfObject.INDIRECT) {
 					var mv = m.Value as PdfIndirectReference;
@@ -338,7 +337,7 @@ namespace PDFPatcher.Functions
 			}
 		}
 
-		void _ObjectDetailBox_CanDrop(object sender, BrightIdeasSoftware.OlvDropEventArgs e) {
+		void _ObjectDetailBox_CanDrop(object sender, OlvDropEventArgs e) {
 			var o = e.DataObject as DataObject;
 			if (o == null) {
 				return;
@@ -348,17 +347,17 @@ namespace PDFPatcher.Functions
 				if (FileHelper.HasExtension(item, Constants.FileExtensions.Xml)
 					|| FileHelper.HasExtension(item, Constants.FileExtensions.Pdf)) {
 					e.Handled = true;
-					e.DropTargetLocation = BrightIdeasSoftware.DropTargetLocation.Background;
+					e.DropTargetLocation = DropTargetLocation.Background;
 					e.Effect = DragDropEffects.Move;
 					e.InfoMessage = "打开文件" + item;
 					return;
 				}
 			}
 			e.Effect = DragDropEffects.None;
-			e.DropTargetLocation = BrightIdeasSoftware.DropTargetLocation.None;
+			e.DropTargetLocation = DropTargetLocation.None;
 		}
 
-		void _ObjectDetailBox_Dropped(object sender, BrightIdeasSoftware.OlvDropEventArgs e) {
+		void _ObjectDetailBox_Dropped(object sender, OlvDropEventArgs e) {
 			var o = e.DataObject as DataObject;
 			if (o == null) {
 				return;

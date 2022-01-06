@@ -26,6 +26,7 @@ namespace PDFPatcher.Functions
 			_PageSettingsBox.FormatRow += (s, args) => {
 				args.Item.SubItems[0].Text = (args.RowIndex + 1).ToText();
 			};
+			_PageSettingsBox.FixEditControlWidth();
 			_PageSettingsBox.FullRowSelect = true;
 			_PageSettingsBox.LabelEdit = false;
 			_PageSettingsBox.CellClick += (s, args) => {

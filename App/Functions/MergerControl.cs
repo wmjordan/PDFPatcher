@@ -54,6 +54,7 @@ namespace PDFPatcher.Functions
 				_BookmarkControl.Enabled = !_IndividualMergerModeBox.Checked;
 			};
 			_listHelper = new FileListHelper(_ItemList);
+			_ItemList.FixEditControlWidth();
 			_ItemList.BeforeSorting += (s, e) => e.Canceled = true;
 			_ItemList.CanExpandGetter = (x) => ((SourceItem)x).HasSubItems;
 			_ItemList.ChildrenGetter = (x) => ((SourceItem)x).Items;

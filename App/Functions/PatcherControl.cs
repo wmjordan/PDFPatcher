@@ -28,7 +28,6 @@ namespace PDFPatcher.Functions
 
 		void PatcherControl_OnLoad(object sender, EventArgs e) {
 			//this.Icon = Common.FormHelper.ToIcon (Properties.Resources.CreateDocument);
-			_ItemList.ListViewItemSorter = new ListViewItemComparer(0);
 
 			AppContext.MainForm.SetTooltip(_ConfigButton, "点击此处设置 PDF 文件的修改方式选项");
 			AppContext.MainForm.SetTooltip(_ActionsBox, "双击项目编辑操作选项；右键点击项目弹出上下文菜单");
@@ -61,6 +60,9 @@ namespace PDFPatcher.Functions
 			fi.AddRange(new System.Drawing.Image[] {
 				Properties.Resources.OriginalPdfFile
 			});
+
+			_ItemList.FixEditControlWidth();
+			_ItemList.ListViewItemSorter = new ListViewItemComparer(0);
 			_listHelper = new FileListHelper(_ItemList);
 			_listHelper.SetupHotkeys();
 			_listHelper.SetupDragAndDrop(AddFiles);

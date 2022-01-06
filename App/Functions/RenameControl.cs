@@ -49,6 +49,7 @@ namespace PDFPatcher.Functions
 			fi.AddRange(new System.Drawing.Image[] {
 				Properties.Resources.OriginalPdfFile
 			});
+			_ItemList.FixEditControlWidth();
 			_listHelper = new FileListHelper(_ItemList);
 			_listHelper.SetupDragAndDrop(AddFiles);
 			_listHelper.SetupHotkeys();

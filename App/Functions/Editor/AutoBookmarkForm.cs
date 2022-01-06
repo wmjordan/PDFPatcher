@@ -27,6 +27,7 @@ namespace PDFPatcher.Functions
 			//	c.AspectGetter = o => o.FontSize;
 			//	c.AspectPutter = (o, v) => o.FontSize = Convert.ToInt32(v);
 			//});
+			_LevelColumn.CellEditUseWholeCell = true;
 			_LevelColumn.AsTyped<EditModel.AutoBookmarkStyle>(c => {
 				c.AspectGetter = o => o.Level;
 				c.AspectPutter = (o, v) => o.Level = Convert.ToInt32(v).LimitInRange(1, 10);
