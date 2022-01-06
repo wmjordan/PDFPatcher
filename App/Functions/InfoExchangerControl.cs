@@ -75,6 +75,7 @@ namespace PDFPatcher.Functions
 			//		AppContext.MainForm.StatusText = String.Empty;
 			//	}
 			//};
+			_ItemList.FixEditControlWidth();
 			_listHelper = new FileListHelper(_ItemList);
 			_listHelper.SetupDragAndDrop(AddFiles);
 			FileListHelper.SetupCommonPdfColumns(_AuthorColumn, _KeywordsColumn, _SubjectColumn, _TitleColumn, _PageCountColumn, _NameColumn, _FolderColumn);

@@ -7,6 +7,29 @@ namespace BrightIdeasSoftware
 {
 	static class ObjectListViewHelper
 	{
+		/// <summary>修复编辑控件太窄小的问题。</summary>
+		public static void FixEditControlWidth(this ObjectListView view) {
+			view.CellEditStarting += View_CellEditStarting;
+			view.Disposed += View_Disposed;
+		}
+
+		static void View_Disposed(object sender, EventArgs e) {
+			var view = (ObjectListView)sender;
+			view.CellEditStarting -= View_CellEditStarting;
+			view.Disposed -= View_Disposed;
+		}
+
+		static void View_CellEditStarting(object sender, CellEditEventArgs e) {
+			var b = e.CellBounds;
+			if (b.Width < 60) {
+				b.Width = 60;
+			}
+			if (e.Control is System.Windows.Forms.Control c) {
+				c.Bounds = b;
+				c.Location = b.Location;
+			}
+		}
+
 		public static void SetTreeViewLine(this TreeListView view) {
 			var tcr = view.TreeColumnRenderer as TreeListView.TreeRenderer;
 			tcr.LinePen = new Pen(SystemColors.ControlDark) {

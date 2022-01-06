@@ -249,7 +249,7 @@ namespace PDFPatcher.Functions
 			if (i == -1) {
 				return;
 			}
-			el = (_BookmarkBox.GetModelObject(i) as BookmarkElement);
+			el = _BookmarkBox.GetModelObject(i) as BookmarkElement;
 			if (_controller.Model.LockDownViewer == false
 				&& _BookmarkBox.SelectedIndices.Count == 1
 				&& (i = el.Page) > 0) {

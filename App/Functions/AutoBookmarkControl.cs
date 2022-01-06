@@ -39,6 +39,7 @@ namespace PDFPatcher.Functions
 			foreach (var item in EditAdjustmentForm.FilterNames) {
 				_AddFilterMenu.Items.Add(item).Name = EditAdjustmentForm.FilterIDs[i++];
 			}
+			_LevelAdjustmentBox.CellEditUseWholeCell = true;
 			_LevelAdjustmentBox.BeforeSorting += (object sender, BrightIdeasSoftware.BeforeSortingEventArgs e) => {
 				e.Canceled = true;
 			};

@@ -38,7 +38,7 @@ namespace PDFPatcher.Functions
 				AspectPutter = (o, v) => o.Prefix = v as string
 			};
 			_PageLabelBox.FormatRow += (s, args) => args.Item.SubItems[0].Text = (args.RowIndex + 1).ToText();
-
+			_PageLabelBox.FixEditControlWidth();
 			_PageLabelBox.FullRowSelect = true;
 			_PageLabelBox.LabelEdit = false;
 			_PageLabelBox.CellClick += (s, args) => {
