@@ -101,7 +101,7 @@ namespace PDFPatcher.Model
 				//try {
 				//    using (var i = new FreeImageAPI.FreeImageBitmap (path, (FreeImageAPI.FREE_IMAGE_LOAD_FLAGS)0x0800/*仅加载图像尺寸信息*/)) {
 				//        var fc = i.FrameCount;
-				//        return new SourceItem.Image (path);
+				//        return new Image (path);
 				//    }
 				//}
 				//catch (Exception) {
@@ -338,29 +338,36 @@ namespace PDFPatcher.Model
 						list.Add(new Folder(item.Substring(0, item.Length - 1), true));
 					}
 					else {
-						list.Add(SourceItem.Create(item));
+						list.Add(Create(item));
 					}
 				}
 			}
 
-			private static void AddFiles(string folderPath, List<SourceItem> list) {
-				var fl = Directory.GetFiles(folderPath);
-				SortFileList(fl);
-				foreach (var item in fl) {
-					var ext = Path.GetExtension(item).ToLowerInvariant();
-					if (Constants.FileExtensions.Pdf == ext
-						|| Constants.FileExtensions.AllSupportedImageExtension.Contains(ext)) {
-						list.Add(SourceItem.Create(item));
+			static void AddFiles(string folderPath, List<SourceItem> list) {
+				try {
+					var fl = Directory.GetFiles(folderPath);
+					SortFileList(fl);
+					foreach (var item in fl) {
+						var ext = Path.GetExtension(item).ToLowerInvariant();
+						if (Constants.FileExtensions.Pdf == ext
+							|| Constants.FileExtensions.AllSupportedImageExtension.Contains(ext)) {
+							list.Add(Create(item));
+						}
 					}
 				}
+				catch (UnauthorizedAccessException) {}
+				catch (IOException) {}
 			}
 
-			private static void AddSubDirectories(string folderPath, List<SourceItem> list) {
-				var d = Directory.GetDirectories(folderPath);
-				foreach (var item in d) {
-					var f = new Folder(item, true);
-					list.Add(f);
+			static void AddSubDirectories(string folderPath, List<SourceItem> list) {
+				try {
+					foreach (var item in Directory.EnumerateDirectories(folderPath)) {
+						var f = new Folder(item, true);
+						list.Add(f);
+					}
 				}
+				catch (UnauthorizedAccessException) {}
+				catch (IOException) {}
 			}
 		}
 
@@ -402,7 +409,7 @@ namespace PDFPatcher.Model
 		}
 
 		List<SourceItem> _Items;
-		private static BookmarkSettings CreateBookmarkSettings(string t) {
+		static BookmarkSettings CreateBookmarkSettings(string t) {
 			if (AppContext.Merger.CajSort && t.Length == 6) {
 				if (MatchCajPattern(t, Constants.CajNaming.Cover)) {
 					return t.EndsWith("001") ? new BookmarkSettings("封面")
@@ -436,7 +443,7 @@ namespace PDFPatcher.Model
 			}
 			return new BookmarkSettings(t);
 		}
-		private static bool CajSort(string[] fileList) {
+		static bool CajSort(string[] fileList) {
 			var m = false; // match Caj naming
 			var cov = new List<string>(1);
 			var bok = new List<string>(2);
@@ -487,13 +494,13 @@ namespace PDFPatcher.Model
 			return true;
 		}
 
-		private static int CopyItem(string[] fileList, List<string> list, int position) {
+		static int CopyItem(string[] fileList, List<string> list, int position) {
 			list.CopyTo(fileList, position);
 			position += list.Count;
 			return position;
 		}
 
-		private static bool MatchCajPatternAddPath(string path, string text, string pattern, List<string> container) {
+		static bool MatchCajPatternAddPath(string path, string text, string pattern, List<string> container) {
 			if (MatchCajPattern(text, pattern)) {
 				container.Add(path);
 				return true;
@@ -501,7 +508,7 @@ namespace PDFPatcher.Model
 			return false;
 		}
 
-		private static BookmarkSettings CreateCajBookmark(string text, string pattern, string title) {
+		static BookmarkSettings CreateCajBookmark(string text, string pattern, string title) {
 			if (MatchCajPattern(text, pattern) && text.EndsWith("001")) {
 				if (text.EndsWith("001")) {
 					return new BookmarkSettings(title);
@@ -513,7 +520,7 @@ namespace PDFPatcher.Model
 			return new BookmarkSettings(text);
 		}
 
-		private static bool MatchCajPattern(string text, string pattern) {
+		static bool MatchCajPattern(string text, string pattern) {
 			if (text.StartsWith(pattern, StringComparison.OrdinalIgnoreCase) == false) {
 				return false;
 			}
