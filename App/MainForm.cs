@@ -62,7 +62,7 @@ namespace PDFPatcher
 				_Worker.DoWork += Worker_DoWork;
 				_Worker.ProgressChanged += Worker_ProgressChanged;
 				_Worker.RunWorkerCompleted += Worker_RunWorkerCompleted;
-				Tracker.Worker = _Worker;
+				Tracker.SetWorker(_Worker);
 			}
 			return _Worker;
 		}

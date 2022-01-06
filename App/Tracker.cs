@@ -17,46 +17,29 @@ namespace PDFPatcher
 			OutputFile = -11
 		}
 
-		///<summary>获取或指定后台工作进程。</summary>
-		internal static BackgroundWorker Worker { get; set; }
+		static BackgroundWorker __Worker;
+
+		///<summary>指定后台工作进程。</summary>
+		internal static void SetWorker(BackgroundWorker value) {
+			__Worker = value;
+		}
 
 		internal static void TrackProgress(int progress) {
-			if (Worker == null) {
-				return;
-			}
-			if (Worker.CancellationPending) {
-				throw new OperationCanceledException();
-			}
-			if (progress >= 0) {
-				Worker.ReportProgress(progress);
-			}
+			ReportProgress(progress, null);
 		}
+
 		internal static void IncrementProgress(int progress) {
-			if (Worker == null) {
-				return;
-			}
-			if (Worker.CancellationPending) {
-				throw new OperationCanceledException();
-			}
-			Worker.ReportProgress(progress, "INC");
+			ReportProgress(progress, "INC");
 		}
+
 		internal static void IncrementTotalProgress() {
-			if (Worker == null) {
-				return;
-			}
-			Worker.ReportProgress(1, "TINC");
+			ReportProgress(1, "TINC");
 		}
 		internal static void SetProgressGoal(int goalNumber) {
-			if (Worker == null) {
-				return;
-			}
-			Worker.ReportProgress(goalNumber, "GOAL");
+			ReportProgress(goalNumber, "GOAL");
 		}
 		internal static void SetTotalProgressGoal(int goalNumber) {
-			if (Worker == null) {
-				return;
-			}
-			Worker.ReportProgress(goalNumber, "TGOAL");
+			ReportProgress(goalNumber, "TGOAL");
 		}
 		internal static void DebugMessage(string message) {
 			Debug.Write(DateTime.Now.ToString("HH:mm:ss.fff "));
@@ -65,8 +48,9 @@ namespace PDFPatcher
 		internal static void TraceMessage(Category level, string message) {
 			Trace.Write(DateTime.Now.ToString("HH:mm:ss.fff "));
 			Trace.WriteLine(message);
-			if (Worker != null && Worker.IsBusy) {
-				Worker.ReportProgress((int)level, message);
+			var worker = __Worker;
+			if (worker != null && worker.IsBusy) {
+				worker.ReportProgress((int)level, message);
 			}
 		}
 		internal static void TraceMessage(string message) {
@@ -77,6 +61,17 @@ namespace PDFPatcher
 #if DEBUG
 			TraceMessage(Category.Message, exception.StackTrace);
 #endif
+		}
+
+		static void ReportProgress(int progress, string category) {
+			var worker = __Worker;
+			if (worker == null) {
+				return;
+			}
+			if (worker.CancellationPending) {
+				throw new OperationCanceledException();
+			}
+			worker.ReportProgress(progress, category);
 		}
 	}
 
