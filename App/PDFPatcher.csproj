@@ -11,7 +11,7 @@
 		<ApplicationIcon>pdf_icon.ico</ApplicationIcon>
 		<IsWebBootstrapper>true</IsWebBootstrapper>
 		<StartupObject>PDFPatcher.Program</StartupObject>
-		<TargetFramework>net6.0-windows</TargetFramework>
+		<TargetFramework>net5.0</TargetFramework>
 		<Platforms>x86;x64</Platforms>
 		<UseWindowsForms>true</UseWindowsForms>
 		<UseWPF>False</UseWPF>
