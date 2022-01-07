@@ -20,7 +20,8 @@
 		<ApplicationManifest>Common\app.manifest</ApplicationManifest>
 		<Nullable>enable</Nullable>
 		<BaseOutputPath>..\bin</BaseOutputPath>
-		<!--<asse-->
+
+		<PublishTrimmed>true</PublishTrimmed>
 
 		<AssemblyOriginatorKeyFile Condition="Exists('wmjordan.snk')">wmjordan.snk</AssemblyOriginatorKeyFile>
 		<SignAssembly Condition="Exists('wmjordan.snk')">true</SignAssembly>
@@ -34,7 +35,6 @@
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="CyotekImageBox" Version="2.0.0-beta.1" />
-		<PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.18.2" />
 		<PackageReference Include="ObjectListView.Official" Version="2.9.1" />
 		<Reference Include="ColorPicker">
 			<HintPath>Lib\ColorPicker.dll</HintPath>
