@@ -3,15 +3,19 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
+using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml;
 using PDFPatcher.Common;
 
 namespace PDFPatcher.Functions
 {
 	public partial class UpdateForm : Form
 	{
-		System.Net.WebClient _UpdateChecker;
+		HttpClient _UpdateChecker;
 
 		public UpdateForm() {
 			InitializeComponent();
@@ -30,7 +34,7 @@ namespace PDFPatcher.Functions
 				CommonCommands.VisitHomePage();
 			};
 			_DownloadButton.Click += (s, args) => {
-				System.Diagnostics.Process.Start(_DownloadButton.Tag.ToString());
+				System.Diagnostics.Process.Start(_DownloadButton.Tag.ToString()!);
 			};
 			_CheckUpdateIntervalBox.SelectedIndexChanged += (s, args) => {
 				switch (_CheckUpdateIntervalBox.SelectedIndex) {
@@ -46,27 +50,23 @@ namespace PDFPatcher.Functions
 		}
 
 		private void CheckNewVersion() {
-			_UpdateChecker = new System.Net.WebClient();
 			_InfoBox.AppendLine("正在检查新版本，请稍候……");
-			_UpdateChecker.DownloadDataCompleted += (s, args) => {
-				_InfoBox.Clear();
-				if (args.Error != null) {
-					_InfoBox.AppendText("检查新版本失败：" + args.Error.Message);
-					goto Exit;
-				}
+
+			Task.Run(async () => {
+				using HttpClient client = new();
 				try {
-					var x = new System.Xml.XmlDocument();
-					x.Load(new System.IO.MemoryStream(args.Result));
-					CheckResult(x);
+					Stream s = await client.GetStreamAsync(Constants.AppUpdateFile);
+					XmlDocument xdoc = new();
+					xdoc.Load(s);
+					CheckResult(xdoc);
 				}
-				catch (Exception) {
-					Common.FormHelper.ErrorBox("版本信息文件格式错误，请稍候重试。");
+				catch (HttpRequestException e) {
+					_InfoBox.AppendText("检查新版本失败：" + e.Message);
 				}
-			Exit:
-				_UpdateChecker.Dispose();
-				_UpdateChecker = null;
-			};
-			_UpdateChecker.DownloadDataAsync(new Uri(Constants.AppUpdateFile));
+				catch (XmlException e) {
+					FormHelper.ErrorBox("版本信息文件格式错误，请稍候重试。");
+				}
+			});
 		}
 
 		private void CheckResult(System.Xml.XmlDocument x) {
@@ -74,6 +74,7 @@ namespace PDFPatcher.Functions
 			if (r == null || r.Name != Constants.AppEngName) {
 				_InfoBox.SelectionColor = Color.Red;
 				_InfoBox.AppendLine("版本信息文件格式错误，请稍候重试。");
+				return;
 			}
 			var v = r.GetAttribute("version");
 			var d = r.GetAttribute("date");
