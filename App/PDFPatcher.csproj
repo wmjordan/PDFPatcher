@@ -21,7 +21,7 @@
 		<Nullable>enable</Nullable>
 		<BaseOutputPath>..\bin</BaseOutputPath>
 
-		<PublishTrimmed>true</PublishTrimmed>
+		<PublishTrimmed>false</PublishTrimmed>
 
 		<AssemblyOriginatorKeyFile Condition="Exists('wmjordan.snk')">wmjordan.snk</AssemblyOriginatorKeyFile>
 		<SignAssembly Condition="Exists('wmjordan.snk')">true</SignAssembly>
