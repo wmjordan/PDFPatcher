@@ -1,0 +1,10 @@
+q:after,
+q:before{
+	content: none;
+}
+q{
+	color: #a00;
+	border: 1px solid #a00;
+	padding: 0 .2em;
+	border-radius: .2em;
+}
