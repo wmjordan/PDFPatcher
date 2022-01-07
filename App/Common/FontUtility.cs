@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -10,7 +11,7 @@ namespace PDFPatcher.Common
 		static readonly Regex _italic = new Regex(" (?:Italic|Oblique)$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
 		static readonly Regex _bold = new Regex(" Bold$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
 		static readonly Regex _boldItalic = new Regex(" Bold (?:Italic|Oblique)$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
-		static FriendlyFontName[] _Fonts;
+		static FriendlyFontName[]? _Fonts;
 
 		public static FriendlyFontName[] InstalledFonts {
 			get {
@@ -21,6 +22,7 @@ namespace PDFPatcher.Common
 			}
 		}
 
+		[MemberNotNull("_Fonts")]
 		private static void ListInstalledFonts() {
 			var uf = new List<FriendlyFontName>(); // 可能包含中文的字体
 			var of = new List<FriendlyFontName>(); // 其他字体
@@ -48,7 +50,7 @@ namespace PDFPatcher.Common
 		internal struct FriendlyFontName : IComparable<FriendlyFontName>
 		{
 			public string OriginalName;
-			public string DisplayName;
+			public string? DisplayName;
 			public FriendlyFontName(string originalName, string displayName) {
 				OriginalName = originalName;
 				DisplayName = displayName != originalName ? displayName : null;

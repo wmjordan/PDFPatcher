@@ -86,7 +86,7 @@ namespace Devcorp.Controls.Design
 		}
 
 		#region Methods
-		public override bool Equals(Object obj) {
+		public override bool Equals(Object? obj) {
 			if (obj == null || GetType() != obj.GetType()) return false;
 
 			return (this == (CMYK)obj);

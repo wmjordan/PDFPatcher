@@ -23,7 +23,7 @@ namespace MuPdfSharp
 		}
 
 		internal static T MarshalAs<T>(this IntPtr ptr) where T : struct {
-			return (T)Marshal.PtrToStructure(ptr, typeof(T));
+			return (T)Marshal.PtrToStructure(ptr, typeof(T))!;
 		}
 
 		internal static bool IsValid(this SafeHandle handle) {

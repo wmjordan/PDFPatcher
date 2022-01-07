@@ -1097,7 +1097,7 @@ namespace PDFPatcher.Common
 		/// <param name="obj">需要与当前实例比较的对象。</param>
 		/// <returns>在两个文件路径相等时，返回 true。</returns>
 		[DebuggerStepThrough]
-		public override bool Equals(object obj) {
+		public override bool Equals(object? obj) {
 			return obj is FilePath && Equals((FilePath)obj);
 		}
 

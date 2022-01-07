@@ -71,7 +71,7 @@ namespace MuPdfSharp
 		internal static extern IntPtr NewListDevice(ContextHandle ctx, DisplayListHandle list);
 
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_new_stext_device")]
-		internal static extern IntPtr NewTextDevice(ContextHandle ctx, TextPageHandle page, TextOptions options);
+		internal static extern IntPtr NewTextDevice(ContextHandle ctx, TextPageHandle page, TextOptions? options);
 
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_close_device")]
 		internal static extern void CloseDevice(ContextHandle context, IntPtr dev);

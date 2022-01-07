@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Security.Permissions;
 using System.Windows.Forms;
 using System.Xml;
 using BrightIdeasSoftware;
@@ -288,8 +287,6 @@ namespace PDFPatcher.Functions
 					break;
 			}
 		}
-
-		[SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
 		protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
 			if (_ObjectDetailBox.IsCellEditing) {
 				return base.ProcessCmdKey(ref msg, keyData);

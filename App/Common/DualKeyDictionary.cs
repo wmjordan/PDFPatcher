@@ -4,6 +4,8 @@ using System.Collections.Generic;
 namespace PDFPatcher.Common
 {
 	public class DualKeyDictionary<K, V> : IDictionary<K, V>
+		where K : notnull
+		where V : notnull
 	{
 		private readonly Dictionary<K, V> _keyDictionary = new Dictionary<K, V>();
 		private readonly Dictionary<V, K> _reverseDictionary = new Dictionary<V, K>();

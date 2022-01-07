@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-
+#nullable disable
 namespace PDFPatcher.Processor
 {
 	sealed class NullXmlWriter : System.Xml.XmlWriter

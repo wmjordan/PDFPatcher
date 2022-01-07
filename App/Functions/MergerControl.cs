@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
-using System.Security.Permissions;
 using System.Text;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
@@ -121,7 +120,7 @@ namespace PDFPatcher.Functions
 			};
 		}
 
-		[SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
+		
 		protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
 			if (_ItemList.IsCellEditing || _ItemList.Focused == false) {
 				return base.ProcessCmdKey(ref msg, keyData);

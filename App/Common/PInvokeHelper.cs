@@ -18,6 +18,8 @@ namespace PDFPatcher.Common
 			return t;
 		}
 
-
+		internal static T UnwrapPointer<T>(IntPtr p) {
+			throw new NotImplementedException();
+		}
 	}
 }
