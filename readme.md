@@ -54,7 +54,7 @@ PDF 文档格式中涉及印刷领域的多项技术，并有其独特的文档�
 
 前者是 .NET 组件，与 PDF 主程序具有较好的互操作性，并且在解析、生成和修改 PDF 文档，以及嵌入 TTF 字体子集这些功能上，优胜于后者。
 
-后者采用 C 语言开发并编译，与前者相比，其最大的优点是具有渲染 PDF 文档为位图的功能。MuPDF 编译出来的动态组件库可在我另一个开放源代码库 https://github.com/wmjordan/SharpMuPDF 下载。PDF 补丁丁通过 P/Invoke 技术调用该组件库的功能。
+后者采用 C 语言开发并编译，与前者相比，其最大的优点是具有渲染 PDF 文档为位图的功能。MuPDF 编译出来的动态组件库可在作者另一个开放源代码库 https://github.com/wmjordan/SharpMuPDF 下载。PDF 补丁丁通过 P/Invoke 技术调用该组件库的功能。
 
 除了 PDF 开源组件之外，程序还使用了其它优秀开源组件。例如 ObjectListView 这个强大的列表控件、FreeImage 来读取和解码各种类型的点阵图像文件、Cyotek 的 ImageBox 用于显示渲染好的 PDF 文档页面、TabControlExtra 用于构建选项卡式文档界面、HTMLRenderer 用于显示 HTML 网页界面等等。
 
