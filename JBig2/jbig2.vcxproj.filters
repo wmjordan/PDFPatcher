@@ -18,74 +18,128 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\jbig2enc.lossless.cc">
+    <ClCompile Include="src\jbig2_arith_iaid.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\jbig2dec\jbig2.c">
+    <ClCompile Include="src\jbig2_arith_int.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\jbig2dec\jbig2_arith_iaid.c">
+    <ClCompile Include="src\jbig2_generic.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\jbig2dec\jbig2_arith_int.c">
+    <ClCompile Include="src\jbig2_halftone.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\jbig2dec\jbig2_generic.c">
+    <ClCompile Include="src\jbig2_huffman.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\jbig2dec\jbig2_halftone.c">
+    <ClCompile Include="src\jbig2_hufftab.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\jbig2dec\jbig2_huffman.c">
+    <ClCompile Include="src\jbig2_image.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\jbig2dec\jbig2_hufftab.c">
+    <ClCompile Include="src\jbig2_mmr.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\jbig2dec\jbig2_image.c">
+    <ClCompile Include="src\jbig2_page.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\jbig2dec\jbig2_mmr.c">
+    <ClCompile Include="src\jbig2_refinement.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\jbig2dec\jbig2_page.c">
+    <ClCompile Include="src\jbig2_segment.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\jbig2dec\jbig2_refinement.c">
+    <ClCompile Include="src\jbig2_symbol_dict.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\jbig2dec\jbig2_segment.c">
+    <ClCompile Include="src\jbig2_text.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\jbig2dec\jbig2_symbol_dict.c">
+    <ClCompile Include="src\sha1.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\jbig2dec\jbig2_text.c">
+    <ClCompile Include="src\jbig2.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\jbig2dec\jbig2dec.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\jbig2dec\sha1.c">
+    <ClCompile Include="src\jbig2_arith.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\jbig2arith.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\jbig2dec\getopt1.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\jbig2dec\getopt.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\jbig2dec\jbig2_image_pbm.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\jbig2dec\jbig2_arith.c">
+    <ClCompile Include="src\jbig2enc.lossless.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\config_win32.h">
+      <Filter>Decoder Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\getopt.h">
+      <Filter>Decoder Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\jbig2.h">
+      <Filter>Decoder Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\jbig2_arith.h">
+      <Filter>Decoder Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\jbig2_arith_iaid.h">
+      <Filter>Decoder Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\jbig2_arith_int.h">
+      <Filter>Decoder Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\jbig2_generic.h">
+      <Filter>Decoder Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\jbig2_halftone.h">
+      <Filter>Decoder Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\jbig2_huffman.h">
+      <Filter>Decoder Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\jbig2_hufftab.h">
+      <Filter>Decoder Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\jbig2_image.h">
+      <Filter>Decoder Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\jbig2_mmr.h">
+      <Filter>Decoder Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\jbig2_page.h">
+      <Filter>Decoder Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\jbig2_priv.h">
+      <Filter>Decoder Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\jbig2_refinement.h">
+      <Filter>Decoder Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\jbig2_segment.h">
+      <Filter>Decoder Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\jbig2_symbol_dict.h">
+      <Filter>Decoder Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\jbig2_text.h">
+      <Filter>Decoder Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\memento.h">
+      <Filter>Decoder Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\os_types.h">
+      <Filter>Decoder Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\sha1.h">
+      <Filter>Decoder Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\unistd.h">
+      <Filter>Decoder Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="include\pix.h">
       <Filter>Encoder Header Files</Filter>
     </ClInclude>
@@ -100,72 +154,6 @@
     </ClInclude>
     <ClInclude Include="include\jbig2structs.h">
       <Filter>Encoder Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\jbig2dec\sha1.h">
-      <Filter>Decoder Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\jbig2dec\os_types.h">
-      <Filter>Decoder Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\jbig2dec\memento.h">
-      <Filter>Decoder Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\jbig2dec\jbig2_symbol_dict.h">
-      <Filter>Decoder Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\jbig2dec\jbig2_text.h">
-      <Filter>Decoder Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\jbig2dec\jbig2_segment.h">
-      <Filter>Decoder Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\jbig2dec\jbig2_page.h">
-      <Filter>Decoder Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\jbig2dec\jbig2_priv.h">
-      <Filter>Decoder Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\jbig2dec\jbig2_refinement.h">
-      <Filter>Decoder Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\jbig2dec\jbig2_mmr.h">
-      <Filter>Decoder Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\jbig2dec\jbig2_image.h">
-      <Filter>Decoder Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\jbig2dec\jbig2_hufftab.h">
-      <Filter>Decoder Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\jbig2dec\jbig2_halftone.h">
-      <Filter>Decoder Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\jbig2dec\jbig2_huffman.h">
-      <Filter>Decoder Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\jbig2dec\jbig2_generic.h">
-      <Filter>Decoder Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\jbig2dec\jbig2_arith_iaid.h">
-      <Filter>Decoder Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\jbig2dec\jbig2_arith_int.h">
-      <Filter>Decoder Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\jbig2dec\jbig2_arith.h">
-      <Filter>Decoder Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\jbig2dec\getopt.h">
-      <Filter>Decoder Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\jbig2dec\jbig2.h">
-      <Filter>Decoder Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\jbig2dec\config_win32.h">
-      <Filter>Decoder Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\unistd.h">
-      <Filter>Decoder Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
