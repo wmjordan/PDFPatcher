@@ -3,6 +3,30 @@
 ###############################################################################
 * text=auto
 
+# Make sure that these files always have CRLF line endings in checkout
+*.config          text eol=crlf
+*.cs              text eol=crlf
+*.csproj          text eol=crlf
+*.html            text eol=crlf
+*.js              text eol=crlf
+*.manifest        text eol=crlf
+*.resx            text eol=crlf
+*.sln             text eol=crlf
+*.targets         text eol=crlf
+*.txt             text eol=crlf
+*.vcxproj         text eol=crlf
+*.vcxproj.filters text eol=crlf
+*.xml             text eol=crlf
+*.xsd             text eol=crlf
+
+# Never perform LF normalization on these files
+*.chw    binary
+*.dll    binary
+*.docx   binary
+*.exe    binary
+*.ico    binary
+*.png    binary
+
 ###############################################################################
 # Set default behavior for command prompt diff.
 #
@@ -34,15 +58,6 @@
 #*.modelproj merge=binary
 #*.sqlproj   merge=binary
 #*.wwaproj   merge=binary
-
-###############################################################################
-# behavior for image files
-#
-# image files are treated as binary by default.
-###############################################################################
-#*.jpg   binary
-#*.png   binary
-#*.gif   binary
 
 ###############################################################################
 # diff behavior for common document formats
