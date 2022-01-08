@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using iTextSharp.text.pdf;
-using PDFPatcher.Common;
 using PDFPatcher.Processor;
 
 namespace PDFPatcher.Model

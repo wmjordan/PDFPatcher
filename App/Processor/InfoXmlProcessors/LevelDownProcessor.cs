@@ -1,7 +1,4 @@
-﻿
-using System;
-
-namespace PDFPatcher.Processor
+﻿namespace PDFPatcher.Processor
 {
 	sealed class LevelDownProcessor : IPdfInfoXmlProcessor
 	{

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using iTextSharp.text.error_messages;
 using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.parser;

@@ -1,7 +1,4 @@
-﻿using System;
-
-
-namespace PDFPatcher.Functions
+﻿namespace PDFPatcher.Functions
 {
 	interface IResettableControl
 	{

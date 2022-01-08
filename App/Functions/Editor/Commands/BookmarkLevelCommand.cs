@@ -1,5 +1,4 @@
-﻿using System;
-using PDFPatcher.Processor;
+﻿using PDFPatcher.Processor;
 
 namespace PDFPatcher.Functions.Editor
 {

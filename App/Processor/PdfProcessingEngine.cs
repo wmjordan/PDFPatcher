@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
-using PDFPatcher.Model;
 
 namespace PDFPatcher.Processor
 {

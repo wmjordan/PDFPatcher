@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows.Forms;
-using System.Xml;
 using PDFPatcher.Model;
 
 namespace PDFPatcher.Functions

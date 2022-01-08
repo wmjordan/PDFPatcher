@@ -1,5 +1,4 @@
 ﻿using System.Drawing;
-using System.Windows.Forms;
 using PDFPatcher.Common;
 
 namespace PDFPatcher.Functions.Editor

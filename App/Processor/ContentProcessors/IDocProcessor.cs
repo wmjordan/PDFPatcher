@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using PDFPatcher.Model;
-
-namespace PDFPatcher.Processor
+﻿namespace PDFPatcher.Processor
 {
 	interface IDocProcessor : IProcessor
 	{

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace PDFPatcher.Processor
+﻿namespace PDFPatcher.Processor
 {
 	[System.Diagnostics.DebuggerDisplay("{_rangeText}")]
 	public class PageRangeFilter : AutoBookmarkFilter

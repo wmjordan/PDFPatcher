@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using System.Xml;
-using FreeImageAPI;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using MuPdfSharp;

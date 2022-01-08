@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using PDFPatcher.Model;
+﻿using PDFPatcher.Model;
 
 namespace PDFPatcher.Processor
 {

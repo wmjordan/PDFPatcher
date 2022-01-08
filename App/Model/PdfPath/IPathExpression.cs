@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using PDFPatcher.Model;
+﻿using System.Collections.Generic;
 
 namespace PDFPatcher.Model.PdfPath
 {

@@ -9,7 +9,6 @@ using MuPdfSharp;
 using PDFPatcher.Common;
 using DrawingPoint = System.Drawing.Point;
 using DrawingRectangle = System.Drawing.Rectangle;
-using MuPoint = MuPdfSharp.Point;
 using MuRectangle = MuPdfSharp.Rectangle;
 
 namespace PDFPatcher.Functions

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using iTextSharp.text.pdf;
+﻿using iTextSharp.text.pdf;
 using E = System.Text.Encoding;
 
 namespace PDFPatcher

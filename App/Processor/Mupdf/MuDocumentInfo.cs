@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace MuPdfSharp
+﻿namespace MuPdfSharp
 {
 	public class MuDocumentInfo
 	{

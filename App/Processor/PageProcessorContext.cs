@@ -1,5 +1,4 @@
-﻿using System;
-using iTextSharp.text.pdf;
+﻿using iTextSharp.text.pdf;
 using PDFPatcher.Model;
 
 namespace PDFPatcher.Processor

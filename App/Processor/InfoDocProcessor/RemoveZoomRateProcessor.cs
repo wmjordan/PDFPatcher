@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace PDFPatcher.Processor
+﻿namespace PDFPatcher.Processor
 {
 	sealed class RemoveZoomRateProcessor : IInfoDocProcessor
 	{

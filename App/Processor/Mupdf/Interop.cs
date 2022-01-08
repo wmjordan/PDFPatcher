@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 
 namespace MuPdfSharp

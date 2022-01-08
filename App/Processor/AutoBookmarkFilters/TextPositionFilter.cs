@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace PDFPatcher.Processor
+﻿namespace PDFPatcher.Processor
 {
 	[System.Diagnostics.DebuggerDisplay("P {Position}: {MinValue}->{MaxValue}")]
 	sealed class TextPositionFilter : AutoBookmarkFilter

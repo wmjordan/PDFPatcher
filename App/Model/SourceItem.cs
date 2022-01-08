@@ -355,8 +355,8 @@ namespace PDFPatcher.Model
 						}
 					}
 				}
-				catch (UnauthorizedAccessException) {}
-				catch (IOException) {}
+				catch (UnauthorizedAccessException) { }
+				catch (IOException) { }
 			}
 
 			static void AddSubDirectories(string folderPath, List<SourceItem> list) {
@@ -366,8 +366,8 @@ namespace PDFPatcher.Model
 						list.Add(f);
 					}
 				}
-				catch (UnauthorizedAccessException) {}
-				catch (IOException) {}
+				catch (UnauthorizedAccessException) { }
+				catch (IOException) { }
 			}
 		}
 
