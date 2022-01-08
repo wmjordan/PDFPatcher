@@ -19,56 +19,52 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\jbig2dec\getopt.c" />
-    <ClCompile Include="..\jbig2dec\getopt1.c" />
-    <ClCompile Include="..\jbig2dec\jbig2.c" />
-    <ClCompile Include="..\jbig2dec\jbig2dec.c" />
-    <ClCompile Include="..\jbig2dec\jbig2_arith.c" />
-    <ClCompile Include="..\jbig2dec\jbig2_arith_iaid.c" />
-    <ClCompile Include="..\jbig2dec\jbig2_arith_int.c" />
-    <ClCompile Include="..\jbig2dec\jbig2_generic.c" />
-    <ClCompile Include="..\jbig2dec\jbig2_halftone.c" />
-    <ClCompile Include="..\jbig2dec\jbig2_huffman.c" />
-    <ClCompile Include="..\jbig2dec\jbig2_hufftab.c" />
-    <ClCompile Include="..\jbig2dec\jbig2_image.c" />
-    <ClCompile Include="..\jbig2dec\jbig2_image_pbm.c" />
-    <ClCompile Include="..\jbig2dec\jbig2_mmr.c" />
-    <ClCompile Include="..\jbig2dec\jbig2_page.c" />
-    <ClCompile Include="..\jbig2dec\jbig2_refinement.c" />
-    <ClCompile Include="..\jbig2dec\jbig2_segment.c" />
-    <ClCompile Include="..\jbig2dec\jbig2_symbol_dict.c" />
-    <ClCompile Include="..\jbig2dec\jbig2_text.c" />
-    <ClCompile Include="..\jbig2dec\sha1.c" />
+    <ClCompile Include="src\jbig2.c" />
     <ClCompile Include="src\jbig2arith.cc" />
     <ClCompile Include="src\jbig2enc.lossless.cc" />
+    <ClCompile Include="src\jbig2_arith.c" />
+    <ClCompile Include="src\jbig2_arith_iaid.c" />
+    <ClCompile Include="src\jbig2_arith_int.c" />
+    <ClCompile Include="src\jbig2_generic.c" />
+    <ClCompile Include="src\jbig2_halftone.c" />
+    <ClCompile Include="src\jbig2_huffman.c" />
+    <ClCompile Include="src\jbig2_hufftab.c" />
+    <ClCompile Include="src\jbig2_image.c" />
+    <ClCompile Include="src\jbig2_mmr.c" />
+    <ClCompile Include="src\jbig2_page.c" />
+    <ClCompile Include="src\jbig2_refinement.c" />
+    <ClCompile Include="src\jbig2_segment.c" />
+    <ClCompile Include="src\jbig2_symbol_dict.c" />
+    <ClCompile Include="src\jbig2_text.c" />
+    <ClCompile Include="src\sha1.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\jbig2dec\config_win32.h" />
-    <ClInclude Include="..\jbig2dec\getopt.h" />
-    <ClInclude Include="..\jbig2dec\jbig2.h" />
-    <ClInclude Include="..\jbig2dec\jbig2_arith.h" />
-    <ClInclude Include="..\jbig2dec\jbig2_arith_iaid.h" />
-    <ClInclude Include="..\jbig2dec\jbig2_arith_int.h" />
-    <ClInclude Include="..\jbig2dec\jbig2_generic.h" />
-    <ClInclude Include="..\jbig2dec\jbig2_halftone.h" />
-    <ClInclude Include="..\jbig2dec\jbig2_huffman.h" />
-    <ClInclude Include="..\jbig2dec\jbig2_hufftab.h" />
-    <ClInclude Include="..\jbig2dec\jbig2_image.h" />
-    <ClInclude Include="..\jbig2dec\jbig2_mmr.h" />
-    <ClInclude Include="..\jbig2dec\jbig2_page.h" />
-    <ClInclude Include="..\jbig2dec\jbig2_priv.h" />
-    <ClInclude Include="..\jbig2dec\jbig2_refinement.h" />
-    <ClInclude Include="..\jbig2dec\jbig2_segment.h" />
-    <ClInclude Include="..\jbig2dec\jbig2_symbol_dict.h" />
-    <ClInclude Include="..\jbig2dec\jbig2_text.h" />
-    <ClInclude Include="..\jbig2dec\memento.h" />
-    <ClInclude Include="..\jbig2dec\os_types.h" />
-    <ClInclude Include="..\jbig2dec\sha1.h" />
+    <ClInclude Include="include\config_win32.h" />
+    <ClInclude Include="include\getopt.h" />
+    <ClInclude Include="include\jbig2.h" />
     <ClInclude Include="include\jbig2arith.h" />
     <ClInclude Include="include\jbig2enc.lossless.h" />
     <ClInclude Include="include\jbig2segments.h" />
     <ClInclude Include="include\jbig2structs.h" />
+    <ClInclude Include="include\jbig2_arith.h" />
+    <ClInclude Include="include\jbig2_arith_iaid.h" />
+    <ClInclude Include="include\jbig2_arith_int.h" />
+    <ClInclude Include="include\jbig2_generic.h" />
+    <ClInclude Include="include\jbig2_halftone.h" />
+    <ClInclude Include="include\jbig2_huffman.h" />
+    <ClInclude Include="include\jbig2_hufftab.h" />
+    <ClInclude Include="include\jbig2_image.h" />
+    <ClInclude Include="include\jbig2_mmr.h" />
+    <ClInclude Include="include\jbig2_page.h" />
+    <ClInclude Include="include\jbig2_priv.h" />
+    <ClInclude Include="include\jbig2_refinement.h" />
+    <ClInclude Include="include\jbig2_segment.h" />
+    <ClInclude Include="include\jbig2_symbol_dict.h" />
+    <ClInclude Include="include\jbig2_text.h" />
+    <ClInclude Include="include\memento.h" />
+    <ClInclude Include="include\os_types.h" />
     <ClInclude Include="include\pix.h" />
+    <ClInclude Include="include\sha1.h" />
     <ClInclude Include="include\unistd.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -149,7 +145,6 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;__STDC_LIMIT_MACROS;_CRT_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalOptions>-w44996 -w24146 /D "HAVE_STRING_H" %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -166,7 +161,6 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;__STDC_LIMIT_MACROS;_CRT_SECURE_NO_WARNINGS;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalOptions>-w44996 -w24146 /D "HAVE_STRING_H" %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
