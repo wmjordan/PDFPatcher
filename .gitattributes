@@ -18,6 +18,7 @@
 *.vcxproj.filters text eol=crlf
 *.xml             text eol=crlf
 *.xsd             text eol=crlf
+*.wsf             text eol=crlf
 
 # Never perform LF normalization on these files
 *.chw    binary
