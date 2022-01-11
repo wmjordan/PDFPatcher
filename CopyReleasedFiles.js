@@ -46,7 +46,7 @@ sh.CurrentDirectory = p;
 	s.SetEOS ();
 	s.WriteText ('<?xml version="1.0" encoding="gbk"?><PDFPatcher');
 	s.WriteText (' version="' + v + '" date="' + dt + '"');
-	s.WriteText (' url="https://z701.com/d/12751606-24910846-996057/"');
+	s.WriteText (' url="https://wwo.lanzouy.com/b02uobz5i"');
 	s.WriteText ('>');
 	s.WriteText ('<content><![CDATA[下载密码：8518\r\n\r\n');
 	var tl = t.split("\r\n");
