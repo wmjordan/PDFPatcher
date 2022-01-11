@@ -12,7 +12,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jbig2", "jbig2\jbig2.vcxpro
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3243E921-0EC3-44D1-96CC-C3E05BF9C89B}"
 	ProjectSection(SolutionItems) = preProject
-		CopyReleasedFiles.js = CopyReleasedFiles.js
+		CopyReleasedFiles.wsf = CopyReleasedFiles.wsf
 		readme.md = readme.md
 	EndProjectSection
 EndProject

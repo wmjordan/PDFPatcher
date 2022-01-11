@@ -21,11 +21,11 @@ jobs:
         run: |
           mkdir $Env:GITHUB_WORKSPACE\release_dir
 
-      - name: Configure CopyReleasedFiles.js
+      - name: Configure CopyReleasedFiles.wsf
         run: |
-          $CopyScriptPath = "$Env:GITHUB_WORKSPACE\CopyReleasedFiles.js"
+          $CopyScriptPath = "$Env:GITHUB_WORKSPACE\CopyReleasedFiles.wsf"
           $ReleaseDir = (ConvertTo-Json "$Env:GITHUB_WORKSPACE\release_dir\")
-          (Get-Content $CopyScriptPath -encoding unicode).replace('"m:\\"', $ReleaseDir) | Set-Content $CopyScriptPath -encoding unicode
+          (Get-Content $CopyScriptPath).replace('"m:\\"', $ReleaseDir) | Set-Content $CopyScriptPath
           Get-Content $CopyScriptPath | Write-Host
 
       - name: Decode base64 to .snk file
