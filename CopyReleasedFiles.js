@@ -44,7 +44,7 @@ sh.CurrentDirectory = p;
 	t = s.ReadText ();
 	s.Position = 0;
 	s.SetEOS ();
-	s.WriteText ('<?xml version="1.0" encoding="gbk"?><PDFPatcher');
+	s.WriteText ('<?xml version="1.0" encoding="utf-8"?><PDFPatcher');
 	s.WriteText (' version="' + v + '" date="' + dt + '"');
 	s.WriteText (' url="https://wwo.lanzouy.com/b02uobz5i"');
 	s.WriteText ('>');
