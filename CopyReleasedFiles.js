@@ -60,6 +60,21 @@ sh.CurrentDirectory = p;
 	s.SaveToFile (op + "pdfpatcher.update.xml", 2);
 	s.Close();
 
+	s.Open();
+	s.Type = 2;
+	s.CharSet = "UTF-8";
+	s.Position = 0;
+	s.SetEOS ();
+	var tl = t.split("\r\n");
+	for (var i=1; i<tl.length; i++) {
+		if (tl[i].length == 0) {
+			break;
+		}
+		s.WriteText (tl[i]+"\r\n");
+	}
+	s.SaveToFile (op + "CHANGELOG.txt", 2);
+	s.Close();
+
 var c = "..\\..\\7za.exe u "+op+"PDFPatcher."+v+".7z "+names.join(" ") + " -mx9";
 WScript.StdOut.WriteLine (c);
 var z = sh.exec(c);

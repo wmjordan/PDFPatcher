@@ -1,0 +1,48 @@
+name: "tagged-release"
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build-and-release:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v1.1
+        with:
+          msbuild-architecture: x86
+
+      - name: Setting output directory
+        run: |
+          mkdir $Env:GITHUB_WORKSPACE\release_dir
+
+      - name: Configure CopyReleasedFiles.js
+        run: |
+          $CopyScriptPath = "$Env:GITHUB_WORKSPACE\CopyReleasedFiles.js"
+          $ReleaseDir = (ConvertTo-Json "$Env:GITHUB_WORKSPACE\release_dir\")
+          (Get-Content $CopyScriptPath -encoding unicode).replace('"m:\\"', $ReleaseDir) | Set-Content $CopyScriptPath -encoding unicode
+          Get-Content $CopyScriptPath | Write-Host
+
+      - name: Decode base64 to .snk file
+        run: |
+          $SigningKeysPayload = [System.Convert]::FromBase64String("${{ secrets.RELEASE_SIGNING_KEY }}")
+          $CertificatePath = Join-Path -Path $Env:GITHUB_WORKSPACE\App -ChildPath "wmjordan.snk"
+          [IO.File]::WriteAllBytes("$CertificatePath", $SigningKeysPayload)
+
+      - name: Build project
+        run: |
+          msbuild $Env:GITHUB_WORKSPACE\PDFPatcher.sln /target:restore /p:Platform=x86 /property:Configuration=Release /property:RestorePackagesConfig=true
+          msbuild $Env:GITHUB_WORKSPACE\PDFPatcher.sln /target:build /p:Platform=x86 /property:Configuration=Release /property:RestorePackagesConfig=true
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            ${{ github.workspace }}\release_dir\PDFPatcher.*.7z
+          body_path: ${{ github.workspace }}\release_dir\CHANGELOG.txt
+          token: ${{ secrets.RELEASE_GITHUB_TOKEN }}
