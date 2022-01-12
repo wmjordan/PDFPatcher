@@ -449,7 +449,7 @@ namespace PDFPatcher.Functions
 				}
 				CopyOrMoveElement(_copiedBookmarks, target, asChild, true, true, c || OperationAffectsDecendants);
 			}
-			catch (Exception ex) {
+			catch (Exception) {
 				// ignore
 			}
 		}

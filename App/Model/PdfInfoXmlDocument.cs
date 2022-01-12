@@ -155,7 +155,7 @@ namespace PDFPatcher.Model
 	public sealed class BookmarkElement : BookmarkContainer
 	{
 		/// <summary>在自动生成书签时标记级别的属性。</summary>
-		internal int AutoLevel;
+		internal int AutoLevel = 0;
 
 		/// <summary>获取或设置书签的文本。</summary>
 		public string Title {

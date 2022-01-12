@@ -230,7 +230,7 @@ namespace PDFPatcher
 			try {
 				AppContext.Load(null);
 			}
-			catch (Exception ex) {
+			catch (Exception) {
 				// ignore loading exception
 			}
 			Text = Constants.AppName + " [" + Application.ProductVersion + "]";
@@ -557,7 +557,7 @@ namespace PDFPatcher
 			try {
 				AppContext.Save(null, true);
 			}
-			catch (Exception ex) {
+			catch (Exception) {
 				// ignore error
 			}
 		}

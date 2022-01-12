@@ -49,7 +49,7 @@ namespace PDFPatcher.Processor.Imaging
 					return r.GetTagValue(ExifTags.Orientation, out b);
 				}
 			}
-			catch (Exception ex) {
+			catch (Exception) {
 				b = 0;
 				return false;
 			}
