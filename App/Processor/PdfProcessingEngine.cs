@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
-using PDFPatcher.Model;
 
 namespace PDFPatcher.Processor
 {
@@ -119,7 +117,7 @@ namespace PDFPatcher.Processor
 						pc.WritePageCommands();
 					}
 				}
-				catch (Exception ex) {
+				catch (Exception) {
 					Tracker.TraceMessage("在处理文档第 " + i + " 页时出错。");
 					throw;
 				}

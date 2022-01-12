@@ -53,7 +53,7 @@ namespace PDFPatcher.Processor
 				try {
 					_fontFactory.Register(item.Value, item.Key);
 				}
-				catch (Exception ex) {
+				catch (Exception) {
 					// ignore
 				}
 			}
@@ -334,7 +334,7 @@ namespace PDFPatcher.Processor
 							}
 							_newFonts.Add(n, nf);
 						}
-						catch (Exception ex) {
+						catch (Exception) {
 							Tracker.TraceMessage(Tracker.Category.Error, "无法加载字体");
 							throw;
 						}

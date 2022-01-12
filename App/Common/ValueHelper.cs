@@ -31,7 +31,7 @@ namespace PDFPatcher.Common
 				try {
 					disposable.Dispose();
 				}
-				catch (Exception ex) {
+				catch (Exception) {
 					// ignore
 				}
 			}
