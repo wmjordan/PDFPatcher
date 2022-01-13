@@ -72,7 +72,7 @@ namespace PDFPatcher.Processor
 				try {
 					File.Delete(file);
 				}
-				catch (Exception ex) {
+				catch (Exception) {
 				}
 			}
 		}

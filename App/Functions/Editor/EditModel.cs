@@ -75,7 +75,7 @@ namespace PDFPatcher.Functions.Editor
 			internal readonly string FontName;
 			internal readonly int FontSize;
 			internal readonly BookmarkSettings Style;
-			internal MatchPattern MatchPattern;
+			internal MatchPattern MatchPattern = null;
 
 			internal int Level;
 

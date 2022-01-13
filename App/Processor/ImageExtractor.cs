@@ -374,7 +374,7 @@ namespace PDFPatcher.Processor
 						try {
 							bmp.Save(n, FREE_IMAGE_FORMAT.FIF_PNG);
 						}
-						catch (System.Runtime.InteropServices.SEHException ex) {
+						catch (System.Runtime.InteropServices.SEHException) {
 							Tracker.TraceMessage(Tracker.Category.Error, "保存图片时出现错误，请联系程序开发者：" + n);
 						}
 					}

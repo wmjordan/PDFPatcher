@@ -90,7 +90,7 @@ namespace PDFPatcher.Model
 				catch (FileNotFoundException) {
 					FormHelper.ErrorBox(String.Concat("找不到文件：“", path, "”。"));
 				}
-				catch (Exception ex) {
+				catch (Exception) {
 					FormHelper.ErrorBox(String.Concat("打开 PDF 文件时“", path, "”出错。"));
 					// ignore corrupted 
 				}
@@ -279,7 +279,7 @@ namespace PDFPatcher.Model
 						PageRanges = new PageRange(1, PageCount).ToString();
 					}
 				}
-				catch (Exception ex) {
+				catch (Exception) {
 					FormHelper.ErrorBox(String.Concat("打开 PDF 文件时“", path, "”出错。"));
 					// ignore corrupted 
 				}
@@ -355,8 +355,8 @@ namespace PDFPatcher.Model
 						}
 					}
 				}
-				catch (UnauthorizedAccessException) {}
-				catch (IOException) {}
+				catch (UnauthorizedAccessException) { }
+				catch (IOException) { }
 			}
 
 			static void AddSubDirectories(string folderPath, List<SourceItem> list) {
@@ -366,8 +366,8 @@ namespace PDFPatcher.Model
 						list.Add(f);
 					}
 				}
-				catch (UnauthorizedAccessException) {}
-				catch (IOException) {}
+				catch (UnauthorizedAccessException) { }
+				catch (IOException) { }
 			}
 		}
 
