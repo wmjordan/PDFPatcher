@@ -485,7 +485,7 @@ jbig2_image_get_pixel(Jbig2Image *image, int x, int y)
 
 /* set an individual pixel value in an image */
 void
-jbig2_image_set_pixel(Jbig2Image *image, int x, int y, int value)
+jbig2_image_set_pixel(Jbig2Image *image, int x, int y, bool value)
 {
     const int w = image->width;
     const int h = image->height;
