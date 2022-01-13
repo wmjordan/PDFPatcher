@@ -1,13 +1,13 @@
-﻿using System;
+﻿using System.Diagnostics;
 using PDFPatcher.Model;
 
 namespace PDFPatcher.Processor;
 
-[System.Diagnostics.DebuggerDisplay("{_rangeText}")]
+[DebuggerDisplay("{_rangeText}")]
 public class PageRangeFilter : AutoBookmarkFilter
 {
-	private PageRangeCollection _range;
 	private readonly string _rangeText;
+	private PageRangeCollection _range;
 
 	public PageRangeFilter(string range) {
 		_rangeText = range;

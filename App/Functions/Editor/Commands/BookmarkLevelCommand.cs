@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Xml;
 using PDFPatcher.Model;
 using PDFPatcher.Processor;
@@ -23,7 +22,7 @@ internal sealed class BookmarkLevelCommand : IEditorCommand
 		List<BookmarkElement> si = b.GetSelectedElements(true);
 		b.BeginUpdate();
 		IEnumerable<XmlNode> ld = controller.ProcessBookmarks(false, false,
-			levelUp ? new LevelUpProcessor() as IPdfInfoXmlProcessor : new LevelDownProcessor());
+			levelUp ? new LevelUpProcessor() : new LevelDownProcessor());
 		if (ld != null) {
 			foreach (XmlNode item in ld) {
 				b.Expand(item);

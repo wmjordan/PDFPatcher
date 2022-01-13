@@ -1,28 +1,32 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Windows.Forms;
+using iTextSharp.text.exceptions;
 using iTextSharp.text.pdf;
 using MuPdfSharp;
 using PDFPatcher.Common;
 using PDFPatcher.Model;
+using Matrix = iTextSharp.text.pdf.parser.Matrix;
 using Rectangle = iTextSharp.text.Rectangle;
 
 namespace PDFPatcher.Processor;
 
 internal static class PdfHelper
 {
-	internal static readonly int[] CompoundTypes =
-		new int[] {PdfObject.DICTIONARY, PdfObject.ARRAY, PdfObject.STREAM};
+	internal static readonly int[] CompoundTypes = {PdfObject.DICTIONARY, PdfObject.ARRAY, PdfObject.STREAM};
 
 	private static readonly DualKeyDictionary<PdfName, string> __PdfNameMap;
 
 	private static readonly Dictionary<string, byte[]> __PdfPasswordBox = new(StringComparer.OrdinalIgnoreCase);
 
+	static PdfHelper() {
+		__PdfNameMap = InitPdfNameMap();
+	}
+
 	/// <summary>
-	/// 切换强制读取加密文档模式。
+	///     切换强制读取加密文档模式。
 	/// </summary>
 	/// <param name="unethicalreading">是否打开强制读取模式。</param>
 	internal static void ToggleUnethicalMode(bool unethicalreading) {
@@ -30,7 +34,7 @@ internal static class PdfHelper
 	}
 
 	/// <summary>
-	/// 切换容错模式（忽略 PDF 文档的错误）。
+	///     切换容错模式（忽略 PDF 文档的错误）。
 	/// </summary>
 	/// <param name="debugMode">是否打开容错模式。</param>
 	internal static void ToggleReaderDebugMode(bool debugMode) {
@@ -38,11 +42,11 @@ internal static class PdfHelper
 	}
 
 	/// <summary>
-	/// 打开 PDF 文件，在有需要时提示输入密码。
+	///     打开 PDF 文件，在有需要时提示输入密码。
 	/// </summary>
 	/// <param name="sourceFile">需要打开的 PDF 文件。</param>
 	/// <param name="partial">是否仅打开文件的部分内容。</param>
-	/// <returns><see cref="PdfReader"/> 实例。</returns>
+	/// <returns><see cref="PdfReader" /> 实例。</returns>
 	internal static PdfReader OpenPdfFile(string sourceFile, bool partial, bool removeUnusedObjects) {
 		byte[] password;
 		__PdfPasswordBox.TryGetValue(sourceFile, out password);
@@ -70,10 +74,10 @@ internal static class PdfHelper
 
 				return r;
 			}
-			catch (iTextSharp.text.exceptions.BadPasswordException) {
+			catch (BadPasswordException) {
 				PasswordEntryForm f = new(sourceFile);
-				if (f.ShowDialog() == System.Windows.Forms.DialogResult.Cancel) {
-					throw new iTextSharp.text.exceptions.BadPasswordException("密码错误，没有权限打开 PDF 文件。");
+				if (f.ShowDialog() == DialogResult.Cancel) {
+					throw new BadPasswordException("密码错误，没有权限打开 PDF 文件。");
 				}
 
 				password = Encoding.Default.GetBytes(f.Password);
@@ -84,7 +88,7 @@ internal static class PdfHelper
 	internal static bool ConfirmUnethicalMode(this PdfReader pdf) {
 		ToggleUnethicalMode(false);
 		bool r = pdf.IsOpenedWithFullPermissions
-		         || FormHelper.YesNoBox(Messages.UserRightRequired) == System.Windows.Forms.DialogResult.Yes;
+		         || FormHelper.YesNoBox(Messages.UserRightRequired) == DialogResult.Yes;
 		ToggleUnethicalMode(true);
 		return r;
 	}
@@ -101,8 +105,8 @@ internal static class PdfHelper
 
 			if (r.NeedsPassword) {
 				PasswordEntryForm f = new(sourceFile);
-				if (f.ShowDialog() == System.Windows.Forms.DialogResult.Cancel) {
-					throw new iTextSharp.text.exceptions.BadPasswordException("密码错误，没有权限打开 PDF 文件。");
+				if (f.ShowDialog() == DialogResult.Cancel) {
+					throw new BadPasswordException("密码错误，没有权限打开 PDF 文件。");
 				}
 
 				password = Encoding.Default.GetBytes(f.Password);
@@ -110,10 +114,6 @@ internal static class PdfHelper
 
 			return r;
 		}
-	}
-
-	static PdfHelper() {
-		__PdfNameMap = InitPdfNameMap();
 	}
 
 	private static DualKeyDictionary<PdfName, string> InitPdfNameMap() {
@@ -157,7 +157,7 @@ internal static class PdfHelper
 	}
 
 	/// <summary>
-	/// 获取友好的 PdfName 文本。
+	///     获取友好的 PdfName 文本。
 	/// </summary>
 	/// <param name="n"></param>
 	/// <returns></returns>
@@ -166,9 +166,9 @@ internal static class PdfHelper
 	}
 
 	/// <summary>
-	/// 解析 PdfName。
+	///     解析 PdfName。
 	/// </summary>
-	/// <param name="friendlyName">从 <seealso cref="GetPdfFriendlyName"/> 转换所得的 PdfName 说明文本。</param>
+	/// <param name="friendlyName">从 <seealso cref="GetPdfFriendlyName" /> 转换所得的 PdfName 说明文本。</param>
 	/// <returns>与文本说明对应的 PdfName。</returns>
 	internal static PdfName ResolvePdfName(string friendlyName) {
 		return __PdfNameMap.ContainsValue(friendlyName)
@@ -180,16 +180,15 @@ internal static class PdfHelper
 		if (name is PdfName) {
 			return PdfName.DecodeName(name.ToString());
 		}
-		else {
-			return name.ToString();
-		}
+
+		return name.ToString();
 	}
 
 	/// <summary>
-	/// 获取 PDF 页面引用与页数的映射关系表。
+	///     获取 PDF 页面引用与页数的映射关系表。
 	/// </summary>
 	/// <param name="reader">源 PDF 文档。</param>
-	/// <returns>键为 <see cref="PdfIndirectReference"/> 的数值，值为页数的字典。</returns>
+	/// <returns>键为 <see cref="PdfIndirectReference" /> 的数值，值为页数的字典。</returns>
 	internal static Dictionary<int, int> GetPageRefMapper(this PdfReader reader) {
 		int numPages = reader.NumberOfPages;
 		Dictionary<int, int> pages = new(numPages);
@@ -202,7 +201,7 @@ internal static class PdfHelper
 	}
 
 	/// <summary>
-	/// 解析形如“D:20111021090818+08'00'”的日期格式。
+	///     解析形如“D:20111021090818+08'00'”的日期格式。
 	/// </summary>
 	/// <param name="date">日期格式。</param>
 	/// <returns></returns>
@@ -235,7 +234,7 @@ internal static class PdfHelper
 	//}
 
 	/// <summary>
-	/// 获取解码后的 PDF 名称字符串。
+	///     获取解码后的 PDF 名称字符串。
 	/// </summary>
 	/// <param name="name">需要解码的 PDF 名称。</param>
 	/// <returns>解码后的 PDF 名称字符串</returns>
@@ -244,7 +243,7 @@ internal static class PdfHelper
 	}
 
 	/// <summary>
-	/// 获取解码后的 PDF 名称字符串。
+	///     获取解码后的 PDF 名称字符串。
 	/// </summary>
 	/// <param name="name">需要解码的 PDF 名称。</param>
 	/// <param name="encoding">用于解码的文本编码。</param>
@@ -270,7 +269,7 @@ internal static class PdfHelper
 	}
 
 	/// <summary>
-	/// 获取页面可见的边框。
+	///     获取页面可见的边框。
 	/// </summary>
 	/// <param name="page">页面字典。</param>
 	/// <returns>页面的可见边框。</returns>
@@ -296,9 +295,8 @@ internal static class PdfHelper
 
 			return rect;
 		}
-		else {
-			return null;
-		}
+
+		return null;
 	}
 
 	internal static void ClearPageLinks(this PdfReader r) {
@@ -378,9 +376,8 @@ internal static class PdfHelper
 
 			return sb.ToString();
 		}
-		else {
-			return value;
-		}
+
+		return value;
 	}
 
 	internal static string GetArrayString(PdfArray array) {
@@ -468,7 +465,7 @@ internal static class PdfHelper
 			if (source.Contains(item)) {
 				d = source.GetAsDict(item);
 				if (d == null) {
-					throw new InvalidCastException(item.ToString() + "不是 PdfDictionary。");
+					throw new InvalidCastException(item + "不是 PdfDictionary。");
 				}
 
 				source = d;
@@ -541,13 +538,13 @@ internal static class PdfHelper
 		return results;
 	}
 
-	internal static string MatrixToString(iTextSharp.text.pdf.parser.Matrix ctm) {
+	internal static string MatrixToString(Matrix ctm) {
 		return string.Join(" ", ctm[0].ToText(), ctm[1].ToText(), ctm[3].ToText(), ctm[4].ToText(), ctm[6].ToText(),
 			ctm[7].ToText());
 	}
 
 	/// <summary>
-	/// 获取未使用对象的列表。
+	///     获取未使用对象的列表。
 	/// </summary>
 	/// <param name="pdf">需要检查的 PDF 文档。</param>
 	/// <param name="partial">待检查 PDF 文档是否为部分加载。</param>

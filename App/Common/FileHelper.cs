@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
 
@@ -6,11 +7,6 @@ namespace PDFPatcher.Common;
 
 internal static class FileHelper
 {
-	private enum OverwriteType
-	{
-		Prompt, Overwrite, Skip
-	}
-
 	private static OverwriteType __OverwriteMode;
 
 	public static bool HasExtension(FilePath fileName, string extension) {
@@ -56,7 +52,7 @@ internal static class FileHelper
 					return x == PathDot ? -1
 						: y == PathDot ? 1
 						: y < '0' || y > '9' ? LocaleInfo.StringComparer(x.ToString(), y.ToString(),
-							System.Globalization.CompareOptions.StringSort)
+							CompareOptions.StringSort)
 							// path2 为数字，path1 不为数字，path2 排在前面
 						: 1;
 				}
@@ -132,8 +128,8 @@ internal static class FileHelper
 		if (File.Exists(targetFile)) {
 			switch (__OverwriteMode) {
 				case OverwriteType.Prompt:
-					DialogResult r = FormHelper.YesNoCancelBox(string.Join("\n",
-						new string[] {"是否覆盖目标文件？", targetFile, "\n按住 Shift 键重复此对话框的选择，本次操作不再弹出覆盖文件提示。"}));
+					DialogResult r = FormHelper.YesNoCancelBox(string.Join("\n", "是否覆盖目标文件？", targetFile,
+						"\n按住 Shift 键重复此对话框的选择，本次操作不再弹出覆盖文件提示。"));
 					if (r == DialogResult.No) {
 						if (FormHelper.IsShiftKeyDown) {
 							__OverwriteMode = OverwriteType.Skip;
@@ -301,9 +297,14 @@ internal static class FileHelper
 		return source;
 	}
 
+	private enum OverwriteType
+	{
+		Prompt, Overwrite, Skip
+	}
+
 	private static class LocaleInfo
 	{
-		public static readonly Func<string, string, System.Globalization.CompareOptions, int> StringComparer =
-			System.Globalization.CultureInfo.CurrentCulture.CompareInfo.Compare;
+		public static readonly Func<string, string, CompareOptions, int> StringComparer =
+			CultureInfo.CurrentCulture.CompareInfo.Compare;
 	}
 }

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Windows.Forms;
 
 namespace BrightIdeasSoftware;
 
@@ -26,14 +27,14 @@ internal static class ObjectListViewHelper
 			b.Width = 60;
 		}
 
-		if (e.Control is System.Windows.Forms.Control c) {
+		if (e.Control is Control c) {
 			c.Bounds = b;
 			c.Location = b.Location;
 		}
 	}
 
 	public static void SetTreeViewLine(this TreeListView view) {
-		TreeListView.TreeRenderer tcr = view.TreeColumnRenderer as TreeListView.TreeRenderer;
+		TreeListView.TreeRenderer tcr = view.TreeColumnRenderer;
 		tcr.LinePen = new Pen(SystemColors.ControlDark) {DashCap = DashCap.Round, DashStyle = DashStyle.Dash};
 	}
 
@@ -102,7 +103,7 @@ internal static class ObjectListViewHelper
 
 	public static void MoveDownSelection(this ObjectListView view) {
 		OLVListItem ls = view.GetLastItemInDisplayOrder();
-		if (ls == null || ls.Selected == true) {
+		if (ls == null || ls.Selected) {
 			return;
 		}
 
@@ -224,9 +225,9 @@ internal static class ObjectListViewHelper
 
 public struct GridTestResult
 {
-	public int ColumnIndex { get; private set; }
-	public int RowIndex { get; private set; }
-	public bool IsOutOfRange { get; private set; }
+	public int ColumnIndex { get; }
+	public int RowIndex { get; }
+	public bool IsOutOfRange { get; }
 
 	public GridTestResult(int columnIndex, int rowIndex, bool isOutOfRange) {
 		ColumnIndex = columnIndex;

@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Cyotek.Windows.Forms;
 using Cyotek.Windows.Forms.Demo;
@@ -9,6 +12,9 @@ using MuPdfSharp;
 using PDFPatcher.Common;
 using PDFPatcher.Functions.Editor;
 using PDFPatcher.Model;
+using PDFPatcher.Processor;
+using PDFPatcher.Processor.Imaging;
+using PDFPatcher.Properties;
 using DrawingPoint = System.Drawing.Point;
 using DrawingRectangle = System.Drawing.Rectangle;
 using Matrix = System.Drawing.Drawing2D.Matrix;
@@ -20,349 +26,52 @@ namespace PDFPatcher.Functions;
 
 internal sealed class PdfViewerControl : ImageBoxEx
 {
-	private enum ZoomMode
-	{
-		Custom, FitPage = -1, FitHorizontal = -2, FitVertical = -3
-	}
-
-	public event EventHandler DocumentLoaded;
-	public new event EventHandler ZoomChanged;
-	public event EventHandler<PageChangedEventArgs> PageChanged;
-	public event EventHandler<SelectionChangedEventArgs> SelectionChanged;
-
-	internal sealed class PageChangedEventArgs : EventArgs
-	{
-		public int PageNumber { get; }
-
-		public PageChangedEventArgs(int pageNumber) {
-			PageNumber = pageNumber;
-		}
-	}
-
-	internal sealed class SelectionChangedEventArgs : EventArgs
-	{
-		public Selection Selection { get; }
-
-		public SelectionChangedEventArgs(Selection selection) {
-			Selection = selection;
-		}
-	}
-
 	private static readonly IComparer<int> __horizontalComparer = ValueHelper.GetReverseComparer<int>();
 
 	private static readonly int __pageMargin =
 		(int)(TextRenderer.MeasureText("国", SystemFonts.MessageBoxFont).Height * 1.2d);
 
-	private readonly BackgroundWorker _renderWorker;
 	private readonly Timer _refreshTimer;
-	private bool _cancelRendering;
-	private bool _lockDown;
-	private MuDocument _mupdf;
 	private readonly ImageRendererOptions _renderOptions;
 
-	private ZoomMode _zoomMode;
-	private float _zoomFactor;
-	private ContentDirection _contentFlow;
+	private readonly BackgroundWorker _renderWorker;
 
 	/// <summary>
-	/// 页面的尺寸信息。
-	/// </summary>
-	private MuRectangle[] _pageBounds;
-
-	private SizeF _maxDimension;
-
-	/// <summary>
-	/// 页面的滚动位置。
-	/// </summary>
-	private int[] _pageOffsets;
-
-	/// <summary>
-	/// 缓存页面渲染结果的缓冲区。
+	///     缓存页面渲染结果的缓冲区。
 	/// </summary>
 	private RenderResultCache _cache;
 
-	private Dictionary<int, List<TextLine>> _ocrResults;
+	private bool _cancelRendering;
+	private ContentDirection _contentFlow;
 
 	private PageRange _DisplayRange;
 
-	/// <summary>
-	/// 获取或设置显示的焦点页面。
-	/// </summary>
-	[DefaultValue(0)]
-	public int CurrentPageNumber {
-		get => HorizontalFlow ? _DisplayRange.EndValue : _DisplayRange.StartValue;
-		set {
-			if (value == CurrentPageNumber) {
-				return;
-			}
-
-			ShowPage(value);
-		}
-	}
-
-	/// <summary>
-	/// 获取当前可见的第一个页面。
-	/// </summary>
-	[Browsable(false)]
-	public int FirstPage => _DisplayRange.StartValue;
-
-	/// <summary>
-	/// 获取当前可见的最后一个页面。
-	/// </summary>
-	[Browsable(false)]
-	public int LastPage => _DisplayRange.EndValue;
-
-	private readonly OcrOptions _OcrOptions = new();
-
-	/// <summary>
-	/// 获取文本识别选项。
-	/// </summary>
-	[Browsable(false)]
-	public OcrOptions OcrOptions => _OcrOptions;
-
 	private string _LiteralZoom;
+	private bool _lockDown;
+
+	private SizeF _maxDimension;
+	private MuDocument _mupdf;
+
+	private Dictionary<int, List<TextLine>> _ocrResults;
 
 	/// <summary>
-	/// 获取或设置显示放大比率。
+	///     页面的尺寸信息。
 	/// </summary>
-	[Browsable(false)]
-	public string LiteralZoom {
-		get => _LiteralZoom;
-		set {
-			if (value != null && ChangeZoom(value)) {
-				_LiteralZoom = value;
-				ZoomChanged?.Invoke(this, EventArgs.Empty);
-			}
-		}
-	}
-
-	public new float ZoomFactor => _zoomFactor * 72f / _renderOptions.Dpi;
+	private MuRectangle[] _pageBounds;
 
 	/// <summary>
-	/// 获取或设置阅读器是否使用右到左的水平滚动模式。
+	///     页面的滚动位置。
 	/// </summary>
-	[DefaultValue(ContentDirection.TopToDown)]
-	public ContentDirection ContentDirection {
-		get => _contentFlow;
-		set {
-			if (value == _contentFlow) {
-				return;
-			}
-
-			PagePosition pp = PagePosition.Empty;
-			if (HorizontalScroll.Value != 0 || VerticalScroll.Value != 0) {
-				pp = TransposeVirtualImageToPagePosition(HorizontalScroll.Value, VerticalScroll.Value);
-			}
-
-			Selection s = GetSelection();
-			_contentFlow = value;
-			UpdateDisplay(true);
-			if (s.ImageRegion.IsEmpty == false) {
-				RectangleF r = s.ImageRegion;
-				DrawingPoint p = GetVirtualImageOffset(s.Page);
-				r = new RectangleF(p.X + r.Left, p.Y + r.Top, r.Width, r.Height);
-				SelectionRegion = r;
-			}
-
-			if (pp.Page > 0) {
-				if (_zoomMode == ZoomMode.FitPage) {
-					ShowPage(pp.Page);
-				}
-				else {
-					ScrollToPosition(pp);
-				}
-			}
-		}
-	}
-
-	public bool HorizontalFlow => _contentFlow != ContentDirection.TopToDown;
-
-	/// <summary>
-	/// 获取或设置阅读器是否将页面渲染为灰度图像。
-	/// </summary>
-	[DefaultValue(false)]
-	public bool GrayScale {
-		get => _renderOptions.ColorSpace == ColorSpace.Gray;
-		set {
-			ColorSpace v = value ? ColorSpace.Gray : ColorSpace.Rgb;
-			if (_renderOptions.ColorSpace != v) {
-				_renderOptions.ColorSpace = v;
-				UpdateDisplay();
-			}
-		}
-	}
-
-	/// <summary>
-	/// 获取或设置阅读器是否将页面渲染为反转颜色的效果。
-	/// </summary>
-	[DefaultValue(false)]
-	public bool InvertColor {
-		get => _renderOptions.InvertColor;
-		set {
-			if (_renderOptions.InvertColor == value) {
-				return;
-			}
-
-			_renderOptions.InvertColor = value;
-			UpdateDisplay();
-		}
-	}
-
-	public Color TintColor {
-		get => _renderOptions.TintColor;
-		set {
-			if (_renderOptions.TintColor == value) {
-				return;
-			}
-
-			_renderOptions.TintColor = value;
-			UpdateDisplay();
-		}
-	}
-
-	[DefaultValue(false)]
-	public bool HideAnnotations {
-		get => _renderOptions.HideAnnotations;
-		set {
-			if (_renderOptions.HideAnnotations == value) {
-				return;
-			}
-
-			_renderOptions.HideAnnotations = value;
-			UpdateDisplay();
-		}
-	}
-
-	/// <summary>
-	/// 获取或设置阅读器的鼠标操作模式。
-	/// </summary>
-	[DefaultValue(MouseMode.Move)]
-	public MouseMode MouseMode {
-		get => PanMode != ImageBoxPanMode.None ? MouseMode.Move : MouseMode.Selection;
-		set {
-			if (value == MouseMode.Move) {
-				PanMode = ImageBoxPanMode.Both;
-				AllowZoom = false;
-				SelectionMode = ImageBoxSelectionMode.None;
-				SelectionRegion = RectangleF.Empty;
-			}
-			else {
-				PanMode = ImageBoxPanMode.Both;
-				AllowZoom = false;
-				SelectionMode = ImageBoxSelectionMode.Rectangle;
-			}
-		}
-	}
-
-	[DefaultValue(false)] public bool FullPageScroll { get; set; }
+	private int[] _pageOffsets;
 
 	private DrawingPoint _PinPoint;
 
-	[Description("指定鼠标定位点")]
-	public DrawingPoint PinPoint {
-		get => _PinPoint;
-		set {
-			if (_PinPoint != value) {
-				_PinPoint = value;
-				if (IsPinPointVisible && DesignMode == false) {
-					Invalidate();
-				}
-			}
-		}
-	}
-
 	private bool _ShowPinPoint;
 
-	[DefaultValue(false)]
-	[Description("指定是否显示鼠标定位点")]
-	public bool ShowPinPoint {
-		get => _ShowPinPoint;
-		set {
-			if (_ShowPinPoint != value) {
-				_ShowPinPoint = value;
-				if (IsPinPointVisible && DesignMode == false) {
-					Invalidate();
-				}
-			}
-		}
-	}
-
-	private bool IsPinPointVisible {
-		get {
-			if (PinPoint != DrawingPoint.Empty) {
-				DrawingPoint op = GetOffsetPoint(0, 0);
-				DrawingRectangle vp = GetImageViewPort();
-				DrawingPoint pp = PinPoint;
-				pp.Offset(op);
-				if (vp.Contains(pp)) {
-					return true;
-				}
-			}
-
-			return false;
-		}
-	}
-
 	private bool _ShowTextBorders;
+	private float _zoomFactor;
 
-	[DefaultValue(false)]
-	[Description("显示文本层的边框")]
-	public bool ShowTextBorders {
-		get => _ShowTextBorders;
-		set {
-			if (_ShowTextBorders != value) {
-				_ShowTextBorders = value;
-				if (DesignMode == false) {
-					Invalidate();
-				}
-			}
-		}
-	}
-
-	[DefaultValue(0)]
-	[Description("指定用于识别文本的语言")]
-	public int OcrLanguage {
-		get => _OcrOptions.OcrLangID;
-		set {
-			if (_OcrOptions.OcrLangID == value) {
-				return;
-			}
-
-			_OcrOptions.OcrLangID = value;
-			_ocrResults.Clear();
-		}
-	}
-
-	[Description("指定需要显示的 PDF 文档")]
-	[Browsable(false)]
-	[DefaultValue(null)]
-	public MuDocument Document {
-		get => _mupdf;
-		set {
-			Enabled = false;
-			InitViewer();
-			_mupdf = value;
-			if (value != null) {
-				Tracker.DebugMessage("Load document.");
-				int l = _mupdf.PageCount + 1;
-				_pageOffsets = new int[l];
-				_pageBounds = new MuRectangle[l];
-				LoadPageBounds();
-				_cache = new RenderResultCache(_mupdf);
-				Tracker.DebugMessage("Calculating document virtual size.");
-				CalculateZoomFactor(_LiteralZoom);
-				CalculateDocumentVirtualSize();
-				ShowPage(1);
-				_refreshTimer.Start();
-				if (_renderWorker.IsBusy == false) {
-					_renderWorker.RunWorkerAsync();
-				}
-
-				DocumentLoaded?.Invoke(this, EventArgs.Empty);
-				Enabled = true;
-			}
-		}
-	}
+	private ZoomMode _zoomMode;
 
 	public PdfViewerControl() {
 		VirtualMode = true;
@@ -423,6 +132,280 @@ internal sealed class PdfViewerControl : ImageBoxEx
 			}
 		};
 	}
+
+	/// <summary>
+	///     获取或设置显示的焦点页面。
+	/// </summary>
+	[DefaultValue(0)]
+	public int CurrentPageNumber {
+		get => HorizontalFlow ? _DisplayRange.EndValue : _DisplayRange.StartValue;
+		set {
+			if (value == CurrentPageNumber) {
+				return;
+			}
+
+			ShowPage(value);
+		}
+	}
+
+	/// <summary>
+	///     获取当前可见的第一个页面。
+	/// </summary>
+	[Browsable(false)]
+	public int FirstPage => _DisplayRange.StartValue;
+
+	/// <summary>
+	///     获取当前可见的最后一个页面。
+	/// </summary>
+	[Browsable(false)]
+	public int LastPage => _DisplayRange.EndValue;
+
+	/// <summary>
+	///     获取文本识别选项。
+	/// </summary>
+	[Browsable(false)]
+	public OcrOptions OcrOptions { get; } = new();
+
+	/// <summary>
+	///     获取或设置显示放大比率。
+	/// </summary>
+	[Browsable(false)]
+	public string LiteralZoom {
+		get => _LiteralZoom;
+		set {
+			if (value != null && ChangeZoom(value)) {
+				_LiteralZoom = value;
+				ZoomChanged?.Invoke(this, EventArgs.Empty);
+			}
+		}
+	}
+
+	public new float ZoomFactor => _zoomFactor * 72f / _renderOptions.Dpi;
+
+	/// <summary>
+	///     获取或设置阅读器是否使用右到左的水平滚动模式。
+	/// </summary>
+	[DefaultValue(ContentDirection.TopToDown)]
+	public ContentDirection ContentDirection {
+		get => _contentFlow;
+		set {
+			if (value == _contentFlow) {
+				return;
+			}
+
+			PagePosition pp = PagePosition.Empty;
+			if (HorizontalScroll.Value != 0 || VerticalScroll.Value != 0) {
+				pp = TransposeVirtualImageToPagePosition(HorizontalScroll.Value, VerticalScroll.Value);
+			}
+
+			Selection s = GetSelection();
+			_contentFlow = value;
+			UpdateDisplay(true);
+			if (s.ImageRegion.IsEmpty == false) {
+				RectangleF r = s.ImageRegion;
+				DrawingPoint p = GetVirtualImageOffset(s.Page);
+				r = new RectangleF(p.X + r.Left, p.Y + r.Top, r.Width, r.Height);
+				SelectionRegion = r;
+			}
+
+			if (pp.Page > 0) {
+				if (_zoomMode == ZoomMode.FitPage) {
+					ShowPage(pp.Page);
+				}
+				else {
+					ScrollToPosition(pp);
+				}
+			}
+		}
+	}
+
+	public bool HorizontalFlow => _contentFlow != ContentDirection.TopToDown;
+
+	/// <summary>
+	///     获取或设置阅读器是否将页面渲染为灰度图像。
+	/// </summary>
+	[DefaultValue(false)]
+	public bool GrayScale {
+		get => _renderOptions.ColorSpace == ColorSpace.Gray;
+		set {
+			ColorSpace v = value ? ColorSpace.Gray : ColorSpace.Rgb;
+			if (_renderOptions.ColorSpace != v) {
+				_renderOptions.ColorSpace = v;
+				UpdateDisplay();
+			}
+		}
+	}
+
+	/// <summary>
+	///     获取或设置阅读器是否将页面渲染为反转颜色的效果。
+	/// </summary>
+	[DefaultValue(false)]
+	public bool InvertColor {
+		get => _renderOptions.InvertColor;
+		set {
+			if (_renderOptions.InvertColor == value) {
+				return;
+			}
+
+			_renderOptions.InvertColor = value;
+			UpdateDisplay();
+		}
+	}
+
+	public Color TintColor {
+		get => _renderOptions.TintColor;
+		set {
+			if (_renderOptions.TintColor == value) {
+				return;
+			}
+
+			_renderOptions.TintColor = value;
+			UpdateDisplay();
+		}
+	}
+
+	[DefaultValue(false)]
+	public bool HideAnnotations {
+		get => _renderOptions.HideAnnotations;
+		set {
+			if (_renderOptions.HideAnnotations == value) {
+				return;
+			}
+
+			_renderOptions.HideAnnotations = value;
+			UpdateDisplay();
+		}
+	}
+
+	/// <summary>
+	///     获取或设置阅读器的鼠标操作模式。
+	/// </summary>
+	[DefaultValue(MouseMode.Move)]
+	public MouseMode MouseMode {
+		get => PanMode != ImageBoxPanMode.None ? MouseMode.Move : MouseMode.Selection;
+		set {
+			if (value == MouseMode.Move) {
+				PanMode = ImageBoxPanMode.Both;
+				AllowZoom = false;
+				SelectionMode = ImageBoxSelectionMode.None;
+				SelectionRegion = RectangleF.Empty;
+			}
+			else {
+				PanMode = ImageBoxPanMode.Both;
+				AllowZoom = false;
+				SelectionMode = ImageBoxSelectionMode.Rectangle;
+			}
+		}
+	}
+
+	[DefaultValue(false)] public bool FullPageScroll { get; set; }
+
+	[Description("指定鼠标定位点")]
+	public DrawingPoint PinPoint {
+		get => _PinPoint;
+		set {
+			if (_PinPoint != value) {
+				_PinPoint = value;
+				if (IsPinPointVisible && DesignMode == false) {
+					Invalidate();
+				}
+			}
+		}
+	}
+
+	[DefaultValue(false)]
+	[Description("指定是否显示鼠标定位点")]
+	public bool ShowPinPoint {
+		get => _ShowPinPoint;
+		set {
+			if (_ShowPinPoint != value) {
+				_ShowPinPoint = value;
+				if (IsPinPointVisible && DesignMode == false) {
+					Invalidate();
+				}
+			}
+		}
+	}
+
+	private bool IsPinPointVisible {
+		get {
+			if (PinPoint != DrawingPoint.Empty) {
+				DrawingPoint op = GetOffsetPoint(0, 0);
+				DrawingRectangle vp = GetImageViewPort();
+				DrawingPoint pp = PinPoint;
+				pp.Offset(op);
+				if (vp.Contains(pp)) {
+					return true;
+				}
+			}
+
+			return false;
+		}
+	}
+
+	[DefaultValue(false)]
+	[Description("显示文本层的边框")]
+	public bool ShowTextBorders {
+		get => _ShowTextBorders;
+		set {
+			if (_ShowTextBorders != value) {
+				_ShowTextBorders = value;
+				if (DesignMode == false) {
+					Invalidate();
+				}
+			}
+		}
+	}
+
+	[DefaultValue(0)]
+	[Description("指定用于识别文本的语言")]
+	public int OcrLanguage {
+		get => OcrOptions.OcrLangID;
+		set {
+			if (OcrOptions.OcrLangID == value) {
+				return;
+			}
+
+			OcrOptions.OcrLangID = value;
+			_ocrResults.Clear();
+		}
+	}
+
+	[Description("指定需要显示的 PDF 文档")]
+	[Browsable(false)]
+	[DefaultValue(null)]
+	public MuDocument Document {
+		get => _mupdf;
+		set {
+			Enabled = false;
+			InitViewer();
+			_mupdf = value;
+			if (value != null) {
+				Tracker.DebugMessage("Load document.");
+				int l = _mupdf.PageCount + 1;
+				_pageOffsets = new int[l];
+				_pageBounds = new MuRectangle[l];
+				LoadPageBounds();
+				_cache = new RenderResultCache(_mupdf);
+				Tracker.DebugMessage("Calculating document virtual size.");
+				CalculateZoomFactor(_LiteralZoom);
+				CalculateDocumentVirtualSize();
+				ShowPage(1);
+				_refreshTimer.Start();
+				if (_renderWorker.IsBusy == false) {
+					_renderWorker.RunWorkerAsync();
+				}
+
+				DocumentLoaded?.Invoke(this, EventArgs.Empty);
+				Enabled = true;
+			}
+		}
+	}
+
+	public event EventHandler DocumentLoaded;
+	public new event EventHandler ZoomChanged;
+	public event EventHandler<PageChangedEventArgs> PageChanged;
+	public event EventHandler<SelectionChangedEventArgs> SelectionChanged;
 
 	protected override void OnCreateControl() {
 		base.OnCreateControl();
@@ -614,14 +597,14 @@ internal sealed class PdfViewerControl : ImageBoxEx
 			g.FillRectangle(Brushes.FloralWhite, vp);
 		}
 		else {
-			using (SolidBrush b = new(Processor.Imaging.BitmapHelper.Tint(Color.Gainsboro, TintColor))) {
+			using (SolidBrush b = new(BitmapHelper.Tint(Color.Gainsboro, TintColor))) {
 				g.FillRectangle(b, vp);
 			}
 		}
 
 		DrawingRectangle r = DrawingRectangle.Empty;
 		do {
-			System.Diagnostics.Debug.Assert(p > 0 && p < _mupdf.PageCount + 1, p.ToString());
+			Debug.Assert(p > 0 && p < _mupdf.PageCount + 1, p.ToString());
 			MuRectangle pb = _pageBounds[p];
 			float z = GetZoomFactorForPage(pb);
 			int ox = HorizontalFlow ? _pageOffsets[p] : 0;
@@ -659,7 +642,7 @@ internal sealed class PdfViewerControl : ImageBoxEx
 		if (ShowPinPoint && PinPoint != DrawingPoint.Empty) {
 			DrawingPoint pp = PinPoint.Transpose(op);
 			if (vp.Contains(pp)) {
-				g.DrawImage(Properties.Resources.Pin, pp.X, pp.Y - Properties.Resources.Pin.Height);
+				g.DrawImage(Resources.Pin, pp.X, pp.Y - Resources.Pin.Height);
 			}
 		}
 
@@ -693,8 +676,8 @@ internal sealed class PdfViewerControl : ImageBoxEx
 			DrawingPoint o = GetVirtualImageOffset(pageNumber);
 			using (Pen spanPen = new(Color.LightGray, 1))
 			using (Pen blockPen = new(Color.Gray, 1)) {
-				blockPen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
-				spanPen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
+				blockPen.DashStyle = DashStyle.Dash;
+				spanPen.DashStyle = DashStyle.Dash;
 				using (Matrix m = new(z, 0, 0, z, offset.X + o.X, offset.Y + o.Y)) {
 					g.MultiplyTransform(m);
 				}
@@ -716,7 +699,7 @@ internal sealed class PdfViewerControl : ImageBoxEx
 	}
 
 	/// <summary>
-	/// 返回选定区域。
+	///     返回选定区域。
 	/// </summary>
 	/// <returns>选定的矩形区域。</returns>
 	internal Selection GetSelection() {
@@ -724,17 +707,16 @@ internal sealed class PdfViewerControl : ImageBoxEx
 		if (s.Page == 0 || _mupdf.IsDocumentOpened == false) {
 			return Selection.Empty;
 		}
-		else {
-			lock (_mupdf.SyncObj) {
-				MuRectangle vb = _pageBounds[s.Page];
-				MuRectangle sr = s.Region;
-				MuRectangle pr = new(sr.Left - vb.Left, vb.Bottom - sr.Top, sr.Right - vb.Left,
-					vb.Bottom - sr.Bottom);
-				DrawingPoint o = GetVirtualImageOffset(s.Page);
-				RectangleF area = SelectionRegion;
-				area.Offset(-o.X, -o.Y);
-				return new Selection(_cache, s.Page, pr, area);
-			}
+
+		lock (_mupdf.SyncObj) {
+			MuRectangle vb = _pageBounds[s.Page];
+			MuRectangle sr = s.Region;
+			MuRectangle pr = new(sr.Left - vb.Left, vb.Bottom - sr.Top, sr.Right - vb.Left,
+				vb.Bottom - sr.Bottom);
+			DrawingPoint o = GetVirtualImageOffset(s.Page);
+			RectangleF area = SelectionRegion;
+			area.Offset(-o.X, -o.Y);
+			return new Selection(_cache, s.Page, pr, area);
 		}
 	}
 
@@ -751,7 +733,7 @@ internal sealed class PdfViewerControl : ImageBoxEx
 	}
 
 	/// <summary>
-	/// 返回指定位置的文本行以及与该文本行具有相同样式的后续文本行。
+	///     返回指定位置的文本行以及与该文本行具有相同样式的后续文本行。
 	/// </summary>
 	/// <param name="position">查找文本行的位置。</param>
 	/// <returns>返回指定位置的文本行以及与该文本行具有相同样式的后续文本行。</returns>
@@ -775,7 +757,7 @@ internal sealed class PdfViewerControl : ImageBoxEx
 					continue;
 				}
 
-				MuTextBlock tb = block as MuTextBlock;
+				MuTextBlock tb = block;
 				HashSet<IntPtr> s = null;
 				MuTextLine l = null;
 				List<MuTextLine> r = null;
@@ -828,7 +810,7 @@ internal sealed class PdfViewerControl : ImageBoxEx
 	}
 
 	/// <summary>
-	/// 返回指定区域内的文本行。
+	///     返回指定区域内的文本行。
 	/// </summary>
 	/// <param name="region">选择的区域。</param>
 	/// <returns>区域内的文本行。</returns>
@@ -882,15 +864,15 @@ internal sealed class PdfViewerControl : ImageBoxEx
 	}
 
 	public string[] CleanUpOcrResult(List<TextLine> result) {
-		return result.ConvertAll((t) => Processor.OcrProcessor.CleanUpText(t.Text, _OcrOptions)).ToArray();
+		return result.ConvertAll(t => OcrProcessor.CleanUpText(t.Text, OcrOptions)).ToArray();
 	}
 
 	private List<TextLine> Ocr(int pageNumber) {
 		try {
 			Bitmap bmp = GetPageImage(pageNumber);
-			return Processor.OcrProcessor.OcrBitmap(bmp, _OcrOptions);
+			return OcrProcessor.OcrBitmap(bmp, OcrOptions);
 		}
-		catch (System.Runtime.InteropServices.COMException ex) {
+		catch (COMException ex) {
 			switch (ex.ErrorCode) {
 				case -959971327:
 					FormHelper.InfoBox("识别引擎初始化时遇到错误。\n请尝试以管理员身份运行程序，或重新安装 Office 2007 的 MODI 组件。");
@@ -964,7 +946,8 @@ internal sealed class PdfViewerControl : ImageBoxEx
 		if (p >= _pageOffsets.Length) {
 			return _pageOffsets.Length - 1;
 		}
-		else if (p < 1) {
+
+		if (p < 1) {
 			return 1;
 		}
 
@@ -1045,7 +1028,7 @@ internal sealed class PdfViewerControl : ImageBoxEx
 				}
 
 				_zoomMode = ZoomMode.Custom;
-				_zoomFactor = (float)f / 100f * _renderOptions.Dpi / 72f;
+				_zoomFactor = f / 100f * _renderOptions.Dpi / 72f;
 				break;
 		}
 
@@ -1079,126 +1062,6 @@ internal sealed class PdfViewerControl : ImageBoxEx
 			//ShowPage (p);
 		}
 	}
-
-	#region 坐标转换
-
-	internal bool IsClientPointInSelection(DrawingPoint point) {
-		return SelectionRegion.Contains(PointToImage(point));
-	}
-
-	internal RectangleF MuRectangleToImageRegion(int pageNumber, MuRectangle box) {
-		bool rtl = HorizontalFlow;
-		int o = _pageOffsets[pageNumber];
-		float z = _zoomFactor;
-		if (rtl) {
-			return new RectangleF(o + __pageMargin + (box.Left * z), (box.Top * z) + __pageMargin, box.Width * z,
-				box.Height * z);
-		}
-		else {
-			return new RectangleF((box.Left * z) + __pageMargin, (box.Top * z) + __pageMargin + o, box.Width * z,
-				box.Height * z);
-		}
-	}
-
-	/// <summary>
-	/// 将屏幕客户区域的位置转换为页面坐标。
-	/// </summary>
-	/// <param name="clientX">横坐标。</param>
-	/// <param name="clientY">纵坐标。</param>
-	/// <returns>页面坐标。</returns>
-	internal PagePosition TransposeClientToPagePosition(int clientX, int clientY) {
-		if (_DisplayRange.StartValue <= 0 || _pageBounds == null) {
-			return PagePosition.Empty;
-		}
-
-		DrawingPoint p = PointToImage(clientX, clientY);
-		return TransposeVirtualImageToPagePosition(p.X, p.Y);
-	}
-
-	/// <summary>
-	/// 将虚拟画布的坐标点转换为屏幕客户区域的位置。
-	/// </summary>
-	/// <param name="imageX">虚拟画布位置的横坐标。</param>
-	/// <param name="imageY">虚拟画布位置的横坐标。</param>
-	/// <returns>屏幕客户区域的位置。</returns>
-	internal DrawingPoint TransposeVirtualImageToClient(float imageX, float imageY) {
-		DrawingRectangle vp = GetImageViewPort();
-		return new DrawingPoint(vp.Left + AutoScrollPosition.X + imageX.ToInt32(),
-			vp.Top + AutoScrollPosition.Y + imageY.ToInt32());
-	}
-
-	/// <summary>
-	/// 获取指定页面在虚拟画布上的绘制坐标点。
-	/// </summary>
-	/// <param name="pageNumber">页面编号。</param>
-	/// <returns>页面左上角在虚拟画布上的坐标点。</returns>
-	internal DrawingPoint GetVirtualImageOffset(int pageNumber) {
-		bool rtl = HorizontalFlow;
-		int ox = rtl ? _pageOffsets[pageNumber] : 0;
-		int oy = rtl ? 0 : _pageOffsets[pageNumber];
-		return new DrawingPoint(ox + __pageMargin, oy + __pageMargin);
-	}
-
-	/// <summary>
-	/// 将虚拟画布的位置转换为页面坐标。
-	/// </summary>
-	/// <param name="imageX">虚拟画布位置的横坐标。</param>
-	/// <param name="imageY">虚拟画布位置的纵坐标。</param>
-	/// <returns>页面坐标。</returns>
-	internal PagePosition TransposeVirtualImageToPagePosition(int imageX, int imageY) {
-		int n = GetPageNumberFromOffset(imageX, imageY);
-		return TransposeVirtualImageToPagePosition(n, imageX, imageY);
-	}
-
-	/// <summary>
-	/// 将屏幕客户区域的位置转换为渲染页面位置。
-	/// </summary>
-	/// <param name="clientX">屏幕区域的横坐标。</param>
-	/// <param name="clientY">屏幕区域的纵坐标。</param>
-	/// <returns>渲染页面的位置。</returns>
-	internal PagePoint TransposeClientToPageImage(int clientX, int clientY) {
-		if (_DisplayRange.StartValue <= 0 || _pageBounds == null || IsPointInImage(clientX, clientY) == false) {
-			return PagePoint.Empty;
-		}
-
-		DrawingPoint p = PointToImage(clientX, clientY);
-		int n = GetPageNumberFromOffset(p.X, p.Y);
-		DrawingPoint o = GetVirtualImageOffset(n);
-		return new PagePoint(n, p.X - o.X, p.Y - o.Y);
-	}
-
-	/// <summary>
-	/// 将虚拟页面的位置转换为PDF页面位置。
-	/// </summary>
-	/// <param name="pageNumber">页码。</param>
-	/// <param name="imageX">虚拟图片的横坐标。</param>
-	/// <param name="imageY">虚拟图片的纵坐标。</param>
-	/// <returns>PDF 页面的位置。</returns>
-	internal PagePosition TransposeVirtualImageToPagePosition(int pageNumber, int imageX, int imageY) {
-		DrawingPoint o = GetVirtualImageOffset(pageNumber);
-		MuRectangle b = _pageBounds[pageNumber];
-		float z = GetZoomFactorForPage(b);
-		float ox = (float)(imageX - o.X) / z;
-		float oy = (float)(imageY - o.Y) / z;
-		return new PagePosition(pageNumber,
-			b.Left + ox, b.Top + b.Height - oy,
-			imageX - o.X, imageY - o.Y,
-			b.Contains(ox, oy));
-	}
-
-	internal PagePosition TransposePageImageToPagePosition(int pageNumber, float pageImageX,
-		float pageImageY) {
-		MuRectangle b = _pageBounds[pageNumber];
-		float z = _zoomFactor;
-		float ox = pageImageX / z;
-		float oy = pageImageY / z;
-		return new PagePosition(pageNumber,
-			b.Left + ox, b.Top + b.Height - oy,
-			pageImageX.ToInt32(), pageImageY.ToInt32(),
-			b.Contains(ox, oy));
-	}
-
-	#endregion
 
 	private int GetPageFullWidth(float pageWidth) {
 		return __pageMargin + __pageMargin + (pageWidth * _zoomFactor).ToInt32();
@@ -1369,7 +1232,7 @@ internal sealed class PdfViewerControl : ImageBoxEx
 		SelectionRegion = DrawingRectangle.Empty;
 		_DisplayRange = new PageRange();
 		if (_LiteralZoom == null) {
-			_zoomFactor = (float)_renderOptions.Dpi / 72;
+			_zoomFactor = _renderOptions.Dpi / 72;
 			_zoomMode = ZoomMode.FitHorizontal;
 			_LiteralZoom = Constants.DestinationAttributes.ViewType.FitH;
 			VirtualSize = new Size(1, 1);
@@ -1385,7 +1248,7 @@ internal sealed class PdfViewerControl : ImageBoxEx
 		}
 
 		_contentFlow = ContentDirection.TopToDown;
-		_OcrOptions.CompressWhiteSpaces = true;
+		OcrOptions.CompressWhiteSpaces = true;
 		_ocrResults = new Dictionary<int, List<TextLine>>();
 	}
 
@@ -1405,4 +1268,146 @@ internal sealed class PdfViewerControl : ImageBoxEx
 		_renderWorker.Dispose();
 		_refreshTimer.Dispose();
 	}
+
+	private enum ZoomMode
+	{
+		Custom, FitPage = -1, FitHorizontal = -2, FitVertical = -3
+	}
+
+	internal sealed class PageChangedEventArgs : EventArgs
+	{
+		public PageChangedEventArgs(int pageNumber) {
+			PageNumber = pageNumber;
+		}
+
+		public int PageNumber { get; }
+	}
+
+	internal sealed class SelectionChangedEventArgs : EventArgs
+	{
+		public SelectionChangedEventArgs(Selection selection) {
+			Selection = selection;
+		}
+
+		public Selection Selection { get; }
+	}
+
+	#region 坐标转换
+
+	internal bool IsClientPointInSelection(DrawingPoint point) {
+		return SelectionRegion.Contains(PointToImage(point));
+	}
+
+	internal RectangleF MuRectangleToImageRegion(int pageNumber, MuRectangle box) {
+		bool rtl = HorizontalFlow;
+		int o = _pageOffsets[pageNumber];
+		float z = _zoomFactor;
+		if (rtl) {
+			return new RectangleF(o + __pageMargin + (box.Left * z), (box.Top * z) + __pageMargin, box.Width * z,
+				box.Height * z);
+		}
+
+		return new RectangleF((box.Left * z) + __pageMargin, (box.Top * z) + __pageMargin + o, box.Width * z,
+			box.Height * z);
+	}
+
+	/// <summary>
+	///     将屏幕客户区域的位置转换为页面坐标。
+	/// </summary>
+	/// <param name="clientX">横坐标。</param>
+	/// <param name="clientY">纵坐标。</param>
+	/// <returns>页面坐标。</returns>
+	internal PagePosition TransposeClientToPagePosition(int clientX, int clientY) {
+		if (_DisplayRange.StartValue <= 0 || _pageBounds == null) {
+			return PagePosition.Empty;
+		}
+
+		DrawingPoint p = PointToImage(clientX, clientY);
+		return TransposeVirtualImageToPagePosition(p.X, p.Y);
+	}
+
+	/// <summary>
+	///     将虚拟画布的坐标点转换为屏幕客户区域的位置。
+	/// </summary>
+	/// <param name="imageX">虚拟画布位置的横坐标。</param>
+	/// <param name="imageY">虚拟画布位置的横坐标。</param>
+	/// <returns>屏幕客户区域的位置。</returns>
+	internal DrawingPoint TransposeVirtualImageToClient(float imageX, float imageY) {
+		DrawingRectangle vp = GetImageViewPort();
+		return new DrawingPoint(vp.Left + AutoScrollPosition.X + imageX.ToInt32(),
+			vp.Top + AutoScrollPosition.Y + imageY.ToInt32());
+	}
+
+	/// <summary>
+	///     获取指定页面在虚拟画布上的绘制坐标点。
+	/// </summary>
+	/// <param name="pageNumber">页面编号。</param>
+	/// <returns>页面左上角在虚拟画布上的坐标点。</returns>
+	internal DrawingPoint GetVirtualImageOffset(int pageNumber) {
+		bool rtl = HorizontalFlow;
+		int ox = rtl ? _pageOffsets[pageNumber] : 0;
+		int oy = rtl ? 0 : _pageOffsets[pageNumber];
+		return new DrawingPoint(ox + __pageMargin, oy + __pageMargin);
+	}
+
+	/// <summary>
+	///     将虚拟画布的位置转换为页面坐标。
+	/// </summary>
+	/// <param name="imageX">虚拟画布位置的横坐标。</param>
+	/// <param name="imageY">虚拟画布位置的纵坐标。</param>
+	/// <returns>页面坐标。</returns>
+	internal PagePosition TransposeVirtualImageToPagePosition(int imageX, int imageY) {
+		int n = GetPageNumberFromOffset(imageX, imageY);
+		return TransposeVirtualImageToPagePosition(n, imageX, imageY);
+	}
+
+	/// <summary>
+	///     将屏幕客户区域的位置转换为渲染页面位置。
+	/// </summary>
+	/// <param name="clientX">屏幕区域的横坐标。</param>
+	/// <param name="clientY">屏幕区域的纵坐标。</param>
+	/// <returns>渲染页面的位置。</returns>
+	internal PagePoint TransposeClientToPageImage(int clientX, int clientY) {
+		if (_DisplayRange.StartValue <= 0 || _pageBounds == null || IsPointInImage(clientX, clientY) == false) {
+			return PagePoint.Empty;
+		}
+
+		DrawingPoint p = PointToImage(clientX, clientY);
+		int n = GetPageNumberFromOffset(p.X, p.Y);
+		DrawingPoint o = GetVirtualImageOffset(n);
+		return new PagePoint(n, p.X - o.X, p.Y - o.Y);
+	}
+
+	/// <summary>
+	///     将虚拟页面的位置转换为PDF页面位置。
+	/// </summary>
+	/// <param name="pageNumber">页码。</param>
+	/// <param name="imageX">虚拟图片的横坐标。</param>
+	/// <param name="imageY">虚拟图片的纵坐标。</param>
+	/// <returns>PDF 页面的位置。</returns>
+	internal PagePosition TransposeVirtualImageToPagePosition(int pageNumber, int imageX, int imageY) {
+		DrawingPoint o = GetVirtualImageOffset(pageNumber);
+		MuRectangle b = _pageBounds[pageNumber];
+		float z = GetZoomFactorForPage(b);
+		float ox = (imageX - o.X) / z;
+		float oy = (imageY - o.Y) / z;
+		return new PagePosition(pageNumber,
+			b.Left + ox, b.Top + b.Height - oy,
+			imageX - o.X, imageY - o.Y,
+			b.Contains(ox, oy));
+	}
+
+	internal PagePosition TransposePageImageToPagePosition(int pageNumber, float pageImageX,
+		float pageImageY) {
+		MuRectangle b = _pageBounds[pageNumber];
+		float z = _zoomFactor;
+		float ox = pageImageX / z;
+		float oy = pageImageY / z;
+		return new PagePosition(pageNumber,
+			b.Left + ox, b.Top + b.Height - oy,
+			pageImageX.ToInt32(), pageImageY.ToInt32(),
+			b.Contains(ox, oy));
+	}
+
+	#endregion
 }

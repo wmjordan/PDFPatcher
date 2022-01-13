@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Xml;
+using PDFPatcher.Common;
+using PDFPatcher.Functions.Editor;
 using PDFPatcher.Model;
 using PDFPatcher.Processor;
 
@@ -14,9 +16,9 @@ public sealed partial class SearchBookmarkForm : Form
 	private static bool _replaceInSelection = true;
 
 	//static char[] __TrimChars = new char[] { ' ', '\t', '\r', '\n', '　' };
-	private readonly Editor.Controller _controller;
+	private readonly Controller _controller;
 
-	internal SearchBookmarkForm(Editor.Controller controller) {
+	internal SearchBookmarkForm(Controller controller) {
 		InitializeComponent();
 		_controller = controller;
 	}
@@ -52,7 +54,7 @@ public sealed partial class SearchBookmarkForm : Form
 			_ReplaceInAllBox.Checked = true;
 		}
 
-		_SearchTextBox.TextChanged += new EventHandler(_SearchTextBox_TextChanged);
+		_SearchTextBox.TextChanged += _SearchTextBox_TextChanged;
 	}
 
 	private BookmarkMatcher CreateMatcher() {
@@ -66,7 +68,7 @@ public sealed partial class SearchBookmarkForm : Form
 
 	private void _SearchButton_Click(object sender, EventArgs args) {
 		if (string.IsNullOrEmpty(_SearchTextBox.Text)) {
-			Common.FormHelper.InfoBox("请先输入查询关键字。");
+			FormHelper.InfoBox("请先输入查询关键字。");
 			return;
 		}
 
@@ -75,7 +77,7 @@ public sealed partial class SearchBookmarkForm : Form
 			matcher = CreateMatcher();
 		}
 		catch (Exception ex) {
-			Common.FormHelper.ErrorBox("搜索表达式有误：" + ex.Message);
+			FormHelper.ErrorBox("搜索表达式有误：" + ex.Message);
 			return;
 		}
 
@@ -108,7 +110,7 @@ public sealed partial class SearchBookmarkForm : Form
 			matcher = CreateMatcher();
 		}
 		catch (Exception ex) {
-			Common.FormHelper.ErrorBox("搜索表达式有误：" + ex.Message);
+			FormHelper.ErrorBox("搜索表达式有误：" + ex.Message);
 			return;
 		}
 
@@ -151,7 +153,7 @@ public sealed partial class SearchBookmarkForm : Form
 		List<XmlNode> si = new();
 		IEnumerable ol = replaceInSelection
 			? b.SelectedObjects
-			: (b.GetModelObject(0) as XmlElement).ParentNode.SelectNodes(".//" + Constants.Bookmark) as IEnumerable;
+			: (b.GetModelObject(0) as XmlElement).ParentNode.SelectNodes(".//" + Constants.Bookmark);
 		foreach (XmlNode item in ol) {
 			si.Add(item);
 		}
@@ -170,7 +172,7 @@ public sealed partial class SearchBookmarkForm : Form
 			}
 		}
 		catch (Exception ex) {
-			Common.FormHelper.ErrorBox("在替换匹配文本时出现错误：" + ex.Message);
+			FormHelper.ErrorBox("在替换匹配文本时出现错误：" + ex.Message);
 		}
 
 		if (undo.Count > 0) {

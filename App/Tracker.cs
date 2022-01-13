@@ -6,17 +6,6 @@ namespace PDFPatcher;
 
 internal static class Tracker
 {
-	internal enum Category
-	{
-		Message = -1,
-		ImportantMessage = -2,
-		Error = -3,
-		Alert = -4,
-		Notice = -5,
-		InputFile = -10,
-		OutputFile = -11
-	}
-
 	private static BackgroundWorker __Worker;
 
 	///<summary>指定后台工作进程。</summary>
@@ -80,5 +69,16 @@ internal static class Tracker
 		}
 
 		worker.ReportProgress(progress, category);
+	}
+
+	internal enum Category
+	{
+		Message = -1,
+		ImportantMessage = -2,
+		Error = -3,
+		Alert = -4,
+		Notice = -5,
+		InputFile = -10,
+		OutputFile = -11
 	}
 }

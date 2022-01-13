@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using iTextSharp.text;
 
 namespace PDFPatcher.Model;
 
@@ -11,5 +9,5 @@ internal sealed class AutoBookmarkContext
 	internal bool IsTextMerged { get; set; }
 	internal TextInfo TextInfo { get; set; }
 	internal TextLine TextLine { get; set; }
-	internal iTextSharp.text.Rectangle PageBox { get; set; }
+	internal Rectangle PageBox { get; set; }
 }

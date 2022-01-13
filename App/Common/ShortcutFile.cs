@@ -10,6 +10,18 @@ public sealed class ShortcutFile
 {
 	private readonly IShellLink _link;
 
+	private ShortcutFile() {
+		_link = (IShellLink)new ShellLink();
+	}
+
+	/// <summary>创建快捷方式。</summary>
+	/// <param name="destination">快捷方式指向的目标文件路径。</param>
+	public ShortcutFile(string destination) {
+		_link = (IShellLink)new ShellLink();
+		Destination = destination;
+		_link.SetPath(destination);
+	}
+
 	/// <summary>获取或设置快捷方式的目标路径。</summary>
 	public string Destination { get; private set; }
 
@@ -28,21 +40,9 @@ public sealed class ShortcutFile
 	/// <summary>获取或设置快捷方式的图标文件索引。</summary>
 	public int IconIndex { get; set; }
 
-	private ShortcutFile() {
-		_link = (IShellLink)new ShellLink();
-	}
-
-	/// <summary>创建快捷方式。</summary>
-	/// <param name="destination">快捷方式指向的目标文件路径。</param>
-	public ShortcutFile(string destination) {
-		_link = (IShellLink)new ShellLink();
-		Destination = destination;
-		_link.SetPath(destination);
-	}
-
 	/// <summary>加载快捷方式。</summary>
 	/// <param name="shortcutFilePath">快捷方式文件的位置。</param>
-	/// <returns><see cref="ShortcutFile"/> 实例。</returns>
+	/// <returns><see cref="ShortcutFile" /> 实例。</returns>
 	public static ShortcutFile Load(string shortcutFilePath) {
 		ShortcutFile s = new();
 		IShellLink l = s._link;

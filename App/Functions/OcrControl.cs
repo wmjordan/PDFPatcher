@@ -1,9 +1,12 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using PDFPatcher.Common;
 using PDFPatcher.Model;
+using PDFPatcher.Processor;
+using PDFPatcher.Properties;
 
 namespace PDFPatcher.Functions;
 
@@ -11,12 +14,6 @@ namespace PDFPatcher.Functions;
 public partial class OcrControl : FunctionControl, IResettableControl
 {
 	private OcrOptions _options;
-
-	public override string FunctionName => "识别图像文本";
-
-	public override System.Drawing.Bitmap IconImage => Properties.Resources.Ocr;
-
-	public override Button DefaultButton => _ExportBookmarkButton;
 
 	public OcrControl() {
 		InitializeComponent();
@@ -38,9 +35,9 @@ public partial class OcrControl : FunctionControl, IResettableControl
 		AppContext.MainForm.SetTooltip(_OutputOriginalOcrResultBox, "保存原始的未经过优化合并的识别结果（可用于写入 PDF 文档）");
 
 		ComboBox.ObjectCollection lb = _OcrLangBox.Items;
-		if (Processor.ModiOcr.ModiInstalled) {
+		if (ModiOcr.ModiInstalled) {
 			foreach (int item in Constants.Ocr.LangIDs) {
-				if (Processor.ModiOcr.IsLanguageInstalled(item)) {
+				if (ModiOcr.IsLanguageInstalled(item)) {
 					lb.Add(ValueHelper.MapValue(item, Constants.Ocr.LangIDs, Constants.Ocr.LangNames));
 				}
 			}
@@ -50,7 +47,7 @@ public partial class OcrControl : FunctionControl, IResettableControl
 			lb.Add("无");
 		}
 
-		_ExportBookmarkButton.Enabled = Processor.ModiOcr.ModiInstalled;
+		_ExportBookmarkButton.Enabled = ModiOcr.ModiInstalled;
 		if (_ExportBookmarkButton.Enabled == false) {
 			AppContext.MainForm.SetTooltip(_OcrLangBox, "当前系统尚未安装识别引擎，请先安装微软 Office 文字识别引擎，再重新启动程序。");
 		}
@@ -67,32 +64,11 @@ public partial class OcrControl : FunctionControl, IResettableControl
 		}
 	}
 
-	public override void SetupCommand(ToolStripItem item) {
-		string n = item.Name;
-		switch (n) {
-			case Commands.SaveBookmark:
-				item.Text = "写入PDF文件(&Q)";
-				item.ToolTipText = "将识别结果写入 PDF 文件";
-				EnableCommand(item, true, true);
-				break;
-			default:
-				break;
-		}
+	public override string FunctionName => "识别图像文本";
 
-		base.SetupCommand(item);
-	}
+	public override Bitmap IconImage => Resources.Ocr;
 
-	public override void ExecuteCommand(string commandName, params string[] parameters) {
-		switch (commandName) {
-			case Commands.SaveBookmark:
-				_ImportOcrResultButton.PerformClick();
-				return;
-			default:
-				break;
-		}
-
-		base.ExecuteCommand(commandName, parameters);
-	}
+	public override Button DefaultButton => _ExportBookmarkButton;
 
 	public void Reset() {
 		AppContext.Ocr = new OcrOptions();
@@ -116,6 +92,29 @@ public partial class OcrControl : FunctionControl, IResettableControl
 
 		_WritingDirectionBox.SelectedIndex = (int)_options.WritingDirection;
 		_QuantitiveFactorBox.SetValue(_options.QuantitativeFactor);
+	}
+
+	public override void SetupCommand(ToolStripItem item) {
+		string n = item.Name;
+		switch (n) {
+			case Commands.SaveBookmark:
+				item.Text = "写入PDF文件(&Q)";
+				item.ToolTipText = "将识别结果写入 PDF 文件";
+				EnableCommand(item, true, true);
+				break;
+		}
+
+		base.SetupCommand(item);
+	}
+
+	public override void ExecuteCommand(string commandName, params string[] parameters) {
+		switch (commandName) {
+			case Commands.SaveBookmark:
+				_ImportOcrResultButton.PerformClick();
+				return;
+		}
+
+		base.ExecuteCommand(commandName, parameters);
 	}
 
 	private void Button_Click(object sender, EventArgs e) {
@@ -160,11 +159,11 @@ public partial class OcrControl : FunctionControl, IResettableControl
 
 		BackgroundWorker worker = AppContext.MainForm.GetWorker();
 		if (sender != _ImportOcrResultButton) {
-			worker.DoWork += new DoWorkEventHandler(OcrExport);
+			worker.DoWork += OcrExport;
 			worker.RunWorkerAsync(new object[] {AppContext.SourceFiles, AppContext.BookmarkFile, _options});
 		}
 		else {
-			worker.DoWork += new DoWorkEventHandler(ImportOcr);
+			worker.DoWork += ImportOcr;
 			worker.RunWorkerAsync(new object[] {
 				AppContext.SourceFiles, AppContext.BookmarkFile, AppContext.TargetFile
 			});
@@ -178,7 +177,7 @@ public partial class OcrControl : FunctionControl, IResettableControl
 		_options.DetectContentPunctuations = _DetectContentPunctuationsBox.Checked;
 		_options.PageRanges = _PageRangeBox.Text;
 		_options.OcrLangID =
-			(int)ValueHelper.MapValue(_OcrLangBox.Text, Constants.Ocr.LangNames, Constants.Ocr.LangIDs, -1);
+			ValueHelper.MapValue(_OcrLangBox.Text, Constants.Ocr.LangNames, Constants.Ocr.LangIDs, -1);
 		_options.OrientPage = _OrientBox.Checked;
 		_options.OutputOriginalOcrResult = _OutputOriginalOcrResultBox.Checked;
 		_options.QuantitativeFactor = (float)_QuantitiveFactorBox.Value;
@@ -198,7 +197,7 @@ public partial class OcrControl : FunctionControl, IResettableControl
 			string p = Path.GetDirectoryName(b);
 			string ext = Path.GetExtension(b);
 			foreach (string file in files) {
-				Processor.Worker.Ocr(file, FileHelper.CombinePath(p, Path.GetFileNameWithoutExtension(file) + ext),
+				Worker.Ocr(file, FileHelper.CombinePath(p, Path.GetFileNameWithoutExtension(file) + ext),
 					options);
 				if (AppContext.Abort) {
 					return;
@@ -206,7 +205,7 @@ public partial class OcrControl : FunctionControl, IResettableControl
 			}
 		}
 		else {
-			Processor.Worker.Ocr(files[0], b, options);
+			Worker.Ocr(files[0], b, options);
 		}
 	}
 
@@ -219,7 +218,7 @@ public partial class OcrControl : FunctionControl, IResettableControl
 			string p = Path.GetDirectoryName(b);
 			string ext = Path.GetExtension(b);
 			foreach (string file in files) {
-				Processor.Worker.ImportOcr(file,
+				Worker.ImportOcr(file,
 					FileHelper.CombinePath(p, Path.GetFileNameWithoutExtension(file) + ext), target);
 				if (AppContext.Abort) {
 					return;
@@ -227,7 +226,7 @@ public partial class OcrControl : FunctionControl, IResettableControl
 			}
 		}
 		else {
-			Processor.Worker.ImportOcr(files[0], b, target);
+			Worker.ImportOcr(files[0], b, target);
 		}
 	}
 

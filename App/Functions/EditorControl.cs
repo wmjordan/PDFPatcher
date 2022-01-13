@@ -7,6 +7,7 @@ using PDFPatcher.Common;
 using PDFPatcher.Functions.Editor;
 using PDFPatcher.Model;
 using PDFPatcher.Processor;
+using PDFPatcher.Properties;
 using Rectangle = MuPdfSharp.Rectangle;
 using TextInfo = PDFPatcher.Functions.Editor.TextInfo;
 
@@ -17,9 +18,40 @@ public sealed partial class EditorControl : FunctionControl, IDocumentEditor, IE
 	private static readonly Color __DarkModeColor = Color.DarkGray;
 	private static readonly Color __GreenModeColor = Color.FromArgb(0xCC, 0xFF, 0xCC);
 
+	private static readonly CommandRegistry<Controller> __Commands = InitCommands();
+	private readonly Controller _controller;
+	private AutoBookmarkForm _autoBookmarkForm;
+
+	private SearchBookmarkForm _searchForm;
+
+	public EditorControl() {
+		InitializeComponent();
+		_controller = new Controller(this);
+	}
+
+	public override string FunctionName => "文档编辑器";
+
+	public override Bitmap IconImage => Resources.Editor;
+
 	public event EventHandler<DocumentChangedEventArgs> DocumentChanged;
 
-	private static readonly CommandRegistry<Controller> __Commands = InitCommands();
+	public string DocumentPath {
+		get => _controller != null ? _controller.Model.DocumentPath : null;
+		set {
+			_controller.Model.DocumentPath = value;
+			if (DocumentChanged != null) {
+				DocumentChanged(this, new DocumentChangedEventArgs(value));
+			}
+		}
+	}
+
+	public void CloseDocument() {
+		_ViewerBox.CloseFile();
+	}
+
+	public void Reopen() {
+		_ViewerBox.Reopen();
+	}
 
 	private static CommandRegistry<Controller> InitCommands() {
 		CommandRegistry<Controller> d = new();
@@ -81,29 +113,6 @@ public sealed partial class EditorControl : FunctionControl, IDocumentEditor, IE
 		ViewerCommand.RegisterCommands(d);
 		QuickSelectCommand.RegisterCommands(d);
 		return d;
-	}
-
-	private SearchBookmarkForm _searchForm;
-	private AutoBookmarkForm _autoBookmarkForm;
-	private readonly Controller _controller;
-
-	public override string FunctionName => "文档编辑器";
-
-	public override Bitmap IconImage => Properties.Resources.Editor;
-
-	public string DocumentPath {
-		get => _controller != null ? _controller.Model.DocumentPath : null;
-		set {
-			_controller.Model.DocumentPath = value;
-			if (DocumentChanged != null) {
-				DocumentChanged(this, new DocumentChangedEventArgs(value));
-			}
-		}
-	}
-
-	public EditorControl() {
-		InitializeComponent();
-		_controller = new Controller(this);
 	}
 
 	protected override void OnLoad(EventArgs e) {
@@ -524,14 +533,6 @@ public sealed partial class EditorControl : FunctionControl, IDocumentEditor, IE
 				__Commands.Process(cmd, _controller, parameters);
 				break;
 		}
-	}
-
-	public void CloseDocument() {
-		_ViewerBox.CloseFile();
-	}
-
-	public void Reopen() {
-		_ViewerBox.Reopen();
 	}
 
 	private void _BookmarkColorButton_SelectedColorChanged(object sender, EventArgs e) {

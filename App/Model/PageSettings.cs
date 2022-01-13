@@ -1,6 +1,8 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
+using System.Diagnostics;
+using System.Xml;
 using System.Xml.Serialization;
+using iTextSharp.text;
 using iTextSharp.text.pdf;
 using PDFPatcher.Common;
 
@@ -43,7 +45,7 @@ public class PageSettings
 	public int Rotation { get; set; }
 
 	internal static PageSettings FromReader(PdfReader reader, int pageIndex, UnitConverter converter) {
-		iTextSharp.text.Rectangle b;
+		Rectangle b;
 		PageSettings s = new();
 		b = reader.GetPageSize(pageIndex);
 		s.PageSize = ConvertPageSize(b, converter);
@@ -59,7 +61,7 @@ public class PageSettings
 		return s;
 	}
 
-	private static string ConvertPageSize(iTextSharp.text.Rectangle b, UnitConverter converter) {
+	private static string ConvertPageSize(Rectangle b, UnitConverter converter) {
 		string[] p = new string[4];
 		p[0] = converter.FromPoint(b.Left).ToText("0.###");
 		p[1] = converter.FromPoint(b.Bottom).ToText("0.###");
@@ -72,7 +74,8 @@ public class PageSettings
 		if (s1 == null && s2 == null) {
 			return true;
 		}
-		else if (s1 == null || s2 == null) {
+
+		if (s1 == null || s2 == null) {
 			return false;
 		}
 
@@ -85,9 +88,9 @@ public class PageSettings
 		return true;
 	}
 
-	internal void WriteXml(System.Xml.XmlWriter writer) {
+	internal void WriteXml(XmlWriter writer) {
 		if (string.IsNullOrEmpty(PageRange)) {
-			System.Diagnostics.Debug.WriteLine("Empty page range.");
+			Debug.WriteLine("Empty page range.");
 			return;
 		}
 

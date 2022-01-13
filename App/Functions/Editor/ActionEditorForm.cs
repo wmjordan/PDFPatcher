@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using PDFPatcher.Common;
@@ -16,8 +11,6 @@ public partial class ActionEditorForm : Form
 {
 	private const string KeepZoomRate = "保持不变";
 	private const string NoAction = "无";
-	public BookmarkElement Action { get; private set; }
-	internal UndoActionGroup UndoActions { get; private set; }
 
 	public ActionEditorForm(BookmarkElement element) {
 		InitializeComponent();
@@ -25,7 +18,7 @@ public partial class ActionEditorForm : Form
 		_ActionBox.Items.AddRange(Constants.ActionType.Names);
 		_ActionBox.Items.Add(NoAction);
 		_ZoomRateBox.Items.AddRange(Constants.DestinationAttributes.ViewType.Names);
-		_ZoomRateBox.Items.AddRange(new string[] {
+		_ZoomRateBox.Items.AddRange(new[] {
 			"————————", "4", "3", "2", "1.5", "1.3", "1.2", "1", "0", "0.9", "0.8", "0.5", "0.3"
 		});
 
@@ -92,8 +85,8 @@ public partial class ActionEditorForm : Form
 			_HeightBox.Value = v;
 		}
 
-		_AttrNameColumn.AspectGetter = (object o) => o is XmlAttribute attr ? attr.Name : (object)null;
-		_AttrValueColumn.AspectGetter = (object o) => {
+		_AttrNameColumn.AspectGetter = o => o is XmlAttribute attr ? attr.Name : (object)null;
+		_AttrValueColumn.AspectGetter = o => {
 			if (o is XmlAttribute attr) {
 				if (attr.Name == Constants.Font.ThisName && attr.Value.TryParse(out int fid)) {
 					XmlNode n = attr.OwnerDocument.DocumentElement.SelectSingleNode(
@@ -112,6 +105,9 @@ public partial class ActionEditorForm : Form
 		};
 		_AttributesBox.SetObjects(element.Attributes);
 	}
+
+	public BookmarkElement Action { get; }
+	internal UndoActionGroup UndoActions { get; private set; }
 
 	private void InitCoordinateValue(XmlElement element, string name, NumericUpDown control, CheckBox check) {
 		if (element.HasAttribute(name)) {

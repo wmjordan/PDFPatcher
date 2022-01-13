@@ -15,25 +15,6 @@ public partial class TextConditionEditor : UserControl, IFilterConditionEditor
 		InitializeComponent();
 	}
 
-	#region ITextInfoFilterEditor 成员
-
-	public UserControl EditorControl => this;
-
-	public AutoBookmarkCondition Filter {
-		get => _filter;
-		set {
-			_filter = (AutoBookmarkCondition.TextCondition)value;
-			_lock = true;
-			_PatternBox.Text = _filter.Pattern.Text;
-			_FullMatchBox.Checked = _filter.Pattern.FullMatch;
-			_MatchCaseBox.Checked = _filter.Pattern.MatchCase;
-			_UseRegexBox.Checked = _filter.Pattern.UseRegularExpression;
-			_lock = false;
-		}
-	}
-
-	#endregion
-
 	private void ControlChanged(object sender, EventArgs e) {
 		if (_lock == false) {
 			if (sender == _PatternBox) {
@@ -52,4 +33,23 @@ public partial class TextConditionEditor : UserControl, IFilterConditionEditor
 			EditAdjustmentForm.UpdateFilter(this);
 		}
 	}
+
+	#region ITextInfoFilterEditor 成员
+
+	public UserControl EditorControl => this;
+
+	public AutoBookmarkCondition Filter {
+		get => _filter;
+		set {
+			_filter = (AutoBookmarkCondition.TextCondition)value;
+			_lock = true;
+			_PatternBox.Text = _filter.Pattern.Text;
+			_FullMatchBox.Checked = _filter.Pattern.FullMatch;
+			_MatchCaseBox.Checked = _filter.Pattern.MatchCase;
+			_UseRegexBox.Checked = _filter.Pattern.UseRegularExpression;
+			_lock = false;
+		}
+	}
+
+	#endregion
 }

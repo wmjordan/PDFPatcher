@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections;
 using System.Collections.Generic;
 using PDFPatcher.Common;
 
@@ -25,7 +25,7 @@ internal struct PageRange : IEnumerable<int>
 	}
 
 	/// <summary>
-	/// 返回范围中包含的数量。
+	///     返回范围中包含的数量。
 	/// </summary>
 	public int Count => (EndValue > StartValue ? EndValue - StartValue : StartValue - EndValue) + 1;
 
@@ -39,7 +39,7 @@ internal struct PageRange : IEnumerable<int>
 
 	#region IEnumerable 成员
 
-	System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() {
+	IEnumerator IEnumerable.GetEnumerator() {
 		return new PageRangeEnumerator(StartValue, EndValue);
 	}
 
@@ -47,8 +47,8 @@ internal struct PageRange : IEnumerable<int>
 
 	private sealed class PageRangeEnumerator : IEnumerator<int>
 	{
-		private readonly int _start, _end;
 		private readonly bool _isIncremental;
+		private readonly int _start, _end;
 		private int _Current;
 
 		public PageRangeEnumerator(int start, int end) {
@@ -72,14 +72,15 @@ internal struct PageRange : IEnumerable<int>
 
 		#region IEnumerator 成员
 
-		object System.Collections.IEnumerator.Current => _Current;
+		object IEnumerator.Current => _Current;
 
 		public bool MoveNext() {
 			if (_isIncremental && _Current < _end) {
 				_Current++;
 				return true;
 			}
-			else if (_isIncremental == false && _Current > _end) {
+
+			if (_isIncremental == false && _Current > _end) {
 				_Current--;
 				return true;
 			}

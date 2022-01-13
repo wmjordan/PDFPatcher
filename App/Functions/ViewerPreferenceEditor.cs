@@ -7,9 +7,25 @@ namespace PDFPatcher.Functions;
 
 public partial class ViewerPreferenceEditor : UserControl
 {
-	private readonly string[] __bookmarkStatus = new string[] {"保持不变", "全部关闭", "全部打开", "打开首层"};
-	private bool _settingsLockdown;
+	private readonly string[] __bookmarkStatus = {"保持不变", "全部关闭", "全部打开", "打开首层"};
 	private ViewerOptions _Options;
+	private bool _settingsLockdown;
+
+	public ViewerPreferenceEditor() {
+		InitializeComponent();
+
+		_settingsLockdown = true;
+		_ForceBookmarkOpenBox.FormattingEnabled
+			= _ForceDirectionBox.FormattingEnabled
+				= _ForceInitialModeBox.FormattingEnabled
+					= _ForceInitialViewBox.FormattingEnabled
+						= false;
+		_ForceBookmarkOpenBox.AddRange(__bookmarkStatus).Select(0);
+		_ForceInitialViewBox.AddRange(Constants.PageLayoutType.Names).Select(0);
+		_ForceDirectionBox.AddRange(Constants.ViewerPreferencesType.DirectionType.Names).Select(0);
+		_ForceInitialModeBox.AddRange(Constants.PageModes.Names).Select(0);
+		_settingsLockdown = false;
+	}
 
 	internal ViewerOptions Options {
 		get => _Options;
@@ -35,22 +51,6 @@ public partial class ViewerPreferenceEditor : UserControl
 			_ForceInitialModeBox.SelectedIndex = i != -1 ? i : 0;
 			_settingsLockdown = false;
 		}
-	}
-
-	public ViewerPreferenceEditor() {
-		InitializeComponent();
-
-		_settingsLockdown = true;
-		_ForceBookmarkOpenBox.FormattingEnabled
-			= _ForceDirectionBox.FormattingEnabled
-				= _ForceInitialModeBox.FormattingEnabled
-					= _ForceInitialViewBox.FormattingEnabled
-						= false;
-		_ForceBookmarkOpenBox.AddRange(__bookmarkStatus).Select(0);
-		_ForceInitialViewBox.AddRange(Constants.PageLayoutType.Names).Select(0);
-		_ForceDirectionBox.AddRange(Constants.ViewerPreferencesType.DirectionType.Names).Select(0);
-		_ForceInitialModeBox.AddRange(Constants.PageModes.Names).Select(0);
-		_settingsLockdown = false;
 	}
 
 

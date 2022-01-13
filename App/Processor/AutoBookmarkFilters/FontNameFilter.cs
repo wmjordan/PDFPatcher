@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using PDFPatcher.Model;
 
 namespace PDFPatcher.Processor;
 
-[System.Diagnostics.DebuggerDisplay("FontName = {FontName}; MatchFullName = {MatchFullName}")]
+[DebuggerDisplay("FontName = {FontName}; MatchFullName = {MatchFullName}")]
 public class FontNameFilter : AutoBookmarkFilter
 {
-	public string FontName { get; set; }
-	public bool MatchFullName { get; set; }
-
 	private readonly Dictionary<int, bool> _matchResultCache;
 
 	public FontNameFilter() {
@@ -21,20 +19,22 @@ public class FontNameFilter : AutoBookmarkFilter
 		MatchFullName = matchFullName;
 	}
 
+	public string FontName { get; set; }
+	public bool MatchFullName { get; set; }
+
 	internal override bool Matches(AutoBookmarkContext context) {
 		if (context.TextLine == null) {
 			FontInfo font = context.TextInfo.Font;
 			return MatchFont(font);
 		}
-		else {
-			foreach (TextInfo item in context.TextLine.Texts) {
-				if (MatchFont(item.Font)) {
-					return true;
-				}
-			}
 
-			return false;
+		foreach (TextInfo item in context.TextLine.Texts) {
+			if (MatchFont(item.Font)) {
+				return true;
+			}
 		}
+
+		return false;
 	}
 
 	private bool MatchFont(FontInfo font) {

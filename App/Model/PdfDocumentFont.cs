@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using iTextSharp.text.pdf;
 using PDFPatcher.Processor;
 
@@ -9,7 +7,7 @@ namespace PDFPatcher.Model;
 internal class PdfDocumentFont
 {
 	/// <summary>
-	/// 删除字体名称的子集前缀。
+	///     删除字体名称的子集前缀。
 	/// </summary>
 	/// <param name="name">字体名称。</param>
 	internal static string RemoveSubsetPrefix(string name) {
@@ -17,9 +15,9 @@ internal class PdfDocumentFont
 	}
 
 	/// <summary>
-	/// 列举指定页面所用的字体。
+	///     列举指定页面所用的字体。
 	/// </summary>
-	/// <param name="page">页面对应的 <see cref="PdfDictionary"/>。</param>
+	/// <param name="page">页面对应的 <see cref="PdfDictionary" />。</param>
 	/// <param name="fonts">用于放置字体名称的集合。</param>
 	internal static void EnumerateFonts(PdfDictionary page, ICollection<string> fonts) {
 		PdfDictionary fl = page.Locate<PdfDictionary>(true, PdfName.RESOURCES, PdfName.FONT);

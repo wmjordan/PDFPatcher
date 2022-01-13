@@ -1,12 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using PDFPatcher.Common;
 
 namespace PDFPatcher.Model.PdfPath;
 
 internal static class PathAxes
 {
+	private static readonly SelfAxis __Self = new();
+	private static readonly ParentAxis __Parent = new();
+	private static readonly ChildrenAxis __Children = new();
+	private static readonly RootAxis __Root = new();
+	private static readonly AncestorsAxis __Ancestors = new();
+	private static readonly DecendantsAxis __Decendants = new();
+
 	private static bool MatchesPredicate(DocumentObject source, string name, IEnumerable<IPathPredicate> predicates) {
 		if (source == null) {
 			return false;
@@ -30,7 +35,7 @@ internal static class PathAxes
 	}
 
 	private static IList<DocumentObject> CompriseSingleObjectCollection(DocumentObject source) {
-		return source == null ? PathExpression.EmptyMatchResult : new DocumentObject[] {source};
+		return source == null ? PathExpression.EmptyMatchResult : new[] {source};
 	}
 
 	private static string GetLiteralValue(object operand) {
@@ -50,20 +55,28 @@ internal static class PathAxes
 			if (l.Count > 0) {
 				return l[0].FriendlyValue ?? l[0].LiteralValue;
 			}
-			else {
-				return string.Empty;
-			}
+
+			return string.Empty;
 		}
 
 		return ((double)operand).ToText();
 	}
 
-	private static readonly SelfAxis __Self = new();
-	private static readonly ParentAxis __Parent = new();
-	private static readonly ChildrenAxis __Children = new();
-	private static readonly RootAxis __Root = new();
-	private static readonly AncestorsAxis __Ancestors = new();
-	private static readonly DecendantsAxis __Decendants = new();
+	public static IPathAxis Create(PathAxisType axisType) {
+		switch (axisType) {
+			case PathAxisType.None: return __Self;
+			case PathAxisType.Children: return __Children;
+			case PathAxisType.Parent: return __Parent;
+			case PathAxisType.Ancestors: return __Ancestors;
+			case PathAxisType.Decendants: return __Decendants;
+			case PathAxisType.Root: return __Root;
+			case PathAxisType.Previous:
+			case PathAxisType.Next:
+			default: break;
+		}
+
+		return __Children;
+	}
 
 	private sealed class SelfAxis : IPathAxis
 	{
@@ -135,9 +148,8 @@ internal static class PathAxes
 
 				return r.ToArray();
 			}
-			else {
-				return PathExpression.EmptyMatchResult;
-			}
+
+			return PathExpression.EmptyMatchResult;
 		}
 
 		#endregion
@@ -276,21 +288,5 @@ internal static class PathAxes
 		}
 
 		#endregion
-	}
-
-	public static IPathAxis Create(PathAxisType axisType) {
-		switch (axisType) {
-			case PathAxisType.None: return __Self;
-			case PathAxisType.Children: return __Children;
-			case PathAxisType.Parent: return __Parent;
-			case PathAxisType.Ancestors: return __Ancestors;
-			case PathAxisType.Decendants: return __Decendants;
-			case PathAxisType.Root: return __Root;
-			case PathAxisType.Previous:
-			case PathAxisType.Next:
-			default: break;
-		}
-
-		return __Children;
 	}
 }

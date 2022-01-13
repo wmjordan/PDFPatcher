@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Xml;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
@@ -14,51 +13,12 @@ namespace PDFPatcher.Processor;
 
 internal sealed class AutoBookmarkCreator
 {
-	private sealed class SizeOccurance
-	{
-		public float Size { get; set; }
-		public int FirstPage { get; set; }
-		public string FirstInstance { get; set; }
-		public int Occurance { get; set; }
-
-		public SizeOccurance(float size, int page, string instance) {
-			Size = size;
-			Occurance = 1;
-			FirstPage = page;
-			FirstInstance = instance.Length > 50 ? instance.Substring(0, 50) : instance;
-		}
-	}
-
-	private sealed class FontOccurance
-	{
-		private readonly Dictionary<string, List<SizeOccurance>> oc = new();
-
-		internal List<SizeOccurance> GetOccurance(string fontName) {
-			return oc.TryGetValue(fontName, out List<SizeOccurance> s) ? s : null;
-		}
-
-		internal void AddOccurance(string fontName, float size, int page, string instance) {
-			if (oc.ContainsKey(fontName) == false) {
-				oc.Add(fontName, new List<SizeOccurance>() {new(size, page, instance)});
-			}
-			else {
-				SizeOccurance o = oc[fontName].Find((s) => { return s.Size == size; });
-				if (o != null) {
-					o.Occurance++;
-				}
-				else {
-					oc[fontName].Add(new SizeOccurance(size, page, instance));
-				}
-			}
-		}
-	}
-
 	private const string __AddSpaceAfterCharacters = ":.,\"'?!)]};";
 	private const string __InsertSpaceBeforeCharacters = "\"'([{";
+	private const int OpenWorkload = 10;
+	private readonly AutoBookmarkOptions _options;
 
 	private readonly PdfReader _reader;
-	private readonly AutoBookmarkOptions _options;
-	private const int OpenWorkload = 10;
 
 	public AutoBookmarkCreator(PdfReader reader, AutoBookmarkOptions options) {
 		_reader = reader;
@@ -183,18 +143,20 @@ internal sealed class AutoBookmarkCreator
 							if (ra.Middle < rb.Middle) {
 								return 1;
 							}
-							else if (ra.Middle > rb.Middle) {
+
+							if (ra.Middle > rb.Middle) {
 								return -1;
 							}
-							else if (ra.Center > rb.Center) {
+
+							if (ra.Center > rb.Center) {
 								return 1;
 							}
-							else if (ra.Center < rb.Center) {
+
+							if (ra.Center < rb.Center) {
 								return -1;
 							}
-							else {
-								return 0;
-							}
+
+							return 0;
 						});
 					}
 
@@ -227,7 +189,6 @@ internal sealed class AutoBookmarkCreator
 							foreach (MatchPattern.IMatcher rg in ig) {
 								if (rg.Matches(t)) {
 									ignore = true;
-									continue;
 								}
 							}
 
@@ -245,7 +206,8 @@ internal sealed class AutoBookmarkCreator
 									level++;
 									break;
 								}
-								else if (s == size) {
+
+								if (s == size) {
 									be = (be.ParentNode ?? be).AppendChild(doc.CreateElement(Constants.Bookmark)) as
 										XmlElement;
 									break;
@@ -266,7 +228,7 @@ internal sealed class AutoBookmarkCreator
 						be.SetAttribute(Constants.DestinationAttributes.View,
 							Constants.DestinationAttributes.ViewType.XYZ);
 						be.SetAttribute(Constants.Coordinates.Top,
-							ValueHelper.ToText(item.Region.Top + (s * yOffset)));
+							(item.Region.Top + (s * yOffset)).ToText());
 						be.SetAttribute(Constants.Font.Size, s.ToText());
 						if (f != null) {
 							be.SetAttribute(Constants.Font.ThisName, f.FontID.ToText());
@@ -389,7 +351,8 @@ internal sealed class AutoBookmarkCreator
 		if (ls.Count == 0) {
 			return string.Empty;
 		}
-		else if (ls.Count == 1) {
+
+		if (ls.Count == 1) {
 			return ls[0].Text;
 		}
 
@@ -399,7 +362,8 @@ internal sealed class AutoBookmarkCreator
 				if (a.Region.Middle < b.Region.Middle) {
 					return 1;
 				}
-				else if (a.Region.Middle > b.Region.Middle) {
+
+				if (a.Region.Middle > b.Region.Middle) {
 					return -1;
 				}
 
@@ -430,10 +394,10 @@ internal sealed class AutoBookmarkCreator
 	}
 
 	/// <summary>
-	/// 使用最小距离法将 <paramref name="textInfos"/> 的文本聚类为 <see cref="TextLine"/> 列表。
+	///     使用最小距离法将 <paramref name="textInfos" /> 的文本聚类为 <see cref="TextLine" /> 列表。
 	/// </summary>
-	/// <param name="textInfos">包含文本位置及尺寸信息的 <see cref="TextInfo"/> 集合。</param>
-	/// <returns>聚类后所得的 <see cref="TextLine"/> 列表。</returns>
+	/// <param name="textInfos">包含文本位置及尺寸信息的 <see cref="TextInfo" /> 集合。</param>
+	/// <returns>聚类后所得的 <see cref="TextLine" /> 列表。</returns>
 	internal static List<TextLine> MergeTextInfoList(Rectangle pageBox, IList<TextInfo> textInfos,
 		AutoBookmarkOptions options) {
 		List<TextLine> ll = new();
@@ -531,8 +495,7 @@ internal sealed class AutoBookmarkCreator
 				ll.Add(new TextLine(item));
 			}
 
-			Next:
-			continue;
+			Next: ;
 		}
 
 		return ll;
@@ -616,19 +579,57 @@ internal sealed class AutoBookmarkCreator
 		return ll;
 	}
 
+	private sealed class SizeOccurance
+	{
+		public SizeOccurance(float size, int page, string instance) {
+			Size = size;
+			Occurance = 1;
+			FirstPage = page;
+			FirstInstance = instance.Length > 50 ? instance.Substring(0, 50) : instance;
+		}
+
+		public float Size { get; }
+		public int FirstPage { get; }
+		public string FirstInstance { get; }
+		public int Occurance { get; set; }
+	}
+
+	private sealed class FontOccurance
+	{
+		private readonly Dictionary<string, List<SizeOccurance>> oc = new();
+
+		internal List<SizeOccurance> GetOccurance(string fontName) {
+			return oc.TryGetValue(fontName, out List<SizeOccurance> s) ? s : null;
+		}
+
+		internal void AddOccurance(string fontName, float size, int page, string instance) {
+			if (oc.ContainsKey(fontName) == false) {
+				oc.Add(fontName, new List<SizeOccurance> {new(size, page, instance)});
+			}
+			else {
+				SizeOccurance o = oc[fontName].Find(s => { return s.Size == size; });
+				if (o != null) {
+					o.Occurance++;
+				}
+				else {
+					oc[fontName].Add(new SizeOccurance(size, page, instance));
+				}
+			}
+		}
+	}
+
 	private sealed class TextToBookmarkProcessor : PdfContentStreamProcessor
 	{
+		private const string __AddSpaceAfterCharacters = ":.,\"'?!)]};";
+		private const string __InsertSpaceBeforeCharacters = "\"'([{";
+		private readonly AutoBookmarkContext _context;
 		private readonly float _fontSizeThreshold;
+		private readonly LevelProcessor _levelProcessor;
 
 		//Rectangle _positionRectangle;
 		private readonly bool _mergeAdjacentTitles;
 		private readonly bool _mergeDifferentSizeTitles;
 		private float _textWidth, _charWidth;
-		private readonly List<TextInfo> _TextList;
-		private readonly LevelProcessor _levelProcessor;
-		private readonly AutoBookmarkContext _context;
-		private const string __AddSpaceAfterCharacters = ":.,\"'?!)]};";
-		private const string __InsertSpaceBeforeCharacters = "\"'([{";
 
 		public TextToBookmarkProcessor(AutoBookmarkOptions options, AutoBookmarkContext context) {
 			_fontSizeThreshold = options.TitleThreshold;
@@ -636,19 +637,19 @@ internal sealed class AutoBookmarkCreator
 			_mergeAdjacentTitles = options.MergeAdjacentTitles;
 			_mergeDifferentSizeTitles = options.MergeDifferentSizeTitles;
 			_levelProcessor = new LevelProcessor(options.LevelAdjustment);
-			_TextList = new List<TextInfo>();
+			TextList = new List<TextInfo>();
 			PopulateOperators();
 			RegisterContentOperator("TJ", new AccumulatedShowTextArray());
 			_context = context;
 		}
 
 		/// <summary>
-		/// 获取页面内容的文本。
+		///     获取页面内容的文本。
 		/// </summary>
-		internal List<TextInfo> TextList => _TextList;
+		internal List<TextInfo> TextList { get; }
 
 		/// <summary>
-		/// 获取字体列表。
+		///     获取字体列表。
 		/// </summary>
 		internal IDictionary<int, string> FontList => Fonts;
 
@@ -656,7 +657,7 @@ internal sealed class AutoBookmarkCreator
 
 		internal override void Reset() {
 			base.Reset();
-			_TextList?.Clear();
+			TextList?.Clear();
 		}
 
 		protected override void DisplayPdfString(PdfString str) {
@@ -756,9 +757,8 @@ internal sealed class AutoBookmarkCreator
 			//    // 文本落在范围框之外
 			//    goto Exit;
 			//}
-			_TextList.Add(ti);
-			Exit:
-			return;
+			TextList.Add(ti);
+			Exit: ;
 		}
 
 		private string DecodeTJText(List<PdfObject> operands, float size) {
@@ -820,7 +820,7 @@ internal sealed class AutoBookmarkCreator
 		}
 
 		/// <summary>
-		/// 检查 <paramref name="b"/> 是否处于 <paramref name="a"/> 之内。
+		///     检查 <paramref name="b" /> 是否处于 <paramref name="a" /> 之内。
 		/// </summary>
 		/// <param name="a">大边框。</param>
 		/// <param name="b">小边框。</param>

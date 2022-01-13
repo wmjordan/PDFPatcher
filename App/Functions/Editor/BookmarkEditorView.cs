@@ -21,22 +21,25 @@ public partial class BookmarkEditorView : TreeListView
 	[EditorBrowsable(EditorBrowsableState.Never)]
 	internal static List<BookmarkElement> _copiedBookmarks;
 
-	[EditorBrowsable(EditorBrowsableState.Never)]
-	internal UndoManager Undo { get; set; }
-
-	public bool OperationAffectsDecendants { get; set; }
-	public OLVColumn BookmarkOpenColumn => _BookmarkOpenColumn;
-	public OLVColumn BookmarkNameColumn => _BookmarkNameColumn;
-	public OLVColumn BookmarkPageColumn => _BookmarkPageColumn;
-	public bool HasMarker => _markers.Count > 0;
-	public bool IsLabelEditing { get; private set; }
-
 	private readonly Dictionary<BookmarkElement, Color> _markers = new();
 
 	public BookmarkEditorView() {
 		InitializeComponent();
 		InitEditerBox();
 	}
+
+	[EditorBrowsable(EditorBrowsableState.Never)]
+	internal UndoManager Undo { get; set; }
+
+	public bool OperationAffectsDecendants { get; set; }
+	public OLVColumn BookmarkOpenColumn { get; private set; }
+
+	public OLVColumn BookmarkNameColumn { get; private set; }
+
+	public OLVColumn BookmarkPageColumn { get; private set; }
+
+	public bool HasMarker => _markers.Count > 0;
+	public bool IsLabelEditing { get; private set; }
 
 	private void InitEditerBox() {
 		if (IsDesignMode) {
@@ -53,9 +56,9 @@ public partial class BookmarkEditorView : TreeListView
 
 		this.SetTreeViewLine();
 		this.FixEditControlWidth();
-		CanExpandGetter = (object x) => x is BookmarkElement e && e.HasSubBookmarks;
-		ChildrenGetter = (object x) => ((BookmarkElement)x).SubBookmarks;
-		_BookmarkNameColumn.AutoCompleteEditorMode = AutoCompleteMode.Suggest;
+		CanExpandGetter = x => x is BookmarkElement e && e.HasSubBookmarks;
+		ChildrenGetter = x => ((BookmarkElement)x).SubBookmarks;
+		BookmarkNameColumn.AutoCompleteEditorMode = AutoCompleteMode.Suggest;
 		//this.SelectedRowDecoration = new RowBorderDecoration ()
 		//{
 		//    FillBrush = new SolidBrush (Color.FromArgb (64, SystemColors.Highlight)),
@@ -63,8 +66,8 @@ public partial class BookmarkEditorView : TreeListView
 		//    CornerRounding = 2,
 		//    BorderPen = new Pen (Color.FromArgb (216, SystemColors.Highlight))
 		//};
-		new TypedColumn<BookmarkElement>(_BookmarkNameColumn) {
-			AspectGetter = (e) => e.Title,
+		new TypedColumn<BookmarkElement>(BookmarkNameColumn) {
+			AspectGetter = e => e.Title,
 			AspectPutter = (e, newValue) => {
 				string s = newValue as string;
 				if (e.Title == s) {
@@ -75,8 +78,8 @@ public partial class BookmarkEditorView : TreeListView
 				Undo?.AddUndo("编辑书签文本", p.Process(e));
 			}
 		};
-		new TypedColumn<BookmarkElement>(_BookmarkOpenColumn) {
-			AspectGetter = (e) => e == null ? false : (object)e.IsOpen,
+		new TypedColumn<BookmarkElement>(BookmarkOpenColumn) {
+			AspectGetter = e => e == null ? false : (object)e.IsOpen,
 			AspectPutter = (e, newValue) => {
 				if (e == null || e.HasSubBookmarks == false) {
 					return;
@@ -86,8 +89,8 @@ public partial class BookmarkEditorView : TreeListView
 				Undo.AddUndo(p.Name, p.Process(e));
 			}
 		};
-		new TypedColumn<XmlElement>(_BookmarkPageColumn) {
-			AspectGetter = (e) => {
+		new TypedColumn<XmlElement>(BookmarkPageColumn) {
+			AspectGetter = e => {
 				if (e == null) {
 					return 0;
 				}
@@ -114,7 +117,7 @@ public partial class BookmarkEditorView : TreeListView
 				}
 			}
 		};
-		_ActionColumn.AspectGetter = (object x) => {
+		_ActionColumn.AspectGetter = x => {
 			XmlElement e = x as XmlElement;
 			if (e == null) {
 				return string.Empty;
@@ -138,101 +141,6 @@ public partial class BookmarkEditorView : TreeListView
 		base.OnItemActivate(e);
 		EditSubItem(SelectedItem, 0);
 	}
-
-	#region 拖放操作
-
-	protected override void OnCanDrop(OlvDropEventArgs args) {
-		DataObject o = args.DataObject as DataObject;
-		if (o == null) {
-			return;
-		}
-
-		StringCollection f = o.GetFileDropList();
-		foreach (string item in f) {
-			if (FileHelper.HasExtension(item, Constants.FileExtensions.Xml)
-				|| FileHelper.HasExtension(item, Constants.FileExtensions.Pdf)) {
-				args.Handled = true;
-				args.DropTargetLocation = DropTargetLocation.Background;
-				args.Effect = DragDropEffects.Copy;
-				args.InfoMessage = "打开文件" + item;
-				return;
-			}
-		}
-
-		base.OnCanDrop(args);
-	}
-
-	protected override void OnModelCanDrop(ModelDropEventArgs e) {
-		IList si = e.SourceModels;
-		XmlElement ti = e.TargetModel as XmlElement;
-		if (si == null || si.Count == 0 || e.TargetModel == null) {
-			e.Effect = DragDropEffects.None;
-			return;
-		}
-
-		bool copy = (ModifierKeys & Keys.Control) != Keys.None ||
-					(e.SourceModels[0] as XmlElement).OwnerDocument != ti.OwnerDocument;
-		if (copy == false) {
-			if (e.DropTargetItem.Selected) {
-				e.Effect = DragDropEffects.None;
-				return;
-			}
-
-			foreach (XmlElement item in si) {
-				if (IsAncestorOrSelf(item, ti)) {
-					e.Effect = DragDropEffects.None;
-					e.InfoMessage = "目标书签不能是源书签的子书签。";
-					return;
-				}
-			}
-		}
-
-		OLVListItem d = e.DropTargetItem;
-		Point ml = e.MouseLocation;
-		bool child = ml.X > d.Position.X + (d.GetBounds(ItemBoundsPortion.ItemOnly).Width / 2);
-		bool append = ml.Y > d.Position.Y + (d.Bounds.Height / 2);
-		if (child == false && copy == false) {
-			int xi = e.DropTargetIndex + (append ? 1 : -1);
-			if (xi > -1 && xi < e.ListView.Items.Count
-						&& e.ListView.Items[xi].Selected
-						&& ti.ParentNode == (e.ListView.GetModelObject(xi) as XmlElement).ParentNode) {
-				e.Effect = DragDropEffects.None;
-				return;
-			}
-		}
-
-		e.Effect = copy ? DragDropEffects.Copy : DragDropEffects.Move;
-		e.InfoMessage = string.Concat(copy ? "复制" : "移动", "到", child ? "所有子书签" : string.Empty,
-			append ? "后面" : "前面");
-		base.OnModelCanDrop(e);
-	}
-
-	protected override void OnModelDropped(ModelDropEventArgs args) {
-		base.OnModelDropped(args);
-		BookmarkElement t = args.TargetModel as BookmarkElement;
-		List<BookmarkElement> se = GetSelectedElements(args.SourceListView as TreeListView, false);
-		if (se == null) {
-			return;
-		}
-
-		BookmarkElement ti = args.TargetModel as BookmarkElement;
-		OLVListItem d = args.DropTargetItem;
-		Point ml = args.MouseLocation;
-		Freeze();
-		bool child = ml.X > d.Position.X + (d.GetBounds(ItemBoundsPortion.ItemOnly).Width / 2);
-		bool append = ml.Y > d.Position.Y + (d.Bounds.Height / 2);
-		bool copy = (ModifierKeys & Keys.Control) != Keys.None ||
-					(args.SourceModels[0] as BookmarkElement).OwnerDocument != ti.OwnerDocument;
-		bool deepCopy = copy && (OperationAffectsDecendants || (ModifierKeys & Keys.Shift) != Keys.None);
-		int tii = TopItemIndex;
-		CopyOrMoveElement(se, ti, child, append, copy, deepCopy);
-		//e.RefreshObjects ();
-		TopItemIndex = tii;
-		Unfreeze();
-		args.Handled = true;
-	}
-
-	#endregion
 
 	internal void LoadBookmarks(XmlNodeList bookmarks) {
 		Roots = bookmarks.ToXmlNodeArray();
@@ -258,7 +166,7 @@ public partial class BookmarkEditorView : TreeListView
 	}
 
 	/// <summary>
-	/// 复制或移动书签。
+	///     复制或移动书签。
 	/// </summary>
 	/// <param name="source">需要复制或移动的源书签。</param>
 	/// <param name="target">目标书签。</param>
@@ -371,7 +279,7 @@ public partial class BookmarkEditorView : TreeListView
 	}
 
 	/// <summary>
-	/// 检查 <paramref name="source"/> 是否为 <paramref name="target"/> 的先代元素。
+	///     检查 <paramref name="source" /> 是否为 <paramref name="target" /> 的先代元素。
 	/// </summary>
 	private static bool IsAncestorOrSelf(XmlElement source, XmlElement target) {
 		do {
@@ -694,4 +602,99 @@ public partial class BookmarkEditorView : TreeListView
 			MakeItemVisible(item);
 		}
 	}
+
+	#region 拖放操作
+
+	protected override void OnCanDrop(OlvDropEventArgs args) {
+		DataObject o = args.DataObject as DataObject;
+		if (o == null) {
+			return;
+		}
+
+		StringCollection f = o.GetFileDropList();
+		foreach (string item in f) {
+			if (FileHelper.HasExtension(item, Constants.FileExtensions.Xml)
+				|| FileHelper.HasExtension(item, Constants.FileExtensions.Pdf)) {
+				args.Handled = true;
+				args.DropTargetLocation = DropTargetLocation.Background;
+				args.Effect = DragDropEffects.Copy;
+				args.InfoMessage = "打开文件" + item;
+				return;
+			}
+		}
+
+		base.OnCanDrop(args);
+	}
+
+	protected override void OnModelCanDrop(ModelDropEventArgs e) {
+		IList si = e.SourceModels;
+		XmlElement ti = e.TargetModel as XmlElement;
+		if (si == null || si.Count == 0 || e.TargetModel == null) {
+			e.Effect = DragDropEffects.None;
+			return;
+		}
+
+		bool copy = (ModifierKeys & Keys.Control) != Keys.None ||
+					(e.SourceModels[0] as XmlElement).OwnerDocument != ti.OwnerDocument;
+		if (copy == false) {
+			if (e.DropTargetItem.Selected) {
+				e.Effect = DragDropEffects.None;
+				return;
+			}
+
+			foreach (XmlElement item in si) {
+				if (IsAncestorOrSelf(item, ti)) {
+					e.Effect = DragDropEffects.None;
+					e.InfoMessage = "目标书签不能是源书签的子书签。";
+					return;
+				}
+			}
+		}
+
+		OLVListItem d = e.DropTargetItem;
+		Point ml = e.MouseLocation;
+		bool child = ml.X > d.Position.X + (d.GetBounds(ItemBoundsPortion.ItemOnly).Width / 2);
+		bool append = ml.Y > d.Position.Y + (d.Bounds.Height / 2);
+		if (child == false && copy == false) {
+			int xi = e.DropTargetIndex + (append ? 1 : -1);
+			if (xi > -1 && xi < e.ListView.Items.Count
+						&& e.ListView.Items[xi].Selected
+						&& ti.ParentNode == (e.ListView.GetModelObject(xi) as XmlElement).ParentNode) {
+				e.Effect = DragDropEffects.None;
+				return;
+			}
+		}
+
+		e.Effect = copy ? DragDropEffects.Copy : DragDropEffects.Move;
+		e.InfoMessage = string.Concat(copy ? "复制" : "移动", "到", child ? "所有子书签" : string.Empty,
+			append ? "后面" : "前面");
+		base.OnModelCanDrop(e);
+	}
+
+	protected override void OnModelDropped(ModelDropEventArgs args) {
+		base.OnModelDropped(args);
+		BookmarkElement t = args.TargetModel as BookmarkElement;
+		List<BookmarkElement> se = GetSelectedElements(args.SourceListView as TreeListView, false);
+		if (se == null) {
+			return;
+		}
+
+		BookmarkElement ti = args.TargetModel as BookmarkElement;
+		OLVListItem d = args.DropTargetItem;
+		Point ml = args.MouseLocation;
+		Freeze();
+		bool child = ml.X > d.Position.X + (d.GetBounds(ItemBoundsPortion.ItemOnly).Width / 2);
+		bool append = ml.Y > d.Position.Y + (d.Bounds.Height / 2);
+		bool copy = (ModifierKeys & Keys.Control) != Keys.None ||
+					(args.SourceModels[0] as BookmarkElement).OwnerDocument != ti.OwnerDocument;
+		bool deepCopy = copy && (OperationAffectsDecendants || (ModifierKeys & Keys.Shift) != Keys.None);
+		int tii = TopItemIndex;
+		CopyOrMoveElement(se, ti, child, append, copy, deepCopy);
+		//e.RefreshObjects ();
+		TopItemIndex = tii;
+		Unfreeze();
+		args.Handled = true;
+	}
+
+	#endregion
 }

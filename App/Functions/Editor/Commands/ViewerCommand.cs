@@ -1,5 +1,4 @@
 ﻿using System.Drawing;
-using System.Windows.Forms;
 using PDFPatcher.Common;
 
 namespace PDFPatcher.Functions.Editor;
@@ -15,12 +14,6 @@ internal sealed class ViewerCommand : IEditorCommand
 		"_ShowTextBorders", "_DarkMode", "_GreenMode", "_ShowBookmarks", "_ShowAnnotations", "_OcrDetectPunctuation",
 		"_FullScreen", "_EditorOptions"
 	};
-
-	internal static void RegisterCommands(CommandRegistry<Controller> registry) {
-		foreach (string item in __commands) {
-			registry.Register(new ViewerCommand(item), item);
-		}
-	}
 
 	private readonly string _command;
 
@@ -85,6 +78,12 @@ internal sealed class ViewerCommand : IEditorCommand
 			case "_EditorOptions":
 				AppContext.MainForm.SelectFunctionList(Function.EditorOptions);
 				break;
+		}
+	}
+
+	internal static void RegisterCommands(CommandRegistry<Controller> registry) {
+		foreach (string item in __commands) {
+			registry.Register(new ViewerCommand(item), item);
 		}
 	}
 }

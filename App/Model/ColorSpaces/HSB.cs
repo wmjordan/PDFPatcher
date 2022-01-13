@@ -1,15 +1,14 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
 namespace Devcorp.Controls.Design;
 
 /// <summary>
-/// Structure to define HSB.
+///     Structure to define HSB.
 /// </summary>
 public struct HSB
 {
 	/// <summary>
-	/// Gets an empty HSB structure;
+	///     Gets an empty HSB structure;
 	/// </summary>
 	public static readonly HSB Empty = new();
 
@@ -40,7 +39,7 @@ public struct HSB
 	#region Accessors
 
 	/// <summary>
-	/// Gets or sets the hue component.
+	///     Gets or sets the hue component.
 	/// </summary>
 	[Description("Hue component")]
 	public double Hue {
@@ -49,7 +48,7 @@ public struct HSB
 	}
 
 	/// <summary>
-	/// Gets or sets saturation component.
+	///     Gets or sets saturation component.
 	/// </summary>
 	[Description("Saturation component")]
 	public double Saturation {
@@ -58,7 +57,7 @@ public struct HSB
 	}
 
 	/// <summary>
-	/// Gets or sets the brightness component.
+	///     Gets or sets the brightness component.
 	/// </summary>
 	[Description("Brightness component")]
 	public double Brightness {
@@ -69,7 +68,7 @@ public struct HSB
 	#endregion
 
 	/// <summary>
-	/// Creates an instance of a HSB structure.
+	///     Creates an instance of a HSB structure.
 	/// </summary>
 	/// <param name="h">Hue value.</param>
 	/// <param name="s">Saturation value.</param>

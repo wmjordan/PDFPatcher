@@ -9,6 +9,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using BrightIdeasSoftware;
+using iTextSharp.text.exceptions;
 using iTextSharp.text.pdf;
 using MuPdfSharp;
 using PDFPatcher.Common;
@@ -22,9 +23,6 @@ namespace PDFPatcher.Functions.Editor;
 
 internal sealed class Controller
 {
-	public EditModel Model { get; }
-	public IEditView View { get; }
-
 	private BackgroundWorker _loader;
 
 	public Controller(IEditView view) {
@@ -34,16 +32,19 @@ internal sealed class Controller
 		View.Bookmark.Undo = Model.Undo;
 	}
 
+	public EditModel Model { get; }
+	public IEditView View { get; }
+
 	internal IEnumerable<XmlNode> ProcessBookmarks(IPdfInfoXmlProcessor processor) {
 		return ProcessBookmarks(View.AffectsDescendantBookmarks, true, processor);
 	}
 
 	/// <summary>
-	/// 逐个处理选中的书签。
+	///     逐个处理选中的书签。
 	/// </summary>
 	/// <param name="includeDescendant">处理操作是否包含选中书签的内层书签。</param>
 	/// <param name="selectChildren">处理时是否遍历选中的内层书签。</param>
-	/// <param name="processor">用于处理书签的 <see cref="IPdfInfoXmlProcessor"/>。</param>
+	/// <param name="processor">用于处理书签的 <see cref="IPdfInfoXmlProcessor" />。</param>
 	/// <returns>处理后的书签。</returns>
 	internal IEnumerable<XmlNode> ProcessBookmarks(bool includeDescendant, bool selectChildren,
 		IPdfInfoXmlProcessor processor) {
@@ -231,7 +232,7 @@ internal sealed class Controller
 				};
 				Tracker.DebugMessage("finished loading");
 			}
-			catch (iTextSharp.text.exceptions.BadPasswordException) {
+			catch (BadPasswordException) {
 				FormHelper.ErrorBox(Messages.PasswordInvalid);
 				Tracker.TraceMessage(Tracker.Category.Error, Messages.PasswordInvalid);
 			}

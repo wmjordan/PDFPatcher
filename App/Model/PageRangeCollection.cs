@@ -141,6 +141,6 @@ internal sealed class PageRangeCollection : List<PageRange>
 	}
 
 	public override string ToString() {
-		return string.Join(";", ConvertAll((r) => { return r.ToString(); }).ToArray());
+		return string.Join(";", ConvertAll(r => { return r.ToString(); }).ToArray());
 	}
 }

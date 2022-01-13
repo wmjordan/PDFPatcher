@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 using System.Xml.Serialization;
 using PDFPatcher.Common;
 
@@ -9,14 +8,26 @@ public class EncodingOptions
 {
 	private Encoding _bookmarkEncoding;
 
+	private string _bookmarkEncodingName;
+
+	private Encoding _docInfoEncoding;
+
+	private string _docInfoEncodingName;
+
+	private Encoding _fontNameEncoding;
+
+	private string _fontNameEncodingName;
+
+	private Encoding _textEncoding;
+
+	private string _textEncodingName;
+
 	public Encoding BookmarkEncoding {
 		get {
 			GetEncoding(_bookmarkEncodingName, ref _bookmarkEncoding);
 			return _bookmarkEncoding;
 		}
 	}
-
-	private string _bookmarkEncodingName;
 
 	///<summary>获取或指定读取书签时所用的编码。</summary>
 	[XmlAttribute("书签文本编码")]
@@ -25,16 +36,12 @@ public class EncodingOptions
 		set => SetEncoding(ref _bookmarkEncodingName, ref _bookmarkEncoding, value);
 	}
 
-	private Encoding _docInfoEncoding;
-
 	public Encoding DocInfoEncoding {
 		get {
 			GetEncoding(_docInfoEncodingName, ref _docInfoEncoding);
 			return _docInfoEncoding;
 		}
 	}
-
-	private string _docInfoEncodingName;
 
 	///<summary>获取或指定读取文档元数据时所用的编码。</summary>
 	[XmlAttribute("文档元数据编码")]
@@ -43,16 +50,12 @@ public class EncodingOptions
 		set => SetEncoding(ref _docInfoEncodingName, ref _docInfoEncoding, value);
 	}
 
-	private Encoding _textEncoding;
-
 	public Encoding TextEncoding {
 		get {
 			GetEncoding(_textEncodingName, ref _textEncoding);
 			return _textEncoding;
 		}
 	}
-
-	private string _textEncodingName;
 
 	///<summary>获取或指定读取文本时所用的编码。</summary>
 	[XmlAttribute("内容文本编码")]
@@ -61,16 +64,12 @@ public class EncodingOptions
 		set => SetEncoding(ref _textEncodingName, ref _textEncoding, value);
 	}
 
-	private Encoding _fontNameEncoding;
-
 	public Encoding FontNameEncoding {
 		get {
 			GetEncoding(_fontNameEncodingName, ref _fontNameEncoding);
 			return _fontNameEncoding;
 		}
 	}
-
-	private string _fontNameEncodingName;
 
 	///<summary>获取或指定读取文本时所用的编码。</summary>
 	[XmlAttribute("字体名称编码")]

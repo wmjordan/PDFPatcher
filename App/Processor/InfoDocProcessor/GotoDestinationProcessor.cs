@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Diagnostics;
 using System.Xml;
 using PDFPatcher.Common;
 using PDFPatcher.Model;
@@ -10,6 +10,25 @@ internal sealed class GotoDestinationProcessor : IInfoDocProcessor
 	public bool RemoveOrphanDestination { get; set; }
 	public int[] PageRemapper { get; set; }
 	public CoordinateTranslationSettings[] TransitionMapper { get; set; }
+
+	private static void TranslateDestinationCoordinates(XmlElement item, CoordinateTranslationSettings ct) {
+		float p;
+		if (item.GetAttribute(Constants.Coordinates.Top).TryParse(out p) && p != 0) {
+			item.SetAttribute(Constants.Coordinates.Top, ((p * ct.YScale) + ct.YTranslation).ToText());
+		}
+
+		if (item.GetAttribute(Constants.Coordinates.Bottom).TryParse(out p) && p != 0) {
+			item.SetAttribute(Constants.Coordinates.Bottom, ((p * ct.YScale) + ct.YTranslation).ToText());
+		}
+
+		if (item.GetAttribute(Constants.Coordinates.Left).TryParse(out p) && p != 0) {
+			item.SetAttribute(Constants.Coordinates.Left, ((p * ct.XScale) + ct.XTranslation).ToText());
+		}
+
+		if (item.GetAttribute(Constants.Coordinates.Right).TryParse(out p) && p != 0) {
+			item.SetAttribute(Constants.Coordinates.Right, ((p * ct.XScale) + ct.XTranslation).ToText());
+		}
+	}
 
 	#region IBookmarkProcessor 成员
 
@@ -34,11 +53,11 @@ internal sealed class GotoDestinationProcessor : IInfoDocProcessor
 			return true;
 		}
 
-		System.Diagnostics.Debug.WriteLine(item.GetAttribute(Constants.BookmarkAttributes.Title));
+		Debug.WriteLine(item.GetAttribute(Constants.BookmarkAttributes.Title));
 		if (page > 0) {
 			if (TransitionMapper != null) {
 				if (PageRemapper != null && page >= PageRemapper.Length) {
-					System.Diagnostics.Trace.WriteLine("跳转页码位置无效：" + page);
+					Trace.WriteLine("跳转页码位置无效：" + page);
 				}
 				else if (TransitionMapper[page] != null) {
 					CoordinateTranslationSettings ct = TransitionMapper[page];
@@ -95,23 +114,4 @@ internal sealed class GotoDestinationProcessor : IInfoDocProcessor
 	}
 
 	#endregion
-
-	private static void TranslateDestinationCoordinates(XmlElement item, CoordinateTranslationSettings ct) {
-		float p;
-		if (item.GetAttribute(Constants.Coordinates.Top).TryParse(out p) && p != 0) {
-			item.SetAttribute(Constants.Coordinates.Top, ((p * ct.YScale) + ct.YTranslation).ToText());
-		}
-
-		if (item.GetAttribute(Constants.Coordinates.Bottom).TryParse(out p) && p != 0) {
-			item.SetAttribute(Constants.Coordinates.Bottom, ((p * ct.YScale) + ct.YTranslation).ToText());
-		}
-
-		if (item.GetAttribute(Constants.Coordinates.Left).TryParse(out p) && p != 0) {
-			item.SetAttribute(Constants.Coordinates.Left, ((p * ct.XScale) + ct.XTranslation).ToText());
-		}
-
-		if (item.GetAttribute(Constants.Coordinates.Right).TryParse(out p) && p != 0) {
-			item.SetAttribute(Constants.Coordinates.Right, ((p * ct.XScale) + ct.XTranslation).ToText());
-		}
-	}
 }

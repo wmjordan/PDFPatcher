@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
+using System.Drawing;
 using System.Windows.Forms;
 using PDFPatcher.Common;
 
@@ -9,13 +8,23 @@ namespace PDFPatcher.Functions;
 
 public class FunctionControl : UserControl
 {
-	[Browsable(false)] public virtual string FunctionName => null;
-	[Browsable(false)] public virtual System.Drawing.Bitmap IconImage => null;
-	[Browsable(false)] public virtual Button DefaultButton => null;
-
 	public EventHandler ListRecentFiles;
 
 	public EventHandler<ToolStripItemClickedEventArgs> RecentFileItemClicked;
+
+	protected FunctionControl() {
+		ListRecentFiles = (s, args) => {
+			ToolStripDropDownItem m = (ToolStripDropDownItem)s;
+			ToolStripItemCollection l = m.DropDown.Items;
+			l.ClearDropDownItems();
+			l.AddSourcePdfFiles();
+		};
+		RecentFileItemClicked = (s, args) => ExecuteCommand(Commands.OpenFile, args.ClickedItem.ToolTipText);
+	}
+
+	[Browsable(false)] public virtual string FunctionName => null;
+	[Browsable(false)] public virtual Bitmap IconImage => null;
+	[Browsable(false)] public virtual Button DefaultButton => null;
 
 	public void ExecuteCommand(ToolStripItem item) {
 		item.HidePopupMenu();
@@ -41,16 +50,6 @@ public class FunctionControl : UserControl
 	public virtual void SetupCommand(ToolStripItem item) { }
 	internal virtual void OnSelected() { }
 	internal virtual void OnDeselected() { }
-
-	protected FunctionControl() {
-		ListRecentFiles = (s, args) => {
-			ToolStripDropDownItem m = (ToolStripDropDownItem)s;
-			ToolStripItemCollection l = m.DropDown.Items;
-			l.ClearDropDownItems();
-			l.AddSourcePdfFiles();
-		};
-		RecentFileItemClicked = (s, args) => ExecuteCommand(Commands.OpenFile, args.ClickedItem.ToolTipText);
-	}
 
 	internal void SetupMenu(ToolStripMenuItem menu) {
 		SetupMenu(menu.DropDownItems);

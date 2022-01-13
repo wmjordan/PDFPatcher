@@ -16,6 +16,30 @@ public partial class TextPositionConditionEditor : UserControl, IFilterCondition
 		_lock = false;
 	}
 
+	private void ControlChanged(object sender, EventArgs e) {
+		ToggleControlState();
+		if (_lock) {
+			return;
+		}
+
+		float min, max;
+		if (_SpecificBox.Checked) {
+			min = max = (float)_SpecificValueBox.Value;
+		}
+		else /*if (_YRangeBox.Checked)*/ {
+			min = (float)_MinBox.Value;
+			max = (float)_MaxBox.Value;
+		}
+
+		_condition.SetRange((byte)(_PositionBox.SelectedIndex + 1), min, max);
+		EditAdjustmentForm.UpdateFilter(this);
+	}
+
+	private void ToggleControlState() {
+		_MinBox.Enabled = _MaxBox.Enabled = _RangeBox.Checked;
+		_SpecificValueBox.Enabled = _SpecificBox.Checked;
+	}
+
 	#region ITextInfoFilterEditor 成员
 
 	public AutoBookmarkCondition Filter {
@@ -42,28 +66,4 @@ public partial class TextPositionConditionEditor : UserControl, IFilterCondition
 	public UserControl EditorControl => this;
 
 	#endregion
-
-	private void ControlChanged(object sender, EventArgs e) {
-		ToggleControlState();
-		if (_lock) {
-			return;
-		}
-
-		float min, max;
-		if (_SpecificBox.Checked) {
-			min = max = (float)_SpecificValueBox.Value;
-		}
-		else /*if (_YRangeBox.Checked)*/ {
-			min = (float)_MinBox.Value;
-			max = (float)_MaxBox.Value;
-		}
-
-		_condition.SetRange((byte)(_PositionBox.SelectedIndex + 1), min, max);
-		EditAdjustmentForm.UpdateFilter(this);
-	}
-
-	private void ToggleControlState() {
-		_MinBox.Enabled = _MaxBox.Enabled = _RangeBox.Checked;
-		_SpecificValueBox.Enabled = _SpecificBox.Checked;
-	}
 }

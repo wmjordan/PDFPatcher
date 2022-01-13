@@ -8,21 +8,21 @@ namespace PDFPatcher.Processor;
 
 internal sealed class PdfProcessingEngine
 {
-	///<summary>获取文档处理器列表。</summary>
-	internal List<IDocProcessor> DocumentProcessors { get; private set; }
-
-	///<summary>获取页面处理器列表。</summary>
-	internal List<IPageProcessor> PageProcessors { get; private set; }
-
-	public PdfReader Pdf { get; private set; }
-	public Dictionary<int, object> ExtraData { get; private set; }
-
 	public PdfProcessingEngine(PdfReader pdf) {
 		DocumentProcessors = new List<IDocProcessor>();
 		PageProcessors = new List<IPageProcessor>();
 		Pdf = pdf;
 		ExtraData = new Dictionary<int, object>();
 	}
+
+	///<summary>获取文档处理器列表。</summary>
+	internal List<IDocProcessor> DocumentProcessors { get; }
+
+	///<summary>获取页面处理器列表。</summary>
+	internal List<IPageProcessor> PageProcessors { get; }
+
+	public PdfReader Pdf { get; }
+	public Dictionary<int, object> ExtraData { get; }
 
 	public void CreateProcessors(PatcherOptions settings) {
 		if (settings.RemoveBookmarks) {

@@ -1,4 +1,6 @@
-﻿namespace PDFPatcher.Processor;
+﻿using System.Xml;
+
+namespace PDFPatcher.Processor;
 
 internal sealed class DestinationGotoTopProcessor : IPdfInfoXmlProcessor
 {
@@ -6,7 +8,7 @@ internal sealed class DestinationGotoTopProcessor : IPdfInfoXmlProcessor
 
 	public string Name => "设置点击目标到页首";
 
-	public IUndoAction Process(System.Xml.XmlElement item) {
+	public IUndoAction Process(XmlElement item) {
 		if (item.HasAttribute(Constants.DestinationAttributes.Page)) {
 			UndoActionGroup undo = new();
 			undo.SetAttribute(item, Constants.DestinationAttributes.View,

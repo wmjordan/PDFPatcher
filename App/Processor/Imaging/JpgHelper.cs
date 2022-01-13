@@ -1,14 +1,146 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
+using Encoder = System.Drawing.Imaging.Encoder;
 
 namespace PDFPatcher.Processor.Imaging;
 
 internal static class JpgHelper
 {
+	/// <summary>
+	///     All exif tags as per the Exif standard 2.2, JEITA CP-2451
+	/// </summary>
+	public enum ExifTags : ushort
+	{
+		// IFD0 items
+		ImageWidth = 0x100,
+		ImageLength = 0x101,
+		BitsPerSample = 0x102,
+		Compression = 0x103,
+		PhotometricInterpretation = 0x106,
+		ImageDescription = 0x10E,
+		Make = 0x10F,
+		Model = 0x110,
+		StripOffsets = 0x111,
+		Orientation = 0x112,
+		SamplesPerPixel = 0x115,
+		RowsPerStrip = 0x116,
+		StripByteCounts = 0x117,
+		XResolution = 0x11A,
+		YResolution = 0x11B,
+		PlanarConfiguration = 0x11C,
+		ResolutionUnit = 0x128,
+		TransferFunction = 0x12D,
+		Software = 0x131,
+		DateTime = 0x132,
+		Artist = 0x13B,
+		WhitePoint = 0x13E,
+		PrimaryChromaticities = 0x13F,
+		JPEGInterchangeFormat = 0x201,
+		JPEGInterchangeFormatLength = 0x202,
+		YCbCrCoefficients = 0x211,
+		YCbCrSubSampling = 0x212,
+		YCbCrPositioning = 0x213,
+		ReferenceBlackWhite = 0x214,
+		Copyright = 0x8298,
+
+		// SubIFD items
+		ExposureTime = 0x829A,
+		FNumber = 0x829D,
+		ExposureProgram = 0x8822,
+		SpectralSensitivity = 0x8824,
+		ISOSpeedRatings = 0x8827,
+		OECF = 0x8828,
+		ExifVersion = 0x9000,
+		DateTimeOriginal = 0x9003,
+		DateTimeDigitized = 0x9004,
+		ComponentsConfiguration = 0x9101,
+		CompressedBitsPerPixel = 0x9102,
+		ShutterSpeedValue = 0x9201,
+		ApertureValue = 0x9202,
+		BrightnessValue = 0x9203,
+		ExposureBiasValue = 0x9204,
+		MaxApertureValue = 0x9205,
+		SubjectDistance = 0x9206,
+		MeteringMode = 0x9207,
+		LightSource = 0x9208,
+		Flash = 0x9209,
+		FocalLength = 0x920A,
+		SubjectArea = 0x9214,
+		MakerNote = 0x927C,
+		UserComment = 0x9286,
+		SubsecTime = 0x9290,
+		SubsecTimeOriginal = 0x9291,
+		SubsecTimeDigitized = 0x9292,
+		FlashpixVersion = 0xA000,
+		ColorSpace = 0xA001,
+		PixelXDimension = 0xA002,
+		PixelYDimension = 0xA003,
+		RelatedSoundFile = 0xA004,
+		FlashEnergy = 0xA20B,
+		SpatialFrequencyResponse = 0xA20C,
+		FocalPlaneXResolution = 0xA20E,
+		FocalPlaneYResolution = 0xA20F,
+		FocalPlaneResolutionUnit = 0xA210,
+		SubjectLocation = 0xA214,
+		ExposureIndex = 0xA215,
+		SensingMethod = 0xA217,
+		FileSource = 0xA300,
+		SceneType = 0xA301,
+		CFAPattern = 0xA302,
+		CustomRendered = 0xA401,
+		ExposureMode = 0xA402,
+		WhiteBalance = 0xA403,
+		DigitalZoomRatio = 0xA404,
+		FocalLengthIn35mmFilm = 0xA405,
+		SceneCaptureType = 0xA406,
+		GainControl = 0xA407,
+		Contrast = 0xA408,
+		Saturation = 0xA409,
+		Sharpness = 0xA40A,
+		DeviceSettingDescription = 0xA40B,
+		SubjectDistanceRange = 0xA40C,
+		ImageUniqueID = 0xA420,
+
+		// GPS subifd items
+		GPSVersionID = 0x0,
+		GPSLatitudeRef = 0x1,
+		GPSLatitude = 0x2,
+		GPSLongitudeRef = 0x3,
+		GPSLongitude = 0x4,
+		GPSAltitudeRef = 0x5,
+		GPSAltitude = 0x6,
+		GPSTimestamp = 0x7,
+		GPSSatellites = 0x8,
+		GPSStatus = 0x9,
+		GPSMeasureMode = 0xA,
+		GPSDOP = 0xB,
+		GPSSpeedRef = 0xC,
+		GPSSpeed = 0xD,
+		GPSTrackRef = 0xE,
+		GPSTrack = 0xF,
+		GPSImgDirectionRef = 0x10,
+		GPSImgDirection = 0x11,
+		GPSMapDatum = 0x12,
+		GPSDestLatitudeRef = 0x13,
+		GPSDestLatitude = 0x14,
+		GPSDestLongitudeRef = 0x15,
+		GPSDestLongitude = 0x16,
+		GPSDestBearingRef = 0x17,
+		GPSDestBearing = 0x18,
+		GPSDestDistanceRef = 0x19,
+		GPSDestDistance = 0x1A,
+		GPSProcessingMethod = 0x1B,
+		GPSAreaInformation = 0x1C,
+		GPSDateStamp = 0x1D,
+		GPSDifferential = 0x1E
+	}
+
 	private static readonly ImageCodecInfo _jpgCodec = BitmapHelper.GetCodec("image/jpeg");
 
 	private static EncoderParameters GetEncoderParameters(int quality) {
@@ -29,7 +161,7 @@ internal static class JpgHelper
 		};
 	}
 
-	internal static void Save(this System.Drawing.Image bmp, string fileName, int quality) {
+	internal static void Save(this Image bmp, string fileName, int quality) {
 		//if (bmp.IsIndexed ()) {
 		//    bmp.Save (fileName, _jpgCodec, GetEncoderParameters (quality, 8));
 		//}
@@ -56,8 +188,8 @@ internal static class JpgHelper
 	}
 
 	/// <summary>
-	/// A class for reading Exif data from a JPEG file. The file will be open for reading for as long as the class exists.
-	/// <seealso cref="http://gvsoft.homedns.org/exif/Exif-explanation.html"/>
+	///     A class for reading Exif data from a JPEG file. The file will be open for reading for as long as the class exists.
+	///     <seealso cref="http://gvsoft.homedns.org/exif/Exif-explanation.html" />
 	/// </summary>
 	private class ExifReader : IDisposable
 	{
@@ -65,37 +197,42 @@ internal static class JpgHelper
 			new(@"^[\s0]{4}[:\s][\s0]{2}[:\s][\s0]{5}[:\s][\s0]{2}[:\s][\s0]{2}$");
 
 		private readonly bool _leaveOpen;
-		private Stream _stream;
-		private BinaryReader _reader;
 
 		/// <summary>
-		/// The main tag id/absolute file offset catalogue
+		///     The main tag id/absolute file offset catalogue
 		/// </summary>
 		private Dictionary<ushort, long> _ifd0Catalogue;
 
 		/// <summary>
-		/// The thumbnail tag id/absolute file offset catalogue
+		///     The thumbnail tag id/absolute file offset catalogue
 		/// </summary>
-		/// <remarks>JPEG images contain 2 main sections - one for the main image (which contains most of the useful EXIF data), and one for the thumbnail
-		/// image (which contains little more than the thumbnail itself). This catalogue is only used by <see cref="GetJpegThumbnailBytes"/>.</remarks>
+		/// <remarks>
+		///     JPEG images contain 2 main sections - one for the main image (which contains most of the useful EXIF data), and one
+		///     for the thumbnail
+		///     image (which contains little more than the thumbnail itself). This catalogue is only used by
+		///     <see cref="GetJpegThumbnailBytes" />.
+		/// </remarks>
 		private Dictionary<ushort, long> _ifd1Catalogue;
 
 		/// <summary>
-		/// Indicates whether to read data using big or little endian byte aligns
-		/// </summary>
-		private bool _isLittleEndian;
-
-		/// <summary>
-		/// The position in the filestream at which the TIFF header starts
-		/// </summary>
-		private long _tiffHeaderStart;
-
-		/// <summary>
-		/// The location of the thumbnail IFD
+		///     The location of the thumbnail IFD
 		/// </summary>
 		private uint _ifd1Offset;
 
 		private bool _isInitialized;
+
+		/// <summary>
+		///     Indicates whether to read data using big or little endian byte aligns
+		/// </summary>
+		private bool _isLittleEndian;
+
+		private BinaryReader _reader;
+		private Stream _stream;
+
+		/// <summary>
+		///     The position in the filestream at which the TIFF header starts
+		/// </summary>
+		private long _tiffHeaderStart;
 
 		public ExifReader(string fileName)
 			: this(new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) {
@@ -132,7 +269,7 @@ internal static class JpgHelper
 			_isLittleEndian = false;
 
 			// Open the file in a stream            
-			_reader = new BinaryReader(_stream, System.Text.Encoding.UTF8);
+			_reader = new BinaryReader(_stream, Encoding.UTF8);
 
 			// Make sure the file's a JPEG.
 			if (ReadUShort() != 0xFFD8) {
@@ -149,7 +286,7 @@ internal static class JpgHelper
 		#region TIFF methods
 
 		/// <summary>
-		/// Returns the length (in bytes) per component of the specified TIFF data type
+		///     Returns the length (in bytes) per component of the specified TIFF data type
 		/// </summary>
 		/// <returns></returns>
 		private static byte GetTIFFFieldLength(ushort tiffDataType) {
@@ -177,10 +314,90 @@ internal static class JpgHelper
 
 		#endregion
 
+		#region Thumbnail retrieval
+
+		/// <summary>
+		///     Retrieves a JPEG thumbnail from the image if one is present. Note that this method cannot retrieve thumbnails
+		///     encoded in other formats,
+		///     but since the DCF specification specifies that thumbnails must be JPEG, this method will be sufficient for most
+		///     purposes
+		///     See http://gvsoft.homedns.org/exif/exif-explanation.html#TIFFThumbs or
+		///     http://partners.adobe.com/public/developer/en/tiff/TIFF6.pdf for
+		///     details on the encoding of TIFF thumbnails
+		/// </summary>
+		/// <returns></returns>
+		public byte[] GetJpegThumbnailBytes() {
+			Initialize();
+
+			if (_ifd1Catalogue == null) {
+				return null;
+			}
+
+			// Get the thumbnail encoding
+			ushort compression;
+			if (!GetTagValue(_ifd1Catalogue, (ushort)ExifTags.Compression, out compression)) {
+				return null;
+			}
+
+			// This method only handles JPEG thumbnails (compression type 6)
+			if (compression != 6) {
+				return null;
+			}
+
+			// Get the location of the thumbnail
+			uint offset;
+			if (!GetTagValue(_ifd1Catalogue, (ushort)ExifTags.JPEGInterchangeFormat, out offset)) {
+				return null;
+			}
+
+			// Get the length of the thumbnail data
+			uint length;
+			if (!GetTagValue(_ifd1Catalogue, (ushort)ExifTags.JPEGInterchangeFormatLength, out length)) {
+				return null;
+			}
+
+			_stream.Position = offset;
+
+			// The thumbnail may be padded, so we scan forward until we reach the JPEG header (0xFFD8) or the end of the file
+			int currentByte;
+			int previousByte = -1;
+			while ((currentByte = _stream.ReadByte()) != -1) {
+				if (previousByte == 0xFF && currentByte == 0xD8) {
+					break;
+				}
+
+				previousByte = currentByte;
+			}
+
+			if (currentByte != 0xD8) {
+				return null;
+			}
+
+			// Step back to the start of the JPEG header
+			_stream.Position -= 2;
+
+			byte[] imageBytes = new byte[length];
+			_stream.Read(imageBytes, 0, (int)length);
+
+			// A valid JPEG stream ends with 0xFFD9. The stream may be padded at the end with multiple 0xFF bytes.
+			int jpegStreamEnd = (int)length - 1;
+			while (jpegStreamEnd > 0 && imageBytes[jpegStreamEnd] == 0xFF) {
+				jpegStreamEnd--;
+			}
+
+			if (jpegStreamEnd <= 0 || imageBytes[jpegStreamEnd] != 0xD9 || imageBytes[jpegStreamEnd - 1] != 0xFF) {
+				return null;
+			}
+
+			return imageBytes;
+		}
+
+		#endregion
+
 		#region Methods for reading data directly from the filestream
 
 		/// <summary>
-		/// Gets a 2 byte unsigned integer from the file
+		///     Gets a 2 byte unsigned integer from the file
 		/// </summary>
 		/// <returns></returns>
 		private ushort ReadUShort() {
@@ -188,7 +405,7 @@ internal static class JpgHelper
 		}
 
 		/// <summary>
-		/// Gets a 4 byte unsigned integer from the file
+		///     Gets a 4 byte unsigned integer from the file
 		/// </summary>
 		/// <returns></returns>
 		private uint ReadUint() {
@@ -197,7 +414,7 @@ internal static class JpgHelper
 
 		private string ReadString(int chars) {
 			byte[] bytes = ReadBytes(chars);
-			return System.Text.Encoding.UTF8.GetString(bytes, 0, bytes.Length);
+			return Encoding.UTF8.GetString(bytes, 0, bytes.Length);
 		}
 
 		private byte[] ReadBytes(int byteCount) {
@@ -205,7 +422,7 @@ internal static class JpgHelper
 		}
 
 		/// <summary>
-		/// Reads some bytes from the specified TIFF offset
+		///     Reads some bytes from the specified TIFF offset
 		/// </summary>
 		/// <param name="tiffOffset"></param>
 		/// <param name="byteCount"></param>
@@ -230,7 +447,7 @@ internal static class JpgHelper
 		#region Data conversion methods for interpreting datatypes from a byte array
 
 		/// <summary>
-		/// Converts 2 bytes to a ushort using the current byte aligns
+		///     Converts 2 bytes to a ushort using the current byte aligns
 		/// </summary>
 		/// <returns></returns>
 		private ushort ToUShort(byte[] data) {
@@ -242,8 +459,8 @@ internal static class JpgHelper
 		}
 
 		/// <summary>
-		/// Converts 8 bytes to the numerator and denominator
-		/// components of an unsigned rational using the current byte aligns
+		///     Converts 8 bytes to the numerator and denominator
+		///     components of an unsigned rational using the current byte aligns
 		/// </summary>
 		private uint[] ToURationalFraction(byte[] data) {
 			byte[] numeratorData = new byte[4];
@@ -260,9 +477,9 @@ internal static class JpgHelper
 
 
 		/// <summary>
-		/// Converts 8 bytes to an unsigned rational using the current byte aligns
+		///     Converts 8 bytes to an unsigned rational using the current byte aligns
 		/// </summary>
-		/// <seealso cref="ToRational"/>
+		/// <seealso cref="ToRational" />
 		private double ToURational(byte[] data) {
 			uint[] fraction = ToURationalFraction(data);
 
@@ -270,12 +487,12 @@ internal static class JpgHelper
 		}
 
 		/// <summary>
-		/// Converts 8 bytes to the numerator and denominator
-		/// components of an unsigned rational using the current byte aligns
+		///     Converts 8 bytes to the numerator and denominator
+		///     components of an unsigned rational using the current byte aligns
 		/// </summary>
 		/// <remarks>
-		/// A TIFF rational contains 2 4-byte integers, the first of which is
-		/// the numerator, and the second of which is the denominator.
+		///     A TIFF rational contains 2 4-byte integers, the first of which is
+		///     the numerator, and the second of which is the denominator.
 		/// </remarks>
 		private int[] ToRationalFraction(byte[] data) {
 			byte[] numeratorData = new byte[4];
@@ -291,9 +508,9 @@ internal static class JpgHelper
 		}
 
 		/// <summary>
-		/// Converts 8 bytes to a signed rational using the current byte aligns.
+		///     Converts 8 bytes to a signed rational using the current byte aligns.
 		/// </summary>
-		/// <seealso cref="ToRationalFraction"/>
+		/// <seealso cref="ToRationalFraction" />
 		private double ToRational(byte[] data) {
 			int[] fraction = ToRationalFraction(data);
 
@@ -301,7 +518,7 @@ internal static class JpgHelper
 		}
 
 		/// <summary>
-		/// Converts 4 bytes to a uint using the current byte aligns
+		///     Converts 4 bytes to a uint using the current byte aligns
 		/// </summary>
 		private uint ToUint(byte[] data) {
 			if (_isLittleEndian != BitConverter.IsLittleEndian) {
@@ -312,7 +529,7 @@ internal static class JpgHelper
 		}
 
 		/// <summary>
-		/// Converts 4 bytes to an int using the current byte aligns
+		///     Converts 4 bytes to an int using the current byte aligns
 		/// </summary>
 		private int ToInt(byte[] data) {
 			if (_isLittleEndian != BitConverter.IsLittleEndian) {
@@ -352,8 +569,8 @@ internal static class JpgHelper
 		}
 
 		/// <summary>
-		/// Retrieves an array from a byte array using the supplied converter
-		/// to read each individual element from the supplied byte array
+		///     Retrieves an array from a byte array using the supplied converter
+		///     to read each individual element from the supplied byte array
 		/// </summary>
 		/// <param name="data"></param>
 		/// <param name="elementLengthBytes"></param>
@@ -377,7 +594,7 @@ internal static class JpgHelper
 		}
 
 		/// <summary>
-		/// A delegate used to invoke any of the data conversion methods
+		///     A delegate used to invoke any of the data conversion methods
 		/// </summary>
 		/// <param name="data"></param>
 		/// <returns></returns>
@@ -389,7 +606,7 @@ internal static class JpgHelper
 		#region Stream seek methods - used to get to locations within the JPEG
 
 		/// <summary>
-		/// Scans to the Exif block
+		///     Scans to the Exif block
 		/// </summary>
 		private void ReadToExifStart() {
 			// The file has a number of blocks (Exif/JFIF), each of which
@@ -414,7 +631,7 @@ internal static class JpgHelper
 		}
 
 		/// <summary>
-		/// Reads through the Exif data and builds an index of all Exif tags in the document
+		///     Reads through the Exif data and builds an index of all Exif tags in the document
 		/// </summary>
 		/// <returns></returns>
 		private void CreateTagIndex() {
@@ -501,7 +718,7 @@ internal static class JpgHelper
 		}
 
 		/// <summary>
-		/// Retrieves an Exif value with the requested tag ID
+		///     Retrieves an Exif value with the requested tag ID
 		/// </summary>
 		private bool GetTagValue<T>(IDictionary<ushort, long> tagDictionary, ushort tagId, out T result) {
 			ushort tiffDataType;
@@ -530,7 +747,7 @@ internal static class JpgHelper
 					return true;
 				case 2:
 					// ascii string
-					string str = System.Text.Encoding.UTF8.GetString(tagData, 0, tagData.Length);
+					string str = Encoding.UTF8.GetString(tagData, 0, tagData.Length);
 
 					// There may be a null character within the string
 					int nullCharIndex = str.IndexOf('\0');
@@ -690,11 +907,13 @@ internal static class JpgHelper
 		}
 
 		/// <summary>
-		/// Gets the data in the specified tag ID, starting from before the IFD block.
+		///     Gets the data in the specified tag ID, starting from before the IFD block.
 		/// </summary>
 		/// <param name="tiffDataType"></param>
-		/// <param name="numberOfComponents">The number of items which make up the data item - i.e. for a string, this will be the
-		/// number of characters in the string</param>
+		/// <param name="numberOfComponents">
+		///     The number of items which make up the data item - i.e. for a string, this will be the
+		///     number of characters in the string
+		/// </param>
 		/// <param name="tagDictionary"></param>
 		/// <param name="tagId"></param>
 		private byte[] GetTagBytes(IDictionary<ushort, long> tagDictionary, ushort tagId, out ushort tiffDataType,
@@ -740,8 +959,8 @@ internal static class JpgHelper
 		}
 
 		/// <summary>
-		/// Records all Exif tags and their offsets within
-		/// the file from the current IFD
+		///     Records all Exif tags and their offsets within
+		///     the file from the current IFD
 		/// </summary>
 		private void CatalogueIFD(ref Dictionary<ushort, long> tagOffsets) {
 			// Assume we're just before the IFD.
@@ -758,83 +977,6 @@ internal static class JpgHelper
 				// Go to the end of this item (10 bytes, as each entry is 12 bytes long)
 				_stream.Seek(10, SeekOrigin.Current);
 			}
-		}
-
-		#endregion
-
-		#region Thumbnail retrieval
-
-		/// <summary>
-		/// Retrieves a JPEG thumbnail from the image if one is present. Note that this method cannot retrieve thumbnails encoded in other formats,
-		/// but since the DCF specification specifies that thumbnails must be JPEG, this method will be sufficient for most purposes
-		/// See http://gvsoft.homedns.org/exif/exif-explanation.html#TIFFThumbs or http://partners.adobe.com/public/developer/en/tiff/TIFF6.pdf for 
-		/// details on the encoding of TIFF thumbnails
-		/// </summary>
-		/// <returns></returns>
-		public byte[] GetJpegThumbnailBytes() {
-			Initialize();
-
-			if (_ifd1Catalogue == null) {
-				return null;
-			}
-
-			// Get the thumbnail encoding
-			ushort compression;
-			if (!GetTagValue(_ifd1Catalogue, (ushort)ExifTags.Compression, out compression)) {
-				return null;
-			}
-
-			// This method only handles JPEG thumbnails (compression type 6)
-			if (compression != 6) {
-				return null;
-			}
-
-			// Get the location of the thumbnail
-			uint offset;
-			if (!GetTagValue(_ifd1Catalogue, (ushort)ExifTags.JPEGInterchangeFormat, out offset)) {
-				return null;
-			}
-
-			// Get the length of the thumbnail data
-			uint length;
-			if (!GetTagValue(_ifd1Catalogue, (ushort)ExifTags.JPEGInterchangeFormatLength, out length)) {
-				return null;
-			}
-
-			_stream.Position = offset;
-
-			// The thumbnail may be padded, so we scan forward until we reach the JPEG header (0xFFD8) or the end of the file
-			int currentByte;
-			int previousByte = -1;
-			while ((currentByte = _stream.ReadByte()) != -1) {
-				if (previousByte == 0xFF && currentByte == 0xD8) {
-					break;
-				}
-
-				previousByte = currentByte;
-			}
-
-			if (currentByte != 0xD8) {
-				return null;
-			}
-
-			// Step back to the start of the JPEG header
-			_stream.Position -= 2;
-
-			byte[] imageBytes = new byte[length];
-			_stream.Read(imageBytes, 0, (int)length);
-
-			// A valid JPEG stream ends with 0xFFD9. The stream may be padded at the end with multiple 0xFF bytes.
-			int jpegStreamEnd = (int)length - 1;
-			while (jpegStreamEnd > 0 && imageBytes[jpegStreamEnd] == 0xFF) {
-				jpegStreamEnd--;
-			}
-
-			if (jpegStreamEnd <= 0 || imageBytes[jpegStreamEnd] != 0xD9 || imageBytes[jpegStreamEnd - 1] != 0xFF) {
-				return null;
-			}
-
-			return imageBytes;
 		}
 
 		#endregion
@@ -883,134 +1025,5 @@ internal static class JpgHelper
 		public ExifLibException(string message, Exception innerException)
 			: base(message, innerException) {
 		}
-	}
-
-	/// <summary>
-	/// All exif tags as per the Exif standard 2.2, JEITA CP-2451
-	/// </summary>
-	public enum ExifTags : ushort
-	{
-		// IFD0 items
-		ImageWidth = 0x100,
-		ImageLength = 0x101,
-		BitsPerSample = 0x102,
-		Compression = 0x103,
-		PhotometricInterpretation = 0x106,
-		ImageDescription = 0x10E,
-		Make = 0x10F,
-		Model = 0x110,
-		StripOffsets = 0x111,
-		Orientation = 0x112,
-		SamplesPerPixel = 0x115,
-		RowsPerStrip = 0x116,
-		StripByteCounts = 0x117,
-		XResolution = 0x11A,
-		YResolution = 0x11B,
-		PlanarConfiguration = 0x11C,
-		ResolutionUnit = 0x128,
-		TransferFunction = 0x12D,
-		Software = 0x131,
-		DateTime = 0x132,
-		Artist = 0x13B,
-		WhitePoint = 0x13E,
-		PrimaryChromaticities = 0x13F,
-		JPEGInterchangeFormat = 0x201,
-		JPEGInterchangeFormatLength = 0x202,
-		YCbCrCoefficients = 0x211,
-		YCbCrSubSampling = 0x212,
-		YCbCrPositioning = 0x213,
-		ReferenceBlackWhite = 0x214,
-		Copyright = 0x8298,
-
-		// SubIFD items
-		ExposureTime = 0x829A,
-		FNumber = 0x829D,
-		ExposureProgram = 0x8822,
-		SpectralSensitivity = 0x8824,
-		ISOSpeedRatings = 0x8827,
-		OECF = 0x8828,
-		ExifVersion = 0x9000,
-		DateTimeOriginal = 0x9003,
-		DateTimeDigitized = 0x9004,
-		ComponentsConfiguration = 0x9101,
-		CompressedBitsPerPixel = 0x9102,
-		ShutterSpeedValue = 0x9201,
-		ApertureValue = 0x9202,
-		BrightnessValue = 0x9203,
-		ExposureBiasValue = 0x9204,
-		MaxApertureValue = 0x9205,
-		SubjectDistance = 0x9206,
-		MeteringMode = 0x9207,
-		LightSource = 0x9208,
-		Flash = 0x9209,
-		FocalLength = 0x920A,
-		SubjectArea = 0x9214,
-		MakerNote = 0x927C,
-		UserComment = 0x9286,
-		SubsecTime = 0x9290,
-		SubsecTimeOriginal = 0x9291,
-		SubsecTimeDigitized = 0x9292,
-		FlashpixVersion = 0xA000,
-		ColorSpace = 0xA001,
-		PixelXDimension = 0xA002,
-		PixelYDimension = 0xA003,
-		RelatedSoundFile = 0xA004,
-		FlashEnergy = 0xA20B,
-		SpatialFrequencyResponse = 0xA20C,
-		FocalPlaneXResolution = 0xA20E,
-		FocalPlaneYResolution = 0xA20F,
-		FocalPlaneResolutionUnit = 0xA210,
-		SubjectLocation = 0xA214,
-		ExposureIndex = 0xA215,
-		SensingMethod = 0xA217,
-		FileSource = 0xA300,
-		SceneType = 0xA301,
-		CFAPattern = 0xA302,
-		CustomRendered = 0xA401,
-		ExposureMode = 0xA402,
-		WhiteBalance = 0xA403,
-		DigitalZoomRatio = 0xA404,
-		FocalLengthIn35mmFilm = 0xA405,
-		SceneCaptureType = 0xA406,
-		GainControl = 0xA407,
-		Contrast = 0xA408,
-		Saturation = 0xA409,
-		Sharpness = 0xA40A,
-		DeviceSettingDescription = 0xA40B,
-		SubjectDistanceRange = 0xA40C,
-		ImageUniqueID = 0xA420,
-
-		// GPS subifd items
-		GPSVersionID = 0x0,
-		GPSLatitudeRef = 0x1,
-		GPSLatitude = 0x2,
-		GPSLongitudeRef = 0x3,
-		GPSLongitude = 0x4,
-		GPSAltitudeRef = 0x5,
-		GPSAltitude = 0x6,
-		GPSTimestamp = 0x7,
-		GPSSatellites = 0x8,
-		GPSStatus = 0x9,
-		GPSMeasureMode = 0xA,
-		GPSDOP = 0xB,
-		GPSSpeedRef = 0xC,
-		GPSSpeed = 0xD,
-		GPSTrackRef = 0xE,
-		GPSTrack = 0xF,
-		GPSImgDirectionRef = 0x10,
-		GPSImgDirection = 0x11,
-		GPSMapDatum = 0x12,
-		GPSDestLatitudeRef = 0x13,
-		GPSDestLatitude = 0x14,
-		GPSDestLongitudeRef = 0x15,
-		GPSDestLongitude = 0x16,
-		GPSDestBearingRef = 0x17,
-		GPSDestBearing = 0x18,
-		GPSDestDistanceRef = 0x19,
-		GPSDestDistance = 0x1A,
-		GPSProcessingMethod = 0x1B,
-		GPSAreaInformation = 0x1C,
-		GPSDateStamp = 0x1D,
-		GPSDifferential = 0x1E
 	}
 }

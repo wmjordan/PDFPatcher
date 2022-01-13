@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using PDFPatcher.Common;
+using PDFPatcher.Properties;
 
 namespace PDFPatcher.Functions;
 
@@ -11,7 +12,7 @@ public partial class FontCharSubstitutionForm : Form
 
 	public FontCharSubstitutionForm(FontSubstitution substitution) {
 		InitializeComponent();
-		this.SetIcon(Properties.Resources.Replace);
+		this.SetIcon(Resources.Replace);
 		MinimumSize = Size;
 		MaximumSize = new Size(999, Size.Height);
 		_Substitution = substitution;

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Xml;
 using PDFPatcher.Common;
 using A = PDFPatcher.Constants.ActionType;
 using D = PDFPatcher.Constants.DestinationAttributes;
@@ -11,7 +12,7 @@ internal sealed class ForceInternalLinkProcessor : IPdfInfoXmlProcessor
 
 	public string Name => "设置点击目标到页首";
 
-	public IUndoAction Process(System.Xml.XmlElement item) {
+	public IUndoAction Process(XmlElement item) {
 		if (item.HasAttribute(D.Action)
 		    && item.GetAttribute(D.Path).EndsWith(".pdf", StringComparison.InvariantCultureIgnoreCase)
 		    && ValueHelper.IsInCollection(item.GetAttribute(D.Action), A.GotoR, A.Launch, A.Uri)) {

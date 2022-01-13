@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using PDFPatcher.Common;
+using PDFPatcher.Properties;
 
 namespace PDFPatcher.Functions;
 
@@ -23,21 +27,12 @@ public partial class ReportControl : UserControl
 			Hide();
 		}
 		else {
-			if (Common.FormHelper.YesNoBox("程序正在工作，是否终止执行？") == DialogResult.Yes) {
+			if (FormHelper.YesNoBox("程序正在工作，是否终止执行？") == DialogResult.Yes) {
 				AppContext.MainForm.GetWorker().CancelAsync();
 				AppContext.Abort = true;
 			}
 		}
 	}
-
-
-	#region IDefaultButtonControl 成员
-
-	//public override Button DefaultButton {
-	//	get { return _CancelButton; }
-	//}
-
-	#endregion
 
 	internal void SetGoal(int goalValue) {
 		_ProgressBar.Value = 0;
@@ -62,7 +57,7 @@ public partial class ReportControl : UserControl
 			_TotalProgressBar.Value++;
 		}
 		catch (ArgumentException) {
-			System.Diagnostics.Debug.WriteLine("Total Progress too big: " + _TotalProgressBar.Value);
+			Debug.WriteLine("Total Progress too big: " + _TotalProgressBar.Value);
 		}
 	}
 
@@ -71,22 +66,22 @@ public partial class ReportControl : UserControl
 			case Tracker.Category.Message:
 				goto default;
 			case Tracker.Category.ImportantMessage:
-				_LogBox.SelectionColor = System.Drawing.Color.DarkBlue;
-				Common.FormHelper.InsertLinkedText(_LogBox, text);
+				_LogBox.SelectionColor = Color.DarkBlue;
+				FormHelper.InsertLinkedText(_LogBox, text);
 				_LogBox.AppendText(Environment.NewLine);
 				break;
 			case Tracker.Category.Alert:
-				_LogBox.SelectionFont = new System.Drawing.Font(_LogBox.Font, System.Drawing.FontStyle.Bold);
-				_LogBox.SelectionColor = System.Drawing.Color.Blue;
-				Common.FormHelper.InsertLinkedText(_LogBox, text);
+				_LogBox.SelectionFont = new Font(_LogBox.Font, FontStyle.Bold);
+				_LogBox.SelectionColor = Color.Blue;
+				FormHelper.InsertLinkedText(_LogBox, text);
 				_LogBox.AppendText(Environment.NewLine);
 				break;
 			case Tracker.Category.Error:
-				_LogBox.SelectionFont = new System.Drawing.Font(_LogBox.Font, System.Drawing.FontStyle.Bold);
-				_LogBox.SelectionColor = System.Drawing.Color.Red;
+				_LogBox.SelectionFont = new Font(_LogBox.Font, FontStyle.Bold);
+				_LogBox.SelectionColor = Color.Red;
 				goto default;
 			case Tracker.Category.Notice:
-				_LogBox.SelectionColor = System.Drawing.Color.DarkMagenta;
+				_LogBox.SelectionColor = Color.DarkMagenta;
 				goto default;
 			case Tracker.Category.InputFile:
 				_InputFileBox.Text = text;
@@ -108,25 +103,34 @@ public partial class ReportControl : UserControl
 		_InputFileBox.Text = string.Empty;
 		_OutputFileBox.Text = string.Empty;
 		_CancelButton.Text = "取消";
-		_CancelButton.Image = Properties.Resources.Reset;
+		_CancelButton.Image = Resources.Reset;
 	}
 
 	internal void Complete() {
 		_ProgressBar.Value = _ProgressBar.Maximum;
 		_TotalProgressBar.Value = _TotalProgressBar.Maximum;
 		_CancelButton.Text = "返回";
-		_CancelButton.Image = Properties.Resources.Return;
+		_CancelButton.Image = Resources.Return;
 	}
 
 	private void _LogBox_LinkClicked(object sender, LinkClickedEventArgs e) {
 		string f = e.LinkText;
 		if (File.Exists(f) || Directory.Exists(f)) {
 			try {
-				System.Diagnostics.Process.Start(f);
+				Process.Start(f);
 			}
 			catch (Exception) {
-				Common.FormHelper.ErrorBox("无法打开文件：" + f);
+				FormHelper.ErrorBox("无法打开文件：" + f);
 			}
 		}
 	}
+
+
+	#region IDefaultButtonControl 成员
+
+	//public override Button DefaultButton {
+	//	get { return _CancelButton; }
+	//}
+
+	#endregion
 }

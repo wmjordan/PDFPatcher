@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
+using MuPdfSharp;
 using PDFPatcher.Common;
 using PDFPatcher.Model;
 using PDFPatcher.Processor;
@@ -21,7 +23,7 @@ internal sealed class EditModel
 	internal UndoManager Undo { get; }
 	internal string DocumentPath { get; set; }
 	internal string LastSavedPdfPath { get; set; }
-	internal MuPdfSharp.MuDocument PdfDocument { get; set; }
+	internal MuDocument PdfDocument { get; set; }
 	internal List<AutoBookmarkStyle> TitleStyles { get; }
 
 	internal string GetPdfFilePath() {
@@ -46,9 +48,15 @@ internal sealed class EditModel
 
 	internal sealed class Region
 	{
-		internal PagePosition Position { get; private set; }
-		internal string Text { get; private set; }
-		internal TextSource TextSource { get; private set; }
+		public Region(PagePosition position, string text, TextSource source) {
+			Position = position;
+			Text = text;
+			TextSource = source;
+		}
+
+		internal PagePosition Position { get; }
+		internal string Text { get; }
+		internal TextSource TextSource { get; }
 
 		internal string LiteralTextSource {
 			get {
@@ -58,15 +66,9 @@ internal sealed class EditModel
 					case TextSource.OcrText: return "已自动识别图像文本";
 					case TextSource.OcrError: return "当前页面不包含可识别文本，或识别过程出错";
 					default:
-						throw new System.IndexOutOfRangeException("TextSource");
+						throw new IndexOutOfRangeException("TextSource");
 				}
 			}
-		}
-
-		public Region(PagePosition position, string text, TextSource source) {
-			Position = position;
-			Text = text;
-			TextSource = source;
 		}
 	}
 
@@ -77,13 +79,13 @@ internal sealed class EditModel
 
 	internal sealed class AutoBookmarkStyle
 	{
-		internal readonly string InternalFontName;
 		internal readonly string FontName;
 		internal readonly int FontSize;
+		internal readonly string InternalFontName;
 		internal readonly BookmarkSettings Style;
-		internal MatchPattern MatchPattern = null;
 
 		internal int Level;
+		internal MatchPattern MatchPattern = null;
 
 		public AutoBookmarkStyle(int level, string internalFontName, int fontSize) {
 			Level = level;

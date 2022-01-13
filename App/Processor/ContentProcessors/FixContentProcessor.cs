@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using iTextSharp.text.pdf;
 using PDFPatcher.Model;
 
@@ -8,6 +7,19 @@ namespace PDFPatcher.Processor;
 internal sealed class FixContentProcessor : IPageProcessor
 {
 	private int _processedPageCount;
+
+	private static bool ProcessCommands(IPdfPageCommandContainer container) {
+		bool r = false;
+		IList<PdfPageCommand> cl = container.Commands;
+		int l = cl.Count;
+		for (int i = 0; i < l; i++) {
+			if (cl[i] is EnclosingCommand ec) {
+				r |= ProcessCommands(ec);
+			}
+		}
+
+		return r;
+	}
 
 	#region IPageProcessor 成员
 
@@ -39,17 +51,4 @@ internal sealed class FixContentProcessor : IPageProcessor
 	}
 
 	#endregion
-
-	private static bool ProcessCommands(IPdfPageCommandContainer container) {
-		bool r = false;
-		IList<PdfPageCommand> cl = container.Commands;
-		int l = cl.Count;
-		for (int i = 0; i < l; i++) {
-			if (cl[i] is EnclosingCommand ec) {
-				r |= ProcessCommands(ec);
-			}
-		}
-
-		return r;
-	}
 }

@@ -1,44 +1,43 @@
-﻿using System;
+﻿using System.Diagnostics;
 using PDFPatcher.Model;
 
 namespace PDFPatcher.Processor;
 
-[System.Diagnostics.DebuggerDisplay("{MinSize}->{MaxSize}")]
+[DebuggerDisplay("{MinSize}->{MaxSize}")]
 public class TextSizeFilter : AutoBookmarkFilter
 {
-	private readonly float _minSize, _maxSize;
-	public float MinSize => _minSize;
-	public float MaxSize => _maxSize;
-
 	public TextSizeFilter(float a, float b) {
 		if (a > b) {
-			_minSize = b;
-			_maxSize = a;
+			MinSize = b;
+			MaxSize = a;
 		}
 		else {
-			_minSize = a;
-			_maxSize = b;
+			MinSize = a;
+			MaxSize = b;
 		}
 	}
+
+	public float MinSize { get; }
+
+	public float MaxSize { get; }
 
 	internal override bool Matches(AutoBookmarkContext context) {
 		if (context.TextLine == null) {
 			float size = context.TextInfo.Size;
 			return MatchSize(size);
 		}
-		else {
-			foreach (TextInfo item in context.TextLine.Texts) {
-				if (MatchSize(item.Size)) {
-					return true;
-				}
-			}
 
-			return false;
+		foreach (TextInfo item in context.TextLine.Texts) {
+			if (MatchSize(item.Size)) {
+				return true;
+			}
 		}
+
+		return false;
 	}
 
 	private bool MatchSize(float size) {
-		return _minSize <= size && size <= _maxSize;
+		return MinSize <= size && size <= MaxSize;
 	}
 
 	internal override void Reset() {

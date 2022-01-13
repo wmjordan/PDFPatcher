@@ -1,4 +1,5 @@
-﻿using System.Xml;
+﻿using System;
+using System.Xml;
 
 namespace PDFPatcher.Processor;
 
@@ -16,7 +17,7 @@ internal sealed class ReplaceTitleTextProcessor : IPdfInfoXmlProcessor
 
 	public ReplaceTitleTextProcessor(BookmarkMatcher matcher, string replacement) {
 		if (matcher == null) {
-			throw new System.ArgumentNullException("matcher");
+			throw new ArgumentNullException("matcher");
 		}
 
 		_matcher = matcher;

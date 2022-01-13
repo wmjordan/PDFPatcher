@@ -1,19 +1,18 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using MuPdfSharp;
 using PDFPatcher.Common;
+using PDFPatcher.Processor;
+using PDFPatcher.Properties;
 
 namespace PDFPatcher.Functions;
 
 [ToolboxItem(false)]
 public partial class RenderImageControl : FunctionControl, IResettableControl
 {
-	public override string FunctionName => "转换页面为图片";
-
-	public override System.Drawing.Bitmap IconImage => Properties.Resources.RenderDocument;
-
 	public RenderImageControl() {
 		InitializeComponent();
 		//this.Icon = Common.FormHelper.ToIcon (Properties.Resources.RenderImage);
@@ -44,23 +43,15 @@ public partial class RenderImageControl : FunctionControl, IResettableControl
 		_ExtractPageRatioBox.GotFocus += (s, args) => { _SpecificRatioBox.Checked = true; };
 	}
 
-	protected override void OnLoad(EventArgs e) {
-		base.OnLoad(e);
-		ShowFileMaskPreview();
-		AppContext.MainForm.SetTooltip(_SourceFileControl.FileList, "包含图片的 PDF 文件路径");
-		AppContext.MainForm.SetTooltip(_TargetBox, "放置输出图片的文件夹路径");
-		AppContext.MainForm.SetTooltip(_ExtractPageRangeBox, "需要提取图片的页码范围，不指定页码范围时提取所有页面的图片");
-		AppContext.MainForm.SetTooltip(_FileNameMaskBox,
-			"提取的图片文件名按其所在页码数字命名，可在此修改命名规则\n“0000”：不足四位用0补足四位\n“0”：文件名按实际页码，不用0补位\n可用英文双引号将文本括起来（如“\"相约2000\"0”，前面的“2000”不会被解释为占位符）");
-		AppContext.MainForm.SetTooltip(_VerticalFlipImageBox, "某些 PDF 文件导出的图片上下颠倒，可用此选项将其还原");
-		AppContext.MainForm.SetTooltip(_InvertColorBox, "翻转 PNG 和 TIFF 黑白图片的颜色");
-		AppContext.MainForm.SetTooltip(_QuantizeBox, "尽量减少导出图片所用的颜色，从而减小图片占用的磁盘空间");
-		AppContext.MainForm.SetTooltip(_SpecificWidthBox, "指定输出图片的宽度（单位为像素，图片的高度将按比例缩放）");
-		AppContext.MainForm.SetTooltip(_SpecificRatioBox, "指定输出图片的放大倍数");
-		AppContext.MainForm.SetTooltip(_ExtractPageImageWidthBox,
-			"指定输出图片的宽度（单位为像素，图片的高度将按比例缩放），宽度为 0 时相当于按 1：1 比例输出");
-		Reload();
-	}
+	public override string FunctionName => "转换页面为图片";
+
+	public override Bitmap IconImage => Resources.RenderDocument;
+
+	#region IDefaultButtonControl 成员
+
+	public override Button DefaultButton => _ExtractButton;
+
+	#endregion
 
 	public void Reset() {
 		AppContext.ImageRenderer = new ImageRendererOptions();
@@ -94,6 +85,24 @@ public partial class RenderImageControl : FunctionControl, IResettableControl
 		_VerticalFlipImageBox.Checked = o.VerticalFlipImages;
 		_ExtractPageImageWidthBox.SetValue(o.ImageWidth);
 		_ExtractPageRatioBox.SetValue(o.ScaleRatio);
+	}
+
+	protected override void OnLoad(EventArgs e) {
+		base.OnLoad(e);
+		ShowFileMaskPreview();
+		AppContext.MainForm.SetTooltip(_SourceFileControl.FileList, "包含图片的 PDF 文件路径");
+		AppContext.MainForm.SetTooltip(_TargetBox, "放置输出图片的文件夹路径");
+		AppContext.MainForm.SetTooltip(_ExtractPageRangeBox, "需要提取图片的页码范围，不指定页码范围时提取所有页面的图片");
+		AppContext.MainForm.SetTooltip(_FileNameMaskBox,
+			"提取的图片文件名按其所在页码数字命名，可在此修改命名规则\n“0000”：不足四位用0补足四位\n“0”：文件名按实际页码，不用0补位\n可用英文双引号将文本括起来（如“\"相约2000\"0”，前面的“2000”不会被解释为占位符）");
+		AppContext.MainForm.SetTooltip(_VerticalFlipImageBox, "某些 PDF 文件导出的图片上下颠倒，可用此选项将其还原");
+		AppContext.MainForm.SetTooltip(_InvertColorBox, "翻转 PNG 和 TIFF 黑白图片的颜色");
+		AppContext.MainForm.SetTooltip(_QuantizeBox, "尽量减少导出图片所用的颜色，从而减小图片占用的磁盘空间");
+		AppContext.MainForm.SetTooltip(_SpecificWidthBox, "指定输出图片的宽度（单位为像素，图片的高度将按比例缩放）");
+		AppContext.MainForm.SetTooltip(_SpecificRatioBox, "指定输出图片的放大倍数");
+		AppContext.MainForm.SetTooltip(_ExtractPageImageWidthBox,
+			"指定输出图片的宽度（单位为像素，图片的高度将按比例缩放），宽度为 0 时相当于按 1：1 比例输出");
+		Reload();
 	}
 
 	private void _BrowseTargetPdfButton_Click(object sender, EventArgs e) {
@@ -145,7 +154,7 @@ public partial class RenderImageControl : FunctionControl, IResettableControl
 				foreach (string file in files) {
 					options.ExtractImagePath = new FilePath(ep).Combine(new FilePath(file).FileNameWithoutExtension)
 						.Normalize();
-					Processor.Worker.RenderPages(file, options);
+					Worker.RenderPages(file, options);
 					Tracker.IncrementTotalProgress();
 					if (AppContext.Abort) {
 						return;
@@ -153,7 +162,7 @@ public partial class RenderImageControl : FunctionControl, IResettableControl
 				}
 			}
 			else {
-				Processor.Worker.RenderPages(files[0], options);
+				Worker.RenderPages(files[0], options);
 			}
 		};
 		worker.RunWorkerCompleted += (dummy, arg) => {
@@ -183,12 +192,6 @@ public partial class RenderImageControl : FunctionControl, IResettableControl
 			new object[] {AppContext.SourceFiles, option});
 		option = null;
 	}
-
-	#region IDefaultButtonControl 成员
-
-	public override Button DefaultButton => _ExtractButton;
-
-	#endregion
 
 	private void _GoToImportImageLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
 		AppContext.MainForm.SelectFunctionList(Function.Patcher);

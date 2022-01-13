@@ -1,23 +1,9 @@
-﻿using System;
-using iTextSharp.text.pdf;
-using iTextSharp.text.pdf.parser;
+﻿using iTextSharp.text.pdf.parser;
 
 namespace PDFPatcher.Model;
 
 internal sealed class GraphicsState
 {
-	internal Matrix TransMatrix { get; set; }
-	internal float CharacterSpacing { get; set; }
-	internal float WordSpacing { get; set; }
-	internal float HorizontalScaling { get; set; }
-	internal float Leading { get; set; }
-	internal int FontID { get; set; }
-	internal FontInfo Font { get; set; }
-	internal float FontSize { get; set; }
-	internal int RenderMode { get; set; }
-	internal float Rise { get; set; }
-	internal bool KnockOut { get; set; }
-
 	/**
          * Constructs a new Graphics State object with the default values.
          */
@@ -33,6 +19,18 @@ internal sealed class GraphicsState
 		Rise = 0;
 		KnockOut = true;
 	}
+
+	internal Matrix TransMatrix { get; set; }
+	internal float CharacterSpacing { get; set; }
+	internal float WordSpacing { get; set; }
+	internal float HorizontalScaling { get; set; }
+	internal float Leading { get; set; }
+	internal int FontID { get; set; }
+	internal FontInfo Font { get; set; }
+	internal float FontSize { get; set; }
+	internal int RenderMode { get; set; }
+	internal float Rise { get; set; }
+	internal bool KnockOut { get; set; }
 
 	public GraphicsState Copy() {
 		return MemberwiseClone() as GraphicsState;

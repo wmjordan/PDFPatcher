@@ -1,25 +1,23 @@
 ﻿using System;
 using System.Collections;
 using System.ComponentModel;
+using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using System.Xml;
+using BrightIdeasSoftware;
 using PDFPatcher.Common;
 using PDFPatcher.Model;
+using PDFPatcher.Processor;
+using PDFPatcher.Properties;
 
 namespace PDFPatcher.Functions;
 
 [ToolboxItem(false)]
 public partial class AutoBookmarkControl : FunctionControl, IResettableControl
 {
-	private AutoBookmarkOptions _options;
 	private static AutoBookmarkOptions.LevelAdjustmentOption[] _copiedLevelAdjustments;
-
-	public override string FunctionName => "自动生成书签";
-
-	public override System.Drawing.Bitmap IconImage => Properties.Resources.AutoBookmark;
-
-	public override Button DefaultButton => _ExportBookmarkButton;
+	private AutoBookmarkOptions _options;
 
 	public AutoBookmarkControl() {
 		InitializeComponent();
@@ -43,10 +41,10 @@ public partial class AutoBookmarkControl : FunctionControl, IResettableControl
 		}
 
 		_LevelAdjustmentBox.CellEditUseWholeCell = true;
-		_LevelAdjustmentBox.BeforeSorting += (object sender, BrightIdeasSoftware.BeforeSortingEventArgs e) => {
+		_LevelAdjustmentBox.BeforeSorting += (object sender, BeforeSortingEventArgs e) => {
 			e.Canceled = true;
 		};
-		_LevelAdjustmentBox.DropSink = new BrightIdeasSoftware.RearrangingDropSink(false);
+		_LevelAdjustmentBox.DropSink = new RearrangingDropSink(false);
 		_AdvancedFilterColumn.AspectGetter = (object x) => {
 			AutoBookmarkOptions.LevelAdjustmentOption f = x as AutoBookmarkOptions.LevelAdjustmentOption;
 			if (f == null) {
@@ -98,6 +96,12 @@ public partial class AutoBookmarkControl : FunctionControl, IResettableControl
 			sd.OverwritePrompt = false;
 		}
 	}
+
+	public override string FunctionName => "自动生成书签";
+
+	public override Bitmap IconImage => Resources.AutoBookmark;
+
+	public override Button DefaultButton => _ExportBookmarkButton;
 
 	public void Reset() {
 		AppContext.AutoBookmarker = new AutoBookmarkOptions();
@@ -219,7 +223,7 @@ public partial class AutoBookmarkControl : FunctionControl, IResettableControl
 			string p = Path.GetDirectoryName(b);
 			string ext = Path.GetExtension(b);
 			foreach (string file in files) {
-				Processor.Worker.CreateBookmark(file,
+				Worker.CreateBookmark(file,
 					FileHelper.CombinePath(p, Path.GetFileNameWithoutExtension(file) + ext), options);
 				if (AppContext.Abort) {
 					return;
@@ -227,7 +231,7 @@ public partial class AutoBookmarkControl : FunctionControl, IResettableControl
 			}
 		}
 		else {
-			Processor.Worker.CreateBookmark(files[0], b, options);
+			Worker.CreateBookmark(files[0], b, options);
 		}
 	}
 

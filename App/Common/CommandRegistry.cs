@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace PDFPatcher.Common;
 
 /// <summary>
-/// 表示在指定上下文下执行的处理命令。
+///     表示在指定上下文下执行的处理命令。
 /// </summary>
 /// <typeparam name="P">处理命令时的上下文类型。</typeparam>
 internal interface ICommand<P>
@@ -14,7 +13,7 @@ internal interface ICommand<P>
 }
 
 /// <summary>
-/// 不区分字符串大小写匹配的容器集合。用于编辑器命令模式。
+///     不区分字符串大小写匹配的容器集合。用于编辑器命令模式。
 /// </summary>
 /// <typeparam name="P">命令模式的处理参数类型。</typeparam>
 internal sealed class CommandRegistry<P>
@@ -22,7 +21,7 @@ internal sealed class CommandRegistry<P>
 	private readonly Dictionary<string, ICommand<P>> _container = new(StringComparer.OrdinalIgnoreCase);
 
 	/// <summary>
-	/// 注册执行处理的命令处理器。
+	///     注册执行处理的命令处理器。
 	/// </summary>
 	/// <param name="command">执行命令的处理器。</param>
 	/// <param name="commandIDs">触发该命令的命令标识符。</param>
@@ -33,7 +32,7 @@ internal sealed class CommandRegistry<P>
 	}
 
 	/// <summary>
-	/// 执行指定的命令。
+	///     执行指定的命令。
 	/// </summary>
 	/// <param name="commandID">命令标识符。</param>
 	/// <param name="context">处理命令时的上下文变量。</param>

@@ -2,10 +2,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text;
 using Microsoft.Win32;
 using PDFPatcher.Common;
 using PDFPatcher.Model;
@@ -21,76 +23,13 @@ public class ModiOcr
 		@"Software\Microsoft\Installer\Components\61BA386016BD0C340BBEAC273D84FD5F";
 
 	private static readonly List<int> __InstalledLanguage = DetectInstalledLanguages();
-	private static readonly bool __ModiInstalled = DetectModi();
+
 	public int LangID { get; set; }
 	public bool StretchPage { get; set; }
 	public bool OrientPage { get; set; }
 	public WritingDirection WritingDirection { get; set; }
 
-	public ModiOcr() {
-		//if (_modiPath == null) {
-		//    _modiPath = FindModi ();
-		//}
-	}
-
-	internal static bool ModiInstalled => __ModiInstalled;
-
-	#region COMInterop
-
-	private static readonly object[] EmptyArray = new object[0];
-
-	private static object Create(string type) {
-		Type t = Type.GetTypeFromProgID(type);
-		if (t == null) {
-			return null;
-		}
-
-		return Activator.CreateInstance(t);
-	}
-
-	private static object Call(object instance, string method, params object[] parameters) {
-		try {
-			return instance.GetType().InvokeMember(method, BindingFlags.InvokeMethod, null, instance, parameters);
-		}
-		catch (Exception ex) {
-			if (ex.InnerException != null) {
-				throw ex.InnerException;
-			}
-
-			throw;
-		}
-	}
-
-	private static object Get(object instance, string propertyName) {
-		return instance.GetType().InvokeMember(propertyName, BindingFlags.GetProperty, null, instance, EmptyArray);
-	}
-
-	private static T Get<T>(object instance, string propertyName) {
-		return (T)Get(instance, propertyName);
-	}
-
-	private static object Get(object instance, string propertyName, int index) {
-		return instance.GetType().InvokeMember(propertyName, BindingFlags.GetProperty, null, instance,
-			new object[1] {index});
-	}
-
-	private static void FinalReleaseComObjects(params object[] objs) {
-		for (int i = 0; i < objs.Length; i++) {
-			if (objs[i] == null) {
-				continue;
-			}
-
-			try {
-				int r = Marshal.ReleaseComObject(objs[i]);
-				System.Diagnostics.Debug.Assert(r == 0);
-			}
-			catch (Exception ex) {
-				System.Diagnostics.Debug.WriteLine("释放对象时出现错误：" + ex.Message);
-			}
-		}
-	}
-
-	#endregion
+	internal static bool ModiInstalled { get; } = DetectModi();
 
 	private static bool DetectModi() {
 		if (__InstalledLanguage.Count == 0) {
@@ -178,7 +117,7 @@ public class ModiOcr
 			image = Get(images, "Item", 0);
 			layout = Get(image, "Layout");
 #if DEBUGOCR && DEBUG
-			StreamWriter l = new(@"m:\ocr.txt", true, System.Text.Encoding.Default);
+			StreamWriter l = new(@"m:\ocr.txt", true, Encoding.Default);
 			l.WriteLine("path: " + path);
 #endif
 			words = Get<IEnumerable>(layout, "Words");
@@ -306,6 +245,63 @@ public class ModiOcr
 			merge = mergeImages = null;
 		}
 	}
+
+	#region COMInterop
+
+	private static readonly object[] EmptyArray = new object[0];
+
+	private static object Create(string type) {
+		Type t = Type.GetTypeFromProgID(type);
+		if (t == null) {
+			return null;
+		}
+
+		return Activator.CreateInstance(t);
+	}
+
+	private static object Call(object instance, string method, params object[] parameters) {
+		try {
+			return instance.GetType().InvokeMember(method, BindingFlags.InvokeMethod, null, instance, parameters);
+		}
+		catch (Exception ex) {
+			if (ex.InnerException != null) {
+				throw ex.InnerException;
+			}
+
+			throw;
+		}
+	}
+
+	private static object Get(object instance, string propertyName) {
+		return instance.GetType().InvokeMember(propertyName, BindingFlags.GetProperty, null, instance, EmptyArray);
+	}
+
+	private static T Get<T>(object instance, string propertyName) {
+		return (T)Get(instance, propertyName);
+	}
+
+	private static object Get(object instance, string propertyName, int index) {
+		return instance.GetType().InvokeMember(propertyName, BindingFlags.GetProperty, null, instance,
+			new object[1] {index});
+	}
+
+	private static void FinalReleaseComObjects(params object[] objs) {
+		for (int i = 0; i < objs.Length; i++) {
+			if (objs[i] == null) {
+				continue;
+			}
+
+			try {
+				int r = Marshal.ReleaseComObject(objs[i]);
+				Debug.Assert(r == 0);
+			}
+			catch (Exception ex) {
+				Debug.WriteLine("释放对象时出现错误：" + ex.Message);
+			}
+		}
+	}
+
+	#endregion
 
 	//private static string FindModi () {
 	//    var p = Registry.GetValue (@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Shared Tools", "SharedFilesDir", null) as string;

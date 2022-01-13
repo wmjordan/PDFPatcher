@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows.Forms;
-using System.Xml;
+﻿using System.Windows.Forms;
 using BrightIdeasSoftware;
 using PDFPatcher.Common;
+using PDFPatcher.Model;
 using PDFPatcher.Processor;
 
 namespace PDFPatcher.Functions.Editor;
@@ -54,7 +51,7 @@ internal sealed class BookmarkActionCommand : IEditorCommand
 
 				break;
 			case "_BookmarkAction":
-				b.ShowBookmarkProperties(b.GetFirstSelectedModel<Model.BookmarkElement>());
+				b.ShowBookmarkProperties(b.GetFirstSelectedModel<BookmarkElement>());
 				break;
 			default:
 				controller.ProcessBookmarks(new ChangeZoomRateProcessor(_viewType));

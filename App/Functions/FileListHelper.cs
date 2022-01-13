@@ -20,7 +20,7 @@ internal sealed class FileListHelper
 	}
 
 	/// <summary>
-	/// 设置 PDF 文件列表的拖放操作。
+	///     设置 PDF 文件列表的拖放操作。
 	/// </summary>
 	/// <param name="addFilesCallback">添加文件的回调函数。</param>
 	public void SetupDragAndDrop(AddFilesCallback addFilesCallback) {
@@ -29,15 +29,15 @@ internal sealed class FileListHelper
 		_fileList.DropSink = ds;
 
 		ds.CanDrop += (s, args) => {
-			string[] files = FormHelper.DropFileOver(args.DragEventArgs, Constants.FileExtensions.Pdf);
+			string[] files = args.DragEventArgs.DropFileOver(Constants.FileExtensions.Pdf);
 			if (files.Length > 0) {
 				args.Effect = DragDropEffects.Link;
-				args.InfoMessage = "添加 " + files.Length.ToString() + " 个文件";
+				args.InfoMessage = "添加 " + files.Length + " 个文件";
 				args.Handled = true;
 			}
 		};
 		ds.Dropped += (s, args) => {
-			string[] files = FormHelper.DropFileOver(args.DragEventArgs, Constants.FileExtensions.Pdf);
+			string[] files = args.DragEventArgs.DropFileOver(Constants.FileExtensions.Pdf);
 			if (files.Length > 0) {
 				_fileList.SelectedIndex
 					= args.DropTargetLocation == DropTargetLocation.Background
@@ -50,7 +50,7 @@ internal sealed class FileListHelper
 	}
 
 	/// <summary>
-	/// 打开 PDF 文件的 <see cref="ToolStripSplitButton"/> 显示下拉文件列表的事件处理函数。
+	///     打开 PDF 文件的 <see cref="ToolStripSplitButton" /> 显示下拉文件列表的事件处理函数。
 	/// </summary>
 	/// <param name="sender"></param>
 	/// <param name="e"></param>
@@ -68,9 +68,9 @@ internal sealed class FileListHelper
 	}
 
 	/// <summary>
-	/// 以指定编码刷新文件列表的选定项目。
+	///     以指定编码刷新文件列表的选定项目。
 	/// </summary>
-	/// <param name="encoding">用于读取文档元数据的 <see cref="Enocding"/>。</param>
+	/// <param name="encoding">用于读取文档元数据的 <see cref="Enocding" />。</param>
 	public void RefreshInfo(Encoding encoding) {
 		IList ol = _fileList.SelectedObjects;
 		if (ol.Count == 0) {
@@ -86,7 +86,7 @@ internal sealed class FileListHelper
 	}
 
 	/// <summary>
-	/// 为 <see cref="OLVColumn"/> 设置读写处理函数。
+	///     为 <see cref="OLVColumn" /> 设置读写处理函数。
 	/// </summary>
 	/// <param name="columns">需要设置的列。</param>
 	public static void SetupCommonPdfColumns(params OLVColumn[] columns) {
@@ -199,11 +199,8 @@ internal sealed class FileListHelper
 			case "_Copy":
 				StringBuilder sb = new();
 				foreach (SourceItem.Pdf item in GetSourceItems<SourceItem>(true)) {
-					sb.AppendLine(string.Join("\t",
-						new string[] {
-							item.FilePath.ToString(), item.PageCount.ToText(), item.DocInfo.Title, item.DocInfo.Author,
-							item.DocInfo.Subject, item.DocInfo.Keywords
-						}));
+					sb.AppendLine(string.Join("\t", item.FilePath.ToString(), item.PageCount.ToText(),
+						item.DocInfo.Title, item.DocInfo.Author, item.DocInfo.Subject, item.DocInfo.Keywords));
 				}
 
 				if (sb.Length > 0) {

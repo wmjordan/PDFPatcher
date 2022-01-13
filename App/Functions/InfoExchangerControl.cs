@@ -1,13 +1,16 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using PDFPatcher.Common;
 using PDFPatcher.Model;
+using PDFPatcher.Processor;
+using PDFPatcher.Properties;
 
 namespace PDFPatcher.Functions;
 
@@ -16,13 +19,19 @@ public partial class InfoExchangerControl : FunctionControl
 {
 	private FileListHelper _listHelper;
 
-	public override string FunctionName => "导出导入信息文件";
-
-	public override System.Drawing.Bitmap IconImage => Properties.Resources.CreateDocument;
-
 	public InfoExchangerControl() {
 		InitializeComponent();
 	}
+
+	public override string FunctionName => "导出导入信息文件";
+
+	public override Bitmap IconImage => Resources.CreateDocument;
+
+	#region IDefaultButtonControl 成员
+
+	public override Button DefaultButton => _ImportButton;
+
+	#endregion
 
 	private void PatcherControl_OnLoad(object sender, EventArgs e) {
 		//this.Icon = Common.FormHelper.ToIcon (Properties.Resources.CreateDocument);
@@ -38,22 +47,21 @@ public partial class InfoExchangerControl : FunctionControl
 		_ConfigButton.Click += (s, args) => AppContext.MainForm.SelectFunctionList(Function.PatcherOptions);
 		_InfoConfigButton.Click += (s, args) => AppContext.MainForm.SelectFunctionList(Function.InfoFileOptions);
 
-		new TypedColumn<Processor.IProcessor>(_ActionNameColumn) {
-			AspectGetter = (o) => o.Name,
-			ImageGetter = (o) => {
-				if (o is Processor.IPageProcessor) {
-					return Properties.Resources.PageProcessor;
+		new TypedColumn<IProcessor>(_ActionNameColumn) {
+			AspectGetter = o => o.Name,
+			ImageGetter = o => {
+				if (o is IPageProcessor) {
+					return Resources.PageProcessor;
 				}
-				else {
-					return Properties.Resources.DocumentProcessor;
-				}
+
+				return Resources.DocumentProcessor;
 			}
 		};
 		_TargetPdfFile.FileMacroMenu.LoadStandardInfoMacros();
 		_TargetPdfFile.FileMacroMenu.LoadStandardSourceFileMacros();
 		_BookmarkControl.FileDialog.CheckFileExists = false;
-		_BookmarkControl.BrowseForFile += new EventHandler<EventArgs>(FileControl_BrowseForFile);
-		_TargetPdfFile.BrowseForFile += new EventHandler<EventArgs>(FileControl_BrowseForFile);
+		_BookmarkControl.BrowseForFile += FileControl_BrowseForFile;
+		_TargetPdfFile.BrowseForFile += FileControl_BrowseForFile;
 		_TargetPdfFile.TargetFileChangedByBrowseButton += (s, args) => {
 			int i;
 			string f = _TargetPdfFile.FileDialog.FileName;
@@ -64,7 +72,7 @@ public partial class InfoExchangerControl : FunctionControl
 			}
 		};
 		ImageList.ImageCollection fi = _FileTypeList.Images;
-		fi.AddRange(new System.Drawing.Image[] {Properties.Resources.OriginalPdfFile});
+		fi.AddRange(new Image[] {Resources.OriginalPdfFile});
 		//_ItemList.SelectedIndexChanged += (s, args) => {
 		//	if (_ItemList.SelectedIndex != -1 && _TargetPdfFile.Text.Trim ().Length > 0) {
 		//		var f = _ItemList.GetModelObject (_ItemList.SelectedIndex) as SourceItem;
@@ -92,7 +100,7 @@ public partial class InfoExchangerControl : FunctionControl
 		_AddFilesButton.DropDownOpening += FileListHelper.OpenPdfButtonDropDownOpeningHandler;
 		_AddFilesButton.DropDownItemClicked += (s, args) => {
 			args.ClickedItem.Owner.Hide();
-			AddFiles(new string[] {args.ClickedItem.ToolTipText}, true);
+			AddFiles(new[] {args.ClickedItem.ToolTipText}, true);
 		};
 	}
 
@@ -192,7 +200,7 @@ public partial class InfoExchangerControl : FunctionControl
 				Tracker.SetTotalProgressGoal(files.Count);
 				foreach (SourceItem file in files) {
 					if (file.Type == SourceItem.ItemType.Pdf) {
-						Processor.Worker.PatchDocument(file as SourceItem.Pdf,
+						Worker.PatchDocument(file as SourceItem.Pdf,
 							file.GetTargetPdfFileName(t),
 							file.GetInfoFileName(),
 							AppContext.Importer,
@@ -214,7 +222,7 @@ public partial class InfoExchangerControl : FunctionControl
 					return;
 				}
 
-				Processor.Worker.PatchDocument(files[0] as SourceItem.Pdf,
+				Worker.PatchDocument(files[0] as SourceItem.Pdf,
 					t,
 					a[1] as string,
 					AppContext.Importer,
@@ -248,7 +256,7 @@ public partial class InfoExchangerControl : FunctionControl
 				string ext = Path.GetExtension(a[0] as string);
 				Tracker.SetTotalProgressGoal(files.Count);
 				foreach (SourceItem file in files) {
-					Processor.Worker.ExportInfo(file.FilePath.ToString(),
+					Worker.ExportInfo(file.FilePath.ToString(),
 						file.FilePath.Directory.Combine(p).Combine(file.FilePath.ChangeExtension(ext)).ToString());
 					Tracker.IncrementTotalProgress();
 					if (AppContext.Abort) {
@@ -262,7 +270,7 @@ public partial class InfoExchangerControl : FunctionControl
 					return;
 				}
 
-				Processor.Worker.ExportInfo(files[0].FilePath.ToString(), a[0] as string);
+				Worker.ExportInfo(files[0].FilePath.ToString(), a[0] as string);
 			}
 		};
 		w.RunWorkerAsync(new object[] {AppContext.BookmarkFile});
@@ -329,14 +337,13 @@ public partial class InfoExchangerControl : FunctionControl
 					t = string.Concat("(找不到 PDF 文件：", s, ")");
 					continue;
 				}
-				else {
-					t = Processor.Worker.RenameFile(template, item);
-					if (t.Length == 0) {
-						t = "<输出文件名无效>";
-					}
-					else if (Path.GetFileName(t).Length == 0) {
-						t = "<输出文件名为空>";
-					}
+
+				t = Worker.RenameFile(template, item);
+				if (t.Length == 0) {
+					t = "<输出文件名无效>";
+				}
+				else if (Path.GetFileName(t).Length == 0) {
+					t = "<输出文件名为空>";
 				}
 
 				source[i] = s.ToString();
@@ -375,20 +382,14 @@ public partial class InfoExchangerControl : FunctionControl
 			return;
 		}
 
-		AddItems(new SourceItem[] {item});
+		AddItems(new[] {item});
 	}
 
-	private void AddItems(System.Collections.ICollection items) {
+	private void AddItems(ICollection items) {
 		int i = _ItemList.GetLastSelectedIndex();
 		_ItemList.InsertObjects(++i, items);
 		_ItemList.SelectedIndex = --i + items.Count;
 	}
-
-	#endregion
-
-	#region IDefaultButtonControl 成员
-
-	public override Button DefaultButton => _ImportButton;
 
 	#endregion
 }

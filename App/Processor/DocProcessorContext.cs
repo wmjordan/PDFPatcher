@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 
@@ -10,12 +8,6 @@ internal sealed class DocProcessorContext
 {
 	internal const int OcrData = 9010;
 	internal const int CoordinateTransition = 9020;
-
-	public PdfReader Pdf { get; }
-	public PdfWriter Writer { get; }
-	public Document OutputDocument { get; }
-	public bool IsModified { get; set; }
-	public Dictionary<int, object> ExtraData { get; }
 
 	public DocProcessorContext(PdfProcessingEngine engine, PdfWriter writer, Document outputDocument) {
 		Pdf = engine.Pdf;
@@ -27,4 +19,10 @@ internal sealed class DocProcessorContext
 	public DocProcessorContext(PdfProcessingEngine engine, PdfWriter writer)
 		: this(engine, writer, null) {
 	}
+
+	public PdfReader Pdf { get; }
+	public PdfWriter Writer { get; }
+	public Document OutputDocument { get; }
+	public bool IsModified { get; set; }
+	public Dictionary<int, object> ExtraData { get; }
 }

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 
@@ -9,6 +11,8 @@ namespace PDFPatcher.Processor.Imaging;
 
 internal static class BitmapHelper
 {
+	private const int threshold = 255 * 3 / 2;
+
 	public static ImageCodecInfo GetCodec(string codecName) {
 		ImageCodecInfo[] ie = ImageCodecInfo.GetImageEncoders();
 
@@ -22,9 +26,9 @@ internal static class BitmapHelper
 	}
 
 	/// <summary>
-	/// 获取指定图片的不重复颜色集合。
+	///     获取指定图片的不重复颜色集合。
 	/// </summary>
-	/// <param name="bmp">需要获取颜色集合的 <see cref="Bitmap"/>。</param>
+	/// <param name="bmp">需要获取颜色集合的 <see cref="Bitmap" />。</param>
 	/// <returns>包含不重复颜色集合的列表。</returns>
 	public static unsafe Color[] GetPallete(this Bitmap bmp) {
 		HashSet<int> hs = new();
@@ -75,7 +79,7 @@ internal static class BitmapHelper
 	}
 
 	/// <summary>
-	/// 检查 <see cref="Image"/> 是否为索引调色板图像。
+	///     检查 <see cref="Image" /> 是否为索引调色板图像。
 	/// </summary>
 	/// <param name="image">需要检查的图像。</param>
 	/// <returns>如为索引调色板图像，则返回 true，否则返回 false。</returns>
@@ -84,28 +88,28 @@ internal static class BitmapHelper
 	}
 
 	/// <summary>
-	/// 锁定 <see cref="Bitmap"/> 的内容，用于读写。
+	///     锁定 <see cref="Bitmap" /> 的内容，用于读写。
 	/// </summary>
 	/// <param name="bmp">需要锁定的内容。</param>
 	/// <param name="writable">是否可写入。</param>
-	/// <returns>锁定后的 <see cref="BitmapData"/>。</returns>
+	/// <returns>锁定后的 <see cref="BitmapData" />。</returns>
 	public static BitmapData LockBits(this Bitmap bmp, bool writable) {
 		return bmp.LockBits(new Rectangle(Point.Empty, bmp.Size),
 			writable ? ImageLockMode.ReadWrite : ImageLockMode.ReadOnly, bmp.PixelFormat);
 	}
 
 	/// <summary>
-	/// 调整 <paramref name="source"/> 的尺寸。
+	///     调整 <paramref name="source" /> 的尺寸。
 	/// </summary>
-	/// <param name="source">需要调整尺寸的 <see cref="Image"/>。</param>
+	/// <param name="source">需要调整尺寸的 <see cref="Image" />。</param>
 	/// <param name="size">新尺寸。</param>
 	/// <param name="highQuality">是否采用插值方式调整尺寸。</param>
-	/// <returns>调整后的新 <see cref="Bitmap"/>。</returns>
+	/// <returns>调整后的新 <see cref="Bitmap" />。</returns>
 	public static Bitmap ResizeImage(this Image source, Size size, bool highQuality) {
 		Bitmap b = new(size.Width, size.Height);
 		using (Graphics g = Graphics.FromImage(b)) {
 			if (highQuality) {
-				g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+				g.InterpolationMode = InterpolationMode.HighQualityBicubic;
 			}
 
 			g.DrawImage(source, 0, 0, size.Width, size.Height);
@@ -115,12 +119,12 @@ internal static class BitmapHelper
 	}
 
 	/// <summary>
-	/// 按文件名的扩展名保存图像文件为对应的格式。
+	///     按文件名的扩展名保存图像文件为对应的格式。
 	/// </summary>
-	/// <param name="image">需要保存的 <see cref="Image"/>。</param>
+	/// <param name="image">需要保存的 <see cref="Image" />。</param>
 	/// <param name="fileName">保存的文件路径。</param>
 	public static void SaveAs(this Image image, string fileName) {
-		string ext = System.IO.Path.GetExtension(fileName);
+		string ext = Path.GetExtension(fileName);
 		switch (ext.ToUpperInvariant()) {
 			case ".PNG":
 				image.Save(fileName, ImageFormat.Png);
@@ -134,7 +138,7 @@ internal static class BitmapHelper
 				return;
 			case ".TIF":
 			case ".TIFF":
-				TiffHelper.SaveBinaryImage(image, fileName);
+				image.SaveBinaryImage(fileName);
 				return;
 			case ".GIF":
 				image.Save(fileName, ImageFormat.Gif);
@@ -145,7 +149,7 @@ internal static class BitmapHelper
 	}
 
 	/// <summary>
-	/// 将 <paramref name="tint"/> 颜色染色到 <paramref name="color"/> 上。
+	///     将 <paramref name="tint" /> 颜色染色到 <paramref name="color" /> 上。
 	/// </summary>
 	/// <param name="color">基色。</param>
 	/// <param name="tint">染色颜色。</param>
@@ -223,7 +227,8 @@ internal static class BitmapHelper
 		if (original.PixelFormat == PixelFormat.Format1bppIndexed) {
 			return (Bitmap)original.Clone();
 		}
-		else if (original.PixelFormat != PixelFormat.Format24bppRgb) {
+
+		if (original.PixelFormat != PixelFormat.Format24bppRgb) {
 			// If original bitmap is not already in 24 BPP, ARGB format, then convert
 			// unfortunately Clone doesn't do this for us but returns a bitmap with the same pixel format
 			// source = original.Clone( new Rectangle( Point.Empty, original.Size ), PixelFormat.Format24bppRgb );
@@ -284,8 +289,6 @@ internal static class BitmapHelper
 		return destination;
 	}
 
-	private const int threshold = 255 * 3 / 2;
-
 	public static byte[] SimpleThresholdBW(byte[] sourceBuffer, int width, int height, int srcStride,
 		int dstStride) {
 		byte[] destinationBuffer = new byte[dstStride * height];
@@ -330,7 +333,7 @@ internal static class BitmapHelper
 	}
 
 	/// <summary>
-	/// Copies a bitmap into a 1bpp/8bpp bitmap of the same dimensions, fast
+	///     Copies a bitmap into a 1bpp/8bpp bitmap of the same dimensions, fast
 	/// </summary>
 	/// <param name="b">original bitmap</param>
 	/// <param name="bpp">1 or 8, target bpp</param>
@@ -437,7 +440,7 @@ internal static class BitmapHelper
 	{
 		public const uint BI_RGB = 0;
 		public const uint DIB_RGB_COLORS = 0;
-		public static int SRCCOPY = 0x00CC0020;
+		public static readonly int SRCCOPY = 0x00CC0020;
 
 		[DllImport("gdi32.dll")]
 		public static extern int BitBlt(IntPtr hdcDst, int xDst, int yDst, int w, int h, IntPtr hdcSrc, int xSrc,

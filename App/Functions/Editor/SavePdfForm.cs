@@ -2,7 +2,9 @@
 using System.ComponentModel;
 using System.Windows.Forms;
 using System.Xml;
+using PDFPatcher.Common;
 using PDFPatcher.Model;
+using PDFPatcher.Processor;
 
 namespace PDFPatcher.Functions;
 
@@ -11,9 +13,6 @@ public partial class SavePdfForm : Form
 	private readonly PdfInfoXmlDocument _bookmarkDocument;
 	public EventHandler DoWork;
 	public EventHandler Finished;
-
-	public string SourceFilePath => _SourceFileBox.Text;
-	public string TargetFilePath => _TargetFileBox.Text;
 
 	public SavePdfForm(string sourcePath, string targePath, PdfInfoXmlDocument bookmarkDocument) {
 		InitializeComponent();
@@ -33,6 +32,9 @@ public partial class SavePdfForm : Form
 		_OverwriteBox.CheckedChanged += (s, args) => _TargetFileBox.Enabled = !_OverwriteBox.Checked;
 	}
 
+	public string SourceFilePath => _SourceFileBox.Text;
+	public string TargetFilePath => _TargetFileBox.Text;
+
 	private void ImportBookmarkForm_Load(object sender, EventArgs e) {
 		_TargetFileBox.FileMacroMenu.LoadStandardSourceFileMacros();
 		_ConfigButton.Click += (s, args) => {
@@ -46,12 +48,12 @@ public partial class SavePdfForm : Form
 		string s = _SourceFileBox.Text;
 		string t = _OverwriteBox.Checked ? _SourceFileBox.Text : _TargetFileBox.Text;
 		if (string.IsNullOrEmpty(s)) {
-			Common.FormHelper.ErrorBox(Messages.SourceFileNotFound);
+			FormHelper.ErrorBox(Messages.SourceFileNotFound);
 			return;
 		}
 
 		if (string.IsNullOrEmpty(t)) {
-			Common.FormHelper.ErrorBox(Messages.TargetFileNotSpecified);
+			FormHelper.ErrorBox(Messages.TargetFileNotSpecified);
 			return;
 		}
 
@@ -61,7 +63,7 @@ public partial class SavePdfForm : Form
 		BackgroundWorker worker = AppContext.MainForm.GetWorker();
 		worker.DoWork += (dummy, arg) => {
 			DoWork?.Invoke(this, null);
-			Processor.Worker.PatchDocument(new SourceItem.Pdf(s), t, _bookmarkDocument, AppContext.Importer,
+			Worker.PatchDocument(new SourceItem.Pdf(s), t, _bookmarkDocument, AppContext.Importer,
 				AppContext.Editor);
 		};
 		worker.RunWorkerCompleted += (dummy, arg) => {

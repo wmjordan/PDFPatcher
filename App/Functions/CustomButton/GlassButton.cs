@@ -12,22 +12,22 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
-using PushButtonState = System.Windows.Forms.VisualStyles.PushButtonState;
+using System.Windows.Forms.VisualStyles;
 
 namespace EnhancedGlassButton;
 
 /// <summary>
-/// Represents a glass button control.
+///     Represents a glass button control.
 /// </summary>
 [ToolboxBitmap(typeof(Button))]
 [ToolboxItem(true)]
 [ToolboxItemFilter("System.Windows.Forms")]
 [Description("Raises an event when the user clicks it.")]
-public partial class GlassButton : Button
+public class GlassButton : Button
 {
 	#region " Global Vareables "
 
-	private IContainer components = null;
+	private IContainer components;
 	private Timer timer;
 
 	#region " Vareables for Drawing "
@@ -57,17 +57,17 @@ public partial class GlassButton : Button
 	#endregion
 
 	/// <summary>
-	/// The ToolTip of the Control.
+	///     The ToolTip of the Control.
 	/// </summary>
 	private readonly ToolTip toolTip = new();
 
 	/// <summary>
-	/// If false, the shine isn't drawn (-> symbolizes an disabled control).
+	///     If false, the shine isn't drawn (-> symbolizes an disabled control).
 	/// </summary>
 	private bool drawShine = true;
 
 	/// <summary>
-	/// Set the trynsperency of the special Symbols.
+	///     Set the trynsperency of the special Symbols.
 	/// </summary>
 	private readonly int transperencyFactor = 128;
 
@@ -76,7 +76,7 @@ public partial class GlassButton : Button
 	#region " Constructors "
 
 	/// <summary>
-	/// Initializes a new instance of the <see cref="Glass.GlassButton" /> class.
+	///     Initializes a new instance of the <see cref="Glass.GlassButton" /> class.
 	/// </summary>
 	public GlassButton() {
 		DoubleBuffered = true;
@@ -103,18 +103,18 @@ public partial class GlassButton : Button
 		alternativeFocusBorderColor = Color.Black;
 		alternativeFormDirection = Direction.Left;
 
-		RecalcRect((float)currentFrame / (framesCount - 1f));
+		RecalcRect(currentFrame / (framesCount - 1f));
 
 		SetStyle(
 			ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.ResizeRedraw |
 			ControlStyles.SupportsTransparentBackColor | ControlStyles.UserPaint, true);
 		SetStyle(ControlStyles.Opaque, false);
 
-		SizeChanged += new EventHandler(GlassButton_SizeChanged);
-		MouseEnter += new EventHandler(GlassButton_MouseEnter);
-		MouseLeave += new EventHandler(GlassButton_MouseLeave);
-		GotFocus += new EventHandler(GlassButton_GotFocus);
-		LostFocus += new EventHandler(GlassButton_LostFocus);
+		SizeChanged += GlassButton_SizeChanged;
+		MouseEnter += GlassButton_MouseEnter;
+		MouseLeave += GlassButton_MouseLeave;
+		GotFocus += GlassButton_GotFocus;
+		LostFocus += GlassButton_LostFocus;
 	}
 
 	private void InitializeComponent() {
@@ -124,12 +124,12 @@ public partial class GlassButton : Button
 		// 
 		// timer
 		// 
-		timer.Tick += new EventHandler(timer_Tick);
+		timer.Tick += timer_Tick;
 		ResumeLayout(false);
 	}
 
 	/// <summary>
-	/// Clean up any resources being used.
+	///     Clean up any resources being used.
 	/// </summary>
 	/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 	protected override void Dispose(bool disposing) {
@@ -164,7 +164,7 @@ public partial class GlassButton : Button
 	private Color backColor;
 
 	/// <summary>
-	/// Gets or sets the background color of the control.
+	///     Gets or sets the background color of the control.
 	/// </summary>
 	/// <returns>A <see cref="T:System.Drawing.Color" /> value representing the background color.</returns>
 	[DefaultValue(typeof(Color), "Black")]
@@ -175,7 +175,7 @@ public partial class GlassButton : Button
 				backColor = value;
 				UseVisualStyleBackColor = false;
 
-				RecalcRect((float)currentFrame / (framesCount - 1f));
+				RecalcRect(currentFrame / (framesCount - 1f));
 
 				OnBackColorChanged(EventArgs.Empty);
 			}
@@ -183,7 +183,7 @@ public partial class GlassButton : Button
 	}
 
 	/// <summary>
-	/// Gets or sets the foreground color of the control.
+	///     Gets or sets the foreground color of the control.
 	/// </summary>
 	/// <returns>The foreground <see cref="T:System.Drawing.Color" /> of the control.</returns>
 	[DefaultValue(typeof(Color), "White")]
@@ -192,14 +192,14 @@ public partial class GlassButton : Button
 		set {
 			base.ForeColor = value;
 
-			RecalcRect((float)currentFrame / (framesCount - 1f));
+			RecalcRect(currentFrame / (framesCount - 1f));
 		}
 	}
 
 	private Color innerBorderColor;
 
 	/// <summary>
-	/// Gets or sets the inner border color of the control.
+	///     Gets or sets the inner border color of the control.
 	/// </summary>
 	/// <returns>A <see cref="T:System.Drawing.Color" /> value representing the color of the inner border.</returns>
 	[DefaultValue(typeof(Color), "Black")]
@@ -211,7 +211,7 @@ public partial class GlassButton : Button
 			if (innerBorderColor != value) {
 				innerBorderColor = value;
 
-				RecalcRect((float)currentFrame / (framesCount - 1f));
+				RecalcRect(currentFrame / (framesCount - 1f));
 
 				if (IsHandleCreated) {
 					Invalidate();
@@ -221,7 +221,7 @@ public partial class GlassButton : Button
 	}
 
 	/// <summary>
-	/// Gets or sets the color of the special symbol.
+	///     Gets or sets the color of the special symbol.
 	/// </summary>
 	/// <value>The color of the special symbol.</value>
 	[DefaultValue(typeof(Color), "White")]
@@ -244,7 +244,7 @@ public partial class GlassButton : Button
 	private int roundCorner;
 
 	/// <summary>
-	/// Gets or sets the corner radius.
+	///     Gets or sets the corner radius.
 	/// </summary>
 	/// <value>The corner radius.</value>
 	[DefaultValue(6)]
@@ -256,7 +256,7 @@ public partial class GlassButton : Button
 			if (roundCorner != value) {
 				roundCorner = value;
 
-				RecalcRect((float)currentFrame / (framesCount - 1f));
+				RecalcRect(currentFrame / (framesCount - 1f));
 
 				if (IsHandleCreated) {
 					Invalidate();
@@ -268,7 +268,7 @@ public partial class GlassButton : Button
 	private string toolTipText;
 
 	/// <summary>
-	/// Gets or sets the tool tip text.
+	///     Gets or sets the tool tip text.
 	/// </summary>
 	/// <value>The tool tip text.</value>
 	[DefaultValue("")]
@@ -294,7 +294,7 @@ public partial class GlassButton : Button
 	private bool alternativeForm;
 
 	/// <summary>
-	/// Gets or sets the alternative form.
+	///     Gets or sets the alternative form.
 	/// </summary>
 	/// <value>The alternative form.</value>
 	[DefaultValue(false)]
@@ -306,7 +306,7 @@ public partial class GlassButton : Button
 			if (alternativeForm != value) {
 				alternativeForm = value;
 
-				RecalcRect((float)currentFrame / (framesCount - 1f));
+				RecalcRect(currentFrame / (framesCount - 1f));
 
 				if (IsHandleCreated) {
 					Invalidate();
@@ -318,7 +318,7 @@ public partial class GlassButton : Button
 	private bool animateGlow;
 
 	/// <summary>
-	/// Gets or sets a value indicating whether the glow is animated.
+	///     Gets or sets a value indicating whether the glow is animated.
 	/// </summary>
 	/// <value><c>true</c> if glow is animated; otherwise, <c>false</c>.</value>
 	[DefaultValue(false)]
@@ -339,7 +339,7 @@ public partial class GlassButton : Button
 	private bool showSpecialSymbol;
 
 	/// <summary>
-	/// Gets or sets a value indicating whether a special symbol is drawn.
+	///     Gets or sets a value indicating whether a special symbol is drawn.
 	/// </summary>
 	/// <value><c>true</c> if special symbol is drawn; otherwise, <c>false</c>.</value>
 	[DefaultValue(false)]
@@ -359,7 +359,7 @@ public partial class GlassButton : Button
 	}
 
 	/// <summary>
-	/// List of all aviable special symbols.
+	///     List of all aviable special symbols.
 	/// </summary>
 	public enum SpecialSymbols
 	{
@@ -384,7 +384,7 @@ public partial class GlassButton : Button
 	private SpecialSymbols specialSymbol;
 
 	/// <summary>
-	/// Gets or sets the special symbol.
+	///     Gets or sets the special symbol.
 	/// </summary>
 	/// <value>The special symbol.</value>
 	[DefaultValue(typeof(SpecialSymbols), "Play")]
@@ -412,7 +412,7 @@ public partial class GlassButton : Button
 	private Direction alternativeFormDirection;
 
 	/// <summary>
-	/// Gets or sets the alternative form direction.
+	///     Gets or sets the alternative form direction.
 	/// </summary>
 	/// <value>The alternative form direction.</value>
 	[DefaultValue(typeof(Direction), "Left")]
@@ -424,7 +424,7 @@ public partial class GlassButton : Button
 			if (alternativeFormDirection != value) {
 				alternativeFormDirection = value;
 
-				RecalcRect((float)currentFrame / (framesCount - 1f));
+				RecalcRect(currentFrame / (framesCount - 1f));
 
 				if (IsHandleCreated) {
 					Invalidate();
@@ -436,7 +436,7 @@ public partial class GlassButton : Button
 	private bool showFocusBorder;
 
 	/// <summary>
-	/// Gets or sets a value indicating whether the focus border is shown.
+	///     Gets or sets a value indicating whether the focus border is shown.
 	/// </summary>
 	/// <value><c>true</c> if focus border shown; otherwise, <c>false</c>.</value>
 	[DefaultValue(false)]
@@ -448,7 +448,7 @@ public partial class GlassButton : Button
 			if (showFocusBorder != value) {
 				showFocusBorder = value;
 
-				RecalcRect((float)currentFrame / (framesCount - 1f));
+				RecalcRect(currentFrame / (framesCount - 1f));
 
 				if (IsHandleCreated) {
 					Invalidate();
@@ -460,7 +460,7 @@ public partial class GlassButton : Button
 	private Color alternativeFocusBorderColor;
 
 	/// <summary>
-	/// Gets or sets the color of the alternative focus border.
+	///     Gets or sets the color of the alternative focus border.
 	/// </summary>
 	/// <value>The color of the alternative focus border.</value>
 	[DefaultValue(typeof(Color), "Black")]
@@ -472,7 +472,7 @@ public partial class GlassButton : Button
 			if (alternativeFocusBorderColor != value) {
 				alternativeFocusBorderColor = value;
 
-				RecalcRect((float)currentFrame / (framesCount - 1f));
+				RecalcRect(currentFrame / (framesCount - 1f));
 
 				if (IsHandleCreated) {
 					Invalidate();
@@ -484,7 +484,7 @@ public partial class GlassButton : Button
 	private Color outerBorderColor;
 
 	/// <summary>
-	/// Gets or sets the outer border color of the control.
+	///     Gets or sets the outer border color of the control.
 	/// </summary>
 	/// <returns>A <see cref="T:System.Drawing.Color" /> value representing the color of the outer border.</returns>
 	[DefaultValue(typeof(Color), "White")]
@@ -496,7 +496,7 @@ public partial class GlassButton : Button
 			if (outerBorderColor != value) {
 				outerBorderColor = value;
 
-				RecalcRect((float)currentFrame / (framesCount - 1f));
+				RecalcRect(currentFrame / (framesCount - 1f));
 
 				if (IsHandleCreated) {
 					Invalidate();
@@ -508,7 +508,7 @@ public partial class GlassButton : Button
 	private Color shineColor;
 
 	/// <summary>
-	/// Gets or sets the shine color of the control.
+	///     Gets or sets the shine color of the control.
 	/// </summary>
 	/// <returns>A <see cref="T:System.Drawing.Color" /> value representing the shine color.</returns>
 	[DefaultValue(typeof(Color), "White")]
@@ -520,7 +520,7 @@ public partial class GlassButton : Button
 			if (shineColor != value) {
 				shineColor = value;
 
-				RecalcRect((float)currentFrame / (framesCount - 1f));
+				RecalcRect(currentFrame / (framesCount - 1f));
 
 				if (IsHandleCreated) {
 					Invalidate();
@@ -532,7 +532,7 @@ public partial class GlassButton : Button
 	private Color glowColor;
 
 	/// <summary>
-	/// Gets or sets the glow color of the control.
+	///     Gets or sets the glow color of the control.
 	/// </summary>
 	/// <returns>A <see cref="T:System.Drawing.Color" /> value representing the glow color.</returns>
 	[DefaultValue(typeof(Color), "255,141,189,255")]
@@ -544,7 +544,7 @@ public partial class GlassButton : Button
 			if (glowColor != value) {
 				glowColor = value;
 
-				RecalcRect((float)currentFrame / (framesCount - 1f));
+				RecalcRect(currentFrame / (framesCount - 1f));
 
 				if (IsHandleCreated) {
 					Invalidate();
@@ -561,7 +561,7 @@ public partial class GlassButton : Button
 	private bool isPressed => isKeyDown || (isMouseDown && isHovered);
 
 	/// <summary>
-	/// Gets the state of the button control.
+	///     Gets the state of the button control.
 	/// </summary>
 	/// <value>The state of the button control.</value>
 	[Browsable(false)]
@@ -592,7 +592,7 @@ public partial class GlassButton : Button
 	#region " Overrided Methods "
 
 	/// <summary>
-	/// Raises the <see cref="E:System.Windows.Forms.Control.Click" /> event.
+	///     Raises the <see cref="E:System.Windows.Forms.Control.Click" /> event.
 	/// </summary>
 	/// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
 	protected override void OnClick(EventArgs e) {
@@ -601,7 +601,7 @@ public partial class GlassButton : Button
 	}
 
 	/// <summary>
-	/// Raises the <see cref="E:System.Windows.Forms.Control.Enter" /> event.
+	///     Raises the <see cref="E:System.Windows.Forms.Control.Enter" /> event.
 	/// </summary>
 	/// <param name="e">An <see cref="T:System.EventArgs" /> that contains the event data.</param>
 	protected override void OnEnter(EventArgs e) {
@@ -610,7 +610,7 @@ public partial class GlassButton : Button
 	}
 
 	/// <summary>
-	/// Raises the <see cref="E:System.Windows.Forms.Control.Leave" /> event.
+	///     Raises the <see cref="E:System.Windows.Forms.Control.Leave" /> event.
 	/// </summary>
 	/// <param name="e">An <see cref="T:System.EventArgs" /> that contains the event data.</param>
 	protected override void OnLeave(EventArgs e) {
@@ -620,7 +620,7 @@ public partial class GlassButton : Button
 	}
 
 	/// <summary>
-	/// Raises the <see cref="M:System.Windows.Forms.ButtonBase.OnKeyUp(System.Windows.Forms.KeyEventArgs)" /> event.
+	///     Raises the <see cref="M:System.Windows.Forms.ButtonBase.OnKeyUp(System.Windows.Forms.KeyEventArgs)" /> event.
 	/// </summary>
 	/// <param name="kevent">A <see cref="T:System.Windows.Forms.KeyEventArgs" /> that contains the event data.</param>
 	protected override void OnKeyDown(KeyEventArgs kevent) {
@@ -633,7 +633,7 @@ public partial class GlassButton : Button
 	}
 
 	/// <summary>
-	/// Raises the <see cref="M:System.Windows.Forms.ButtonBase.OnKeyUp(System.Windows.Forms.KeyEventArgs)" /> event.
+	///     Raises the <see cref="M:System.Windows.Forms.ButtonBase.OnKeyUp(System.Windows.Forms.KeyEventArgs)" /> event.
 	/// </summary>
 	/// <param name="kevent">A <see cref="T:System.Windows.Forms.KeyEventArgs" /> that contains the event data.</param>
 	protected override void OnKeyUp(KeyEventArgs kevent) {
@@ -646,7 +646,7 @@ public partial class GlassButton : Button
 	}
 
 	/// <summary>
-	/// Raises the <see cref="E:System.Windows.Forms.Control.MouseDown" /> event.
+	///     Raises the <see cref="E:System.Windows.Forms.Control.MouseDown" /> event.
 	/// </summary>
 	/// <param name="e">A <see cref="T:System.Windows.Forms.MouseEventArgs" /> that contains the event data.</param>
 	protected override void OnMouseDown(MouseEventArgs e) {
@@ -660,7 +660,7 @@ public partial class GlassButton : Button
 	}
 
 	/// <summary>
-	/// Raises the <see cref="E:System.Windows.Forms.Control.MouseUp" /> event.
+	///     Raises the <see cref="E:System.Windows.Forms.Control.MouseUp" /> event.
 	/// </summary>
 	/// <param name="e">A <see cref="T:System.Windows.Forms.MouseEventArgs" /> that contains the event data.</param>
 	protected override void OnMouseUp(MouseEventArgs e) {
@@ -673,7 +673,7 @@ public partial class GlassButton : Button
 	}
 
 	/// <summary>
-	/// Raises the <see cref="M:System.Windows.Forms.Control.OnMouseMove(System.Windows.Forms.MouseEventArgs)" /> event.
+	///     Raises the <see cref="M:System.Windows.Forms.Control.OnMouseMove(System.Windows.Forms.MouseEventArgs)" /> event.
 	/// </summary>
 	/// <param name="mevent">A <see cref="T:System.Windows.Forms.MouseEventArgs" /> that contains the event data.</param>
 	protected override void OnMouseMove(MouseEventArgs mevent) {
@@ -693,7 +693,7 @@ public partial class GlassButton : Button
 	}
 
 	/// <summary>
-	/// Raises the <see cref="E:System.Windows.Forms.Control.MouseEnter" /> event.
+	///     Raises the <see cref="E:System.Windows.Forms.Control.MouseEnter" /> event.
 	/// </summary>
 	/// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
 	protected override void OnMouseEnter(EventArgs e) {
@@ -704,7 +704,7 @@ public partial class GlassButton : Button
 	}
 
 	/// <summary>
-	/// Raises the <see cref="E:System.Windows.Forms.Control.MouseLeave" /> event.
+	///     Raises the <see cref="E:System.Windows.Forms.Control.MouseLeave" /> event.
 	/// </summary>
 	/// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
 	protected override void OnMouseLeave(EventArgs e) {
@@ -719,7 +719,7 @@ public partial class GlassButton : Button
 	#region " Painting "
 
 	/// <summary>
-	/// Raises the <see cref="M:System.Windows.Forms.ButtonBase.OnPaint(System.Windows.Forms.PaintEventArgs)" /> event.
+	///     Raises the <see cref="M:System.Windows.Forms.ButtonBase.OnPaint(System.Windows.Forms.PaintEventArgs)" /> event.
 	/// </summary>
 	/// <param name="pevent">A <see cref="T:System.Windows.Forms.PaintEventArgs" /> that contains the event data.</param>
 	protected override void OnPaint(PaintEventArgs pevent) {
@@ -734,7 +734,7 @@ public partial class GlassButton : Button
 	}
 
 	/// <summary>
-	/// Draws the button background.
+	///     Draws the button background.
 	/// </summary>
 	/// <param name="g">The graphics to draw on.</param>
 	private void DrawButtonBackground(Graphics g) {
@@ -767,7 +767,7 @@ public partial class GlassButton : Button
 	}
 
 	/// <summary>
-	/// Draws the special symbol.
+	///     Draws the special symbol.
 	/// </summary>
 	/// <param name="g">The graphics to draw on.</param>
 	private void DrawSpecialSymbol(Graphics g) {
@@ -960,16 +960,16 @@ public partial class GlassButton : Button
 
 			case SpecialSymbols.Repeat:
 				g.DrawLine(new Pen(specialSymbolBrush, LineWidth),
-					new Point((int)(Width / 4), (int)(Height / 3)),
-					new Point((int)(Width - (Width / 2.4)), (int)(Height / 3)));
-				g.DrawArc(new Pen(specialSymbolBrush, LineWidth), (int)(Width - (Width * 0.6)), (int)(Height / 3),
-					(int)(Width / 3), (int)(Height / 3), 270, 180);
+					new Point(Width / 4, Height / 3),
+					new Point((int)(Width - (Width / 2.4)), Height / 3));
+				g.DrawArc(new Pen(specialSymbolBrush, LineWidth), (int)(Width - (Width * 0.6)), Height / 3,
+					Width / 3, Height / 3, 270, 180);
 				g.DrawLine(new Pen(specialSymbolBrush, LineWidth),
-					new Point((int)(Width - (Width / 2.4)), (int)(Height - (Height / 3))),
-					new Point((int)(Width / 3.2), (int)(Height - (Height / 3))));
+					new Point((int)(Width - (Width / 2.4)), Height - (Height / 3)),
+					new Point((int)(Width / 3.2), Height - (Height / 3)));
 				g.DrawLine(pen,
-					new Point((int)(Width / 3.2), (int)(Height - (Height / 3))),
-					new Point((int)(Width / 4), (int)(Height - (Height / 3))));
+					new Point((int)(Width / 3.2), Height - (Height / 3)),
+					new Point(Width / 4, Height - (Height / 3)));
 				break;
 
 			#endregion
@@ -978,18 +978,18 @@ public partial class GlassButton : Button
 
 			case SpecialSymbols.RepeatAll:
 				g.DrawLine(new Pen(specialSymbolBrush, LineWidth),
-					new Point((int)(Width / 2.4), (int)(Height / 3)),
-					new Point((int)(Width - (Width / 2.4)), (int)(Height / 3)));
-				g.DrawArc(new Pen(specialSymbolBrush, LineWidth), (int)(Width - (Width * 0.6)), (int)(Height / 3),
-					(int)(Width / 3), (int)(Height / 3), 270, 180);
+					new Point((int)(Width / 2.4), Height / 3),
+					new Point((int)(Width - (Width / 2.4)), Height / 3));
+				g.DrawArc(new Pen(specialSymbolBrush, LineWidth), (int)(Width - (Width * 0.6)), Height / 3,
+					Width / 3, Height / 3, 270, 180);
 				g.DrawLine(new Pen(specialSymbolBrush, LineWidth),
-					new Point((int)(Width - (Width / 2.4)), (int)(Height - (Height / 3))),
-					new Point((int)(Width / 2.4), (int)(Height - (Height / 3))));
+					new Point((int)(Width - (Width / 2.4)), Height - (Height / 3)),
+					new Point((int)(Width / 2.4), Height - (Height / 3)));
 				g.DrawLine(pen,
-					new Point((int)(Width / 2.4), (int)(Height - (Height / 3))),
-					new Point((int)(Width / 3), (int)(Height - (Height / 3))));
-				g.DrawArc(new Pen(specialSymbolBrush, LineWidth), (int)(Width / 4), (int)(Height / 3),
-					(int)(Width / 3), (int)(Height / 3), 90, 180);
+					new Point((int)(Width / 2.4), Height - (Height / 3)),
+					new Point(Width / 3, Height - (Height / 3)));
+				g.DrawArc(new Pen(specialSymbolBrush, LineWidth), Width / 4, Height / 3,
+					Width / 3, Height / 3, 90, 180);
 				break;
 
 			#endregion
@@ -1016,7 +1016,7 @@ public partial class GlassButton : Button
 	}
 
 	/// <summary>
-	/// Draws the button foreground.
+	///     Draws the button foreground.
 	/// </summary>
 	/// <param name="g">The graphics to draw on.</param>
 	private void DrawButtonForeground(Graphics g) {
@@ -1030,9 +1030,9 @@ public partial class GlassButton : Button
 	private Button imageButton;
 
 	/// <summary>
-	/// Draws the foreground from button.
+	///     Draws the foreground from button.
 	/// </summary>
-	/// <param name="pevent">The <see cref="System.Windows.Forms.PaintEventArgs"/> instance containing the event data.</param>
+	/// <param name="pevent">The <see cref="System.Windows.Forms.PaintEventArgs" /> instance containing the event data.</param>
 	private void DrawForegroundFromButton(PaintEventArgs pevent) {
 		if (imageButton == null) {
 			imageButton = new Button {Parent = new TransparentControl(), BackColor = Color.Transparent};
@@ -1073,7 +1073,7 @@ public partial class GlassButton : Button
 	}
 
 	/// <summary>
-	/// Creates the round rectangle.
+	///     Creates the round rectangle.
 	/// </summary>
 	/// <param name="rectangle">The rectangle.</param>
 	/// <param name="radius">The radius.</param>
@@ -1091,15 +1091,14 @@ public partial class GlassButton : Button
 				path.AddArc(l, t, h, h, 90, 180);
 				path.AddLine(l + h, t, l + w, t);
 				path.AddCurve(new Point[5] {
-					new(l + w, t), new(l + w - (h / 6), t + (h / 4)),
-					new((int)(l + w - (double)(h / 4.7)), t + (h / 2)), new(l + w - (h / 6), t + (3 * h / 4)),
-					new(l + w, t + h)
+					new(l + w, t), new(l + w - (h / 6), t + (h / 4)), new((int)(l + w - (h / 4.7)), t + (h / 2)),
+					new(l + w - (h / 6), t + (3 * h / 4)), new(l + w, t + h)
 				});
 				path.AddLine(l + h, t + h, l + w, t + h);
 			}
 			else {
 				path.AddCurve(new Point[5] {
-					new(l, t), new(l + (h / 6), t + (h / 4)), new((int)(l + (double)(h / 4.85)), t + (h / 2)),
+					new(l, t), new(l + (h / 6), t + (h / 4)), new((int)(l + (h / 4.85)), t + (h / 2)),
 					new(l + (h / 6), t + (3 * h / 4)), new(l, t + h)
 				});
 				path.AddLine(l, t + h, l + w - h, t + h);
@@ -1124,7 +1123,7 @@ public partial class GlassButton : Button
 	}
 
 	/// <summary>
-	/// Creates the top round rectangle.
+	///     Creates the top round rectangle.
 	/// </summary>
 	/// <param name="rectangle">The rectangle.</param>
 	/// <param name="radius">The radius.</param>
@@ -1142,14 +1141,13 @@ public partial class GlassButton : Button
 				path.AddArc(l, t, h * 2, h * 2, 180, 90);
 				path.AddLine(l + h, t, l + w, t);
 				path.AddCurve(new Point[3] {
-					new(l + w, t), new(l + w - (h / 3), t + (h / 2)), new((int)(l + w - (double)(h / 2.35)), t + h)
+					new(l + w, t), new(l + w - (h / 3), t + (h / 2)), new((int)(l + w - (h / 2.35)), t + h)
 				});
 			}
 			else {
-				path.AddCurve(new Point[3] {
-					new(l, t), new(l + (h / 3), t + (h / 2)), new((int)(l + (double)(h / 2.35)), t + h)
-				});
-				path.AddLine((int)(l + (double)(h / 2.35)), t + h, l + w - h, t + h);
+				path.AddCurve(
+					new Point[3] {new(l, t), new(l + (h / 3), t + (h / 2)), new((int)(l + (h / 2.35)), t + h)});
+				path.AddLine((int)(l + (h / 2.35)), t + h, l + w - h, t + h);
 				path.AddArc(l + w - (h * 2), t, h * 2, h * 2, 0, -90);
 			}
 		}
@@ -1168,7 +1166,7 @@ public partial class GlassButton : Button
 	}
 
 	/// <summary>
-	/// Creates the bottom radial path.
+	///     Creates the bottom radial path.
 	/// </summary>
 	/// <param name="rectangle">The rectangle.</param>
 	/// <returns></returns>
@@ -1185,52 +1183,52 @@ public partial class GlassButton : Button
 	}
 
 	/// <summary>
-	/// Handles the SizeChanged event of the GlassButton control.
+	///     Handles the SizeChanged event of the GlassButton control.
 	/// </summary>
 	/// <param name="sender">The source of the event.</param>
-	/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+	/// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
 	private void GlassButton_SizeChanged(object sender, EventArgs e) {
-		RecalcRect((float)currentFrame / (framesCount - 1f));
+		RecalcRect(currentFrame / (framesCount - 1f));
 	}
 
 	/// <summary>
-	/// Handles the MouseLeave event of the GlassButton control.
+	///     Handles the MouseLeave event of the GlassButton control.
 	/// </summary>
 	/// <param name="sender">The source of the event.</param>
-	/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+	/// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
 	private void GlassButton_MouseLeave(object sender, EventArgs e) {
-		RecalcGlow((float)currentFrame / (framesCount - 1f));
+		RecalcGlow(currentFrame / (framesCount - 1f));
 	}
 
 	/// <summary>
-	/// Handles the MouseEnter event of the GlassButton control.
+	///     Handles the MouseEnter event of the GlassButton control.
 	/// </summary>
 	/// <param name="sender">The source of the event.</param>
-	/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+	/// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
 	private void GlassButton_MouseEnter(object sender, EventArgs e) {
-		RecalcGlow((float)currentFrame / (framesCount - 1f));
+		RecalcGlow(currentFrame / (framesCount - 1f));
 	}
 
 	/// <summary>
-	/// Handles the LostFocus event of the GlassButton control.
+	///     Handles the LostFocus event of the GlassButton control.
 	/// </summary>
 	/// <param name="sender">The source of the event.</param>
-	/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+	/// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
 	private void GlassButton_LostFocus(object sender, EventArgs e) {
 		RecalcOuterBorder();
 	}
 
 	/// <summary>
-	/// Handles the GotFocus event of the GlassButton control.
+	///     Handles the GotFocus event of the GlassButton control.
 	/// </summary>
 	/// <param name="sender">The source of the event.</param>
-	/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+	/// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
 	private void GlassButton_GotFocus(object sender, EventArgs e) {
 		RecalcOuterBorder();
 	}
 
 	/// <summary>
-	/// Recalcs the rectangles for drawing.
+	///     Recalcs the rectangles for drawing.
 	/// </summary>
 	/// <param name="glowOpacity">The glow opacity.</param>
 	private void RecalcRect(float glowOpacity) {
@@ -1261,7 +1259,7 @@ public partial class GlassButton : Button
 	}
 
 	/// <summary>
-	/// Recalcs the shine.
+	///     Recalcs the shine.
 	/// </summary>
 	/// <param name="rect2">The rect2.</param>
 	/// <returns></returns>
@@ -1301,7 +1299,7 @@ public partial class GlassButton : Button
 	}
 
 	/// <summary>
-	/// Recalcs the glow.
+	///     Recalcs the glow.
 	/// </summary>
 	/// <param name="glowOpacity">The glow opacity.</param>
 	private void RecalcGlow(float glowOpacity) {
@@ -1332,11 +1330,11 @@ public partial class GlassButton : Button
 		}
 
 		GlowRadialPath.CenterColor = Color.FromArgb(opacity, glowColor);
-		GlowRadialPath.SurroundColors = new Color[] {Color.FromArgb(0, glowColor)};
+		GlowRadialPath.SurroundColors = new[] {Color.FromArgb(0, glowColor)};
 	}
 
 	/// <summary>
-	/// Recalcs the content.
+	///     Recalcs the content.
 	/// </summary>
 	/// <param name="rect">The rect.</param>
 	/// <param name="rect2">The rect2.</param>
@@ -1367,7 +1365,7 @@ public partial class GlassButton : Button
 	}
 
 	/// <summary>
-	/// Recalcs the outer border.
+	///     Recalcs the outer border.
 	/// </summary>
 	/// <returns></returns>
 	private Rectangle RecalcOuterBorder() {
@@ -1457,7 +1455,7 @@ public partial class GlassButton : Button
 			return;
 		}
 
-		RecalcRect((float)currentFrame / (framesCount - 1f));
+		RecalcRect(currentFrame / (framesCount - 1f));
 		Refresh();
 		currentFrame += direction;
 		if (currentFrame == -1) {

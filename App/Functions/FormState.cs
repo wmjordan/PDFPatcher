@@ -1,19 +1,18 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Windows.Forms;
 
 namespace PDFPatcher.Functions;
 
 /// <summary>
-/// Class used to preserve / restore / maximize state of the form
+///     Class used to preserve / restore / maximize state of the form
 /// </summary>
 public sealed class FormState
 {
-	private FormBorderStyle brdStyle;
-	private bool topMost;
 	private Rectangle bounds;
+	private FormBorderStyle brdStyle;
 
 	private bool IsMaximized;
+	private bool topMost;
 
 	public void Maximize(Form targetForm) {
 		if (!IsMaximized) {

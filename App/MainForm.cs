@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
+using System.IO;
 using System.Net;
 using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
+using iTextSharp.text.io;
 using PDFPatcher.Common;
 using PDFPatcher.Functions;
+using PDFPatcher.Processor;
 
 namespace PDFPatcher;
 
@@ -16,232 +20,14 @@ public partial class MainForm : Form
 
 	private ReportControl _LogControl;
 
-	#region 公共功能
-
-	private BackgroundWorker _Worker;
-	private readonly FormState _formState = new();
-	private bool _FullScreen;
-
-	///<summary>获取或指定全屏显示的值。</summary>
-	public bool FullScreen {
-		get => _FullScreen;
-		set {
-			if (value == _FullScreen) {
-				return;
-			}
-
-			_FullScreen = value;
-			if (value) {
-				_MainMenu.Visible = _GeneralToolbar.Visible = false;
-				_formState.Maximize(this);
-			}
-			else {
-				_MainMenu.Visible = true;
-				_GeneralToolbar.Visible = AppContext.Toolbar.ShowGeneralToolbar;
-				_formState.Restore(this);
-			}
-		}
-	}
-
-	/// <summary>
-	/// 设置控件的提示信息。
-	/// </summary>
-	internal void SetTooltip(Control control, string text) {
-		_ToolTip.SetToolTip(control, text);
-	}
-
-	/// <summary>
-	/// 获取或设置状态栏文本。
-	/// </summary>
-	internal string StatusText {
-		get => _MainStatusLabel.Text;
-		set => _MainStatusLabel.Text = value;
-	}
-
-	#region Worker
-
-	///<summary>获取或指定后台进程。</summary>
-	internal BackgroundWorker GetWorker() {
-		if (_Worker == null) {
-			_Worker = new BackgroundWorker { WorkerReportsProgress = true, WorkerSupportsCancellation = true };
-			_Worker.DoWork += Worker_DoWork;
-			_Worker.ProgressChanged += Worker_ProgressChanged;
-			_Worker.RunWorkerCompleted += Worker_RunWorkerCompleted;
-			Tracker.SetWorker(_Worker);
-		}
-
-		return _Worker;
-	}
-
-	internal bool IsWorkerBusy => _Worker?.IsBusy == true;
-
-	private void Worker_DoWork(object sender, DoWorkEventArgs e) {
-		_Worker.ReportProgress(0);
-		FileHelper.ResetOverwriteMode();
-		AppContext.Abort = false;
-	}
-
-	private void Worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
-		_MainMenu.Enabled = _GeneralToolbar.Enabled = _FunctionContainer.Enabled = true;
-		foreach (TabPage item in _FunctionContainer.TabPages) {
-			item.Enabled = true;
-		}
-
-		if (e.Error == null || e.Cancelled == false) {
-			_LogControl.Complete();
-		}
-	}
-
-	public void ResetWorker() {
-		if (_Worker != null) {
-			if (_Worker.IsBusy) {
-				throw new InvalidOperationException("Worker is busy. Can't be reset.");
-			}
-
-			_Worker.Dispose();
-			_Worker = null;
-		}
-	}
-
-	private void Worker_ProgressChanged(object sender, ProgressChangedEventArgs e) {
-		string s = e.UserState as string;
-		if (s == "INC") {
-			_LogControl.IncrementProgress(e.ProgressPercentage);
-			return;
-		}
-		else if (s == "GOAL") {
-			_LogControl.SetGoal(e.ProgressPercentage);
-			return;
-		}
-		else if (s == "TINC") {
-			_LogControl.IncrementTotalProgress();
-		}
-		else if (s == "TGOAL") {
-			_LogControl.SetTotalGoal(e.ProgressPercentage);
-		}
-
-		if (e.ProgressPercentage > 0) {
-			_LogControl.SetProgress(e.ProgressPercentage);
-		}
-		else if (e.ProgressPercentage == 0) {
-			_MainMenu.Enabled = _GeneralToolbar.Enabled = _FunctionContainer.Enabled = false;
-			foreach (TabPage item in _FunctionContainer.TabPages) {
-				item.Enabled = false;
-			}
-
-			_LogControl.Reset();
-			ShowLogControl();
-		}
-		else if (s != null) {
-			_LogControl.PrintMessage(s, (Tracker.Category)e.ProgressPercentage);
-		}
-	}
-
-	#endregion
-
-	internal FunctionControl GetFunctionControl(Function functionName) {
-		if (__FunctionControls.TryGetValue(functionName, out FunctionControl f) && f.IsDisposed == false) {
-			return f;
-		}
-
-		switch (functionName) {
-			case Function.FrontPage:
-				__FunctionControls[functionName] = new FrontPageControl();
-				break;
-			case Function.Patcher:
-				__FunctionControls[functionName] = new PatcherControl();
-				break;
-			case Function.Merger:
-				__FunctionControls[functionName] = new MergerControl();
-				break;
-			case Function.BookmarkGenerator:
-				__FunctionControls[functionName] = new AutoBookmarkControl();
-				break;
-			case Function.InfoExchanger:
-				__FunctionControls[functionName] = new InfoExchangerControl();
-				break;
-			case Function.ExtractPages:
-				__FunctionControls[functionName] = new ExtractPageControl();
-				break;
-			case Function.ExtractImages:
-				__FunctionControls[functionName] = new ExtractImageControl();
-				break;
-			case Function.BookmarkEditor:
-				//__FunctionControls[functionName] = new BookmarkEditorControl ();
-				//break;
-				EditorControl b = new();
-				b.DocumentChanged += OnDocumentChanged;
-				return b;
-			//case FormHelper.Functions.InfoFileOptions:
-			//    __FunctionControls[functionName] = new InfoFileOptionControl ();
-			//    break;
-			case Function.Ocr:
-				__FunctionControls[functionName] = new OcrControl();
-				break;
-			case Function.RenderPages:
-				__FunctionControls[functionName] = new RenderImageControl();
-				break;
-			//case Form.Functions.ImportOptions:
-			//    __FunctionControls[functionName] = new ImportOptionControl ();
-			//    break;
-			//case FormHelper.Functions.Options:
-			//    __FunctionControls[functionName] = new AppOptionControl ();
-			//    break;
-			case Function.About:
-				__FunctionControls[functionName] = new AboutControl();
-				break;
-			//case FormHelper.Functions.Log:
-			//    __FunctionControls[functionName] = new ReportControl ();
-			//    break;
-			case Function.Inspector:
-				//__FunctionControls[functionName] = new DocumentInspectorControl ();
-				//break;
-				DocumentInspectorControl d = new();
-				d.DocumentChanged += OnDocumentChanged;
-				return d;
-			case Function.Rename:
-				__FunctionControls[functionName] = new RenameControl();
-				break;
-			default:
-				return null;
-				//__FunctionControls[Form.Functions.Default] = new Label ();
-				//functionName = Form.Functions.Default;
-				//break;
-		}
-
-		return __FunctionControls[functionName];
-	}
-
-	private void OnDocumentChanged(object sender, DocumentChangedEventArgs args) {
-		string p = args.Path;
-		_MainStatusLabel.Text = p ?? string.Empty;
-		if (FileHelper.IsPathValid(p)) {
-			p = System.IO.Path.GetFileNameWithoutExtension(p);
-			if (p.Length > 20) {
-				p = p.Substring(0, 17) + "...";
-			}
-
-			if (sender is Control f) {
-				f = f.Parent;
-				if (f == null) {
-					return;
-				}
-
-				f.Text = p;
-			}
-		}
-	}
-
-	#endregion
-
 	public MainForm() {
 		InitializeComponent();
 	}
 
 	protected override void OnLoad(EventArgs e) {
 		base.OnLoad(e);
-		Processor.PdfHelper.ToggleReaderDebugMode(true); // 打开容错模式
-		Processor.PdfHelper.ToggleUnethicalMode(true); // 打开强制读取加密文档模式
+		PdfHelper.ToggleReaderDebugMode(true); // 打开容错模式
+		PdfHelper.ToggleUnethicalMode(true); // 打开强制读取加密文档模式
 
 		try {
 			AppContext.Load(null);
@@ -325,7 +111,7 @@ public partial class MainForm : Form
 			OpenFiles(ca);
 		}
 #if DEBUG
-		iTextSharp.text.io.StreamUtil.AddToResourceSearch("iTextAsian.dll");
+		StreamUtil.AddToResourceSearch("iTextAsian.dll");
 #endif
 	}
 
@@ -347,7 +133,7 @@ public partial class MainForm : Form
 
 			try {
 				XmlDocument x = new();
-				x.Load(new System.IO.MemoryStream(args.Result));
+				x.Load(new MemoryStream(args.Result));
 				XmlElement r = x.DocumentElement;
 				string u = r.GetAttribute("url");
 				if (string.IsNullOrEmpty(u) == false
@@ -535,7 +321,7 @@ public partial class MainForm : Form
 				}
 			}
 
-			TabPage t = new(c.FunctionName) { Font = System.Drawing.SystemFonts.SmallCaptionFont };
+			TabPage t = new(c.FunctionName) { Font = SystemFonts.SmallCaptionFont };
 			ImageList.ImageCollection im = _FunctionContainer.ImageList.Images;
 			for (int i = im.Count - 1; i >= 0; i--) {
 				if (im[i] == c.IconImage) {
@@ -615,4 +401,224 @@ public partial class MainForm : Form
 			f.ListRecentFiles(sender, e);
 		}
 	}
+
+	#region 公共功能
+
+	private BackgroundWorker _Worker;
+	private readonly FormState _formState = new();
+	private bool _FullScreen;
+
+	///<summary>获取或指定全屏显示的值。</summary>
+	public bool FullScreen {
+		get => _FullScreen;
+		set {
+			if (value == _FullScreen) {
+				return;
+			}
+
+			_FullScreen = value;
+			if (value) {
+				_MainMenu.Visible = _GeneralToolbar.Visible = false;
+				_formState.Maximize(this);
+			}
+			else {
+				_MainMenu.Visible = true;
+				_GeneralToolbar.Visible = AppContext.Toolbar.ShowGeneralToolbar;
+				_formState.Restore(this);
+			}
+		}
+	}
+
+	/// <summary>
+	///     设置控件的提示信息。
+	/// </summary>
+	internal void SetTooltip(Control control, string text) {
+		_ToolTip.SetToolTip(control, text);
+	}
+
+	/// <summary>
+	///     获取或设置状态栏文本。
+	/// </summary>
+	internal string StatusText {
+		get => _MainStatusLabel.Text;
+		set => _MainStatusLabel.Text = value;
+	}
+
+	#region Worker
+
+	///<summary>获取或指定后台进程。</summary>
+	internal BackgroundWorker GetWorker() {
+		if (_Worker == null) {
+			_Worker = new BackgroundWorker { WorkerReportsProgress = true, WorkerSupportsCancellation = true };
+			_Worker.DoWork += Worker_DoWork;
+			_Worker.ProgressChanged += Worker_ProgressChanged;
+			_Worker.RunWorkerCompleted += Worker_RunWorkerCompleted;
+			Tracker.SetWorker(_Worker);
+		}
+
+		return _Worker;
+	}
+
+	internal bool IsWorkerBusy => _Worker?.IsBusy == true;
+
+	private void Worker_DoWork(object sender, DoWorkEventArgs e) {
+		_Worker.ReportProgress(0);
+		FileHelper.ResetOverwriteMode();
+		AppContext.Abort = false;
+	}
+
+	private void Worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
+		_MainMenu.Enabled = _GeneralToolbar.Enabled = _FunctionContainer.Enabled = true;
+		foreach (TabPage item in _FunctionContainer.TabPages) {
+			item.Enabled = true;
+		}
+
+		if (e.Error == null || e.Cancelled == false) {
+			_LogControl.Complete();
+		}
+	}
+
+	public void ResetWorker() {
+		if (_Worker != null) {
+			if (_Worker.IsBusy) {
+				throw new InvalidOperationException("Worker is busy. Can't be reset.");
+			}
+
+			_Worker.Dispose();
+			_Worker = null;
+		}
+	}
+
+	private void Worker_ProgressChanged(object sender, ProgressChangedEventArgs e) {
+		string s = e.UserState as string;
+		if (s == "INC") {
+			_LogControl.IncrementProgress(e.ProgressPercentage);
+			return;
+		}
+
+		if (s == "GOAL") {
+			_LogControl.SetGoal(e.ProgressPercentage);
+			return;
+		}
+
+		if (s == "TINC") {
+			_LogControl.IncrementTotalProgress();
+		}
+		else if (s == "TGOAL") {
+			_LogControl.SetTotalGoal(e.ProgressPercentage);
+		}
+
+		if (e.ProgressPercentage > 0) {
+			_LogControl.SetProgress(e.ProgressPercentage);
+		}
+		else if (e.ProgressPercentage == 0) {
+			_MainMenu.Enabled = _GeneralToolbar.Enabled = _FunctionContainer.Enabled = false;
+			foreach (TabPage item in _FunctionContainer.TabPages) {
+				item.Enabled = false;
+			}
+
+			_LogControl.Reset();
+			ShowLogControl();
+		}
+		else if (s != null) {
+			_LogControl.PrintMessage(s, (Tracker.Category)e.ProgressPercentage);
+		}
+	}
+
+	#endregion
+
+	internal FunctionControl GetFunctionControl(Function functionName) {
+		if (__FunctionControls.TryGetValue(functionName, out FunctionControl f) && f.IsDisposed == false) {
+			return f;
+		}
+
+		switch (functionName) {
+			case Function.FrontPage:
+				__FunctionControls[functionName] = new FrontPageControl();
+				break;
+			case Function.Patcher:
+				__FunctionControls[functionName] = new PatcherControl();
+				break;
+			case Function.Merger:
+				__FunctionControls[functionName] = new MergerControl();
+				break;
+			case Function.BookmarkGenerator:
+				__FunctionControls[functionName] = new AutoBookmarkControl();
+				break;
+			case Function.InfoExchanger:
+				__FunctionControls[functionName] = new InfoExchangerControl();
+				break;
+			case Function.ExtractPages:
+				__FunctionControls[functionName] = new ExtractPageControl();
+				break;
+			case Function.ExtractImages:
+				__FunctionControls[functionName] = new ExtractImageControl();
+				break;
+			case Function.BookmarkEditor:
+				//__FunctionControls[functionName] = new BookmarkEditorControl ();
+				//break;
+				EditorControl b = new();
+				b.DocumentChanged += OnDocumentChanged;
+				return b;
+			//case FormHelper.Functions.InfoFileOptions:
+			//    __FunctionControls[functionName] = new InfoFileOptionControl ();
+			//    break;
+			case Function.Ocr:
+				__FunctionControls[functionName] = new OcrControl();
+				break;
+			case Function.RenderPages:
+				__FunctionControls[functionName] = new RenderImageControl();
+				break;
+			//case Form.Functions.ImportOptions:
+			//    __FunctionControls[functionName] = new ImportOptionControl ();
+			//    break;
+			//case FormHelper.Functions.Options:
+			//    __FunctionControls[functionName] = new AppOptionControl ();
+			//    break;
+			case Function.About:
+				__FunctionControls[functionName] = new AboutControl();
+				break;
+			//case FormHelper.Functions.Log:
+			//    __FunctionControls[functionName] = new ReportControl ();
+			//    break;
+			case Function.Inspector:
+				//__FunctionControls[functionName] = new DocumentInspectorControl ();
+				//break;
+				DocumentInspectorControl d = new();
+				d.DocumentChanged += OnDocumentChanged;
+				return d;
+			case Function.Rename:
+				__FunctionControls[functionName] = new RenameControl();
+				break;
+			default:
+				return null;
+				//__FunctionControls[Form.Functions.Default] = new Label ();
+				//functionName = Form.Functions.Default;
+				//break;
+		}
+
+		return __FunctionControls[functionName];
+	}
+
+	private void OnDocumentChanged(object sender, DocumentChangedEventArgs args) {
+		string p = args.Path;
+		_MainStatusLabel.Text = p ?? string.Empty;
+		if (FileHelper.IsPathValid(p)) {
+			p = Path.GetFileNameWithoutExtension(p);
+			if (p.Length > 20) {
+				p = p.Substring(0, 17) + "...";
+			}
+
+			if (sender is Control f) {
+				f = f.Parent;
+				if (f == null) {
+					return;
+				}
+
+				f.Text = p;
+			}
+		}
+	}
+
+	#endregion
 }

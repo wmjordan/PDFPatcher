@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Text;
 using CC = System.Runtime.InteropServices.CallingConvention;
 
@@ -14,14 +13,14 @@ public sealed class MuFont
 	private readonly ContextHandle _context;
 	private readonly IntPtr _Font;
 
-	public unsafe string Name => new(NativeMethods.GetFontName(_context, _Font));
-	public MuFontFlags Attributes => NativeMethods.GetFontFlags(_Font);
-	public BBox BBox => NativeMethods.GetFontBBox(_context, _Font);
-
 	internal MuFont(ContextHandle handle, IntPtr font) {
 		_context = handle;
 		_Font = font;
 	}
+
+	public unsafe string Name => new(NativeMethods.GetFontName(_context, _Font));
+	public MuFontFlags Attributes => NativeMethods.GetFontFlags(_Font);
+	public BBox BBox => NativeMethods.GetFontBBox(_context, _Font);
 }
 
 [Flags]
@@ -45,18 +44,18 @@ public enum MuFontFlags : uint
 public sealed class MuTextPage : IMuBoundedElement, IDisposable
 {
 	private readonly TextPageHandle _handle;
-	private NativeTextPage _TextPage;
 	private IEnumerable<MuTextBlock> _Blocks;
-
-	public Rectangle BBox => _TextPage.MediaBox;
-
-	public IEnumerable<MuTextBlock> Blocks =>
-		_Blocks ?? (_Blocks = MuContentBlock.GetTextBlocks(_TextPage._FirstBlock));
+	private NativeTextPage _TextPage;
 
 	internal MuTextPage(TextPageHandle nativePage) {
 		_handle = nativePage;
 		_TextPage = _handle.MarshalAs<NativeTextPage>();
 	}
+
+	public IEnumerable<MuTextBlock> Blocks =>
+		_Blocks ?? (_Blocks = MuContentBlock.GetTextBlocks(_TextPage._FirstBlock));
+
+	public Rectangle BBox => _TextPage.MediaBox;
 
 	///// <summary>
 	///// 获取指针指向的所有文本集合。
@@ -76,17 +75,15 @@ public sealed class MuTextPage : IMuBoundedElement, IDisposable
 		private readonly IntPtr /*fz_pool*/
 			_Pool;
 
-		private readonly Rectangle _MediaBox;
-
 		/* fz_text_block */
 		internal IntPtr _FirstBlock, _LastBlock;
 
-		internal Rectangle MediaBox => _MediaBox;
+		internal Rectangle MediaBox { get; }
 	}
 
 	#region IDisposable Support
 
-	private bool disposedValue = false; // 要检测冗余调用
+	private bool disposedValue; // 要检测冗余调用
 
 	private void Dispose(bool disposing) {
 		if (!disposedValue) {
@@ -116,8 +113,8 @@ public enum ContentBlockType { Text = 0, Image = 1 }
 
 public abstract class MuContentBlock : IMuBoundedElement
 {
-	public abstract Rectangle BBox { get; }
 	public abstract ContentBlockType Type { get; }
+	public abstract Rectangle BBox { get; }
 
 	internal static IEnumerable<MuContentBlock> GetBlocks(IntPtr firstBlock) {
 		foreach (NativeObject<NativeContentBlock> item in firstBlock.EnumerateLinkedList<NativeContentBlock>()) {
@@ -160,7 +157,6 @@ public abstract class MuContentBlock : IMuBoundedElement
 
 	private struct NativeContentBlock : Interop.ILinkedList
 	{
-		private readonly ContentBlockType _Type;
 		private readonly Rectangle _BBox;
 
 		/* union {
@@ -168,10 +164,11 @@ public abstract class MuContentBlock : IMuBoundedElement
 			struct { fz_matrix transform; fz_image *image; } i;
 		} u; */
 		private readonly IntPtr _Ptr1, _Ptr2, a, b, c, d, e;
-		private readonly IntPtr _PreviousBlock, _NextBlock;
+		private readonly IntPtr _PreviousBlock;
 
-		IntPtr Interop.ILinkedList.Next => _NextBlock;
-		internal ContentBlockType Type => _Type;
+		IntPtr Interop.ILinkedList.Next { get; }
+
+		internal ContentBlockType Type { get; }
 
 		internal MuContentBlock ToMuBlock() {
 			return new MuTextBlock(_BBox, _Ptr1, _Ptr2);
@@ -181,45 +178,47 @@ public abstract class MuContentBlock : IMuBoundedElement
 
 public sealed class MuImageBlock : MuContentBlock, IMuBoundedElement
 {
-	private readonly Rectangle _BBox;
-	private readonly Matrix _Matrix;
 	private readonly IntPtr _Image;
+	private readonly Matrix _Matrix;
 
 	internal MuImageBlock(Rectangle bbox, Matrix matrix, IntPtr image) {
-		_BBox = bbox;
+		BBox = bbox;
 		_Matrix = matrix;
 		_Image = image;
 	}
 
-	public override Rectangle BBox => _BBox;
 	public override ContentBlockType Type => ContentBlockType.Image;
+
+	public override Rectangle BBox { get; }
 }
 
 public sealed class MuTextBlock : MuContentBlock, IMuBoundedElement
 {
-	private readonly Rectangle _BBox;
 	private readonly IntPtr _FirstLine, _LastLine;
 
 	private IEnumerable<MuTextLine> _Lines;
-	public override Rectangle BBox => _BBox;
-	public override ContentBlockType Type => ContentBlockType.Text;
-	public IEnumerable<MuTextLine> Lines => _Lines ?? (_Lines = MuTextLine.GetLines(_FirstLine));
 
 	internal MuTextBlock(Rectangle BBox, IntPtr FirstLine, IntPtr LastLine) {
-		_BBox = BBox;
+		this.BBox = BBox;
 		_FirstLine = FirstLine;
 		_LastLine = LastLine;
 	}
+
+	public override ContentBlockType Type => ContentBlockType.Text;
+	public IEnumerable<MuTextLine> Lines => _Lines ?? (_Lines = MuTextLine.GetLines(_FirstLine));
+	public override Rectangle BBox { get; }
 }
 
 [DebuggerDisplay("Text={Text},BBox={BBox}")]
 public sealed class MuTextLine : IMuBoundedElement
 {
-	private NativeTextLine _textLine;
-	private string _Text;
 	private IEnumerable<MuTextChar> _Characters;
+	private string _Text;
+	private NativeTextLine _textLine;
 
-	public Rectangle BBox => _textLine.BBox;
+	private MuTextLine(IntPtr textLine) {
+		_textLine = textLine.MarshalAs<NativeTextLine>();
+	}
 
 	public IEnumerable<MuTextChar> Characters =>
 		_Characters ?? (_Characters = MuTextChar.GetCharacters(_textLine._FirstChar));
@@ -228,9 +227,7 @@ public sealed class MuTextLine : IMuBoundedElement
 	public string Text => _Text ?? (_Text = GetText());
 	public MuTextChar FirstCharacter => MuTextChar.GetChar(_textLine._FirstChar);
 
-	private MuTextLine(IntPtr textLine) {
-		_textLine = textLine.MarshalAs<NativeTextLine>();
-	}
+	public Rectangle BBox => _textLine.BBox;
 
 	private string GetText() {
 		StringBuilder sb = new(50);
@@ -256,17 +253,16 @@ public sealed class MuTextLine : IMuBoundedElement
 		private readonly Point _Point;
 
 		//fz_rect bbox;
-		private readonly Rectangle _BBox;
 
 		//fz_stext_char *first_char, *last_char;
 		internal IntPtr _FirstChar, _LastChar;
 
 		//fz_stext_line *prev, *next;
-		private readonly IntPtr _PrevLine, _NextLine;
+		private readonly IntPtr _PrevLine;
 
-		IntPtr Interop.ILinkedList.Next => _NextLine;
+		IntPtr Interop.ILinkedList.Next { get; }
 
-		public Rectangle BBox => _BBox;
+		public Rectangle BBox { get; }
 	}
 }
 
@@ -274,19 +270,19 @@ public sealed class MuTextLine : IMuBoundedElement
 	"Point={Point}; Size={Size}, Char={System.Char.ConvertFromUtf32(Unicode)}({Unicode}); Font={FontID}")]
 public sealed class MuTextChar : IMuBoundedElement
 {
-	private NativeTextChar _textChar;
 	private readonly Rectangle _Box;
-
-	public Point Point => _textChar._Point;
-	public Rectangle BBox => _Box.IsEmpty ? Quad.ToRectangle() : _Box;
-	public Quad Quad => _textChar._Quad;
-	public int Unicode => _textChar._Unicode;
-	public float Size => _textChar._Size;
-	public IntPtr FontID => _textChar._Font;
+	private readonly NativeTextChar _textChar;
 
 	private MuTextChar(NativeTextChar textChar) {
 		_textChar = textChar;
 	}
+
+	public Point Point => _textChar._Point;
+	public Quad Quad => _textChar._Quad;
+	public int Unicode => _textChar._Unicode;
+	public float Size => _textChar._Size;
+	public IntPtr FontID => _textChar._Font;
+	public Rectangle BBox => _Box.IsEmpty ? Quad.ToRectangle() : _Box;
 
 	internal static MuTextChar GetChar(IntPtr charPtr) {
 		return new MuTextChar(charPtr.MarshalAs<NativeTextChar>());

@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.ComponentModel;
 using System.Windows.Forms;
 
 namespace PDFPatcher.Functions;
 
 internal sealed class MacroMenu : ContextMenuStrip
 {
-	private readonly TextBox __editOperationWrapper = new();
-
 	internal const string InsertText = "插入";
+
+	private readonly TextBox __editOperationWrapper = new();
 	//internal const string Copy = "复制";
 	//internal const string Paste = "粘贴";
 	//internal const string Cut = "剪切";
@@ -23,8 +21,8 @@ internal sealed class MacroMenu : ContextMenuStrip
 	//        new ToolStripMenuItem (Delete)
 	//    });
 	//}
-	public MacroMenu() : base() { }
-	public MacroMenu(System.ComponentModel.IContainer container) : base(container) { }
+	public MacroMenu() { }
+	public MacroMenu(IContainer container) : base(container) { }
 
 	internal void AddInsertMacroMenuItem(string text) {
 		Items.Add(InsertText + text);

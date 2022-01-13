@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Windows.Forms;
 using PDFPatcher.Common;
+using PDFPatcher.Properties;
 
 namespace PDFPatcher.Functions;
 
@@ -15,7 +16,7 @@ public partial class InfoFileOptionControl : Form, IResettableControl
 	public InfoFileOptionControl() {
 		InitializeComponent();
 
-		this.SetIcon(Properties.Resources.InfoFileOptions);
+		this.SetIcon(Resources.InfoFileOptions);
 		AppContext.MainForm.SetTooltip(_ExtractPageRangeBox, Messages.PageRanges);
 
 		_UnitBox.Items.AddRange(Constants.Units.Names);

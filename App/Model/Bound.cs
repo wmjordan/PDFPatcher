@@ -1,32 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Drawing;
 
 namespace PDFPatcher.Model;
 
 [DebuggerDisplay("T={Top},L={Left},B={Bottom},R={Right}; H={Height},W={Width}")]
 public class Bound
 {
-	internal float Top { get; private set; }
-	internal float Left { get; private set; }
-	internal float Bottom { get; private set; }
-	internal float Right { get; private set; }
-
-	/// <summary>
-	/// 获取此区域坐标是否属于笛卡尔坐标系。
-	/// </summary>
-	internal bool IsTopUp { get; private set; }
-
-	/// <summary>
-	/// 获取此坐标区域是否属于绘图坐标系。
-	/// </summary>
-	internal bool IsTopDown { get; private set; }
-
-	internal float Height { get; private set; }
-	internal float Width { get; private set; }
-
-	internal float Middle { get; private set; }
-	internal float Center { get; private set; }
-
 	private Bound() {
 		IsTopDown = true;
 		IsTopUp = true;
@@ -48,7 +28,7 @@ public class Bound
 	}
 
 	/// <summary>
-	/// 创建宽度和高度均为 0 的区域（点）实例。
+	///     创建宽度和高度均为 0 的区域（点）实例。
 	/// </summary>
 	/// <param name="x">横坐标。</param>
 	/// <param name="y">纵坐标。</param>
@@ -56,11 +36,32 @@ public class Bound
 	}
 
 	/// <summary>
-	/// 从指定区域复制副本。
+	///     从指定区域复制副本。
 	/// </summary>
 	/// <param name="source">需要复制副本的区域。</param>
 	public Bound(Bound source) : this(source.Left, source.Bottom, source.Right, source.Top) {
 	}
+
+	internal float Top { get; private set; }
+	internal float Left { get; private set; }
+	internal float Bottom { get; private set; }
+	internal float Right { get; private set; }
+
+	/// <summary>
+	///     获取此区域坐标是否属于笛卡尔坐标系。
+	/// </summary>
+	internal bool IsTopUp { get; private set; }
+
+	/// <summary>
+	///     获取此坐标区域是否属于绘图坐标系。
+	/// </summary>
+	internal bool IsTopDown { get; private set; }
+
+	internal float Height { get; private set; }
+	internal float Width { get; private set; }
+
+	internal float Middle { get; private set; }
+	internal float Center { get; private set; }
 
 	private void RecalculateSize() {
 		IsTopUp = Top >= Bottom;
@@ -105,11 +106,11 @@ public class Bound
 	}
 
 	/// <summary>
-	/// 获取区域 <paramref name="other"/> 到当前区域之间的距离。
+	///     获取区域 <paramref name="other" /> 到当前区域之间的距离。
 	/// </summary>
 	/// <param name="other">另一个区域。</param>
 	/// <param name="writingDirection">假设书写方向。</param>
-	/// <returns><paramref name="other"/> 相对于此区域的距离关系。</returns>
+	/// <returns><paramref name="other" /> 相对于此区域的距离关系。</returns>
 	internal DistanceInfo GetDistance(Bound other, WritingDirection writingDirection) {
 		if (IsTopDown != other.IsTopDown && IsTopUp != other.IsTopUp) {
 			throw new ArgumentException("区域坐标系不同。");
@@ -155,15 +156,16 @@ public class Bound
 			if (vd == 0 && hd == 0) {
 				return new DistanceInfo(DistanceInfo.Placement.Overlapping, 0, 0);
 			}
-			else if (vd == 0) {
+
+			if (vd == 0) {
 				return new DistanceInfo(DistanceInfo.Placement.Overlapping | hp, hd, vd);
 			}
-			else if (hp == 0) {
+
+			if (hp == 0) {
 				return new DistanceInfo(DistanceInfo.Placement.Overlapping | vp, hd, vd);
 			}
-			else {
-				return new DistanceInfo(DistanceInfo.Placement.Overlapping, hd, vd);
-			}
+
+			return new DistanceInfo(DistanceInfo.Placement.Overlapping, hd, vd);
 		}
 
 		if (other.Left >= Right) {
@@ -193,16 +195,16 @@ public class Bound
 		if (writingDirection == WritingDirection.Vertical) {
 			return hp != DistanceInfo.Placement.Unknown ? h : v;
 		}
-		else if (writingDirection == WritingDirection.Hortizontal) {
+
+		if (writingDirection == WritingDirection.Hortizontal) {
 			return vp != DistanceInfo.Placement.Unknown ? v : h;
 		}
-		else {
-			return hd < vd ? h : v;
-		}
+
+		return hd < vd ? h : v;
 	}
 
 	/// <summary>
-	/// 返回当前区域是否和指定区域在同一行上（中心点是否落在 <paramref name="other"/> 的两个边缘之间）。
+	///     返回当前区域是否和指定区域在同一行上（中心点是否落在 <paramref name="other" /> 的两个边缘之间）。
 	/// </summary>
 	/// <param name="other">需要比较的区域。</param>
 	/// <param name="direction">比较方向。</param>
@@ -260,8 +262,8 @@ public class Bound
 		return Top.GetHashCode() ^ Bottom.GetHashCode() ^ Left.GetHashCode() ^ Right.GetHashCode();
 	}
 
-	public static implicit operator System.Drawing.RectangleF(Bound bound) {
-		return new System.Drawing.RectangleF(Math.Min(bound.Left, bound.Right), Math.Min(bound.Top, bound.Bottom),
+	public static implicit operator RectangleF(Bound bound) {
+		return new RectangleF(Math.Min(bound.Left, bound.Right), Math.Min(bound.Top, bound.Bottom),
 			Math.Abs(bound.Left - bound.Right), Math.Abs(bound.Top - bound.Bottom));
 	}
 }

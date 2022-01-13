@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Drawing;
 using PDFPatcher.Common;
+using PDFPatcher.Properties;
+using TheArtOfDev.HtmlRenderer.Core.Entities;
 
 namespace PDFPatcher.Functions;
 
@@ -26,14 +30,14 @@ internal class HtmlPageControl : FunctionControl
 				break;
 			case "http":
 			case "https":
-				System.Diagnostics.Process.Start(link);
+				Process.Start(link);
 				break;
 		}
 	}
 
-	protected void LoadResourceImage(TheArtOfDev.HtmlRenderer.Core.Entities.HtmlImageLoadEventArgs e) {
+	protected void LoadResourceImage(HtmlImageLoadEventArgs e) {
 		e.Callback(
-			Properties.Resources.ResourceManager.GetObject(e.Src.Substring("res:".Length)) as System.Drawing.Image);
+			Resources.ResourceManager.GetObject(e.Src.Substring("res:".Length)) as Image);
 		e.Handled = true;
 	}
 

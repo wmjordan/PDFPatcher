@@ -279,7 +279,6 @@ internal static class ValueHelper
 					goto EndsWithWhitespaceFalse;
 				case '错':
 					if (i + 1 < l && value[++i] == '误') {
-						goto EndsWithWhitespaceFalse;
 					}
 
 					goto EndsWithWhitespaceFalse;
@@ -299,9 +298,8 @@ internal static class ValueHelper
 										hasDot = true;
 										continue;
 									}
-									else {
-										return Invalid;
-									}
+
+									return Invalid;
 								}
 
 								return Invalid;
@@ -532,17 +530,16 @@ internal static class ValueHelper
 
 				return result;
 			}
-			else {
-				char* c = p;
-				*(int*)c = mapper[*bp];
-				while (++b < end) {
-					c += 2;
-					*c = separator;
-					*(int*)++c = mapper[*b];
-				}
 
-				return result;
+			char* c = p;
+			*(int*)c = mapper[*bp];
+			while (++b < end) {
+				c += 2;
+				*c = separator;
+				*(int*)++c = mapper[*b];
 			}
+
+			return result;
 		}
 	}
 

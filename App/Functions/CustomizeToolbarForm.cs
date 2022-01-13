@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
+using PDFPatcher.Properties;
 using BO = PDFPatcher.ToolbarOptions.ButtonOption;
 
 namespace PDFPatcher.Functions;
@@ -21,20 +22,20 @@ public partial class CustomizeToolbarForm : Form
 	private void CustomizeToolbarForm_Load(object sender, EventArgs e) {
 		foreach (Toolkit item in Toolkit.Toolkits) {
 			_ItemListBox.SmallImageList.Images.Add(item.Icon,
-				Properties.Resources.ResourceManager.GetObject(item.Icon) as Image);
+				Resources.ResourceManager.GetObject(item.Icon) as Image);
 		}
 
 		new TypedColumn<BO>(_NameColumn) {
-			AspectGetter = (o) => o.GetToolkit().Name, ImageGetter = (o) => o.GetToolkit().Icon
+			AspectGetter = o => o.GetToolkit().Name, ImageGetter = o => o.GetToolkit().Icon
 		};
 		new TypedColumn<BO>(_ShowTextColumn) {
-			AspectGetter = (o) => o.ShowText, AspectPutter = (o, v) => o.ShowText = (bool)v
+			AspectGetter = o => o.ShowText, AspectPutter = (o, v) => o.ShowText = (bool)v
 		};
 		new TypedColumn<BO>(_VisibleColumn) {
-			AspectGetter = (o) => o.Visible, AspectPutter = (o, v) => o.Visible = (bool)v
+			AspectGetter = o => o.Visible, AspectPutter = (o, v) => o.Visible = (bool)v
 		};
 		new TypedColumn<BO>(_DisplayTextColumn) {
-			AspectGetter = (o) => o.DisplayName,
+			AspectGetter = o => o.DisplayName,
 			AspectPutter = (o, v) => o.DisplayName = v as string ?? o.GetToolkit().Name
 		};
 		AppContext.Toolbar.AddMissedButtons();

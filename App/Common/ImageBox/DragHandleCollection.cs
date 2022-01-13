@@ -37,6 +37,20 @@ internal sealed class DragHandleCollection : IEnumerable<DragHandle>
 
 	#endregion
 
+	#region IEnumerable<DragHandle> Members
+
+	/// <summary>
+	///     Returns an enumerator that iterates through a collection.
+	/// </summary>
+	/// <returns>
+	///     An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.
+	/// </returns>
+	IEnumerator IEnumerable.GetEnumerator() {
+		return GetEnumerator();
+	}
+
+	#endregion
+
 	#region Public Properties
 
 	public int Count => _items.Count;
@@ -48,10 +62,10 @@ internal sealed class DragHandleCollection : IEnumerable<DragHandle>
 	#region Public Members
 
 	/// <summary>
-	/// Returns an enumerator that iterates through the collection.
+	///     Returns an enumerator that iterates through the collection.
 	/// </summary>
 	/// <returns>
-	/// A <see cref="T:System.Collections.Generic.IEnumerator`1"/> that can be used to iterate through the collection.
+	///     A <see cref="T:System.Collections.Generic.IEnumerator`1" /> that can be used to iterate through the collection.
 	/// </returns>
 	public IEnumerator<DragHandle> GetEnumerator() {
 		return _items.Values.GetEnumerator();
@@ -70,20 +84,6 @@ internal sealed class DragHandleCollection : IEnumerable<DragHandle>
 		}
 
 		return result;
-	}
-
-	#endregion
-
-	#region IEnumerable<DragHandle> Members
-
-	/// <summary>
-	/// Returns an enumerator that iterates through a collection.
-	/// </summary>
-	/// <returns>
-	/// An <see cref="T:System.Collections.IEnumerator"/> object that can be used to iterate through the collection.
-	/// </returns>
-	IEnumerator IEnumerable.GetEnumerator() {
-		return GetEnumerator();
 	}
 
 	#endregion

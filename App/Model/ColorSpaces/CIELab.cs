@@ -1,23 +1,16 @@
-﻿using System;
-using System.ComponentModel;
-
-namespace Devcorp.Controls.Design;
+﻿namespace Devcorp.Controls.Design;
 
 /// <summary>
-/// Structure to define CIE L*a*b*.
+///     Structure to define CIE L*a*b*.
 /// </summary>
 public struct CIELab
 {
 	/// <summary>
-	/// Gets an empty CIELab structure.
+	///     Gets an empty CIELab structure.
 	/// </summary>
 	public static readonly CIELab Empty = new();
 
 	#region Fields
-
-	private double l;
-	private double a;
-	private double b;
 
 	#endregion
 
@@ -40,35 +33,26 @@ public struct CIELab
 	#region Accessors
 
 	/// <summary>
-	/// Gets or sets L component.
+	///     Gets or sets L component.
 	/// </summary>
-	public double L {
-		get => l;
-		set => l = value;
-	}
+	public double L { get; set; }
 
 	/// <summary>
-	/// Gets or sets a component.
+	///     Gets or sets a component.
 	/// </summary>
-	public double A {
-		get => a;
-		set => a = value;
-	}
+	public double A { get; set; }
 
 	/// <summary>
-	/// Gets or sets a component.
+	///     Gets or sets a component.
 	/// </summary>
-	public double B {
-		get => b;
-		set => b = value;
-	}
+	public double B { get; set; }
 
 	#endregion
 
 	public CIELab(double l, double a, double b) {
-		this.l = l;
-		this.a = a;
-		this.b = b;
+		this.L = l;
+		this.A = a;
+		this.B = b;
 	}
 
 	#region Methods
@@ -82,7 +66,7 @@ public struct CIELab
 	}
 
 	public override int GetHashCode() {
-		return L.GetHashCode() ^ a.GetHashCode() ^ b.GetHashCode();
+		return L.GetHashCode() ^ A.GetHashCode() ^ B.GetHashCode();
 	}
 
 	#endregion

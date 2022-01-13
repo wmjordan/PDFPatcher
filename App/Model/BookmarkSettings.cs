@@ -1,33 +1,23 @@
 ﻿using System;
 using System.Drawing;
-using System.Text;
 using System.Xml;
+using System.Xml.Schema;
 using System.Xml.Serialization;
 using PDFPatcher.Common;
 
 namespace PDFPatcher.Model;
 
 /// <summary>
-/// 在合并文件功能中使用的书签设置。
+///     在合并文件功能中使用的书签设置。
 /// </summary>
 public class BookmarkSettings : ICloneable, IXmlSerializable
 {
-	public string Title { get; set; }
-	public bool IsBold { get; set; }
-	public bool IsItalic { get; set; }
-	public bool IsOpened { get; set; }
-	public Color ForeColor { get; set; }
-
 	public BookmarkSettings() {
 		ForeColor = Color.Transparent;
 	}
 
 	public BookmarkSettings(string title) {
 		Title = title;
-	}
-
-	public BookmarkSettings Clone() {
-		return (BookmarkSettings)MemberwiseClone();
 	}
 
 	public BookmarkSettings(BookmarkElement element) {
@@ -38,6 +28,12 @@ public class BookmarkSettings : ICloneable, IXmlSerializable
 		ForeColor = element.ForeColor;
 	}
 
+	public string Title { get; set; }
+	public bool IsBold { get; set; }
+	public bool IsItalic { get; set; }
+	public bool IsOpened { get; set; }
+	public Color ForeColor { get; set; }
+
 	#region ICloneable 成员
 
 	object ICloneable.Clone() {
@@ -46,9 +42,13 @@ public class BookmarkSettings : ICloneable, IXmlSerializable
 
 	#endregion
 
+	public BookmarkSettings Clone() {
+		return (BookmarkSettings)MemberwiseClone();
+	}
+
 	#region IXmlSerializable 成员
 
-	public System.Xml.Schema.XmlSchema GetSchema() {
+	public XmlSchema GetSchema() {
 		return null;
 	}
 

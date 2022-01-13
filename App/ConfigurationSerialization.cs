@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Xml.Serialization;
+using MuPdfSharp;
 using PowerJson;
 
 namespace PDFPatcher;
@@ -32,7 +33,7 @@ public class ConfigurationSerialization
 	[XmlElement("PDF编辑器设置")] public PatcherOptions EditorOptions { get; set; }
 	[XmlElement("自动生成书签设置")] public AutoBookmarkOptions AutoBookmarkOptions { get; set; }
 	[XmlElement("导出图像设置")] public ImageExtracterOptions ImageExporterOptions { get; set; }
-	[XmlElement("转为图片设置")] public MuPdfSharp.ImageRendererOptions ImageRendererOptions { get; set; }
+	[XmlElement("转为图片设置")] public ImageRendererOptions ImageRendererOptions { get; set; }
 	[XmlElement("提取页面设置")] public ExtractPageOptions ExtractPageOptions { get; set; }
 	[XmlElement("文本识别设置")] public OcrOptions OcrOptions { get; set; }
 	[XmlElement("工具栏设置")] public ToolbarOptions ToolbarOptions { get; set; }
@@ -41,7 +42,4 @@ public class ConfigurationSerialization
 	[JsonInclude]
 	[JsonSerializable]
 	internal AppContext.RecentItems Recent { get; set; }
-
-	public ConfigurationSerialization() {
-	}
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using iTextSharp.text.error_messages;
 using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.parser;
@@ -12,6 +11,13 @@ namespace PDFPatcher.Processor;
 
 internal class PdfContentStreamProcessor
 {
+	public static readonly IContentOperator NopOperator = new IgnoreOperatorContentOperator();
+
+	private readonly Dictionary<int, WeakReference> _FontCache = new();
+	private readonly Dictionary<int, string> _FontNameCache = new();
+
+	private readonly Dictionary<PdfName, IXObjectDoHandler> _XObjectDoHandlers = new();
+
 	// Fields
 	private readonly Stack<GraphicsState> gsStack = new();
 	private readonly Stack<MarkedContentInfo> markedContentStack = new();
@@ -19,15 +25,7 @@ internal class PdfContentStreamProcessor
 	private readonly IDictionary<string, IContentOperator> operators = new Dictionary<string, IContentOperator>();
 
 	//IRenderListener renderListener;
-	private ResourceDictionary _Resources;
 	private Matrix _TextLineMatrix;
-	private Matrix _TextMatrix;
-
-	private readonly Dictionary<PdfName, IXObjectDoHandler> _XObjectDoHandlers = new();
-
-	private readonly Dictionary<int, WeakReference> _FontCache = new();
-	private readonly Dictionary<int, string> _FontNameCache = new();
-	public static readonly IContentOperator NopOperator = new IgnoreOperatorContentOperator();
 
 	internal PdfContentStreamProcessor() {
 		Reset();
@@ -35,18 +33,19 @@ internal class PdfContentStreamProcessor
 
 	// Methods
 	internal GraphicsState CurrentGraphicState => gsStack.Peek();
-	internal Matrix TextMatrix => _TextMatrix;
+	internal Matrix TextMatrix { get; private set; }
+
 	internal IContentOperator DefaultOperator { get; set; }
 	protected IDictionary<int, string> Fonts => _FontNameCache;
-	protected ResourceDictionary Resource => _Resources;
+	protected ResourceDictionary Resource { get; private set; }
 
 	protected void ApplyTextAdjust(float tj) {
 		float adjustBy = -tj / 1000f * CurrentGraphicState.FontSize * CurrentGraphicState.HorizontalScaling;
-		_TextMatrix = new Matrix(adjustBy, 0f).Multiply(_TextMatrix);
+		TextMatrix = new Matrix(adjustBy, 0f).Multiply(TextMatrix);
 	}
 
 	protected void AdjustTextMatrixX(float x) {
-		_TextMatrix = new Matrix(x, 0f).Multiply(_TextMatrix);
+		TextMatrix = new Matrix(x, 0f).Multiply(TextMatrix);
 	}
 
 	protected void BeginMarkedContent(PdfName tag, PdfDictionary dict) {
@@ -62,12 +61,11 @@ internal class PdfContentStreamProcessor
 		if (_FontCache.TryGetValue(fontRef.Number, out r)) {
 			return (FontInfo)(r.Target ?? (r.Target = new FontInfo(fontRef)));
 		}
-		else {
-			FontInfo f = new(fontRef);
-			_FontCache.Add(fontRef.Number, new WeakReference(f));
-			_FontNameCache.Add(fontRef.Number, f.FontName);
-			return f;
-		}
+
+		FontInfo f = new(fontRef);
+		_FontCache.Add(fontRef.Number, new WeakReference(f));
+		_FontNameCache.Add(fontRef.Number, f.FontName);
+		return f;
 	}
 
 	protected virtual void DisplayPdfString(PdfString str) {
@@ -152,7 +150,7 @@ internal class PdfContentStreamProcessor
 	}
 
 	public void ProcessContent(byte[] contentBytes, PdfDictionary resources) {
-		_Resources.Push(resources);
+		Resource.Push(resources);
 		PRTokeniser tokeniser = new(new RandomAccessFileOrArray(contentBytes));
 		PdfContentParser ps = new(tokeniser);
 		List<PdfObject> operands = new();
@@ -168,7 +166,7 @@ internal class PdfContentStreamProcessor
 			}
 		}
 
-		_Resources.Pop();
+		Resource.Pop();
 	}
 
 	internal IContentOperator RegisterContentOperator(string operatorString, IContentOperator oper) {
@@ -190,9 +188,346 @@ internal class PdfContentStreamProcessor
 	internal virtual void Reset() {
 		gsStack.Clear();
 		gsStack.Push(new GraphicsState());
-		_TextMatrix = null;
+		TextMatrix = null;
 		_TextLineMatrix = null;
-		_Resources = new ResourceDictionary();
+		Resource = new ResourceDictionary();
+	}
+
+	internal static class InlineImageUtils
+	{
+		/**
+			 * Map between key abbreviations allowed in dictionary of inline images and their
+			 * equivalent image dictionary keys
+			 */
+		private static readonly IDictionary<PdfName, PdfName> inlineImageEntryAbbreviationMap;
+
+		/**
+			 * Map between value abbreviations allowed in dictionary of inline images for COLORSPACE
+			 */
+		private static readonly IDictionary<PdfName, PdfName> inlineImageColorSpaceAbbreviationMap;
+
+		/**
+			 * Map between value abbreviations allowed in dictionary of inline images for FILTER
+			 */
+		private static readonly IDictionary<PdfName, PdfName> inlineImageFilterAbbreviationMap;
+
+		static InlineImageUtils() {
+			// static initializer
+			inlineImageEntryAbbreviationMap = new Dictionary<PdfName, PdfName> {
+				// allowed entries - just pass these through
+				[PdfName.BITSPERCOMPONENT] = PdfName.BITSPERCOMPONENT,
+				[PdfName.COLORSPACE] = PdfName.COLORSPACE,
+				[PdfName.DECODE] = PdfName.DECODE,
+				[PdfName.DECODEPARMS] = PdfName.DECODEPARMS,
+				[PdfName.FILTER] = PdfName.FILTER,
+				[PdfName.HEIGHT] = PdfName.HEIGHT,
+				[PdfName.IMAGEMASK] = PdfName.IMAGEMASK,
+				[PdfName.INTENT] = PdfName.INTENT,
+				[PdfName.INTERPOLATE] = PdfName.INTERPOLATE,
+				[PdfName.WIDTH] = PdfName.WIDTH,
+
+				// abbreviations - transform these to corresponding correct values
+				[new PdfName("BPC")] = PdfName.BITSPERCOMPONENT,
+				[new PdfName("CS")] = PdfName.COLORSPACE,
+				[new PdfName("D")] = PdfName.DECODE,
+				[new PdfName("DP")] = PdfName.DECODEPARMS,
+				[new PdfName("F")] = PdfName.FILTER,
+				[new PdfName("H")] = PdfName.HEIGHT,
+				[new PdfName("IM")] = PdfName.IMAGEMASK,
+				[new PdfName("I")] = PdfName.INTERPOLATE,
+				[new PdfName("W")] = PdfName.WIDTH
+			};
+
+			inlineImageColorSpaceAbbreviationMap = new Dictionary<PdfName, PdfName> {
+				[new PdfName("G")] = PdfName.DEVICEGRAY,
+				[new PdfName("RGB")] = PdfName.DEVICERGB,
+				[new PdfName("CMYK")] = PdfName.DEVICECMYK,
+				[new PdfName("I")] = PdfName.INDEXED
+			};
+
+			inlineImageFilterAbbreviationMap = new Dictionary<PdfName, PdfName> {
+				[new PdfName("AHx")] = PdfName.ASCIIHEXDECODE,
+				[new PdfName("A85")] = PdfName.ASCII85DECODE,
+				[new PdfName("LZW")] = PdfName.LZWDECODE,
+				[new PdfName("Fl")] = PdfName.FLATEDECODE,
+				[new PdfName("RL")] = PdfName.RUNLENGTHDECODE,
+				[new PdfName("CCF")] = PdfName.CCITTFAXDECODE,
+				[new PdfName("DCT")] = PdfName.DCTDECODE
+			};
+		}
+
+		/**
+			 * Parses an inline image from the provided content parser.  The parser must be positioned immediately following the BI operator in the content stream.
+			 * The parser will be left with current position immediately following the EI operator that terminates the inline image
+			 * @param ps the content parser to use for reading the image. 
+			 * @return the parsed image
+			 * @throws IOException if anything goes wring with the parsing
+			 * @throws InlineImageParseException if parsing of the inline image failed due to issues specific to inline image processing
+			 */
+		public static PdfImageData ParseInlineImage(PdfContentParser ps,
+			PdfDictionary colorSpaceDic) {
+			PdfDictionary d = ParseInlineImageDictionary(ps);
+			return new PdfImageData(d, ParseInlineImageSamples(d, colorSpaceDic, ps));
+		}
+
+		/**
+			 * Parses the next inline image dictionary from the parser.  The parser must be positioned immediately following the EI operator.
+			 * The parser will be left with position immediately following the whitespace character that follows the ID operator that ends the inline image dictionary.
+			 * @param ps the parser to extract the embedded image information from
+			 * @return the dictionary for the inline image, with any abbreviations converted to regular image dictionary keys and values
+			 * @throws IOException if the parse fails
+			 */
+		private static PdfDictionary ParseInlineImageDictionary(PdfContentParser ps) {
+			// by the time we get to here, we have already parsed the BI operator
+			PdfDictionary dictionary = new();
+
+			for (PdfObject key = ps.ReadPRObject();
+			     key != null && !"ID".Equals(key.ToString());
+			     key = ps.ReadPRObject()) {
+				PdfObject value = ps.ReadPRObject();
+
+				PdfName resolvedKey;
+				inlineImageEntryAbbreviationMap.TryGetValue((PdfName)key, out resolvedKey);
+				if (resolvedKey == null) {
+					resolvedKey = (PdfName)key;
+				}
+
+				dictionary.Put(resolvedKey, GetAlternateValue(resolvedKey, value));
+			}
+
+			int ch = ps.GetTokeniser().Read();
+			if (!PRTokeniser.IsWhitespace(ch)) {
+				throw new IOException("Unexpected character " + ch + " found after ID in inline image");
+			}
+
+			return dictionary;
+		}
+
+		/**
+		 * Transforms value abbreviations into their corresponding real value 
+		 * @param key the key that the value is for
+		 * @param value the value that might be an abbreviation
+		 * @return if value is an allowed abbreviation for the key, the expanded value for that abbreviation.  Otherwise, value is returned without modification
+		 */
+		private static PdfObject GetAlternateValue(PdfName key, PdfObject value) {
+			if (key == PdfName.FILTER) {
+				if (value is PdfName) {
+					PdfName altValue;
+					inlineImageFilterAbbreviationMap.TryGetValue((PdfName)value, out altValue);
+					if (altValue != null) {
+						return altValue;
+					}
+				}
+				else if (value is PdfArray) {
+					PdfArray array = (PdfArray)value;
+					PdfArray altArray = new();
+					int count = array.Size;
+					for (int i = 0; i < count; i++) {
+						altArray.Add(GetAlternateValue(key, array[i]));
+					}
+
+					return altArray;
+				}
+			}
+			else if (key == PdfName.COLORSPACE) {
+				if (value is PdfName) {
+					PdfName altValue;
+					inlineImageColorSpaceAbbreviationMap.TryGetValue((PdfName)value, out altValue);
+					if (altValue != null) {
+						return altValue;
+					}
+				}
+			}
+
+			return value;
+		}
+
+		/**
+			 * @param colorSpaceName the name of the color space. If null, a bi-tonal (black and white) color space is assumed.
+			 * @return the components per pixel for the specified color space
+			 */
+		private static int GetComponentsPerPixel(PdfName colorSpaceName, PdfDictionary colorSpaceDic) {
+			if (colorSpaceName == null) {
+				return 1;
+			}
+
+			if (colorSpaceName.Equals(PdfName.DEVICEGRAY)) {
+				return 1;
+			}
+
+			if (colorSpaceName.Equals(PdfName.DEVICERGB)) {
+				return 3;
+			}
+
+			if (colorSpaceName.Equals(PdfName.DEVICECMYK)) {
+				return 4;
+			}
+
+			if (colorSpaceDic != null) {
+				PdfArray colorSpace = colorSpaceDic.GetAsArray(colorSpaceName);
+				if (colorSpace != null) {
+					if (PdfName.INDEXED.Equals(colorSpace.GetAsName(0))) {
+						return 1;
+					}
+				}
+			}
+
+			throw new ArgumentException("Unexpected color space " + colorSpaceName);
+		}
+
+		/**
+			 * Computes the number of unfiltered bytes that each row of the image will contain.
+			 * If the number of bytes results in a partial terminating byte, this number is rounded up
+			 * per the PDF specification
+			 * @param imageDictionary the dictionary of the inline image
+			 * @return the number of bytes per row of the image
+			 */
+		private static int ComputeBytesPerRow(PdfDictionary imageDictionary, PdfDictionary colorSpaceDic) {
+			PdfNumber wObj = imageDictionary.GetAsNumber(PdfName.WIDTH);
+			PdfNumber bpcObj = imageDictionary.GetAsNumber(PdfName.BITSPERCOMPONENT);
+			int cpp = GetComponentsPerPixel(imageDictionary.GetAsName(PdfName.COLORSPACE), colorSpaceDic);
+
+			int w = wObj.IntValue;
+			int bpc = bpcObj != null ? bpcObj.IntValue : 1;
+
+
+			int bytesPerRow = ((w * bpc * cpp) + 7) / 8;
+
+			return bytesPerRow;
+		}
+
+		/**
+			 * Parses the samples of the image from the underlying content parser, ignoring all filters.
+			 * The parser must be positioned immediately after the ID operator that ends the inline image's dictionary.
+			 * The parser will be left positioned immediately following the EI operator.
+			 * This is primarily useful if no filters have been applied. 
+			 * @param imageDictionary the dictionary of the inline image
+			 * @param ps the content parser
+			 * @return the samples of the image
+			 * @throws IOException if anything bad happens during parsing
+			 */
+		private static byte[] ParseUnfilteredSamples(PdfDictionary imageDictionary, PdfDictionary colorSpaceDic,
+			PdfContentParser ps) {
+			// special case:  when no filter is specified, we just read the number of bits
+			// per component, multiplied by the width and height.
+			if (imageDictionary.Contains(PdfName.FILTER)) {
+				throw new ArgumentException("Dictionary contains filters");
+			}
+
+			PdfNumber h = imageDictionary.GetAsNumber(PdfName.HEIGHT);
+
+			int bytesToRead = ComputeBytesPerRow(imageDictionary, colorSpaceDic) * h.IntValue;
+			byte[] bytes = new byte[bytesToRead];
+			PRTokeniser tokeniser = ps.GetTokeniser();
+
+			int shouldBeWhiteSpace =
+				tokeniser.Read(); // skip next character (which better be a whitespace character - I suppose we could check for this)
+			// from the PDF spec:  Unless the image uses ASCIIHexDecode or ASCII85Decode as one of its filters, the ID operator shall be followed by a single white-space character, and the next character shall be interpreted as the first byte of image data.
+			// unfortunately, we've seen some PDFs where there is no space following the ID, so we have to capture this case and handle it
+			int startIndex = 0;
+			if (!PRTokeniser.IsWhitespace(shouldBeWhiteSpace) || shouldBeWhiteSpace == 0) {
+				bytes[0] = (byte)shouldBeWhiteSpace;
+				startIndex++;
+			}
+
+			for (int i = startIndex; i < bytesToRead; i++) {
+				int ch = tokeniser.Read();
+				if (ch == -1) {
+					throw new InlineImageParseException("End of content stream reached before end of image data");
+				}
+
+				bytes[i] = (byte)ch;
+			}
+
+			PdfObject ei = ps.ReadPRObject();
+			if (!ei.ToString().Equals("EI")) {
+				throw new InlineImageParseException("EI not found after end of image data");
+			}
+
+			return bytes;
+		}
+
+		/**
+		 * Parses the samples of the image from the underlying content parser, accounting for filters
+		 * The parser must be positioned immediately after the ID operator that ends the inline image's dictionary.
+		 * The parser will be left positioned immediately following the EI operator.
+		 * <b>Note:</b>
+		 * This implementation does not actually apply the filters at this time
+		 * @param imageDictionary the dictionary of the inline image
+		 * @param ps the content parser
+		 * @return the samples of the image
+		 * @throws IOException if anything bad happens during parsing
+		 */
+		private static byte[] ParseInlineImageSamples(PdfDictionary imageDictionary, PdfDictionary colorSpaceDic,
+			PdfContentParser ps) {
+			// by the time we get to here, we have already parsed the ID operator
+
+			if (!imageDictionary.Contains(PdfName.FILTER)) {
+				return ParseUnfilteredSamples(imageDictionary, colorSpaceDic, ps);
+			}
+
+
+			// read all content until we reach an EI operator surrounded by whitespace.
+			// The following algorithm has two potential issues: what if the image stream 
+			// contains <ws>EI<ws> ?
+			// Plus, there are some streams that don't have the <ws> before the EI operator
+			// it sounds like we would have to actually decode the content stream, which
+			// I'd rather avoid right now.
+			MemoryStream baos = new();
+			MemoryStream accumulated = new();
+			int ch;
+			int found = 0;
+			PRTokeniser tokeniser = ps.GetTokeniser();
+			byte[] ff = null;
+
+			while ((ch = tokeniser.Read()) != -1) {
+				if (found == 0 && PRTokeniser.IsWhitespace(ch)) {
+					found++;
+					accumulated.WriteByte((byte)ch);
+				}
+				else if (found == 1 && ch == 'E') {
+					found++;
+					accumulated.WriteByte((byte)ch);
+				}
+				else if (found == 1 && PRTokeniser.IsWhitespace(ch)) {
+					// this clause is needed if we have a white space character that is part of the image data
+					// followed by a whitespace character that precedes the EI operator.  In this case, we need
+					// to flush the first whitespace, then treat the current whitespace as the first potential
+					// character for the end of stream check.  Note that we don't increment 'found' here.
+					baos.Write(ff = accumulated.ToArray(), 0, ff.Length);
+					accumulated.SetLength(0);
+					accumulated.WriteByte((byte)ch);
+				}
+				else if (found == 2 && ch == 'I') {
+					found++;
+					accumulated.WriteByte((byte)ch);
+				}
+				else if (found == 3 && PRTokeniser.IsWhitespace(ch)) {
+					return baos.ToArray();
+				}
+				else {
+					baos.Write(ff = accumulated.ToArray(), 0, ff.Length);
+					accumulated.SetLength(0);
+
+					baos.WriteByte((byte)ch);
+					found = 0;
+				}
+			}
+
+			throw new InlineImageParseException("Could not find image data or EI");
+		}
+
+		/**
+			 * Simple class in case users need to differentiate an exception from processing
+			 * inline images vs other exceptions 
+			 * @since 5.0.4
+			 */
+		public sealed class InlineImageParseException : IOException
+		{
+			public InlineImageParseException(string message)
+				: base(message) {
+			}
+		}
 	}
 
 	#region Nested Types
@@ -217,6 +552,12 @@ internal class PdfContentStreamProcessor
 
 	protected sealed class BeginMarkedContentDictionary : IContentOperator
 	{
+		public void Invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
+			PdfObject properties = operands[1];
+			processor.BeginMarkedContent((PdfName)operands[0],
+				GetPropertiesDictionary(properties, processor.Resource));
+		}
+
 		// Methods
 		private PdfDictionary GetPropertiesDictionary(PdfObject operand1,
 			ResourceDictionary resources) {
@@ -227,20 +568,14 @@ internal class PdfContentStreamProcessor
 			PdfName dictionaryName = (PdfName)operand1;
 			return resources.GetAsDict(dictionaryName);
 		}
-
-		public void Invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
-			PdfObject properties = operands[1];
-			processor.BeginMarkedContent((PdfName)operands[0],
-				GetPropertiesDictionary(properties, processor._Resources));
-		}
 	}
 
 	protected sealed class BeginTextC : IContentOperator
 	{
 		// Methods
 		public void Invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
-			processor._TextMatrix = new Matrix();
-			processor._TextLineMatrix = processor._TextMatrix;
+			processor.TextMatrix = new Matrix();
+			processor._TextLineMatrix = processor.TextMatrix;
 			processor.BeginText();
 		}
 	}
@@ -266,7 +601,7 @@ internal class PdfContentStreamProcessor
 	{
 		// Methods
 		public void Invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
-			processor._TextMatrix = null;
+			processor.TextMatrix = null;
 			processor._TextLineMatrix = null;
 			processor.EndText();
 		}
@@ -400,7 +735,7 @@ internal class PdfContentStreamProcessor
 		// Methods
 		public void Invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
 			PdfName dictionaryName = (PdfName)operands[0];
-			PdfDictionary extGState = processor._Resources.GetAsDict(PdfName.EXTGSTATE);
+			PdfDictionary extGState = processor.Resource.GetAsDict(PdfName.EXTGSTATE);
 			if (extGState == null) {
 				throw new ArgumentException(MessageLocalization.GetComposedMessage(
 					"resources.do.not.contain.extgstate.entry.unable.to.process.oper.1", oper));
@@ -475,7 +810,7 @@ internal class PdfContentStreamProcessor
 		public void Invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
 			PdfName fontResourceName = (PdfName)operands[0];
 			float size = ((PdfNumber)operands[1]).FloatValue;
-			PdfObject f = processor._Resources.GetAsDict(PdfName.FONT).Get(fontResourceName);
+			PdfObject f = processor.Resource.GetAsDict(PdfName.FONT).Get(fontResourceName);
 			GraphicsState g = processor.CurrentGraphicState;
 			PRIndirectReference fref = f as PRIndirectReference;
 			if (fref == null) {
@@ -625,8 +960,8 @@ internal class PdfContentStreamProcessor
 		public void Invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
 			float tx = ((PdfNumber)operands[0]).FloatValue;
 			float ty = ((PdfNumber)operands[1]).FloatValue;
-			processor._TextMatrix = new Matrix(tx, ty).Multiply(processor._TextLineMatrix);
-			processor._TextLineMatrix = processor._TextMatrix;
+			processor.TextMatrix = new Matrix(tx, ty).Multiply(processor._TextLineMatrix);
+			processor._TextLineMatrix = processor.TextMatrix;
 		}
 	}
 
@@ -663,345 +998,9 @@ internal class PdfContentStreamProcessor
 			float e = ((PdfNumber)operands[4]).FloatValue;
 			float f = ((PdfNumber)operands[5]).FloatValue;
 			processor._TextLineMatrix = new Matrix(a, b, c, d, e, f);
-			processor._TextMatrix = processor._TextLineMatrix;
+			processor.TextMatrix = processor._TextLineMatrix;
 		}
 	}
 
 	#endregion
-
-	internal static class InlineImageUtils
-	{
-		/**
-			 * Simple class in case users need to differentiate an exception from processing
-			 * inline images vs other exceptions 
-			 * @since 5.0.4
-			 */
-		public sealed class InlineImageParseException : IOException
-		{
-			public InlineImageParseException(string message)
-				: base(message) {
-			}
-		}
-
-		/**
-			 * Map between key abbreviations allowed in dictionary of inline images and their
-			 * equivalent image dictionary keys
-			 */
-		private static readonly IDictionary<PdfName, PdfName> inlineImageEntryAbbreviationMap;
-
-		/**
-			 * Map between value abbreviations allowed in dictionary of inline images for COLORSPACE
-			 */
-		private static readonly IDictionary<PdfName, PdfName> inlineImageColorSpaceAbbreviationMap;
-
-		/**
-			 * Map between value abbreviations allowed in dictionary of inline images for FILTER
-			 */
-		private static readonly IDictionary<PdfName, PdfName> inlineImageFilterAbbreviationMap;
-
-		static InlineImageUtils() {
-			// static initializer
-			inlineImageEntryAbbreviationMap = new Dictionary<PdfName, PdfName> {
-				// allowed entries - just pass these through
-				[PdfName.BITSPERCOMPONENT] = PdfName.BITSPERCOMPONENT,
-				[PdfName.COLORSPACE] = PdfName.COLORSPACE,
-				[PdfName.DECODE] = PdfName.DECODE,
-				[PdfName.DECODEPARMS] = PdfName.DECODEPARMS,
-				[PdfName.FILTER] = PdfName.FILTER,
-				[PdfName.HEIGHT] = PdfName.HEIGHT,
-				[PdfName.IMAGEMASK] = PdfName.IMAGEMASK,
-				[PdfName.INTENT] = PdfName.INTENT,
-				[PdfName.INTERPOLATE] = PdfName.INTERPOLATE,
-				[PdfName.WIDTH] = PdfName.WIDTH,
-
-				// abbreviations - transform these to corresponding correct values
-				[new PdfName("BPC")] = PdfName.BITSPERCOMPONENT,
-				[new PdfName("CS")] = PdfName.COLORSPACE,
-				[new PdfName("D")] = PdfName.DECODE,
-				[new PdfName("DP")] = PdfName.DECODEPARMS,
-				[new PdfName("F")] = PdfName.FILTER,
-				[new PdfName("H")] = PdfName.HEIGHT,
-				[new PdfName("IM")] = PdfName.IMAGEMASK,
-				[new PdfName("I")] = PdfName.INTERPOLATE,
-				[new PdfName("W")] = PdfName.WIDTH
-			};
-
-			inlineImageColorSpaceAbbreviationMap = new Dictionary<PdfName, PdfName> {
-				[new PdfName("G")] = PdfName.DEVICEGRAY,
-				[new PdfName("RGB")] = PdfName.DEVICERGB,
-				[new PdfName("CMYK")] = PdfName.DEVICECMYK,
-				[new PdfName("I")] = PdfName.INDEXED
-			};
-
-			inlineImageFilterAbbreviationMap = new Dictionary<PdfName, PdfName> {
-				[new PdfName("AHx")] = PdfName.ASCIIHEXDECODE,
-				[new PdfName("A85")] = PdfName.ASCII85DECODE,
-				[new PdfName("LZW")] = PdfName.LZWDECODE,
-				[new PdfName("Fl")] = PdfName.FLATEDECODE,
-				[new PdfName("RL")] = PdfName.RUNLENGTHDECODE,
-				[new PdfName("CCF")] = PdfName.CCITTFAXDECODE,
-				[new PdfName("DCT")] = PdfName.DCTDECODE
-			};
-		}
-
-		/**
-			 * Parses an inline image from the provided content parser.  The parser must be positioned immediately following the BI operator in the content stream.
-			 * The parser will be left with current position immediately following the EI operator that terminates the inline image
-			 * @param ps the content parser to use for reading the image. 
-			 * @return the parsed image
-			 * @throws IOException if anything goes wring with the parsing
-			 * @throws InlineImageParseException if parsing of the inline image failed due to issues specific to inline image processing
-			 */
-		public static PdfImageData ParseInlineImage(PdfContentParser ps,
-			PdfDictionary colorSpaceDic) {
-			PdfDictionary d = ParseInlineImageDictionary(ps);
-			return new PdfImageData(d, ParseInlineImageSamples(d, colorSpaceDic, ps));
-		}
-
-		/**
-			 * Parses the next inline image dictionary from the parser.  The parser must be positioned immediately following the EI operator.
-			 * The parser will be left with position immediately following the whitespace character that follows the ID operator that ends the inline image dictionary.
-			 * @param ps the parser to extract the embedded image information from
-			 * @return the dictionary for the inline image, with any abbreviations converted to regular image dictionary keys and values
-			 * @throws IOException if the parse fails
-			 */
-		private static PdfDictionary ParseInlineImageDictionary(PdfContentParser ps) {
-			// by the time we get to here, we have already parsed the BI operator
-			PdfDictionary dictionary = new();
-
-			for (PdfObject key = ps.ReadPRObject();
-			     key != null && !"ID".Equals(key.ToString());
-			     key = ps.ReadPRObject()) {
-				PdfObject value = ps.ReadPRObject();
-
-				PdfName resolvedKey;
-				inlineImageEntryAbbreviationMap.TryGetValue((PdfName)key, out resolvedKey);
-				if (resolvedKey == null) {
-					resolvedKey = (PdfName)key;
-				}
-
-				dictionary.Put(resolvedKey, GetAlternateValue(resolvedKey, value));
-			}
-
-			int ch = ps.GetTokeniser().Read();
-			if (!PRTokeniser.IsWhitespace(ch)) {
-				throw new IOException("Unexpected character " + ch + " found after ID in inline image");
-			}
-
-			return dictionary;
-		}
-
-		/**
-			 * Transforms value abbreviations into their corresponding real value 
-			 * @param key the key that the value is for
-			 * @param value the value that might be an abbreviation
-			 * @return if value is an allowed abbreviation for the key, the expanded value for that abbreviation.  Otherwise, value is returned without modification 
-			 */
-		private static PdfObject GetAlternateValue(PdfName key, PdfObject value) {
-			if (key == PdfName.FILTER) {
-				if (value is PdfName) {
-					PdfName altValue;
-					inlineImageFilterAbbreviationMap.TryGetValue((PdfName)value, out altValue);
-					if (altValue != null) {
-						return altValue;
-					}
-				}
-				else if (value is PdfArray) {
-					PdfArray array = (PdfArray)value;
-					PdfArray altArray = new();
-					int count = array.Size;
-					for (int i = 0; i < count; i++) {
-						altArray.Add(GetAlternateValue(key, array[i]));
-					}
-
-					return altArray;
-				}
-			}
-			else if (key == PdfName.COLORSPACE) {
-				if (value is PdfName) {
-					PdfName altValue;
-					inlineImageColorSpaceAbbreviationMap.TryGetValue((PdfName)value, out altValue);
-					if (altValue != null) {
-						return altValue;
-					}
-				}
-			}
-
-			return value;
-		}
-
-		/**
-			 * @param colorSpaceName the name of the color space. If null, a bi-tonal (black and white) color space is assumed.
-			 * @return the components per pixel for the specified color space
-			 */
-		private static int GetComponentsPerPixel(PdfName colorSpaceName, PdfDictionary colorSpaceDic) {
-			if (colorSpaceName == null) {
-				return 1;
-			}
-
-			if (colorSpaceName.Equals(PdfName.DEVICEGRAY)) {
-				return 1;
-			}
-
-			if (colorSpaceName.Equals(PdfName.DEVICERGB)) {
-				return 3;
-			}
-
-			if (colorSpaceName.Equals(PdfName.DEVICECMYK)) {
-				return 4;
-			}
-
-			if (colorSpaceDic != null) {
-				PdfArray colorSpace = colorSpaceDic.GetAsArray(colorSpaceName);
-				if (colorSpace != null) {
-					if (PdfName.INDEXED.Equals(colorSpace.GetAsName(0))) {
-						return 1;
-					}
-				}
-			}
-
-			throw new ArgumentException("Unexpected color space " + colorSpaceName);
-		}
-
-		/**
-			 * Computes the number of unfiltered bytes that each row of the image will contain.
-			 * If the number of bytes results in a partial terminating byte, this number is rounded up
-			 * per the PDF specification
-			 * @param imageDictionary the dictionary of the inline image
-			 * @return the number of bytes per row of the image
-			 */
-		private static int ComputeBytesPerRow(PdfDictionary imageDictionary, PdfDictionary colorSpaceDic) {
-			PdfNumber wObj = imageDictionary.GetAsNumber(PdfName.WIDTH);
-			PdfNumber bpcObj = imageDictionary.GetAsNumber(PdfName.BITSPERCOMPONENT);
-			int cpp = GetComponentsPerPixel(imageDictionary.GetAsName(PdfName.COLORSPACE), colorSpaceDic);
-
-			int w = wObj.IntValue;
-			int bpc = bpcObj != null ? bpcObj.IntValue : 1;
-
-
-			int bytesPerRow = ((w * bpc * cpp) + 7) / 8;
-
-			return bytesPerRow;
-		}
-
-		/**
-			 * Parses the samples of the image from the underlying content parser, ignoring all filters.
-			 * The parser must be positioned immediately after the ID operator that ends the inline image's dictionary.
-			 * The parser will be left positioned immediately following the EI operator.
-			 * This is primarily useful if no filters have been applied. 
-			 * @param imageDictionary the dictionary of the inline image
-			 * @param ps the content parser
-			 * @return the samples of the image
-			 * @throws IOException if anything bad happens during parsing
-			 */
-		private static byte[] ParseUnfilteredSamples(PdfDictionary imageDictionary, PdfDictionary colorSpaceDic,
-			PdfContentParser ps) {
-			// special case:  when no filter is specified, we just read the number of bits
-			// per component, multiplied by the width and height.
-			if (imageDictionary.Contains(PdfName.FILTER)) {
-				throw new ArgumentException("Dictionary contains filters");
-			}
-
-			PdfNumber h = imageDictionary.GetAsNumber(PdfName.HEIGHT);
-
-			int bytesToRead = ComputeBytesPerRow(imageDictionary, colorSpaceDic) * h.IntValue;
-			byte[] bytes = new byte[bytesToRead];
-			PRTokeniser tokeniser = ps.GetTokeniser();
-
-			int shouldBeWhiteSpace =
-				tokeniser.Read(); // skip next character (which better be a whitespace character - I suppose we could check for this)
-			// from the PDF spec:  Unless the image uses ASCIIHexDecode or ASCII85Decode as one of its filters, the ID operator shall be followed by a single white-space character, and the next character shall be interpreted as the first byte of image data.
-			// unfortunately, we've seen some PDFs where there is no space following the ID, so we have to capture this case and handle it
-			int startIndex = 0;
-			if (!PRTokeniser.IsWhitespace(shouldBeWhiteSpace) || shouldBeWhiteSpace == 0) {
-				bytes[0] = (byte)shouldBeWhiteSpace;
-				startIndex++;
-			}
-
-			for (int i = startIndex; i < bytesToRead; i++) {
-				int ch = tokeniser.Read();
-				if (ch == -1) {
-					throw new InlineImageParseException("End of content stream reached before end of image data");
-				}
-
-				bytes[i] = (byte)ch;
-			}
-
-			PdfObject ei = ps.ReadPRObject();
-			if (!ei.ToString().Equals("EI")) {
-				throw new InlineImageParseException("EI not found after end of image data");
-			}
-
-			return bytes;
-		}
-
-		/**
-			 * Parses the samples of the image from the underlying content parser, accounting for filters
-			 * The parser must be positioned immediately after the ID operator that ends the inline image's dictionary.
-			 * The parser will be left positioned immediately following the EI operator.
-			 * <b>Note:</b>This implementation does not actually apply the filters at this time
-			 * @param imageDictionary the dictionary of the inline image
-			 * @param ps the content parser
-			 * @return the samples of the image
-			 * @throws IOException if anything bad happens during parsing
-			 */
-		private static byte[] ParseInlineImageSamples(PdfDictionary imageDictionary, PdfDictionary colorSpaceDic,
-			PdfContentParser ps) {
-			// by the time we get to here, we have already parsed the ID operator
-
-			if (!imageDictionary.Contains(PdfName.FILTER)) {
-				return ParseUnfilteredSamples(imageDictionary, colorSpaceDic, ps);
-			}
-
-
-			// read all content until we reach an EI operator surrounded by whitespace.
-			// The following algorithm has two potential issues: what if the image stream 
-			// contains <ws>EI<ws> ?
-			// Plus, there are some streams that don't have the <ws> before the EI operator
-			// it sounds like we would have to actually decode the content stream, which
-			// I'd rather avoid right now.
-			MemoryStream baos = new();
-			MemoryStream accumulated = new();
-			int ch;
-			int found = 0;
-			PRTokeniser tokeniser = ps.GetTokeniser();
-			byte[] ff = null;
-
-			while ((ch = tokeniser.Read()) != -1) {
-				if (found == 0 && PRTokeniser.IsWhitespace(ch)) {
-					found++;
-					accumulated.WriteByte((byte)ch);
-				}
-				else if (found == 1 && ch == 'E') {
-					found++;
-					accumulated.WriteByte((byte)ch);
-				}
-				else if (found == 1 && PRTokeniser.IsWhitespace(ch)) {
-					// this clause is needed if we have a white space character that is part of the image data
-					// followed by a whitespace character that precedes the EI operator.  In this case, we need
-					// to flush the first whitespace, then treat the current whitespace as the first potential
-					// character for the end of stream check.  Note that we don't increment 'found' here.
-					baos.Write(ff = accumulated.ToArray(), 0, ff.Length);
-					accumulated.SetLength(0);
-					accumulated.WriteByte((byte)ch);
-				}
-				else if (found == 2 && ch == 'I') {
-					found++;
-					accumulated.WriteByte((byte)ch);
-				}
-				else if (found == 3 && PRTokeniser.IsWhitespace(ch)) {
-					return baos.ToArray();
-				}
-				else {
-					baos.Write(ff = accumulated.ToArray(), 0, ff.Length);
-					accumulated.SetLength(0);
-
-					baos.WriteByte((byte)ch);
-					found = 0;
-				}
-			}
-
-			throw new InlineImageParseException("Could not find image data or EI");
-		}
-	}
 }

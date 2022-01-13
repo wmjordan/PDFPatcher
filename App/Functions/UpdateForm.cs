@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Net;
 using System.Windows.Forms;
 using System.Xml;
 using PDFPatcher.Common;
+using PDFPatcher.Properties;
 
 namespace PDFPatcher.Functions;
 
@@ -13,7 +16,7 @@ public partial class UpdateForm : Form
 
 	public UpdateForm() {
 		InitializeComponent();
-		this.SetIcon(Properties.Resources.CheckUpdate);
+		this.SetIcon(Resources.CheckUpdate);
 		Load += (s, args) => {
 			CheckNewVersion();
 			int i = AppContext.CheckUpdateInterval;
@@ -28,7 +31,7 @@ public partial class UpdateForm : Form
 			CommonCommands.VisitHomePage();
 		};
 		_DownloadButton.Click += (s, args) => {
-			System.Diagnostics.Process.Start(_DownloadButton.Tag.ToString());
+			Process.Start(_DownloadButton.Tag.ToString());
 		};
 		_CheckUpdateIntervalBox.SelectedIndexChanged += (s, args) => {
 			switch (_CheckUpdateIntervalBox.SelectedIndex) {
@@ -64,7 +67,7 @@ public partial class UpdateForm : Form
 
 			try {
 				XmlDocument x = new();
-				x.Load(new System.IO.MemoryStream(args.Result));
+				x.Load(new MemoryStream(args.Result));
 				CheckResult(x);
 			}
 			catch (Exception) {
@@ -101,7 +104,7 @@ public partial class UpdateForm : Form
 			}
 		}
 		else {
-			_InfoBox.AppendLine(string.Join("\n", new string[] {"未发现新版本。", "服务器上发布的版本是：", v + " " + d}));
+			_InfoBox.AppendLine(string.Join("\n", "未发现新版本。", "服务器上发布的版本是：", v + " " + d));
 		}
 	}
 }

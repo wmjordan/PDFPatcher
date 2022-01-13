@@ -7,6 +7,12 @@ namespace MuPdfSharp;
 
 internal partial class NativeMethods
 {
+	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_get_bound_document")]
+	public static extern IntPtr GetDocument(ContextHandle context, IntPtr obj);
+
+	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_objcmp")]
+	public static extern int Compare(ContextHandle context, IntPtr obj, IntPtr obj2);
+
 	#region Dictionary
 
 	/// <summary>Returns [0, len) for key found. Returns (-1-len, -1] for key not found, but with insertion point -1-i.</summary>
@@ -99,9 +105,6 @@ internal partial class NativeMethods
 
 	#endregion
 
-	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_get_bound_document")]
-	public static extern IntPtr GetDocument(ContextHandle context, IntPtr obj);
-
 	#region Object type
 
 	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_is_null")]
@@ -139,9 +142,6 @@ internal partial class NativeMethods
 
 	#endregion
 
-	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_objcmp")]
-	public static extern int Compare(ContextHandle context, IntPtr obj, IntPtr obj2);
-
 	#region Object conversion
 
 	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_to_bool")]
@@ -174,14 +174,13 @@ internal partial class NativeMethods
 				}
 			}
 		}
-		else {
-			char[] c = new char[l];
-			for (int i = 0; i < l; i++) {
-				c[i] = (char)pdf_doc_encoding[bytes[i]];
-			}
 
-			return new string(c);
+		char[] c = new char[l];
+		for (int i = 0; i < l; i++) {
+			c[i] = (char)pdf_doc_encoding[bytes[i]];
 		}
+
+		return new string(c);
 	}
 
 	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_to_num")]

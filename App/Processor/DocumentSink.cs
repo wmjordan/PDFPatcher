@@ -6,18 +6,18 @@ using PDFPatcher.Model;
 namespace PDFPatcher.Processor;
 
 /// <summary>
-/// 用于合并 PDF 文档的文档池。
+///     用于合并 PDF 文档的文档池。
 /// </summary>
 internal sealed class DocumentSink
 {
 	private readonly Dictionary<string, PdfReaderReference> _sink = new(StringComparer.OrdinalIgnoreCase);
 
-	public int Workload { get; private set; }
-	public bool HasDuplicateFiles { get; private set; }
-
 	public DocumentSink(IEnumerable<SourceItem> items, bool useSink) {
 		EvaluateWorkload(items, useSink);
 	}
+
+	public int Workload { get; private set; }
+	public bool HasDuplicateFiles { get; private set; }
 
 	public PdfReader GetPdfReader(string path) {
 		if (_sink.TryGetValue(path, out PdfReaderReference rr)) {

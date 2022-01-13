@@ -1,19 +1,17 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Data;
+using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using PDFPatcher.Common;
+using PDFPatcher.Processor;
+using PDFPatcher.Properties;
 
 namespace PDFPatcher.Functions;
 
 [ToolboxItem(false)]
 public partial class ExtractPageControl : FunctionControl, IResettableControl
 {
-	public override string FunctionName => "提取页面";
-
-	public override System.Drawing.Bitmap IconImage => Properties.Resources.ExtractPages;
-
 	public ExtractPageControl() {
 		InitializeComponent();
 		//Icon = FormHelper.ToIcon (Properties.Resources.ExtractPages);
@@ -30,6 +28,16 @@ public partial class ExtractPageControl : FunctionControl, IResettableControl
 		_TargetFileControl.FileMacroMenu.LoadStandardInfoMacros();
 		_TargetFileControl.FileMacroMenu.LoadStandardSourceFileMacros();
 	}
+
+	public override string FunctionName => "提取页面";
+
+	public override Bitmap IconImage => Resources.ExtractPages;
+
+	#region IDefaultButtonControl 成员
+
+	public override Button DefaultButton => _ExtractButton;
+
+	#endregion
 
 	private void ExtractPageControl_Load(object sender, EventArgs e) {
 		_SeparatingModeBox.SelectedIndexChanged += (s, args) => {
@@ -79,7 +87,7 @@ public partial class ExtractPageControl : FunctionControl, IResettableControl
 				string p = m ? null : Path.GetDirectoryName(t);
 				Tracker.SetTotalProgressGoal(files.Length);
 				foreach (string file in files) {
-					Processor.Worker.ExtractPages(options,
+					Worker.ExtractPages(options,
 						file,
 						m
 							? t
@@ -92,7 +100,7 @@ public partial class ExtractPageControl : FunctionControl, IResettableControl
 				}
 			}
 			else {
-				Processor.Worker.ExtractPages(options, files[0], t);
+				Worker.ExtractPages(options, files[0], t);
 			}
 		};
 		worker.RunWorkerAsync(
@@ -102,12 +110,6 @@ public partial class ExtractPageControl : FunctionControl, IResettableControl
 	private void _ExtractPageRangeBox_TextChanged(object sender, EventArgs e) {
 		AppContext.Exporter.ExtractPageRange = _ExtractPageRangeBox.Text;
 	}
-
-	#region IDefaultButtonControl 成员
-
-	public override Button DefaultButton => _ExtractButton;
-
-	#endregion
 
 
 	#region IResettableControl 成员

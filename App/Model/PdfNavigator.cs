@@ -9,6 +9,22 @@ namespace PDFPatcher.Model;
 
 internal sealed class PdfNavigator : XPathNavigator
 {
+	private readonly PdfPathDocument _doc;
+	private readonly HtmlNameTable _nameTable = new();
+	private int _childIndex = -1;
+	private DocumentObject _currentObject;
+
+	public PdfNavigator(PdfPathDocument document) {
+		_doc = document;
+	}
+
+	public PdfNavigator(PdfNavigator source) {
+		_doc = source._doc;
+		_currentObject = source._currentObject;
+	}
+
+	public PdfObject PdfObject => _currentObject.ExtensiveObject as PdfObject;
+
 	private sealed class HtmlNameTable : XmlNameTable
 	{
 		private readonly NameTable _nametable = new();
@@ -33,22 +49,6 @@ internal sealed class PdfNavigator : XPathNavigator
 			return Get(array) ?? Add(array);
 		}
 	}
-
-	private readonly PdfPathDocument _doc;
-	private readonly HtmlNameTable _nameTable = new();
-	private DocumentObject _currentObject;
-	private int _childIndex = -1;
-
-	public PdfNavigator(PdfPathDocument document) {
-		_doc = document;
-	}
-
-	public PdfNavigator(PdfNavigator source) {
-		_doc = source._doc;
-		_currentObject = source._currentObject;
-	}
-
-	public PdfObject PdfObject => _currentObject.ExtensiveObject as PdfObject;
 
 	#region XPathNavigator implementation
 

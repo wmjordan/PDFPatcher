@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using PDFPatcher.Common;
 
 namespace MuPdfSharp;
@@ -11,25 +12,24 @@ public interface IMuBoundedElement
 }
 
 [DebuggerDisplay(
-	"(Abort: {_Abort}, Progress: {_Progress}/{_ProgressMax}, Errors: {_Errors}, Incomplete: {_Incomplete})")]
+	"(Abort: {_Abort}, Progress: {_Progress}/{_ProgressMax}, Errors: {ErrorCount}, Incomplete: {_Incomplete})")]
 public struct MuCookie
 {
 	private int _Abort;
 	private readonly int _Progress;
 	private readonly int _ProgressMax;
-	private readonly int _Errors;
 	private readonly int _IncompleteOk;
 	private readonly int _Incomplete;
 
 	public bool IsCancellationPending => _Abort != 0;
 	public bool IsRunning => _ProgressMax == -1 || (_Progress > 0 && _Progress < _ProgressMax - 1);
-	public int ErrorCount => _Errors;
+	public int ErrorCount { get; }
 
 	public void CancelAsync() { _Abort = 1; }
 }
 
 /// <summary>
-/// MuPDF 引擎的工作方式。
+///     MuPDF 引擎的工作方式。
 /// </summary>
 [Flags]
 public enum DeviceHints
@@ -43,7 +43,7 @@ public enum DeviceHints
 }
 
 /// <summary>
-/// 渲染页面的颜色空间。
+///     渲染页面的颜色空间。
 /// </summary>
 public enum ColorSpace
 {
@@ -54,7 +54,7 @@ public enum ColorSpace
 }
 
 /// <summary>
-/// 保存渲染页面的文件格式。
+///     保存渲染页面的文件格式。
 /// </summary>
 public enum ImageFormat
 {
@@ -91,13 +91,13 @@ public readonly struct PageLabel : IComparable<PageLabel>
 			case PageLabelStyle.Digit:
 				return string.Concat(Prefix, n.ToText());
 			case PageLabelStyle.UpperRoman:
-				return string.Concat(Prefix, ValueHelper.ToRoman(n));
+				return string.Concat(Prefix, n.ToRoman());
 			case PageLabelStyle.LowerRoman:
-				return string.Concat(Prefix, ValueHelper.ToRoman(n)).ToLowerInvariant();
+				return string.Concat(Prefix, n.ToRoman()).ToLowerInvariant();
 			case PageLabelStyle.UpperAlphabetic:
-				return string.Concat(Prefix, ValueHelper.ToAlphabet(n, true));
+				return string.Concat(Prefix, n.ToAlphabet(true));
 			case PageLabelStyle.LowerAlphabetic:
-				return string.Concat(Prefix, ValueHelper.ToAlphabet(n, false));
+				return string.Concat(Prefix, n.ToAlphabet(false));
 			default:
 				goto case PageLabelStyle.Digit;
 		}
@@ -115,7 +115,7 @@ public enum PageLabelStyle : byte
 }
 
 /// <summary>
-/// 表示点。
+///     表示点。
 /// </summary>
 [DebuggerDisplay("({X},{Y})")]
 public readonly struct Point : IEquatable<Point>
@@ -132,7 +132,7 @@ public readonly struct Point : IEquatable<Point>
 	}
 
 	/// <summary>
-	/// 将 PDF 页面坐标点转换为渲染页面坐标点。
+	///     将 PDF 页面坐标点转换为渲染页面坐标点。
 	/// </summary>
 	/// <param name="pageVisualBound">页面的可视区域。</param>
 	/// <returns>转换为页面坐标的点。</returns>
@@ -144,15 +144,15 @@ public readonly struct Point : IEquatable<Point>
 		return new System.Drawing.Point(point.X.ToInt32(), point.Y.ToInt32());
 	}
 
-	public static implicit operator System.Drawing.PointF(Point point) {
-		return new System.Drawing.PointF(point.X, point.Y);
+	public static implicit operator PointF(Point point) {
+		return new PointF(point.X, point.Y);
 	}
 
 	public static implicit operator Point(System.Drawing.Point point) {
 		return new Point(point.X, point.Y);
 	}
 
-	public static implicit operator Point(System.Drawing.PointF point) {
+	public static implicit operator Point(PointF point) {
 		return new Point(point.X, point.Y);
 	}
 
@@ -178,8 +178,8 @@ public readonly struct Point : IEquatable<Point>
 }
 
 /// <summary>
-/// 表示边框（坐标值为整数的矩形）。
-/// 在 MuPDF 中，BBox 的 <see cref="Bottom"/> 值应大于 <see cref="Top"/> 值。
+///     表示边框（坐标值为整数的矩形）。
+///     在 MuPDF 中，BBox 的 <see cref="Bottom" /> 值应大于 <see cref="Top" /> 值。
 /// </summary>
 [DebuggerDisplay("({Left},{Top})-({Right},{Bottom})")]
 public readonly struct BBox : IEquatable<BBox>
@@ -193,7 +193,7 @@ public readonly struct BBox : IEquatable<BBox>
 		Bottom = bottom;
 	}
 
-	public System.Drawing.Size Size => new(Width, Height);
+	public Size Size => new(Width, Height);
 	public bool IsEmpty => Left == Right || Top == Bottom;
 	public bool IsInfinite => Left > Right || Top > Bottom;
 	public int Width => Right - Left;
@@ -241,7 +241,7 @@ public readonly struct BBox : IEquatable<BBox>
 }
 
 /// <summary>
-/// 表示使用浮点数为坐标的矩形。
+///     表示使用浮点数为坐标的矩形。
 /// </summary>
 [DebuggerDisplay("({Left},{Top})-({Right},{Bottom})")]
 public readonly struct Rectangle : IEquatable<Rectangle>
@@ -262,7 +262,7 @@ public readonly struct Rectangle : IEquatable<Rectangle>
 		return f > int.MaxValue ? int.MaxValue : f < int.MinValue ? int.MinValue : (int)f;
 	}
 
-	public System.Drawing.SizeF Size => new(Width, Height);
+	public SizeF Size => new(Width, Height);
 	public bool IsEmpty => Left == Right || Top == Bottom;
 	public bool IsInfinite => Left > Right || Top > Bottom;
 	public float Width => Right - Left;
@@ -280,7 +280,7 @@ public readonly struct Rectangle : IEquatable<Rectangle>
 	}
 
 	/// <summary>
-	/// 返回当前矩形区域是否包含另一个点。
+	///     返回当前矩形区域是否包含另一个点。
 	/// </summary>
 	/// <param name="point">另一个点。</param>
 	/// <returns>包含点时返回 true。</returns>
@@ -299,7 +299,8 @@ public readonly struct Rectangle : IEquatable<Rectangle>
 		if (IsEmpty || other.IsInfinite) {
 			return false;
 		}
-		else if (IsInfinite || other.IsEmpty) {
+
+		if (IsInfinite || other.IsEmpty) {
 			return true;
 		}
 
@@ -370,8 +371,8 @@ public readonly struct Rectangle : IEquatable<Rectangle>
 		return new Rectangle(Math.Min(a, c), Math.Min(b, d), Math.Max(a, c), Math.Max(b, d));
 	}
 
-	public static implicit operator System.Drawing.RectangleF(Rectangle rect) {
-		return new System.Drawing.RectangleF(
+	public static implicit operator RectangleF(Rectangle rect) {
+		return new RectangleF(
 			rect.Left,
 			rect.Top < rect.Bottom ? rect.Top : rect.Bottom,
 			rect.Width,
@@ -439,7 +440,7 @@ public readonly struct Rectangle : IEquatable<Rectangle>
 }
 
 /// <summary>
-/// 表示四个坐标构成的矩形。
+///     表示四个坐标构成的矩形。
 /// </summary>
 public readonly struct Quad : IEquatable<Quad>
 {
@@ -498,7 +499,7 @@ public readonly struct Quad : IEquatable<Quad>
 }
 
 /// <summary>
-/// 表示转置矩阵。
+///     表示转置矩阵。
 /// </summary>
 [DebuggerDisplay("({A},{B},{C},{D},{E},{F})")]
 public readonly struct Matrix : IEquatable<Matrix>
@@ -506,13 +507,13 @@ public readonly struct Matrix : IEquatable<Matrix>
 	public readonly float A, B, C, D, E, F;
 
 	/// <summary>
-	/// 返回矩阵的放大方向是否对齐坐标轴（没有斜向拉伸或90整数倍以外的旋转）。
+	///     返回矩阵的放大方向是否对齐坐标轴（没有斜向拉伸或90整数倍以外的旋转）。
 	/// </summary>
 	public bool IsRectilinear => (Math.Abs(B) < float.Epsilon && Math.Abs(C) < float.Epsilon)
 	                             || (Math.Abs(A) < float.Epsilon && Math.Abs(D) < float.Epsilon);
 
 	/// <summary>
-	/// 返回矩阵大致的放大比例。
+	///     返回矩阵大致的放大比例。
 	/// </summary>
 	public float Expansion => (float)Math.Sqrt(Math.Abs((A * D) - (B * C)));
 
@@ -525,17 +526,17 @@ public readonly struct Matrix : IEquatable<Matrix>
 	}
 
 	/// <summary>
-	/// 单元矩阵。
+	///     单元矩阵。
 	/// </summary>
 	public static readonly Matrix Identity = new(1, 0, 0, 1, 0, 0);
 
 	/// <summary>
-	/// 垂直翻转矩阵。
+	///     垂直翻转矩阵。
 	/// </summary>
 	public static readonly Matrix VeritcalFlip = new(1, 0, 0, -1, 0, 0);
 
 	/// <summary>
-	/// 水平翻转矩阵。
+	///     水平翻转矩阵。
 	/// </summary>
 	public static readonly Matrix HorizontalFlip = new(-1, 0, 0, 1, 0, 0);
 
@@ -549,7 +550,7 @@ public readonly struct Matrix : IEquatable<Matrix>
 	}
 
 	/// <summary>
-	/// 将两个矩阵相乘。
+	///     将两个矩阵相乘。
 	/// </summary>
 	/// <param name="one">被乘的矩阵。</param>
 	/// <param name="two">乘数矩阵。</param>

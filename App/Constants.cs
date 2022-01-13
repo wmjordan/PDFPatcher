@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using iTextSharp.text.pdf;
+﻿using iTextSharp.text.pdf;
 using E = System.Text.Encoding;
 
 namespace PDFPatcher;
@@ -21,7 +19,7 @@ internal static class Constants
 	internal const string AppUpdateFile = "http://files.cnblogs.com/pdfpatcher/pdfpatcher.update.xml";
 
 	/// <summary>
-	/// 信息文件根元素。
+	///     信息文件根元素。
 	/// </summary>
 	internal const string PdfInfo = "PDF信息";
 
@@ -183,6 +181,146 @@ internal static class Constants
 
 	#endregion
 
+	#region 页面内容
+
+	internal static class Content
+	{
+		internal const string Page = "页面";
+		internal const string PageNumber = "页码";
+		internal const string ResourceID = "资源编号";
+		internal const string RefType = "引用对象类型";
+		internal const string Texts = "文本内容";
+		internal const string Operators = "命令";
+		internal const string Operands = "参数";
+		internal const string Name = "名称";
+		internal const string Item = "项目";
+		internal const string Path = "路径";
+		internal const string Type = "类型";
+		internal const string Length = "长度";
+		internal const string Raw = "原始内容";
+		internal const string Value = "值";
+
+		internal static class PageSettings
+		{
+			internal const string ThisName = "页面设置";
+			internal const string MediaBox = "页面边框";
+			internal const string CropBox = "截取边框";
+			internal const string TrimBox = "裁剪边框";
+			internal const string ArtBox = "内容边框";
+			internal const string BleedBox = "出血边框";
+			internal const string Rotation = "旋转角度";
+		}
+
+		internal static class OperandNames
+		{
+			internal const string Matrix = "矩阵";
+			internal const string ResourceName = "资源名称";
+			internal const string Size = "尺寸";
+			internal const string Text = "文本";
+		}
+
+		internal static class RotationDirections
+		{
+			internal const string ThisName = PageSettings.Rotation;
+			internal const string Zero = "保持不变";
+			internal const string Right = "顺时针90度";
+			internal const string HalfClock = "180度";
+			internal const string Left = "逆时针90度";
+			internal static readonly string[] Names = {Zero, Right, HalfClock, Left};
+			internal static readonly int[] Values = {0, 90, 180, 270};
+		}
+	}
+
+	#endregion
+
+	#region 光学字符识别
+
+	internal static class Ocr
+	{
+		internal const int NoLanguage = 0;
+		internal const int SimplifiedChineseLangID = 2052;
+		internal const int TraditionalChineseLangID = 1028;
+		internal const int JapaneseLangID = 1041;
+		internal const int KoreanLangID = 1042;
+		internal const int EnglishLangID = 1033;
+
+		internal const int DanishLangID = 1030;
+		internal const int DutchLangID = 1043;
+		internal const int FinnishLangID = 1035;
+		internal const int FrenchLangID = 1036;
+		internal const int GermanLangID = 1031;
+		internal const int ItalianLangID = 1040;
+		internal const int NorskLangID = 1044;
+		internal const int PortugueseLangID = 1046;
+		internal const int SpanishLangID = 3082;
+		internal const int SwedishLangID = 1053;
+		internal const int CzechLangID = 1029;
+		internal const int PolishLangID = 1045;
+		internal const int HungarianLangID = 1038;
+		internal const int GreekLangID = 1032;
+		internal const int RussianLangID = 1049;
+		internal const int TurkishLangID = 1055;
+
+		internal const string Result = "识别结果";
+		internal const string Text = "文本";
+		internal const string Content = "内容";
+		internal const string Image = "图片";
+
+		internal static int[] LangIDs = {
+			SimplifiedChineseLangID, TraditionalChineseLangID, EnglishLangID, JapaneseLangID, KoreanLangID,
+			DanishLangID, DutchLangID, FinnishLangID, FrenchLangID, GermanLangID, ItalianLangID, NorskLangID,
+			PortugueseLangID, SpanishLangID, SwedishLangID, CzechLangID, PolishLangID, HungarianLangID, GreekLangID,
+			RussianLangID, TurkishLangID
+		};
+
+		internal static int[] OcrLangIDs = {
+			SimplifiedChineseLangID, TraditionalChineseLangID, 9, 17, 18, 6, 19, 11, 12, 7, 16, 20, 22, 10, 29, 5, 21,
+			14, 8, 25, 31
+		};
+
+		internal static string[] LangNames = {
+			"简体中文", "繁体中文", "英文", "日文", "韩文", "丹麦文", "荷兰文", "芬兰文", "法文", "德文", "意大利文", "挪威文", "葡萄牙文", "西班牙文", "瑞典文",
+			"捷克文", "波兰文", "匈牙利文", "希腊文", "俄文", "土耳其文"
+		};
+	}
+
+	#endregion
+
+	#region 导出为图片
+
+	internal static class ColorSpaces
+	{
+		internal const string Rgb = "DeviceRGB";
+		internal const string Bgr = "DeviceBGR";
+		internal const string Cmyk = "DeviceCMYK";
+		internal const string Gray = "DeviceGray";
+		internal static string[] Names = {Rgb, Gray};
+	}
+
+	#endregion
+
+	#region 超星命名规则
+
+	internal static class CajNaming
+	{
+		internal const string Cover = "cov";
+		internal const string TitlePage = "bok";
+		internal const string CopyrightPage = "leg";
+		internal const string Foreword = "fow";
+		internal const string Contents = "!";
+	}
+
+	#endregion
+
+	internal static class AutoBookmark
+	{
+		internal const string ThisName = "自动书签";
+		internal const string Group = "条件集合";
+		internal const string Name = "名称";
+		internal const string Description = "说明";
+		internal const string IsInclusive = "正向过滤";
+	}
+
 	#region 文档信息
 
 	internal static class Info
@@ -244,14 +382,13 @@ internal static class Constants
 
 	internal static class ViewerPreferencesType
 	{
+		internal const string Direction = "阅读方向";
 		internal static readonly string[] Names = {"隐藏菜单", "隐藏工具栏", "只显示文档内容", "窗口适合文档首页", "窗口居中", "显示文档标题"};
 
 		internal static readonly PdfName[] PdfNames = {
 			PdfName.HIDEMENUBAR, PdfName.HIDETOOLBAR, PdfName.HIDEWINDOWUI, PdfName.FITWINDOW, PdfName.CENTERWINDOW,
 			PdfName.DISPLAYDOCTITLE
 		};
-
-		internal const string Direction = "阅读方向";
 
 		internal static class DirectionType
 		{
@@ -284,58 +421,6 @@ internal static class Constants
 		internal const string StartPage = "起始页码";
 		internal const string Prefix = "页码前缀";
 		internal const string Style = "样式";
-	}
-
-	#endregion
-
-	#region 页面内容
-
-	internal static class Content
-	{
-		internal const string Page = "页面";
-		internal const string PageNumber = "页码";
-		internal const string ResourceID = "资源编号";
-		internal const string RefType = "引用对象类型";
-		internal const string Texts = "文本内容";
-		internal const string Operators = "命令";
-		internal const string Operands = "参数";
-		internal const string Name = "名称";
-		internal const string Item = "项目";
-		internal const string Path = "路径";
-		internal const string Type = "类型";
-		internal const string Length = "长度";
-		internal const string Raw = "原始内容";
-		internal const string Value = "值";
-
-		internal static class PageSettings
-		{
-			internal const string ThisName = "页面设置";
-			internal const string MediaBox = "页面边框";
-			internal const string CropBox = "截取边框";
-			internal const string TrimBox = "裁剪边框";
-			internal const string ArtBox = "内容边框";
-			internal const string BleedBox = "出血边框";
-			internal const string Rotation = "旋转角度";
-		}
-
-		internal static class OperandNames
-		{
-			internal const string Matrix = "矩阵";
-			internal const string ResourceName = "资源名称";
-			internal const string Size = "尺寸";
-			internal const string Text = "文本";
-		}
-
-		internal static class RotationDirections
-		{
-			internal const string ThisName = PageSettings.Rotation;
-			internal const string Zero = "保持不变";
-			internal const string Right = "顺时针90度";
-			internal const string HalfClock = "180度";
-			internal const string Left = "逆时针90度";
-			internal static readonly string[] Names = {Zero, Right, HalfClock, Left};
-			internal static readonly int[] Values = {0, 90, 180, 270};
-		}
 	}
 
 	#endregion
@@ -466,59 +551,6 @@ internal static class Constants
 
 	#endregion
 
-	#region 光学字符识别
-
-	internal static class Ocr
-	{
-		internal const int NoLanguage = 0;
-		internal const int SimplifiedChineseLangID = 2052;
-		internal const int TraditionalChineseLangID = 1028;
-		internal const int JapaneseLangID = 1041;
-		internal const int KoreanLangID = 1042;
-		internal const int EnglishLangID = 1033;
-
-		internal const int DanishLangID = 1030;
-		internal const int DutchLangID = 1043;
-		internal const int FinnishLangID = 1035;
-		internal const int FrenchLangID = 1036;
-		internal const int GermanLangID = 1031;
-		internal const int ItalianLangID = 1040;
-		internal const int NorskLangID = 1044;
-		internal const int PortugueseLangID = 1046;
-		internal const int SpanishLangID = 3082;
-		internal const int SwedishLangID = 1053;
-		internal const int CzechLangID = 1029;
-		internal const int PolishLangID = 1045;
-		internal const int HungarianLangID = 1038;
-		internal const int GreekLangID = 1032;
-		internal const int RussianLangID = 1049;
-		internal const int TurkishLangID = 1055;
-
-		internal static int[] LangIDs = {
-			SimplifiedChineseLangID, TraditionalChineseLangID, EnglishLangID, JapaneseLangID, KoreanLangID,
-			DanishLangID, DutchLangID, FinnishLangID, FrenchLangID, GermanLangID, ItalianLangID, NorskLangID,
-			PortugueseLangID, SpanishLangID, SwedishLangID, CzechLangID, PolishLangID, HungarianLangID, GreekLangID,
-			RussianLangID, TurkishLangID
-		};
-
-		internal static int[] OcrLangIDs = {
-			SimplifiedChineseLangID, TraditionalChineseLangID, 9, 17, 18, 6, 19, 11, 12, 7, 16, 20, 22, 10, 29, 5, 21,
-			14, 8, 25, 31
-		};
-
-		internal static string[] LangNames = {
-			"简体中文", "繁体中文", "英文", "日文", "韩文", "丹麦文", "荷兰文", "芬兰文", "法文", "德文", "意大利文", "挪威文", "葡萄牙文", "西班牙文", "瑞典文",
-			"捷克文", "波兰文", "匈牙利文", "希腊文", "俄文", "土耳其文"
-		};
-
-		internal const string Result = "识别结果";
-		internal const string Text = "文本";
-		internal const string Content = "内容";
-		internal const string Image = "图片";
-	}
-
-	#endregion
-
 	#region 字体属性
 
 	internal static class Font
@@ -538,41 +570,6 @@ internal static class Constants
 	}
 
 	#endregion
-
-	#region 导出为图片
-
-	internal static class ColorSpaces
-	{
-		internal const string Rgb = "DeviceRGB";
-		internal const string Bgr = "DeviceBGR";
-		internal const string Cmyk = "DeviceCMYK";
-		internal const string Gray = "DeviceGray";
-		internal static string[] Names = {Rgb, Gray};
-	}
-
-	#endregion
-
-	#region 超星命名规则
-
-	internal static class CajNaming
-	{
-		internal const string Cover = "cov";
-		internal const string TitlePage = "bok";
-		internal const string CopyrightPage = "leg";
-		internal const string Foreword = "fow";
-		internal const string Contents = "!";
-	}
-
-	#endregion
-
-	internal static class AutoBookmark
-	{
-		internal const string ThisName = "自动书签";
-		internal const string Group = "条件集合";
-		internal const string Name = "名称";
-		internal const string Description = "说明";
-		internal const string IsInclusive = "正向过滤";
-	}
 }
 
 internal static class Messages

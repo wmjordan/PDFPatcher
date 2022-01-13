@@ -13,7 +13,22 @@ public class PaperSize
 	public const string AsLargestPage = "等同最大页面尺寸";
 	public const string AsSmallestPage = "等同最小页面尺寸";
 
+	private float _Height;
+
 	private string _PaperName;
+
+	private float _Width;
+
+	public PaperSize() { }
+
+	public PaperSize(float width, float height) : this(null, width, height) {
+	}
+
+	public PaperSize(string paperName, float width, float height) {
+		PaperName = paperName;
+		Width = width;
+		Height = height;
+	}
 
 	[XmlAttribute("名称")]
 	public string PaperName {
@@ -51,8 +66,6 @@ public class PaperSize
 
 	[XmlIgnore] public SpecialPaperSize SpecialSize { get; private set; }
 
-	private float _Height;
-
 	///<summary>获取或指定页面高度的值。</summary>
 	[XmlAttribute("高度")]
 	public float Height {
@@ -66,8 +79,6 @@ public class PaperSize
 		}
 	}
 
-	private float _Width;
-
 	///<summary>获取或指定页面宽度的值。</summary>
 	[XmlAttribute("宽度")]
 	public float Width {
@@ -79,17 +90,6 @@ public class PaperSize
 
 			_Width = value;
 		}
-	}
-
-	public PaperSize() { }
-
-	public PaperSize(float width, float height) : this(null, width, height) {
-	}
-
-	public PaperSize(string paperName, float width, float height) {
-		PaperName = paperName;
-		Width = width;
-		Height = height;
 	}
 
 	internal PaperSize Scale(float xFactor, float yFactor) {

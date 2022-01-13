@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
+using PDFPatcher.Common;
 
 namespace PDFPatcher.Processor.Imaging;
 
@@ -25,7 +27,7 @@ internal static class JBig2Decoder
 			c = NativeMethods.ReadData(ctxptr, data, (uint)data.Length);
 			c = NativeMethods.CompletePage(ctxptr);
 			if ((imageptr = NativeMethods.Decode(ctxptr)) != IntPtr.Zero) {
-				JBig2Image image = Common.PInvokeHelper.Unwrap<JBig2Image>(imageptr);
+				JBig2Image image = PInvokeHelper.Unwrap<JBig2Image>(imageptr);
 				decodedData = image.GetData();
 				NativeMethods.ReleasePage(ctxptr, imageptr);
 			}
@@ -61,7 +63,7 @@ internal static class JBig2Decoder
 		internal static extern int CompletePage(IntPtr ctx);
 
 		[DllImport(DLL, EntryPoint = "jbig2_data_in", CallingConvention = CallingConvention.Cdecl)]
-		internal static extern int ReadData(IntPtr ctx, [InAttribute()] byte[] bytes, uint length);
+		internal static extern int ReadData(IntPtr ctx, [InAttribute] byte[] bytes, uint length);
 
 		[DllImport(DLL, EntryPoint = "jbig2_make_global_ctx", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern IntPtr MakeGlobal(IntPtr ctx);
@@ -72,8 +74,8 @@ internal static class JBig2Decoder
 		[DllImport(DLL, EntryPoint = "jbig2_release_page", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern void ReleasePage(IntPtr ctx, IntPtr image);
 
-		private static int ErrorCallback(IntPtr data, [InAttribute()] string msg, Jbig2Severity severity, int seg_idx) {
-			System.Diagnostics.Debug.WriteLine(msg);
+		private static int ErrorCallback(IntPtr data, [InAttribute] string msg, Jbig2Severity severity, int seg_idx) {
+			Debug.WriteLine(msg);
 			return 0;
 		}
 	}

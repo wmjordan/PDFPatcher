@@ -14,15 +14,6 @@ public partial class PageLabelEditor : UserControl
 	private readonly TypedObjectListView<PageLabel> _LabelBox;
 	private List<PageLabel> _Labels;
 
-	[Browsable(false)]
-	public List<PageLabel> Labels {
-		get => _Labels;
-		set {
-			_Labels = value;
-			_PageLabelBox.Objects = value;
-		}
-	}
-
 	public PageLabelEditor() {
 		InitializeComponent();
 		foreach (string item in Constants.PageLabelStyles.Names) {
@@ -30,24 +21,24 @@ public partial class PageLabelEditor : UserControl
 		}
 
 		new TypedColumn<PageLabel>(_PageNumColumn) {
-			AspectGetter = (o) => o.PageNumber,
+			AspectGetter = o => o.PageNumber,
 			AspectPutter = (o, v) => {
 				int i = v.ToString().ToInt32();
 				o.PageNumber = i > 0 ? i : 1;
 			}
 		};
 		new TypedColumn<PageLabel>(_StartNumColumn) {
-			AspectGetter = (o) => o.StartPage,
+			AspectGetter = o => o.StartPage,
 			AspectPutter = (o, v) => {
 				int i = v.ToString().ToInt32();
 				o.StartPage = i > 0 ? i : 1;
 			}
 		};
 		new TypedColumn<PageLabel>(_LabelStyleColumn) {
-			AspectGetter = (o) => o.Style ?? Constants.PageLabelStyles.Names[0]
+			AspectGetter = o => o.Style ?? Constants.PageLabelStyles.Names[0]
 		};
 		new TypedColumn<PageLabel>(_LabelPrefixColumn) {
-			AspectGetter = (o) => o.Prefix, AspectPutter = (o, v) => o.Prefix = v as string
+			AspectGetter = o => o.Prefix, AspectPutter = (o, v) => o.Prefix = v as string
 		};
 		_PageLabelBox.FormatRow += (s, args) => args.Item.SubItems[0].Text = (args.RowIndex + 1).ToText();
 		_PageLabelBox.FixEditControlWidth();
@@ -66,6 +57,15 @@ public partial class PageLabelEditor : UserControl
 		};
 	}
 
+	[Browsable(false)]
+	public List<PageLabel> Labels {
+		get => _Labels;
+		set {
+			_Labels = value;
+			_PageLabelBox.Objects = value;
+		}
+	}
+
 	private void _AddPageLabelButton_Click(object sender, EventArgs e) {
 		int i = 0;
 		foreach (PageLabel item in _Labels) {
@@ -75,7 +75,7 @@ public partial class PageLabelEditor : UserControl
 		}
 
 		++i;
-		_Labels.Add(new PageLabel() {PageNumber = i, StartPage = 1});
+		_Labels.Add(new PageLabel {PageNumber = i, StartPage = 1});
 		_LabelBox.Objects = _Labels;
 	}
 

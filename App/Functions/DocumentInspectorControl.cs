@@ -10,12 +10,14 @@ using System.Security.Permissions;
 using System.Windows.Forms;
 using System.Xml;
 using BrightIdeasSoftware;
+using iTextSharp.text.exceptions;
 using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.fonts.cmaps;
 using PDFPatcher.Common;
 using PDFPatcher.Model;
 using PDFPatcher.Processor;
 using PDFPatcher.Processor.Imaging;
+using PDFPatcher.Properties;
 
 namespace PDFPatcher.Functions;
 
@@ -28,19 +30,25 @@ public sealed partial class DocumentInspectorControl : FunctionControl, IDocumen
 	private static Dictionary<string, int> __OpNameIcons;
 	private static Dictionary<int, int> __PdfObjectIcons;
 
-	private PdfPathDocument _pdf;
-	private ImageExtractor _imgExp;
-	private string _fileName;
-	private ToolStripItem[] _addPdfObjectMenuItems;
-	private int[] _pdfTypeForAddObjectMenuItems;
-
 	private static readonly ImageExtracterOptions _imgExpOption = new() {
 		OutputPath = Path.GetTempPath(), MergeImages = false
 	};
 
+	private ToolStripItem[] _addPdfObjectMenuItems;
+	private string _fileName;
+	private ImageExtractor _imgExp;
+
+	private PdfPathDocument _pdf;
+	private int[] _pdfTypeForAddObjectMenuItems;
+
+	public DocumentInspectorControl() {
+		InitializeComponent();
+		//this.Icon = Common.FormHelper.ToIcon (Properties.Resources.DocumentInspector);
+	}
+
 	public override string FunctionName => "文档结构探查器";
 
-	public override Bitmap IconImage => Properties.Resources.DocumentInspector;
+	public override Bitmap IconImage => Resources.DocumentInspector;
 
 	public event EventHandler<DocumentChangedEventArgs> DocumentChanged;
 
@@ -56,9 +64,16 @@ public sealed partial class DocumentInspectorControl : FunctionControl, IDocumen
 		}
 	}
 
-	public DocumentInspectorControl() {
-		InitializeComponent();
-		//this.Icon = Common.FormHelper.ToIcon (Properties.Resources.DocumentInspector);
+	public void CloseDocument() {
+		if (_pdf.Document != null) {
+			_pdf.Document.SafeFile.Close();
+		}
+	}
+
+	public void Reopen() {
+		if (_pdf.Document != null) {
+			_pdf.Document.SafeFile.ReOpen();
+		}
 	}
 
 	private void DocumentInspectorControl_OnLoad(object sender, EventArgs e) {
@@ -360,18 +375,6 @@ public sealed partial class DocumentInspectorControl : FunctionControl, IDocumen
 					_ObjectDetailBox.RefreshObject(m);
 				}
 			}
-		}
-	}
-
-	public void CloseDocument() {
-		if (_pdf.Document != null) {
-			_pdf.Document.SafeFile.Close();
-		}
-	}
-
-	public void Reopen() {
-		if (_pdf.Document != null) {
-			_pdf.Document.SafeFile.ReOpen();
 		}
 	}
 
@@ -905,7 +908,7 @@ public sealed partial class DocumentInspectorControl : FunctionControl, IDocumen
 			//Common.Form.Action ev = delegate () { _FilePathBox.Text = path; };
 			//_FilePathBox.Invoke (ev);
 		}
-		catch (iTextSharp.text.exceptions.BadPasswordException) {
+		catch (BadPasswordException) {
 			FormHelper.ErrorBox(Messages.PasswordInvalid);
 		}
 		catch (Exception ex) {

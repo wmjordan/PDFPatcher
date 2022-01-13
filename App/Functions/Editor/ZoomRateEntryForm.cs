@@ -5,11 +5,11 @@ namespace PDFPatcher.Functions;
 
 public partial class ZoomRateEntryForm : Form
 {
-	internal string ZoomRate => _ZoomRateBox.Text;
-
 	public ZoomRateEntryForm() {
 		InitializeComponent();
 	}
+
+	internal string ZoomRate => _ZoomRateBox.Text;
 
 	private void ZoomRateEntryForm_Load(object sender, EventArgs e) {
 	}

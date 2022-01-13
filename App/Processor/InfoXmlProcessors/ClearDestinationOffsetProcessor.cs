@@ -1,31 +1,15 @@
-﻿namespace PDFPatcher.Processor;
+﻿using System.Xml;
+
+namespace PDFPatcher.Processor;
 
 internal sealed class ClearDestinationOffsetProcessor : IPdfInfoXmlProcessor,
 	IPdfInfoXmlProcessor<ClearDestinationOffsetProcessor.PositionType>
 {
 	public enum PositionType { X, Y, XY }
 
-	private PositionType _type;
-
-	public PositionType Parameter {
-		get => _type;
-		set {
-			_type = value;
-			switch (_type) {
-				case PositionType.X:
-					_name = "横";
-					break;
-				case PositionType.Y:
-					_name = "纵";
-					break;
-				default:
-					_name = string.Empty;
-					break;
-			}
-		}
-	}
-
 	private string _name;
+
+	private PositionType _type;
 
 	public ClearDestinationOffsetProcessor() {
 	}
@@ -45,11 +29,29 @@ internal sealed class ClearDestinationOffsetProcessor : IPdfInfoXmlProcessor,
 		}
 	}
 
+	public PositionType Parameter {
+		get => _type;
+		set {
+			_type = value;
+			switch (_type) {
+				case PositionType.X:
+					_name = "横";
+					break;
+				case PositionType.Y:
+					_name = "纵";
+					break;
+				default:
+					_name = string.Empty;
+					break;
+			}
+		}
+	}
+
 	#region IInfoDocProcessor 成员
 
 	public string Name => "清除" + _name + "坐标定位偏移值";
 
-	public IUndoAction Process(System.Xml.XmlElement item) {
+	public IUndoAction Process(XmlElement item) {
 		if (item.GetAttribute(Constants.DestinationAttributes.View) ==
 		    Constants.DestinationAttributes.ViewType.FitR) {
 			return null;
@@ -77,14 +79,12 @@ internal sealed class ClearDestinationOffsetProcessor : IPdfInfoXmlProcessor,
 				}
 
 				break;
-			default:
-				break;
 		}
 
 		return null;
 	}
 
-	private static IUndoAction ClearPositionOffset(System.Xml.XmlElement item, string coordinate) {
+	private static IUndoAction ClearPositionOffset(XmlElement item, string coordinate) {
 		if (item.HasAttribute(coordinate)) {
 			string l = item.GetAttribute(coordinate);
 			if (l.Trim() == "0") {

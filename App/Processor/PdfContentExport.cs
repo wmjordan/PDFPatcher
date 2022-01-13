@@ -1,22 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Xml;
 using iTextSharp.text.pdf;
+using iTextSharp.text.pdf.parser;
 using PDFPatcher.Common;
 using PDFPatcher.Model;
 using PDFPatcher.Processor.Imaging;
-using Matrix = iTextSharp.text.pdf.parser.Matrix;
+using GraphicsState = PDFPatcher.Model.GraphicsState;
+using Path = System.IO.Path;
 
 namespace PDFPatcher.Processor;
 
 internal sealed class PdfContentExport
 {
-	private readonly ExporterOptions _options;
-	private ImageExtractor _imageExporter;
-	private readonly Dictionary<string, string> _resolvedReferences = new();
 	private readonly List<string> _exportPath = new();
+	private readonly ExporterOptions _options;
+	private readonly Dictionary<string, string> _resolvedReferences = new();
+	private ImageExtractor _imageExporter;
+
+
+	public PdfContentExport(ExporterOptions options) {
+		_options = options;
+	}
 
 	private bool AddReferenceRecord(PdfIndirectReference r, string type) {
 		string k = string.Concat(r.Number, ' ', r.Generation);
@@ -26,11 +32,6 @@ internal sealed class PdfContentExport
 		}
 
 		return false;
-	}
-
-
-	public PdfContentExport(ExporterOptions options) {
-		_options = options;
 	}
 
 	internal void ExportTrailer(XmlWriter writer, PdfReader reader) {
@@ -124,7 +125,7 @@ internal sealed class PdfContentExport
 	}
 
 	/// <summary>
-	/// 导出 PDFDictionary。
+	///     导出 PDFDictionary。
 	/// </summary>
 	/// <param name="writer"></param>
 	/// <param name="dict"></param>
@@ -137,7 +138,7 @@ internal sealed class PdfContentExport
 	private void ExportPdfDictionaryItem(KeyValuePair<PdfName, PdfObject> item, XmlWriter writer) {
 		string key = PdfHelper.DecodeKeyName(item.Key);
 		string val = item.Value.ToString();
-		PdfObject value = item.Value as PdfObject;
+		PdfObject value = item.Value;
 		try {
 			writer.WriteStartElement(XmlConvert.VerifyNCName(key));
 		}
@@ -341,7 +342,7 @@ internal sealed class PdfContentExport
 	}
 
 	private void ExportIndirectReference(PdfIndirectReference r, XmlWriter writer, string key) {
-		PdfObject i = (PdfObject)PdfReader.GetPdfObjectRelease(r);
+		PdfObject i = PdfReader.GetPdfObjectRelease(r);
 		writer.WriteAttributeString(Constants.Content.ResourceID, Constants.ContentNamespace, r.ToString());
 		if (AddReferenceRecord(r, key) == false || i == null) {
 			return;
@@ -601,34 +602,24 @@ internal sealed class PdfContentExport
 
 	private sealed class ExportProcessor : PdfContentStreamProcessor
 	{
-		private struct NameValuePair
-		{
-			public string Name;
-			public string Value;
-
-			public NameValuePair(string name, string value) {
-				Name = name;
-				Value = value;
-			}
-		}
-
 		private readonly PdfContentExport _export;
-		private readonly XmlWriter _writer;
-		private readonly bool _writeOperators;
-		private readonly List<TextInfo> _textContainer;
 		private readonly List<NameValuePair> _operands = new();
-		private int _writerLevel;
+		private readonly bool _writeOperators;
+		private readonly XmlWriter _writer;
 		private float _textWidth;
+		private int _writerLevel;
 
 
 		public ExportProcessor(PdfContentExport export, XmlWriter writer, ExporterOptions options) {
 			_export = export;
 			_writer = writer;
 			_writeOperators = options.ExportContentOperators;
-			_textContainer = options.ExportDecodedText ? new List<TextInfo>() : null;
+			TextInfoList = options.ExportDecodedText ? new List<TextInfo>() : null;
 			PopulateOperators();
 			RegisterContentOperator("TJ", new AccumulatedShowTextArray());
 		}
+
+		internal List<TextInfo> TextInfoList { get; }
 
 		public void End() {
 			if (_writeOperators == false) {
@@ -640,8 +631,6 @@ internal sealed class PdfContentExport
 				_writerLevel--;
 			}
 		}
-
-		internal List<TextInfo> TextInfoList => _textContainer;
 
 		protected override void DisplayPdfString(PdfString str) {
 			GraphicsState gs = CurrentGraphicState;
@@ -759,21 +748,32 @@ internal sealed class PdfContentExport
 		}
 
 		private static string GetOperandsTextValue(List<PdfObject> operands) {
-			List<string> n = operands.ConvertAll((po) =>
+			List<string> n = operands.ConvertAll(po =>
 				po.Type == PdfObject.NUMBER ? ((PdfNumber)po).DoubleValue.ToText() : null);
 			n.RemoveAt(n.Count - 1);
 			return string.Join(" ", n.ToArray());
 		}
 
 		private void AddTextInfo(string t) {
-			if (_textContainer != null && t != null) {
-				_textContainer.Add(new TextInfo() {
+			if (TextInfoList != null && t != null) {
+				TextInfoList.Add(new TextInfo {
 					Text = t,
 					Size = CurrentGraphicState.FontSize * TextMatrix[Matrix.I11],
 					Region = new Bound(TextMatrix[Matrix.I31], TextMatrix[Matrix.I32],
 						TextMatrix[Matrix.I31] + _textWidth, 0),
 					Font = CurrentGraphicState.Font
 				});
+			}
+		}
+
+		private struct NameValuePair
+		{
+			public readonly string Name;
+			public readonly string Value;
+
+			public NameValuePair(string name, string value) {
+				Name = name;
+				Value = value;
 			}
 		}
 	}

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Xml.Serialization;
 using PDFPatcher.Model;
 
@@ -34,7 +32,7 @@ public class MergerOptions : DocumentOptions
 	public bool AutoScaleUp { get; set; }
 
 	/// <summary>
-	/// 获取页面除去上下留白的高度。
+	///     获取页面除去上下留白的高度。
 	/// </summary>
 	[XmlIgnore]
 	public float ContentHeight {
@@ -45,7 +43,7 @@ public class MergerOptions : DocumentOptions
 	}
 
 	/// <summary>
-	/// 获取页面除去左右留白的宽度。
+	///     获取页面除去左右留白的宽度。
 	/// </summary>
 	[XmlIgnore]
 	public float ContentWidth {

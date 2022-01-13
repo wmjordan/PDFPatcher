@@ -3,6 +3,9 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using PDFPatcher.Common;
 using PDFPatcher.Model;
+using PDFPatcher.Processor;
+using PDFPatcher.Properties;
+using HorizontalAlignment = PDFPatcher.Model.HorizontalAlignment;
 
 namespace PDFPatcher.Functions;
 
@@ -10,16 +13,14 @@ namespace PDFPatcher.Functions;
 public partial class PatcherOptionForm : Form, IResettableControl
 {
 	private const float cm2point = 72f / 2.54f;
-	private string paperName;
-	private bool _uiLockDown;
 	private readonly bool _editorOptions;
-
-	public PatcherOptions Options { get; set; }
+	private bool _uiLockDown;
+	private string paperName;
 
 	public PatcherOptionForm(bool editorOptions) {
 		InitializeComponent();
-		this.SetIcon(Properties.Resources.PdfOptions);
-		_PageSizeBox.Items.AddRange(Processor.PdfDocumentCreator.PaperSizes);
+		this.SetIcon(Resources.PdfOptions);
+		_PageSizeBox.Items.AddRange(PdfDocumentCreator.PaperSizes);
 		_ImageHAlignBox.Items.Add("水平居中");
 		_ImageHAlignBox.Items.Add("左对齐");
 		_ImageHAlignBox.Items.Add("右对齐");
@@ -34,13 +35,7 @@ public partial class PatcherOptionForm : Form, IResettableControl
 		};
 	}
 
-	private void PatcherOptionForm_Load(object sender, EventArgs e) {
-		Reload();
-		if (_editorOptions) {
-			_MainTab.TabPages.Remove(_DocumentInfoPage);
-			Options.MetaData.SpecifyMetaData = false;
-		}
-	}
+	public PatcherOptions Options { get; set; }
 
 	public void Reset() {
 		if (_editorOptions) {
@@ -113,6 +108,14 @@ public partial class PatcherOptionForm : Form, IResettableControl
 		_uiLockDown = false;
 	}
 
+	private void PatcherOptionForm_Load(object sender, EventArgs e) {
+		Reload();
+		if (_editorOptions) {
+			_MainTab.TabPages.Remove(_DocumentInfoPage);
+			Options.MetaData.SpecifyMetaData = false;
+		}
+	}
+
 	protected override void OnClosing(CancelEventArgs e) {
 		base.OnClosing(e);
 		PatcherOptions settings = Options;
@@ -127,7 +130,7 @@ public partial class PatcherOptionForm : Form, IResettableControl
 		ps.PaperSize.PaperName = paperName;
 		ps.PaperSize.Width = CmToPoint(_WidthBox);
 		ps.PaperSize.Height = CmToPoint(_HeightBox);
-		ps.HorizontalAlign = (Model.HorizontalAlignment)_ImageHAlignBox.SelectedIndex;
+		ps.HorizontalAlign = (HorizontalAlignment)_ImageHAlignBox.SelectedIndex;
 		ps.VerticalAlign = (VerticalAlignment)_ImageVAlignBox.SelectedIndex;
 		ps.ScaleContent = _ScalePdfPagesBox.Checked;
 		settings.RecompressWithJbig2 = _RecompressWithJbig2Box.Checked;

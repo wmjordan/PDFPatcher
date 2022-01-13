@@ -6,6 +6,24 @@ internal static class Commands
 {
 	internal const string File = "_File";
 
+	internal const string Tools = "_ToolBox";
+
+	internal const string Selection = "_Select";
+
+	internal const string Help = "_Help";
+
+	internal static readonly string[] TopMenuItems = { File, Tools, Selection };
+	internal static readonly string[] CommonSelectionCommands = { SelectAllItems, SelectNone, InvertSelectItem };
+
+	internal static readonly HashSet<string> DefaultDisabledItems = new(
+		new[] { SelectAllItems, InvertSelectItem, SelectNone, Copy, Delete, Options });
+
+	internal static readonly HashSet<string> DefaultHiddenItems = new(
+		new[] {
+			ImportBookmark, SaveBookmark, SaveAsInfoFile, DocumentProperties, SelectAllPdf, SelectAllImages,
+			SelectAllFolders, ItemTypeSeparator
+		});
+
 	#region File menu
 
 	internal const string Open = "_Open";
@@ -29,8 +47,6 @@ internal static class Commands
 
 	#endregion
 
-	internal const string Tools = "_ToolBox";
-
 	#region Tools menu
 
 	internal const string LogWindow = "_LogWindow";
@@ -38,8 +54,6 @@ internal static class Commands
 	internal const string CustomizeToolbar = "_CustomizeToolbar";
 
 	#endregion
-
-	internal const string Selection = "_Select";
 
 	#region Selection menu
 
@@ -63,8 +77,6 @@ internal static class Commands
 	internal const string InfoFileOptions = "_InfoFileOptions";
 
 	#endregion
-
-	internal const string Help = "_Help";
 
 	#region Help menu
 
@@ -91,16 +103,4 @@ internal static class Commands
 	internal const string EditorSavePageImage = "_SavePageImage";
 
 	#endregion
-
-	internal static readonly string[] TopMenuItems = { File, Tools, Selection };
-	internal static readonly string[] CommonSelectionCommands = { SelectAllItems, SelectNone, InvertSelectItem };
-
-	internal static readonly HashSet<string> DefaultDisabledItems = new(
-		new string[] { SelectAllItems, InvertSelectItem, SelectNone, Copy, Delete, Options });
-
-	internal static readonly HashSet<string> DefaultHiddenItems = new(
-		new string[] {
-			ImportBookmark, SaveBookmark, SaveAsInfoFile, DocumentProperties, SelectAllPdf, SelectAllImages,
-			SelectAllFolders, ItemTypeSeparator
-		});
 }

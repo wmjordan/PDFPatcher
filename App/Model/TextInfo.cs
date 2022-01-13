@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Drawing;
 using iTextSharp.text.pdf;
 
 namespace PDFPatcher.Model;
@@ -6,13 +7,13 @@ namespace PDFPatcher.Model;
 [DebuggerDisplay("Region={Region.Bottom},{Region.Left}; Size={Size}; Text={Text}")]
 internal sealed class TextInfo : ITextRegion
 {
-	public Bound Region { get; set; }
-	public string Text { get; set; }
 	public PdfString PdfString { get; set; }
 	internal float Size { get; set; }
 	internal FontInfo Font { get; set; }
-	internal System.Drawing.Color Color { get; set; }
+	internal Color Color { get; set; }
 	internal float LetterWidth { get; set; }
+	public Bound Region { get; set; }
+	public string Text { get; set; }
 
 	internal static int CompareRegionX(ITextRegion a, ITextRegion b) {
 		if (a == b) {

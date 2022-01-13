@@ -1,20 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 namespace PDFPatcher.Functions;
 
 public partial class ShiftPageNumberEntryForm : Form
 {
-	internal int ShiftNumber => (int)_ShiftNumberBox.Value;
-
 	public ShiftPageNumberEntryForm() {
 		InitializeComponent();
 	}
+
+	internal int ShiftNumber => (int)_ShiftNumberBox.Value;
 
 	private void ShiftPageNumberEntryForm_Load(object sender, EventArgs e) {
 	}

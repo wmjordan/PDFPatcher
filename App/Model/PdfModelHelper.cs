@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using iTextSharp.text.pdf;
@@ -116,27 +115,25 @@ internal static class PdfModelHelper
 						return r.ReadToEnd();
 					}
 				}
-				else {
-					return PdfEncodings.ConvertToString(bytes, PdfObject.TEXT_PDFDOCENCODING);
-				}
-			}
-			else {
-				// 忽略字节顺序标记
-				if (bytes.Length >= 2 &&
-				    ((bytes[0] == 0xFF && bytes[1] == 0xFE) || (bytes[0] == 0xFE && bytes[1] == 0xFF))) {
-					ms.Position += 2;
-				}
-				else if (bytes.Length >= 3 && bytes[0] == 0xef && bytes[1] == 0xbb && bytes[2] == 0xbf) {
-					ms.Position += 3;
-				}
-				else if (bytes.Length >= 4 && bytes[0] == 0 && bytes[1] == 0 && bytes[2] == 0xfe &&
-				         bytes[3] == 0xff) {
-					ms.Position += 4;
-				}
 
-				using (TextReader r = new StreamReader(ms, encoding)) {
-					return r.ReadToEnd();
-				}
+				return PdfEncodings.ConvertToString(bytes, PdfObject.TEXT_PDFDOCENCODING);
+			}
+
+			// 忽略字节顺序标记
+			if (bytes.Length >= 2 &&
+			    ((bytes[0] == 0xFF && bytes[1] == 0xFE) || (bytes[0] == 0xFE && bytes[1] == 0xFF))) {
+				ms.Position += 2;
+			}
+			else if (bytes.Length >= 3 && bytes[0] == 0xef && bytes[1] == 0xbb && bytes[2] == 0xbf) {
+				ms.Position += 3;
+			}
+			else if (bytes.Length >= 4 && bytes[0] == 0 && bytes[1] == 0 && bytes[2] == 0xfe &&
+			         bytes[3] == 0xff) {
+				ms.Position += 4;
+			}
+
+			using (TextReader r = new StreamReader(ms, encoding)) {
+				return r.ReadToEnd();
 			}
 		}
 	}

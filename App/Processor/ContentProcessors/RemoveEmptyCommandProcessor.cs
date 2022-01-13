@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using iTextSharp.text.pdf;
 using PDFPatcher.Model;
@@ -11,6 +10,27 @@ namespace PDFPatcher.Processor;
 internal sealed class RemoveEmptyCommandProcessor : IPageProcessor
 {
 	private int _processedPageCount;
+
+	private static bool ProcessCommands(IList<PdfPageCommand> parent) {
+		bool r = false;
+		EnclosingCommand ec;
+		for (int i = parent.Count - 1; i >= 0; i--) {
+			ec = parent[i] as EnclosingCommand;
+			if (ec == null) {
+				continue;
+			}
+
+			if (ec.Name.ToString() == "BT") {
+				parent.RemoveAt(i);
+				r = true;
+			}
+			else {
+				r |= ProcessCommands(ec.Commands);
+			}
+		}
+
+		return r;
+	}
 
 	#region IPageProcessor 成员
 
@@ -35,7 +55,7 @@ internal sealed class RemoveEmptyCommandProcessor : IPageProcessor
 		IPdfPageCommandContainer p = context.PageCommands;
 		bool r = false;
 		r = ProcessCommands(p.Commands);
-		if (r == true) {
+		if (r) {
 			context.IsPageContentModified = true;
 			_processedPageCount++;
 		}
@@ -69,25 +89,4 @@ internal sealed class RemoveEmptyCommandProcessor : IPageProcessor
 	}
 
 	#endregion
-
-	private static bool ProcessCommands(IList<PdfPageCommand> parent) {
-		bool r = false;
-		EnclosingCommand ec;
-		for (int i = parent.Count - 1; i >= 0; i--) {
-			ec = parent[i] as EnclosingCommand;
-			if (ec == null) {
-				continue;
-			}
-
-			if (ec.Name.ToString() == "BT") {
-				parent.RemoveAt(i);
-				r = true;
-			}
-			else {
-				r |= ProcessCommands(ec.Commands);
-			}
-		}
-
-		return r;
-	}
 }

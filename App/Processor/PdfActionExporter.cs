@@ -1,5 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
+using System.Text;
 using System.Xml;
 using iTextSharp.text.pdf;
 using PDFPatcher.Common;
@@ -28,7 +29,7 @@ internal sealed class PdfActionExporter
 		}
 		else if (file.Type == PdfObject.STRING) {
 			w.WriteAttributeString(Constants.DestinationAttributes.Path,
-				PdfHelper.GetValidXmlString(((PdfString)file).Decode(System.Text.Encoding.Default)));
+				PdfHelper.GetValidXmlString(((PdfString)file).Decode(Encoding.Default)));
 		}
 	}
 
@@ -212,7 +213,7 @@ internal sealed class PdfActionExporter
 
 				break;
 			default:
-				System.Diagnostics.Trace.WriteLine("目标位置无效");
+				Trace.WriteLine("目标位置无效");
 				break;
 		}
 	}

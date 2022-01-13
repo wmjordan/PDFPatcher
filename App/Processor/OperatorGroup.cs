@@ -1,24 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using iTextSharp.text.pdf;
-using PDFPatcher.Model;
 
 namespace PDFPatcher.Processor;
 
 internal sealed class OperatorGroup : PdfContentStreamProcessor.IContentOperator
 {
-	/// <summary>
-	/// 处理内容的 <see cref="PdfContentStreamProcessor.IContentOperator"/> 列表。
-	/// </summary>
-	public List<PdfContentStreamProcessor.IContentOperator> Operators { get; private set; }
-
 	public OperatorGroup(IEnumerable<PdfContentStreamProcessor.IContentOperator> operators) {
 		Operators = new List<PdfContentStreamProcessor.IContentOperator>();
 		if (operators != null) {
 			Operators.AddRange(operators);
 		}
 	}
+
+	/// <summary>
+	///     处理内容的 <see cref="PdfContentStreamProcessor.IContentOperator" /> 列表。
+	/// </summary>
+	public List<PdfContentStreamProcessor.IContentOperator> Operators { get; }
 
 	#region IContentOperator 成员
 

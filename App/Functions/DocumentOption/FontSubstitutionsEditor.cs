@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using PDFPatcher.Common;
@@ -10,27 +9,16 @@ namespace PDFPatcher.Functions;
 
 public partial class FontSubstitutionsEditor : UserControl
 {
+	private readonly TypedObjectListView<FontSubstitution> _SubstitutionsBox;
 	private string _copiedFont;
 
 	private FontUtility.FriendlyFontName[] _Fonts;
-	private readonly TypedObjectListView<FontSubstitution> _SubstitutionsBox;
 	private List<FontSubstitution> _Substitutions;
-
-	[Browsable(false)]
-	public List<FontSubstitution> Substitutions {
-		get => _Substitutions;
-		set {
-			_Substitutions = value;
-			_FontSubstitutionsBox.Objects = value;
-		}
-	}
-
-	public PatcherOptions Options { get; set; }
 
 	public FontSubstitutionsEditor() {
 		InitializeComponent();
 		_FontSubstitutionsBox.FormatRow +=
-			(s, args) => args.Item.SubItems[0].Text = ValueHelper.ToText(args.RowIndex + 1);
+			(s, args) => args.Item.SubItems[0].Text = (args.RowIndex + 1).ToText();
 
 		_FontSubstitutionsBox.FullRowSelect = true;
 		_FontSubstitutionsBox.HideSelection = false;
@@ -57,15 +45,26 @@ public partial class FontSubstitutionsEditor : UserControl
 			}
 		};
 		new TypedColumn<FontSubstitution>(_OriginalFontColumn) {
-			AspectGetter = (o) => o.OriginalFont, AspectPutter = (o, v) => o.OriginalFont = v as string
+			AspectGetter = o => o.OriginalFont, AspectPutter = (o, v) => o.OriginalFont = v as string
 		};
 		new TypedColumn<FontSubstitution>(_SubstitutionColumn) {
-			AspectGetter = (o) => o.Substitution, AspectPutter = (o, v) => o.Substitution = v as string
+			AspectGetter = o => o.Substitution, AspectPutter = (o, v) => o.Substitution = v as string
 		};
 		new TypedColumn<FontSubstitution>(_CharSubstitutionColumn) {
-			AspectGetter = (o) => string.IsNullOrEmpty(o.OriginalCharacters) ? "添加" : "修改"
+			AspectGetter = o => string.IsNullOrEmpty(o.OriginalCharacters) ? "添加" : "修改"
 		};
 	}
+
+	[Browsable(false)]
+	public List<FontSubstitution> Substitutions {
+		get => _Substitutions;
+		set {
+			_Substitutions = value;
+			_FontSubstitutionsBox.Objects = value;
+		}
+	}
+
+	public PatcherOptions Options { get; set; }
 
 	private void EditSubstitutionItem(CellEditEventArgs args) {
 		ComboBox cb = new() {
@@ -162,7 +161,7 @@ public partial class FontSubstitutionsEditor : UserControl
 				continue;
 			}
 
-			_Substitutions.Add(new FontSubstitution() {OriginalFont = item});
+			_Substitutions.Add(new FontSubstitution {OriginalFont = item});
 		}
 
 		_SubstitutionsBox.Objects = _Substitutions;

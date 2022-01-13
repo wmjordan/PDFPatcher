@@ -11,10 +11,16 @@ namespace PDFPatcher.Processor;
 internal sealed class PageDimensionProcessor : IPageProcessor
 {
 	private CoordinateTranslationSettings[] _cts;
-	private bool _resizePages, _adjustMargins;
 	private PageRangeCollection _pageRanges;
 	private PaperSize _refPaperSize;
+	private bool _resizePages, _adjustMargins;
 	public PageBoxSettings Settings { get; set; }
+
+	#region IProcessor 成员
+
+	public string Name => "修改页面尺寸";
+
+	#endregion
 
 	internal static CoordinateTranslationSettings ResizePage(PdfDictionary page, PageBoxSettings settings,
 		PaperSize refPaperSize) {
@@ -79,7 +85,7 @@ internal sealed class PageDimensionProcessor : IPageProcessor
 			b.Bottom = b.Top - size.Height;
 		}
 
-		float[] a = new float[] {b.Left, b.Bottom, b.Right, b.Top};
+		float[] a = {b.Left, b.Bottom, b.Right, b.Top};
 		page.Put(PdfName.CROPBOX, new PdfArray(a));
 		ResizeBox(page, mb, b);
 		if (page.GetAsArray(PdfName.BLEEDBOX) != null) {
@@ -117,7 +123,7 @@ internal sealed class PageDimensionProcessor : IPageProcessor
 
 	private static void ResizeBox(PdfDictionary page, Rectangle box, Rectangle refBox) {
 		page.Put(PdfName.MEDIABOX,
-			new PdfArray(new float[] {
+			new PdfArray(new[] {
 				box.Left < refBox.Left ? box.Left : refBox.Left,
 				box.Bottom < refBox.Bottom ? box.Bottom : refBox.Bottom,
 				box.Right > refBox.Right ? box.Right : refBox.Right, box.Top > refBox.Top ? box.Top : refBox.Top
@@ -168,17 +174,14 @@ internal sealed class PageDimensionProcessor : IPageProcessor
 	}
 
 	/// <summary>
-	/// 无损拉伸平移页面。
+	///     无损拉伸平移页面。
 	/// </summary>
 	/// <param name="pdf">PDF 文档。</param>
 	/// <param name="pageNumber">页码。</param>
 	/// <param name="ct">拉伸及平移参数。</param>
 	internal static byte[] ScaleContent(PdfReader pdf, int pageNumber, CoordinateTranslationSettings ct) {
-		byte[] newContent = Encoding.ASCII.GetBytes(string.Join(" ",
-			new string[] {
-				ct.XScale.ToText(), "0", "0", ct.YScale.ToText(), ct.XTranslation.ToText(), ct.YTranslation.ToText(),
-				"cm "
-			}));
+		byte[] newContent = Encoding.ASCII.GetBytes(string.Join(" ", ct.XScale.ToText(), "0", "0", ct.YScale.ToText(),
+			ct.XTranslation.ToText(), ct.YTranslation.ToText(), "cm "));
 		byte[] cb = pdf.GetPageContent(pageNumber);
 		Array.Resize(ref newContent, cb.Length + newContent.Length);
 		cb.CopyTo(newContent, newContent.Length - cb.Length);
@@ -248,7 +251,7 @@ internal sealed class PageDimensionProcessor : IPageProcessor
 
 		Rectangle r = PdfReader.GetNormalizedRectangle(b);
 		page.Put(boxName,
-			new PdfArray(new float[] {
+			new PdfArray(new[] {
 				r.Left - margins.Left, r.Bottom - margins.Bottom, r.Right + margins.Right, r.Top + margins.Top
 			}));
 	}
@@ -373,12 +376,6 @@ internal sealed class PageDimensionProcessor : IPageProcessor
 	public bool EndProcess(PdfReader pdf) {
 		return false;
 	}
-
-	#endregion
-
-	#region IProcessor 成员
-
-	public string Name => "修改页面尺寸";
 
 	#endregion
 }

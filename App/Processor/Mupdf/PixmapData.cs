@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 using FreeImageAPI;
 using CC = System.Runtime.InteropServices.CallingConvention;
 using DllImport = System.Runtime.InteropServices.DllImportAttribute;
@@ -21,12 +22,12 @@ internal sealed class PixmapData : IDisposable
 		_pixmap = pixmap;
 	}
 
-	public int Width { get; private set; }
-	public int Height { get; private set; }
-	public int Components { get; private set; }
+	public int Width { get; }
+	public int Height { get; }
+	public int Components { get; }
 
 	/// <summary>获取指向 Pixmap 数据内容的指针。</summary>
-	public IntPtr Samples { get; private set; }
+	public IntPtr Samples { get; }
 
 	/// <summary>获取 Pixmap 的边框。</summary>
 	public BBox BBox => NativeMethods.GetBBox(_context, _pixmap);
@@ -41,7 +42,7 @@ internal sealed class PixmapData : IDisposable
 	public int Stride => NativeMethods.GetStride(_context, _pixmap);
 
 	/// <summary>
-	/// 将 Pixmap 的数据转换为 <see cref="Bitmap"/>。
+	///     将 Pixmap 的数据转换为 <see cref="Bitmap" />。
 	/// </summary>
 	public unsafe Bitmap ToBitmap(ImageRendererOptions options) {
 		int width = Width;
@@ -117,7 +118,7 @@ internal sealed class PixmapData : IDisposable
 	}
 
 	/// <summary>
-	/// 将 Pixmap 的数据转换为 <see cref="FreeImageBitmap"/>。
+	///     将 Pixmap 的数据转换为 <see cref="FreeImageBitmap" />。
 	/// </summary>
 	public unsafe FreeImageBitmap ToFreeImageBitmap(ImageRendererOptions options) {
 		int width = Width;
@@ -182,14 +183,14 @@ internal sealed class PixmapData : IDisposable
 	}
 
 	/// <summary>
-	/// 反转 Pixmap 的颜色。
+	///     反转 Pixmap 的颜色。
 	/// </summary>
 	public void Invert() {
 		NativeMethods.InvertPixmap(_context, _pixmap);
 	}
 
 	/// <summary>
-	/// 为 Pixmap 蒙上色层。
+	///     为 Pixmap 蒙上色层。
 	/// </summary>
 	/// <param name="color">需要蒙上的颜色。</param>
 	public void Tint(Color color) {
@@ -197,7 +198,7 @@ internal sealed class PixmapData : IDisposable
 	}
 
 	/// <summary>
-	/// 对 Pixmap 执行 Gamma 校正。
+	///     对 Pixmap 执行 Gamma 校正。
 	/// </summary>
 	/// <param name="gamma">需要应用的 Gamma 值。1.0 表示不更改。</param>
 	public void Gamma(float gamma) {
@@ -209,7 +210,7 @@ internal sealed class PixmapData : IDisposable
 	}
 
 	/// <summary>
-	/// 获取 Pixmap 内的数据。
+	///     获取 Pixmap 内的数据。
 	/// </summary>
 	/// <returns>字节数组。</returns>
 	public byte[] GetSampleBytes() {
@@ -218,13 +219,13 @@ internal sealed class PixmapData : IDisposable
 		}
 
 		byte[] d = new byte[Width * Height * Components];
-		System.Runtime.InteropServices.Marshal.Copy(Samples, d, 0, d.Length);
+		Marshal.Copy(Samples, d, 0, d.Length);
 		return d;
 	}
 
 	#region 实现 IDisposable 接口的属性和方法
 
-	private bool disposed = false;
+	private bool disposed;
 
 	public void Dispose() {
 		Dispose(true);

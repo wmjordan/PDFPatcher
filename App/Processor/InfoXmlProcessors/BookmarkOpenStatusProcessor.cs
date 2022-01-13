@@ -1,12 +1,9 @@
-﻿namespace PDFPatcher.Processor;
+﻿using System.Xml;
+
+namespace PDFPatcher.Processor;
 
 internal sealed class BookmarkOpenStatusProcessor : IPdfInfoXmlProcessor, IPdfInfoXmlProcessor<bool>
 {
-	/// <summary>
-	/// 表示处理器是否应打开书签。
-	/// </summary>
-	public bool Parameter { get; set; }
-
 	public BookmarkOpenStatusProcessor() {
 	}
 
@@ -14,11 +11,16 @@ internal sealed class BookmarkOpenStatusProcessor : IPdfInfoXmlProcessor, IPdfIn
 		Parameter = open;
 	}
 
+	/// <summary>
+	///     表示处理器是否应打开书签。
+	/// </summary>
+	public bool Parameter { get; set; }
+
 	#region IInfoDocProcessor 成员
 
 	public string Name => "设置书签状态为" + (Parameter ? "打开" : "关闭");
 
-	public IUndoAction Process(System.Xml.XmlElement item) {
+	public IUndoAction Process(XmlElement item) {
 		if (item.SelectSingleNode(Constants.Bookmark) == null) {
 			return null;
 		}

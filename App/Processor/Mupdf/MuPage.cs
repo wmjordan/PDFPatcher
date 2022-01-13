@@ -1,76 +1,13 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
+using FreeImageAPI;
 
 namespace MuPdfSharp;
 
 public sealed class MuPage : IDisposable
 {
-	#region 非托管资源成员
-
-	private readonly ContextHandle _context;
-	private DocumentHandle _document;
-	private readonly PageHandle _page;
-	private DisplayListHandle _displayList;
-
-	#endregion
-
-	#region 托管资源成员
-
-	private static readonly ImageRendererOptions __defaultOptions = new();
-	private MuCookie _cookie;
-	private MuTextPage _TextPage;
-	private bool _flattened;
-
-	/// <summary>获取当前页面的页码。</summary>
-	public int PageNumber { get; private set; }
-
-	/// <summary>获取当前页面的尺寸（左下角坐标置为“0,0”）。如需获取页面字典中的原始可视区域，请使用 <see cref="VisualBound"/> 属性。</summary>
-	public Rectangle Bound => NativeMethods.BoundPage(_context, _page);
-
-	/// <summary>获取当前页面可视区域的坐标及尺寸。</summary>
-	public Rectangle VisualBound => Matrix.Identity.RotateTo(Rotation).Transform(VisualBox);
-
-	public Rectangle ArtBox => LookupPageBox("ArtBox");
-	public Rectangle BleedBox => LookupPageBox("BleedBox");
-	public Rectangle CropBox => LookupPageBox("CropBox");
-	public Rectangle TrimBox => LookupPageBox("TrimBox");
-	public Rectangle MediaBox => LookupPageBox("MediaBox");
-
-	public Rectangle VisualBox {
-		get {
-			Rectangle b = LookupPageBox("CropBox");
-			return b.IsEmpty ? LookupPageBox("MediaBox") : b;
-		}
-	}
-
-	public int Rotation => LookupPage("Rotate").IntegerValue;
-
-	public MuTextPage TextPage {
-		get {
-			PopulateTextPage();
-			return _TextPage;
-		}
-	}
-
-	private unsafe Rectangle LookupPageBox(string name) {
-		if (_flattened == false) {
-			IntPtr d = _page.PageDictionary;
-			NativeMethods.FlatternInheritablePageItems(_context, d);
-			_flattened = true;
-		}
-
-		MuPdfDictionary a = new(_context, _page.PageDictionary);
-		MuPdfArray ra = a[name].AsArray();
-		return ra.Count == 4 ? Rectangle.FromArray(a[name]) : Rectangle.Empty;
-	}
-
-	private MuPdfObject LookupPage(string name) {
-		MuPdfDictionary a = new(_context, _page.PageDictionary);
-		return a[name];
-	}
-
-	#endregion
-
 	internal MuPage(ContextHandle context, DocumentHandle document, int pageNumber, ref MuCookie cookie) {
 		try {
 			_page = new PageHandle(document, pageNumber - 1);
@@ -105,23 +42,23 @@ public sealed class MuPage : IDisposable
 	//}
 
 	/// <summary>
-	/// 使用默认的配置渲染页面。
+	///     使用默认的配置渲染页面。
 	/// </summary>
 	/// <param name="width">页面的宽度。</param>
 	/// <param name="height">页面的高度。</param>
-	/// <returns>渲染后生成的 <see cref="Bitmap"/>。</returns>
-	public FreeImageAPI.FreeImageBitmap RenderPage(int width, int height) {
+	/// <returns>渲染后生成的 <see cref="Bitmap" />。</returns>
+	public FreeImageBitmap RenderPage(int width, int height) {
 		return RenderPage(width, height, __defaultOptions);
 	}
 
 	/// <summary>
-	/// 使用指定的配置渲染页面。
+	///     使用指定的配置渲染页面。
 	/// </summary>
 	/// <param name="width">页面的宽度。</param>
 	/// <param name="height">页面的高度。</param>
 	/// <param name="options">渲染选项。</param>
-	/// <returns>渲染后生成的 <see cref="FreeImageAPI.FreeImageBitmap"/>。</returns>
-	public FreeImageAPI.FreeImageBitmap RenderPage(int width, int height, ImageRendererOptions options) {
+	/// <returns>渲染后生成的 <see cref="FreeImageAPI.FreeImageBitmap" />。</returns>
+	public FreeImageBitmap RenderPage(int width, int height, ImageRendererOptions options) {
 		using (PixmapData pix = InternalRenderPage(width, height, options)) {
 			if (pix != null) {
 				return pix.ToFreeImageBitmap(options);
@@ -132,12 +69,12 @@ public sealed class MuPage : IDisposable
 	}
 
 	/// <summary>
-	/// 使用指定的配置渲染页面。
+	///     使用指定的配置渲染页面。
 	/// </summary>
 	/// <param name="width">页面的宽度。</param>
 	/// <param name="height">页面的高度。</param>
 	/// <param name="options">渲染选项。</param>
-	/// <returns>渲染后生成的 <see cref="Bitmap"/>。</returns>
+	/// <returns>渲染后生成的 <see cref="Bitmap" />。</returns>
 	public Bitmap RenderBitmapPage(int width, int height, ImageRendererOptions options) {
 		using (PixmapData pix = InternalRenderPage(width, height, options)) {
 			if (pix != null) {
@@ -173,7 +110,7 @@ public sealed class MuPage : IDisposable
 		}
 
 		if (_cookie.ErrorCount > 0) {
-			System.Diagnostics.Debug.WriteLine("在第 " + PageNumber + " 页有 " + _cookie.ErrorCount + " 个错误。");
+			Debug.WriteLine("在第 " + PageNumber + " 页有 " + _cookie.ErrorCount + " 个错误。");
 		}
 
 		return _displayList;
@@ -198,8 +135,6 @@ public sealed class MuPage : IDisposable
 			text.DisposeHandle();
 			throw;
 		}
-
-		return;
 	}
 
 	private PixmapData InternalRenderPage(int width, int height, ImageRendererOptions options) {
@@ -286,10 +221,10 @@ public sealed class MuPage : IDisposable
 				h = b.Height;
 			}
 			else if (h == 0) {
-				h = (float)width * b.Height / b.Width;
+				h = width * b.Height / b.Width;
 			}
 			else if (w == 0) {
-				w = (float)height * b.Width / b.Height;
+				w = height * b.Width / b.Height;
 			}
 		}
 		else if (w == 0 || h == 0) {
@@ -310,9 +245,9 @@ public sealed class MuPage : IDisposable
 	}
 
 	/// <summary>
-	/// 获取页面内容的实际覆盖范围。
+	///     获取页面内容的实际覆盖范围。
 	/// </summary>
-	/// <returns>包含页面内容的最小 <see cref="BBox"/>。</returns>
+	/// <returns>包含页面内容的最小 <see cref="BBox" />。</returns>
 	public Rectangle GetContentBoundary() {
 		Rectangle b = Bound;
 		Rectangle o = b;
@@ -331,6 +266,72 @@ public sealed class MuPage : IDisposable
 		}
 	}
 
+	#region 非托管资源成员
+
+	private readonly ContextHandle _context;
+	private DocumentHandle _document;
+	private readonly PageHandle _page;
+	private DisplayListHandle _displayList;
+
+	#endregion
+
+	#region 托管资源成员
+
+	private static readonly ImageRendererOptions __defaultOptions = new();
+	private MuCookie _cookie;
+	private MuTextPage _TextPage;
+	private bool _flattened;
+
+	/// <summary>获取当前页面的页码。</summary>
+	public int PageNumber { get; }
+
+	/// <summary>获取当前页面的尺寸（左下角坐标置为“0,0”）。如需获取页面字典中的原始可视区域，请使用 <see cref="VisualBound" /> 属性。</summary>
+	public Rectangle Bound => NativeMethods.BoundPage(_context, _page);
+
+	/// <summary>获取当前页面可视区域的坐标及尺寸。</summary>
+	public Rectangle VisualBound => Matrix.Identity.RotateTo(Rotation).Transform(VisualBox);
+
+	public Rectangle ArtBox => LookupPageBox("ArtBox");
+	public Rectangle BleedBox => LookupPageBox("BleedBox");
+	public Rectangle CropBox => LookupPageBox("CropBox");
+	public Rectangle TrimBox => LookupPageBox("TrimBox");
+	public Rectangle MediaBox => LookupPageBox("MediaBox");
+
+	public Rectangle VisualBox {
+		get {
+			Rectangle b = LookupPageBox("CropBox");
+			return b.IsEmpty ? LookupPageBox("MediaBox") : b;
+		}
+	}
+
+	public int Rotation => LookupPage("Rotate").IntegerValue;
+
+	public MuTextPage TextPage {
+		get {
+			PopulateTextPage();
+			return _TextPage;
+		}
+	}
+
+	private Rectangle LookupPageBox(string name) {
+		if (_flattened == false) {
+			IntPtr d = _page.PageDictionary;
+			NativeMethods.FlatternInheritablePageItems(_context, d);
+			_flattened = true;
+		}
+
+		MuPdfDictionary a = new(_context, _page.PageDictionary);
+		MuPdfArray ra = a[name].AsArray();
+		return ra.Count == 4 ? Rectangle.FromArray(a[name]) : Rectangle.Empty;
+	}
+
+	private MuPdfObject LookupPage(string name) {
+		MuPdfDictionary a = new(_context, _page.PageDictionary);
+		return a[name];
+	}
+
+	#endregion
+
 	#region 实现 IDisposable 接口的属性和方法
 
 	private bool disposed;
@@ -342,7 +343,7 @@ public sealed class MuPage : IDisposable
 
 	/// <summary>释放由 MuPdfPage 占用的资源。</summary>
 	/// <param name="disposing">是否手动释放托管资源。</param>
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed",
+	[SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed",
 		MessageId = "_page")]
 	private void Dispose(bool disposing) {
 		if (!disposed) {

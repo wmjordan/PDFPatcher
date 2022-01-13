@@ -12,12 +12,6 @@ internal sealed class BookmarkMarkerCommand : IEditorCommand
 		"_SelectGreenMarks", "_SelectBlueMarks", "_SelectCyanMarks", "_SelectPurpleMarks"
 	};
 
-	internal static void RegisterCommands(CommandRegistry<Controller> registry) {
-		foreach (string item in __commands) {
-			registry.Register(new BookmarkMarkerCommand(item), item);
-		}
-	}
-
 	private readonly string _command;
 
 	public BookmarkMarkerCommand(string command) {
@@ -72,6 +66,12 @@ internal sealed class BookmarkMarkerCommand : IEditorCommand
 			case "_SelectPurpleMarks":
 				b.SelectMarkedItems(Color.Violet);
 				break;
+		}
+	}
+
+	internal static void RegisterCommands(CommandRegistry<Controller> registry) {
+		foreach (string item in __commands) {
+			registry.Register(new BookmarkMarkerCommand(item), item);
 		}
 	}
 }

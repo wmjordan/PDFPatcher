@@ -1,13 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Xml.Serialization;
 
 namespace MuPdfSharp;
 
 public class ImageRendererOptions
 {
+	private float _Dpi = 72f;
+
+	public ImageRendererOptions() {
+		AutoOutputFolder = true;
+		FileMask = "0000";
+		ScaleRatio = 1f;
+		Gamma = 1.0f;
+		TintColor = Color.Transparent;
+	}
+
 	[XmlAttribute("自动指定输出位置")] public bool AutoOutputFolder { get; set; }
 
 	///<summary>获取或指定导出图片的格式。</summary>
@@ -42,8 +49,6 @@ public class ImageRendererOptions
 	[XmlAttribute("图片宽度")] public int ImageWidth { get; set; }
 
 	[XmlAttribute("图片比例")] public float ScaleRatio { get; set; }
-
-	private float _Dpi = 72f;
 	[XmlAttribute("分辨率")] public float Dpi { get => _Dpi; set => _Dpi = value > 0 ? value : 72f; }
 
 	[XmlAttribute("尺寸模式")] public bool UseSpecificWidth { get; set; }
@@ -75,12 +80,4 @@ public class ImageRendererOptions
 	[XmlIgnore] public Color TintColor { get; set; }
 
 	internal bool LowQuality { get; set; }
-
-	public ImageRendererOptions() {
-		AutoOutputFolder = true;
-		FileMask = "0000";
-		ScaleRatio = 1f;
-		Gamma = 1.0f;
-		TintColor = Color.Transparent;
-	}
 }

@@ -1,11 +1,11 @@
-﻿using System;
+﻿using System.Xml;
 
 namespace PDFPatcher.Processor;
 
 internal interface IPdfInfoXmlProcessor
 {
 	string Name { get; }
-	IUndoAction Process(System.Xml.XmlElement item);
+	IUndoAction Process(XmlElement item);
 }
 
 internal interface IPdfInfoXmlProcessor<T> : IPdfInfoXmlProcessor

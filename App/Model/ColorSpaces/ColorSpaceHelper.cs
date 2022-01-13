@@ -1,20 +1,18 @@
 ﻿using System;
 using System.Drawing;
-using System.Drawing.Imaging;
-using System.Text;
 
 namespace Devcorp.Controls.Design;
 
 /// <summary>
-/// Provides methods to convert from a color space to an other.
+///     Provides methods to convert from a color space to an other.
 /// </summary>
 public static class ColorSpaceHelper
 {
 	#region Color processing
 
 	/// <summary>
-	/// Gets the "distance" between two colors.
-	/// RGB colors must be normalized (eg. values in [0.0, 1.0]).
+	///     Gets the "distance" between two colors.
+	///     RGB colors must be normalized (eg. values in [0.0, 1.0]).
 	/// </summary>
 	/// <param name="r1">First color red component.</param>
 	/// <param name="g1">First color green component.</param>
@@ -32,8 +30,8 @@ public static class ColorSpaceHelper
 
 
 	/// <summary>
-	/// Gets the "distance" between two colors.
-	/// RGB colors must be normalized (eg. values in [0.0, 1.0]).
+	///     Gets the "distance" between two colors.
+	///     RGB colors must be normalized (eg. values in [0.0, 1.0]).
 	/// </summary>
 	/// <param name="color1">First color [r,g,b]</param>
 	/// <param name="color2">Second color [r,g,b]</param>
@@ -43,14 +41,14 @@ public static class ColorSpaceHelper
 
 
 	/// <summary>
-	/// Gets the "distance" between two colors.
+	///     Gets the "distance" between two colors.
 	/// </summary>
 	/// <param name="color1">First color.</param>
 	/// <param name="color2">Second color.</param>
 	public static double GetColorDistance(Color c1, Color c2) {
-		double[] rgb1 = new double[] {(double)c1.R / 255.0, (double)c1.G / 255.0, (double)c1.B / 255.0};
+		double[] rgb1 = {c1.R / 255.0, c1.G / 255.0, c1.B / 255.0};
 
-		double[] rgb2 = new double[] {(double)c2.R / 255.0, (double)c2.G / 255.0, (double)c2.B / 255.0};
+		double[] rgb2 = {c2.R / 255.0, c2.G / 255.0, c2.B / 255.0};
 
 		return GetColorDistance(rgb1[0], rgb1[1], rgb1[2], rgb2[0], rgb2[1], rgb2[2]);
 	}
@@ -60,10 +58,10 @@ public static class ColorSpaceHelper
 	#region Light Spectrum processing
 
 	/// <summary>
-	/// Gets visible colors (color wheel).
+	///     Gets visible colors (color wheel).
 	/// </summary>
 	/// <param name="alpha">
-	/// The alpha value used for each colors.
+	///     The alpha value used for each colors.
 	/// </param>
 	public static Color[] GetWheelColors(int alpha) {
 		Color temp;
@@ -71,7 +69,7 @@ public static class ColorSpaceHelper
 		Color[] colors = new Color[colorCount];
 
 		for (int i = 0; i < colorCount; i++) {
-			temp = HSBtoColor((int)((double)(i * 255.0) / colorCount), 255, 255);
+			temp = HSBtoColor((int)(i * 255.0 / colorCount), 255, 255);
 			colors[i] = Color.FromArgb(alpha, temp.R, temp.G, temp.B);
 		}
 
@@ -80,7 +78,7 @@ public static class ColorSpaceHelper
 
 
 	/// <summary>
-	/// Gets visible spectrum colors.
+	///     Gets visible spectrum colors.
 	/// </summary>
 	/// <param name="alpha">The alpha value used for each colors.</param>
 	public static Color[] GetSpectrumColors(int alpha) {
@@ -116,7 +114,7 @@ public static class ColorSpaceHelper
 
 
 	/// <summary>
-	/// Gets visible spectrum colors.
+	///     Gets visible spectrum colors.
 	/// </summary>
 	public static Color[] GetSpectrumColors() {
 		return GetSpectrumColors(255);
@@ -127,7 +125,7 @@ public static class ColorSpaceHelper
 	#region Hexa convert
 
 	/// <summary>
-	/// Gets the int equivalent for a hexadecimal value.
+	///     Gets the int equivalent for a hexadecimal value.
 	/// </summary>
 	private static int GetIntFromHex(string strHex) {
 		switch (strHex) {
@@ -157,7 +155,7 @@ public static class ColorSpaceHelper
 
 
 	/// <summary>
-	/// Converts a Hex color to a .net Color.
+	///     Converts a Hex color to a .net Color.
 	/// </summary>
 	/// <param name="hexColor">The desired hexadecimal color to convert.</param>
 	public static Color HexToColor(string hexColor) {
@@ -184,18 +182,18 @@ public static class ColorSpaceHelper
 	}
 
 	/// <summary>
-	/// Converts a RGB color format to an hexadecimal color.
+	///     Converts a RGB color format to an hexadecimal color.
 	/// </summary>
 	/// <param name="r">The Red value.</param>
 	/// <param name="g">The Green value.</param>
 	/// <param name="b">The Blue value.</param>
 	public static string RGBToHex(int r, int g, int b) {
-		return string.Format("#{0:x2}{1:x2}{2:x2}", (int)r, (int)g, (int)b);
+		return string.Format("#{0:x2}{1:x2}{2:x2}", r, g, b);
 	}
 
 
 	/// <summary>
-	/// Converts a RGB color format to an hexadecimal color.
+	///     Converts a RGB color format to an hexadecimal color.
 	/// </summary>
 	/// <param name="r">The color to convert.</param>
 	public static string RGBToHex(Color c) {
@@ -207,7 +205,7 @@ public static class ColorSpaceHelper
 	#region HSB convert
 
 	/// <summary>
-	/// Converts HSB to RGB.
+	///     Converts HSB to RGB.
 	/// </summary>
 	/// <param name="hsv">The HSB structure to convert.</param>
 	public static RGB HSBtoRGB(HSB hsb) {
@@ -273,7 +271,7 @@ public static class ColorSpaceHelper
 	}
 
 	/// <summary>
-	/// Converts HSB to RGB.
+	///     Converts HSB to RGB.
 	/// </summary>
 	/// <param name="h">Hue value.</param>
 	/// <param name="s">Saturation value.</param>
@@ -284,7 +282,7 @@ public static class ColorSpaceHelper
 
 
 	/// <summary>
-	/// Converts HSB to Color.
+	///     Converts HSB to Color.
 	/// </summary>
 	/// <param name="hsb">the HSB structure to convert.</param>
 	public static Color HSBtoColor(HSB hsb) {
@@ -293,8 +291,8 @@ public static class ColorSpaceHelper
 		return Color.FromArgb(rgb.Red, rgb.Green, rgb.Blue);
 	}
 
-	/// <summary> 
-	/// Converts HSB to a .net Color.
+	/// <summary>
+	///     Converts HSB to a .net Color.
 	/// </summary>
 	/// <param name="h">Hue value (must be between 0 and 360).</param>
 	/// <param name="s">Saturation value (must be between 0 and 1).</param>
@@ -304,7 +302,7 @@ public static class ColorSpaceHelper
 	}
 
 	/// <summary>
-	/// Converts HSB to Color.
+	///     Converts HSB to Color.
 	/// </summary>
 	/// <param name="h">Hue value.</param>
 	/// <param name="s">Saturation value.</param>
@@ -314,9 +312,9 @@ public static class ColorSpaceHelper
 
 		// Scale Hue to be between 0 and 360. Saturation and value scale to be between 0 and 1.
 		if (h > 360 || s > 1 || b > 1) {
-			hue = (double)h / 255.0 * 360.0 % 360.0;
-			sat = (double)s / 255.0;
-			val = (double)b / 255.0;
+			hue = h / 255.0 * 360.0 % 360.0;
+			sat = s / 255.0;
+			val = b / 255.0;
 		}
 
 		return HSBtoColor(new HSB(hue, sat, val));
@@ -324,7 +322,7 @@ public static class ColorSpaceHelper
 
 
 	/// <summary>
-	/// Converts HSB to HSL.
+	///     Converts HSB to HSL.
 	/// </summary>
 	public static HSL HSBtoHSL(double h, double s, double b) {
 		RGB rgb = HSBtoRGB(new HSB(h, s, b));
@@ -333,7 +331,7 @@ public static class ColorSpaceHelper
 	}
 
 	/// <summary>
-	/// Converts HSB to CMYK.
+	///     Converts HSB to CMYK.
 	/// </summary>
 	public static CMYK HSBtoCMYK(double h, double s, double b) {
 		RGB rgb = HSBtoRGB(new HSB(h, s, b));
@@ -342,7 +340,7 @@ public static class ColorSpaceHelper
 	}
 
 	/// <summary>
-	/// Converts HSB to CMYK.
+	///     Converts HSB to CMYK.
 	/// </summary>
 	public static YUV HSBtoYUV(double h, double s, double b) {
 		RGB rgb = HSBtoRGB(new HSB(h, s, b));
@@ -355,7 +353,7 @@ public static class ColorSpaceHelper
 	#region HSL convert
 
 	/// <summary>
-	/// Converts HSL to RGB.
+	///     Converts HSL to RGB.
 	/// </summary>
 	/// <param name="h">Hue, must be in [0, 360].</param>
 	/// <param name="s">Saturation, must be in [0, 1].</param>
@@ -369,51 +367,50 @@ public static class ColorSpaceHelper
 				Convert.ToInt32(double.Parse(string.Format("{0:0.00}", l * 255.0)))
 			);
 		}
-		else {
-			double q = l < 0.5 ? l * (1.0 + s) : l + s - (l * s);
-			double p = (2.0 * l) - q;
 
-			double Hk = h / 360.0;
-			double[] T = new double[3];
-			T[0] = Hk + (1.0 / 3.0); // Tr
-			T[1] = Hk; // Tb
-			T[2] = Hk - (1.0 / 3.0); // Tg
+		double q = l < 0.5 ? l * (1.0 + s) : l + s - (l * s);
+		double p = (2.0 * l) - q;
 
-			for (int i = 0; i < 3; i++) {
-				if (T[i] < 0) {
-					T[i] += 1.0;
-				}
+		double Hk = h / 360.0;
+		double[] T = new double[3];
+		T[0] = Hk + (1.0 / 3.0); // Tr
+		T[1] = Hk; // Tb
+		T[2] = Hk - (1.0 / 3.0); // Tg
 
-				if (T[i] > 1) {
-					T[i] -= 1.0;
-				}
-
-				if (T[i] * 6 < 1) {
-					T[i] = p + ((q - p) * 6.0 * T[i]);
-				}
-				else if (T[i] * 2.0 < 1) //(1.0/6.0)<=T[i] && T[i]<0.5
-				{
-					T[i] = q;
-				}
-				else if (T[i] * 3.0 < 2) // 0.5<=T[i] && T[i]<(2.0/3.0)
-				{
-					T[i] = p + ((q - p) * ((2.0 / 3.0) - T[i]) * 6.0);
-				}
-				else {
-					T[i] = p;
-				}
+		for (int i = 0; i < 3; i++) {
+			if (T[i] < 0) {
+				T[i] += 1.0;
 			}
 
-			return new RGB(
-				Convert.ToInt32(double.Parse(string.Format("{0:0.00}", T[0] * 255.0))),
-				Convert.ToInt32(double.Parse(string.Format("{0:0.00}", T[1] * 255.0))),
-				Convert.ToInt32(double.Parse(string.Format("{0:0.00}", T[2] * 255.0)))
-			);
+			if (T[i] > 1) {
+				T[i] -= 1.0;
+			}
+
+			if (T[i] * 6 < 1) {
+				T[i] = p + ((q - p) * 6.0 * T[i]);
+			}
+			else if (T[i] * 2.0 < 1) //(1.0/6.0)<=T[i] && T[i]<0.5
+			{
+				T[i] = q;
+			}
+			else if (T[i] * 3.0 < 2) // 0.5<=T[i] && T[i]<(2.0/3.0)
+			{
+				T[i] = p + ((q - p) * ((2.0 / 3.0) - T[i]) * 6.0);
+			}
+			else {
+				T[i] = p;
+			}
 		}
+
+		return new RGB(
+			Convert.ToInt32(double.Parse(string.Format("{0:0.00}", T[0] * 255.0))),
+			Convert.ToInt32(double.Parse(string.Format("{0:0.00}", T[1] * 255.0))),
+			Convert.ToInt32(double.Parse(string.Format("{0:0.00}", T[2] * 255.0)))
+		);
 	}
 
 	/// <summary>
-	/// Converts HSL to RGB.
+	///     Converts HSL to RGB.
 	/// </summary>
 	/// <param name="hsl">The HSL structure to convert.</param>
 	public static RGB HSLtoRGB(HSL hsl) {
@@ -422,7 +419,7 @@ public static class ColorSpaceHelper
 
 
 	/// <summary>
-	/// Converts HSL to .net Color.
+	///     Converts HSL to .net Color.
 	/// </summary>
 	/// <param name="hsl">The HSL structure to convert.</param>
 	public static Color HSLtoColor(double h, double s, double l) {
@@ -432,7 +429,7 @@ public static class ColorSpaceHelper
 	}
 
 	/// <summary>
-	/// Converts HSL to .net Color.
+	///     Converts HSL to .net Color.
 	/// </summary>
 	/// <param name="hsl">The HSL structure to convert.</param>
 	public static Color HSLtoColor(HSL hsl) {
@@ -441,7 +438,7 @@ public static class ColorSpaceHelper
 
 
 	/// <summary>
-	/// Converts HSL to HSB.
+	///     Converts HSL to HSB.
 	/// </summary>
 	public static HSB HSLtoHSB(double h, double s, double l) {
 		RGB rgb = HSLtoRGB(h, s, l);
@@ -450,7 +447,7 @@ public static class ColorSpaceHelper
 	}
 
 	/// <summary>
-	/// Converts HSL to CMYK.
+	///     Converts HSL to CMYK.
 	/// </summary>
 	public static CMYK HSLtoCMYK(double h, double s, double l) {
 		RGB rgb = HSLtoRGB(h, s, l);
@@ -459,7 +456,7 @@ public static class ColorSpaceHelper
 	}
 
 	/// <summary>
-	/// Converts HSL to YUV.
+	///     Converts HSL to YUV.
 	/// </summary>
 	public static YUV HSLtoYUV(double h, double s, double l) {
 		RGB rgb = HSLtoRGB(h, s, l);
@@ -471,8 +468,8 @@ public static class ColorSpaceHelper
 
 	#region RGB convert
 
-	/// <summary> 
-	/// Converts RGB to HSL.
+	/// <summary>
+	///     Converts RGB to HSL.
 	/// </summary>
 	/// <param name="red">Red value, must be in [0,255].</param>
 	/// <param name="green">Green value, must be in [0,255].</param>
@@ -481,9 +478,9 @@ public static class ColorSpaceHelper
 		double h = 0, s = 0, l = 0;
 
 		// normalizes red-green-blue values
-		double nRed = (double)red / 255.0;
-		double nGreen = (double)green / 255.0;
-		double nBlue = (double)blue / 255.0;
+		double nRed = red / 255.0;
+		double nGreen = green / 255.0;
+		double nBlue = blue / 255.0;
 
 		double max = Math.Max(nRed, Math.Max(nGreen, nBlue));
 		double min = Math.Min(nRed, Math.Min(nGreen, nBlue));
@@ -526,28 +523,28 @@ public static class ColorSpaceHelper
 		);
 	}
 
-	/// <summary> 
-	/// Converts RGB to HSL.
+	/// <summary>
+	///     Converts RGB to HSL.
 	/// </summary>
 	public static HSL RGBtoHSL(RGB rgb) {
 		return RGBtoHSL(rgb.Red, rgb.Green, rgb.Blue);
 	}
 
-	/// <summary> 
-	/// Converts Color to HSL.
+	/// <summary>
+	///     Converts Color to HSL.
 	/// </summary>
 	public static HSL RGBtoHSL(Color c) {
 		return RGBtoHSL(c.R, c.G, c.B);
 	}
 
 
-	/// <summary> 
-	/// Converts RGB to HSB.
-	/// </summary> 
+	/// <summary>
+	///     Converts RGB to HSB.
+	/// </summary>
 	public static HSB RGBtoHSB(int red, int green, int blue) {
-		double r = (double)red / 255.0;
-		double g = (double)green / 255.0;
-		double b = (double)blue / 255.0;
+		double r = red / 255.0;
+		double g = green / 255.0;
+		double b = blue / 255.0;
 
 		double max = Math.Max(r, Math.Max(g, b));
 		double min = Math.Min(r, Math.Min(g, b));
@@ -571,28 +568,28 @@ public static class ColorSpaceHelper
 			h = (60 * (r - g) / (max - min)) + 240;
 		}
 
-		double s = max == 0 ? 0.0 : 1.0 - ((double)min / (double)max);
+		double s = max == 0 ? 0.0 : 1.0 - (min / max);
 
-		return new HSB(h, s, (double)max);
+		return new HSB(h, s, max);
 	}
 
-	/// <summary> 
-	/// Converts RGB to HSB.
-	/// </summary> 
+	/// <summary>
+	///     Converts RGB to HSB.
+	/// </summary>
 	public static HSB RGBtoHSB(RGB rgb) {
 		return RGBtoHSB(rgb.Red, rgb.Green, rgb.Blue);
 	}
 
-	/// <summary> 
-	/// Converts RGB to HSB.
-	/// </summary> 
+	/// <summary>
+	///     Converts RGB to HSB.
+	/// </summary>
 	public static HSB RGBtoHSB(Color c) {
 		return RGBtoHSB(c.R, c.G, c.B);
 	}
 
 
 	/// <summary>
-	/// Converts RGB to CMYK
+	///     Converts RGB to CMYK
 	/// </summary>
 	/// <param name="red">Red vaue must be in [0, 255].</param>
 	/// <param name="green">Green vaue must be in [0, 255].</param>
@@ -602,24 +599,23 @@ public static class ColorSpaceHelper
 		double m = (double)(255 - green) / 255;
 		double y = (double)(255 - blue) / 255;
 
-		double min = (double)Math.Min(c, Math.Min(m, y));
+		double min = Math.Min(c, Math.Min(m, y));
 		if (min == 1.0) {
 			return new CMYK(0, 0, 0, 1);
 		}
-		else {
-			return new CMYK((c - min) / (1 - min), (m - min) / (1 - min), (y - min) / (1 - min), min);
-		}
+
+		return new CMYK((c - min) / (1 - min), (m - min) / (1 - min), (y - min) / (1 - min), min);
 	}
 
 	/// <summary>
-	/// Converts RGB to CMYK
+	///     Converts RGB to CMYK
 	/// </summary>
 	public static CMYK RGBtoCMYK(Color c) {
 		return RGBtoCMYK(c.R, c.G, c.B);
 	}
 
 	/// <summary>
-	/// Converts RGB to CMYK
+	///     Converts RGB to CMYK
 	/// </summary>
 	public static CMYK RGBtoCMYK(RGB rgb) {
 		return RGBtoCMYK(rgb.Red, rgb.Green, rgb.Blue);
@@ -627,7 +623,7 @@ public static class ColorSpaceHelper
 
 
 	/// <summary>
-	/// Converts RGB to YUV.
+	///     Converts RGB to YUV.
 	/// </summary>
 	/// <param name="red">red must be in [0, 255].</param>
 	/// <param name="green">green must be in [0, 255].</param>
@@ -636,9 +632,9 @@ public static class ColorSpaceHelper
 		YUV yuv = new();
 
 		// normalizes red/green/blue values
-		double nRed = (double)red / 255.0;
-		double nGreen = (double)green / 255.0;
-		double nBlue = (double)blue / 255.0;
+		double nRed = red / 255.0;
+		double nGreen = green / 255.0;
+		double nBlue = blue / 255.0;
 
 		// converts
 		yuv.Y = (0.299 * nRed) + (0.587 * nGreen) + (0.114 * nBlue);
@@ -649,14 +645,14 @@ public static class ColorSpaceHelper
 	}
 
 	/// <summary>
-	/// Converts RGB to YUV.
+	///     Converts RGB to YUV.
 	/// </summary>
 	public static YUV RGBtoYUV(Color c) {
 		return RGBtoYUV(c.R, c.G, c.B);
 	}
 
 	/// <summary>
-	/// Converts RGB to YUV.
+	///     Converts RGB to YUV.
 	/// </summary>
 	public static YUV RGBtoYUV(RGB rgb) {
 		return RGBtoYUV(rgb.Red, rgb.Green, rgb.Blue);
@@ -664,16 +660,16 @@ public static class ColorSpaceHelper
 
 
 	/// <summary>
-	/// Converts RGB to CIE XYZ (CIE 1931 color space)
+	///     Converts RGB to CIE XYZ (CIE 1931 color space)
 	/// </summary>
 	/// <param name="red">Red must be in [0, 255].</param>
 	/// <param name="green">Green must be in [0, 255].</param>
 	/// <param name="blue">Blue must be in [0, 255].</param>
 	public static CIEXYZ RGBtoXYZ(int red, int green, int blue) {
 		// normalize red, green, blue values
-		double rLinear = (double)red / 255.0;
-		double gLinear = (double)green / 255.0;
-		double bLinear = (double)blue / 255.0;
+		double rLinear = red / 255.0;
+		double gLinear = green / 255.0;
+		double bLinear = blue / 255.0;
 
 		// convert to a sRGB form
 		double r = rLinear > 0.04045 ? Math.Pow((rLinear + 0.055) / (1 + 0.055), 2.2) : rLinear / 12.92;
@@ -689,14 +685,14 @@ public static class ColorSpaceHelper
 	}
 
 	/// <summary>
-	/// Converts RGB to CIEXYZ.
+	///     Converts RGB to CIEXYZ.
 	/// </summary>
 	public static CIEXYZ RGBtoXYZ(RGB rgb) {
 		return RGBtoXYZ(rgb.Red, rgb.Green, rgb.Blue);
 	}
 
 	/// <summary>
-	/// Converts RGB to CIEXYZ.
+	///     Converts RGB to CIEXYZ.
 	/// </summary>
 	public static CIEXYZ RGBtoXYZ(Color c) {
 		return RGBtoXYZ(c.R, c.G, c.B);
@@ -704,21 +700,21 @@ public static class ColorSpaceHelper
 
 
 	/// <summary>
-	/// Converts RGB to CIELab.
+	///     Converts RGB to CIELab.
 	/// </summary>
 	public static CIELab RGBtoLab(int red, int green, int blue) {
 		return XYZtoLab(RGBtoXYZ(red, green, blue));
 	}
 
 	/// <summary>
-	/// Converts RGB to CIELab.
+	///     Converts RGB to CIELab.
 	/// </summary>
 	public static CIELab RGBtoLab(RGB rgb) {
 		return XYZtoLab(RGBtoXYZ(rgb.Red, rgb.Green, rgb.Blue));
 	}
 
 	/// <summary>
-	/// Converts RGB to CIELab.
+	///     Converts RGB to CIELab.
 	/// </summary>
 	public static CIELab RGBtoLab(Color color) {
 		return XYZtoLab(RGBtoXYZ(color.R, color.G, color.B));
@@ -729,7 +725,7 @@ public static class ColorSpaceHelper
 	#region CMYK convert
 
 	/// <summary>
-	/// 将四色分量（必须为 0～1）转换为 RGB 颜色。
+	///     将四色分量（必须为 0～1）转换为 RGB 颜色。
 	/// </summary>
 	/// <param name="c">青</param>
 	/// <param name="m">紫</param>
@@ -737,11 +733,11 @@ public static class ColorSpaceHelper
 	/// <param name="k">黑</param>
 	/// <returns>颜色。</returns>
 	public static Color CMYKtoColor(float c, float m, float y, float k) {
-		return CMYKtoColor((double)c, (double)m, (double)y, (double)k);
+		return CMYKtoColor(c, m, y, (double)k);
 	}
 
 	/// <summary>
-	/// 将四色分量（必须为 0～1）转换为 RGB 颜色。
+	///     将四色分量（必须为 0～1）转换为 RGB 颜色。
 	/// </summary>
 	/// <param name="c">青</param>
 	/// <param name="m">紫</param>
@@ -753,7 +749,7 @@ public static class ColorSpaceHelper
 	}
 
 	/// <summary>
-	/// Converts CMYK to RGB.
+	///     Converts CMYK to RGB.
 	/// </summary>
 	/// <param name="cmyk"></param>
 	public static Color CMYKtoColor(CMYK cmyk) {
@@ -766,7 +762,7 @@ public static class ColorSpaceHelper
 
 
 	/// <summary>
-	/// Converts CMYK to RGB.
+	///     Converts CMYK to RGB.
 	/// </summary>
 	/// <param name="c">Cyan value (must be between 0 and 1).</param>
 	/// <param name="m">Magenta value (must be between 0 and 1).</param>
@@ -781,7 +777,7 @@ public static class ColorSpaceHelper
 	}
 
 	/// <summary>
-	/// Converts CMYK to RGB.
+	///     Converts CMYK to RGB.
 	/// </summary>
 	/// <param name="cmyk"></param>
 	public static RGB CMYKtoRGB(CMYK cmyk) {
@@ -790,7 +786,7 @@ public static class ColorSpaceHelper
 
 
 	/// <summary>
-	/// Converts CMYK to HSL.
+	///     Converts CMYK to HSL.
 	/// </summary>
 	public static HSL CMYKtoHSL(double c, double m, double y, double k) {
 		RGB rgb = CMYKtoRGB(c, m, y, k);
@@ -799,7 +795,7 @@ public static class ColorSpaceHelper
 	}
 
 	/// <summary>
-	/// Converts CMYK to HSB.
+	///     Converts CMYK to HSB.
 	/// </summary>
 	public static HSB CMYKtoHSB(double c, double m, double y, double k) {
 		RGB rgb = CMYKtoRGB(c, m, y, k);
@@ -808,7 +804,7 @@ public static class ColorSpaceHelper
 	}
 
 	/// <summary>
-	/// Converts CMYK to YUV.
+	///     Converts CMYK to YUV.
 	/// </summary>
 	public static YUV CMYKtoYUV(double c, double m, double y, double k) {
 		RGB rgb = CMYKtoRGB(c, m, y, k);
@@ -821,7 +817,7 @@ public static class ColorSpaceHelper
 	#region YUV convert
 
 	/// <summary>
-	/// Converts YUV to RGB.
+	///     Converts YUV to RGB.
 	/// </summary>
 	/// <param name="y">Y must be in [0, 1].</param>
 	/// <param name="u">U must be in [-0.436, +0.436].</param>
@@ -835,7 +831,7 @@ public static class ColorSpaceHelper
 	}
 
 	/// <summary>
-	/// Converts YUV to RGB.
+	///     Converts YUV to RGB.
 	/// </summary>
 	public static RGB YUVtoRGB(YUV yuv) {
 		return YUVtoRGB(yuv.Y, yuv.U, yuv.V);
@@ -843,7 +839,7 @@ public static class ColorSpaceHelper
 
 
 	/// <summary>
-	/// Converts YUV to a .net Color.
+	///     Converts YUV to a .net Color.
 	/// </summary>
 	/// <param name="y">Y must be in [0, 1].</param>
 	/// <param name="u">U must be in [-0.436, +0.436].</param>
@@ -855,7 +851,7 @@ public static class ColorSpaceHelper
 	}
 
 	/// <summary>
-	/// Converts YUV to a .net Color.
+	///     Converts YUV to a .net Color.
 	/// </summary>
 	public static Color YUVtoColor(YUV yuv) {
 		RGB rgb = YUVtoRGB(yuv);
@@ -865,7 +861,7 @@ public static class ColorSpaceHelper
 
 
 	/// <summary>
-	/// Converts YUV to HSL.
+	///     Converts YUV to HSL.
 	/// </summary>
 	/// <param name="y">Y must be in [0, 1].</param>
 	/// <param name="u">U must be in [-0.436, +0.436].</param>
@@ -877,7 +873,7 @@ public static class ColorSpaceHelper
 	}
 
 	/// <summary>
-	/// Converts YUV to HSB.
+	///     Converts YUV to HSB.
 	/// </summary>
 	/// <param name="y">Y must be in [0, 1].</param>
 	/// <param name="u">U must be in [-0.436, +0.436].</param>
@@ -889,7 +885,7 @@ public static class ColorSpaceHelper
 	}
 
 	/// <summary>
-	/// Converts YUV to CMYK.
+	///     Converts YUV to CMYK.
 	/// </summary>
 	/// <param name="y">Y must be in [0, 1].</param>
 	/// <param name="u">U must be in [-0.436, +0.436].</param>
@@ -905,7 +901,7 @@ public static class ColorSpaceHelper
 	#region CIE XYZ convert
 
 	/// <summary>
-	/// Converts CIEXYZ to RGB structure.
+	///     Converts CIEXYZ to RGB structure.
 	/// </summary>
 	public static RGB XYZtoRGB(double x, double y, double z) {
 		double[] Clinear = new double[3];
@@ -927,7 +923,7 @@ public static class ColorSpaceHelper
 	}
 
 	/// <summary>
-	/// Converts CIEXYZ to RGB structure.
+	///     Converts CIEXYZ to RGB structure.
 	/// </summary>
 	public static RGB XYZtoRGB(CIEXYZ xyz) {
 		return XYZtoRGB(xyz.X, xyz.Y, xyz.Z);
@@ -935,7 +931,7 @@ public static class ColorSpaceHelper
 
 
 	/// <summary>
-	/// XYZ to L*a*b* transformation function.
+	///     XYZ to L*a*b* transformation function.
 	/// </summary>
 	/// <param name="t"></param>
 	/// <returns></returns>
@@ -944,7 +940,7 @@ public static class ColorSpaceHelper
 	}
 
 	/// <summary>
-	/// Converts CIEXYZ to CIELab structure.
+	///     Converts CIEXYZ to CIELab structure.
 	/// </summary>
 	public static CIELab XYZtoLab(double x, double y, double z) {
 		CIELab lab = CIELab.Empty;
@@ -957,7 +953,7 @@ public static class ColorSpaceHelper
 	}
 
 	/// <summary>
-	/// Converts CIEXYZ to CIELab structure.
+	///     Converts CIEXYZ to CIELab structure.
 	/// </summary>
 	public static CIELab XYZtoLab(CIEXYZ xyz) {
 		return XYZtoLab(xyz.X, xyz.Y, xyz.Z);
@@ -968,7 +964,7 @@ public static class ColorSpaceHelper
 	#region CIE L*a*b* convert
 
 	/// <summary>
-	/// Converts CIELab to CIEXYZ.
+	///     Converts CIELab to CIEXYZ.
 	/// </summary>
 	public static CIEXYZ LabtoXYZ(double l, double a, double b) {
 		double theta = 6.0 / 29.0;
@@ -985,7 +981,7 @@ public static class ColorSpaceHelper
 	}
 
 	/// <summary>
-	/// Converts CIELab to CIEXYZ.
+	///     Converts CIELab to CIEXYZ.
 	/// </summary>
 	public static CIEXYZ LabtoXYZ(CIELab lab) {
 		return LabtoXYZ(lab.L, lab.A, lab.B);
@@ -993,14 +989,14 @@ public static class ColorSpaceHelper
 
 
 	/// <summary>
-	/// Converts CIELab to RGB.
+	///     Converts CIELab to RGB.
 	/// </summary>
 	public static RGB LabtoRGB(double l, double a, double b) {
 		return XYZtoRGB(LabtoXYZ(l, a, b));
 	}
 
 	/// <summary>
-	/// Converts CIELab to RGB.
+	///     Converts CIELab to RGB.
 	/// </summary>
 	public static RGB LabtoRGB(CIELab lab) {
 		return XYZtoRGB(LabtoXYZ(lab));

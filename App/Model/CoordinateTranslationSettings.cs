@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using iTextSharp.text.pdf.parser;
 
 namespace PDFPatcher.Model;
 
 internal sealed class CoordinateTranslationSettings
 {
-	internal float XScale { get; set; }
-	internal float YScale { get; set; }
-	internal float XTranslation { get; set; }
-	internal float YTranslation { get; set; }
-
 	public CoordinateTranslationSettings() {
 		XScale = YScale = 1;
 	}
@@ -22,7 +15,12 @@ internal sealed class CoordinateTranslationSettings
 		YTranslation = yTranslation;
 	}
 
-	internal iTextSharp.text.pdf.parser.Matrix GetMatrix() {
-		return new iTextSharp.text.pdf.parser.Matrix(XScale, 0, 0, YScale, XTranslation, YTranslation);
+	internal float XScale { get; set; }
+	internal float YScale { get; set; }
+	internal float XTranslation { get; set; }
+	internal float YTranslation { get; set; }
+
+	internal Matrix GetMatrix() {
+		return new Matrix(XScale, 0, 0, YScale, XTranslation, YTranslation);
 	}
 }

@@ -1,24 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
-using PowerJson;
 
 namespace PDFPatcher.Model;
 
 public sealed class MatchPattern : ICloneable
 {
-	[XmlAttribute("名称")] public string Name { get; set; }
-
-	[XmlAttribute("匹配模板")] public string Text { get; set; }
-
-	[XmlAttribute("匹配大小写")] public bool MatchCase { get; set; }
-
-	[XmlAttribute("匹配全标题")] public bool FullMatch { get; set; }
-
-	[XmlAttribute("使用正则表达式")] public bool UseRegularExpression { get; set; }
-
 	public MatchPattern() {
 	}
 
@@ -29,13 +17,15 @@ public sealed class MatchPattern : ICloneable
 		UseRegularExpression = useRegExp;
 	}
 
-	public IMatcher CreateMatcher() {
-		if (UseRegularExpression) {
-			return new RegexMatcher(this);
-		}
+	[XmlAttribute("名称")] public string Name { get; set; }
 
-		return new SimpleMatcher(this);
-	}
+	[XmlAttribute("匹配模板")] public string Text { get; set; }
+
+	[XmlAttribute("匹配大小写")] public bool MatchCase { get; set; }
+
+	[XmlAttribute("匹配全标题")] public bool FullMatch { get; set; }
+
+	[XmlAttribute("使用正则表达式")] public bool UseRegularExpression { get; set; }
 
 	#region ICloneable 成员
 
@@ -45,6 +35,14 @@ public sealed class MatchPattern : ICloneable
 
 	#endregion
 
+	public IMatcher CreateMatcher() {
+		if (UseRegularExpression) {
+			return new RegexMatcher(this);
+		}
+
+		return new SimpleMatcher(this);
+	}
+
 	public interface IMatcher
 	{
 		bool Matches(string text);
@@ -53,8 +51,8 @@ public sealed class MatchPattern : ICloneable
 
 	private sealed class RegexMatcher : IMatcher
 	{
-		private readonly Regex _regex;
 		private readonly bool _fullMatch;
+		private readonly Regex _regex;
 
 		public RegexMatcher(MatchPattern pattern) {
 			_regex = new Regex(pattern.Text,
@@ -74,9 +72,9 @@ public sealed class MatchPattern : ICloneable
 
 	private sealed class SimpleMatcher : IMatcher
 	{
+		private readonly StringComparison _comparison;
 		private readonly bool _fullMatch;
 		private readonly string _text;
-		private readonly StringComparison _comparison;
 
 		public SimpleMatcher(MatchPattern pattern) {
 			_text = pattern.Text;

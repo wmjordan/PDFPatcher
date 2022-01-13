@@ -15,23 +15,15 @@ public abstract class AutoBookmarkCondition : ICloneable
 
 	public abstract string Description { get; }
 	public abstract string Name { get; }
+	internal abstract bool IsTextLineFilter { get; }
 
 	public abstract object Clone();
 	internal abstract AutoBookmarkFilter CreateFilter();
-	internal abstract bool IsTextLineFilter { get; }
 
 	[JsonTypeAlias(ThisName)]
 	public class MultiCondition : AutoBookmarkCondition
 	{
 		internal const string ThisName = "条件组";
-		private readonly Collection<AutoBookmarkCondition> _Conditions = new();
-
-		[XmlElement(FontNameCondition.ThisName, typeof(FontNameCondition))]
-		[XmlElement(TextSizeCondition.ThisName, typeof(TextSizeCondition))]
-		[XmlElement(PageRangeCondition.ThisName, typeof(PageRangeCondition))]
-		[XmlElement(TextCondition.ThisName, typeof(TextCondition))]
-		[JsonField("条件")]
-		public Collection<AutoBookmarkCondition> Conditions => _Conditions;
 
 		public MultiCondition() { }
 
@@ -47,11 +39,18 @@ public abstract class AutoBookmarkCondition : ICloneable
 			}
 		}
 
+		[XmlElement(FontNameCondition.ThisName, typeof(FontNameCondition))]
+		[XmlElement(TextSizeCondition.ThisName, typeof(TextSizeCondition))]
+		[XmlElement(PageRangeCondition.ThisName, typeof(PageRangeCondition))]
+		[XmlElement(TextCondition.ThisName, typeof(TextCondition))]
+		[JsonField("条件")]
+		public Collection<AutoBookmarkCondition> Conditions { get; } = new();
+
 		public override string Description {
 			get {
 				string[] s = new string[Conditions.Count];
 				for (int i = 0; i < s.Length; i++) {
-					s[i] = _Conditions[i].Description;
+					s[i] = Conditions[i].Description;
 				}
 
 				return string.Join(";", s);
@@ -91,14 +90,21 @@ public abstract class AutoBookmarkCondition : ICloneable
 	{
 		internal const string ThisName = "字体名称";
 
+		public FontNameCondition() { }
+
+		internal FontNameCondition(string fontName, bool matchFullName) {
+			FontName = fontName;
+			MatchFullName = matchFullName;
+		}
+
 		/// <summary>
-		/// 需要调整级别的字体名称。
+		///     需要调整级别的字体名称。
 		/// </summary>
 		[XmlAttribute(ThisName)]
 		public string FontName { get; set; }
 
 		/// <summary>
-		/// 是否匹配字体全名。
+		///     是否匹配字体全名。
 		/// </summary>
 		[XmlAttribute("匹配字体全名")]
 		public bool MatchFullName { get; set; }
@@ -109,13 +115,6 @@ public abstract class AutoBookmarkCondition : ICloneable
 		public override string Name => ThisName;
 
 		internal override bool IsTextLineFilter => false;
-
-		public FontNameCondition() { }
-
-		internal FontNameCondition(string fontName, bool matchFullName) {
-			FontName = fontName;
-			MatchFullName = matchFullName;
-		}
 
 		internal override AutoBookmarkFilter CreateFilter() {
 			return new FontNameFilter(FontName, MatchFullName);
@@ -130,8 +129,18 @@ public abstract class AutoBookmarkCondition : ICloneable
 	public class TextSizeCondition : AutoBookmarkCondition
 	{
 		internal const string ThisName = "字体尺寸";
-		private float _minSize, _maxSize;
 		private string _description;
+		private float _minSize, _maxSize;
+
+		public TextSizeCondition() { }
+
+		internal TextSizeCondition(float size) {
+			SetRange(size, size);
+		}
+
+		internal TextSizeCondition(float minSize, float maxSize) {
+			SetRange(minSize, maxSize);
+		}
 
 		[XmlAttribute("最小尺寸")]
 		[DefaultValue(0)]
@@ -166,16 +175,6 @@ public abstract class AutoBookmarkCondition : ICloneable
 		public override string Name => ThisName;
 
 		internal override bool IsTextLineFilter => false;
-
-		public TextSizeCondition() { }
-
-		internal TextSizeCondition(float size) {
-			SetRange(size, size);
-		}
-
-		internal TextSizeCondition(float minSize, float maxSize) {
-			SetRange(minSize, maxSize);
-		}
 
 		private void UpdateRangeDescription() {
 			_description = ThisName + (_minSize == _maxSize
@@ -212,9 +211,19 @@ public abstract class AutoBookmarkCondition : ICloneable
 	public class TextPositionCondition : AutoBookmarkCondition
 	{
 		internal const string ThisName = "文本坐标";
-		private byte _position;
-		private float _minValue, _maxValue;
 		private string _description;
+		private float _minValue, _maxValue;
+		private byte _position;
+
+		public TextPositionCondition() { }
+
+		internal TextPositionCondition(byte position, float value) {
+			SetRange(position, value, value);
+		}
+
+		internal TextPositionCondition(byte position, float value1, float value2) {
+			SetRange(position, value1, value2);
+		}
 
 		[XmlAttribute("坐标值")]
 		[DefaultValue(0)]
@@ -260,16 +269,6 @@ public abstract class AutoBookmarkCondition : ICloneable
 
 		internal override bool IsTextLineFilter => false;
 
-		public TextPositionCondition() { }
-
-		internal TextPositionCondition(byte position, float value) {
-			SetRange(position, value, value);
-		}
-
-		internal TextPositionCondition(byte position, float value1, float value2) {
-			SetRange(position, value1, value2);
-		}
-
 		private void UpdateRangeDescription() {
 			_description = string.Concat(ThisName,
 				_position == 1 ? "上" :
@@ -278,8 +277,8 @@ public abstract class AutoBookmarkCondition : ICloneable
 				_position == 4 ? "右" : string.Empty,
 				"坐标",
 				_minValue == _maxValue
-					? "等于" + ValueHelper.ToText(_minValue)
-					: "介于" + ValueHelper.ToText(_minValue) + "和" + _maxValue
+					? "等于" + _minValue.ToText()
+					: "介于" + _minValue.ToText() + "和" + _maxValue
 			);
 		}
 
@@ -323,7 +322,7 @@ public abstract class AutoBookmarkCondition : ICloneable
 		internal override bool IsTextLineFilter => false;
 
 		public override object Clone() {
-			return new PageRangeCondition() {PageRange = PageRange};
+			return new PageRangeCondition {PageRange = PageRange};
 		}
 
 		internal override AutoBookmarkFilter CreateFilter() {
@@ -335,6 +334,14 @@ public abstract class AutoBookmarkCondition : ICloneable
 	public class TextCondition : AutoBookmarkCondition
 	{
 		internal const string ThisName = "文本内容";
+
+		public TextCondition() {
+			Pattern = new MatchPattern();
+		}
+
+		private TextCondition(MatchPattern pattern) {
+			Pattern = pattern.Clone() as MatchPattern;
+		}
 
 		[XmlElement("文本模式")] public MatchPattern Pattern { get; set; }
 
@@ -354,14 +361,6 @@ public abstract class AutoBookmarkCondition : ICloneable
 
 		internal override AutoBookmarkFilter CreateFilter() {
 			return new TextFilter(Pattern);
-		}
-
-		public TextCondition() {
-			Pattern = new MatchPattern();
-		}
-
-		private TextCondition(MatchPattern pattern) {
-			Pattern = pattern.Clone() as MatchPattern;
 		}
 	}
 }

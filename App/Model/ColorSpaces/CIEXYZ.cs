@@ -1,20 +1,17 @@
-﻿using System;
-using System.ComponentModel;
-
-namespace Devcorp.Controls.Design;
+﻿namespace Devcorp.Controls.Design;
 
 /// <summary>
-/// Structure to define CIE XYZ.
+///     Structure to define CIE XYZ.
 /// </summary>
 public struct CIEXYZ
 {
 	/// <summary>
-	/// Gets an empty CIEXYZ structure.
+	///     Gets an empty CIEXYZ structure.
 	/// </summary>
 	public static readonly CIEXYZ Empty = new();
 
 	/// <summary>
-	/// Gets the CIE D65 (white) structure.
+	///     Gets the CIE D65 (white) structure.
 	/// </summary>
 	public static readonly CIEXYZ D65 = new(0.9505, 1.0, 1.0890);
 
@@ -45,7 +42,7 @@ public struct CIEXYZ
 	#region Accessors
 
 	/// <summary>
-	/// Gets or sets X component.
+	///     Gets or sets X component.
 	/// </summary>
 	public double X {
 		get => x;
@@ -53,7 +50,7 @@ public struct CIEXYZ
 	}
 
 	/// <summary>
-	/// Gets or sets Y component.
+	///     Gets or sets Y component.
 	/// </summary>
 	public double Y {
 		get => y;
@@ -61,7 +58,7 @@ public struct CIEXYZ
 	}
 
 	/// <summary>
-	/// Gets or sets Z component.
+	///     Gets or sets Z component.
 	/// </summary>
 	public double Z {
 		get => z;

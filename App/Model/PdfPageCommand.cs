@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using iTextSharp.text.pdf;
 using PDFPatcher.Common;
+using PDFPatcher.Processor;
 
 namespace PDFPatcher.Model;
 
@@ -25,6 +26,53 @@ internal interface IPdfPageCommandContainer
 
 internal class PdfPageCommand
 {
+	public PdfPageCommand(PdfLiteral oper, List<PdfObject> operands) {
+		Name = oper;
+		if (operands?.Count > 0) {
+			Operands = new PdfObject[operands[operands.Count - 1] is PdfLiteral
+				? operands.Count - 1
+				: operands.Count];
+			operands.CopyTo(0, Operands, 0, Operands.Length);
+		}
+	}
+
+	public virtual PdfLiteral Name { get; }
+	public PdfObject[] Operands { get; }
+	public virtual PdfPageCommandType Type => PdfPageCommandType.Normal;
+	internal bool HasOperand => Operands?.Length > 0;
+
+	internal static PdfPageCommand Create(string name, params PdfObject[] operands) {
+		return new PdfPageCommand(new PdfLiteral(name), new List<PdfObject>(operands));
+	}
+
+	internal virtual void WriteToPdf(Stream target) {
+		if (Operands != null) {
+			foreach (PdfObject oi in Operands) {
+				WriteOperand(oi, target);
+			}
+		}
+
+		WriteOperator(Name, target);
+	}
+
+	protected static void WriteOperand(PdfObject operand, Stream target) {
+		operand.ToPdf(null, target);
+		target.WriteByte((byte)' ');
+	}
+
+	protected static void WriteOperator(PdfLiteral opName, Stream target) {
+		opName.ToPdf(null, target);
+		target.WriteByte((byte)'\n');
+	}
+
+	internal static bool GetFriendlyCommandName(string oper, out string friendlyName) {
+		return __OperatorNames.TryGetValue(oper, out friendlyName);
+	}
+
+	internal string GetOperandsText() {
+		return Operands != null ? PdfHelper.GetArrayString(Operands) : null;
+	}
+
 	#region 操作符中文名称
 
 	private static readonly Dictionary<string, string> __OperatorNames = Init();
@@ -110,53 +158,6 @@ internal class PdfPageCommand
 	}
 
 	#endregion
-
-	public virtual PdfLiteral Name { get; }
-	public PdfObject[] Operands { get; }
-	public virtual PdfPageCommandType Type => PdfPageCommandType.Normal;
-	internal bool HasOperand => Operands?.Length > 0;
-
-	public PdfPageCommand(PdfLiteral oper, List<PdfObject> operands) {
-		Name = oper;
-		if (operands?.Count > 0) {
-			Operands = new PdfObject[operands[operands.Count - 1] is PdfLiteral
-				? operands.Count - 1
-				: operands.Count];
-			operands.CopyTo(0, Operands, 0, Operands.Length);
-		}
-	}
-
-	internal static PdfPageCommand Create(string name, params PdfObject[] operands) {
-		return new PdfPageCommand(new PdfLiteral(name), new List<PdfObject>(operands));
-	}
-
-	internal virtual void WriteToPdf(Stream target) {
-		if (Operands != null) {
-			foreach (PdfObject oi in Operands) {
-				WriteOperand(oi, target);
-			}
-		}
-
-		WriteOperator(Name, target);
-	}
-
-	protected static void WriteOperand(PdfObject operand, Stream target) {
-		operand.ToPdf(null, target);
-		target.WriteByte((byte)' ');
-	}
-
-	protected static void WriteOperator(PdfLiteral opName, Stream target) {
-		opName.ToPdf(null, target);
-		target.WriteByte((byte)'\n');
-	}
-
-	internal static bool GetFriendlyCommandName(string oper, out string friendlyName) {
-		return __OperatorNames.TryGetValue(oper, out friendlyName);
-	}
-
-	internal string GetOperandsText() {
-		return Operands != null ? Processor.PdfHelper.GetArrayString(Operands) : null;
-	}
 }
 
 internal sealed class EnclosingCommand : PdfPageCommand, IPdfPageCommandContainer
@@ -171,21 +172,20 @@ internal sealed class EnclosingCommand : PdfPageCommand, IPdfPageCommandContaine
 	private const string EMC = "EMC";
 	private const string EX = "EX";
 
-	private static readonly string[] __StartEnclosingCommands = new string[] {BQ, BT, BDC, BMC, BX};
-	private static readonly string[] __EndEnclosingCommands = new string[] {EQ, ET, EMC, EX};
+	private static readonly string[] __StartEnclosingCommands = {BQ, BT, BDC, BMC, BX};
+	private static readonly string[] __EndEnclosingCommands = {EQ, ET, EMC, EX};
 
-	private static readonly PdfLiteral[] __EnclosingCommands = new PdfLiteral[] {
-		new(EQ), new(ET), new(EMC), new(EMC), new(EX)
-	};
-
-	public bool HasCommand => Commands.Count > 0;
-	public IList<PdfPageCommand> Commands { get; }
-	public override PdfPageCommandType Type => PdfPageCommandType.Enclosure;
+	private static readonly PdfLiteral[] __EnclosingCommands = {new(EQ), new(ET), new(EMC), new(EMC), new(EX)};
 
 	public EnclosingCommand(PdfLiteral oper, List<PdfObject> operands)
 		: base(oper, operands) {
 		Commands = new List<PdfPageCommand>();
 	}
+
+	public override PdfPageCommandType Type => PdfPageCommandType.Enclosure;
+
+	public bool HasCommand => Commands.Count > 0;
+	public IList<PdfPageCommand> Commands { get; }
 
 	internal static EnclosingCommand Create(string name, IEnumerable<PdfObject> operands,
 		params PdfPageCommand[] subCommands) {
@@ -216,19 +216,17 @@ internal sealed class EnclosingCommand : PdfPageCommand, IPdfPageCommandContaine
 
 internal class TextCommand : PdfPageCommand
 {
-	public TextInfo TextInfo { get; private set; }
-	public override PdfPageCommandType Type => PdfPageCommandType.Text;
-
 	public TextCommand(PdfLiteral oper, List<PdfObject> operands, TextInfo text)
 		: base(oper, operands) {
 		TextInfo = text;
 	}
+
+	public TextInfo TextInfo { get; }
+	public override PdfPageCommandType Type => PdfPageCommandType.Text;
 }
 
 internal sealed class PaceAndTextCommand : TextCommand
 {
-	public string[] DecodedTexts { get; private set; }
-
 	public PaceAndTextCommand(PdfLiteral oper, List<PdfObject> operands, TextInfo text, FontInfo font)
 		: base(oper, operands, text) {
 		PdfArray a = Operands[0] as PdfArray;
@@ -244,13 +242,14 @@ internal sealed class PaceAndTextCommand : TextCommand
 
 		text.Text = string.Concat(DecodedTexts);
 	}
+
+	public string[] DecodedTexts { get; }
 }
 
 internal sealed class MatrixCommand : PdfPageCommand
 {
 	public static PdfLiteral CM = new("cm");
 	public static PdfLiteral TM = new("Tm");
-	public override PdfPageCommandType Type => PdfPageCommandType.Matrix;
 
 	public MatrixCommand(PdfLiteral oper, List<PdfObject> operands)
 		: base(oper, operands) {
@@ -267,8 +266,10 @@ internal sealed class MatrixCommand : PdfPageCommand
 		}) {
 	}
 
+	public override PdfPageCommandType Type => PdfPageCommandType.Matrix;
+
 	public void Multiply(double[] matrix) {
-		double[] m1 = Array.ConvertAll(Operands, (i) => { return (i as PdfNumber).DoubleValue; });
+		double[] m1 = Array.ConvertAll(Operands, i => { return (i as PdfNumber).DoubleValue; });
 		Operands[0] = new PdfNumber((m1[0] * matrix[0]) + (m1[1] * matrix[2]));
 		Operands[1] = new PdfNumber((m1[0] * matrix[1]) + (m1[1] * matrix[3]));
 		Operands[2] = new PdfNumber((m1[2] * matrix[0]) + (m1[3] * matrix[2]));

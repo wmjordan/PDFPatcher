@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml;
+﻿using System.Xml;
 using PDFPatcher.Model;
 
 namespace PDFPatcher.Processor;
@@ -9,9 +6,6 @@ namespace PDFPatcher.Processor;
 internal sealed class CollapseBookmarkProcessor : IInfoDocProcessor
 {
 	public BookmarkStatus BookmarkStatus { get; set; }
-
-	public CollapseBookmarkProcessor() {
-	}
 
 	#region IBookmarkProcessor 成员
 

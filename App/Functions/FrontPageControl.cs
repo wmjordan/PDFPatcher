@@ -1,20 +1,33 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
+using System.Drawing;
+using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using PDFPatcher.Common;
+using PDFPatcher.Functions;
+using PDFPatcher.Properties;
 using TheArtOfDev.HtmlRenderer.Core.Entities;
 
 namespace PDFPatcher;
 
 [ToolboxItem(false)]
-internal sealed partial class FrontPageControl : Functions.HtmlPageControl
+internal sealed partial class FrontPageControl : HtmlPageControl
 {
 	private readonly Regex __FrontPagePattern = new("<div>(.+);(.+);(.+);(.+)</div>", RegexOptions.CultureInvariant);
 
+	public FrontPageControl() {
+		InitializeComponent();
+		Text = "主页";
+		RefreshContent();
+		RecentFileItemClicked = (s, args) => {
+			AppContext.MainForm.OpenFileWithEditor(args.ClickedItem.ToolTipText);
+		};
+		AllowDrop = true;
+	}
+
 	public override string FunctionName => "主页";
 
-	public override System.Drawing.Bitmap IconImage => Properties.Resources.HomePage;
+	public override Bitmap IconImage => Resources.HomePage;
 
 	public override void ExecuteCommand(string commandName, params string[] parameters) {
 		if (commandName == Commands.Open) {
@@ -25,7 +38,8 @@ internal sealed partial class FrontPageControl : Functions.HtmlPageControl
 
 			return;
 		}
-		else if (commandName == Commands.CleanUpInexistentFiles) {
+
+		if (commandName == Commands.CleanUpInexistentFiles) {
 			AppContext.CleanUpInexistentFiles(AppContext.Recent.SourcePdfFiles);
 			AppContext.CleanUpInexistentFiles(AppContext.Recent.InfoDocuments);
 			AppContext.CleanUpInexistentFolders(AppContext.Recent.Folders);
@@ -34,16 +48,6 @@ internal sealed partial class FrontPageControl : Functions.HtmlPageControl
 		}
 
 		base.ExecuteCommand(commandName, parameters);
-	}
-
-	public FrontPageControl() {
-		InitializeComponent();
-		Text = "主页";
-		RefreshContent();
-		RecentFileItemClicked = (s, args) => {
-			AppContext.MainForm.OpenFileWithEditor(args.ClickedItem.ToolTipText);
-		};
-		AllowDrop = true;
 	}
 
 	protected override void OnDragEnter(DragEventArgs drgevent) {
@@ -76,7 +80,7 @@ internal sealed partial class FrontPageControl : Functions.HtmlPageControl
 
 	private void RefreshContent() {
 		_FrontPageBox.Text = __FrontPagePattern
-			.Replace(Properties.Resources.FrontPage, @"<div><a href=""func:$2""><img src=""res:$1"" />$3</a></div>")
+			.Replace(Resources.FrontPage, @"<div><a href=""func:$2""><img src=""res:$1"" />$3</a></div>")
 			.Replace("$appName", Constants.AppName)
 			.Replace("$AppHomePage", Constants.AppHomePage)
 			.Replace("<li></li>", GetLastFileList());
@@ -84,8 +88,8 @@ internal sealed partial class FrontPageControl : Functions.HtmlPageControl
 
 	private string GetLastFileList() {
 		int i = 0;
-		return string.Concat(AppContext.Recent.SourcePdfFiles.ConvertAll((s) =>
-			FileHelper.IsPathValid(s) && System.IO.File.Exists(s)
+		return string.Concat(AppContext.Recent.SourcePdfFiles.ConvertAll(s =>
+			FileHelper.IsPathValid(s) && File.Exists(s)
 				? string.Concat(@"<li><a href=""recent:", i++, "\">", SubstringAfter(s, '\\'), "</a></li>")
 				: string.Concat(@"<li id=""", i++, "\">", SubstringAfter(s, '\\'), "</li>")));
 	}

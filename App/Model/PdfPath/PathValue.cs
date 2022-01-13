@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using PDFPatcher.Common;
+﻿using PDFPatcher.Common;
 
 namespace PDFPatcher.Model.PdfPath;
 
@@ -66,40 +63,37 @@ public static class PathValue
 
 	private sealed class PathStringValue : IConstantPathValue
 	{
-		public PathValueType ValueType => PathValueType.String;
-
-		public string Value { get; private set; }
-
-		public string LiteralValue => Value;
-
 		public PathStringValue(string value) {
 			Value = value;
 		}
+
+		public string Value { get; }
+		public PathValueType ValueType => PathValueType.String;
+
+		public string LiteralValue => Value;
 	}
 
 	private sealed class PathNumberValue : IConstantPathValue
 	{
-		public PathValueType ValueType => PathValueType.Number;
-
-		public double Value { get; private set; }
-
-		public string LiteralValue => Value.ToText();
-
 		public PathNumberValue(double value) {
 			Value = value;
 		}
+
+		public double Value { get; }
+		public PathValueType ValueType => PathValueType.Number;
+
+		public string LiteralValue => Value.ToText();
 	}
 
 	private sealed class PathBooleanValue : IConstantPathValue
 	{
-		public PathValueType ValueType => PathValueType.Boolean;
-
-		public bool Value { get; private set; }
-
-		public string LiteralValue => Value.ToString();
-
 		public PathBooleanValue(bool value) {
 			Value = value;
 		}
+
+		public bool Value { get; }
+		public PathValueType ValueType => PathValueType.Boolean;
+
+		public string LiteralValue => Value.ToString();
 	}
 }

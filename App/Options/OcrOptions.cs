@@ -1,13 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml.Serialization;
+﻿using System.Xml.Serialization;
 using PDFPatcher.Model;
 
 namespace PDFPatcher;
 
 public class OcrOptions
 {
+	public OcrOptions() {
+		OcrLangID = 2052;
+		DetectColumns = true;
+	}
+
 	//[XmlAttribute ("页码范围")]
 	[XmlIgnore] public string PageRanges { get; set; }
 
@@ -28,9 +30,4 @@ public class OcrOptions
 	[XmlIgnore] public string SaveOcredImagePath { get; set; }
 
 	#endregion
-
-	public OcrOptions() {
-		OcrLangID = 2052;
-		DetectColumns = true;
-	}
 }

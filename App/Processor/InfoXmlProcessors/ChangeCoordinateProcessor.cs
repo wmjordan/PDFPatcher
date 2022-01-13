@@ -1,14 +1,10 @@
-﻿using PDFPatcher.Common;
+﻿using System.Xml;
+using PDFPatcher.Common;
 
 namespace PDFPatcher.Processor;
 
 internal sealed class ChangeCoordinateProcessor : IPdfInfoXmlProcessor
 {
-	public string CoordinateName { get; private set; }
-	public float Value { get; private set; }
-	public bool IsAbsolute { get; private set; }
-	public bool IsProportional { get; private set; }
-
 	public ChangeCoordinateProcessor(string coordinateName, float value, bool absolute, bool proportional) {
 		CoordinateName = coordinateName;
 		Value = value;
@@ -16,11 +12,16 @@ internal sealed class ChangeCoordinateProcessor : IPdfInfoXmlProcessor
 		IsProportional = proportional;
 	}
 
+	public string CoordinateName { get; }
+	public float Value { get; }
+	public bool IsAbsolute { get; }
+	public bool IsProportional { get; }
+
 	#region IInfoDocProcessor 成员
 
 	public string Name => string.Concat(IsAbsolute ? "更改" : IsProportional ? "缩放" : "调整", CoordinateName, "坐标定位");
 
-	public IUndoAction Process(System.Xml.XmlElement item) {
+	public IUndoAction Process(XmlElement item) {
 		float c;
 		string v;
 		item.GetAttribute(CoordinateName).TryParse(out c);

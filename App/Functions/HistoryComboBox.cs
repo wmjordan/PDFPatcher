@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -7,9 +6,6 @@ namespace PDFPatcher;
 
 public class HistoryComboBox : ComboBox
 {
-	public int MaxItemCount { get; set; }
-	public IList<string> Contents { get; set; }
-
 	public HistoryComboBox() {
 		MaxItemCount = 16;
 		DropDown += (s, args) => {
@@ -21,6 +17,9 @@ public class HistoryComboBox : ComboBox
 			Items.AddRange(Contents.ToArray());
 		};
 	}
+
+	public int MaxItemCount { get; set; }
+	public IList<string> Contents { get; set; }
 
 	internal void AddHistoryItem() {
 		AddHistoryItem(Text);
@@ -54,9 +53,8 @@ public class HistoryComboBox : ComboBox
 		if (l != null) {
 			return l.IndexOf(o);
 		}
-		else {
-			return Items.IndexOf(o);
-		}
+
+		return Items.IndexOf(o);
 	}
 
 	private void RemoveAt(int i) {

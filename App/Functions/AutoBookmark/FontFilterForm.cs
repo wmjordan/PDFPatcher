@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using System.Xml;
 using BrightIdeasSoftware;
@@ -11,41 +12,21 @@ namespace PDFPatcher.Functions;
 
 public partial class FontFilterForm : Form
 {
-	private sealed class FilterSetting
-	{
-		internal string FontName { get; }
-		internal bool FullMatch { get; }
-		internal float Size { get; }
-
-		public FilterSetting(string fontName, bool fullMatch, float size) {
-			FontName = fontName;
-			FullMatch = fullMatch;
-			Size = size;
-		}
-	}
-
 	private readonly XmlElement _fontInfo;
-
-	internal AutoBookmarkCondition[] FilterConditions {
-		get;
-		private set;
-	}
 
 	public FontFilterForm(XmlNode fontInfo) {
 		InitializeComponent();
 		_fontInfo = fontInfo as XmlElement;
 
 		TreeListView.TreeRenderer
-			tcr = _FontInfoBox.TreeColumnRenderer as TreeListView.TreeRenderer;
-		tcr.LinePen = new Pen(SystemColors.ControlDark) {
-			DashCap = System.Drawing.Drawing2D.DashCap.Round, DashStyle = System.Drawing.Drawing2D.DashStyle.Dash
-		};
+			tcr = _FontInfoBox.TreeColumnRenderer;
+		tcr.LinePen = new Pen(SystemColors.ControlDark) {DashCap = DashCap.Round, DashStyle = DashStyle.Dash};
 
-		_FontInfoBox.CanExpandGetter = (object o) => {
+		_FontInfoBox.CanExpandGetter = o => {
 			XmlElement f = o as XmlElement;
 			return f != null && f.Name == Constants.Font.ThisName && f.HasChildNodes;
 		};
-		_FontInfoBox.ChildrenGetter = (object o) => {
+		_FontInfoBox.ChildrenGetter = o => {
 			XmlElement f = o as XmlElement;
 			if (f == null) {
 				return null;
@@ -53,14 +34,14 @@ public partial class FontFilterForm : Form
 
 			return f.SelectNodes(Constants.Font.Size);
 		};
-		_FontInfoBox.RowFormatter = (OLVListItem o) => {
+		_FontInfoBox.RowFormatter = o => {
 			if (_FontInfoBox.GetParent(o.RowObject) == null) {
 				o.SubItems[0].Font = new Font(o.SubItems[0].Font, FontStyle.Bold);
 				o.SubItems[1].Text = string.Empty;
 				o.BackColor = Color.LightBlue;
 			}
 		};
-		_FontNameSizeColumn.AspectGetter = (object o) => {
+		_FontNameSizeColumn.AspectGetter = o => {
 			XmlElement f = o as XmlElement;
 			if (f == null) {
 				return null;
@@ -69,7 +50,8 @@ public partial class FontFilterForm : Form
 			if (f.Name == Constants.Font.ThisName) {
 				return f.GetAttribute(Constants.Font.Name);
 			}
-			else if (f.ParentNode?.Name == Constants.Font.ThisName) {
+
+			if (f.ParentNode?.Name == Constants.Font.ThisName) {
 				f.GetAttribute(Constants.Font.Size).TryParse(out float p);
 				string t = f.GetAttribute(Constants.FontOccurance.FirstText);
 				return string.Concat(p.ToText(), "(", t, ")");
@@ -77,7 +59,7 @@ public partial class FontFilterForm : Form
 
 			return null;
 		};
-		_CountColumn.AspectGetter = (object o) => {
+		_CountColumn.AspectGetter = o => {
 			if (o is XmlElement f) {
 				f.GetAttribute(Constants.FontOccurance.Count).TryParse(out int p);
 				return p;
@@ -85,7 +67,7 @@ public partial class FontFilterForm : Form
 
 			return null;
 		};
-		_FirstPageColumn.AspectGetter = (object o) => {
+		_FirstPageColumn.AspectGetter = o => {
 			if (o is XmlElement f) {
 				f.GetAttribute(Constants.FontOccurance.FirstPage).TryParse(out int p);
 				return p;
@@ -93,7 +75,12 @@ public partial class FontFilterForm : Form
 
 			return null;
 		};
-		_ConditionColumn.AspectGetter = (object o) => o is AutoBookmarkCondition c ? c.Description : (object)null;
+		_ConditionColumn.AspectGetter = o => o is AutoBookmarkCondition c ? c.Description : (object)null;
+	}
+
+	internal AutoBookmarkCondition[] FilterConditions {
+		get;
+		private set;
 	}
 
 	private void FontFilterForm_Load(object sender, EventArgs e) {
@@ -166,7 +153,7 @@ public partial class FontFilterForm : Form
 
 		_AddFilterMenu.Items.Clear();
 		int p = n.IndexOf('+');
-		int m = n.IndexOfAny(new char[] {'-', ','}, p != -1 ? p : 0);
+		int m = n.IndexOfAny(new[] {'-', ','}, p != -1 ? p : 0);
 		string fn;
 		if (p != -1) {
 			if (m > p + 1) {
@@ -238,5 +225,18 @@ public partial class FontFilterForm : Form
 		else if (sender == _AddConditionButton) {
 			_AddFilterMenu.Show(_AddConditionButton, 0, _AddConditionButton.Height);
 		}
+	}
+
+	private sealed class FilterSetting
+	{
+		public FilterSetting(string fontName, bool fullMatch, float size) {
+			FontName = fontName;
+			FullMatch = fullMatch;
+			Size = size;
+		}
+
+		internal string FontName { get; }
+		internal bool FullMatch { get; }
+		internal float Size { get; }
 	}
 }

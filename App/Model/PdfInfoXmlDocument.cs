@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.Windows.Forms;
 using System.Xml;
+using MuPdfSharp;
 using PDFPatcher.Common;
 
 namespace PDFPatcher.Model;
 
 public sealed class PdfInfoXmlDocument : XmlDocument
 {
-	/// <summary>返回已经初始化的 <see cref="PdfInfoXmlDocument"/> 实例。</summary>
+	/// <summary>返回已经初始化的 <see cref="PdfInfoXmlDocument" /> 实例。</summary>
 	public PdfInfoXmlDocument() {
 		Init();
 	}
@@ -43,7 +45,7 @@ public sealed class PdfInfoXmlDocument : XmlDocument
 			root = AppendChild(CreateElement(Constants.PdfInfo)) as XmlElement;
 		}
 
-		root.SetAttribute(Constants.Info.ProductName, System.Windows.Forms.Application.ProductName);
+		root.SetAttribute(Constants.Info.ProductName, Application.ProductName);
 		root.SetAttribute(Constants.Info.ProductVersion, Constants.InfoDocVersion);
 		root.SetAttribute(Constants.Info.ExportDate, DateTime.Now.ToString("yyyy年MM月dd日 HH:mm:ss"));
 	}
@@ -174,6 +176,10 @@ public sealed class BookmarkElement : BookmarkContainer
 	/// <summary>在自动生成书签时标记级别的属性。</summary>
 	internal int AutoLevel = 0;
 
+	internal BookmarkElement(XmlDocument doc)
+		: base(Constants.Bookmark, doc) {
+	}
+
 	/// <summary>获取或设置书签的文本。</summary>
 	public string Title {
 		get => GetAttribute(Constants.BookmarkAttributes.Title);
@@ -190,7 +196,8 @@ public sealed class BookmarkElement : BookmarkContainer
 					b = this.GetValue(Constants.Colors.Blue, 0f);
 				return Color.FromArgb((int)(r * 255f), (int)(g * 255f), (int)(b * 255f));
 			}
-			else if (HasAttribute(Constants.Color)) {
+
+			if (HasAttribute(Constants.Color)) {
 				string a = GetAttribute(Constants.Color);
 				int c = a.ToInt32(int.MaxValue);
 				return c != int.MaxValue ? Color.FromArgb(c) : Color.FromName(a);
@@ -330,10 +337,6 @@ public sealed class BookmarkElement : BookmarkContainer
 		set => this.SetValue("标记颜色", value, 0);
 	}
 
-	internal BookmarkElement(XmlDocument doc)
-		: base(Constants.Bookmark, doc) {
-	}
-
 	/// <summary>设置跳转到页面的书签动作。</summary>
 	/// <param name="title">书签的标题。</param>
 	/// <param name="pageNumber">跳转页面。</param>
@@ -373,6 +376,10 @@ public sealed class PageLabelRootElement : XmlElement
 /// <summary>页码标签设置元素。</summary>
 public sealed class PageLabelElement : XmlElement
 {
+	internal PageLabelElement(XmlDocument doc)
+		: base(string.Empty, Constants.PageLabelsAttributes.Style, string.Empty, doc) {
+	}
+
 	/// <summary>获取或指定开始使用页码标签的绝对页码。</summary>
 	public int PageNumber {
 		get => GetAttribute(Constants.PageLabelsAttributes.PageNumber).ToInt32();
@@ -396,10 +403,6 @@ public sealed class PageLabelElement : XmlElement
 		set => this.SetValue(Constants.PageLabelsAttributes.StartPage, value < 1 ? 0 : value, 0);
 	}
 
-	internal PageLabelElement(XmlDocument doc)
-		: base(string.Empty, Constants.PageLabelsAttributes.Style, string.Empty, doc) {
-	}
-
 	public void SetAttributes(MuPdfSharp.PageLabel label) {
 		this.SetValue(Constants.PageLabelsAttributes.PageNumber, label.FromPageNumber + 1, 0);
 		SetAttribute(Constants.PageLabelsAttributes.Style,
@@ -414,7 +417,7 @@ public sealed class PageLabelElement : XmlElement
 			PageNumber - 1,
 			StartNumber,
 			PrefixLabel,
-			(MuPdfSharp.PageLabelStyle)ValueHelper.MapValue(Style, Constants.PageLabelStyles.Names,
+			(PageLabelStyle)ValueHelper.MapValue(Style, Constants.PageLabelStyles.Names,
 				Constants.PageLabelStyles.PdfValues));
 	}
 }

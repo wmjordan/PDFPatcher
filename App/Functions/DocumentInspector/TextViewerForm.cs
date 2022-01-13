@@ -1,10 +1,18 @@
-﻿using System;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
 namespace PDFPatcher.Functions;
 
 public partial class TextViewerForm : Form
 {
+	public TextViewerForm() {
+		InitializeComponent();
+	}
+
+	public TextViewerForm(string textContent, bool isTextReadonly) : this() {
+		TextContent = textContent;
+		IsTextReadOnly = isTextReadonly;
+	}
+
 	///<summary>获取或指定文本内容是否只读。</summary>
 	public bool IsTextReadOnly {
 		get => _TextBox.ReadOnly;
@@ -18,14 +26,5 @@ public partial class TextViewerForm : Form
 	public string TextContent {
 		get => _TextBox.Text;
 		set => _TextBox.Text = value;
-	}
-
-	public TextViewerForm() {
-		InitializeComponent();
-	}
-
-	public TextViewerForm(string textContent, bool isTextReadonly) : this() {
-		TextContent = textContent;
-		IsTextReadOnly = isTextReadonly;
 	}
 }

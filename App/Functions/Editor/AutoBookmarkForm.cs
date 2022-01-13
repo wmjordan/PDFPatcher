@@ -10,8 +10,8 @@ namespace PDFPatcher.Functions;
 
 public sealed partial class AutoBookmarkForm : DraggableForm
 {
-	private List<EditModel.AutoBookmarkStyle> _list;
 	private readonly Controller _controller;
+	private List<EditModel.AutoBookmarkStyle> _list;
 
 	internal AutoBookmarkForm(Controller controller) {
 		InitializeComponent();
@@ -61,7 +61,7 @@ public sealed partial class AutoBookmarkForm : DraggableForm
 				);
 			}
 		};
-		_BookmarkConditionBox.RowFormatter = (r) => {
+		_BookmarkConditionBox.RowFormatter = r => {
 			EditModel.AutoBookmarkStyle ts = r.RowObject as EditModel.AutoBookmarkStyle;
 			r.UseItemStyleForSubItems = false;
 			r.SubItems[_ColorColumn.Index].ForeColor = ts.Style.ForeColor == Color.Transparent

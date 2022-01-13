@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace PDFPatcher.Functions.Editor;
+﻿namespace PDFPatcher.Functions.Editor;
 
 internal sealed class DocumentPropertyCommand : IEditorCommand
 {

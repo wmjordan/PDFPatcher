@@ -15,9 +15,18 @@ namespace Cyotek.Windows.Forms.Demo;
 
 internal class ImageBoxEx : ImageBox
 {
-	#region Constants
+	#region Constructors
 
-	private readonly DragHandleCollection _dragHandles;
+	public ImageBoxEx() {
+		DragHandles = new DragHandleCollection();
+		_dragHandleSize = 8;
+		_maximumSelectionSize = Size.Empty;
+		PositionDragHandles();
+	}
+
+	#endregion
+
+	#region Constants
 
 	private static readonly object _eventDragHandleSizeChanged = new();
 
@@ -43,35 +52,16 @@ internal class ImageBoxEx : ImageBox
 
 	private Point _dragOriginOffset;
 
-	private bool _isMoving;
-
-	private bool _isResizing;
-
 	private Size _maximumSelectionSize;
 
 	private Size _minimumSelectionSize;
-
-	private RectangleF _previousSelectionRegion;
-
-	private DragHandleAnchor _resizeAnchor;
-
-	#endregion
-
-	#region Constructors
-
-	public ImageBoxEx() {
-		_dragHandles = new DragHandleCollection();
-		_dragHandleSize = 8;
-		_maximumSelectionSize = Size.Empty;
-		PositionDragHandles();
-	}
 
 	#endregion
 
 	#region Events
 
 	/// <summary>
-	/// Occurs when the DragHandleSize property value changes
+	///     Occurs when the DragHandleSize property value changes
 	/// </summary>
 	[Category("Property Changed")]
 	public event EventHandler DragHandleSizeChanged {
@@ -80,7 +70,7 @@ internal class ImageBoxEx : ImageBox
 	}
 
 	/// <summary>
-	/// Occurs when the MaximumSelectionSize property value changes
+	///     Occurs when the MaximumSelectionSize property value changes
 	/// </summary>
 	[Category("Property Changed")]
 	public event EventHandler MaximumSelectionSizeChanged {
@@ -89,7 +79,7 @@ internal class ImageBoxEx : ImageBox
 	}
 
 	/// <summary>
-	/// Occurs when the MinimumSelectionSize property value changes
+	///     Occurs when the MinimumSelectionSize property value changes
 	/// </summary>
 	[Category("Property Changed")]
 	public event EventHandler MinimumSelectionSizeChanged {
@@ -125,7 +115,7 @@ internal class ImageBoxEx : ImageBox
 
 	#region Properties
 
-	[Browsable(false)] public DragHandleCollection DragHandles => _dragHandles;
+	[Browsable(false)] public DragHandleCollection DragHandles { get; }
 
 	[Category("Appearance")]
 	[DefaultValue(8)]
@@ -142,17 +132,11 @@ internal class ImageBoxEx : ImageBox
 
 	[Browsable(false)]
 	[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-	public bool IsMoving {
-		get => _isMoving;
-		protected set => _isMoving = value;
-	}
+	public bool IsMoving { get; protected set; }
 
 	[Browsable(false)]
 	[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-	public bool IsResizing {
-		get => _isResizing;
-		protected set => _isResizing = value;
-	}
+	public bool IsResizing { get; protected set; }
 
 	[Category("Behavior")]
 	[DefaultValue(typeof(Size), "0, 0")]
@@ -180,11 +164,7 @@ internal class ImageBoxEx : ImageBox
 		}
 	}
 
-	[Browsable(false)]
-	public RectangleF PreviousSelectionRegion {
-		get => _previousSelectionRegion;
-		protected set => _previousSelectionRegion = value;
-	}
+	[Browsable(false)] public RectangleF PreviousSelectionRegion { get; protected set; }
 
 	protected Point DragOrigin {
 		get => _dragOrigin;
@@ -196,24 +176,21 @@ internal class ImageBoxEx : ImageBox
 		set => _dragOriginOffset = value;
 	}
 
-	protected DragHandleAnchor ResizeAnchor {
-		get => _resizeAnchor;
-		set => _resizeAnchor = value;
-	}
+	protected DragHandleAnchor ResizeAnchor { get; set; }
 
 	#endregion
 
 	#region Methods
 
 	public void CancelResize() {
-		SelectionRegion = _previousSelectionRegion;
+		SelectionRegion = PreviousSelectionRegion;
 		CompleteResize();
 	}
 
 	public void StartMove() {
 		CancelEventArgs e;
 
-		if (_isMoving || _isResizing) {
+		if (IsMoving || IsResizing) {
 			throw new InvalidOperationException("A move or resize action is currently being performed.");
 		}
 
@@ -222,8 +199,8 @@ internal class ImageBoxEx : ImageBox
 		OnSelectionMoving(e);
 
 		if (!e.Cancel) {
-			_previousSelectionRegion = SelectionRegion;
-			_isMoving = true;
+			PreviousSelectionRegion = SelectionRegion;
+			IsMoving = true;
 		}
 	}
 
@@ -257,7 +234,7 @@ internal class ImageBoxEx : ImageBox
 	}
 
 	/// <summary>
-	/// Raises the <see cref="DragHandleSizeChanged" /> event.
+	///     Raises the <see cref="DragHandleSizeChanged" /> event.
 	/// </summary>
 	/// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
 	protected virtual void OnDragHandleSizeChanged(EventArgs e) {
@@ -272,7 +249,7 @@ internal class ImageBoxEx : ImageBox
 	}
 
 	/// <summary>
-	/// Raises the <see cref="MaximumSelectionSizeChanged" /> event.
+	///     Raises the <see cref="MaximumSelectionSizeChanged" /> event.
 	/// </summary>
 	/// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
 	protected virtual void OnMaximumSelectionSizeChanged(EventArgs e) {
@@ -284,7 +261,7 @@ internal class ImageBoxEx : ImageBox
 	}
 
 	/// <summary>
-	/// Raises the <see cref="MinimumSelectionSizeChanged" /> event.
+	///     Raises the <see cref="MinimumSelectionSizeChanged" /> event.
 	/// </summary>
 	/// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
 	protected virtual void OnMinimumSelectionSizeChanged(EventArgs e) {
@@ -296,10 +273,10 @@ internal class ImageBoxEx : ImageBox
 	}
 
 	/// <summary>
-	///   Raises the <see cref="System.Windows.Forms.Control.MouseDown" /> event.
+	///     Raises the <see cref="System.Windows.Forms.Control.MouseDown" /> event.
 	/// </summary>
 	/// <param name="e">
-	///   A <see cref="T:System.Windows.Forms.MouseEventArgs" /> that contains the event data.
+	///     A <see cref="T:System.Windows.Forms.MouseEventArgs" /> that contains the event data.
 	/// </param>
 	protected override void OnMouseDown(MouseEventArgs e) {
 		Point imagePoint;
@@ -323,14 +300,14 @@ internal class ImageBoxEx : ImageBox
 	}
 
 	/// <summary>
-	///   Raises the <see cref="System.Windows.Forms.Control.MouseMove" /> event.
+	///     Raises the <see cref="System.Windows.Forms.Control.MouseMove" /> event.
 	/// </summary>
 	/// <param name="e">
-	///   A <see cref="T:System.Windows.Forms.MouseEventArgs" /> that contains the event data.
+	///     A <see cref="T:System.Windows.Forms.MouseEventArgs" /> that contains the event data.
 	/// </param>
 	protected override void OnMouseMove(MouseEventArgs e) {
 		// start either a move or a resize operation
-		if (!IsSelecting && !_isMoving && !_isResizing && e.Button == MouseButtons.Left && !_dragOrigin.IsEmpty &&
+		if (!IsSelecting && !IsMoving && !IsResizing && e.Button == MouseButtons.Left && !_dragOrigin.IsEmpty &&
 		    IsOutsideDragZone(e.Location)) {
 			DragHandleAnchor anchor;
 
@@ -340,7 +317,7 @@ internal class ImageBoxEx : ImageBox
 				// move
 				StartMove();
 			}
-			else if (_dragHandles[anchor].Enabled && _dragHandles[anchor].Visible) {
+			else if (DragHandles[anchor].Enabled && DragHandles[anchor].Visible) {
 				// resize
 				StartResize(anchor);
 			}
@@ -357,16 +334,16 @@ internal class ImageBoxEx : ImageBox
 	}
 
 	/// <summary>
-	///   Raises the <see cref="System.Windows.Forms.Control.MouseUp" /> event.
+	///     Raises the <see cref="System.Windows.Forms.Control.MouseUp" /> event.
 	/// </summary>
 	/// <param name="e">
-	///   A <see cref="T:System.Windows.Forms.MouseEventArgs" /> that contains the event data.
+	///     A <see cref="T:System.Windows.Forms.MouseEventArgs" /> that contains the event data.
 	/// </param>
 	protected override void OnMouseUp(MouseEventArgs e) {
-		if (_isMoving) {
+		if (IsMoving) {
 			CompleteMove();
 		}
-		else if (_isResizing) {
+		else if (IsResizing) {
 			CompleteResize();
 		}
 
@@ -374,16 +351,16 @@ internal class ImageBoxEx : ImageBox
 	}
 
 	/// <summary>
-	///   Raises the <see cref="System.Windows.Forms.Control.Paint" /> event.
+	///     Raises the <see cref="System.Windows.Forms.Control.Paint" /> event.
 	/// </summary>
 	/// <param name="e">
-	///   A <see cref="T:System.Windows.Forms.PaintEventArgs" /> that contains the event data.
+	///     A <see cref="T:System.Windows.Forms.PaintEventArgs" /> that contains the event data.
 	/// </param>
 	protected override void OnPaint(PaintEventArgs e) {
 		base.OnPaint(e);
 
 		if (AllowPainting && !SelectionRegion.IsEmpty) {
-			foreach (DragHandle handle in _dragHandles) {
+			foreach (DragHandle handle in DragHandles) {
 				if (handle.Visible) {
 					DrawDragHandle(e.Graphics, handle);
 				}
@@ -392,13 +369,13 @@ internal class ImageBoxEx : ImageBox
 	}
 
 	/// <summary>
-	///   Raises the <see cref="ImageBox.PanStart" /> event.
+	///     Raises the <see cref="ImageBox.PanStart" /> event.
 	/// </summary>
 	/// <param name="e">
-	///   The <see cref="System.ComponentModel.CancelEventArgs" /> instance containing the event data.
+	///     The <see cref="System.ComponentModel.CancelEventArgs" /> instance containing the event data.
 	/// </param>
 	protected override void OnPanStart(CancelEventArgs e) {
-		if (_isMoving || _isResizing || !_dragOrigin.IsEmpty) {
+		if (IsMoving || IsResizing || !_dragOrigin.IsEmpty) {
 			e.Cancel = true;
 		}
 
@@ -406,10 +383,10 @@ internal class ImageBoxEx : ImageBox
 	}
 
 	/// <summary>
-	///   Raises the <see cref="System.Windows.Forms.Control.Resize" /> event.
+	///     Raises the <see cref="System.Windows.Forms.Control.Resize" /> event.
 	/// </summary>
 	/// <param name="e">
-	///   An <see cref="T:System.EventArgs" /> that contains the event data.
+	///     An <see cref="T:System.EventArgs" /> that contains the event data.
 	/// </param>
 	protected override void OnResize(EventArgs e) {
 		base.OnResize(e);
@@ -418,10 +395,10 @@ internal class ImageBoxEx : ImageBox
 	}
 
 	/// <summary>
-	///   Raises the <see cref="System.Windows.Forms.ScrollableControl.Scroll" /> event.
+	///     Raises the <see cref="System.Windows.Forms.ScrollableControl.Scroll" /> event.
 	/// </summary>
 	/// <param name="se">
-	///   A <see cref="T:System.Windows.Forms.ScrollEventArgs" /> that contains the event data.
+	///     A <see cref="T:System.Windows.Forms.ScrollEventArgs" /> that contains the event data.
 	/// </param>
 	protected override void OnScroll(ScrollEventArgs se) {
 		base.OnScroll(se);
@@ -430,20 +407,20 @@ internal class ImageBoxEx : ImageBox
 	}
 
 	/// <summary>
-	///   Raises the <see cref="ImageBox.Selecting" /> event.
+	///     Raises the <see cref="ImageBox.Selecting" /> event.
 	/// </summary>
 	/// <param name="e">
-	///   The <see cref="System.EventArgs" /> instance containing the event data.
+	///     The <see cref="System.EventArgs" /> instance containing the event data.
 	/// </param>
 	protected override void OnSelecting(ImageBoxCancelEventArgs e) {
-		e.Cancel = _isMoving || _isResizing || SelectionRegion.Contains(PointToImage(e.Location)) ||
+		e.Cancel = IsMoving || IsResizing || SelectionRegion.Contains(PointToImage(e.Location)) ||
 		           HitTest(e.Location) != DragHandleAnchor.None;
 
 		base.OnSelecting(e);
 	}
 
 	/// <summary>
-	/// Raises the <see cref="SelectionMoved" /> event.
+	///     Raises the <see cref="SelectionMoved" /> event.
 	/// </summary>
 	/// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
 	protected virtual void OnSelectionMoved(EventArgs e) {
@@ -455,7 +432,7 @@ internal class ImageBoxEx : ImageBox
 	}
 
 	/// <summary>
-	/// Raises the <see cref="SelectionMoving" /> event.
+	///     Raises the <see cref="SelectionMoving" /> event.
 	/// </summary>
 	/// <param name="e">The <see cref="CancelEventArgs" /> instance containing the event data.</param>
 	protected virtual void OnSelectionMoving(CancelEventArgs e) {
@@ -467,10 +444,10 @@ internal class ImageBoxEx : ImageBox
 	}
 
 	/// <summary>
-	///   Raises the <see cref="ImageBox.SelectionRegionChanged" /> event.
+	///     Raises the <see cref="ImageBox.SelectionRegionChanged" /> event.
 	/// </summary>
 	/// <param name="e">
-	///   The <see cref="System.EventArgs" /> instance containing the event data.
+	///     The <see cref="System.EventArgs" /> instance containing the event data.
 	/// </param>
 	protected override void OnSelectionRegionChanged(EventArgs e) {
 		base.OnSelectionRegionChanged(e);
@@ -479,7 +456,7 @@ internal class ImageBoxEx : ImageBox
 	}
 
 	/// <summary>
-	/// Raises the <see cref="SelectionResized" /> event.
+	///     Raises the <see cref="SelectionResized" /> event.
 	/// </summary>
 	/// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
 	protected virtual void OnSelectionResized(EventArgs e) {
@@ -491,7 +468,7 @@ internal class ImageBoxEx : ImageBox
 	}
 
 	/// <summary>
-	/// Raises the <see cref="SelectionResizing" /> event.
+	///     Raises the <see cref="SelectionResizing" /> event.
 	/// </summary>
 	/// <param name="e">The <see cref="CancelEventArgs" /> instance containing the event data.</param>
 	protected virtual void OnSelectionResizing(CancelEventArgs e) {
@@ -503,10 +480,10 @@ internal class ImageBoxEx : ImageBox
 	}
 
 	/// <summary>
-	///   Raises the <see cref="ImageBox.ZoomChanged" /> event.
+	///     Raises the <see cref="ImageBox.ZoomChanged" /> event.
 	/// </summary>
 	/// <param name="e">
-	///   The <see cref="System.EventArgs" /> instance containing the event data.
+	///     The <see cref="System.EventArgs" /> instance containing the event data.
 	/// </param>
 	protected override void OnZoomChanged(EventArgs e) {
 		base.OnZoomChanged(e);
@@ -515,17 +492,17 @@ internal class ImageBoxEx : ImageBox
 	}
 
 	/// <summary>
-	/// Processes a dialog key.
+	///     Processes a dialog key.
 	/// </summary>
 	/// <returns>
-	/// true if the key was processed by the control; otherwise, false.
+	///     true if the key was processed by the control; otherwise, false.
 	/// </returns>
-	/// <param name="keyData">One of the <see cref="T:System.Windows.Forms.Keys"/> values that represents the key to process. </param>
+	/// <param name="keyData">One of the <see cref="T:System.Windows.Forms.Keys" /> values that represents the key to process. </param>
 	protected override bool ProcessDialogKey(Keys keyData) {
 		bool result;
 
-		if (keyData == Keys.Escape && (_isResizing || _isMoving)) {
-			if (_isResizing) {
+		if (keyData == Keys.Escape && (IsResizing || IsMoving)) {
+			if (IsResizing) {
 				CancelResize();
 			}
 			else {
@@ -553,8 +530,8 @@ internal class ImageBoxEx : ImageBox
 			else {
 				DragHandleAnchor handleAnchor;
 
-				handleAnchor = _isResizing ? _resizeAnchor : HitTest(point);
-				if (handleAnchor != DragHandleAnchor.None && _dragHandles[handleAnchor].Enabled) {
+				handleAnchor = IsResizing ? ResizeAnchor : HitTest(point);
+				if (handleAnchor != DragHandleAnchor.None && DragHandles[handleAnchor].Enabled) {
 					switch (handleAnchor) {
 						case DragHandleAnchor.TopLeft:
 						case DragHandleAnchor.BottomRight:
@@ -576,7 +553,7 @@ internal class ImageBoxEx : ImageBox
 							throw new ArgumentOutOfRangeException();
 					}
 				}
-				else if (_isMoving || SelectionRegion.Contains(PointToImage(point))) {
+				else if (IsMoving || SelectionRegion.Contains(PointToImage(point))) {
 					cursor = Cursors.SizeAll;
 				}
 				else {
@@ -589,7 +566,7 @@ internal class ImageBoxEx : ImageBox
 	}
 
 	private void CancelMove() {
-		SelectionRegion = _previousSelectionRegion;
+		SelectionRegion = PreviousSelectionRegion;
 		CompleteMove();
 	}
 
@@ -604,7 +581,7 @@ internal class ImageBoxEx : ImageBox
 	}
 
 	private DragHandleAnchor HitTest(Point cursorPosition) {
-		return _dragHandles.HitTest(cursorPosition);
+		return DragHandles.HitTest(cursorPosition);
 	}
 
 	private bool IsOutsideDragZone(Point location) {
@@ -621,13 +598,13 @@ internal class ImageBoxEx : ImageBox
 	}
 
 	private void PositionDragHandles() {
-		if (_dragHandles != null && _dragHandleSize > 0) {
+		if (DragHandles != null && _dragHandleSize > 0) {
 			RectangleF selectionRegion;
 
 			selectionRegion = SelectionRegion;
 
 			if (selectionRegion.IsEmpty) {
-				foreach (DragHandle handle in _dragHandles) {
+				foreach (DragHandle handle in DragHandles) {
 					handle.Bounds = Rectangle.Empty;
 				}
 			}
@@ -654,28 +631,28 @@ internal class ImageBoxEx : ImageBox
 				halfWidth = Convert.ToInt32(selectionRegion.Width * ZoomFactor) / 2;
 				halfHeight = Convert.ToInt32(selectionRegion.Height * ZoomFactor) / 2;
 
-				_dragHandles[DragHandleAnchor.TopLeft].Bounds = new Rectangle(left - _dragHandleSize,
+				DragHandles[DragHandleAnchor.TopLeft].Bounds = new Rectangle(left - _dragHandleSize,
 					top - _dragHandleSize, _dragHandleSize, _dragHandleSize);
-				_dragHandles[DragHandleAnchor.TopCenter].Bounds = new Rectangle(
+				DragHandles[DragHandleAnchor.TopCenter].Bounds = new Rectangle(
 					left + halfWidth - halfDragHandleSize, top - _dragHandleSize, _dragHandleSize, _dragHandleSize);
-				_dragHandles[DragHandleAnchor.TopRight].Bounds = new Rectangle(right, top - _dragHandleSize,
+				DragHandles[DragHandleAnchor.TopRight].Bounds = new Rectangle(right, top - _dragHandleSize,
 					_dragHandleSize, _dragHandleSize);
-				_dragHandles[DragHandleAnchor.MiddleLeft].Bounds = new Rectangle(left - _dragHandleSize,
+				DragHandles[DragHandleAnchor.MiddleLeft].Bounds = new Rectangle(left - _dragHandleSize,
 					top + halfHeight - halfDragHandleSize, _dragHandleSize, _dragHandleSize);
-				_dragHandles[DragHandleAnchor.MiddleRight].Bounds = new Rectangle(right,
+				DragHandles[DragHandleAnchor.MiddleRight].Bounds = new Rectangle(right,
 					top + halfHeight - halfDragHandleSize, _dragHandleSize, _dragHandleSize);
-				_dragHandles[DragHandleAnchor.BottomLeft].Bounds = new Rectangle(left - _dragHandleSize, bottom,
+				DragHandles[DragHandleAnchor.BottomLeft].Bounds = new Rectangle(left - _dragHandleSize, bottom,
 					_dragHandleSize, _dragHandleSize);
-				_dragHandles[DragHandleAnchor.BottomCenter].Bounds =
+				DragHandles[DragHandleAnchor.BottomCenter].Bounds =
 					new Rectangle(left + halfWidth - halfDragHandleSize, bottom, _dragHandleSize, _dragHandleSize);
-				_dragHandles[DragHandleAnchor.BottomRight].Bounds =
+				DragHandles[DragHandleAnchor.BottomRight].Bounds =
 					new Rectangle(right, bottom, _dragHandleSize, _dragHandleSize);
 			}
 		}
 	}
 
 	private void ProcessSelectionMove(Point cursorPosition) {
-		if (_isMoving) {
+		if (IsMoving) {
 			int x;
 			int y;
 			Point imagePoint;
@@ -701,7 +678,7 @@ internal class ImageBoxEx : ImageBox
 	}
 
 	private void ProcessSelectionResize(Point cursorPosition) {
-		if (_isResizing) {
+		if (IsResizing) {
 			Point imagePosition;
 			float left;
 			float top;
@@ -725,16 +702,16 @@ internal class ImageBoxEx : ImageBox
 			bottom = selectionRegion.Bottom;
 
 			// decide which edges we're resizing
-			resizingTopEdge = _resizeAnchor >= DragHandleAnchor.TopLeft &&
-			                  _resizeAnchor <= DragHandleAnchor.TopRight;
-			resizingBottomEdge = _resizeAnchor >= DragHandleAnchor.BottomLeft &&
-			                     _resizeAnchor <= DragHandleAnchor.BottomRight;
-			resizingLeftEdge = _resizeAnchor == DragHandleAnchor.TopLeft ||
-			                   _resizeAnchor == DragHandleAnchor.MiddleLeft ||
-			                   _resizeAnchor == DragHandleAnchor.BottomLeft;
-			resizingRightEdge = _resizeAnchor == DragHandleAnchor.TopRight ||
-			                    _resizeAnchor == DragHandleAnchor.MiddleRight ||
-			                    _resizeAnchor == DragHandleAnchor.BottomRight;
+			resizingTopEdge = ResizeAnchor >= DragHandleAnchor.TopLeft &&
+			                  ResizeAnchor <= DragHandleAnchor.TopRight;
+			resizingBottomEdge = ResizeAnchor >= DragHandleAnchor.BottomLeft &&
+			                     ResizeAnchor <= DragHandleAnchor.BottomRight;
+			resizingLeftEdge = ResizeAnchor == DragHandleAnchor.TopLeft ||
+			                   ResizeAnchor == DragHandleAnchor.MiddleLeft ||
+			                   ResizeAnchor == DragHandleAnchor.BottomLeft;
+			resizingRightEdge = ResizeAnchor == DragHandleAnchor.TopRight ||
+			                    ResizeAnchor == DragHandleAnchor.MiddleRight ||
+			                    ResizeAnchor == DragHandleAnchor.BottomRight;
 
 			// and resize!
 			if (resizingTopEdge) {
@@ -784,8 +761,8 @@ internal class ImageBoxEx : ImageBox
 	}
 
 	private void ResetDrag() {
-		_isResizing = false;
-		_isMoving = false;
+		IsResizing = false;
+		IsMoving = false;
 		_dragOrigin = Point.Empty;
 		_dragOriginOffset = Point.Empty;
 	}
@@ -793,7 +770,7 @@ internal class ImageBoxEx : ImageBox
 	private void StartResize(DragHandleAnchor anchor) {
 		CancelEventArgs e;
 
-		if (_isMoving || _isResizing) {
+		if (IsMoving || IsResizing) {
 			throw new InvalidOperationException("A move or resize action is currently being performed.");
 		}
 
@@ -802,9 +779,9 @@ internal class ImageBoxEx : ImageBox
 		OnSelectionResizing(e);
 
 		if (!e.Cancel) {
-			_resizeAnchor = anchor;
-			_previousSelectionRegion = SelectionRegion;
-			_isResizing = true;
+			ResizeAnchor = anchor;
+			PreviousSelectionRegion = SelectionRegion;
+			IsResizing = true;
 		}
 	}
 

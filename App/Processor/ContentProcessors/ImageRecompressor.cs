@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using FreeImageAPI;
 using iTextSharp.text.pdf;
 using PDFPatcher.Model;
@@ -12,14 +10,15 @@ namespace PDFPatcher.Processor;
 
 internal sealed class ImageRecompressor : IPageProcessor
 {
-	private static readonly PdfName[] __IgnoreFilters = new PdfName[] {PdfName.DCTDECODE, PdfName.JBIG2DECODE};
+	private static readonly PdfName[] __IgnoreFilters = {PdfName.DCTDECODE, PdfName.JBIG2DECODE};
 
 	private static readonly ImageExtracterOptions _imgExpOption = new() {
 		OutputPath = Path.GetTempPath(), MergeImages = false
 	};
 
-	private int _processedImageCount;
 	private int _optimizedImageCount;
+
+	private int _processedImageCount;
 
 	#region IPageProcessor 成员
 

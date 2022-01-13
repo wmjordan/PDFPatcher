@@ -1,15 +1,11 @@
 ﻿using System.Xml;
 using System.Xml.XPath;
+using PDFPatcher.Model;
 
 namespace PDFPatcher.Processor;
 
 internal abstract class BookmarkMatcher
 {
-	internal enum MatcherType
-	{
-		Normal, Regex, XPath
-	}
-
 	internal abstract bool Match(XmlElement item);
 	internal abstract IUndoAction Replace(XmlElement item, string replacement);
 
@@ -17,17 +13,21 @@ internal abstract class BookmarkMatcher
 		if (type == MatcherType.XPath) {
 			return new XPathMatcher(pattern);
 		}
-		else {
-			return new RegexMatcher(pattern, matchCase, type == MatcherType.Regex, fullMatch);
-		}
+
+		return new RegexMatcher(pattern, matchCase, type == MatcherType.Regex, fullMatch);
+	}
+
+	internal enum MatcherType
+	{
+		Normal, Regex, XPath
 	}
 
 	private sealed class RegexMatcher : BookmarkMatcher
 	{
-		private readonly Model.MatchPattern.IMatcher _matcher;
+		private readonly MatchPattern.IMatcher _matcher;
 
 		internal RegexMatcher(string pattern, bool matchCase, bool regexSearch, bool fullMatch) {
-			_matcher = new Model.MatchPattern(pattern, matchCase, fullMatch, regexSearch).CreateMatcher();
+			_matcher = new MatchPattern(pattern, matchCase, fullMatch, regexSearch).CreateMatcher();
 		}
 
 		internal override bool Match(XmlElement item) {

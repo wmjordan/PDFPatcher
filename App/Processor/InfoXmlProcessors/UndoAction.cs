@@ -12,15 +12,15 @@ internal interface IUndoAction
 
 internal sealed class UndoManager
 {
-	private readonly Stack<IUndoAction> _undoActions = new();
-	private readonly List<string> _names = new();
-
 	public delegate void OnUndoDelegate(UndoManager undoManager, IUndoAction action);
 
-	public bool CanUndo => _names.Count > 0;
+	private readonly List<string> _names = new();
+	private readonly Stack<IUndoAction> _undoActions = new();
 
 	public OnUndoDelegate OnAddUndo = null;
 	public OnUndoDelegate OnUndo = null;
+
+	public bool CanUndo => _names.Count > 0;
 
 	public void Clear() {
 		_names.Clear();
@@ -68,14 +68,14 @@ internal sealed class UndoActionGroup : IUndoAction
 {
 	private readonly List<IUndoAction> _actions = new();
 
-	public int Count => _actions.Count;
-
 	public UndoActionGroup() {
 	}
 
 	public UndoActionGroup(IEnumerable<IUndoAction> actions) {
 		_actions.AddRange(actions);
 	}
+
+	public int Count => _actions.Count;
 
 	public void Add(IUndoAction action) {
 		if (action == null) {
@@ -134,17 +134,17 @@ internal sealed class UndoActionGroup : IUndoAction
 
 internal abstract class UndoElementAction : IUndoAction
 {
-	public XmlNode Parent { get; private set; }
-	public XmlElement TargetElement { get; private set; }
-
 	protected UndoElementAction(XmlElement target) {
 		TargetElement = target ?? throw new ArgumentNullException("undo/element/target");
 		Parent = target.ParentNode;
 	}
 
+	public XmlNode Parent { get; }
+	public XmlElement TargetElement { get; }
+
 	#region IUndoAction 成员
 
-	public IEnumerable<XmlNode> AffectedElements => new XmlNode[] {Parent};
+	public IEnumerable<XmlNode> AffectedElements => new[] {Parent};
 	public abstract bool Undo();
 
 	#endregion
@@ -163,11 +163,11 @@ internal sealed class RemoveElementAction : UndoElementAction
 
 internal sealed class AddElementAction : UndoElementAction
 {
-	public XmlNode RefNode { get; private set; }
-
 	public AddElementAction(XmlElement target) : base(target) {
 		RefNode = target.NextSibling;
 	}
+
+	public XmlNode RefNode { get; }
 
 	public override bool Undo() {
 		if (RefNode == null) {
@@ -183,9 +183,6 @@ internal sealed class AddElementAction : UndoElementAction
 
 internal abstract class UndoAttributeAction : IUndoAction
 {
-	public XmlElement TargetElement { get; private set; }
-	public string Name { get; private set; }
-
 	protected UndoAttributeAction(XmlElement targeNode, string name) {
 		if (string.IsNullOrEmpty(name)) {
 			throw new ArgumentNullException("undo/attr/name");
@@ -194,6 +191,9 @@ internal abstract class UndoAttributeAction : IUndoAction
 		TargetElement = targeNode ?? throw new ArgumentNullException("undo/attr/target");
 		Name = name;
 	}
+
+	public XmlElement TargetElement { get; }
+	public string Name { get; }
 
 	//internal static UndoActionGroup GetUndoAttributeGroup (XmlElement targetNode, params string[] names) {
 	//	var undoList = new UndoActionGroup ();
@@ -223,7 +223,7 @@ internal abstract class UndoAttributeAction : IUndoAction
 	//}
 
 	/// <summary>
-	/// 设置目标元素的属性值，并返回撤销动作。
+	///     设置目标元素的属性值，并返回撤销动作。
 	/// </summary>
 	/// <param name="targetNode">需要修改的元素节点。</param>
 	/// <param name="name">属性名称。</param>
@@ -245,7 +245,8 @@ internal abstract class UndoAttributeAction : IUndoAction
 
 			return new SetAttributeAction(targetNode, name, v);
 		}
-		else if (newValue != null) {
+
+		if (newValue != null) {
 			targetNode.SetAttribute(name, newValue);
 		}
 
@@ -273,11 +274,11 @@ internal sealed class RemoveAttributeAction : UndoAttributeAction
 
 internal sealed class SetAttributeAction : UndoAttributeAction
 {
-	public string Value { get; private set; }
-
 	public SetAttributeAction(XmlElement targeNode, string name, string value) : base(targeNode, name) {
 		Value = value;
 	}
+
+	public string Value { get; }
 
 	public override bool Undo() {
 		TargetElement.SetAttribute(Name, Value);

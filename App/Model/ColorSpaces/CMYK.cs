@@ -1,14 +1,12 @@
-﻿using System;
-
-namespace Devcorp.Controls.Design;
+﻿namespace Devcorp.Controls.Design;
 
 /// <summary>
-/// Structure to define CMYK.
+///     Structure to define CMYK.
 /// </summary>
 public struct CMYK
 {
 	/// <summary>
-	/// Gets an empty CMYK structure;
+	///     Gets an empty CMYK structure;
 	/// </summary>
 	public static readonly CMYK Empty = new();
 
@@ -76,7 +74,7 @@ public struct CMYK
 	#endregion
 
 	/// <summary>
-	/// Creates an instance of a CMYK structure.
+	///     Creates an instance of a CMYK structure.
 	/// </summary>
 	public CMYK(double c, double m, double y, double k) {
 		this.c = c;

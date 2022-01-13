@@ -1,12 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml.Serialization;
+﻿using System.Xml.Serialization;
 
 namespace PDFPatcher;
 
 public class ExtractPageOptions
 {
+	public ExtractPageOptions() {
+		KeepBookmarks = true;
+		KeepDocumentProperties = true;
+		RemoveDocumentRestrictions = true;
+		RemoveOrphanBookmarks = true;
+		NumberFileNames = true;
+		SeperateByPage = 1;
+	}
+
 	[XmlAttribute("保留文档属性")] public bool KeepDocumentProperties { get; set; }
 	[XmlAttribute("保留文档书签")] public bool KeepBookmarks { get; set; }
 	[XmlAttribute("删除无效书签")] public bool RemoveOrphanBookmarks { get; set; }
@@ -17,13 +23,4 @@ public class ExtractPageOptions
 
 	[XmlIgnore] public string PageRanges { get; set; }
 	[XmlIgnore] public string ExcludePageRanges { get; set; }
-
-	public ExtractPageOptions() {
-		KeepBookmarks = true;
-		KeepDocumentProperties = true;
-		RemoveDocumentRestrictions = true;
-		RemoveOrphanBookmarks = true;
-		NumberFileNames = true;
-		SeperateByPage = 1;
-	}
 }

@@ -1,4 +1,7 @@
-﻿namespace PDFPatcher.Processor;
+﻿using System;
+using System.Xml;
+
+namespace PDFPatcher.Processor;
 
 internal sealed class SetTextStyleProcessor : IPdfInfoXmlProcessor
 {
@@ -9,7 +12,7 @@ internal sealed class SetTextStyleProcessor : IPdfInfoXmlProcessor
 
 	private readonly Style _style;
 
-	public SetTextStyleProcessor(System.Xml.XmlElement element, Style style) {
+	public SetTextStyleProcessor(XmlElement element, Style style) {
 		string s = element.GetAttribute(Constants.BookmarkAttributes.Style);
 		if (style == Style.SetBold) {
 			if (s != Constants.BookmarkAttributes.StyleType.Bold &&
@@ -50,7 +53,7 @@ internal sealed class SetTextStyleProcessor : IPdfInfoXmlProcessor
 		}
 	}
 
-	public IUndoAction Process(System.Xml.XmlElement item) {
+	public IUndoAction Process(XmlElement item) {
 		string value = item.GetAttribute(Constants.BookmarkAttributes.Style);
 		int style = 0;
 		switch (value) {
@@ -62,8 +65,6 @@ internal sealed class SetTextStyleProcessor : IPdfInfoXmlProcessor
 				break;
 			case Constants.BookmarkAttributes.StyleType.BoldItalic:
 				style = 3;
-				break;
-			default:
 				break;
 		}
 
@@ -96,7 +97,7 @@ internal sealed class SetTextStyleProcessor : IPdfInfoXmlProcessor
 
 				style ^= 0x02;
 				break;
-			default: throw new System.ArgumentOutOfRangeException("Style");
+			default: throw new ArgumentOutOfRangeException("Style");
 		}
 
 		switch (style) {

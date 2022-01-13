@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Windows.Forms;
 using System.Xml;
 using MuPdfSharp;
 using PDFPatcher.Common;
@@ -11,8 +12,10 @@ namespace PDFPatcher;
 
 internal static class AppContext
 {
+	internal const int MaxHistoryItemCount = 16;
+
 	private static readonly string AppConfigFilePath = FileHelper.CombinePath(
-		Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath),
+		Path.GetDirectoryName(Application.ExecutablePath),
 		//"config.json");
 		"AppConfig.json");
 
@@ -25,9 +28,7 @@ internal static class AppContext
 		CanSerializePrivateMembers = true
 	};
 
-	internal const int MaxHistoryItemCount = 16;
-
-	internal static MainForm MainForm { get; set; }
+	private static string[] _SourceFiles = new string[0];
 
 	static AppContext() {
 		SaveAppSettings = true;
@@ -50,12 +51,12 @@ internal static class AppContext
 		Recent = new RecentItems();
 	}
 
+	internal static MainForm MainForm { get; set; }
+
 	public static bool SaveAppSettings { get; set; }
 
 	///<summary>获取或指定是否在加载 PDF 文档时仅加载部分文档。</summary>
 	public static bool LoadPartialPdfFile { get; set; }
-
-	private static string[] _SourceFiles = new string[0];
 
 	///<summary>获取或指定要处理的源文件路径列表。</summary>
 	public static string[] SourceFiles {
@@ -115,69 +116,6 @@ internal static class AppContext
 	public static ToolbarOptions Toolbar { get; internal set; }
 
 	public static RecentItems Recent { get; internal set; }
-
-	[JsonSerializable]
-	public sealed class RecentItems
-	{
-		///<summary>获取最近使用的 PDF 文件列表。</summary>
-		[JsonField("源文件")]
-		public List<string> SourcePdfFiles { get; } = new();
-
-		///<summary>获取最近使用的 PDF 输出文件列表。</summary>
-		[JsonField("输出文件")]
-		public List<string> TargetPdfFiles { get; } = new();
-
-		///<summary>获取最近使用的信息文件列表。</summary>
-		[JsonField("信息文件")]
-		public List<string> InfoDocuments { get; } = new();
-
-		///<summary>获取最近使用的文件名模板列表。</summary>
-		[JsonField("文件名模板")]
-		public List<string> FileNameTemplates { get; } = new();
-
-		///<summary>获取最近使用的文件夹列表。</summary>
-		[JsonField("文件夹")]
-		public List<string> Folders { get; } = new();
-
-		///<summary>获取最近使用的查找字符串列表。</summary>
-		[JsonField("查找项")]
-		public List<string> SearchPatterns { get; } = new();
-
-		///<summary>获取最近使用的替换字符串列表。</summary>
-		[JsonField("替换项")]
-		public List<string> ReplacePatterns { get; } = new();
-
-		internal static void AddHistoryItem(IList<string> list, string item) {
-			if (string.IsNullOrEmpty(item)) {
-				return;
-			}
-
-			int i = -1;
-			bool m = false;
-			foreach (string li in list) {
-				i++;
-				if (string.Equals(li, item, StringComparison.OrdinalIgnoreCase)) {
-					m = true;
-					break;
-				}
-			}
-
-			if (m) {
-				if (i == 0) {
-					return;
-				}
-
-				if (i != -1) {
-					list.RemoveAt(i);
-				}
-			}
-
-			list.Insert(0, item);
-			while (list.Count > MaxHistoryItemCount) {
-				list.RemoveAt(list.Count - 1);
-			}
-		}
-	}
 
 	internal static void CleanUpInexistentFiles(IList<string> list) {
 		List<string> s = new(list.Count);
@@ -287,7 +225,7 @@ internal static class AppContext
 	}
 
 	/// <summary>
-	/// 保存应用程序配置。
+	///     保存应用程序配置。
 	/// </summary>
 	/// <param name="path">保存路径。路径为空时，保存到默认位置。</param>
 	/// <param name="saveHistoryFileList">是否保存历史文件列表。</param>
@@ -330,6 +268,69 @@ internal static class AppContext
 			writer.WriteStartElement(name);
 			writer.WriteAttributeString(Configuration.Path, item);
 			writer.WriteEndElement();
+		}
+	}
+
+	[JsonSerializable]
+	public sealed class RecentItems
+	{
+		///<summary>获取最近使用的 PDF 文件列表。</summary>
+		[JsonField("源文件")]
+		public List<string> SourcePdfFiles { get; } = new();
+
+		///<summary>获取最近使用的 PDF 输出文件列表。</summary>
+		[JsonField("输出文件")]
+		public List<string> TargetPdfFiles { get; } = new();
+
+		///<summary>获取最近使用的信息文件列表。</summary>
+		[JsonField("信息文件")]
+		public List<string> InfoDocuments { get; } = new();
+
+		///<summary>获取最近使用的文件名模板列表。</summary>
+		[JsonField("文件名模板")]
+		public List<string> FileNameTemplates { get; } = new();
+
+		///<summary>获取最近使用的文件夹列表。</summary>
+		[JsonField("文件夹")]
+		public List<string> Folders { get; } = new();
+
+		///<summary>获取最近使用的查找字符串列表。</summary>
+		[JsonField("查找项")]
+		public List<string> SearchPatterns { get; } = new();
+
+		///<summary>获取最近使用的替换字符串列表。</summary>
+		[JsonField("替换项")]
+		public List<string> ReplacePatterns { get; } = new();
+
+		internal static void AddHistoryItem(IList<string> list, string item) {
+			if (string.IsNullOrEmpty(item)) {
+				return;
+			}
+
+			int i = -1;
+			bool m = false;
+			foreach (string li in list) {
+				i++;
+				if (string.Equals(li, item, StringComparison.OrdinalIgnoreCase)) {
+					m = true;
+					break;
+				}
+			}
+
+			if (m) {
+				if (i == 0) {
+					return;
+				}
+
+				if (i != -1) {
+					list.RemoveAt(i);
+				}
+			}
+
+			list.Insert(0, item);
+			while (list.Count > MaxHistoryItemCount) {
+				list.RemoveAt(list.Count - 1);
+			}
 		}
 	}
 }

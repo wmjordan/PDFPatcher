@@ -6,6 +6,7 @@ using iTextSharp.text.pdf;
 using PDFPatcher.Common;
 using PDFPatcher.Model;
 using PDFPatcher.Processor;
+using PDFPatcher.Properties;
 
 namespace PDFPatcher.Functions;
 
@@ -13,22 +14,10 @@ public partial class DocumentFontListForm : Form
 {
 	private Dictionary<int, string> _fontIdNames;
 	private Dictionary<string, PageFont> _pageFonts;
-	internal FontSubstitutionsEditor SubstitutionsEditor { get; set; }
-
-	public IList<string> SelectedFonts {
-		get {
-			List<string> sf = new();
-			foreach (PageFont item in _FontListBox.CheckedObjects) {
-				sf.Add(item.Name);
-			}
-
-			return sf;
-		}
-	}
 
 	public DocumentFontListForm() {
 		InitializeComponent();
-		this.SetIcon(Properties.Resources.Fonts);
+		this.SetIcon(Resources.Fonts);
 		Load += (s, args) => {
 			MinimumSize = Size;
 			if (AppContext.Recent.SourcePdfFiles.HasContent()) {
@@ -88,10 +77,23 @@ public partial class DocumentFontListForm : Form
 			}
 		};
 		_FontListBox.PersistentCheckBoxes = true;
-		new TypedColumn<PageFont>(_NameColumn) {AspectGetter = (o) => o.Name};
-		new TypedColumn<PageFont>(_FirstPageColumn) {AspectGetter = (o) => o.FirstPage};
-		new TypedColumn<PageFont>(_EmbeddedColumn) {AspectGetter = (o) => o.Embedded};
-		new TypedColumn<PageFont>(_ReferenceColumn) {AspectGetter = (o) => o.Reference};
+		new TypedColumn<PageFont>(_NameColumn) {AspectGetter = o => o.Name};
+		new TypedColumn<PageFont>(_FirstPageColumn) {AspectGetter = o => o.FirstPage};
+		new TypedColumn<PageFont>(_EmbeddedColumn) {AspectGetter = o => o.Embedded};
+		new TypedColumn<PageFont>(_ReferenceColumn) {AspectGetter = o => o.Reference};
+	}
+
+	internal FontSubstitutionsEditor SubstitutionsEditor { get; set; }
+
+	public IList<string> SelectedFonts {
+		get {
+			List<string> sf = new();
+			foreach (PageFont item in _FontListBox.CheckedObjects) {
+				sf.Add(item.Name);
+			}
+
+			return sf;
+		}
 	}
 
 	private void GetPageFonts(PdfReader pdf, int pageNumber) {
@@ -139,25 +141,6 @@ public partial class DocumentFontListForm : Form
 		_Worker.RunWorkerAsync();
 	}
 
-	private sealed class PageFont
-	{
-		public string Name { get; }
-		public int FirstPage { get; }
-		public int Reference { get; private set; }
-		public bool Embedded { get; set; }
-
-		public PageFont(string name, int firstPage, bool embedded) {
-			Name = name;
-			FirstPage = firstPage;
-			Embedded = embedded;
-			Reference = 1;
-		}
-
-		public void IncrementReference() {
-			Reference++;
-		}
-	}
-
 	private void _SelectAllButton_Click(object sender, EventArgs e) {
 		if (_FontListBox.GetItemCount() == 0) {
 			return;
@@ -190,5 +173,24 @@ public partial class DocumentFontListForm : Form
 
 	private void _AppConfigButton_Click(object sender, EventArgs e) {
 		this.ShowDialog<AppOptionForm>();
+	}
+
+	private sealed class PageFont
+	{
+		public PageFont(string name, int firstPage, bool embedded) {
+			Name = name;
+			FirstPage = firstPage;
+			Embedded = embedded;
+			Reference = 1;
+		}
+
+		public string Name { get; }
+		public int FirstPage { get; }
+		public int Reference { get; private set; }
+		public bool Embedded { get; }
+
+		public void IncrementReference() {
+			Reference++;
+		}
 	}
 }

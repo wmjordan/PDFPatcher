@@ -1,5 +1,4 @@
-﻿using System.Drawing;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 using PDFPatcher.Common;
 using PDFPatcher.Model;
 using PDFPatcher.Processor;
@@ -30,6 +29,17 @@ internal sealed class QuickSelectCommand : IEditorCommand
 		new("^" + __S + __ND + __ND + __ND + __ND + __ND + "?" + __NN, true, false, true) {Name = "“N.N.N.N.N”模式"}
 	};
 
+	private readonly BookmarkMatcher _command;
+
+	public QuickSelectCommand(MatchPattern command) {
+		_command = BookmarkMatcher.Create(command.Text, BookmarkMatcher.MatcherType.Regex, command.MatchCase,
+			command.FullMatch);
+	}
+
+	public void Process(Controller controller, params string[] parameters) {
+		controller.View.Bookmark.SearchBookmarks(_command);
+	}
+
 	internal static void RegisterCommands(CommandRegistry<Controller> registry) {
 		foreach (MatchPattern item in __commands) {
 			registry.Register(new QuickSelectCommand(item), item.Name);
@@ -40,16 +50,5 @@ internal sealed class QuickSelectCommand : IEditorCommand
 		foreach (MatchPattern item in __commands) {
 			container.Add(new ToolStripMenuItem(item.Name) {Name = item.Name});
 		}
-	}
-
-	private readonly BookmarkMatcher _command;
-
-	public QuickSelectCommand(MatchPattern command) {
-		_command = BookmarkMatcher.Create(command.Text, BookmarkMatcher.MatcherType.Regex, command.MatchCase,
-			command.FullMatch);
-	}
-
-	public void Process(Controller controller, params string[] parameters) {
-		controller.View.Bookmark.SearchBookmarks(_command);
 	}
 }

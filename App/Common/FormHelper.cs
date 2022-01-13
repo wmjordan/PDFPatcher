@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Drawing;
+using System.IO;
 using System.Text;
 using System.Windows.Forms;
+using RichTextBoxLinks;
 
 namespace PDFPatcher.Common;
 
@@ -135,8 +137,8 @@ internal static class FormHelper
 			return;
 		}
 
-		dialog.InitialDirectory = System.IO.Path.GetDirectoryName(path);
-		dialog.FileName = System.IO.Path.GetFileName(path);
+		dialog.InitialDirectory = Path.GetDirectoryName(path);
+		dialog.FileName = Path.GetFileName(path);
 	}
 
 	public static ToolStrip ToggleEnabled(this ToolStrip toolStrip, bool enabled, params string[] names) {
@@ -149,7 +151,7 @@ internal static class FormHelper
 		return toolStrip;
 	}
 
-	internal static void InsertLinkedText(this RichTextBoxLinks.RichTextBoxEx textBox, string text) {
+	internal static void InsertLinkedText(this RichTextBoxEx textBox, string text) {
 		const int TokenLength = 2;
 		int p1 = text.IndexOf("<<");
 		int p2 = text.IndexOf(">>");

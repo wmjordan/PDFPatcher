@@ -13,6 +13,27 @@ public partial class TextSizeConditionEditor : UserControl, IFilterConditionEdit
 		InitializeComponent();
 	}
 
+	private void ControlChanged(object sender, EventArgs e) {
+		ToggleControlState();
+		if (_lock) {
+			return;
+		}
+
+		if (_SizeBox.Checked) {
+			_condition.SetRange((float)_SpecificSizeBox.Value, (float)_SpecificSizeBox.Value);
+		}
+		else if (_SizeRangeBox.Checked) {
+			_condition.SetRange((float)_MinSizeBox.Value, (float)_MaxSizeBox.Value);
+		}
+
+		EditAdjustmentForm.UpdateFilter(this);
+	}
+
+	private void ToggleControlState() {
+		_MinSizeBox.Enabled = _MaxSizeBox.Enabled = _SizeRangeBox.Checked;
+		_SpecificSizeBox.Enabled = _SizeBox.Checked;
+	}
+
 	#region ITextInfoFilterEditor 成员
 
 	public AutoBookmarkCondition Filter {
@@ -38,25 +59,4 @@ public partial class TextSizeConditionEditor : UserControl, IFilterConditionEdit
 	public UserControl EditorControl => this;
 
 	#endregion
-
-	private void ControlChanged(object sender, EventArgs e) {
-		ToggleControlState();
-		if (_lock) {
-			return;
-		}
-
-		if (_SizeBox.Checked) {
-			_condition.SetRange((float)_SpecificSizeBox.Value, (float)_SpecificSizeBox.Value);
-		}
-		else if (_SizeRangeBox.Checked) {
-			_condition.SetRange((float)_MinSizeBox.Value, (float)_MaxSizeBox.Value);
-		}
-
-		EditAdjustmentForm.UpdateFilter(this);
-	}
-
-	private void ToggleControlState() {
-		_MinSizeBox.Enabled = _MaxSizeBox.Enabled = _SizeRangeBox.Checked;
-		_SpecificSizeBox.Enabled = _SizeBox.Checked;
-	}
 }

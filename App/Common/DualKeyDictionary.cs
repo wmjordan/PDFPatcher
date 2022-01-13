@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections;
 using System.Collections.Generic;
 
 namespace PDFPatcher.Common;
@@ -8,8 +8,21 @@ public class DualKeyDictionary<K, V> : IDictionary<K, V>
 	private readonly Dictionary<K, V> _keyDictionary = new();
 	private readonly Dictionary<V, K> _reverseDictionary = new();
 
-	public DualKeyDictionary() {
+	#region IEnumerable<KeyValuePair<K,V>> 成员
+
+	public IEnumerator<KeyValuePair<K, V>> GetEnumerator() {
+		return ((IEnumerable<KeyValuePair<K, V>>)_keyDictionary).GetEnumerator();
 	}
+
+	#endregion
+
+	#region IEnumerable 成员
+
+	IEnumerator IEnumerable.GetEnumerator() {
+		return ((IEnumerable)_keyDictionary).GetEnumerator();
+	}
+
+	#endregion
 
 	public K GetKeyByValue(V value) {
 		return _reverseDictionary[value];
@@ -84,22 +97,6 @@ public class DualKeyDictionary<K, V> : IDictionary<K, V>
 
 	public bool Remove(KeyValuePair<K, V> item) {
 		return Remove(item.Key);
-	}
-
-	#endregion
-
-	#region IEnumerable<KeyValuePair<K,V>> 成员
-
-	public IEnumerator<KeyValuePair<K, V>> GetEnumerator() {
-		return ((IEnumerable<KeyValuePair<K, V>>)_keyDictionary).GetEnumerator();
-	}
-
-	#endregion
-
-	#region IEnumerable 成员
-
-	System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() {
-		return ((System.Collections.IEnumerable)_keyDictionary).GetEnumerator();
 	}
 
 	#endregion

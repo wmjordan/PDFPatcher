@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
 using PDFPatcher.Common;
 
 namespace MuPdfSharp;
@@ -11,11 +10,16 @@ public sealed class RenderResultCache : IDisposable
 	private const int __bufferSize = 10;
 	private readonly MuDocument _document;
 	private Dictionary<int, RenderResult> _buffer = new(__bufferSize);
-	private readonly object _SyncObj = new();
-	public object SyncObj => _SyncObj;
 
 	public RenderResultCache(MuDocument document) {
 		_document = document;
+	}
+
+	public object SyncObj { get; } = new();
+
+	public void Dispose() {
+		Clear();
+		_buffer = null;
 	}
 
 	public MuPage LoadPage(int pageNumber) {
@@ -80,19 +84,14 @@ public sealed class RenderResultCache : IDisposable
 		_buffer.Clear();
 	}
 
-	public void Dispose() {
-		Clear();
-		_buffer = null;
-	}
-
 	private sealed class RenderResult : IDisposable
 	{
-		public MuPage Page { get; private set; }
-		public Bitmap Image { get; internal set; }
-
 		public RenderResult(MuPage page) {
 			Page = page;
 		}
+
+		public MuPage Page { get; }
+		public Bitmap Image { get; internal set; }
 
 		public void Dispose() {
 			if (Page != null) {

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using iTextSharp.text.pdf;
-using PDFPatcher.Model;
+﻿using iTextSharp.text.pdf;
 
 namespace PDFPatcher.Processor;
 

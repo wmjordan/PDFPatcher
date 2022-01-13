@@ -13,6 +13,20 @@ namespace PDFPatcher.Processor.Imaging;
 [DebuggerDisplay("REF = {PdfRef}({ReferenceCount}); Size = {Width} * {Height}")]
 internal sealed class ImageInfo
 {
+	internal ImageInfo() { }
+
+	internal ImageInfo(PdfImageData image) {
+		InlineImage = image;
+	}
+
+	internal ImageInfo(PdfIndirectReference pdfIndirect) {
+		InlineImage = new PdfImageData(pdfIndirect);
+	}
+
+	internal ImageInfo(PRStream stream) {
+		InlineImage = new PdfImageData(stream);
+	}
+
 	public string FileName { get; set; }
 	public int Width { get; set; }
 	public int Height { get; set; }
@@ -30,21 +44,7 @@ internal sealed class ImageInfo
 	public byte[] MaskBytes { get; private set; }
 	public int PaletteEntryCount { get; private set; }
 	public RGBQUAD[] PaletteArray { get; private set; }
-	public PdfImageData InlineImage { get; private set; }
-
-	internal ImageInfo() { }
-
-	internal ImageInfo(PdfImageData image) {
-		InlineImage = image;
-	}
-
-	internal ImageInfo(PdfIndirectReference pdfIndirect) {
-		InlineImage = new PdfImageData(pdfIndirect);
-	}
-
-	internal ImageInfo(PRStream stream) {
-		InlineImage = new PdfImageData(stream);
-	}
+	public PdfImageData InlineImage { get; }
 
 	internal byte[] DecodeImage(ImageExtracterOptions options) {
 		return DecodeImage(this, options);
@@ -72,8 +72,8 @@ internal sealed class ImageInfo
 		info.BitsPerComponent = data.TryGetInt32(PdfName.BITSPERCOMPONENT, 1);
 		info.PixelFormat = PixelFormat.Format8bppIndexed;
 		IList<PdfObject> decParams =
-			PdfHelper.GetObjectDirectOrFromContainerArray(data, PdfName.DECODEPARMS, PdfObject.DICTIONARY);
-		IList<PdfObject> filters = PdfHelper.GetObjectDirectOrFromContainerArray(data, PdfName.FILTER, PdfObject.NAME);
+			data.GetObjectDirectOrFromContainerArray(PdfName.DECODEPARMS, PdfObject.DICTIONARY);
+		IList<PdfObject> filters = data.GetObjectDirectOrFromContainerArray(PdfName.FILTER, PdfObject.NAME);
 		decodedBytes = DecodeStreamContent(data, filters);
 		string filter = filters.Count > 0
 			? (filters[filters.Count - 1] as PdfName ?? PdfName.DEFAULT).ToString()
@@ -193,8 +193,6 @@ internal sealed class ImageInfo
 						case FREE_IMAGE_COLOR_TYPE.FIC_RGBALPHA:
 							info.ColorSpace = PdfName.DEVICERGB;
 							break;
-						default:
-							break;
 					}
 
 					info.BitsPerComponent =
@@ -222,7 +220,7 @@ internal sealed class ImageInfo
 		   ) {
 			ImageInfo mi = new(sm);
 			byte[] mask = DecodeImage(mi,
-				new ImageExtracterOptions() {InvertBlackAndWhiteImages = !options.InvertSoftMask});
+				new ImageExtracterOptions {InvertBlackAndWhiteImages = !options.InvertSoftMask});
 			if (mask != null && mi.BitsPerComponent == 1) {
 				info.MaskBytes = mask;
 				info.MaskSize = new Size(mi.Width, mi.Height);
@@ -380,7 +378,7 @@ internal sealed class ImageInfo
 					break;
 				case "DecodePredictor":
 					if (i < dp.Count) {
-						buffer = PdfReader.DecodePredictor(buffer, (PdfObject)dp[i]);
+						buffer = PdfReader.DecodePredictor(buffer, dp[i]);
 					}
 
 					break;
@@ -510,8 +508,6 @@ internal sealed class ImageInfo
 				//}
 			}
 		}
-
-		return;
 	}
 
 	internal void ConvertDecodedBytes(ref byte[] bytes) {

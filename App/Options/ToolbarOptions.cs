@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 
@@ -8,16 +7,15 @@ namespace PDFPatcher;
 
 public class ToolbarOptions
 {
-	[XmlAttribute("显示主工具栏")]
-	[System.ComponentModel.DefaultValue(true)]
-	public bool ShowGeneralToolbar { get; set; }
-
-	private readonly List<ButtonOption> _Buttons = new();
-	[XmlElement("按钮")] public List<ButtonOption> Buttons => _Buttons;
-
 	public ToolbarOptions() {
 		ShowGeneralToolbar = true;
 	}
+
+	[XmlAttribute("显示主工具栏")]
+	[DefaultValue(true)]
+	public bool ShowGeneralToolbar { get; set; }
+
+	[XmlElement("按钮")] public List<ButtonOption> Buttons { get; } = new();
 
 	public void Reset() {
 		Buttons.Clear();
@@ -27,7 +25,7 @@ public class ToolbarOptions
 	}
 
 	internal void RemoveInvalidButtons() {
-		if (_Buttons.Count == 0) {
+		if (Buttons.Count == 0) {
 			Reset();
 			return;
 		}
@@ -54,11 +52,6 @@ public class ToolbarOptions
 
 	public class ButtonOption
 	{
-		[XmlAttribute("ID")] public string ID { get; set; }
-		[XmlAttribute("按钮名称")] public string DisplayName { get; set; }
-		[XmlAttribute("显示按钮文字")] public bool ShowText { get; set; }
-		[XmlAttribute("显示按钮")] public bool Visible { get; set; }
-
 		public ButtonOption() {
 		}
 
@@ -68,6 +61,11 @@ public class ToolbarOptions
 			ShowText = showText;
 			Visible = visible;
 		}
+
+		[XmlAttribute("ID")] public string ID { get; set; }
+		[XmlAttribute("按钮名称")] public string DisplayName { get; set; }
+		[XmlAttribute("显示按钮文字")] public bool ShowText { get; set; }
+		[XmlAttribute("显示按钮")] public bool Visible { get; set; }
 
 		internal Toolkit GetToolkit() {
 			return Toolkit.Get(ID);

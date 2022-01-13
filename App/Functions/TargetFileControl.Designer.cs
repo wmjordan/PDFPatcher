@@ -30,7 +30,7 @@
             this._SavePdfBox = new System.Windows.Forms.SaveFileDialog();
             this._BrowseTargetPdfButton = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
-            this._TargetPdfBox = new PDFPatcher.HistoryComboBox();
+            this.FileList = new PDFPatcher.HistoryComboBox();
             this._FileMacroMenu = new PDFPatcher.Functions.MacroMenu(this.components);
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -67,7 +67,7 @@
             // panel1
             // 
             this.panel1.Controls.Add(this._BrowseTargetPdfButton);
-            this.panel1.Controls.Add(this._TargetPdfBox);
+            this.panel1.Controls.Add(this.FileList);
             this.panel1.Controls.Add(this.label1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 0);
@@ -77,20 +77,20 @@
             // 
             // _TargetPdfBox
             // 
-            this._TargetPdfBox.AllowDrop = true;
-            this._TargetPdfBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.FileList.AllowDrop = true;
+            this.FileList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this._TargetPdfBox.Contents = null;
-            this._TargetPdfBox.ContextMenuStrip = this._FileMacroMenu;
-            this._TargetPdfBox.FormattingEnabled = true;
-            this._TargetPdfBox.Location = new System.Drawing.Point(104, 3);
-            this._TargetPdfBox.MaxItemCount = 16;
-            this._TargetPdfBox.Name = "_TargetPdfBox";
-            this._TargetPdfBox.Size = new System.Drawing.Size(281, 20);
-            this._TargetPdfBox.TabIndex = 1;
-            this._TargetPdfBox.DragDrop += new System.Windows.Forms.DragEventHandler(this._TargetPdfBox_DragDrop);
-            this._TargetPdfBox.DragEnter += new System.Windows.Forms.DragEventHandler(this._TargetPdfBox_DragEnter);
-            this._TargetPdfBox.TextChanged += new System.EventHandler(this._TargetPdfBox_TextChanged);
+            this.FileList.Contents = null;
+            this.FileList.ContextMenuStrip = this._FileMacroMenu;
+            this.FileList.FormattingEnabled = true;
+            this.FileList.Location = new System.Drawing.Point(104, 3);
+            this.FileList.MaxItemCount = 16;
+            this.FileList.Name = "FileList";
+            this.FileList.Size = new System.Drawing.Size(281, 20);
+            this.FileList.TabIndex = 1;
+            this.FileList.DragDrop += new System.Windows.Forms.DragEventHandler(this._TargetPdfBox_DragDrop);
+            this.FileList.DragEnter += new System.Windows.Forms.DragEventHandler(this._TargetPdfBox_DragEnter);
+            this.FileList.TextChanged += new System.EventHandler(this._TargetPdfBox_TextChanged);
             // 
             // _FileMacroMenu
             // 
@@ -117,7 +117,6 @@
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Button _BrowseTargetPdfButton;
 		private System.Windows.Forms.SaveFileDialog _SavePdfBox;
-		private HistoryComboBox _TargetPdfBox;
 		private Functions.MacroMenu _FileMacroMenu;
         private System.Windows.Forms.Panel panel1;
 	}

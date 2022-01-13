@@ -1,19 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Runtime.InteropServices;
+using iTextSharp.text;
 using iTextSharp.text.pdf;
 using Microsoft.Win32;
-using CharSet = System.Runtime.InteropServices.CharSet;
-using DllImport = System.Runtime.InteropServices.DllImportAttribute;
 
 namespace PDFPatcher.Common;
 
 internal static class FontHelper
 {
 	public static string FontDirectory { get; } =
-		System.IO.Path.GetFullPath(Environment.GetFolderPath(Environment.SpecialFolder.System) + "\\..\\fonts\\");
+		Path.GetFullPath(Environment.GetFolderPath(Environment.SpecialFolder.System) + "\\..\\fonts\\");
 
 	/// <summary>
-	/// 列出已安装的字体及其路径。
+	///     列出已安装的字体及其路径。
 	/// </summary>
 	/// <param name="includeFamilyName">是否包含字体组名称</param>
 	public static Dictionary<string, string> GetInstalledFonts(bool includeFamilyName) {
@@ -44,12 +45,12 @@ internal static class FontHelper
 						}
 					}
 				}
-				catch (System.IO.IOException) {
+				catch (IOException) {
 					// ignore
 				}
 				catch (NullReferenceException) {
 				}
-				catch (iTextSharp.text.DocumentException) {
+				catch (DocumentException) {
 					// ignore
 				}
 			}
@@ -96,7 +97,7 @@ internal static class FontHelper
 
 	private static class NativeMethods
 	{
-		[DllImport("Gdi32.dll", CharSet = CharSet.Unicode)]
+		[System.Runtime.InteropServices.DllImport("Gdi32.dll", CharSet = CharSet.Unicode)]
 		private static extern int AddFontResourceEx(string fontPath, int flag, IntPtr preserved);
 
 		[DllImport("Gdi32.dll", CharSet = CharSet.Unicode)]

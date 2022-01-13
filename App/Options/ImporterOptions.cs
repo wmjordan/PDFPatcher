@@ -4,6 +4,14 @@ namespace PDFPatcher;
 
 public class ImporterOptions
 {
+	public ImporterOptions() {
+		ImportDocProperties = true;
+		ImportBookmarks = true;
+		ImportPageLinks = true;
+		ImportViewerPreferences = true;
+		ImportPageSettings = true;
+	}
+
 	///<summary>获取或指定是否导入文档属性信息。</summary>
 	[XmlAttribute("导入文档属性")]
 	public bool ImportDocProperties { get; set; }
@@ -27,12 +35,4 @@ public class ImporterOptions
 	///<summary>获取或指定是否导入页面的阅读设置。</summary>
 	[XmlAttribute("导入页面设置")]
 	public bool ImportPageSettings { get; set; }
-
-	public ImporterOptions() {
-		ImportDocProperties = true;
-		ImportBookmarks = true;
-		ImportPageLinks = true;
-		ImportViewerPreferences = true;
-		ImportPageSettings = true;
-	}
 }

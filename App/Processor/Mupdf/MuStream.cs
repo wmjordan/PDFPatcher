@@ -9,27 +9,6 @@ internal sealed class MuStream : IDisposable
 {
 	private const int __CompressionBomb = 100 << 20;
 
-	#region 非托管资源成员
-
-	private readonly StreamHandle _stream;
-	private readonly ContextHandle _context;
-	private GCHandle _data;
-
-	#endregion
-
-	#region 托管资源成员
-
-	private readonly int _knownDataLength;
-	private readonly bool _sharedContext;
-
-	/// <summary>获取或设置游标位置。</summary>
-	public int Position {
-		get => NativeMethods.GetPosition(_context, _stream);
-		set => Seek(value, SeekOrigin.Begin);
-	}
-
-	#endregion
-
 	internal MuStream(byte[] data) {
 		ContextHandle ctx = ContextHandle.Create();
 		_knownDataLength = data.Length;
@@ -53,7 +32,7 @@ internal sealed class MuStream : IDisposable
 	}
 
 	/// <summary>
-	/// 读取 <paramref name="length"/> 字节到缓冲数组 <see cref="buffer"/>。（可能抛出异常）
+	///     读取 <paramref name="length" /> 字节到缓冲数组 <see cref="buffer" />。（可能抛出异常）
 	/// </summary>
 	/// <param name="buffer">放置读取数据的数组。</param>
 	/// <param name="length">要读取的数据长度。</param>
@@ -63,7 +42,7 @@ internal sealed class MuStream : IDisposable
 	}
 
 	/// <summary>
-	/// 读取流的所有内容到字节数组。（可能抛出异常）
+	///     读取流的所有内容到字节数组。（可能抛出异常）
 	/// </summary>
 	/// <returns>包含流中所有内容的数组。</returns>
 	public byte[] ReadAll(int initialSize) {
@@ -91,7 +70,7 @@ internal sealed class MuStream : IDisposable
 	}
 
 	/// <summary>
-	/// 跳转到流的指定位置。
+	///     跳转到流的指定位置。
 	/// </summary>
 	/// <param name="offset">偏移位置。</param>
 	/// <param name="origin">跳转方式。</param>
@@ -101,7 +80,7 @@ internal sealed class MuStream : IDisposable
 	}
 
 	/// <summary>
-	/// 将当前流视为以 CCITT Fax 压缩的图像来解压缩。
+	///     将当前流视为以 CCITT Fax 压缩的图像来解压缩。
 	/// </summary>
 	/// <param name="width">图像宽度。</param>
 	/// <param name="height">图像高度。</param>
@@ -120,6 +99,27 @@ internal sealed class MuStream : IDisposable
 					width, height, endOfBlock ? 1 : 0, blackIs1 ? 1 : 0))
 		);
 	}
+
+	#region 非托管资源成员
+
+	private readonly StreamHandle _stream;
+	private readonly ContextHandle _context;
+	private GCHandle _data;
+
+	#endregion
+
+	#region 托管资源成员
+
+	private readonly int _knownDataLength;
+	private readonly bool _sharedContext;
+
+	/// <summary>获取或设置游标位置。</summary>
+	public int Position {
+		get => NativeMethods.GetPosition(_context, _stream);
+		set => Seek(value, SeekOrigin.Begin);
+	}
+
+	#endregion
 
 	#region 实现 IDisposable 接口的属性和方法
 

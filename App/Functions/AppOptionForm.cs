@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Windows.Forms;
 using PDFPatcher.Common;
+using PDFPatcher.Properties;
 
 namespace PDFPatcher.Functions;
 
@@ -13,7 +14,7 @@ public partial class AppOptionForm : Form, IResettableControl
 	public AppOptionForm() {
 		InitializeComponent();
 		Reload();
-		this.SetIcon(Properties.Resources.AppOptions);
+		this.SetIcon(Resources.AppOptions);
 		_BookmarkEncodingBox.SelectedIndexChanged += ControlChanged;
 		_DocInfoEncodingBox.SelectedIndexChanged += ControlChanged;
 		_TextEncodingBox.SelectedIndexChanged += ControlChanged;

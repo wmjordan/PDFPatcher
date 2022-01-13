@@ -1,43 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace PDFPatcher.Model;
 
-[System.Diagnostics.DebuggerDisplay("{Direction}({Region.Middle},{Region.Center}):Text = {Text}")]
+[DebuggerDisplay("{Direction}({Region.Middle},{Region.Center}):Text = {Text}")]
 internal sealed class TextLine : IDirectionalBoundObject
 {
 	private readonly List<TextInfo> _Texts;
 
-	/// <summary>获取此行内包含的文本。</summary>
-	internal IEnumerable<TextInfo> Texts => _Texts;
-
-	/// <summary>获取 <see cref="Texts"/> 内的第一个 <see cref="TextInfo"/>。</summary>
-	internal TextInfo FirstText => _Texts[0];
-
-	public WritingDirection Direction { get; private set; }
-	public Bound Region { get; private set; }
-	internal bool SuppressTextInfoArrangement { get; set; }
-
-	/// <summary>
-	/// 默认的书写方向。
-	/// </summary>
-	internal static WritingDirection DefaultDirection { get; set; }
-
 	private string _Text;
-
-	/// <summary>
-	/// 获取将 <see cref="Texts"/> 内所有文本串联起来的字符串。
-	/// </summary>
-	public string Text {
-		get {
-			if (_Text == null) {
-				_Text = GetConcatinatedText();
-			}
-
-			return _Text;
-		}
-	}
 
 	private TextLine() {
 		_Texts = new List<TextInfo>();
@@ -49,6 +21,35 @@ internal sealed class TextLine : IDirectionalBoundObject
 		Region = new Bound(text.Region);
 		if (text.Text.Length > 2 && text.Region.Height > 0 && text.Region.Width > text.Region.Height * 2) {
 			Direction = WritingDirection.Hortizontal;
+		}
+	}
+
+	/// <summary>获取此行内包含的文本。</summary>
+	internal IEnumerable<TextInfo> Texts => _Texts;
+
+	/// <summary>获取 <see cref="Texts" /> 内的第一个 <see cref="TextInfo" />。</summary>
+	internal TextInfo FirstText => _Texts[0];
+
+	internal bool SuppressTextInfoArrangement { get; set; }
+
+	/// <summary>
+	///     默认的书写方向。
+	/// </summary>
+	internal static WritingDirection DefaultDirection { get; set; }
+
+	public WritingDirection Direction { get; private set; }
+	public Bound Region { get; private set; }
+
+	/// <summary>
+	///     获取将 <see cref="Texts" /> 内所有文本串联起来的字符串。
+	/// </summary>
+	public string Text {
+		get {
+			if (_Text == null) {
+				_Text = GetConcatinatedText();
+			}
+
+			return _Text;
 		}
 	}
 
@@ -80,23 +81,24 @@ internal sealed class TextLine : IDirectionalBoundObject
 	}
 
 	/// <summary>
-	/// 获取区域 <paramref name="other"/> 到当前文本行之间的距离。
+	///     获取区域 <paramref name="other" /> 到当前文本行之间的距离。
 	/// </summary>
 	/// <param name="other">另一个区域。</param>
-	/// <returns><paramref name="other"/> 相对于此区域的距离关系。</returns>
+	/// <returns><paramref name="other" /> 相对于此区域的距离关系。</returns>
 	internal DistanceInfo GetDistance(Bound other) {
 		return Region.GetDistance(other, Direction);
 	}
 
 	/// <summary>
-	/// 获取将 <see cref="Texts"/> 内所有文本串联起来的字符串。
+	///     获取将 <see cref="Texts" /> 内所有文本串联起来的字符串。
 	/// </summary>
 	private string GetConcatinatedText() {
 		int l = _Texts.Count;
 		if (l == 0) {
 			return string.Empty;
 		}
-		else if (l == 1) {
+
+		if (l == 1) {
 			return _Texts[0].Text;
 		}
 
@@ -149,13 +151,13 @@ internal sealed class TextLine : IDirectionalBoundObject
 		return sb.ToString();
 	}
 
-	/// <summary>获取 <see cref="Texts"/> 内文字或数字的平均尺寸。</summary>
+	/// <summary>获取 <see cref="Texts" /> 内文字或数字的平均尺寸。</summary>
 	/// <returns>返回平均字符尺寸。</returns>
 	internal float GetAverageCharSize() {
 		List<TextInfo> tl = _Texts;
 		float ts = 0, cc = 0;
 		if (Direction == WritingDirection.Vertical) {
-			tl.ForEach((t) => {
+			tl.ForEach(t => {
 				ts += t.LetterWidth;
 				cc += t.Text.Length;
 			});

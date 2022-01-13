@@ -1,28 +1,38 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using PDFPatcher.Common;
 using PDFPatcher.Model;
+using PDFPatcher.Processor;
+using PDFPatcher.Properties;
 
 namespace PDFPatcher.Functions;
 
 [ToolboxItem(false)]
 public partial class RenameControl : FunctionControl
 {
-	private FileListHelper _listHelper;
 	private static readonly string[] __EnabledCommands = { Commands.Copy, Commands.Delete };
-
-	public override string FunctionName => "重命名文件";
-
-	public override System.Drawing.Bitmap IconImage => Properties.Resources.Rename;
+	private FileListHelper _listHelper;
 
 	public RenameControl() {
 		InitializeComponent();
 	}
+
+	public override string FunctionName => "重命名文件";
+
+	public override Bitmap IconImage => Resources.Rename;
+
+	#region IDefaultButtonControl 成员
+
+	public override Button DefaultButton => _RenameButton;
+
+	#endregion
 
 	private void PatcherControl_OnLoad(object sender, EventArgs e) {
 		//Icon = FormHelper.ToIcon (Properties.Resources.CreateDocument);
@@ -35,7 +45,7 @@ public partial class RenameControl : FunctionControl
 
 		_TargetPdfFile.FileMacroMenu.LoadStandardInfoMacros();
 		_TargetPdfFile.FileMacroMenu.LoadStandardSourceFileMacros();
-		_TargetPdfFile.BrowseForFile += new EventHandler<EventArgs>(FileControl_BrowseForFile);
+		_TargetPdfFile.BrowseForFile += FileControl_BrowseForFile;
 		_TargetPdfFile.TargetFileChangedByBrowseButton += (s, args) => {
 			int i;
 			string f = _TargetPdfFile.FileDialog.FileName;
@@ -46,7 +56,7 @@ public partial class RenameControl : FunctionControl
 			}
 		};
 		ImageList.ImageCollection fi = _FileTypeList.Images;
-		fi.AddRange(new System.Drawing.Image[] { Properties.Resources.OriginalPdfFile });
+		fi.AddRange(new Image[] { Resources.OriginalPdfFile });
 		_ItemList.FixEditControlWidth();
 		_listHelper = new FileListHelper(_ItemList);
 		_listHelper.SetupDragAndDrop(AddFiles);
@@ -97,8 +107,6 @@ public partial class RenameControl : FunctionControl
 			case Commands.OpenFile:
 				AddFiles(parameters, true);
 				break;
-			default:
-				break;
 		}
 
 		base.ExecuteCommand(commandName, parameters);
@@ -129,7 +137,7 @@ public partial class RenameControl : FunctionControl
 		BackgroundWorker worker = AppContext.MainForm.GetWorker();
 		worker.DoWork += (dummy, arg) => {
 			List<SourceItem.Pdf> items = _listHelper.GetSourceItems<SourceItem.Pdf>(false);
-			Processor.Worker.RenameFiles(items, targetPdfFile, _KeepSourceFileBox.Checked);
+			Worker.RenameFiles(items, targetPdfFile, _KeepSourceFileBox.Checked);
 		};
 		worker.RunWorkerAsync();
 	}
@@ -226,14 +234,13 @@ public partial class RenameControl : FunctionControl
 					t = string.Concat("(找不到 PDF 文件：", s, ")");
 					continue;
 				}
-				else {
-					t = Processor.Worker.RenameFile(template, item);
-					if (t.Length == 0) {
-						t = "<输出文件名无效>";
-					}
-					else if (Path.GetFileName(t).Length == 0) {
-						t = "<输出文件名为空>";
-					}
+
+				t = Worker.RenameFile(template, item);
+				if (t.Length == 0) {
+					t = "<输出文件名无效>";
+				}
+				else if (Path.GetFileName(t).Length == 0) {
+					t = "<输出文件名为空>";
 				}
 
 				source[i] = s.ToString();
@@ -272,20 +279,14 @@ public partial class RenameControl : FunctionControl
 			return;
 		}
 
-		AddItems(new SourceItem[] { item });
+		AddItems(new[] { item });
 	}
 
-	private void AddItems(System.Collections.ICollection items) {
+	private void AddItems(ICollection items) {
 		int i = _ItemList.GetLastSelectedIndex();
 		_ItemList.InsertObjects(++i, items);
 		_ItemList.SelectedIndex = --i + items.Count;
 	}
-
-	#endregion
-
-	#region IDefaultButtonControl 成员
-
-	public override Button DefaultButton => _RenameButton;
 
 	#endregion
 }

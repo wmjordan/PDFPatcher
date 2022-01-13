@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace PDFPatcher.Model.PdfPath;
 
@@ -13,13 +12,7 @@ internal class PathCompiler
 	private const char StartPredicate = '[';
 	private const char EndPredicate = ']';
 
-	private static readonly char[] __PredicateChars = new char[] {StartPredicate, EndPredicate};
-
-	private sealed class Context
-	{
-		internal bool CanBeRoot { get; set; }
-		internal PathAxisType Axis { get; set; }
-	}
+	private static readonly char[] __PredicateChars = {StartPredicate, EndPredicate};
 
 	public static IEnumerable<IPathExpression> Compile(string path) {
 		Queue<IPathExpression> r = new();
@@ -57,25 +50,24 @@ internal class PathCompiler
 				++index;
 				return PathAxisType.Decendants;
 			}
-			else if (canBeRoot) {
+
+			if (canBeRoot) {
 				return PathAxisType.Root;
 			}
-			else {
-				return PathAxisType.Children;
-			}
+
+			return PathAxisType.Children;
 		}
-		else if (c == SelfChar) {
+
+		if (c == SelfChar) {
 			if (MatchNextChar(path, length, index, SelfChar)) {
 				++index;
 				return PathAxisType.Parent;
 			}
-			else {
-				return PathAxisType.None;
-			}
+
+			return PathAxisType.None;
 		}
-		else {
-			return PathAxisType.Children;
-		}
+
+		return PathAxisType.Children;
 	}
 
 	private static string ExtractName(string path, int length, ref int index) {
@@ -105,5 +97,11 @@ internal class PathCompiler
 
 	private static bool MatchNextChar(string path, int length, int index, char ch) {
 		return index + 1 < length && path[index + 1] == ch;
+	}
+
+	private sealed class Context
+	{
+		internal bool CanBeRoot { get; set; }
+		internal PathAxisType Axis { get; set; }
 	}
 }

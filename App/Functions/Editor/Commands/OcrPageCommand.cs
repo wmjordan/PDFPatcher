@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Windows.Forms;
-using System.Xml;
 using PDFPatcher.Common;
 using PDFPatcher.Model;
-using PDFPatcher.Processor;
 
 namespace PDFPatcher.Functions.Editor;
 

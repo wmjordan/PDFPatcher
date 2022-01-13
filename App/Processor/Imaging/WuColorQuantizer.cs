@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 
 namespace PDFPatcher.Processor.Imaging;
 
@@ -51,7 +52,7 @@ public static class WuQuantizer
 				targetOffset += targetByteLength;
 			}
 
-			System.Runtime.InteropServices.Marshal.Copy(targetBuffer, 0, targetData.Scan0, targetSize);
+			Marshal.Copy(targetBuffer, 0, targetData.Scan0, targetSize);
 		}
 		finally {
 			if (targetData != null) {
@@ -82,7 +83,7 @@ public static class WuQuantizer
 			int offset = 0;
 			byte[] buffer = new byte[byteLength * sourceImage.Height];
 
-			System.Runtime.InteropServices.Marshal.Copy(data.Scan0, buffer, 0, buffer.Length);
+			Marshal.Copy(data.Scan0, buffer, 0, buffer.Length);
 			int[] t = new int[__MaxColor];
 			for (int i = 0; i < __MaxColor; ++i) {
 				t[i] = i * i;
@@ -111,7 +112,7 @@ public static class WuQuantizer
 					mr[pos] += vr;
 					mg[pos] += vg;
 					mb[pos] += vb;
-					m[pos] += (float)(t[vr] + t[vg] + t[vb]);
+					m[pos] += t[vr] + t[vg] + t[vb];
 
 					colorData.AddPixel(
 						new Pixel(vr, vg, vb),
@@ -589,6 +590,9 @@ public static class WuQuantizer
 
 	private sealed class ColorData
 	{
+		private readonly int pixelsCount;
+		private int pixelFillingCounter;
+
 		public ColorData(int dataGranularity, int bitmapWidth, int bitmapHeight) {
 			dataGranularity++;
 			int s = dataGranularity * dataGranularity * dataGranularity;
@@ -599,30 +603,26 @@ public static class WuQuantizer
 			Moments = new float[s];
 
 			pixelsCount = bitmapWidth * bitmapHeight;
-			pixels = new Pixel[pixelsCount];
-			quantizedPixels = new int[pixelsCount];
+			Pixels = new Pixel[pixelsCount];
+			QuantizedPixels = new int[pixelsCount];
 		}
 
-		internal long[] Weights { get; private set; }
-		internal long[] MomentsRed { get; private set; }
-		internal long[] MomentsGreen { get; private set; }
-		internal long[] MomentsBlue { get; private set; }
-		internal float[] Moments { get; private set; }
+		internal long[] Weights { get; }
+		internal long[] MomentsRed { get; }
+		internal long[] MomentsGreen { get; }
+		internal long[] MomentsBlue { get; }
+		internal float[] Moments { get; }
 
-		internal int[] QuantizedPixels => quantizedPixels;
-		internal Pixel[] Pixels => pixels;
+		internal int[] QuantizedPixels { get; }
 
-		public int PixelsCount => pixels.Length;
+		internal Pixel[] Pixels { get; }
+
+		public int PixelsCount => Pixels.Length;
 
 		internal void AddPixel(Pixel pixel, int quantizedPixel) {
-			pixels[pixelFillingCounter] = pixel;
-			quantizedPixels[pixelFillingCounter++] = quantizedPixel;
+			Pixels[pixelFillingCounter] = pixel;
+			QuantizedPixels[pixelFillingCounter++] = quantizedPixel;
 		}
-
-		private readonly Pixel[] pixels;
-		private readonly int[] quantizedPixels;
-		private readonly int pixelsCount;
-		private int pixelFillingCounter;
 	}
 
 	private struct CubeCut
@@ -645,8 +645,8 @@ public static class WuQuantizer
 			Tags = new int[granularity * granularity * granularity];
 		}
 
-		public IList<Pixel> Lookups { get; private set; }
-		public int[] Tags { get; private set; }
+		public IList<Pixel> Lookups { get; }
+		public int[] Tags { get; }
 	}
 
 	private struct Pixel
@@ -669,8 +669,8 @@ public static class WuQuantizer
 			PixelIndex = new int[size];
 		}
 
-		public IList<Color> Colors { get; private set; }
-		public int[] PixelIndex { get; private set; }
+		public IList<Color> Colors { get; }
+		public int[] PixelIndex { get; }
 	}
 
 	private sealed class QuantizationException : ApplicationException

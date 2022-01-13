@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using PDFPatcher.Model;
 
@@ -11,8 +6,12 @@ namespace PDFPatcher.Functions;
 
 public partial class DocumentInfoEditor : UserControl
 {
-	private bool _settingsLockdown;
 	private GeneralInfo _Options;
+	private bool _settingsLockdown;
+
+	public DocumentInfoEditor() {
+		InitializeComponent();
+	}
 
 	internal GeneralInfo Options {
 		get => _Options;
@@ -27,10 +26,6 @@ public partial class DocumentInfoEditor : UserControl
 			_RewriteXmpBox.Checked = _Options.RewriteXmp;
 			_settingsLockdown = false;
 		}
-	}
-
-	public DocumentInfoEditor() {
-		InitializeComponent();
 	}
 
 	private void DocumentInfoEditor_Load(object sender, EventArgs e) {

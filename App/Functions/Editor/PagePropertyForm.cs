@@ -4,14 +4,13 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using MuPdfSharp;
 using PDFPatcher.Common;
+using PDFPatcher.Model;
 using MuRectangle = MuPdfSharp.Rectangle;
 
 namespace PDFPatcher.Functions.Editor;
 
 public partial class PagePropertyForm : DraggableForm
 {
-	public int PageNumber { get; set; }
-
 	public PagePropertyForm() {
 		InitializeComponent();
 		_PageDimensionBox.SelectedIndexChanged += _PageDimensionBox_SelectedIndexChanged;
@@ -19,6 +18,8 @@ public partial class PagePropertyForm : DraggableForm
 		_FontNameColumn.AsTyped<MuFontAndSize>(f => f.AspectGetter = o => o.FontName);
 		_SizeColumn.AsTyped<MuFontAndSize>(f => f.AspectGetter = o => o.Size);
 	}
+
+	public int PageNumber { get; set; }
 
 	public void LoadPage(MuPage page) {
 		_PageDimensionBox.Items.Clear();
@@ -36,7 +37,7 @@ public partial class PagePropertyForm : DraggableForm
 		foreach (MuTextBlock block in page.TextPage.Blocks) {
 			foreach (MuTextLine line in block.Lines) {
 				MuTextChar c = line.FirstCharacter;
-				ts.Add(new MuFontAndSize(Model.PdfDocumentFont.RemoveSubsetPrefix(page.GetFont(c).Name), c.Size));
+				ts.Add(new MuFontAndSize(PdfDocumentFont.RemoveSubsetPrefix(page.GetFont(c).Name), c.Size));
 			}
 		}
 

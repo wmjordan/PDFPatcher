@@ -2,15 +2,18 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Text;
 using System.Windows.Forms;
 using System.Xml;
-using FreeImageAPI;
 using iTextSharp.text;
+using iTextSharp.text.exceptions;
 using iTextSharp.text.pdf;
 using MuPdfSharp;
 using PDFPatcher.Common;
 using PDFPatcher.Model;
+using PDFPatcher.Processor.Imaging;
 using Ext = PDFPatcher.Constants.FileExtensions;
+using Rectangle = iTextSharp.text.Rectangle;
 
 namespace PDFPatcher.Processor;
 
@@ -28,7 +31,7 @@ internal static class Worker
 			FormHelper.ErrorBox(string.Concat("找不到文件：“", sourceFile, "”。"));
 			return null;
 		}
-		catch (iTextSharp.text.exceptions.BadPasswordException) {
+		catch (BadPasswordException) {
 			Tracker.TraceMessage(Tracker.Category.Error, Messages.PasswordInvalid);
 			FormHelper.ErrorBox(Messages.PasswordInvalid);
 			return null;
@@ -127,27 +130,27 @@ internal static class Worker
 							Tracker.TraceMessage(Tracker.Category.Error, "页面" + i + "的尺寸为空。");
 						}
 						else if (options.FileFormat == ImageFormat.Tiff) {
-							using (Bitmap b = Imaging.BitmapHelper.ToBitonal(bmp)) {
-								Imaging.BitmapHelper.SaveAs(b, fn);
+							using (Bitmap b = BitmapHelper.ToBitonal(bmp)) {
+								BitmapHelper.SaveAs(b, fn);
 							}
 						}
 						else {
-							Color[] uc = Imaging.BitmapHelper.GetPallete(bmp);
+							Color[] uc = BitmapHelper.GetPallete(bmp);
 							if (uc.Length > 256 && options.Quantize) {
-								using (Bitmap b = Imaging.WuQuantizer.QuantizeImage(bmp)) {
-									Imaging.BitmapHelper.SaveAs(b, fn);
+								using (Bitmap b = WuQuantizer.QuantizeImage(bmp)) {
+									BitmapHelper.SaveAs(b, fn);
 								}
 							}
-							else if (uc.Length <= 256 && Imaging.BitmapHelper.IsIndexed(bmp) == false) {
-								using (Bitmap b = Imaging.BitmapHelper.ToIndexImage(bmp, uc)) {
-									Imaging.BitmapHelper.SaveAs(b, fn);
+							else if (uc.Length <= 256 && BitmapHelper.IsIndexed(bmp) == false) {
+								using (Bitmap b = BitmapHelper.ToIndexImage(bmp, uc)) {
+									BitmapHelper.SaveAs(b, fn);
 								}
 							}
 							else if (options.FileFormat == ImageFormat.Jpeg) {
-								Imaging.JpgHelper.Save(bmp, fn, options.JpegQuality);
+								JpgHelper.Save(bmp, fn, options.JpegQuality);
 							}
 							else {
-								Imaging.BitmapHelper.SaveAs(bmp, fn);
+								BitmapHelper.SaveAs(bmp, fn);
 							}
 						}
 					}
@@ -231,7 +234,7 @@ internal static class Worker
 		catch (OperationCanceledException) {
 			Tracker.TraceMessage(Tracker.Category.ImportantMessage, OperationCanceled);
 		}
-		catch (System.Text.EncoderFallbackException ex) {
+		catch (EncoderFallbackException ex) {
 			Tracker.TraceMessage(ex);
 			FormHelper.ErrorBox("在导出信息文件时遇到错误：\n" + ex.Message + "\n\n请选择在导出信息选项中选择其它编码方式。");
 		}
@@ -364,7 +367,7 @@ internal static class Worker
 
 				if (pdfEngine.ExtraData.ContainsKey(DocProcessorContext.CoordinateTransition) &&
 				    pdfSettings.UnifiedPageSettings.ScaleContent) {
-					processors.Add(new GotoDestinationProcessor() {
+					processors.Add(new GotoDestinationProcessor {
 						TransitionMapper =
 							pdfEngine.ExtraData[DocProcessorContext.CoordinateTransition] as
 								CoordinateTranslationSettings[]
@@ -430,12 +433,12 @@ internal static class Worker
 				if ((options.ImportBookmarks && pdfSettings.RemoveBookmarks == false) || xInfoDoc != null) {
 					Tracker.TraceMessage("导入书签。");
 					bookmarks = import.GetBookmarks() ??
-					            OutlineManager.GetBookmark(pdf, new UnitConverter() {Unit = Constants.Units.Point});
+					            OutlineManager.GetBookmark(pdf, new UnitConverter {Unit = Constants.Units.Point});
 				}
 
 				if (bookmarks != null) {
 					// 预处理书签
-					processors.Add(new CollapseBookmarkProcessor() {
+					processors.Add(new CollapseBookmarkProcessor {
 						BookmarkStatus = pdfSettings.ViewerPreferences.CollapseBookmark
 					});
 					PdfDocumentCreator.ProcessInfoItem(bookmarks, processors);
@@ -520,7 +523,7 @@ internal static class Worker
 	}
 
 	/// <summary>
-	/// 替换目标文件名的替代符。
+	///     替换目标文件名的替代符。
 	/// </summary>
 	/// <param name="sourceFile">用于替换的源文件名。</param>
 	/// <param name="targetFile">包含替代符的目标文件名。</param>
@@ -662,7 +665,7 @@ internal static class Worker
 			using (Stream s = new FileStream(f, FileMode.Create)) {
 				PageBoxSettings ps = option.PageSettings;
 				doc = new Document(
-					new iTextSharp.text.Rectangle(ps.PaperSize.Width, ps.PaperSize.Height),
+					new Rectangle(ps.PaperSize.Width, ps.PaperSize.Height),
 					ps.Margins.Left, ps.Margins.Right, ps.Margins.Top, ps.Margins.Bottom
 				);
 				PdfSmartCopy w = new(doc, s);
@@ -701,7 +704,7 @@ internal static class Worker
 				}
 
 				Tracker.TraceMessage("写入文件索引。");
-				Tracker.TraceMessage(Tracker.Category.Alert, "生成文件：<<" + targetFile.ToString() + ">>。");
+				Tracker.TraceMessage(Tracker.Category.Alert, "生成文件：<<" + targetFile + ">>。");
 				w.Close();
 			}
 		}
@@ -770,7 +773,7 @@ internal static class Worker
 		catch (OperationCanceledException) {
 			Tracker.TraceMessage(Tracker.Category.ImportantMessage, OperationCanceled);
 		}
-		catch (System.Text.EncoderFallbackException ex) {
+		catch (EncoderFallbackException ex) {
 			Tracker.TraceMessage(ex);
 			FormHelper.ErrorBox("在导出信息文件时遇到错误：\n" + ex.Message + "\n\n请选择在导出信息选项中选择其它编码方式。");
 		}
@@ -864,7 +867,7 @@ internal static class Worker
 		catch (OperationCanceledException) {
 			Tracker.TraceMessage(Tracker.Category.ImportantMessage, OperationCanceled);
 		}
-		catch (System.Text.EncoderFallbackException ex) {
+		catch (EncoderFallbackException ex) {
 			Tracker.TraceMessage(ex);
 			FormHelper.ErrorBox("在导出信息文件时遇到错误：\n" + ex.Message + "\n\n请选择在导出信息选项中选择其它编码方式。");
 		}
@@ -891,7 +894,8 @@ internal static class Worker
 		if (FileHelper.IsPathValid(t) == false) {
 			return t;
 		}
-		else if (Path.GetFileName(t).Length > 0) {
+
+		if (Path.GetFileName(t).Length > 0) {
 			t = new FilePath(t).EnsureExtension(Ext.Pdf).ToString();
 		}
 
@@ -923,16 +927,19 @@ internal static class Worker
 					Tracker.TraceMessage("源文件与目标文件名称相同。不需重命名。");
 					goto Exit;
 				}
-				else if (Path.GetFileName(t).Trim().Length == 0) {
+
+				if (Path.GetFileName(t).Trim().Length == 0) {
 					Tracker.TraceMessage("输出文件名为空，无法重命名。");
 					goto Exit;
 				}
-				else if (File.Exists(t)) {
+
+				if (File.Exists(t)) {
 					DialogResult r = FormHelper.YesNoCancelBox("是否覆盖已存在的 PDF 文件：" + t);
 					if (r == DialogResult.No) {
 						goto Exit;
 					}
-					else if (r == DialogResult.Cancel) {
+
+					if (r == DialogResult.Cancel) {
 						throw new OperationCanceledException();
 					}
 
@@ -1000,7 +1007,7 @@ internal static class Worker
 
 		try {
 			using (XmlReader infoReader = XmlReader.Create(infoFile,
-				       new XmlReaderSettings() {IgnoreComments = true, IgnoreProcessingInstructions = true})) {
+				       new XmlReaderSettings {IgnoreComments = true, IgnoreProcessingInstructions = true})) {
 				infoReader.MoveToContent(); // 移到根元素
 				using (Stream s = new FileStream(targetFile, FileMode.Create)) {
 					PdfStamper st = new(pdf, s);

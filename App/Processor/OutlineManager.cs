@@ -14,11 +14,11 @@ namespace PDFPatcher.Processor;
 internal static class OutlineManager
 {
 	// modifed: added split array for action parameters
-	private static readonly char[] __ActionSplitters = new char[] {' ', '\t', '\r', '\n'};
+	private static readonly char[] __ActionSplitters = {' ', '\t', '\r', '\n'};
 	private static readonly char[] __fullWidthNums = "０１２３４５６７８９".ToCharArray();
 	private static readonly char[] __halfWidthNums = "0123456789".ToCharArray();
-	private static readonly char[] __cmdIdentifiers = new char[] {'=', '﹦', '＝', ':', '：'};
-	private static readonly char[] __pageLabelSeparators = new char[] {';', '；', ',', '，', ' '};
+	private static readonly char[] __cmdIdentifiers = {'=', '﹦', '＝', ':', '：'};
+	private static readonly char[] __pageLabelSeparators = {';', '；', ',', '，', ' '};
 
 	private static void BookmarkDepth(PdfReader reader, PdfActionExporter exporter, PdfDictionary outline,
 		Dictionary<int, int> pageRefMap, XmlWriter target) {
@@ -67,7 +67,7 @@ internal static class OutlineManager
 	}
 
 	/// <summary>
-	/// 从 PDF 导出书签为 XML 元素。
+	///     从 PDF 导出书签为 XML 元素。
 	/// </summary>
 	public static XmlElement GetBookmark(PdfReader reader, UnitConverter unitConverter) {
 		PdfDictionary catalog = reader.Catalog;
@@ -358,7 +358,7 @@ internal static class OutlineManager
 								Constants.PageLabelStyles.Names[1])
 							: Constants.PageLabelStyles.Names[1];
 						string prefix = l.Length > 2 ? l[2] : null;
-						XmlElement pl = target.CreateElement(Constants.PageLabelsAttributes.Style) as XmlElement;
+						XmlElement pl = target.CreateElement(Constants.PageLabelsAttributes.Style);
 						pl.SetAttribute(Constants.PageLabelsAttributes.PageNumber, pn.ToText());
 						pl.SetAttribute(Constants.PageLabelsAttributes.Style, style);
 						if (string.IsNullOrEmpty(prefix) == false) {
@@ -459,7 +459,7 @@ internal static class OutlineManager
 	}
 
 	/// <summary>
-	/// 将 XML 书签输出为简易书签。
+	///     将 XML 书签输出为简易书签。
 	/// </summary>
 	/// <param name="writer">输出目标。</param>
 	/// <param name="container">书签节点。</param>

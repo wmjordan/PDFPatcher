@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Xml;
 using PDFPatcher.Common;
 
 namespace PDFPatcher.Processor;
@@ -6,21 +7,22 @@ namespace PDFPatcher.Processor;
 internal sealed class SetTextColorProcessor : IPdfInfoXmlProcessor
 {
 	private readonly string r, g, b;
-	public Color Color { get; private set; }
 
 	public SetTextColorProcessor(Color color) {
 		if (color != Color.Transparent && color != Color.White) {
-			r = ValueHelper.ToText(color.R / 255f);
-			g = ValueHelper.ToText(color.G / 255f);
-			b = ValueHelper.ToText(color.B / 255f);
+			r = (color.R / 255f).ToText();
+			g = (color.G / 255f).ToText();
+			b = (color.B / 255f).ToText();
 		}
 	}
+
+	public Color Color { get; private set; }
 
 	#region IInfoDocProcessor 成员
 
 	public string Name => "设置书签文本颜色";
 
-	public IUndoAction Process(System.Xml.XmlElement item) {
+	public IUndoAction Process(XmlElement item) {
 		UndoActionGroup undo = new();
 		if (string.IsNullOrEmpty(r) == false) {
 			undo.SetAttribute(item, Constants.Colors.Red, r);

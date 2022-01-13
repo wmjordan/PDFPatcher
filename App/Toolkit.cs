@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Drawing;
 using System.Windows.Forms;
+using PDFPatcher.Properties;
 
 namespace PDFPatcher;
 
@@ -22,23 +21,6 @@ internal sealed class Toolkit
 		new("程序配置", "Options", "AppOptions", "修改 PDF 补丁丁的程序配置", false, false)
 	};
 
-	internal static Toolkit Get(string id) {
-		foreach (Toolkit item in Toolkits) {
-			if (item.Identifier == id) {
-				return item;
-			}
-		}
-
-		return null;
-	}
-
-	public string Identifier { get; }
-	public string Icon { get; }
-	public string Name { get; }
-	public string Description { get; }
-	public bool ShowText { get; }
-	public bool DefaultVisisble { get; }
-
 	private Toolkit(string name, string id, string icon, string description)
 		: this(name, id, icon, description, false, true) {
 	}
@@ -56,9 +38,26 @@ internal sealed class Toolkit
 		DefaultVisisble = defaultVisible;
 	}
 
+	public string Identifier { get; }
+	public string Icon { get; }
+	public string Name { get; }
+	public string Description { get; }
+	public bool ShowText { get; }
+	public bool DefaultVisisble { get; }
+
+	internal static Toolkit Get(string id) {
+		foreach (Toolkit item in Toolkits) {
+			if (item.Identifier == id) {
+				return item;
+			}
+		}
+
+		return null;
+	}
+
 	internal ToolStripButton CreateButton() {
 		return new ToolStripButton(Name,
-			Properties.Resources.ResourceManager.GetObject(Icon) as System.Drawing.Image) {
+			Resources.ResourceManager.GetObject(Icon) as Image) {
 			Name = Identifier,
 			Tag = Identifier,
 			ToolTipText = Description,

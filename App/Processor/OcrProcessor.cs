@@ -3,31 +3,22 @@
 #endif
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Xml;
 using FreeImageAPI;
-using iTextSharp.text;
 using iTextSharp.text.pdf;
 using PDFPatcher.Common;
 using PDFPatcher.Model;
 using PDFPatcher.Processor.Imaging;
+using Rectangle = iTextSharp.text.Rectangle;
 
 namespace PDFPatcher.Processor;
 
 internal sealed class OcrProcessor
 {
-	internal sealed class Result
-	{
-		public ImageDisposition Image { get; }
-		public List<TextLine> Texts { get; }
-
-		public Result(ImageDisposition image) {
-			Image = image;
-			Texts = new List<TextLine>();
-		}
-	}
-
 	private const int OpenWorkload = 1;
 	private const string __puctuations = @"·．“”，,\.－""～∼。:：\p{P}";
 
@@ -44,10 +35,10 @@ internal sealed class OcrProcessor
 		new(@"([\u4E00-\u9FFF\u3400-\u4DBF])[ 　]+(?=[\u4E00-\u9FFF\u3400-\u4DBF])", RegexOptions.Compiled);
 
 	private readonly ModiOcr _Ocr;
-	private readonly float _OcrQuatitiveFactor;
-	private readonly PdfReader _reader;
 	private readonly ImageExtractor _ocrImageExp;
+	private readonly float _OcrQuatitiveFactor;
 	private readonly OcrOptions _options;
+	private readonly PdfReader _reader;
 	private IResultWriter _resultWriter;
 
 	public OcrProcessor(PdfReader reader, OcrOptions options) : this(options) {
@@ -155,7 +146,7 @@ internal sealed class OcrProcessor
 		Rectangle pr = _reader.GetPageNRelease(i).GetPageVisibleRectangle();
 		List<TextLine> tl = _options.WritingDirection != WritingDirection.Unknown
 			? AutoBookmarkCreator.MergeTextInfoList(pr,
-				result.Texts.ConvertAll((l) => GetMergedTextInfo(result.Image, l)), __MergeOptions) // 按照书写方向重组识别文本
+				result.Texts.ConvertAll(l => GetMergedTextInfo(result.Image, l)), __MergeOptions) // 按照书写方向重组识别文本
 			: result.Texts;
 		foreach (TextLine item in tl) {
 			string t = item.Text;
@@ -177,7 +168,7 @@ internal sealed class OcrProcessor
 	}
 
 	/// <summary>
-	/// 根据识别选项优化输出结果。
+	///     根据识别选项优化输出结果。
 	/// </summary>
 	/// <param name="text">文本内容。</param>
 	/// <param name="options">识别选项。</param>
@@ -215,7 +206,7 @@ internal sealed class OcrProcessor
 				r = null;
 			}
 		}
-		catch (System.Runtime.InteropServices.COMException ex) {
+		catch (COMException ex) {
 			string err = null;
 			switch (ex.ErrorCode) {
 				case -959967087:
@@ -455,17 +446,16 @@ internal sealed class OcrProcessor
 #if DEBUGOCR
 		Tracker.TraceMessage("完成识别图片：" + p);
 #endif
-		return;
 	}
 
 	/// <summary>
-	/// 调用图像处理引擎识别位图。如图片中的文本量太少，将无法识别，并会抛出异常。
+	///     调用图像处理引擎识别位图。如图片中的文本量太少，将无法识别，并会抛出异常。
 	/// </summary>
 	/// <param name="bmp">需要识别的图片。</param>
 	/// <param name="options">识别选项。</param>
 	/// <exception cref="System.Runtime.InteropServices.COMException">在识别时发生的错误。</exception>
 	/// <returns>识别后的文本。</returns>
-	internal static List<TextLine> OcrBitmap(System.Drawing.Bitmap bmp, OcrOptions options) {
+	internal static List<TextLine> OcrBitmap(Bitmap bmp, OcrOptions options) {
 		const int minSize = 500;
 		OcrProcessor ocr = new(options);
 		List<TextLine> r = new();
@@ -548,6 +538,17 @@ internal sealed class OcrProcessor
 		}
 	}
 
+	internal sealed class Result
+	{
+		public Result(ImageDisposition image) {
+			Image = image;
+			Texts = new List<TextLine>();
+		}
+
+		public ImageDisposition Image { get; }
+		public List<TextLine> Texts { get; }
+	}
+
 	private interface IResultWriter
 	{
 		void BeginWritePage(int i);
@@ -569,7 +570,7 @@ internal sealed class OcrProcessor
 
 		public void BeginWritePage(int i) {
 			_writer.WriteStartElement(Constants.Ocr.Result);
-			_writer.WriteAttributeString(Constants.Content.PageNumber, ValueHelper.ToText(i));
+			_writer.WriteAttributeString(Constants.Content.PageNumber, i.ToText());
 		}
 
 		public void WriteText(TextLine text, string optimizedText) {
@@ -596,10 +597,10 @@ internal sealed class OcrProcessor
 					break;
 			}
 
-			_writer.WriteAttributeString(Constants.Coordinates.Top, ValueHelper.ToText(Math.Round(ir.Top)));
-			_writer.WriteAttributeString(Constants.Coordinates.Left, ValueHelper.ToText(Math.Round(ir.Left)));
-			_writer.WriteAttributeString(Constants.Coordinates.Bottom, ValueHelper.ToText(Math.Round(ir.Bottom)));
-			_writer.WriteAttributeString(Constants.Coordinates.Right, ValueHelper.ToText(Math.Round(ir.Right)));
+			_writer.WriteAttributeString(Constants.Coordinates.Top, Math.Round(ir.Top).ToText());
+			_writer.WriteAttributeString(Constants.Coordinates.Left, Math.Round(ir.Left).ToText());
+			_writer.WriteAttributeString(Constants.Coordinates.Bottom, Math.Round(ir.Bottom).ToText());
+			_writer.WriteAttributeString(Constants.Coordinates.Right, Math.Round(ir.Right).ToText());
 			_writer.WriteEndElement();
 		}
 
@@ -609,8 +610,8 @@ internal sealed class OcrProcessor
 
 		public void BeginWriteImage(ImageDisposition image) {
 			_writer.WriteStartElement(Constants.Ocr.Image);
-			_writer.WriteAttributeString(Constants.Coordinates.Width, ValueHelper.ToText(image.Image.Width));
-			_writer.WriteAttributeString(Constants.Coordinates.Height, ValueHelper.ToText(image.Image.Height));
+			_writer.WriteAttributeString(Constants.Coordinates.Width, image.Image.Width.ToText());
+			_writer.WriteAttributeString(Constants.Coordinates.Height, image.Image.Height.ToText());
 			_writer.WriteAttributeString(Constants.Content.OperandNames.Matrix,
 				PdfHelper.MatrixToString(image.Ctm));
 		}

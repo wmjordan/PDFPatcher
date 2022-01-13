@@ -2,28 +2,29 @@
 using System.Windows.Forms;
 using MuPdfSharp;
 using PDFPatcher.Model;
+using PDFPatcher.Processor;
 
 namespace PDFPatcher.Functions.Editor;
 
 public partial class DocumentInfoForm : Form
 {
-	internal MuDocument Document { get; set; }
-	internal PdfInfoXmlDocument InfoDucument { get; set; }
-
 	public DocumentInfoForm() {
 		InitializeComponent();
 	}
+
+	internal MuDocument Document { get; set; }
+	internal PdfInfoXmlDocument InfoDucument { get; set; }
 
 	protected override void OnLoad(EventArgs e) {
 		base.OnLoad(e);
 		if (Document != null) {
 			MuDocumentInfo info = Document.Info;
 			_AuthorBox.Text = info.Author;
-			_CreationDateBox.Text = Processor.PdfHelper.ParseDateTime(info.CreationDate).ToString();
+			_CreationDateBox.Text = PdfHelper.ParseDateTime(info.CreationDate).ToString();
 			_CreatorBox.Text = info.Creator;
 			_FilePathBox.Text = Document.FilePath;
 			_KeywordsBox.Text = info.Keywords;
-			_ModDateBox.Text = Processor.PdfHelper.ParseDateTime(info.ModificationDate).ToString();
+			_ModDateBox.Text = PdfHelper.ParseDateTime(info.ModificationDate).ToString();
 			_PageCountBox.Text = Document.PageCount.ToString();
 			_ProducerBox.Text = info.Producer;
 			_SubjectBox.Text = info.Subject;

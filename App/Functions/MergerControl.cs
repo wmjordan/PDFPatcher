@@ -12,24 +12,32 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using PDFPatcher.Common;
 using PDFPatcher.Model;
+using PDFPatcher.Processor;
+using PDFPatcher.Properties;
 
 namespace PDFPatcher.Functions;
 
 [ToolboxItem(false)]
 public partial class MergerControl : FunctionControl
 {
-	private FileListHelper _listHelper;
-	private readonly SourceItem _itemsContainer = new SourceItem.Empty();
 	private readonly string[] _bookmarkStyleButtonNames;
-
-	public override string FunctionName => "合并文档";
-
-	public override Bitmap IconImage => Properties.Resources.Merger;
+	private readonly SourceItem _itemsContainer = new SourceItem.Empty();
+	private FileListHelper _listHelper;
 
 	public MergerControl() {
 		InitializeComponent();
-		_bookmarkStyleButtonNames = new string[] {"_BoldStyleButton", "_BookmarkColorButton", "_ItalicStyleButton"};
+		_bookmarkStyleButtonNames = new[] {"_BoldStyleButton", "_BookmarkColorButton", "_ItalicStyleButton"};
 	}
+
+	public override string FunctionName => "合并文档";
+
+	public override Bitmap IconImage => Resources.Merger;
+
+	#region IDefaultButtonControl 成员
+
+	public override Button DefaultButton => _ImportButton;
+
+	#endregion
 
 	private void MergerControl_Load(object sender, EventArgs args) {
 		//this.Icon = Common.FormHelper.ToIcon (Properties.Resources.CreateDocument);
@@ -43,10 +51,8 @@ public partial class MergerControl : FunctionControl
 		_ItemList.EmptyListMsg = "请使用“添加文件”按钮添加需要合并的文件，或从资源管理器拖放文件到本列表框";
 
 		ImageList.ImageCollection fi = _FileTypeList.Images;
-		fi.AddRange(new Image[] {
-			Properties.Resources.EmptyPage, Properties.Resources.OriginalPdfFile, Properties.Resources.Image,
-			Properties.Resources.ImageFolder
-		});
+		fi.AddRange(
+			new Image[] {Resources.EmptyPage, Resources.OriginalPdfFile, Resources.Image, Resources.ImageFolder});
 
 		_BookmarkControl.FileDialog.CheckFileExists = false;
 		_BookmarkControl.BrowseForFile += FileControl_BrowseForFile;
@@ -57,8 +63,8 @@ public partial class MergerControl : FunctionControl
 		_listHelper = new FileListHelper(_ItemList);
 		_ItemList.FixEditControlWidth();
 		_ItemList.BeforeSorting += (s, e) => e.Canceled = true;
-		_ItemList.CanExpandGetter = (x) => ((SourceItem)x).HasSubItems;
-		_ItemList.ChildrenGetter = (x) => ((SourceItem)x).Items;
+		_ItemList.CanExpandGetter = x => ((SourceItem)x).HasSubItems;
+		_ItemList.ChildrenGetter = x => ((SourceItem)x).Items;
 		_ItemList.SelectedIndexChanged += (s, e) => {
 			int i = _ItemList.GetFirstSelectedIndex();
 			bool en = false;
@@ -90,7 +96,7 @@ public partial class MergerControl : FunctionControl
 				c.ImageGetter = o => (int)o.Type;
 			})
 			.ConfigColumn(_BookmarkColumn, c => {
-				c.AspectGetter = (o) => o.Bookmark != null ? o.Bookmark.Title : null;
+				c.AspectGetter = o => o.Bookmark != null ? o.Bookmark.Title : null;
 				c.AspectPutter = (o, v) => {
 					string s = v as string;
 					if (string.IsNullOrEmpty(s)) {
@@ -105,7 +111,7 @@ public partial class MergerControl : FunctionControl
 				};
 			})
 			.ConfigColumn(_PageRangeColumn, c => {
-				c.AspectGetter = (o) => (o as SourceItem.Pdf)?.PageRanges;
+				c.AspectGetter = o => (o as SourceItem.Pdf)?.PageRanges;
 				c.AspectPutter = (o, v) => {
 					if (o is SourceItem.Pdf p) {
 						p.PageRanges = v as string;
@@ -115,7 +121,7 @@ public partial class MergerControl : FunctionControl
 					}
 				};
 			})
-			.ConfigColumn(_FolderColumn, c => c.AspectGetter = (o) => o.FolderName);
+			.ConfigColumn(_FolderColumn, c => c.AspectGetter = o => o.FolderName);
 		_AddFilesButton.DropDownOpening += FileListHelper.OpenPdfButtonDropDownOpeningHandler;
 		_AddFilesButton.DropDownItemClicked += (s, e) => {
 			_RecentFileMenu.Hide();
@@ -144,134 +150,6 @@ public partial class MergerControl : FunctionControl
 		}
 	}
 
-	#region 拖放操作
-
-	private void ItemList_CanDropFile(object sender, OlvDropEventArgs e) {
-		DataObject o = e.DataObject as DataObject;
-		if (o == null) {
-			return;
-		}
-
-		StringCollection f = o.GetFileDropList();
-		OLVListItem d = e.DropTargetItem;
-		bool child = d != null &&
-		             e.MouseLocation.X > d.Position.X + (d.GetBounds(ItemBoundsPortion.ItemOnly).Width / 2);
-		bool after = d == null || e.MouseLocation.Y > d.Position.Y + (d.Bounds.Height / 2);
-		foreach (string item in f) {
-			if (Directory.Exists(item)) {
-				e.Handled = true;
-				e.Effect = DragDropEffects.Copy;
-				e.InfoMessage = string.Concat("添加目录", item, "到", child ? "所有子项" : string.Empty,
-					after ? "后面" : "前面");
-				return;
-			}
-
-			string ext = Path.GetExtension(item).ToLowerInvariant();
-			if (ext == Constants.FileExtensions.Pdf ||
-			    Constants.FileExtensions.AllSupportedImageExtension.Contains(ext)) {
-				e.Handled = true;
-				e.Effect = DragDropEffects.Copy;
-				e.InfoMessage = string.Concat("添加文件", item, "到", child ? "所有子项" : string.Empty,
-					after ? "后面" : "前面");
-				return;
-			}
-		}
-	}
-
-	private void ItemList_FileDropped(object sender, OlvDropEventArgs e) {
-		DataObject o = e.DataObject as DataObject;
-		if (o == null) {
-			return;
-		}
-
-		StringCollection f = o.GetFileDropList();
-		string[] fl = new string[f.Count];
-		f.CopyTo(fl, 0);
-		SourceItem.SortFileList(fl);
-		List<SourceItem> sl = new(fl.Length);
-		foreach (string item in fl) {
-			SourceItem si = SourceItem.Create(item);
-			if (si == null) {
-				continue;
-			}
-
-			sl.Add(si);
-		}
-
-		SourceItem ti = e.ListView.GetModelObject(e.DropTargetIndex) as SourceItem;
-		OLVListItem d = e.DropTargetItem;
-		bool child = d != null &&
-		             e.MouseLocation.X > d.Position.X + (d.GetBounds(ItemBoundsPortion.ItemOnly).Width / 2);
-		bool after = d != null && e.MouseLocation.Y > d.Position.Y + (d.Bounds.Height / 2);
-		CopyOrMoveElement(sl, ti, child, after, false, true);
-	}
-
-	private void ItemList_CanDropModel(object sender, ModelDropEventArgs e) {
-		IList si = e.SourceModels;
-		SourceItem ti = e.TargetModel as SourceItem;
-		if (si == null || si.Count == 0 || e.TargetModel == null) {
-			e.Effect = DragDropEffects.None;
-			return;
-		}
-
-		bool copy = (ModifierKeys & Keys.Control) != Keys.None;
-		if (copy == false) {
-			if (e.DropTargetItem.Selected) {
-				e.Effect = DragDropEffects.None;
-				return;
-			}
-
-			List<SourceItem> al = _ItemList.GetAncestorsOrSelf(ti);
-			foreach (SourceItem item in si) {
-				if (al.IndexOf(item) != -1) {
-					e.Effect = DragDropEffects.None;
-					e.InfoMessage = "目标项不能是源项目的子项。";
-					return;
-				}
-			}
-		}
-
-		OLVListItem d = e.DropTargetItem;
-		Point ml = e.MouseLocation;
-		bool child = ml.X > d.Position.X + (d.GetBounds(ItemBoundsPortion.ItemOnly).Width / 2);
-		bool append = ml.Y > d.Position.Y + (d.Bounds.Height / 2);
-		if (child == false && copy == false) {
-			int xi = e.DropTargetIndex + (append ? 1 : -1);
-			if (xi > -1 && xi < e.ListView.GetItemCount()
-			            && e.ListView.Items[xi].Selected
-			            && GetParentSourceItem(ti) ==
-			            GetParentSourceItem(_ItemList.GetModelObject(xi) as SourceItem)) {
-				e.Effect = DragDropEffects.None;
-				return;
-			}
-		}
-
-		e.Effect = copy ? DragDropEffects.Copy : DragDropEffects.Move;
-		e.InfoMessage = string.Concat(copy ? "复制" : "移动", "到", child ? "所有子项" : string.Empty,
-			append ? "后面" : "前面");
-	}
-
-	private void ItemList_Dropped(object sender, ModelDropEventArgs e) {
-		SourceItem t = e.TargetModel as SourceItem;
-		List<SourceItem> si = (e.SourceListView as TreeListView).GetSelectedModels<SourceItem>();
-		if (si == null) {
-			return;
-		}
-
-		SourceItem ti = e.TargetModel as SourceItem;
-		OLVListItem d = e.DropTargetItem;
-		bool child = e.MouseLocation.X > d.Position.X + (d.GetBounds(ItemBoundsPortion.ItemOnly).Width / 2);
-		bool after = e.MouseLocation.Y > d.Position.Y + (d.Bounds.Height / 2);
-		bool copy = (ModifierKeys & Keys.Control) != Keys.None;
-		bool deepCopy = copy && (ModifierKeys & Keys.Shift) != Keys.None;
-		int tii = _ItemList.TopItemIndex;
-		CopyOrMoveElement(si, ti, child, after, copy, deepCopy);
-		e.RefreshObjects();
-		_ItemList.TopItemIndex = tii;
-	}
-
-	#endregion
-
 	public override void SetupCommand(ToolStripItem item) {
 		string n = item.Name;
 		if (item.OwnerItem != null && item.OwnerItem.Name == Commands.Selection) {
@@ -296,7 +174,7 @@ public partial class MergerControl : FunctionControl
 	}
 
 	/// <summary>
-	/// 复制或移动书签。
+	///     复制或移动书签。
 	/// </summary>
 	/// <param name="source">需要复制或移动的源书签。</param>
 	/// <param name="target">目标书签。</param>
@@ -352,9 +230,6 @@ public partial class MergerControl : FunctionControl
 
 			if (p == _itemsContainer) {
 				_ItemList.SetObjects(_itemsContainer.Items);
-			}
-			else {
-				//_ItemList.RefreshObject (p);
 			}
 		}
 
@@ -479,12 +354,10 @@ public partial class MergerControl : FunctionControl
 							break;
 						case SourceItem.ItemType.Pdf:
 						case SourceItem.ItemType.Image:
-							Processor.Worker.MergeDocuments(new SourceItem[] {item}, tn, null);
+							Worker.MergeDocuments(new[] {item}, tn, null);
 							break;
 						case SourceItem.ItemType.Folder:
-							Processor.Worker.MergeDocuments(item.Items, tn, null);
-							break;
-						default:
+							Worker.MergeDocuments(item.Items, tn, null);
 							break;
 					}
 
@@ -492,7 +365,7 @@ public partial class MergerControl : FunctionControl
 				}
 			}
 			else {
-				Processor.Worker.MergeDocuments(items, args[1] as string, args[2] as string);
+				Worker.MergeDocuments(items, args[1] as string, args[2] as string);
 			}
 		};
 		worker.RunWorkerAsync(new object[] {fl, targetPdfFile, infoFile, fm});
@@ -562,7 +435,7 @@ public partial class MergerControl : FunctionControl
 						_ItemList.DeselectAll();
 						_ItemList.ClearObjects();
 						_itemsContainer.Items.Clear();
-						_itemsContainer.Items.AddRange(Processor.SourceItemSerializer.Deserialize(f.FileName));
+						_itemsContainer.Items.AddRange(SourceItemSerializer.Deserialize(f.FileName));
 						_ItemList.Objects = _itemsContainer.Items;
 					}
 				}
@@ -575,7 +448,7 @@ public partial class MergerControl : FunctionControl
 					       DefaultExt = Constants.FileExtensions.Xml
 				       }) {
 					if (f.ShowDialog() == DialogResult.OK) {
-						Processor.SourceItemSerializer.Serialize(_itemsContainer.Items, f.FileName);
+						SourceItemSerializer.Serialize(_itemsContainer.Items, f.FileName);
 					}
 				}
 
@@ -614,21 +487,17 @@ public partial class MergerControl : FunctionControl
 					if (item.Type == SourceItem.ItemType.Empty) {
 						continue;
 					}
-					else if (item.Type == SourceItem.ItemType.Pdf) {
+
+					if (item.Type == SourceItem.ItemType.Pdf) {
 						SourceItem.Pdf pi = item as SourceItem.Pdf;
-						sb.AppendLine(string.Join("\t",
-							new string[] {
-								pi.FilePath.ToString(), item.Bookmark != null ? item.Bookmark.Title : string.Empty,
-								pi.PageRanges, pi.PageCount.ToText()
-							}));
+						sb.AppendLine(string.Join("\t", pi.FilePath.ToString(),
+							item.Bookmark != null ? item.Bookmark.Title : string.Empty, pi.PageRanges,
+							pi.PageCount.ToText()));
 					}
 					else if (item.Type == SourceItem.ItemType.Image) {
 						SourceItem.Image im = item as SourceItem.Image;
-						sb.AppendLine(string.Join("\t",
-							new string[] {
-								im.FilePath.ToString(), item.Bookmark != null ? item.Bookmark.Title : string.Empty,
-								"-" /*im.PageRanges*/, im.PageCount.ToText()
-							}));
+						sb.AppendLine(string.Join("\t", im.FilePath.ToString(),
+							item.Bookmark != null ? item.Bookmark.Title : string.Empty, "-", im.PageCount.ToText()));
 					}
 					else if (item.Type == SourceItem.ItemType.Folder) {
 						sb.AppendLine(item.FilePath.ToString());
@@ -769,8 +638,6 @@ public partial class MergerControl : FunctionControl
 				goto case "__Refresh";
 			case "__Refresh":
 				_ItemList.RefreshObjects(_ItemList.SelectedObjects);
-				break;
-			default:
 				break;
 		}
 	}
@@ -918,7 +785,7 @@ public partial class MergerControl : FunctionControl
 
 		IEnumerable l = selectedOnly ? _ItemList.SelectedObjects : _ItemList.Objects;
 		List<T> items = new(selectedOnly ? 10 : _ItemList.GetItemCount());
-		SelectItems<T>(l, items);
+		SelectItems(l, items);
 		return items;
 	}
 
@@ -930,10 +797,156 @@ public partial class MergerControl : FunctionControl
 
 			results.Add(item);
 			if (item.HasSubItems) {
-				SelectItems<T>(item.Items, results);
+				SelectItems(item.Items, results);
 			}
 		}
 	}
+
+	private void _ItemList_FormatRow(object sender, FormatRowEventArgs e) {
+		SourceItem si = e.Model as SourceItem;
+		BookmarkSettings bs = si.Bookmark;
+		if (bs == null) {
+			return;
+		}
+
+		e.Item.UseItemStyleForSubItems = false;
+		e.UseCellFormatEvents = false;
+		ListViewItem.ListViewSubItem c = e.Item.SubItems[1];
+		c.ForeColor = bs.ForeColor.IsEmptyOrTransparent() ? Color.Black : bs.ForeColor;
+		if (bs.IsBold || bs.IsItalic) {
+			c.Font = new Font(c.Font,
+				(bs.IsBold ? FontStyle.Bold : FontStyle.Regular) |
+				(bs.IsItalic ? FontStyle.Italic : FontStyle.Regular));
+		}
+	}
+
+	#region 拖放操作
+
+	private void ItemList_CanDropFile(object sender, OlvDropEventArgs e) {
+		DataObject o = e.DataObject as DataObject;
+		if (o == null) {
+			return;
+		}
+
+		StringCollection f = o.GetFileDropList();
+		OLVListItem d = e.DropTargetItem;
+		bool child = d != null &&
+		             e.MouseLocation.X > d.Position.X + (d.GetBounds(ItemBoundsPortion.ItemOnly).Width / 2);
+		bool after = d == null || e.MouseLocation.Y > d.Position.Y + (d.Bounds.Height / 2);
+		foreach (string item in f) {
+			if (Directory.Exists(item)) {
+				e.Handled = true;
+				e.Effect = DragDropEffects.Copy;
+				e.InfoMessage = string.Concat("添加目录", item, "到", child ? "所有子项" : string.Empty,
+					after ? "后面" : "前面");
+				return;
+			}
+
+			string ext = Path.GetExtension(item).ToLowerInvariant();
+			if (ext == Constants.FileExtensions.Pdf ||
+			    Constants.FileExtensions.AllSupportedImageExtension.Contains(ext)) {
+				e.Handled = true;
+				e.Effect = DragDropEffects.Copy;
+				e.InfoMessage = string.Concat("添加文件", item, "到", child ? "所有子项" : string.Empty,
+					after ? "后面" : "前面");
+				return;
+			}
+		}
+	}
+
+	private void ItemList_FileDropped(object sender, OlvDropEventArgs e) {
+		DataObject o = e.DataObject as DataObject;
+		if (o == null) {
+			return;
+		}
+
+		StringCollection f = o.GetFileDropList();
+		string[] fl = new string[f.Count];
+		f.CopyTo(fl, 0);
+		SourceItem.SortFileList(fl);
+		List<SourceItem> sl = new(fl.Length);
+		foreach (string item in fl) {
+			SourceItem si = SourceItem.Create(item);
+			if (si == null) {
+				continue;
+			}
+
+			sl.Add(si);
+		}
+
+		SourceItem ti = e.ListView.GetModelObject(e.DropTargetIndex) as SourceItem;
+		OLVListItem d = e.DropTargetItem;
+		bool child = d != null &&
+		             e.MouseLocation.X > d.Position.X + (d.GetBounds(ItemBoundsPortion.ItemOnly).Width / 2);
+		bool after = d != null && e.MouseLocation.Y > d.Position.Y + (d.Bounds.Height / 2);
+		CopyOrMoveElement(sl, ti, child, after, false, true);
+	}
+
+	private void ItemList_CanDropModel(object sender, ModelDropEventArgs e) {
+		IList si = e.SourceModels;
+		SourceItem ti = e.TargetModel as SourceItem;
+		if (si == null || si.Count == 0 || e.TargetModel == null) {
+			e.Effect = DragDropEffects.None;
+			return;
+		}
+
+		bool copy = (ModifierKeys & Keys.Control) != Keys.None;
+		if (copy == false) {
+			if (e.DropTargetItem.Selected) {
+				e.Effect = DragDropEffects.None;
+				return;
+			}
+
+			List<SourceItem> al = _ItemList.GetAncestorsOrSelf(ti);
+			foreach (SourceItem item in si) {
+				if (al.IndexOf(item) != -1) {
+					e.Effect = DragDropEffects.None;
+					e.InfoMessage = "目标项不能是源项目的子项。";
+					return;
+				}
+			}
+		}
+
+		OLVListItem d = e.DropTargetItem;
+		Point ml = e.MouseLocation;
+		bool child = ml.X > d.Position.X + (d.GetBounds(ItemBoundsPortion.ItemOnly).Width / 2);
+		bool append = ml.Y > d.Position.Y + (d.Bounds.Height / 2);
+		if (child == false && copy == false) {
+			int xi = e.DropTargetIndex + (append ? 1 : -1);
+			if (xi > -1 && xi < e.ListView.GetItemCount()
+			            && e.ListView.Items[xi].Selected
+			            && GetParentSourceItem(ti) ==
+			            GetParentSourceItem(_ItemList.GetModelObject(xi) as SourceItem)) {
+				e.Effect = DragDropEffects.None;
+				return;
+			}
+		}
+
+		e.Effect = copy ? DragDropEffects.Copy : DragDropEffects.Move;
+		e.InfoMessage = string.Concat(copy ? "复制" : "移动", "到", child ? "所有子项" : string.Empty,
+			append ? "后面" : "前面");
+	}
+
+	private void ItemList_Dropped(object sender, ModelDropEventArgs e) {
+		SourceItem t = e.TargetModel as SourceItem;
+		List<SourceItem> si = (e.SourceListView as TreeListView).GetSelectedModels<SourceItem>();
+		if (si == null) {
+			return;
+		}
+
+		SourceItem ti = e.TargetModel as SourceItem;
+		OLVListItem d = e.DropTargetItem;
+		bool child = e.MouseLocation.X > d.Position.X + (d.GetBounds(ItemBoundsPortion.ItemOnly).Width / 2);
+		bool after = e.MouseLocation.Y > d.Position.Y + (d.Bounds.Height / 2);
+		bool copy = (ModifierKeys & Keys.Control) != Keys.None;
+		bool deepCopy = copy && (ModifierKeys & Keys.Shift) != Keys.None;
+		int tii = _ItemList.TopItemIndex;
+		CopyOrMoveElement(si, ti, child, after, copy, deepCopy);
+		e.RefreshObjects();
+		_ItemList.TopItemIndex = tii;
+	}
+
+	#endregion
 
 	#region AddDocumentWorker
 
@@ -972,7 +985,7 @@ public partial class MergerControl : FunctionControl
 			return;
 		}
 
-		AddItems(new SourceItem[] {item});
+		AddItems(new[] {item});
 	}
 
 	private void AddItems(ICollection<SourceItem> items) {
@@ -1006,28 +1019,4 @@ public partial class MergerControl : FunctionControl
 	}
 
 	#endregion
-
-	#region IDefaultButtonControl 成员
-
-	public override Button DefaultButton => _ImportButton;
-
-	#endregion
-
-	private void _ItemList_FormatRow(object sender, FormatRowEventArgs e) {
-		SourceItem si = e.Model as SourceItem;
-		BookmarkSettings bs = si.Bookmark;
-		if (bs == null) {
-			return;
-		}
-
-		e.Item.UseItemStyleForSubItems = false;
-		e.UseCellFormatEvents = false;
-		ListViewItem.ListViewSubItem c = e.Item.SubItems[1];
-		c.ForeColor = bs.ForeColor.IsEmptyOrTransparent() ? Color.Black : bs.ForeColor;
-		if (bs.IsBold || bs.IsItalic) {
-			c.Font = new Font(c.Font,
-				(bs.IsBold ? FontStyle.Bold : FontStyle.Regular) |
-				(bs.IsItalic ? FontStyle.Italic : FontStyle.Regular));
-		}
-	}
 }

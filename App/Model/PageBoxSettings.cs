@@ -1,12 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.ComponentModel;
 using System.Xml.Serialization;
 
 namespace PDFPatcher.Model;
 
 public class PageBoxSettings
 {
+	public PageBoxSettings() {
+		PaperSize = new PaperSize(PaperSize.AsPageSize, 0, 0);
+		Margins = new Margins();
+		AutoRotation = true;
+	}
+
 	[XmlElement("边框调整值")] public Margins Margins { get; set; }
 	[XmlElement("指定尺寸")] public PaperSize PaperSize { get; set; }
 
@@ -15,7 +19,7 @@ public class PageBoxSettings
 
 	///<summary>获取或指定是否自动旋转页面适合图片纵横比。</summary>
 	[XmlAttribute("自动旋转")]
-	[System.ComponentModel.DefaultValue(true)]
+	[DefaultValue(true)]
 	public bool AutoRotation { get; set; }
 
 	[XmlAttribute("旋转角度")] public int Rotation { get; set; }
@@ -26,12 +30,6 @@ public class PageBoxSettings
 
 	public bool NeedResize => PaperSize.SpecialSize != SpecialPaperSize.AsPageSize;
 	public bool NeedAdjustMargins => Margins.IsEmpty == false;
-
-	public PageBoxSettings() {
-		PaperSize = new PaperSize(PaperSize.AsPageSize, 0, 0);
-		Margins = new Margins();
-		AutoRotation = true;
-	}
 }
 
 public enum VerticalAlignment

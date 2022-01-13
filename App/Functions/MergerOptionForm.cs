@@ -1,30 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using PDFPatcher.Common;
 using PDFPatcher.Model;
+using PDFPatcher.Processor;
+using PDFPatcher.Properties;
+using HorizontalAlignment = PDFPatcher.Model.HorizontalAlignment;
 
 namespace PDFPatcher.Functions;
 
 [ToolboxItem(false)]
 public partial class MergerOptionForm : Form, IResettableControl
 {
-	private string paperName;
 	private bool _uiLockDown;
+	private string paperName;
 
 	public MergerOptionForm() {
 		InitializeComponent();
-		this.SetIcon(Properties.Resources.PdfOptions);
+		this.SetIcon(Resources.PdfOptions);
 		MinimumSize = Size;
 
 		_AutoBookmarkTitleBox.CheckedChanged += CheckBoxChanged;
 		_KeepSourcePdfBookmarkBox.CheckedChanged += CheckBoxChanged;
 		_UnifyOrientationBox.CheckedChanged += CheckBoxChanged;
-		_PageSizeBox.Items.AddRange(Array.FindAll(Processor.PdfDocumentCreator.PaperSizes,
+		_PageSizeBox.Items.AddRange(Array.FindAll(PdfDocumentCreator.PaperSizes,
 			i => i.SpecialSize < SpecialPaperSize.AsSpecificPage));
 		_ImageHAlignBox.Items.Add("水平居中");
 		_ImageHAlignBox.Items.Add("左对齐");
@@ -118,7 +117,7 @@ public partial class MergerOptionForm : Form, IResettableControl
 		ps.PaperSize.PaperName = paperName;
 		ps.PaperSize.Width = CmToPoint(_WidthBox);
 		ps.PaperSize.Height = CmToPoint(_HeightBox);
-		ps.HorizontalAlign = (Model.HorizontalAlignment)_ImageHAlignBox.SelectedIndex;
+		ps.HorizontalAlign = (HorizontalAlignment)_ImageHAlignBox.SelectedIndex;
 		ps.VerticalAlign = (VerticalAlignment)_ImageVAlignBox.SelectedIndex;
 		ps.ScaleContent = _ScalePdfPagesBox.Checked;
 		option.SubFolderBeforeFiles = _SubFoldersBeforeFilesBox.Checked;
@@ -151,8 +150,8 @@ public partial class MergerOptionForm : Form, IResettableControl
 
 		PaperSize p = _PageSizeBox.SelectedItem as PaperSize;
 		if (p.Width > 0 && p.Height > 0) {
-			_WidthBox.SetValue((decimal)p.Width / (decimal)100);
-			_HeightBox.SetValue((decimal)p.Height / (decimal)100);
+			_WidthBox.SetValue((decimal)p.Width / 100);
+			_HeightBox.SetValue((decimal)p.Height / 100);
 		}
 
 		paperName = p.PaperName;

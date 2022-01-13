@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using iTextSharp.text.pdf;
 using PDFPatcher.Common;
@@ -7,89 +8,14 @@ using PDFPatcher.Processor;
 
 namespace PDFPatcher.Model;
 
-[System.Diagnostics.DebuggerDisplay("Name = {Name}({FriendlyName}); Value = {Value}; {HasChildren}")]
+[DebuggerDisplay("Name = {Name}({FriendlyName}); Value = {Value}; {HasChildren}")]
 public sealed class DocumentObject : IHierarchicalObject<DocumentObject>
 {
-	private static readonly string[] __ReversalRefNames = new string[] {"Parent", "Prev", "First", "Last", "P"};
-	private static readonly int[] __CompoundTypes = new int[] {PdfObject.DICTIONARY, PdfObject.ARRAY, PdfObject.STREAM};
+	private static readonly string[] __ReversalRefNames = {"Parent", "Prev", "First", "Last", "P"};
+	private static readonly int[] __CompoundTypes = {PdfObject.DICTIONARY, PdfObject.ARRAY, PdfObject.STREAM};
 	private static readonly DocumentObject[] __Leaf = new DocumentObject[0];
 
-	internal PdfPathDocument OwnerDocument { get; private set; }
-	internal DocumentObject Parent { get; private set; }
-	internal string Name { get; set; }
-	internal PdfObject Value { get; set; }
-	internal string Description { get; set; }
-	internal object ExtensiveObject { get; set; }
-	internal PdfObjectType Type { get; private set; }
-	internal bool IsKeyObject { get; set; }
-	internal object ImageKey { get; set; }
-
-	/// <summary>
-	/// 获取友好形式的名称。
-	/// </summary>
-	internal string FriendlyName { get; set; }
-
-	/// <summary>
-	/// 获取友好形式的值。
-	/// </summary>
-	internal string FriendlyValue { get; set; }
-
-	public string LiteralValue => GetItemValueText(Value, ExtensiveObject as PdfObject);
-
-	public bool HasChildren {
-		get {
-			if (Type != PdfObjectType.Normal
-			    && (Type == PdfObjectType.Trailer || Type == PdfObjectType.Pages || Type == PdfObjectType.Page ||
-			        Type == PdfObjectType.PageCommands || Type == PdfObjectType.Hidden ||
-			        (Type == PdfObjectType.PageCommand && Children.Count > 0))) {
-				return true;
-			}
-
-			PdfObject po = Value ?? ExtensiveObject as PdfObject;
-			if (po == null) {
-				return false;
-			}
-
-			if (PdfHelper.CompoundTypes.Contains(po.Type)) {
-				return true;
-			}
-			else if (po.Type == PdfObject.INDIRECT) {
-				if (Type == PdfObjectType.GoToPage) {
-					return false;
-				}
-
-				PdfObject r = ExtensiveObject as PdfObject;
-				if (r == null) {
-					return false;
-				}
-
-				if (r.Type == PdfObject.DICTIONARY && Parent.Type == PdfObjectType.Outline && Name == "Next") {
-					return false;
-				}
-
-				return (r.Type == PdfObject.DICTIONARY && __ReversalRefNames.Contains(Name) == false)
-				       || r.Type == PdfObject.ARRAY
-				       || r.Type == PdfObject.STREAM;
-			}
-
-			return false;
-		}
-	}
-
 	private IList<DocumentObject> _Children;
-
-	public ICollection<DocumentObject> Children {
-		get {
-			if (_Children == null) {
-				PopulateChildren(false);
-				if (_Children == null) {
-					_Children = __Leaf;
-				}
-			}
-
-			return _Children;
-		}
-	}
 
 	internal DocumentObject(PdfPathDocument ownerDocument, DocumentObject parent, string name, PdfObject value) :
 		this(ownerDocument, parent, name, value, PdfObjectType.Normal) {
@@ -120,6 +46,82 @@ public sealed class DocumentObject : IHierarchicalObject<DocumentObject>
 		Name = name;
 		Value = value;
 		Type = type;
+	}
+
+	internal PdfPathDocument OwnerDocument { get; }
+	internal DocumentObject Parent { get; }
+	internal string Name { get; set; }
+	internal PdfObject Value { get; set; }
+	internal string Description { get; set; }
+	internal object ExtensiveObject { get; set; }
+	internal PdfObjectType Type { get; private set; }
+	internal bool IsKeyObject { get; set; }
+	internal object ImageKey { get; set; }
+
+	/// <summary>
+	///     获取友好形式的名称。
+	/// </summary>
+	internal string FriendlyName { get; set; }
+
+	/// <summary>
+	///     获取友好形式的值。
+	/// </summary>
+	internal string FriendlyValue { get; set; }
+
+	public string LiteralValue => GetItemValueText(Value, ExtensiveObject as PdfObject);
+
+	public bool HasChildren {
+		get {
+			if (Type != PdfObjectType.Normal
+			    && (Type == PdfObjectType.Trailer || Type == PdfObjectType.Pages || Type == PdfObjectType.Page ||
+			        Type == PdfObjectType.PageCommands || Type == PdfObjectType.Hidden ||
+			        (Type == PdfObjectType.PageCommand && Children.Count > 0))) {
+				return true;
+			}
+
+			PdfObject po = Value ?? ExtensiveObject as PdfObject;
+			if (po == null) {
+				return false;
+			}
+
+			if (PdfHelper.CompoundTypes.Contains(po.Type)) {
+				return true;
+			}
+
+			if (po.Type == PdfObject.INDIRECT) {
+				if (Type == PdfObjectType.GoToPage) {
+					return false;
+				}
+
+				PdfObject r = ExtensiveObject as PdfObject;
+				if (r == null) {
+					return false;
+				}
+
+				if (r.Type == PdfObject.DICTIONARY && Parent.Type == PdfObjectType.Outline && Name == "Next") {
+					return false;
+				}
+
+				return (r.Type == PdfObject.DICTIONARY && __ReversalRefNames.Contains(Name) == false)
+				       || r.Type == PdfObject.ARRAY
+				       || r.Type == PdfObject.STREAM;
+			}
+
+			return false;
+		}
+	}
+
+	public ICollection<DocumentObject> Children {
+		get {
+			if (_Children == null) {
+				PopulateChildren(false);
+				if (_Children == null) {
+					_Children = __Leaf;
+				}
+			}
+
+			return _Children;
+		}
 	}
 
 	internal bool RemoveChildByName(string name) {
@@ -167,7 +169,7 @@ public sealed class DocumentObject : IHierarchicalObject<DocumentObject>
 	}
 
 	internal bool UpdateDocumentObject(object value) {
-		PdfObject po = Value as PdfObject;
+		PdfObject po = Value;
 		if (po == null) {
 			return false;
 		}
@@ -255,7 +257,8 @@ public sealed class DocumentObject : IHierarchicalObject<DocumentObject>
 			if (d.Type == PdfObjectType.Page) {
 				return "Page";
 			}
-			else if (d.Type == PdfObjectType.Image) {
+
+			if (d.Type == PdfObjectType.Image) {
 				return "Image";
 			}
 		}
@@ -317,13 +320,13 @@ public sealed class DocumentObject : IHierarchicalObject<DocumentObject>
 						PdfObjectType.PageCommands) {IsKeyObject = true};
 				}
 				else if (Type == PdfObjectType.Trailer) {
-					DocumentObject d = Array.Find(r, (o) => { return o.Name == "Root"; });
+					DocumentObject d = Array.Find(r, o => { return o.Name == "Root"; });
 					if (d != null) {
 						d.Type = PdfObjectType.Root;
 					}
 				}
 				else if (Type == PdfObjectType.Root) {
-					DocumentObject d = Array.Find(r, (o) => { return o.Name == "Outlines"; });
+					DocumentObject d = Array.Find(r, o => { return o.Name == "Outlines"; });
 					if (d != null) {
 						d.Type = PdfObjectType.Outline;
 					}

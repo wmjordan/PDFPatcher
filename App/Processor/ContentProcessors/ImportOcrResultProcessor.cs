@@ -25,46 +25,6 @@ internal sealed class ImportOcrResultProcessor : IDocProcessor
 	private PdfIndirectReference font;
 	private PdfIndirectReference fontV;
 
-	public ImportOcrResultProcessor() {
-	}
-
-	#region IDocProcessor 成员
-
-	public string Name => "导入光学字符识别结果";
-
-	public int EstimateWorkload(PdfReader pdf) {
-		return pdf.NumberOfPages;
-	}
-
-	public void BeginProcess(DocProcessorContext context) {
-		XmlReader x = context.ExtraData[DocProcessorContext.OcrData] as XmlReader;
-		if (x == null) {
-			return;
-		}
-
-		if (x.Name == Constants.PdfInfo) {
-			x.Read();
-			x.MoveToContent();
-		}
-
-		CreateGlobalOcrFontReference(context);
-	}
-
-	public bool Process(DocProcessorContext context) {
-		XmlReader x = context.ExtraData[DocProcessorContext.OcrData] as XmlReader;
-		if (x == null || x.Name != Constants.Ocr.Result) {
-			return false;
-		}
-
-		ImportOcrResult(context, x);
-		return true;
-	}
-
-	public void EndProcess(DocProcessorContext context) {
-	}
-
-	#endregion
-
 	private void ImportOcrResult(DocProcessorContext context, XmlReader x) {
 		int l = 0;
 		int p;
@@ -202,7 +162,7 @@ internal sealed class ImportOcrResultProcessor : IDocProcessor
 		fd.Put(PdfName.CAPHEIGHT, new PdfNumber(857));
 		fd.Put(PdfName.DESCENT, new PdfNumber(-143));
 		fd.Put(PdfName.FLAGS, new PdfNumber(4));
-		fd.Put(PdfName.FONTBBOX, new PdfArray(new int[] {-250, -143, 600, 857}));
+		fd.Put(PdfName.FONTBBOX, new PdfArray(new[] {-250, -143, 600, 857}));
 		fd.Put(PdfName.FONTNAME, FontName);
 		//fd.Put (PdfName.ITALICANGLE, new PdfNumber (0));
 		fd.Put(PdfName.STEMV, new PdfNumber(91));
@@ -298,21 +258,12 @@ internal sealed class ImportOcrResultProcessor : IDocProcessor
 	private sealed class OcrContentInfo
 	{
 		internal const int A1 = 0, A2 = 1, B1 = 2, B2 = 3, DX = 4, DY = 5; // 矩阵数组索引
-		internal int ImageWidth { get; private set; }
-		internal int ImageHeight { get; private set; }
-		internal string Text { get; private set; }
-		internal int DeltaX => _dx;
-		internal int DeltaY => _dy;
-		internal bool IsVertical => _isVertical;
-		internal float FontSize => _size;
 
-		private bool _isVertical;
+		private int _cx, _cy;
 
 		//float _ix, _iy, _dx, _dy;
 		private string _text;
 		private int _top, _bottom, _left, _right, _size;
-
-		private int _cx, _cy, _dx, _dy;
 
 		//float _m11, _m12, _m21, _m22, _mx, _my;
 		internal OcrContentInfo(int imageWidth, int imageHeight, float[] matrix) {
@@ -328,6 +279,17 @@ internal sealed class ImportOcrResultProcessor : IDocProcessor
 			//_iy = 1 / (float)imageHeight;
 		}
 
+		internal int ImageWidth { get; }
+		internal int ImageHeight { get; }
+		internal string Text { get; private set; }
+		internal int DeltaX { get; private set; }
+
+		internal int DeltaY { get; private set; }
+
+		internal bool IsVertical { get; private set; }
+
+		internal float FontSize => _size;
+
 		internal bool GetInfo(XmlElement ocrInfoItem) {
 			if (ocrInfoItem.GetAttribute(Constants.Coordinates.Top).TryParse(out _top) == false
 			    || ocrInfoItem.GetAttribute(Constants.Coordinates.Bottom).TryParse(out _bottom) == false
@@ -340,20 +302,20 @@ internal sealed class ImportOcrResultProcessor : IDocProcessor
 				return false;
 			}
 
-			_isVertical = ocrInfoItem.GetAttribute(Constants.Coordinates.Direction) ==
-			              Constants.Coordinates.Vertical;
-			_size = Math.Abs(_isVertical ? _right - _left : _bottom - _top);
-			if (_isVertical == false) {
+			IsVertical = ocrInfoItem.GetAttribute(Constants.Coordinates.Direction) ==
+			             Constants.Coordinates.Vertical;
+			_size = Math.Abs(IsVertical ? _right - _left : _bottom - _top);
+			if (IsVertical == false) {
 				_bottom = ImageHeight - _bottom;
-				_dx = _left - _cx;
-				_dy = _bottom - _cy;
+				DeltaX = _left - _cx;
+				DeltaY = _bottom - _cy;
 				_cx = _left;
 				_cy = _bottom;
 			}
 			else {
 				_top = ImageHeight - _top;
-				_dx = _left - _cx;
-				_dy = _top - _cy;
+				DeltaX = _left - _cx;
+				DeltaY = _top - _cy;
 				_cx = _left;
 				_cy = _top;
 			}
@@ -362,4 +324,41 @@ internal sealed class ImportOcrResultProcessor : IDocProcessor
 			return true;
 		}
 	}
+
+	#region IDocProcessor 成员
+
+	public string Name => "导入光学字符识别结果";
+
+	public int EstimateWorkload(PdfReader pdf) {
+		return pdf.NumberOfPages;
+	}
+
+	public void BeginProcess(DocProcessorContext context) {
+		XmlReader x = context.ExtraData[DocProcessorContext.OcrData] as XmlReader;
+		if (x == null) {
+			return;
+		}
+
+		if (x.Name == Constants.PdfInfo) {
+			x.Read();
+			x.MoveToContent();
+		}
+
+		CreateGlobalOcrFontReference(context);
+	}
+
+	public bool Process(DocProcessorContext context) {
+		XmlReader x = context.ExtraData[DocProcessorContext.OcrData] as XmlReader;
+		if (x == null || x.Name != Constants.Ocr.Result) {
+			return false;
+		}
+
+		ImportOcrResult(context, x);
+		return true;
+	}
+
+	public void EndProcess(DocProcessorContext context) {
+	}
+
+	#endregion
 }

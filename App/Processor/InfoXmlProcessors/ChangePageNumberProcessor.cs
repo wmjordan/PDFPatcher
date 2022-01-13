@@ -1,14 +1,10 @@
-﻿using System;
+﻿using System.Xml;
 using PDFPatcher.Common;
 
 namespace PDFPatcher.Processor;
 
 internal sealed class ChangePageNumberProcessor : IPdfInfoXmlProcessor
 {
-	public bool IsAbsolute { get; private set; }
-	public int Amount { get; private set; }
-	public bool SkipZero { get; private set; }
-
 	public ChangePageNumberProcessor(int amount) : this(amount, false, false) { }
 
 	public ChangePageNumberProcessor(int amount, bool isAbsolute, bool skipZero) {
@@ -17,11 +13,15 @@ internal sealed class ChangePageNumberProcessor : IPdfInfoXmlProcessor
 		SkipZero = skipZero;
 	}
 
+	public bool IsAbsolute { get; }
+	public int Amount { get; }
+	public bool SkipZero { get; }
+
 	#region IInfoDocProcessor 成员
 
 	public string Name => "更改目标页码";
 
-	public IUndoAction Process(System.Xml.XmlElement item) {
+	public IUndoAction Process(XmlElement item) {
 		int p;
 		string a = item.GetAttribute(Constants.DestinationAttributes.Action);
 		if (((string.IsNullOrEmpty(a) && SkipZero == false) || a == Constants.ActionType.Goto ||
@@ -48,15 +48,14 @@ internal sealed class ChangePageNumberProcessor : IPdfInfoXmlProcessor
 
 			return UndoAttributeAction.GetUndoAction(item, Constants.DestinationAttributes.Page, p.ToText());
 		}
-		else {
-			UndoActionGroup undo = new();
-			undo.SetAttribute(item, Constants.DestinationAttributes.Page, Amount.ToText());
-			if (string.IsNullOrEmpty(a)) {
-				undo.SetAttribute(item, Constants.DestinationAttributes.Action, Constants.ActionType.Goto);
-			}
 
-			return undo;
+		UndoActionGroup undo = new();
+		undo.SetAttribute(item, Constants.DestinationAttributes.Page, Amount.ToText());
+		if (string.IsNullOrEmpty(a)) {
+			undo.SetAttribute(item, Constants.DestinationAttributes.Action, Constants.ActionType.Goto);
 		}
+
+		return undo;
 	}
 
 	#endregion

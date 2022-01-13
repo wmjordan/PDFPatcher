@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml;
+﻿using System.Xml;
+using PDFPatcher.Common;
 
 namespace PDFPatcher.Processor;
 
 internal sealed class ConvertUnitProcessor : IInfoDocProcessor
 {
-	public float UnitFactor { get; set; }
-
 	public ConvertUnitProcessor() {
 		UnitFactor = 1;
 	}
+
+	public float UnitFactor { get; set; }
 
 	#region IInfoDocProcessor 成员
 
@@ -28,7 +26,7 @@ internal sealed class ConvertUnitProcessor : IInfoDocProcessor
 	private bool ConvertUnit(XmlElement item, string attribute) {
 		XmlAttribute a = item.GetAttributeNode(attribute);
 		if (a != null) {
-			a.Value = Common.UnitConverter.ToPoint(a.Value, UnitFactor);
+			a.Value = UnitConverter.ToPoint(a.Value, UnitFactor);
 			return true;
 		}
 

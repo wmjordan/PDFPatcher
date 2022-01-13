@@ -1,15 +1,14 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
 namespace Devcorp.Controls.Design;
 
 /// <summary>
-/// Structure to define HSL.
+///     Structure to define HSL.
 /// </summary>
 public struct HSL
 {
 	/// <summary>
-	/// Gets an empty HSL structure;
+	///     Gets an empty HSL structure;
 	/// </summary>
 	public static readonly HSL Empty = new();
 
@@ -40,7 +39,7 @@ public struct HSL
 	#region Accessors
 
 	/// <summary>
-	/// Gets or sets the hue component.
+	///     Gets or sets the hue component.
 	/// </summary>
 	[Description("Hue component")]
 	public double Hue {
@@ -49,7 +48,7 @@ public struct HSL
 	}
 
 	/// <summary>
-	/// Gets or sets saturation component.
+	///     Gets or sets saturation component.
 	/// </summary>
 	[Description("Saturation component")]
 	public double Saturation {
@@ -58,7 +57,7 @@ public struct HSL
 	}
 
 	/// <summary>
-	/// Gets or sets the luminance component.
+	///     Gets or sets the luminance component.
 	/// </summary>
 	[Description("Luminance component")]
 	public double Luminance {
@@ -69,7 +68,7 @@ public struct HSL
 	#endregion
 
 	/// <summary>
-	/// Creates an instance of a HSL structure.
+	///     Creates an instance of a HSL structure.
 	/// </summary>
 	/// <param name="h">Hue value.</param>
 	/// <param name="s">Saturation value.</param>

@@ -1,22 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using iTextSharp.text.pdf;
+using iTextSharp.text.pdf.parser;
 using PDFPatcher.Common;
 using PDFPatcher.Model;
-using Matrix = iTextSharp.text.pdf.parser.Matrix;
+using GraphicsState = PDFPatcher.Model.GraphicsState;
 
 namespace PDFPatcher.Processor;
 
 internal sealed class PdfPageCommandProcessor : PdfContentStreamProcessor, IPdfPageCommandContainer
 {
-	public bool HasCommand => Commands.Count > 0;
-
-	/// <summary>
-	/// 分析内容后得到的 PDF 命令操作符及操作数列表。
-	/// </summary>
-	public IList<PdfPageCommand> Commands { get; }
-
 	private readonly Stack<EnclosingCommand> _commandStack;
 	private EnclosingCommand _currentCommand;
 	private float _textWidth;
@@ -33,6 +26,13 @@ internal sealed class PdfPageCommandProcessor : PdfContentStreamProcessor, IPdfP
 		PdfDictionary resources = form.Locate<PdfDictionary>(PdfName.RESOURCES);
 		ProcessContent(PdfReader.GetStreamBytes(form), resources);
 	}
+
+	public bool HasCommand => Commands.Count > 0;
+
+	/// <summary>
+	///     分析内容后得到的 PDF 命令操作符及操作数列表。
+	/// </summary>
+	public IList<PdfPageCommand> Commands { get; }
 
 	protected override void DisplayPdfString(PdfString str) {
 		GraphicsState gs = CurrentGraphicState;
@@ -102,7 +102,7 @@ internal sealed class PdfPageCommandProcessor : PdfContentStreamProcessor, IPdfP
 	}
 
 	/// <summary>
-	/// 将 <see cref="Operands"/> 的内容写入到目标 <see cref="System.IO.Stream"/>。
+	///     将 <see cref="Operands" /> 的内容写入到目标 <see cref="System.IO.Stream" />。
 	/// </summary>
 	/// <param name="target">目标流对象。</param>
 	internal void WritePdfCommands(Stream target) {
@@ -112,9 +112,9 @@ internal sealed class PdfPageCommandProcessor : PdfContentStreamProcessor, IPdfP
 	}
 
 	/// <summary>
-	/// 将 <see cref="Operands"/> 的内容写入到目标 <paramref name="pdf"/> 的第 <paramref name="pageNumber"/> 页。
+	///     将 <see cref="Operands" /> 的内容写入到目标 <paramref name="pdf" /> 的第 <paramref name="pageNumber" /> 页。
 	/// </summary>
-	/// <param name="pdf">目标 <see cref="PdfReader"/>。</param>
+	/// <param name="pdf">目标 <see cref="PdfReader" />。</param>
 	/// <param name="pageNumber">要写入的页码。</param>
 	internal void WritePdfCommands(PdfReader pdf, int pageNumber) {
 		using (MemoryStream ms = new()) {
@@ -129,8 +129,8 @@ internal sealed class PdfPageCommandProcessor : PdfContentStreamProcessor, IPdfP
 	}
 
 	private static string GetOperandsTextValue(List<PdfObject> operands) {
-		List<string> n = operands.ConvertAll((po) =>
-			po.Type == PdfObject.NUMBER ? ValueHelper.ToText(((PdfNumber)po).DoubleValue) : null);
+		List<string> n = operands.ConvertAll(po =>
+			po.Type == PdfObject.NUMBER ? ((PdfNumber)po).DoubleValue.ToText() : null);
 		n.RemoveAt(n.Count - 1);
 		return string.Join(" ", n.ToArray());
 	}

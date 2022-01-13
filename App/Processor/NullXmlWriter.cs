@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Xml;
 
 namespace PDFPatcher.Processor;
 
-internal sealed class NullXmlWriter : System.Xml.XmlWriter
+internal sealed class NullXmlWriter : XmlWriter
 {
+	public override WriteState WriteState => WriteState.Content;
+
 	public override void Close() {
 	}
 
@@ -69,8 +69,6 @@ internal sealed class NullXmlWriter : System.Xml.XmlWriter
 
 	public override void WriteStartElement(string prefix, string localName, string ns) {
 	}
-
-	public override System.Xml.WriteState WriteState => System.Xml.WriteState.Content;
 
 	public override void WriteString(string text) {
 	}

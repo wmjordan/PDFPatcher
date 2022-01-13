@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Runtime.InteropServices;
 using FreeImageAPI;
 using iTextSharp.text.pdf;
 using PDFPatcher.Common;
@@ -14,27 +15,27 @@ namespace PDFPatcher.Processor;
 
 internal sealed class ImageExtractor
 {
-	private readonly PdfPageImageProcessor _parser;
-	private int _totalImageCount;
-	private int _imageCount;
-	private int _activePage; // 在导出文件图片时，使用此属性命名文件
 	private readonly string _fileMask;
-	private int _pageRotation;
-	private readonly ImageExtracterOptions _options;
 	private readonly List<ImageInfo> _imageInfoList = new();
-	private readonly HashSet<PdfObject> _Refs = new();
-
-	internal List<ImageInfo> InfoList => _imageInfoList;
 
 	private readonly List<ImageDisposition> _imagePosList = new();
-	internal List<ImageDisposition> PosList => _imagePosList;
-	internal bool PrintImageLocation { get; set; }
+	private readonly ImageExtracterOptions _options;
+	private readonly PdfPageImageProcessor _parser;
+	private readonly HashSet<PdfObject> _Refs = new();
+	private int _activePage; // 在导出文件图片时，使用此属性命名文件
+	private int _imageCount;
+	private int _pageRotation;
+	private int _totalImageCount;
 
 	public ImageExtractor(ImageExtracterOptions options, PdfReader reader) {
 		_fileMask = string.IsNullOrEmpty(options.FileMask) ? "0" : options.FileMask;
 		_options = options;
 		_parser = new PdfPageImageProcessor(_imagePosList, _imageInfoList);
 	}
+
+	internal List<ImageInfo> InfoList => _imageInfoList;
+	internal List<ImageDisposition> PosList => _imagePosList;
+	internal bool PrintImageLocation { get; set; }
 
 	internal void ExtractPageImages(PdfReader reader, int pageNum) {
 		if (pageNum < 1 || pageNum > reader.NumberOfPages) {
@@ -405,7 +406,7 @@ internal sealed class ImageExtractor
 					try {
 						bmp.Save(n, FREE_IMAGE_FORMAT.FIF_PNG);
 					}
-					catch (System.Runtime.InteropServices.SEHException) {
+					catch (SEHException) {
 						Tracker.TraceMessage(Tracker.Category.Error, "保存图片时出现错误，请联系程序开发者：" + n);
 					}
 				}
@@ -706,8 +707,8 @@ internal sealed class ImageExtractor
 
 	private sealed class PdfPageImageProcessor : PdfContentStreamProcessor
 	{
-		private readonly List<ImageDisposition> _posList;
 		private readonly List<ImageInfo> _infoList;
+		private readonly List<ImageDisposition> _posList;
 
 		public PdfPageImageProcessor(List<ImageDisposition> posList, List<ImageInfo> infoList) {
 			PopulateOperators();

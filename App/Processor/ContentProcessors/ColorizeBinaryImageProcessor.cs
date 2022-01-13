@@ -1,18 +1,45 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using iTextSharp.text.pdf;
 using PDFPatcher.Model;
-using PDFPatcher.Processor.Imaging;
 
 namespace PDFPatcher.Processor;
 
 /// <summary>
-/// 设置黑白图片的颜色。
+///     设置黑白图片的颜色。
 /// </summary>
 internal sealed class ColorizeBinaryImageProcessor : IPageProcessor
 {
 	private int _processedPageCount;
+
+	private bool ProcessCommands(IList<PdfPageCommand> parent, IList<PdfName> bwImages) {
+		bool r = false;
+		PdfPageCommand cmd;
+		EnclosingCommand ec;
+		for (int i = 0; i < parent.Count; i++) {
+			cmd = parent[i];
+			ec = cmd as EnclosingCommand;
+			if (ec != null) {
+				r |= ProcessCommands(ec.Commands, bwImages);
+				continue;
+			}
+
+			if (cmd.Name.ToString() == "Do") {
+				foreach (PdfName item in bwImages) {
+					if (item.Equals(cmd.Operands[0])) {
+						parent.Insert(i,
+							PdfPageCommand.Create("RG", new PdfNumber(1), new PdfNumber(0),
+								new PdfNumber(0)));
+						parent.Insert(i,
+							PdfPageCommand.Create("rg", new PdfNumber(0), new PdfNumber(1),
+								new PdfNumber(0)));
+						return true;
+					}
+				}
+			}
+		}
+
+		return r;
+	}
 
 	#region IPageProcessor 成员
 
@@ -62,34 +89,4 @@ internal sealed class ColorizeBinaryImageProcessor : IPageProcessor
 	}
 
 	#endregion
-
-	private bool ProcessCommands(IList<PdfPageCommand> parent, IList<PdfName> bwImages) {
-		bool r = false;
-		PdfPageCommand cmd;
-		EnclosingCommand ec;
-		for (int i = 0; i < parent.Count; i++) {
-			cmd = parent[i];
-			ec = cmd as EnclosingCommand;
-			if (ec != null) {
-				r |= ProcessCommands(ec.Commands, bwImages);
-				continue;
-			}
-
-			if (cmd.Name.ToString() == "Do") {
-				foreach (PdfName item in bwImages) {
-					if (item.Equals(cmd.Operands[0])) {
-						parent.Insert(i,
-							PdfPageCommand.Create("RG", new PdfNumber(1), new PdfNumber(0),
-								new PdfNumber(0)));
-						parent.Insert(i,
-							PdfPageCommand.Create("rg", new PdfNumber(0), new PdfNumber(1),
-								new PdfNumber(0)));
-						return true;
-					}
-				}
-			}
-		}
-
-		return r;
-	}
 }

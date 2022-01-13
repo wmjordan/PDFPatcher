@@ -1,20 +1,12 @@
-﻿using System;
+﻿using System.Collections;
 using System.Windows.Forms;
+using BrightIdeasSoftware;
 using PDFPatcher.Common;
 
 namespace PDFPatcher;
 
-internal sealed class ListViewItemComparer : System.Collections.IComparer
+internal sealed class ListViewItemComparer : IComparer
 {
-	///<summary>获取或指定排序列的值。</summary>
-	public int Col { get; }
-
-	///<summary>获取或指定是否使用智能排序。</summary>
-	public bool UseSmartSort { get; }
-
-	///<summary>获取或指定列表排序的方式。</summary>
-	public SortOrder SortOrder { get; }
-
 	public ListViewItemComparer() {
 		Col = 0;
 	}
@@ -35,9 +27,18 @@ internal sealed class ListViewItemComparer : System.Collections.IComparer
 		SortOrder = sortOrder;
 	}
 
+	///<summary>获取或指定排序列的值。</summary>
+	public int Col { get; }
+
+	///<summary>获取或指定是否使用智能排序。</summary>
+	public bool UseSmartSort { get; }
+
+	///<summary>获取或指定列表排序的方式。</summary>
+	public SortOrder SortOrder { get; }
+
 	#region IComparer 成员
 
-	int System.Collections.IComparer.Compare(object x, object y) {
+	int IComparer.Compare(object x, object y) {
 		if (SortOrder == SortOrder.None) {
 			return 0;
 		}
@@ -51,22 +52,22 @@ internal sealed class ListViewItemComparer : System.Collections.IComparer
 	#endregion
 }
 
-internal sealed class OlvColumnSmartComparer : System.Collections.IComparer
+internal sealed class OlvColumnSmartComparer : IComparer
 {
-	///<summary>获取排序列。</summary>
-	public BrightIdeasSoftware.OLVColumn Column { get; }
-
-	///<summary>获取列表排序的方式。</summary>
-	public SortOrder SortOrder { get; }
-
-	public OlvColumnSmartComparer(BrightIdeasSoftware.OLVColumn column, SortOrder sortOrder) {
+	public OlvColumnSmartComparer(OLVColumn column, SortOrder sortOrder) {
 		Column = column;
 		SortOrder = sortOrder;
 	}
 
+	///<summary>获取排序列。</summary>
+	public OLVColumn Column { get; }
+
+	///<summary>获取列表排序的方式。</summary>
+	public SortOrder SortOrder { get; }
+
 	#region IComparer 成员
 
-	int System.Collections.IComparer.Compare(object x, object y) {
+	int IComparer.Compare(object x, object y) {
 		if (SortOrder == SortOrder.None) {
 			return 0;
 		}

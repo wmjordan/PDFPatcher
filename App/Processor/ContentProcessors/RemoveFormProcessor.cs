@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using iTextSharp.text.pdf;
 using PDFPatcher.Common;
 using PDFPatcher.Model;
@@ -9,6 +8,24 @@ namespace PDFPatcher.Processor;
 internal sealed class RemoveFormProcessor : IPageProcessor
 {
 	private int _processedPageCount;
+
+	private bool ProcessCommands(IList<PdfPageCommand> parent, HashSet<PdfName> formNames) {
+		bool r = false;
+		for (int i = parent.Count - 1; i >= 0; i--) {
+			PdfPageCommand cmd = parent[i];
+			EnclosingCommand ec = cmd as EnclosingCommand;
+			if (ec != null) {
+				r |= ProcessCommands(ec.Commands, formNames);
+			}
+
+			if (cmd.Name.ToString() == "Do" && cmd.HasOperand && formNames.Contains(cmd.Operands[0] as PdfName)) {
+				parent.RemoveAt(i);
+				r = true;
+			}
+		}
+
+		return r;
+	}
 
 	#region IPageProcessor 成员
 
@@ -75,22 +92,4 @@ internal sealed class RemoveFormProcessor : IPageProcessor
 	}
 
 	#endregion
-
-	private bool ProcessCommands(IList<PdfPageCommand> parent, HashSet<PdfName> formNames) {
-		bool r = false;
-		for (int i = parent.Count - 1; i >= 0; i--) {
-			PdfPageCommand cmd = parent[i];
-			EnclosingCommand ec = cmd as EnclosingCommand;
-			if (ec != null) {
-				r |= ProcessCommands(ec.Commands, formNames);
-			}
-
-			if (cmd.Name.ToString() == "Do" && cmd.HasOperand && formNames.Contains(cmd.Operands[0] as PdfName)) {
-				parent.RemoveAt(i);
-				r = true;
-			}
-		}
-
-		return r;
-	}
 }

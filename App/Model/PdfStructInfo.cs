@@ -1,6 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Reflection;
 using System.Xml;
 
 namespace PDFPatcher.Model;
@@ -8,27 +9,26 @@ namespace PDFPatcher.Model;
 internal struct PdfStructInfo
 {
 	private static readonly Dictionary<string, PdfStructInfo> _Info = InitStructInfo();
-	private readonly string _Name;
-	private readonly bool _IsKeyObject;
-	private readonly bool _IsRequired;
-	private readonly string _Description;
-	private readonly string _ImageKey;
 
-	public string Name => _Name;
-	public bool IsKeyObject => _IsKeyObject;
-	public bool IsRequired => _IsRequired;
-	public string Description => _Description;
-	public string ImageKey => _ImageKey;
+	public string Name { get; }
+
+	public bool IsKeyObject { get; }
+
+	public bool IsRequired { get; }
+
+	public string Description { get; }
+
+	public string ImageKey { get; }
 
 	public PdfStructInfo(string name, bool isKeyObject) : this(name, isKeyObject, false, null, null) {
 	}
 
 	public PdfStructInfo(string name, bool isKeyObject, bool isRequired, string description, string imageKey) {
-		_Name = name;
-		_IsKeyObject = isKeyObject;
-		_IsRequired = isRequired;
-		_Description = description;
-		_ImageKey = imageKey;
+		Name = name;
+		IsKeyObject = isKeyObject;
+		IsRequired = isRequired;
+		Description = description;
+		ImageKey = imageKey;
 	}
 
 	internal static PdfStructInfo GetInfo(string context, string name) {
@@ -36,15 +36,14 @@ internal struct PdfStructInfo
 		if (_Info.TryGetValue(string.Concat(context, "/", name), out i)) {
 			return i;
 		}
-		else {
-			_Info.TryGetValue(name, out i);
-			return i;
-		}
+
+		_Info.TryGetValue(name, out i);
+		return i;
 	}
 
 	private static Dictionary<string, PdfStructInfo> InitStructInfo() {
 		Dictionary<string, PdfStructInfo> d = new();
-		using (System.IO.Stream s = System.Reflection.Assembly.GetExecutingAssembly()
+		using (Stream s = Assembly.GetExecutingAssembly()
 			       .GetManifestResourceStream("PDFPatcher.Model.PDFStructInfo.xml")) {
 			XmlDocument doc = new();
 			doc.Load(s);
@@ -86,7 +85,7 @@ internal struct PdfStructInfo
 
 	private static void AddItem(Dictionary<string, PdfStructInfo> d, string key, PdfStructInfo item) {
 		if (d.ContainsKey(key)) {
-			System.Diagnostics.Debug.WriteLine("已添加 " + key);
+			Debug.WriteLine("已添加 " + key);
 			return;
 		}
 

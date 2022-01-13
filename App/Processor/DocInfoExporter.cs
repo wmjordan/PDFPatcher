@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Windows.Forms;
 using System.Xml;
 using iTextSharp.text.pdf;
 using PDFPatcher.Common;
@@ -14,18 +15,19 @@ internal sealed class DocInfoExporter
 	private const string SimpleBookmarkPageNumLeader = " ………… ";
 	private const int OpenDocWorkload = 10;
 	private const int BookmarkWorkload = 30;
-
-	internal static XmlWriterSettings GetWriterSettings() {
-		return new XmlWriterSettings() {
-			Encoding = AppContext.Exporter.GetEncoding(), Indent = true, IndentChars = "\t", CheckCharacters = false
-		};
-	}
+	private readonly PdfActionExporter _actionExport;
+	private readonly PdfContentExport _contentExport;
+	private readonly ExporterOptions _options;
 
 	private readonly PdfReader _reader;
-	private readonly ExporterOptions _options;
-	private readonly PdfContentExport _contentExport;
-	private readonly PdfActionExporter _actionExport;
 	private Dictionary<int, int> _pageReferenceMapper;
+
+	public DocInfoExporter(PdfReader reader, ExporterOptions options) {
+		_reader = reader;
+		_options = options;
+		_contentExport = new PdfContentExport(options);
+		_actionExport = new PdfActionExporter(options.UnitConverter);
+	}
 
 	private Dictionary<int, int> PageReferenceMapper {
 		get {
@@ -37,11 +39,10 @@ internal sealed class DocInfoExporter
 		}
 	}
 
-	public DocInfoExporter(PdfReader reader, ExporterOptions options) {
-		_reader = reader;
-		_options = options;
-		_contentExport = new PdfContentExport(options);
-		_actionExport = new PdfActionExporter(options.UnitConverter);
+	internal static XmlWriterSettings GetWriterSettings() {
+		return new XmlWriterSettings {
+			Encoding = AppContext.Exporter.GetEncoding(), Indent = true, IndentChars = "\t", CheckCharacters = false
+		};
 	}
 
 	internal int EstimateWorkload() {
@@ -129,7 +130,7 @@ internal sealed class DocInfoExporter
 	}
 
 	internal static void WriteDocumentInfoAttributes(XmlWriter w, string sourcePath, int numberOfPages) {
-		w.WriteAttributeString(Constants.Info.ProductName, System.Windows.Forms.Application.ProductName);
+		w.WriteAttributeString(Constants.Info.ProductName, Application.ProductName);
 		w.WriteAttributeString(Constants.Info.ProductVersion, Constants.InfoDocVersion);
 		w.WriteAttributeString(Constants.Info.ExportDate, DateTime.Now.ToString("yyyy年MM月dd日 HH:mm:ss"));
 		//w.WriteAttributeString (Constants.Info.DocumentName, Path.GetFileNameWithoutExtension (sourceFile));
@@ -440,7 +441,7 @@ internal sealed class DocInfoExporter
 				w.WriteStartElement("位置");
 				w.WriteAttributeString(Constants.DestinationAttributes.Name,
 					StringHelper.ReplaceControlAndBomCharacters(item.Key.ToString()));
-				_actionExport.ExportGotoAction(item.Value as PdfObject, w, PageReferenceMapper);
+				_actionExport.ExportGotoAction(item.Value, w, PageReferenceMapper);
 				w.WriteEndElement();
 			}
 
@@ -489,7 +490,7 @@ internal sealed class DocInfoExporter
 	}
 
 	/// <summary>
-	/// 导出 PDF 书签。
+	///     导出 PDF 书签。
 	/// </summary>
 	/// <param name="bookmarks"></param>
 	/// <param name="w"></param>
@@ -505,7 +506,7 @@ internal sealed class DocInfoExporter
 
 			w.WriteStartElement(Constants.Bookmark);
 			foreach (XmlAttribute entry in child.Attributes) {
-				string key = entry.Name as string;
+				string key = entry.Name;
 				string value = entry.Value ?? string.Empty;
 				switch (key) {
 					case Constants.Coordinates.Bottom:
@@ -541,7 +542,7 @@ internal sealed class DocInfoExporter
 	}
 
 	/// <summary>
-	/// 导出 PDF 文档页内连接。
+	///     导出 PDF 文档页内连接。
 	/// </summary>
 	/// <param name="r"></param>
 	/// <param name="w"></param>
@@ -601,8 +602,8 @@ internal sealed class DocInfoExporter
 					if (annot.Contains(PdfName.H)) {
 						string style = PdfHelper.GetPdfNameString(annot.GetAsName(PdfName.H));
 						style = ValueHelper.MapValue(style,
-							new string[] {"N", "I", "O", "P"},
-							new string[] {"无", "取反内容", "取反边框", "按下"},
+							new[] {"N", "I", "O", "P"},
+							new[] {"无", "取反内容", "取反边框", "按下"},
 							style
 						);
 						w.WriteAttributeString(Constants.PageLinkAttributes.Style, style);
@@ -638,8 +639,8 @@ internal sealed class DocInfoExporter
 						if (bs.Contains(PdfName.S)) {
 							string style = PdfHelper.GetPdfNameString(bs.GetAsName(PdfName.S));
 							style = ValueHelper.MapValue(style,
-								new string[] {"S", "U", "D", "B", "I"},
-								new string[] {"方框", "下划线", "虚线", "凸起", "凹陷"},
+								new[] {"S", "U", "D", "B", "I"},
+								new[] {"方框", "下划线", "虚线", "凸起", "凹陷"},
 								style
 							);
 							w.WriteAttributeString("样式", style);
@@ -686,7 +687,7 @@ internal sealed class DocInfoExporter
 	}
 
 	/// <summary>
-	/// 导出 PDF 文档的单个连接信息。
+	///     导出 PDF 文档的单个连接信息。
 	/// </summary>
 	/// <param name="link"></param>
 	/// <param name="w"></param>

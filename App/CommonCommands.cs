@@ -1,6 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Diagnostics;
+using System.IO;
+using System.Windows.Forms;
 using PDFPatcher.Common;
 
 namespace PDFPatcher;
@@ -8,7 +9,7 @@ namespace PDFPatcher;
 internal static class CommonCommands
 {
 	internal static void CreateShortcut() {
-		string p = System.IO.Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath);
+		string p = Path.GetDirectoryName(Application.ExecutablePath);
 		ShortcutFile s = new(FileHelper.CombinePath(p, Constants.AppEngName + ".exe")) {
 			WorkingDirectory = p, Description = Constants.AppName
 		};
@@ -19,6 +20,6 @@ internal static class CommonCommands
 	}
 
 	internal static void VisitHomePage() {
-		System.Diagnostics.Process.Start(Constants.AppHomePage);
+		Process.Start(Constants.AppHomePage);
 	}
 }

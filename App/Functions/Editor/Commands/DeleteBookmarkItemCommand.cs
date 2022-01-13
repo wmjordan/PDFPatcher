@@ -1,6 +1,5 @@
-﻿using System;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using System.Xml;
 using PDFPatcher.Processor;
 
@@ -12,7 +11,7 @@ internal sealed class DeleteBookmarkItemCommand : IEditorCommand
 		RemoveItems(controller, controller.View.Bookmark.GetSelectedElements(false));
 	}
 
-	private void RemoveItems(Controller controller, System.Collections.IList si) {
+	private void RemoveItems(Controller controller, IList si) {
 		if (si.Count == 0) {
 			return;
 		}

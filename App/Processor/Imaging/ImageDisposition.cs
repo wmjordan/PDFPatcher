@@ -8,14 +8,6 @@ namespace PDFPatcher.Processor.Imaging;
 [DebuggerDisplay("{Image.InlineImage}: {X}*{XScale},{Y}*{YScale};Flip={Image.VerticalFlip}")]
 internal sealed class ImageDisposition : IComparable<ImageDisposition>
 {
-	public ImageInfo Image { get; set; }
-	public float X { get; }
-	public float Y { get; }
-	public float Z { get; }
-	public Matrix Ctm { get; }
-	public float XScale => Ctm[Matrix.I11] / Image.Width;
-	public float YScale => Ctm[Matrix.I22] / Image.Height;
-
 	public ImageDisposition(Matrix ctm, ImageInfo image) {
 		Image = image;
 		Ctm = ctm;
@@ -27,10 +19,13 @@ internal sealed class ImageDisposition : IComparable<ImageDisposition>
 		image.VerticalFlip = Ctm[Matrix.I22] < 0;
 	}
 
-	public override string ToString() {
-		return string.Concat(Image.InlineImage.PdfRef != null ? Image.InlineImage.PdfRef.Number.ToText() : "内嵌图像",
-			":", X, ",", Y, ",", Z);
-	}
+	public ImageInfo Image { get; set; }
+	public float X { get; }
+	public float Y { get; }
+	public float Z { get; }
+	public Matrix Ctm { get; }
+	public float XScale => Ctm[Matrix.I11] / Image.Width;
+	public float YScale => Ctm[Matrix.I22] / Image.Height;
 
 	#region IComparable<ImageDisposition> 成员
 
@@ -42,4 +37,9 @@ internal sealed class ImageDisposition : IComparable<ImageDisposition>
 	}
 
 	#endregion
+
+	public override string ToString() {
+		return string.Concat(Image.InlineImage.PdfRef != null ? Image.InlineImage.PdfRef.Number.ToText() : "内嵌图像",
+			":", X, ",", Y, ",", Z);
+	}
 }

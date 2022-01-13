@@ -1,9 +1,11 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Windows.Forms;
 using FreeImageAPI;
 using PDFPatcher.Common;
 using PDFPatcher.Processor;
 using PDFPatcher.Processor.Imaging;
+using PDFPatcher.Properties;
 
 namespace PDFPatcher.Functions;
 
@@ -11,7 +13,7 @@ public sealed partial class ImageViewerForm : Form
 {
 	internal ImageViewerForm(ImageInfo image, byte[] bytes) {
 		InitializeComponent();
-		this.SetIcon(Properties.Resources.ViewContent);
+		this.SetIcon(Resources.ViewContent);
 		if (image.ExtName == Constants.FileExtensions.Png || image.ExtName == Constants.FileExtensions.Tif) {
 			using (FreeImageBitmap bmp = ImageExtractor.CreateFreeImageBitmap(image, ref bytes, false, true)) {
 				_ImageBox.Image = bmp.ToBitmap();
@@ -25,13 +27,13 @@ public sealed partial class ImageViewerForm : Form
 					}
 				}
 			}
-			catch (System.Exception ex) {
+			catch (Exception ex) {
 				this.ErrorBox("无法加载图片", ex);
 			}
 		}
 	}
 
-	protected override void OnClosed(System.EventArgs e) {
+	protected override void OnClosed(EventArgs e) {
 		_ImageBox.Image.TryDispose();
 		base.OnClosed(e);
 	}
@@ -52,7 +54,7 @@ public sealed partial class ImageViewerForm : Form
 								fi.Save(f.FileName);
 							}
 						}
-						catch (System.Exception ex) {
+						catch (Exception ex) {
 							FormHelper.ErrorBox(ex.Message);
 						}
 					}
@@ -64,8 +66,6 @@ public sealed partial class ImageViewerForm : Form
 				break;
 			case "_FitWindow":
 				_ImageBox.ZoomToFit();
-				break;
-			default:
 				break;
 		}
 	}

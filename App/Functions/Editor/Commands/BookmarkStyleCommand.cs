@@ -1,5 +1,4 @@
-﻿using System;
-using BrightIdeasSoftware;
+﻿using BrightIdeasSoftware;
 using PDFPatcher.Model;
 using PDFPatcher.Processor;
 

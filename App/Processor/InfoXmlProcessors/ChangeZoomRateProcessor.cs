@@ -1,12 +1,10 @@
-﻿using PDFPatcher.Common;
+﻿using System.Xml;
+using PDFPatcher.Common;
 
 namespace PDFPatcher.Processor;
 
 internal sealed class ChangeZoomRateProcessor : IPdfInfoXmlProcessor
 {
-	public string ZoomMethod { get; private set; }
-	public float ZoomRate { get; private set; }
-
 	public ChangeZoomRateProcessor(object zoomRate) {
 		if (zoomRate is string || zoomRate == null) {
 			ZoomMethod = zoomRate as string;
@@ -17,11 +15,14 @@ internal sealed class ChangeZoomRateProcessor : IPdfInfoXmlProcessor
 		}
 	}
 
+	public string ZoomMethod { get; }
+	public float ZoomRate { get; }
+
 	#region IInfoDocProcessor 成员
 
 	public string Name => "更改缩放比例";
 
-	public IUndoAction Process(System.Xml.XmlElement item) {
+	public IUndoAction Process(XmlElement item) {
 		UndoActionGroup undo;
 		if (ZoomRate >= 0) {
 			undo = new UndoActionGroup();

@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.IO;
 using iTextSharp.text.pdf;
-using PDFPatcher.Common;
 using PDFPatcher.Processor;
 
 namespace PDFPatcher.Model;
@@ -11,25 +10,21 @@ internal sealed class PdfPathDocument : IHierarchicalObject<DocumentObject>
 {
 	private const int pageGroupNumber = 100;
 	private static readonly DocumentObject[] __Leaf = new DocumentObject[0];
-	private readonly PdfReader _pdf;
-	private readonly DocumentObject[] _rootObjects;
-	private readonly DocumentObject _trailer;
 	private readonly DocumentObject _hiddenObjects;
 	private readonly Dictionary<int, int> _pageMapper;
+	private readonly DocumentObject[] _rootObjects;
 
 	public PdfPathDocument(string pdfPath) {
-		_pdf = PdfHelper.OpenPdfFile(pdfPath, AppContext.LoadPartialPdfFile, false);
-		_pageMapper = PdfHelper.GetPageRefMapper(_pdf);
-		_trailer = new DocumentObject(this, null, "Trailer", _pdf.Trailer, PdfObjectType.Trailer) {
-			IsKeyObject = true,
-			Description = "文档根节点",
-			FriendlyValue = System.IO.Path.GetFileNameWithoutExtension(pdfPath)
+		Document = PdfHelper.OpenPdfFile(pdfPath, AppContext.LoadPartialPdfFile, false);
+		_pageMapper = Document.GetPageRefMapper();
+		Trailer = new DocumentObject(this, null, "Trailer", Document.Trailer, PdfObjectType.Trailer) {
+			IsKeyObject = true, Description = "文档根节点", FriendlyValue = Path.GetFileNameWithoutExtension(pdfPath)
 		};
 		_hiddenObjects = new DocumentObject(this, null, "隐藏对象", null, PdfObjectType.Hidden);
-		int l = _pdf.NumberOfPages;
+		int l = Document.NumberOfPages;
 		if (l > 301) {
 			DocumentObject[] c = new DocumentObject[1 + ((l + pageGroupNumber - 1) / pageGroupNumber) + 1];
-			c[0] = _trailer;
+			c[0] = Trailer;
 			for (int i = 1; i < c.Length - 1; i++) {
 				int a = ((i - 1) * pageGroupNumber) + 1;
 				int b = Math.Min(l, i * pageGroupNumber);
@@ -44,8 +39,8 @@ internal sealed class PdfPathDocument : IHierarchicalObject<DocumentObject>
 			_rootObjects = c;
 		}
 		else {
-			_rootObjects = new DocumentObject[] {
-				_trailer,
+			_rootObjects = new[] {
+				Trailer,
 				new(this, null, "Pages", null, PdfObjectType.Pages) {
 					IsKeyObject = true, FriendlyValue = "共 " + l + " 页"
 				},
@@ -54,14 +49,14 @@ internal sealed class PdfPathDocument : IHierarchicalObject<DocumentObject>
 		}
 	}
 
-	public PdfReader Document => _pdf;
+	public PdfReader Document { get; }
 
-	public DocumentObject Trailer => _trailer;
+	public DocumentObject Trailer { get; }
 
-	public int PageCount => _pdf.NumberOfPages;
+	public int PageCount => Document.NumberOfPages;
 
 	public void Close() {
-		_pdf.Close();
+		Document.Close();
 	}
 
 	public int GetPageNumber(PdfIndirectReference pdfRef) {

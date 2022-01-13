@@ -1,6 +1,5 @@
 using System;
 using System.ComponentModel;
-using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
@@ -8,6 +7,159 @@ namespace RichTextBoxLinks;
 
 public class RichTextBoxEx : RichTextBox
 {
+	public RichTextBoxEx() {
+		// Otherwise, non-standard links get lost when user starts typing
+		// next to a non-standard link
+		DetectUrls = false;
+	}
+
+	[DefaultValue(false)]
+	public new bool DetectUrls {
+		get => base.DetectUrls;
+		set => base.DetectUrls = value;
+	}
+
+	/// <summary>
+	///     Insert a given text as a link into the RichTextBox at the current insert position.
+	/// </summary>
+	/// <param name="text">Text to be inserted</param>
+	public void InsertLink(string text) {
+		InsertLink(text, SelectionStart);
+	}
+
+	/// <summary>
+	///     Insert a given text at a given position as a link.
+	/// </summary>
+	/// <param name="text">Text to be inserted</param>
+	/// <param name="position">Insert position</param>
+	public void InsertLink(string text, int position) {
+		if (position < 0 || position > Text.Length) {
+			throw new ArgumentOutOfRangeException("position");
+		}
+
+		SelectionStart = position;
+		SelectedText = text;
+		Select(position, text.Length);
+		SetSelectionLink(true);
+		Select(position + text.Length, 0);
+	}
+
+	/// <summary>
+	///     Insert a given text at at the current input position as a link.
+	///     The link text is followed by a hash (#) and the given hyperlink text, both of
+	///     them invisible.
+	///     When clicked on, the whole link text and hyperlink string are given in the
+	///     LinkClickedEventArgs.
+	/// </summary>
+	/// <param name="text">Text to be inserted</param>
+	/// <param name="hyperlink">Invisible hyperlink string to be inserted</param>
+	public void InsertLink(string text, string hyperlink) {
+		InsertLink(text, hyperlink, SelectionStart);
+	}
+
+	/// <summary>
+	///     Insert a given text at a given position as a link. The link text is followed by
+	///     a hash (#) and the given hyperlink text, both of them invisible.
+	///     When clicked on, the whole link text and hyperlink string are given in the
+	///     LinkClickedEventArgs.
+	/// </summary>
+	/// <param name="text">Text to be inserted</param>
+	/// <param name="hyperlink">Invisible hyperlink string to be inserted</param>
+	/// <param name="position">Insert position</param>
+	public void InsertLink(string text, string hyperlink, int position) {
+		if (position < 0 || position > Text.Length) {
+			throw new ArgumentOutOfRangeException("position");
+		}
+
+		SelectionStart = position;
+		SelectedRtf = @"{\rtf1\ansi " + text + @"\v #" + hyperlink + @"\v0}";
+		Select(position, text.Length + hyperlink.Length + 1);
+		SetSelectionLink(true);
+		Select(position + text.Length + hyperlink.Length + 1, 0);
+	}
+
+	/// <summary>
+	///     Set the current selection's link style
+	/// </summary>
+	/// <param name="link">true: set link style, false: clear link style</param>
+	public void SetSelectionLink(bool link) {
+		SetSelectionStyle(CFM_LINK, link ? CFE_LINK : 0);
+	}
+
+	/// <summary>
+	///     Get the link style for the current selection
+	/// </summary>
+	/// <returns>0: link style not set, 1: link style set, -1: mixed</returns>
+	public int GetSelectionLink() {
+		return GetSelectionStyle(CFM_LINK, CFE_LINK);
+	}
+
+	public void SetSelectionFontSize(float size) {
+		CHARFORMAT2_STRUCT cf = new() {dwMask = CFM_SIZE};
+		cf.cbSize = (uint)Marshal.SizeOf(cf);
+		cf.yHeight = (int)(size * 20f);
+
+		IntPtr wpar = new(SCF_SELECTION);
+		IntPtr lpar = Marshal.AllocCoTaskMem(Marshal.SizeOf(cf));
+		Marshal.StructureToPtr(cf, lpar, false);
+		IntPtr res = SendMessage(Handle, EM_SETCHARFORMAT, wpar, lpar);
+		Marshal.FreeCoTaskMem(lpar);
+	}
+
+	public void SetSelectionBold(bool bold) {
+		SetSelectionStyle(CFM_BOLD, bold ? CFE_BOLD : 0);
+	}
+
+	public void SetSelectionUnderline(bool underline) {
+		SetSelectionStyle(CFM_UNDERLINE, underline ? CFE_UNDERLINE : 0);
+	}
+
+	private void SetSelectionStyle(uint mask, uint effect) {
+		CHARFORMAT2_STRUCT cf = new();
+		cf.cbSize = (uint)Marshal.SizeOf(cf);
+		cf.dwMask = mask;
+		cf.dwEffects = effect;
+
+		IntPtr wpar = new(SCF_SELECTION);
+		IntPtr lpar = Marshal.AllocCoTaskMem(Marshal.SizeOf(cf));
+		Marshal.StructureToPtr(cf, lpar, false);
+
+		IntPtr res = SendMessage(Handle, EM_SETCHARFORMAT, wpar, lpar);
+
+		Marshal.FreeCoTaskMem(lpar);
+	}
+
+	private int GetSelectionStyle(uint mask, uint effect) {
+		CHARFORMAT2_STRUCT cf = new();
+		cf.cbSize = (uint)Marshal.SizeOf(cf);
+		cf.szFaceName = new char[32];
+
+		IntPtr wpar = new(SCF_SELECTION);
+		IntPtr lpar = Marshal.AllocCoTaskMem(Marshal.SizeOf(cf));
+		Marshal.StructureToPtr(cf, lpar, false);
+
+		IntPtr res = SendMessage(Handle, EM_GETCHARFORMAT, wpar, lpar);
+
+		cf = (CHARFORMAT2_STRUCT)Marshal.PtrToStructure(lpar, typeof(CHARFORMAT2_STRUCT));
+
+		int state;
+		// dwMask holds the information which properties are consistent throughout the selection:
+		if ((cf.dwMask & mask) == mask) {
+			if ((cf.dwEffects & effect) == effect) {
+				state = 1;
+			}
+			else {
+				state = 0;
+			}
+		}
+		else {
+			state = -1;
+		}
+
+		Marshal.FreeCoTaskMem(lpar);
+		return state;
+	}
+
 	#region Interop-Defines
 
 	[StructLayout(LayoutKind.Sequential)]
@@ -17,25 +169,25 @@ public class RichTextBoxEx : RichTextBox
 		public uint dwMask;
 		public uint dwEffects;
 		public int yHeight;
-		public int yOffset;
-		public int crTextColor;
-		public byte bCharSet;
-		public byte bPitchAndFamily;
+		public readonly int yOffset;
+		public readonly int crTextColor;
+		public readonly byte bCharSet;
+		public readonly byte bPitchAndFamily;
 
 		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
 		public char[] szFaceName;
 
-		public ushort wWeight;
-		public ushort sSpacing;
-		public int crBackColor; // Color.ToArgb() -> int
-		public int lcid;
-		public int dwReserved;
-		public short sStyle;
-		public short wKerning;
-		public byte bUnderlineType;
-		public byte bAnimation;
-		public byte bRevAuthor;
-		public byte bReserved1;
+		public readonly ushort wWeight;
+		public readonly ushort sSpacing;
+		public readonly int crBackColor; // Color.ToArgb() -> int
+		public readonly int lcid;
+		public readonly int dwReserved;
+		public readonly short sStyle;
+		public readonly short wKerning;
+		public readonly byte bUnderlineType;
+		public readonly byte bAnimation;
+		public readonly byte bRevAuthor;
+		public readonly byte bReserved1;
 	}
 
 	[DllImport("user32.dll", CharSet = CharSet.Auto)]
@@ -111,157 +263,4 @@ public class RichTextBoxEx : RichTextBox
 	#endregion
 
 	#endregion
-
-	public RichTextBoxEx() {
-		// Otherwise, non-standard links get lost when user starts typing
-		// next to a non-standard link
-		DetectUrls = false;
-	}
-
-	[DefaultValue(false)]
-	public new bool DetectUrls {
-		get => base.DetectUrls;
-		set => base.DetectUrls = value;
-	}
-
-	/// <summary>
-	/// Insert a given text as a link into the RichTextBox at the current insert position.
-	/// </summary>
-	/// <param name="text">Text to be inserted</param>
-	public void InsertLink(string text) {
-		InsertLink(text, SelectionStart);
-	}
-
-	/// <summary>
-	/// Insert a given text at a given position as a link. 
-	/// </summary>
-	/// <param name="text">Text to be inserted</param>
-	/// <param name="position">Insert position</param>
-	public void InsertLink(string text, int position) {
-		if (position < 0 || position > Text.Length) {
-			throw new ArgumentOutOfRangeException("position");
-		}
-
-		SelectionStart = position;
-		SelectedText = text;
-		Select(position, text.Length);
-		SetSelectionLink(true);
-		Select(position + text.Length, 0);
-	}
-
-	/// <summary>
-	/// Insert a given text at at the current input position as a link.
-	/// The link text is followed by a hash (#) and the given hyperlink text, both of
-	/// them invisible.
-	/// When clicked on, the whole link text and hyperlink string are given in the
-	/// LinkClickedEventArgs.
-	/// </summary>
-	/// <param name="text">Text to be inserted</param>
-	/// <param name="hyperlink">Invisible hyperlink string to be inserted</param>
-	public void InsertLink(string text, string hyperlink) {
-		InsertLink(text, hyperlink, SelectionStart);
-	}
-
-	/// <summary>
-	/// Insert a given text at a given position as a link. The link text is followed by
-	/// a hash (#) and the given hyperlink text, both of them invisible.
-	/// When clicked on, the whole link text and hyperlink string are given in the
-	/// LinkClickedEventArgs.
-	/// </summary>
-	/// <param name="text">Text to be inserted</param>
-	/// <param name="hyperlink">Invisible hyperlink string to be inserted</param>
-	/// <param name="position">Insert position</param>
-	public void InsertLink(string text, string hyperlink, int position) {
-		if (position < 0 || position > Text.Length) {
-			throw new ArgumentOutOfRangeException("position");
-		}
-
-		SelectionStart = position;
-		SelectedRtf = @"{\rtf1\ansi " + text + @"\v #" + hyperlink + @"\v0}";
-		Select(position, text.Length + hyperlink.Length + 1);
-		SetSelectionLink(true);
-		Select(position + text.Length + hyperlink.Length + 1, 0);
-	}
-
-	/// <summary>
-	/// Set the current selection's link style
-	/// </summary>
-	/// <param name="link">true: set link style, false: clear link style</param>
-	public void SetSelectionLink(bool link) {
-		SetSelectionStyle(CFM_LINK, link ? CFE_LINK : 0);
-	}
-
-	/// <summary>
-	/// Get the link style for the current selection
-	/// </summary>
-	/// <returns>0: link style not set, 1: link style set, -1: mixed</returns>
-	public int GetSelectionLink() {
-		return GetSelectionStyle(CFM_LINK, CFE_LINK);
-	}
-
-	public void SetSelectionFontSize(float size) {
-		CHARFORMAT2_STRUCT cf = new() {dwMask = CFM_SIZE};
-		cf.cbSize = (uint)Marshal.SizeOf(cf);
-		cf.yHeight = (int)(size * 20f);
-
-		IntPtr wpar = new(SCF_SELECTION);
-		IntPtr lpar = Marshal.AllocCoTaskMem(Marshal.SizeOf(cf));
-		Marshal.StructureToPtr(cf, lpar, false);
-		IntPtr res = SendMessage(Handle, EM_SETCHARFORMAT, wpar, lpar);
-		Marshal.FreeCoTaskMem(lpar);
-	}
-
-	public void SetSelectionBold(bool bold) {
-		SetSelectionStyle(CFM_BOLD, bold ? CFE_BOLD : 0);
-	}
-
-	public void SetSelectionUnderline(bool underline) {
-		SetSelectionStyle(CFM_UNDERLINE, underline ? CFE_UNDERLINE : 0);
-	}
-
-	private void SetSelectionStyle(uint mask, uint effect) {
-		CHARFORMAT2_STRUCT cf = new();
-		cf.cbSize = (uint)Marshal.SizeOf(cf);
-		cf.dwMask = mask;
-		cf.dwEffects = effect;
-
-		IntPtr wpar = new(SCF_SELECTION);
-		IntPtr lpar = Marshal.AllocCoTaskMem(Marshal.SizeOf(cf));
-		Marshal.StructureToPtr(cf, lpar, false);
-
-		IntPtr res = SendMessage(Handle, EM_SETCHARFORMAT, wpar, lpar);
-
-		Marshal.FreeCoTaskMem(lpar);
-	}
-
-	private int GetSelectionStyle(uint mask, uint effect) {
-		CHARFORMAT2_STRUCT cf = new();
-		cf.cbSize = (uint)Marshal.SizeOf(cf);
-		cf.szFaceName = new char[32];
-
-		IntPtr wpar = new(SCF_SELECTION);
-		IntPtr lpar = Marshal.AllocCoTaskMem(Marshal.SizeOf(cf));
-		Marshal.StructureToPtr(cf, lpar, false);
-
-		IntPtr res = SendMessage(Handle, EM_GETCHARFORMAT, wpar, lpar);
-
-		cf = (CHARFORMAT2_STRUCT)Marshal.PtrToStructure(lpar, typeof(CHARFORMAT2_STRUCT));
-
-		int state;
-		// dwMask holds the information which properties are consistent throughout the selection:
-		if ((cf.dwMask & mask) == mask) {
-			if ((cf.dwEffects & effect) == effect) {
-				state = 1;
-			}
-			else {
-				state = 0;
-			}
-		}
-		else {
-			state = -1;
-		}
-
-		Marshal.FreeCoTaskMem(lpar);
-		return state;
-	}
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.IO;
 using System.Windows.Forms;
 using PDFPatcher.Common;
 
@@ -17,26 +18,26 @@ public partial class SourceFileControl : UserControl
 	}
 
 	///<summary>获取文件下拉列表框。</summary>
-	internal HistoryComboBox FileList => _SourcePdfBox;
-
-	///<summary>点击浏览按钮更改选中文件后触发的事件。</summary>
-	public event EventHandler BrowseSelectedFiles;
+	internal HistoryComboBox FileList { get; private set; }
 
 	/// <summary>
-	/// 获取选定的 PDF 文件列表。
+	///     获取选定的 PDF 文件列表。
 	/// </summary>
 	internal string[] Files { get; private set; }
 
 	/// <summary>
-	/// 获取选定的 PDF 文件列表的第一项。
+	///     获取选定的 PDF 文件列表的第一项。
 	/// </summary>
 	internal string FirstFile => Files != null && Files.Length > 0 ? Files[0] : string.Empty;
 
 	[DefaultValue(null)]
 	public override string Text {
-		get => _SourcePdfBox.Text;
-		set => _SourcePdfBox.Text = value;
+		get => FileList.Text;
+		set => FileList.Text = value;
 	}
+
+	///<summary>点击浏览按钮更改选中文件后触发的事件。</summary>
+	public event EventHandler BrowseSelectedFiles;
 
 	/////<summary>获取或指定文本标签的值。</summary>
 	//[Description ("文本标签的值")]
@@ -53,10 +54,10 @@ public partial class SourceFileControl : UserControl
 	//}
 
 	private void _BrowseSourcePdfButton_Click(object sender, EventArgs e) {
-		string t = _SourcePdfBox.Text;
+		string t = FileList.Text;
 		if (t.Length > 0
 		    && FileHelper.IsPathValid(t)
-		    && System.IO.Path.GetFileName(t).Length > 0) {
+		    && Path.GetFileName(t).Length > 0) {
 			_OpenPdfBox.FileName = t;
 		}
 
@@ -69,9 +70,9 @@ public partial class SourceFileControl : UserControl
 	}
 
 	private void SelectFiles(string[] files) {
-		string t = _SourcePdfBox.Text;
+		string t = FileList.Text;
 		if (files.Length > 1) {
-			Text = string.Concat("<选定了 ", files.Length, " 个文件>", System.IO.Path.GetDirectoryName(files[0]));
+			Text = string.Concat("<选定了 ", files.Length, " 个文件>", Path.GetDirectoryName(files[0]));
 		}
 		else if (files[0] != t) {
 			Text = files[0];
@@ -81,21 +82,21 @@ public partial class SourceFileControl : UserControl
 	}
 
 	private void _SourcePdfBox_TextChanged(object sender, EventArgs e) {
-		if (_controlLockDown == true) {
+		if (_controlLockDown) {
 			return;
 		}
 
-		if (FileHelper.HasFileNameMacro(_SourcePdfBox.Text) == false) {
-			SelectFiles(new string[] {_SourcePdfBox.Text});
+		if (FileHelper.HasFileNameMacro(FileList.Text) == false) {
+			SelectFiles(new[] {FileList.Text});
 		}
 	}
 
 	private void _SourcePdfBox_DragEnter(object sender, DragEventArgs e) {
-		FormHelper.FeedbackDragFileOver(e, Constants.FileExtensions.Pdf);
+		e.FeedbackDragFileOver(Constants.FileExtensions.Pdf);
 	}
 
 	private void _SourcePdfBox_DragDrop(object sender, DragEventArgs e) {
-		string[] files = FormHelper.DropFileOver(e, Constants.FileExtensions.Pdf);
+		string[] files = e.DropFileOver(Constants.FileExtensions.Pdf);
 		SelectFiles(files);
 	}
 
@@ -103,10 +104,10 @@ public partial class SourceFileControl : UserControl
 		_controlLockDown = true;
 		string t = Text;
 		if (Visible && AppContext.MainForm != null) {
-			_SourcePdfBox.Contents = AppContext.Recent.SourcePdfFiles;
+			FileList.Contents = AppContext.Recent.SourcePdfFiles;
 		}
 		else if (Visible == false) {
-			_SourcePdfBox.Contents = null;
+			FileList.Contents = null;
 		}
 
 		Text = t;

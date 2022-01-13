@@ -1,15 +1,14 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
 namespace Devcorp.Controls.Design;
 
 /// <summary>
-/// Structure to define RGB.
+///     Structure to define RGB.
 /// </summary>
 public struct RGB
 {
 	/// <summary>
-	/// Gets an empty RGB structure;
+	///     Gets an empty RGB structure;
 	/// </summary>
 	public static readonly RGB Empty = new();
 

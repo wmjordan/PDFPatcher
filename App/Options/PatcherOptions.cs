@@ -1,12 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.Xml.Serialization;
 using PDFPatcher.Model;
+using PowerJson;
 
 namespace PDFPatcher;
 
 [XmlRoot("文档设置")]
 public class PatcherOptions : DocumentOptions
 {
+	public PatcherOptions() {
+		PageSettings = new List<PageBoxSettings>();
+		FontSubstitutions = new List<FontSubstitution>();
+		UnifiedPageSettings = new PageBoxSettings();
+	}
+
 	[XmlAttribute("嵌入字库")] public bool EmbedFonts { get; set; }
 	[XmlAttribute("删除文本尾随空白")] public bool TrimTrailingWhiteSpace { get; set; }
 	[XmlAttribute("允许替换字库")] public bool EnableFontSubstitutions { get; set; }
@@ -35,12 +42,6 @@ public class PatcherOptions : DocumentOptions
 	[XmlArray("字体替换")]
 	[XmlArrayItem("替换项")]
 	public List<FontSubstitution> FontSubstitutions { get; }
-
-	public PatcherOptions() {
-		PageSettings = new List<PageBoxSettings>();
-		FontSubstitutions = new List<FontSubstitution>();
-		UnifiedPageSettings = new PageBoxSettings();
-	}
 }
 
 public class FontSubstitution
@@ -48,7 +49,7 @@ public class FontSubstitution
 	[XmlAttribute("原字体")] public string OriginalFont { get; set; }
 
 	[XmlAttribute("新字体")]
-	[PowerJson.JsonField("SubstitutionFont")]
+	[JsonField("SubstitutionFont")]
 	public string Substitution { get; set; }
 
 	[XmlAttribute("原字符")] public string OriginalCharacters { get; set; }

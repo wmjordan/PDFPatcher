@@ -1,24 +1,20 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace PDFPatcher.Model;
 
-[System.Diagnostics.DebuggerDisplay("{Location}={Distance}")]
+[DebuggerDisplay("{Location}={Distance}")]
 internal sealed class DistanceInfo
 {
-	[Flags]
-	internal enum Placement
-	{
-		Unknown = 0,
-		Overlapping = 1,
-		Left = 2,
-		Right = 4,
-		Up = 8,
-		Down = 16
+	internal DistanceInfo(Placement location, float distanceX, float distanceY) {
+		Location = location;
+		DistanceX = distanceX;
+		DistanceY = distanceY;
 	}
 
 	internal Placement Location { get; private set; }
-	internal float DistanceX { get; private set; }
-	internal float DistanceY { get; private set; }
+	internal float DistanceX { get; }
+	internal float DistanceY { get; }
 	internal bool IsOverlapping => (Location & Placement.Overlapping) != Placement.Unknown;
 	internal bool IsLeft => (Location & Placement.Left) != Placement.Unknown;
 	internal bool IsRight => (Location & Placement.Right) != Placement.Unknown;
@@ -38,9 +34,14 @@ internal sealed class DistanceInfo
 		? float.MaxValue
 		: (float)Math.Sqrt((DistanceX * DistanceX) + (DistanceY * DistanceY));
 
-	internal DistanceInfo(Placement location, float distanceX, float distanceY) {
-		Location = location;
-		DistanceX = distanceX;
-		DistanceY = distanceY;
+	[Flags]
+	internal enum Placement
+	{
+		Unknown = 0,
+		Overlapping = 1,
+		Left = 2,
+		Right = 4,
+		Up = 8,
+		Down = 16
 	}
 }

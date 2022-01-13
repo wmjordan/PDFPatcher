@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace MuPdfSharp;
 
@@ -19,17 +20,12 @@ internal struct NativeObject<T> where T : struct
 
 internal static class Interop
 {
-	internal interface ILinkedList
-	{
-		IntPtr Next { get; }
-	}
-
 	internal static T MarshalAs<T>(this IntPtr ptr) where T : struct {
 		return (T)Marshal.PtrToStructure(ptr, typeof(T));
 	}
 
 	internal static bool IsValid(this SafeHandle handle) {
-		return handle != null && (handle.IsInvalid == true || handle.IsClosed == false);
+		return handle != null && (handle.IsInvalid || handle.IsClosed == false);
 	}
 
 	internal static void DisposeHandle(this SafeHandle handle) {
@@ -40,22 +36,22 @@ internal static class Interop
 	}
 
 	/// <summary>
-	/// 将链表指针转换为 <see cref="IEnumerable{T}"/>
+	///     将链表指针转换为 <see cref="IEnumerable{T}" />
 	/// </summary>
 	/// <typeparam name="T">链表的类型。</typeparam>
 	/// <param name="ptr">需要转换的指针。</param>
-	/// <returns><see cref="IEnumerable{T}"/> 实例。</returns>
+	/// <returns><see cref="IEnumerable{T}" /> 实例。</returns>
 	internal static IEnumerable<NativeObject<T>> EnumerateLinkedList<T>(this IntPtr ptr)
 		where T : struct, ILinkedList {
 		return NativeLinkedList<T>.EnumerateLinkedList(ptr);
 	}
 
 	/// <summary>
-	/// 将链表指针转换为 <see cref="IEnumerable{T}"/>
+	///     将链表指针转换为 <see cref="IEnumerable{T}" />
 	/// </summary>
 	/// <typeparam name="T">链表的类型。</typeparam>
 	/// <param name="ptr">需要转换的指针。</param>
-	/// <returns><see cref="IEnumerable{T}"/> 实例。</returns>
+	/// <returns><see cref="IEnumerable{T}" /> 实例。</returns>
 	internal static IEnumerable<NativeObject<T>> EnumerateLinkedList<T>(this SafeHandle ptr)
 		where T : struct, ILinkedList {
 		return NativeLinkedList<T>.EnumerateLinkedList(ptr.DangerousGetHandle());
@@ -70,9 +66,14 @@ internal static class Interop
 			}
 
 			buffer.Position = 0;
-			return System.Text.Encoding.UTF8.GetString(buffer.GetBuffer(), (int)buffer.Position,
+			return Encoding.UTF8.GetString(buffer.GetBuffer(), (int)buffer.Position,
 				(int)buffer.Length);
 		}
+	}
+
+	internal interface ILinkedList
+	{
+		IntPtr Next { get; }
 	}
 
 	private static class NativeLinkedList<T> where T : struct, ILinkedList
@@ -94,7 +95,7 @@ internal static class Interop
 				return new LinkedListEnumerator<Node>(_pointer);
 			}
 
-			System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() {
+			IEnumerator IEnumerable.GetEnumerator() {
 				return new LinkedListEnumerator<Node>(_pointer);
 			}
 		}
@@ -117,9 +118,9 @@ internal static class Interop
 			void IDisposable.Dispose() {
 			}
 
-			object System.Collections.IEnumerator.Current => _Node;
+			object IEnumerator.Current => _Node;
 
-			bool System.Collections.IEnumerator.MoveNext() {
+			bool IEnumerator.MoveNext() {
 				if (_current == IntPtr.Zero) {
 					return false;
 				}
@@ -129,7 +130,7 @@ internal static class Interop
 				return true;
 			}
 
-			void System.Collections.IEnumerator.Reset() {
+			void IEnumerator.Reset() {
 				_current = _start;
 			}
 

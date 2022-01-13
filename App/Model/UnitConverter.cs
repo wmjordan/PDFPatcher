@@ -9,14 +9,21 @@ public class UnitConverter
 	private const string Null = "null";
 	internal const string ToStringFormat = "0.###";
 
+	private int _Precision;
+	private float _PreservedValue;
+
+	private string _Unit;
+
+	public UnitConverter() {
+		Unit = Constants.Units.CM;
+		Precision = 3;
+	}
+
 	/// <summary>
-	/// 获取单位转换因数。
+	///     获取单位转换因数。
 	/// </summary>
 	[XmlIgnore]
 	public float UnitFactor { get; private set; }
-
-	private int _Precision;
-	private float _PreservedValue;
 
 	///<summary>获取或指定转换精度的值。</summary>
 	[XmlIgnore]
@@ -32,8 +39,6 @@ public class UnitConverter
 		}
 	}
 
-	private string _Unit;
-
 	///<summary>获取或指定转换使用的单位。</summary>
 	[XmlAttribute("单位")]
 	public string Unit {
@@ -47,11 +52,6 @@ public class UnitConverter
 			UnitFactor = f;
 			_Unit = value;
 		}
-	}
-
-	public UnitConverter() {
-		Unit = Constants.Units.CM;
-		Precision = 3;
 	}
 
 	internal float FromPoint(float point) {

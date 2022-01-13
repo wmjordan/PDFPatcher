@@ -1,12 +1,22 @@
 ﻿using System;
+using System.Globalization;
 using System.Xml;
 
 namespace PDFPatcher.Processor;
 
 internal sealed class SetTitleCaseProcessor : IPdfInfoXmlProcessor
 {
-	private static readonly System.Globalization.TextInfo __currentTextInfo =
-		System.Globalization.CultureInfo.CurrentCulture.TextInfo;
+	public enum LetterCase
+	{
+		Title, Upper, Lower,
+		FullWidthNumber, FullWidthAlphabetic, FullWidthPunctuation,
+		HalfWidthNumber, HalfWidthAlphabetic, HalfWidthPunctuation,
+		ChineseNumber, TraditionalChineseNumbers,
+		TraditionalToSimplifiedCjk, SimplifiedToTraditionalCjk
+	}
+
+	private static readonly TextInfo __currentTextInfo =
+		CultureInfo.CurrentCulture.TextInfo;
 
 	private static readonly char[] SimplifiedChars = ChineseCharMap.Simplified.ToCharArray();
 	private static readonly char[] TraditionalChars = ChineseCharMap.Traditional.ToCharArray();
@@ -24,24 +34,15 @@ internal sealed class SetTitleCaseProcessor : IPdfInfoXmlProcessor
 	private static readonly char[] FullWidthPunctuations = "！＂＃＄％＆＇（）＊＋，－．／：；＜＝＞？＠［＼］＾＿｀｛｜｝～".ToCharArray();
 	private static readonly char[] HalfWidthPunctuations = "!\"#$%&'()*+,-./;:<=>?@[\\]^_`{|}~".ToCharArray();
 
-	internal static string[] CaseNames = new string[] {
+	internal static string[] CaseNames = {
 		"首字母大写", "英文大写", "英文小写", "全角数字", "全角字母", "全角标点", "半角数字", "半角字母", "半角标点", "中文数字", "大写中文数字", "繁体汉字转简体", "简体汉字转繁体"
 	};
-
-	public enum LetterCase
-	{
-		Title, Upper, Lower,
-		FullWidthNumber, FullWidthAlphabetic, FullWidthPunctuation,
-		HalfWidthNumber, HalfWidthAlphabetic, HalfWidthPunctuation,
-		ChineseNumber, TraditionalChineseNumbers,
-		TraditionalToSimplifiedCjk, SimplifiedToTraditionalCjk
-	}
-
-	public LetterCase Case { get; private set; }
 
 	public SetTitleCaseProcessor(LetterCase letterCase) {
 		Case = letterCase;
 	}
+
+	public LetterCase Case { get; }
 
 	private static string Translate(string s, char[] source, char[] target) {
 		char[] cs = s.ToCharArray();

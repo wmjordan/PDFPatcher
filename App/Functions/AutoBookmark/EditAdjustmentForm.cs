@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using BrightIdeasSoftware;
+using PDFPatcher.Common;
 using PDFPatcher.Model;
 
 namespace PDFPatcher.Functions;
@@ -14,8 +16,6 @@ public partial class EditAdjustmentForm : Form
 	};
 
 	private readonly Dictionary<Type, IFilterConditionEditor> _filterEditors = new();
-
-	internal AutoBookmarkOptions.LevelAdjustmentOption Filter { get; private set; }
 	private AutoBookmarkCondition.MultiCondition conditions;
 
 	public EditAdjustmentForm(AutoBookmarkOptions.LevelAdjustmentOption filter) {
@@ -26,7 +26,7 @@ public partial class EditAdjustmentForm : Form
 		}
 
 		_FilterBox.BeforeSorting +=
-			(object sender, BrightIdeasSoftware.BeforeSortingEventArgs e) => e.Canceled = true;
+			(object sender, BeforeSortingEventArgs e) => e.Canceled = true;
 		_ConditionColumn.AspectGetter = (object x) => x is AutoBookmarkCondition f ? f.Description : (object)null;
 		_IsInclusiveColumn.AspectGetter = (object x) => {
 			if (x is AutoBookmarkCondition f) {
@@ -48,6 +48,8 @@ public partial class EditAdjustmentForm : Form
 			_FilterBox.SelectedIndex = 0;
 		}
 	}
+
+	internal AutoBookmarkOptions.LevelAdjustmentOption Filter { get; private set; }
 
 	private void EditAdjustmentForm_Load(object sender, EventArgs e) {
 	}
@@ -144,7 +146,7 @@ public partial class EditAdjustmentForm : Form
 			c = new TextConditionEditor();
 		}
 		else {
-			Common.FormHelper.ErrorBox("无法编辑选中的筛选条件。");
+			FormHelper.ErrorBox("无法编辑选中的筛选条件。");
 			return null;
 		}
 

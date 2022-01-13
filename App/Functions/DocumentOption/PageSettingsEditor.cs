@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using PDFPatcher.Common;
@@ -15,15 +13,6 @@ public partial class PageSettingsEditor : UserControl
 {
 	private readonly TypedObjectListView<PageBoxSettings> _SettingsBox;
 	private List<PageBoxSettings> _Settings;
-
-	[Browsable(false)]
-	public List<PageBoxSettings> Settings {
-		get => _Settings;
-		set {
-			_Settings = value;
-			_SettingsBox.Objects = value;
-		}
-	}
 
 	public PageSettingsEditor() {
 		InitializeComponent();
@@ -80,7 +69,7 @@ public partial class PageSettingsEditor : UserControl
 			_PageSettingsBox.RefreshObject(_PageSettingsBox.SelectedObject);
 		};
 		new TypedColumn<PageBoxSettings>(_PageFilterColumn) {
-			AspectGetter = (o) => {
+			AspectGetter = o => {
 				PageFilterFlag f = o.Filter;
 				PageFilterFlag eo = f & (PageFilterFlag.Even | PageFilterFlag.Odd);
 				PageFilterFlag pl = f & (PageFilterFlag.Landscape | PageFilterFlag.Portrait);
@@ -139,7 +128,7 @@ public partial class PageSettingsEditor : UserControl
 			_PageSettingsBox.RefreshObject(o);
 		};
 		new TypedColumn<PageBoxSettings>(_SettingsColumn) {
-			AspectGetter = (o) => {
+			AspectGetter = o => {
 				int r = o.Rotation;
 				return string.Concat(
 					r == 0 ? Constants.Content.RotationDirections.Zero
@@ -151,7 +140,7 @@ public partial class PageSettingsEditor : UserControl
 			}
 		};
 		new TypedColumn<PageBoxSettings>(_PageRangeColumn) {
-			AspectGetter = (o) => {
+			AspectGetter = o => {
 				return string.IsNullOrEmpty(o.PageRanges) ? Constants.PageFilterTypes.AllPages : o.PageRanges;
 			},
 			AspectPutter = (o, v) => {
@@ -159,6 +148,15 @@ public partial class PageSettingsEditor : UserControl
 				o.PageRanges = s != Constants.PageFilterTypes.AllPages ? s : null;
 			}
 		};
+	}
+
+	[Browsable(false)]
+	public List<PageBoxSettings> Settings {
+		get => _Settings;
+		set {
+			_Settings = value;
+			_SettingsBox.Objects = value;
+		}
 	}
 
 	private void ShowMenuForClickedCell(CellClickEventArgs args, ContextMenuStrip menu) {

@@ -6,6 +6,7 @@ using System.IO;
 using System.Text;
 using System.Xml;
 using System.Xml.XPath;
+using iTextSharp.text;
 using iTextSharp.text.pdf;
 using iTextSharp.text.xml.xmp;
 using PDFPatcher.Common;
@@ -16,21 +17,20 @@ namespace PDFPatcher.Processor;
 
 internal sealed class DocInfoImporter
 {
-	private readonly float _unitFactor;
-	private readonly PdfInfoXmlDocument _infoDoc;
-	internal PdfInfoXmlDocument InfoDoc => _infoDoc;
+	private static readonly char[] __ValueArraySplitChars = { ' ', '\t', ',', ';' };
 
 	private readonly ImporterOptions _options;
+	private readonly float _unitFactor;
 
 	/// <summary>
-	/// 从 <see cref="XmlDocument"/> 实例创建导入器（支持无信息文件的补丁操作）。
+	///     从 <see cref="XmlDocument" /> 实例创建导入器（支持无信息文件的补丁操作）。
 	/// </summary>
 	/// <param name="options">导入器的选项。</param>
-	/// <param name="infoDoc">包含信息文件的 <see cref="XmlDocument"/>。</param>
+	/// <param name="infoDoc">包含信息文件的 <see cref="XmlDocument" />。</param>
 	internal DocInfoImporter(ImporterOptions options, PdfInfoXmlDocument infoDoc) {
 		_options = options;
 		_unitFactor = 1;
-		_infoDoc = infoDoc;
+		InfoDoc = infoDoc;
 	}
 
 	internal DocInfoImporter(ImporterOptions options, string infoDocFile) {
@@ -48,7 +48,7 @@ internal sealed class DocInfoImporter
 
 		// 设置单位转换因数
 		_unitFactor = GetUnitFactor(infoDoc.DocumentElement);
-		_infoDoc = infoDoc;
+		InfoDoc = infoDoc;
 		_options = options;
 	}
 
@@ -102,9 +102,11 @@ internal sealed class DocInfoImporter
 			x.Load(ms);
 			_options = importerOptions;
 			_unitFactor = 1;
-			_infoDoc = x;
+			InfoDoc = x;
 		}
 	}
+
+	internal PdfInfoXmlDocument InfoDoc { get; }
 
 	internal static float GetUnitFactor(XmlElement root) {
 		XmlNode n = root.SelectSingleNode(Constants.Units.ThisName + "/@" + Constants.Units.Unit);
@@ -117,11 +119,11 @@ internal sealed class DocInfoImporter
 	}
 
 	internal BookmarkContainer GetBookmarks() {
-		if (_infoDoc == null) {
+		if (InfoDoc == null) {
 			return null;
 		}
 
-		BookmarkContainer be = _infoDoc.BookmarkRoot;
+		BookmarkContainer be = InfoDoc.BookmarkRoot;
 		if (be?.HasSubBookmarks == true) {
 			if (be.GetAttribute(Constants.DestinationAttributes.FirstPageNumber)
 				.TryParse(out int bookmarkPageShift)) {
@@ -135,7 +137,7 @@ internal sealed class DocInfoImporter
 	}
 
 	/// <summary>
-	/// 偏移页码位置并转换书签目标的尺寸单位。
+	///     偏移页码位置并转换书签目标的尺寸单位。
 	/// </summary>
 	/// <param name="source"></param>
 	/// <param name="bookmarkPageShift"></param>
@@ -190,12 +192,12 @@ internal sealed class DocInfoImporter
 	}
 
 	internal GeneralInfo ImportDocumentInfomation() {
-		if (_options.ImportDocProperties == false || _infoDoc == null) {
+		if (_options.ImportDocProperties == false || InfoDoc == null) {
 			return null;
 		}
 
 		Tracker.TraceMessage("导入文档元数据信息。");
-		DocumentInfoElement info = _infoDoc.InfoNode;
+		DocumentInfoElement info = InfoDoc.InfoNode;
 		return info == null
 			? null
 			: new GeneralInfo {
@@ -271,7 +273,7 @@ internal sealed class DocInfoImporter
 		info.Put(name, string.IsNullOrEmpty(value) ? null : value.ToPdfString());
 	}
 
-	internal static void ImportDocumentInfomation(GeneralInfo info, iTextSharp.text.Document doc) {
+	internal static void ImportDocumentInfomation(GeneralInfo info, Document doc) {
 		if (info == null) {
 			return;
 		}
@@ -291,12 +293,12 @@ internal sealed class DocInfoImporter
 	}
 
 	internal PdfPageLabels ImportPageLabels() {
-		if (_options.ImportViewerPreferences == false || _infoDoc == null) {
+		if (_options.ImportViewerPreferences == false || InfoDoc == null) {
 			return null;
 		}
 
 		Tracker.TraceMessage("导入页码设置。");
-		XmlNodeList pn = _infoDoc.DocumentElement.SelectNodes(
+		XmlNodeList pn = InfoDoc.DocumentElement.SelectNodes(
 			Constants.PageLabels + "/" + Constants.PageLabelsAttributes.Style + "[@" +
 			Constants.PageLabelsAttributes.PageNumber + "]");
 		PdfPageLabels pls = new();
@@ -351,20 +353,20 @@ internal sealed class DocInfoImporter
 	}
 
 	internal void ImportPageLinks(PdfReader r, PdfStamper w) {
-		if (_infoDoc == null) {
+		if (InfoDoc == null) {
 			return;
 		}
 
-		XmlNodeList ls = _infoDoc.DocumentElement.SelectNodes(Constants.PageLink + "/" +
-															  Constants.PageLinkAttributes.Link +
-															  "[@" + Constants.PageLinkAttributes.PageNumber + "]");
+		XmlNodeList ls = InfoDoc.DocumentElement.SelectNodes(Constants.PageLink + "/" +
+															 Constants.PageLinkAttributes.Link +
+															 "[@" + Constants.PageLinkAttributes.PageNumber + "]");
 		if (ls == null || ls.Count == 0) {
 			return;
 		}
 
 		Tracker.TraceMessage("导入页面内连接。");
 		if (_options.KeepPageLinks == false) {
-			PdfHelper.ClearPageLinks(r);
+			r.ClearPageLinks();
 		}
 
 		int pageCount = r.NumberOfPages;
@@ -450,23 +452,23 @@ internal sealed class DocInfoImporter
 			}
 
 			Color c = Color.FromName(s);
-			dict.Put(PdfName.C, new PdfArray(new float[] { c.R / 255f, c.G / 255f, c.B / 255f }));
+			dict.Put(PdfName.C, new PdfArray(new[] { c.R / 255f, c.G / 255f, c.B / 255f }));
 		}
 		else if (item.HasAttribute(Constants.Colors.Red) || item.HasAttribute(Constants.Colors.Green) ||
 				 item.HasAttribute(Constants.Colors.Blue)) {
 			dict.Put(PdfName.C,
-				new PdfArray(new float[] {
+				new PdfArray(new[] {
 					item.GetValue(Constants.Colors.Red, 0f), item.GetValue(Constants.Colors.Green, 0f),
 					item.GetValue(Constants.Colors.Blue, 0f)
 				}));
 		}
 		else if (item.HasAttribute(Constants.Colors.Gray)) {
-			dict.Put(PdfName.C, new PdfArray(new float[] { item.GetValue(Constants.Colors.Gray, 0f) }));
+			dict.Put(PdfName.C, new PdfArray(new[] { item.GetValue(Constants.Colors.Gray, 0f) }));
 		}
 		else if (item.HasAttribute(Constants.Colors.Black) || item.HasAttribute(Constants.Colors.Cyan) ||
 				 item.HasAttribute(Constants.Colors.Magenta) || item.HasAttribute(Constants.Colors.Yellow)) {
 			dict.Put(PdfName.C,
-				new PdfArray(new float[] {
+				new PdfArray(new[] {
 					item.GetValue(Constants.Colors.Cyan, 0f), item.GetValue(Constants.Colors.Magenta, 0f),
 					item.GetValue(Constants.Colors.Yellow, 0f), item.GetValue(Constants.Colors.Black, 0f)
 				}));
@@ -631,9 +633,9 @@ internal sealed class DocInfoImporter
 				if (top == Constants.Coordinates.Unchanged) {
 					pos[0] = float.NaN;
 				}
-				else if (ValueHelper.TryParse(top, out pos[0]) == false) {
+				else if (top.TryParse(out pos[0]) == false) {
 					if (pr != null &&
-						(box = PdfHelper.GetPageVisibleRectangle(PdfReader.GetPdfObject(pr) as PdfDictionary)) !=
+						(box = (PdfReader.GetPdfObject(pr) as PdfDictionary).GetPageVisibleRectangle()) !=
 						null) {
 						pos[0] = box.Top;
 					}
@@ -650,9 +652,9 @@ internal sealed class DocInfoImporter
 				if (left == Constants.Coordinates.Unchanged) {
 					pos[0] = float.NaN;
 				}
-				else if (ValueHelper.TryParse(left, out pos[0]) == false) {
+				else if (left.TryParse(out pos[0]) == false) {
 					if (pr != null &&
-						(box = PdfHelper.GetPageVisibleRectangle(PdfReader.GetPdfObject(pr) as PdfDictionary)) !=
+						(box = (PdfReader.GetPdfObject(pr) as PdfDictionary).GetPageVisibleRectangle()) !=
 						null) {
 						pos[0] = box.Left;
 					}
@@ -821,12 +823,12 @@ internal sealed class DocInfoImporter
 	}
 
 	internal void ImportViewerPreferences(PdfReader r) {
-		if (_options.ImportViewerPreferences == false || _infoDoc == null) {
+		if (_options.ImportViewerPreferences == false || InfoDoc == null) {
 			return;
 		}
 
 		Tracker.TraceMessage("导入阅读器设置。");
-		XmlElement ps = _infoDoc.DocumentElement.SelectSingleNode(Constants.ViewerPreferences) as XmlElement;
+		XmlElement ps = InfoDoc.DocumentElement.SelectSingleNode(Constants.ViewerPreferences) as XmlElement;
 		if (ps == null) {
 			return;
 		}
@@ -856,7 +858,7 @@ internal sealed class DocInfoImporter
 					n = PdfName.DIRECTION;
 					v = ValueHelper.MapValue(item.Value, Constants.ViewerPreferencesType.DirectionType.Names,
 						Constants.ViewerPreferencesType.DirectionType.PdfNames, PdfName.NONE);
-					if (PdfName.NONE.Equals(v) == true) {
+					if (PdfName.NONE.Equals(v)) {
 						continue;
 					}
 
@@ -933,11 +935,11 @@ internal sealed class DocInfoImporter
 	}
 
 	internal void ImportNamedDestinations(PdfReader pdf, PdfWriter w) {
-		if (_infoDoc == null) {
+		if (InfoDoc == null) {
 			return;
 		}
 
-		XmlNodeList ds = _infoDoc.DocumentElement.SelectNodes("命名位置/位置[@名称]");
+		XmlNodeList ds = InfoDoc.DocumentElement.SelectNodes("命名位置/位置[@名称]");
 		if (ds.Count == 0) {
 			return;
 		}
@@ -975,18 +977,15 @@ internal sealed class DocInfoImporter
 				sourceD.ArrayList.Clear();
 				sourceD.ArrayList.AddRange(prop.ArrayList);
 			}
-			else {
-				// ignore those names not in the original document
-			}
 		}
 	}
 
 	internal void ImportPageSettings(PdfReader pdf) {
-		if (_options.ImportPageSettings == false || _infoDoc == null) {
+		if (_options.ImportPageSettings == false || InfoDoc == null) {
 			return;
 		}
 
-		XmlNodeList ps = _infoDoc.DocumentElement.SelectNodes(string.Concat(Constants.Content.PageSettings.ThisName,
+		XmlNodeList ps = InfoDoc.DocumentElement.SelectNodes(string.Concat(Constants.Content.PageSettings.ThisName,
 			"/",
 			Constants.Content.Page));
 		if (ps.Count == 0) {
@@ -1054,14 +1053,14 @@ internal sealed class DocInfoImporter
 		return false;
 	}
 
-	private static readonly char[] __ValueArraySplitChars = { ' ', '\t', ',', ';' };
 	public static float[] ToSingleArray(string value) { return ToSingleArray(value, false); }
 
 	public static float[] ToSingleArray(string value, bool allowNegativeNumber) {
 		if (value == null) {
 			return null;
 		}
-		else if (value.Length == 0) {
+
+		if (value.Length == 0) {
 			return new float[0];
 		}
 

@@ -11,7 +11,7 @@ internal static class SourceItemSerializer
 	private static readonly BookmarkSettings __EmptyBookmark = new();
 
 	/// <summary>
-	/// 保存合并文件功能的列表。
+	///     保存合并文件功能的列表。
 	/// </summary>
 	/// <param name="list">文件列表项目。</param>
 	/// <param name="path">文件列表的保存路径。</param>

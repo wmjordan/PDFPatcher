@@ -5,12 +5,13 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
+using FILETIME = System.Runtime.InteropServices.ComTypes.FILETIME;
 using NameList = System.Collections.Generic.List<string>;
 using SysDirectory = System.IO.Directory;
 
 namespace PDFPatcher.Common;
 
-/// <summary>表示文件路径的结构。此结构可隐式转换为字符串、<see cref="FileInfo"/>、<see cref="DirectoryInfo"/> 和 <see cref="Uri"/>。</summary>
+/// <summary>表示文件路径的结构。此结构可隐式转换为字符串、<see cref="FileInfo" />、<see cref="DirectoryInfo" /> 和 <see cref="Uri" />。</summary>
 public readonly struct FilePath : IEquatable<FilePath>
 {
 	internal static readonly char[] InvalidFileNameChars = Path.GetInvalidFileNameChars();
@@ -30,7 +31,7 @@ public readonly struct FilePath : IEquatable<FilePath>
 	public static readonly FilePath AppRoot =
 		((FilePath)AppDomain.CurrentDomain.BaseDirectory).AppendPathSeparator();
 
-	/// <summary>获取应用程序的文件路径（对于 Web 应用程序，返回 <see cref="Empty"/>）。</summary>
+	/// <summary>获取应用程序的文件路径（对于 Web 应用程序，返回 <see cref="Empty" />）。</summary>
 	public static readonly FilePath AppPath = Assembly.GetEntryAssembly() != null
 		? (FilePath)Assembly.GetEntryAssembly().Location
 		: Empty;
@@ -39,7 +40,7 @@ public readonly struct FilePath : IEquatable<FilePath>
 	private static readonly string __CurrentPath = "." + Path.DirectorySeparatorChar;
 	private readonly string _value;
 
-	/// <summary>传入文件路径的字符串形式，创建新的 <see cref="FilePath"/> 实例。在创建实例时，删除传入字符串内所有的前导和尾随空白。</summary>
+	/// <summary>传入文件路径的字符串形式，创建新的 <see cref="FilePath" /> 实例。在创建实例时，删除传入字符串内所有的前导和尾随空白。</summary>
 	/// <param name="path">文件路径的字符串形式。</param>
 	public FilePath(string path) : this(path, true) { }
 
@@ -200,7 +201,7 @@ public readonly struct FilePath : IEquatable<FilePath>
 	/// <summary>返回当前文件路径是否有效。</summary>
 	public bool IsValidPath => _value?.Trim().Length > 0 && _value.IndexOfAny(InvalidPathChars) == -1;
 
-	/// <summary>在路径后附加 <see cref="Path.DirectorySeparatorChar"/> 字符。</summary>
+	/// <summary>在路径后附加 <see cref="Path.DirectorySeparatorChar" /> 字符。</summary>
 	/// <returns>附加了“\”字符的路径。</returns>
 	public FilePath AppendPathSeparator() {
 		return IsEmpty == false && _value[_value.Length - 1] == Path.DirectorySeparatorChar
@@ -208,7 +209,7 @@ public readonly struct FilePath : IEquatable<FilePath>
 			: (FilePath)(_value + Path.DirectorySeparatorChar);
 	}
 
-	/// <summary>删除路径尾部的 <see cref="Path.DirectorySeparatorChar"/> 或 <see cref="Path.AltDirectorySeparatorChar"/> 字符。</summary>
+	/// <summary>删除路径尾部的 <see cref="Path.DirectorySeparatorChar" /> 或 <see cref="Path.AltDirectorySeparatorChar" /> 字符。</summary>
 	/// <returns>删除了尾部“\”字符的路径。</returns>
 	public FilePath TrimPathSeparator() {
 		if (_value != null) {
@@ -260,14 +261,17 @@ public readonly struct FilePath : IEquatable<FilePath>
 		return new FilePath(i >= 0 ? _value.Substring(0, i) + extension : _value + extension, false);
 	}
 
-	/// <inheritdoc cref="Combine(FilePath, bool)"/>
+	/// <inheritdoc cref="Combine(FilePath, bool)" />
 	public FilePath Combine(FilePath path) {
 		return Combine(path, false);
 	}
 
-	/// <summary>合并两个文件路径。如 <paramref name="path"/> 为绝对路径，则返回该路径。</summary>
+	/// <summary>合并两个文件路径。如 <paramref name="path" /> 为绝对路径，则返回该路径。</summary>
 	/// <param name="path">子路径。</param>
-	/// <param name="rootAsRelative">对于 <paramref name="path"/> 以 <see cref="Path.DirectorySeparatorChar"/> 开头的情况，取值为 <see langword="true"/> 时，视为以当前目录为基础目录；否则将 <paramref name="path"/> 视为从根目录开始，返回 <paramref name="path"/>。</param>
+	/// <param name="rootAsRelative">
+	///     对于 <paramref name="path" /> 以 <see cref="Path.DirectorySeparatorChar" /> 开头的情况，取值为
+	///     <see langword="true" /> 时，视为以当前目录为基础目录；否则将 <paramref name="path" /> 视为从根目录开始，返回 <paramref name="path" />。
+	/// </param>
 	/// <returns>合并后的路径。</returns>
 	public FilePath Combine(FilePath path, bool rootAsRelative) {
 		if (path.IsEmpty) {
@@ -355,26 +359,26 @@ public readonly struct FilePath : IEquatable<FilePath>
 	}
 
 	/// <summary>返回与文件关联的版本说明信息。</summary>
-	/// <returns>文件 <see cref="FileVersionInfo"/> 对应的 <see cref="FileVersionInfo.FileDescription"/></returns>
+	/// <returns>文件 <see cref="FileVersionInfo" /> 对应的 <see cref="FileVersionInfo.FileDescription" /></returns>
 	public string GetDescription() {
 		return FileVersionInfo.GetVersionInfo(ToFullPath()).FileDescription;
 	}
 
-	/// <summary>获取当前 <see cref="FilePath"/> 下符合匹配模式的文件。在执行匹配前，先将当前实例转换为完整路径。当前用户无权访问的目录将被忽略。</summary>
+	/// <summary>获取当前 <see cref="FilePath" /> 下符合匹配模式的文件。在执行匹配前，先将当前实例转换为完整路径。当前用户无权访问的目录将被忽略。</summary>
 	/// <param name="pattern">匹配文件用的模式。模式中的“\”用于分隔目录，“**”表示当前目录及其包含的所有目录，“*”匹配 0 到多个字符，“?”匹配 1 个字符。模式为空时，返回所有文件。</param>
 	/// <returns>返回匹配模式的所有文件。</returns>
 	public FilePath[] GetFiles(string pattern) {
 		return GetFiles(pattern, null);
 	}
 
-	/// <summary>获取当前 <see cref="FilePath"/> 下符合匹配模式的目录。在执行匹配前，先将当前实例转换为完整路径。当前用户无权访问的目录将被忽略。</summary>
+	/// <summary>获取当前 <see cref="FilePath" /> 下符合匹配模式的目录。在执行匹配前，先将当前实例转换为完整路径。当前用户无权访问的目录将被忽略。</summary>
 	/// <param name="pattern">匹配目录用的模式。模式中的“\”用于分隔目录，“**”表示当前目录及其包含的所有目录，“*”匹配 0 到多个字符，“?”匹配 1 个字符。模式为空时，返回所有一级子目录。</param>
 	/// <returns>返回匹配模式的所有目录。</returns>
 	public FilePath[] GetDirectories(string pattern) {
 		return GetDirectories(pattern, null);
 	}
 
-	/// <summary>获取当前 <see cref="FilePath"/> 下符合匹配模式和筛选条件的文件。在执行匹配前，先将当前实例转换为完整路径。当前用户无权访问的目录将被忽略。</summary>
+	/// <summary>获取当前 <see cref="FilePath" /> 下符合匹配模式和筛选条件的文件。在执行匹配前，先将当前实例转换为完整路径。当前用户无权访问的目录将被忽略。</summary>
 	/// <param name="pattern">匹配文件用的模式。模式中的“\”用于分隔目录，“**”表示当前目录及其包含的所有目录，“*”匹配 0 到多个字符，“?”匹配 1 个字符。</param>
 	/// <param name="filter">用于筛选文件名的委托。</param>
 	/// <returns>返回匹配模式的所有文件。</returns>
@@ -440,7 +444,7 @@ public readonly struct FilePath : IEquatable<FilePath>
 #endif
 	}
 
-	/// <summary>获取当前 <see cref="FilePath"/> 下符合匹配模式和筛选条件的目录。在执行匹配前，先将当前实例转换为完整路径。当前用户无权访问的目录将被忽略。</summary>
+	/// <summary>获取当前 <see cref="FilePath" /> 下符合匹配模式和筛选条件的目录。在执行匹配前，先将当前实例转换为完整路径。当前用户无权访问的目录将被忽略。</summary>
 	/// <param name="pattern">匹配目录用的模式。模式中的“\”用于分隔目录，“**”表示当前目录及其包含的所有目录，“*”匹配 0 到多个字符，“?”匹配 1 个字符。</param>
 	/// <param name="filter">用于筛选目录名的委托。</param>
 	/// <returns>返回匹配模式的所有目录。</returns>
@@ -515,7 +519,8 @@ public readonly struct FilePath : IEquatable<FilePath>
 				t = new NameList(1) { Path.GetPathRoot(path) };
 				continue;
 			}
-			else if (pi == "..") {
+
+			if (pi == "..") {
 				foreach (string item in t) {
 					string n = IsDirectorySeparator(item[item.Length - 1])
 						? Path.GetDirectoryName(item.Substring(0, item.Length - 1))
@@ -537,7 +542,6 @@ public readonly struct FilePath : IEquatable<FilePath>
 						r.AddRange(SysDirectory.GetDirectories(item, pi));
 					}
 					catch (UnauthorizedAccessException) {
-						continue;
 					}
 				}
 			}
@@ -557,7 +561,6 @@ public readonly struct FilePath : IEquatable<FilePath>
 			}
 		}
 		catch (UnauthorizedAccessException) {
-			return;
 		}
 	}
 
@@ -666,16 +669,22 @@ public readonly struct FilePath : IEquatable<FilePath>
 	}
 
 	/// <summary>
-	/// <para>
-	/// 以当前路径的绝对路径为基准，返回 <paramref name="path"/> 相对于当前路径的相对路径。 如果 <paramref name="path"/>
-	/// 与当前路径盘符不一致，返回 <paramref name="path"/>。 在计算相对路径前，将把当前路径和 <paramref name="path"/> 使用 <see
-	/// cref="ToFullPath"/> 方法转换为绝对路径。
-	/// </para>
-	/// <note type="note">如当前路径为目录，但不以 <see cref="Path.DirectorySeparatorChar"/> 结束，应先调用 <see
-	/// cref="AppendPathSeparator"/> 方法将目录结束符附加到路径末尾。</note>
+	///     <para>
+	///         以当前路径的绝对路径为基准，返回 <paramref name="path" /> 相对于当前路径的相对路径。 如果 <paramref name="path" />
+	///         与当前路径盘符不一致，返回 <paramref name="path" />。 在计算相对路径前，将把当前路径和 <paramref name="path" /> 使用
+	///         <see
+	///             cref="ToFullPath" />
+	///         方法转换为绝对路径。
+	///     </para>
+	///     <note type="note">
+	///         如当前路径为目录，但不以 <see cref="Path.DirectorySeparatorChar" /> 结束，应先调用
+	///         <see
+	///             cref="AppendPathSeparator" />
+	///         方法将目录结束符附加到路径末尾。
+	///     </note>
 	/// </summary>
 	/// <param name="path">要计算相对路径的路径。</param>
-	/// <returns><paramref name="path"/> 对于当前路径的相对路径。</returns>
+	/// <returns><paramref name="path" /> 对于当前路径的相对路径。</returns>
 	public FilePath GetRelativePath(FilePath path) {
 		string p1 = ToFullPath()._value;
 		string p2 = path.ToFullPath()._value;
@@ -761,7 +770,7 @@ public readonly struct FilePath : IEquatable<FilePath>
 
 	/// <summary>检查当前路径是否属于指定的路径（子目录或其下文件）。</summary>
 	/// <param name="containingPath">上级目录。</param>
-	/// <param name="rootAsRelative">是否将当前目录以 <see cref="Path.DirectorySeparatorChar"/> 开头的情况视为相对路径。</param>
+	/// <param name="rootAsRelative">是否将当前目录以 <see cref="Path.DirectorySeparatorChar" /> 开头的情况视为相对路径。</param>
 	public bool IsInDirectory(FilePath containingPath, bool rootAsRelative) {
 		string p = containingPath.ToFullPath()._value;
 		string v = ToFullPath()._value;
@@ -772,14 +781,14 @@ public readonly struct FilePath : IEquatable<FilePath>
 																 rootAsRelative)));
 	}
 
-	/// <summary>返回指定的字符是否 <see cref="Path.DirectorySeparatorChar"/> 或 <see cref="Path.AltDirectorySeparatorChar"/>。</summary>
+	/// <summary>返回指定的字符是否 <see cref="Path.DirectorySeparatorChar" /> 或 <see cref="Path.AltDirectorySeparatorChar" />。</summary>
 	/// <param name="ch">要检查的字符。</param>
 	private static bool IsDirectorySeparator(char ch) {
 		return ch == Path.DirectorySeparatorChar || ch == Path.AltDirectorySeparatorChar;
 	}
 
 	/// <summary>返回当前路径是否为子路径（不会指向当前目录的上级目录）。</summary>
-	/// <param name="rootAsRelative">是否将目录以 <see cref="Path.DirectorySeparatorChar"/> 开头的情况视为子路径。</param>
+	/// <param name="rootAsRelative">是否将目录以 <see cref="Path.DirectorySeparatorChar" /> 开头的情况视为子路径。</param>
 	public bool IsSubPath(bool rootAsRelative) {
 		if (string.IsNullOrEmpty(_value)) {
 			return true;
@@ -814,7 +823,8 @@ public readonly struct FilePath : IEquatable<FilePath>
 				// ".." points to parent folder
 				return false;
 			}
-			else if (p.Length != 1 || p[0] != '.') {
+
+			if (p.Length != 1 || p[0] != '.') {
 				// ignore "."
 				++d;
 			}
@@ -829,7 +839,10 @@ public readonly struct FilePath : IEquatable<FilePath>
 
 	private static readonly string __DirectorySeparator = Path.DirectorySeparatorChar.ToString();
 
-	/// <summary>将文件路径转换为绝对定位路径，并删除目录名称中的空白。同时将 <see cref="Path.AltDirectorySeparatorChar"/> 转换为 <see cref="Path.DirectorySeparatorChar"/>。</summary>
+	/// <summary>
+	///     将文件路径转换为绝对定位路径，并删除目录名称中的空白。同时将 <see cref="Path.AltDirectorySeparatorChar" /> 转换为
+	///     <see cref="Path.DirectorySeparatorChar" />。
+	/// </summary>
 	/// <returns>标准的绝对定位路径。</returns>
 	public FilePath Normalize() {
 		if (_value.IsNullOrWhiteSpace()) {
@@ -863,13 +876,13 @@ public readonly struct FilePath : IEquatable<FilePath>
 			FileAccess.ReadWrite, FileShare.Read);
 	}
 
-	/// <summary>返回读写文件的 <see cref="Stream"/>。</summary>
-	/// <inheritdoc cref="OpenFile(FileMode, FileAccess, FileShare, int)"/>
+	/// <summary>返回读写文件的 <see cref="Stream" />。</summary>
+	/// <inheritdoc cref="OpenFile(FileMode, FileAccess, FileShare, int)" />
 	public Stream OpenFile(FileMode mode, FileAccess access, FileShare share) {
 		return new FileStream(ToFullPath()._value, mode, access, share);
 	}
 
-	/// <summary>返回读写文件的 <see cref="Stream"/>。</summary>
+	/// <summary>返回读写文件的 <see cref="Stream" />。</summary>
 	/// <param name="mode">指定文件访问方式。</param>
 	/// <param name="access">指定文件读写方式。</param>
 	/// <param name="share">指定文件访问共享方式。</param>
@@ -878,17 +891,17 @@ public readonly struct FilePath : IEquatable<FilePath>
 		return new FileStream(ToFullPath()._value, mode, access, share, bufferSize);
 	}
 
-	/// <summary>创建以指定编码读取文件的 <see cref="StreamReader"/> 实例。</summary>
+	/// <summary>创建以指定编码读取文件的 <see cref="StreamReader" /> 实例。</summary>
 	/// <param name="encoding">用于读取文件的编码。编码为 null 时采用 UTF-8 编码。</param>
-	/// <returns>读取文件的 <see cref="StreamReader"/> 实例。</returns>
+	/// <returns>读取文件的 <see cref="StreamReader" /> 实例。</returns>
 	public StreamReader OpenTextReader(Encoding encoding) {
 		return new StreamReader(ToFullPath()._value, encoding ?? Encoding.UTF8, true);
 	}
 
-	/// <summary>创建以指定编码写入文件的 <see cref="StreamWriter"/> 实例。</summary>
+	/// <summary>创建以指定编码写入文件的 <see cref="StreamWriter" /> 实例。</summary>
 	/// <param name="append">是否追加到文件结尾。</param>
 	/// <param name="encoding">用于写入文件的编码。编码为 null 时采用 UTF-8 编码。</param>
-	/// <returns>写入文件的 <see cref="StreamWriter"/> 实例。</returns>
+	/// <returns>写入文件的 <see cref="StreamWriter" /> 实例。</returns>
 	public StreamWriter OpenTextWriter(bool append, Encoding encoding) {
 		FilePath fp = ToFullPath();
 		fp.CreateContainingDirectory();
@@ -900,7 +913,7 @@ public readonly struct FilePath : IEquatable<FilePath>
 	public byte[] ReadAllBytes() { return ReadAllBytes(-1); }
 
 	/// <summary>打开当前路径对应的文件并读取所有内容为字节数组。如文件不存在，返回 0 长度的字节数组。此方法使用 FileStream 读取文件，打开或读取文件过程中可能返回异常。</summary>
-	/// <param name="maxBytes">允许读取的最大字节数。如此值非正整数，则按读取文件的大小读取最多 <see cref="int.MaxValue"/> 个字节。</param>
+	/// <param name="maxBytes">允许读取的最大字节数。如此值非正整数，则按读取文件的大小读取最多 <see cref="int.MaxValue" /> 个字节。</param>
 	/// <returns>文件的字节数组。</returns>
 	public byte[] ReadAllBytes(int maxBytes) {
 		if (ExistsFile == false) {
@@ -928,8 +941,8 @@ public readonly struct FilePath : IEquatable<FilePath>
 		}
 	}
 
-	/// <summary>打开当前路径对应的文件，并以指定编码逐行读取所有行。如文件不存在，返回 <see cref="String.Empty"/>。</summary>
-	/// <param name="encoding">用于读取文件的编码。编码为 <see langword="null"/> 时采用 UTF-8 编码。</param>
+	/// <summary>打开当前路径对应的文件，并以指定编码逐行读取所有行。如文件不存在，返回 <see cref="String.Empty" />。</summary>
+	/// <param name="encoding">用于读取文件的编码。编码为 <see langword="null" /> 时采用 UTF-8 编码。</param>
 	/// <returns>包含整个文本文件的字符串。</returns>
 	/// <exception cref="PathTooLongException">指定的路径、文件名或者两者都超出了系统定义的最大长度。例如，在基于 Windows 的平台上，路径必须小于 248 个字符，文件名必须小于 260 个字符。</exception>
 	/// <exception cref="UnauthorizedAccessException">调用方没有所要求的权限。</exception>
@@ -947,7 +960,7 @@ public readonly struct FilePath : IEquatable<FilePath>
 	}
 
 	/// <summary>打开当前路径对应的文件，并以指定编码逐行读取所有内容为字符串集合。如文件不存在，返回 0 长度的字符串数组。</summary>
-	/// <param name="encoding">用于读取文件的编码。编码为 <see langword="null"/> 时采用 UTF-8 编码。</param>
+	/// <param name="encoding">用于读取文件的编码。编码为 <see langword="null" /> 时采用 UTF-8 编码。</param>
 	/// <returns>文件中每行对应一个字符串所构成的集合。</returns>
 	public IEnumerable<string> ReadLines(Encoding encoding) {
 		if (ExistsFile == false) {
@@ -964,7 +977,7 @@ public readonly struct FilePath : IEquatable<FilePath>
 #endif
 	}
 
-	/// <summary>将 <paramref name="bytes"/>写入文件。</summary>
+	/// <summary>将 <paramref name="bytes" />写入文件。</summary>
 	/// <param name="append">是否追加到文件结尾。</param>
 	/// <param name="bytes">需要写入的字节数组。此参数为空时，不写入文件内容。</param>
 	public void WriteAllBytes(bool append, byte[] bytes) {
@@ -980,9 +993,9 @@ public readonly struct FilePath : IEquatable<FilePath>
 		}
 	}
 
-	/// <summary>将 <paramref name="text"/> 以指定编码写入文件。</summary>
+	/// <summary>将 <paramref name="text" /> 以指定编码写入文件。</summary>
 	/// <param name="append">是否追加到文件结尾。</param>
-	/// <param name="encoding">用于写入文件的编码。编码为 <see langword="null"/> 时采用 UTF-8 编码。</param>
+	/// <param name="encoding">用于写入文件的编码。编码为 <see langword="null" /> 时采用 UTF-8 编码。</param>
 	/// <param name="text">需要写入的文本。此参数为空时，不写入文件内容。</param>
 	public void WriteAllText(bool append, Encoding encoding, string text) {
 		if (text == null) {
@@ -994,10 +1007,10 @@ public readonly struct FilePath : IEquatable<FilePath>
 		}
 	}
 
-	/// <summary>将 <paramref name="lines"/> 的每项内容后附加换行，以指定编码写入文件。</summary>
+	/// <summary>将 <paramref name="lines" /> 的每项内容后附加换行，以指定编码写入文件。</summary>
 	/// <param name="append">是否追加到文件结尾。</param>
-	/// <param name="encoding">用于写入文件的编码。编码为 <see langword="null"/> 时采用 UTF-8 编码。</param>
-	/// <param name="lines">需要写入的文本。此参数为 <see langword="null"/> 时，不写入文件内容。此参数的项为 <see langword="null"/> 时，写入对应的空行。</param>
+	/// <param name="encoding">用于写入文件的编码。编码为 <see langword="null" /> 时采用 UTF-8 编码。</param>
+	/// <param name="lines">需要写入的文本。此参数为 <see langword="null" /> 时，不写入文件内容。此参数的项为 <see langword="null" /> 时，写入对应的空行。</param>
 	public void WriteAllLines(bool append, Encoding encoding, IEnumerable<string> lines) {
 		if (lines == null) {
 			return;
@@ -1010,25 +1023,25 @@ public readonly struct FilePath : IEquatable<FilePath>
 		}
 	}
 
-	/// <inheritdoc cref="WriteAllLines(bool, Encoding, IEnumerable{string})"/>
+	/// <inheritdoc cref="WriteAllLines(bool, Encoding, IEnumerable{string})" />
 	public void WriteAllLines(bool append, Encoding encoding, params string[] lines) {
 		WriteAllLines(append, encoding, (IEnumerable<string>)lines);
 	}
 
 	/// <summary>使用关联的程序打开当前路径对应的文件或目录，返回对应的进程。</summary>
 	/// <param name="arguments">要传递的额外参数。</param>
-	/// <returns><see cref="Process"/> 实例。</returns>
+	/// <returns><see cref="Process" /> 实例。</returns>
 	public Process StartProcess(string arguments) {
 		return Process.Start(_value, arguments);
 	}
 
 	/// <summary>使用关联的程序打开当前路径对应的文件或目录，返回对应的进程。</summary>
-	/// <returns><see cref="Process"/> 实例。</returns>
+	/// <returns><see cref="Process" /> 实例。</returns>
 	public Process StartProcess() {
 		return Process.Start(_value);
 	}
 
-	/// <summary>将路径中的无效字符替换为 <paramref name="substitution"/>。</summary>
+	/// <summary>将路径中的无效字符替换为 <paramref name="substitution" />。</summary>
 	/// <param name="substitution">用于替换无效字符的字符。</param>
 	/// <returns>替换了无效字符的路径。</returns>
 	public FilePath SubstituteInvalidChars(char substitution) {
@@ -1053,7 +1066,7 @@ public readonly struct FilePath : IEquatable<FilePath>
 		return this;
 	}
 
-	/// <summary>将路径转换为绝对定位的路径。路径的基准位置为 <see cref="AppRoot"/>。执行此方法前，必须确保路径中不包含无效字符，否则将抛出异常。</summary>
+	/// <summary>将路径转换为绝对定位的路径。路径的基准位置为 <see cref="AppRoot" />。执行此方法前，必须确保路径中不包含无效字符，否则将抛出异常。</summary>
 	/// <returns>采用绝对定位路径的实例。</returns>
 	/// <exception cref="ArgumentException">路径无效。</exception>
 	public FilePath ToFullPath() {
@@ -1065,16 +1078,16 @@ public readonly struct FilePath : IEquatable<FilePath>
 	}
 
 	/// <summary>
-	/// <para>将 <see cref="FilePath"/> 实例转换为完全路径，再隐式转换为 <see cref="FileInfo"/> 实例。路径的基准位置为 <see cref="AppRoot"/>。</para>
-	/// <note type="note">事实上，<see cref="FilePath"/> 实例可隐式转换为 <see cref="FileInfo"/> 实例。</note>
+	///     <para>将 <see cref="FilePath" /> 实例转换为完全路径，再隐式转换为 <see cref="FileInfo" /> 实例。路径的基准位置为 <see cref="AppRoot" />。</para>
+	///     <note type="note">事实上，<see cref="FilePath" /> 实例可隐式转换为 <see cref="FileInfo" /> 实例。</note>
 	/// </summary>
-	/// <returns>将当前路径转换为完全路径后对应的 <see cref="FileInfo"/> 实例。</returns>
+	/// <returns>将当前路径转换为完全路径后对应的 <see cref="FileInfo" /> 实例。</returns>
 	[DebuggerStepThrough]
 	public FileInfo ToFileInfo() {
 		return this;
 	}
 
-	/// <summary>将 <see cref="FilePath"/> 实例转换为完全路径，再获取其对应的 <see cref="FileVersionInfo"/>。</summary>
+	/// <summary>将 <see cref="FilePath" /> 实例转换为完全路径，再获取其对应的 <see cref="FileVersionInfo" />。</summary>
 	/// <returns>与完全路径对应的文件版本信息。</returns>
 	/// <exception cref="ArgumentException">路径无效。</exception>
 	/// <exception cref="FileNotFoundException">找不到对应的文件。</exception>
@@ -1084,34 +1097,34 @@ public readonly struct FilePath : IEquatable<FilePath>
 	}
 
 	/// <summary>
-	/// 将 <see cref="FilePath"/> 实例转换为完全路径，再隐式转换为 <see cref="DirectoryInfo"/> 实例。路径的基准位置为 <see cref="AppRoot"/>。
-	/// <note type="note">事实上，<see cref="FilePath"/> 实例可隐式转换为 <see cref="DirectoryInfo"/> 实例。</note>
+	///     将 <see cref="FilePath" /> 实例转换为完全路径，再隐式转换为 <see cref="DirectoryInfo" /> 实例。路径的基准位置为 <see cref="AppRoot" />。
+	///     <note type="note">事实上，<see cref="FilePath" /> 实例可隐式转换为 <see cref="DirectoryInfo" /> 实例。</note>
 	/// </summary>
-	/// <returns>将当前路径转换为完全路径后对应的 <see cref="DirectoryInfo"/> 实例。</returns>
+	/// <returns>将当前路径转换为完全路径后对应的 <see cref="DirectoryInfo" /> 实例。</returns>
 	[DebuggerStepThrough]
 	public DirectoryInfo ToDirectoryInfo() {
 		return this;
 	}
 
 	/// <summary>
-	/// 将 <see cref="FilePath"/> 实例转换为 <see cref="Uri"/> 实例。
-	/// <note type="note">事实上，<see cref="FilePath"/> 实例可隐式转换为 <see cref="Uri"/> 实例。</note>
+	///     将 <see cref="FilePath" /> 实例转换为 <see cref="Uri" /> 实例。
+	///     <note type="note">事实上，<see cref="FilePath" /> 实例可隐式转换为 <see cref="Uri" /> 实例。</note>
 	/// </summary>
-	/// <returns>与当前路径对应的 <see cref="Uri"/> 实例。</returns>
+	/// <returns>与当前路径对应的 <see cref="Uri" /> 实例。</returns>
 	[DebuggerStepThrough]
 	public Uri ToUri() { return this; }
 
 	#region 类型映射
 
-	/// <summary>将字符串隐式转换为 <see cref="FilePath"/> 实例，删除传入字符串内所有的前导和尾随空白。</summary>
+	/// <summary>将字符串隐式转换为 <see cref="FilePath" /> 实例，删除传入字符串内所有的前导和尾随空白。</summary>
 	/// <param name="path">需要转换的路径字符串。</param>
-	/// <returns><see cref="FilePath"/> 实例。</returns>
+	/// <returns><see cref="FilePath" /> 实例。</returns>
 	[DebuggerStepThrough]
 	public static implicit operator FilePath(string path) {
 		return new FilePath(path);
 	}
 
-	/// <summary>将 <see cref="FilePath"/> 实例隐式转换为字符串。</summary>
+	/// <summary>将 <see cref="FilePath" /> 实例隐式转换为字符串。</summary>
 	/// <param name="path">需要转换的路径。</param>
 	/// <returns>以字符串形式表示的实例。</returns>
 	[DebuggerStepThrough]
@@ -1119,7 +1132,7 @@ public readonly struct FilePath : IEquatable<FilePath>
 		return path._value;
 	}
 
-	/// <summary>将 <see cref="FileInfo"/> 显式转换为 <see cref="FilePath"/> 实例。</summary>
+	/// <summary>将 <see cref="FileInfo" /> 显式转换为 <see cref="FilePath" /> 实例。</summary>
 	/// <param name="file">需要转换的路径。</param>
 	[DebuggerStepThrough]
 	public static explicit operator FilePath(FileInfo file) {
@@ -1127,17 +1140,17 @@ public readonly struct FilePath : IEquatable<FilePath>
 	}
 
 	/// <summary>
-	/// 将 <see cref="FilePath"/> 实例转换为完全路径，再隐式转换为 <see cref="FileInfo"/> 实例。路径的基准位置为 <see cref="AppRoot"/>。
+	///     将 <see cref="FilePath" /> 实例转换为完全路径，再隐式转换为 <see cref="FileInfo" /> 实例。路径的基准位置为 <see cref="AppRoot" />。
 	/// </summary>
 	/// <param name="path">需要转换的路径。</param>
-	/// <returns>将当前路径转换为完全路径后对应的 <see cref="FileInfo"/> 实例。</returns>
-	/// <seealso cref="ToFullPath"/>
+	/// <returns>将当前路径转换为完全路径后对应的 <see cref="FileInfo" /> 实例。</returns>
+	/// <seealso cref="ToFullPath" />
 	[DebuggerStepThrough]
 	public static implicit operator FileInfo(FilePath path) {
 		return new FileInfo(path.ToFullPath()._value);
 	}
 
-	/// <summary>将 <see cref="DirectoryInfo"/> 显式转换为 <see cref="FilePath"/> 实例。</summary>
+	/// <summary>将 <see cref="DirectoryInfo" /> 显式转换为 <see cref="FilePath" /> 实例。</summary>
 	/// <param name="directory">需要转换的路径。</param>
 	[DebuggerStepThrough]
 	public static explicit operator FilePath(DirectoryInfo directory) {
@@ -1145,17 +1158,17 @@ public readonly struct FilePath : IEquatable<FilePath>
 	}
 
 	/// <summary>
-	/// 将 <see cref="FilePath"/> 实例转换为完全路径，再隐式转换为 <see cref="DirectoryInfo"/> 实例。路径的基准位置为 <see cref="AppRoot"/>。
+	///     将 <see cref="FilePath" /> 实例转换为完全路径，再隐式转换为 <see cref="DirectoryInfo" /> 实例。路径的基准位置为 <see cref="AppRoot" />。
 	/// </summary>
 	/// <param name="path">需要转换的路径。</param>
-	/// <returns>将当前路径转换为完全路径后对应的 <see cref="DirectoryInfo"/> 实例。</returns>
-	/// <seealso cref="ToFullPath"/>
+	/// <returns>将当前路径转换为完全路径后对应的 <see cref="DirectoryInfo" /> 实例。</returns>
+	/// <seealso cref="ToFullPath" />
 	[DebuggerStepThrough]
 	public static implicit operator DirectoryInfo(FilePath path) {
 		return new DirectoryInfo(path.ToFullPath()._value);
 	}
 
-	/// <summary>将 <see cref="FilePath"/> 实例隐式转换为 <see cref="Uri"/> 实例。</summary>
+	/// <summary>将 <see cref="FilePath" /> 实例隐式转换为 <see cref="Uri" /> 实例。</summary>
 	/// <param name="path">需要转换的路径。</param>
 	[DebuggerStepThrough]
 	public static implicit operator Uri(FilePath path) {
@@ -1186,7 +1199,7 @@ public readonly struct FilePath : IEquatable<FilePath>
 
 	/// <summary>指示当前文件路径是否等于同一类型的另一个文件路径。</summary>
 	/// <param name="other">与此对象进行比较的对象。</param>
-	/// <returns>如果当前对象等于 <paramref name="other"/> 参数，则为 <see langword="true"/>；否则为 <see langword="false"/>。</returns>
+	/// <returns>如果当前对象等于 <paramref name="other" /> 参数，则为 <see langword="true" />；否则为 <see langword="false" />。</returns>
 	public bool Equals(FilePath other) {
 		return __PathComparer(_value, other._value)
 			   || __PathComparer(
@@ -1211,8 +1224,8 @@ public readonly struct FilePath : IEquatable<FilePath>
 
 	#endregion
 
-	/// <summary>返回表示当前文件路径的 <see cref="string"/> 实例。</summary>
-	/// <returns>表示当前文件路径的 <see cref="string"/> 实例。</returns>
+	/// <summary>返回表示当前文件路径的 <see cref="string" /> 实例。</summary>
+	/// <returns>表示当前文件路径的 <see cref="string" /> 实例。</returns>
 	[DebuggerStepThrough]
 	public override string ToString() {
 		return _value ?? string.Empty;
@@ -1279,25 +1292,6 @@ public readonly struct FilePath : IEquatable<FilePath>
 			}
 		}
 
-		[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-		private struct WIN32_FIND_DATA
-		{
-			public uint dwFileAttributes;
-			public System.Runtime.InteropServices.ComTypes.FILETIME ftCreationTime;
-			public System.Runtime.InteropServices.ComTypes.FILETIME ftLastAccessTime;
-			public System.Runtime.InteropServices.ComTypes.FILETIME ftLastWriteTime;
-			public uint nFileSizeHigh;
-			public uint nFileSizeLow;
-			public uint dwReserved0;
-			public uint dwReserved1;
-
-			[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
-			public string cFileName;
-
-			[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 14)]
-			public string cAlternateFileName;
-		}
-
 		[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
 		private static extern bool FindClose(IntPtr hFindFile);
 
@@ -1308,6 +1302,25 @@ public readonly struct FilePath : IEquatable<FilePath>
 		[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
 		private static extern bool FindNextFile
 			(IntPtr hFindFile, out WIN32_FIND_DATA lpFindFileData);
+
+		[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+		private struct WIN32_FIND_DATA
+		{
+			public readonly uint dwFileAttributes;
+			public readonly FILETIME ftCreationTime;
+			public readonly FILETIME ftLastAccessTime;
+			public readonly FILETIME ftLastWriteTime;
+			public readonly uint nFileSizeHigh;
+			public readonly uint nFileSizeLow;
+			public readonly uint dwReserved0;
+			public readonly uint dwReserved1;
+
+			[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
+			public readonly string cFileName;
+
+			[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 14)]
+			public readonly string cAlternateFileName;
+		}
 	}
 
 #if NET20

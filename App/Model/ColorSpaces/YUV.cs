@@ -1,14 +1,12 @@
-﻿using System;
-
-namespace Devcorp.Controls.Design;
+﻿namespace Devcorp.Controls.Design;
 
 /// <summary>
-/// Structure to define YUV.
+///     Structure to define YUV.
 /// </summary>
 public struct YUV
 {
 	/// <summary>
-	/// Gets an empty YUV structure.
+	///     Gets an empty YUV structure.
 	/// </summary>
 	public static readonly YUV Empty = new();
 
@@ -65,7 +63,7 @@ public struct YUV
 	#endregion
 
 	/// <summary>
-	/// Creates an instance of a YUV structure.
+	///     Creates an instance of a YUV structure.
 	/// </summary>
 	public YUV(double y, double u, double v) {
 		this.y = y;

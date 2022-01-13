@@ -16,19 +16,19 @@ namespace PDFPatcher.Processor;
 
 internal sealed class PdfDocumentCreator
 {
-	internal static readonly string[] SupportedFileTypes = new string[] {
+	internal static readonly string[] SupportedFileTypes = {
 		".pdf", ".tif", ".jpg", ".gif", ".png", ".tiff", ".bmp", ".jpeg", ".jp2", ".j2k"
 	};
 
 	private static readonly string[] __BuiltInImageTypes = {".png", ".jpg", ".jpeg", ".bmp", ".jp2", ".j2k"};
 	private static readonly string[] __ExtImageTypes = {".tif", ".tiff", ".gif"};
 
-	private static readonly PixelFormat[] __JpgFormats = new PixelFormat[] {
+	private static readonly PixelFormat[] __JpgFormats = {
 		PixelFormat.Format16bppGrayScale, PixelFormat.Format16bppRgb555, PixelFormat.Format16bppRgb565,
 		PixelFormat.Format24bppRgb, PixelFormat.Format32bppRgb, PixelFormat.Format48bppRgb
 	};
 
-	internal static readonly PaperSize[] PaperSizes = new PaperSize[] {
+	internal static readonly PaperSize[] PaperSizes = {
 		new(PaperSize.AsPageSize, 0, 0), new(PaperSize.FixedWidthAutoHeight, 0, 0), new(PaperSize.AsWidestPage, 0, 0),
 		new(PaperSize.AsNarrowestPage, 0, 0), new(PaperSize.AsLargestPage, 0, 0), new(PaperSize.AsSmallestPage, 0, 0),
 		new("16 开 (18.4*26.0)", 1840, 2601), new("32 开 (13.0*18.4)", 1300, 1840), new("大 32 开 (14.0*20.3)", 1400, 2030),
@@ -43,24 +43,20 @@ internal sealed class PdfDocumentCreator
 		new("B5 (17.6*25.0)", 1760, 2501), new("B6 (12.5*17.6)", 1250, 1760)
 	};
 
-	private readonly MergerOptions _option;
-	private readonly ImporterOptions _impOptions;
-	private readonly Document _doc;
-	private readonly PdfSmartCopy _writer;
-	private readonly PaperSize _content;
-	private readonly DocumentSink _sink;
-	private readonly PageBoxSettings _pageSettings;
 	private readonly bool _autoRotate;
-	private readonly HorizontalAlignment hAlign;
-	private readonly VerticalAlignment vAlign;
-	private readonly bool scaleUp, scaleDown;
-	private readonly bool areMarginsEqual;
-	private bool _portrait;
+	private readonly PaperSize _content;
+	private readonly Document _doc;
+	private readonly ImporterOptions _impOptions;
 
-	/// <summary>
-	/// 在传入构造函数选项中保留链接时，获取最近处理的 PDF 文档的书签。
-	/// </summary>
-	public PdfInfoXmlDocument PdfBookmarks { get; }
+	private readonly MergerOptions _option;
+	private readonly PageBoxSettings _pageSettings;
+	private readonly DocumentSink _sink;
+	private readonly PdfSmartCopy _writer;
+	private readonly bool areMarginsEqual;
+	private readonly HorizontalAlignment hAlign;
+	private readonly bool scaleUp, scaleDown;
+	private readonly VerticalAlignment vAlign;
+	private bool _portrait;
 
 	public PdfDocumentCreator(DocumentSink sink, MergerOptions option, ImporterOptions impOptions,
 		Document document, PdfSmartCopy writer) {
@@ -90,6 +86,11 @@ internal sealed class PdfDocumentCreator
 		}
 	}
 
+	/// <summary>
+	///     在传入构造函数选项中保留链接时，获取最近处理的 PDF 文档的书签。
+	/// </summary>
+	public PdfInfoXmlDocument PdfBookmarks { get; }
+
 	internal void ProcessFile(SourceItem sourceFile, BookmarkContainer bookmarkContainer) {
 		if (sourceFile.Type != SourceItem.ItemType.Empty) {
 			Tracker.TraceMessage(Tracker.Category.InputFile, sourceFile.FilePath.ToString());
@@ -114,8 +115,6 @@ internal sealed class PdfDocumentCreator
 				break;
 			case SourceItem.ItemType.Folder:
 				Tracker.TraceMessage("添加文件夹：" + sourceFile);
-				break;
-			default:
 				break;
 		}
 
@@ -232,7 +231,7 @@ internal sealed class PdfDocumentCreator
 			int a = _option.RotateAntiClockwise ? -90 : 90;
 			for (int i = pdf.NumberOfPages; i > 0; i--) {
 				PdfDictionary p = pdf.GetPageN(i);
-				Rectangle r = PdfHelper.GetPageVisibleRectangle(p);
+				Rectangle r = p.GetPageVisibleRectangle();
 				if ((rv && r.Width < r.Height)
 				    || (rv == false && r.Width > r.Height)) {
 					p.Put(PdfName.ROTATE, (r.Rotation + a) % 360);
@@ -249,7 +248,7 @@ internal sealed class PdfDocumentCreator
 			bookmark.SetAttribute(Constants.DestinationAttributes.Page, n.ToText());
 			bookmark.SetAttribute(Constants.DestinationAttributes.View,
 				Constants.DestinationAttributes.ViewType.XYZ);
-			Rectangle r = PdfHelper.GetPageVisibleRectangle(pdf.GetPageN(ranges[0].StartValue));
+			Rectangle r = pdf.GetPageN(ranges[0].StartValue).GetPageVisibleRectangle();
 			float t = 0;
 			switch (r.Rotation % 360 / 90) {
 				case 0:
@@ -269,7 +268,7 @@ internal sealed class PdfDocumentCreator
 			bookmark.SetAttribute(Constants.Coordinates.Top, t.ToText());
 		}
 
-		SourceItem.Pdf pdfItem = sourceFile as SourceItem.Pdf;
+		SourceItem.Pdf pdfItem = sourceFile;
 		bool importImagesOnly = pdfItem.ImportImagesOnly;
 		int pn = pdf.NumberOfPages;
 		ImageExtractor imgExp = null;
@@ -363,11 +362,11 @@ internal sealed class PdfDocumentCreator
 
 	private BookmarkContainer KeepBookmarks(BookmarkContainer bookmark, PdfReader pdf, int[] pageRemapper,
 		CoordinateTranslationSettings[] cts) {
-		XmlElement bm = OutlineManager.GetBookmark(pdf, new UnitConverter() {Unit = Constants.Units.Point});
+		XmlElement bm = OutlineManager.GetBookmark(pdf, new UnitConverter {Unit = Constants.Units.Point});
 		List<IInfoDocProcessor> processors = new();
 		if (_option.ViewerPreferences.CollapseBookmark != BookmarkStatus.AsIs) {
 			processors.Add(
-				new CollapseBookmarkProcessor() {BookmarkStatus = _option.ViewerPreferences.CollapseBookmark});
+				new CollapseBookmarkProcessor {BookmarkStatus = _option.ViewerPreferences.CollapseBookmark});
 		}
 
 		if (_option.ViewerPreferences.RemoveZoomRate) {
@@ -378,7 +377,7 @@ internal sealed class PdfDocumentCreator
 			processors.Add(new ForceInternalDestinationProcessor());
 		}
 
-		processors.Add(new GotoDestinationProcessor() {
+		processors.Add(new GotoDestinationProcessor {
 			RemoveOrphanDestination = _option.RemoveOrphanBookmarks, PageRemapper = pageRemapper, TransitionMapper = cts
 		});
 		ProcessInfoItem(bm, processors);
@@ -560,7 +559,7 @@ internal sealed class PdfDocumentCreator
 			if (_autoRotate
 			    && ( // 页面不足以放下当前尺寸的图片
 				    ((image.ScaledHeight > _content.Height || image.ScaledWidth > _content.Width)
-				     && ((image.ScaledWidth > image.ScaledHeight && _portrait == true)
+				     && ((image.ScaledWidth > image.ScaledHeight && _portrait)
 				         || (image.ScaledHeight > image.ScaledWidth && _portrait == false)))
 				    ||
 				    // 图片较小，可以还原为原始的页面方向

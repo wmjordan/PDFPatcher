@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using PDFPatcher.Model;
+﻿using System.Collections.Generic;
 
 namespace PDFPatcher.Model.PdfPath;
 
@@ -18,13 +15,22 @@ public class PathExpression : IPathExpression
 {
 	internal static readonly IList<DocumentObject> EmptyMatchResult = new DocumentObject[0];
 
+	public PathExpression(PathAxisType axis) {
+		Axis = PathAxes.Create(axis);
+	}
+
+	public PathExpression(PathAxisType axis, string name) {
+		Axis = PathAxes.Create(axis);
+		Name = name;
+	}
+
 	#region IPathExpression 成员
 
 	public PathValueType ValueType => PathValueType.Expression;
 
-	public IPathAxis Axis { get; private set; }
+	public IPathAxis Axis { get; }
 
-	public string Name { get; private set; }
+	public string Name { get; }
 
 	private IList<IPathPredicate> _Predicates;
 
@@ -48,13 +54,4 @@ public class PathExpression : IPathExpression
 	}
 
 	#endregion
-
-	public PathExpression(PathAxisType axis) {
-		Axis = PathAxes.Create(axis);
-	}
-
-	public PathExpression(PathAxisType axis, string name) {
-		Axis = PathAxes.Create(axis);
-		Name = name;
-	}
 }

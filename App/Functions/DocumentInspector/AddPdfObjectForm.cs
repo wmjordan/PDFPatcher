@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using iTextSharp.text.pdf;
 using PDFPatcher.Common;
@@ -14,8 +9,14 @@ namespace PDFPatcher.Functions;
 public partial class AddPdfObjectForm : Form
 {
 	private readonly Control[] _editBoxes;
-	public string ObjectName => _ObjectNameBox.Text;
 	private int _PdfObjectType;
+
+	public AddPdfObjectForm() {
+		InitializeComponent();
+		_editBoxes = new Control[] {_NameValueBox, _NumericValueBox, _BooleanValueBox, _TextValueBox};
+	}
+
+	public string ObjectName => _ObjectNameBox.Text;
 
 	///<summary>获取或指定Description的值。</summary>
 	public int PdfObjectType {
@@ -71,11 +72,6 @@ public partial class AddPdfObjectForm : Form
 
 			return o;
 		}
-	}
-
-	public AddPdfObjectForm() {
-		InitializeComponent();
-		_editBoxes = new Control[] {_NameValueBox, _NumericValueBox, _BooleanValueBox, _TextValueBox};
 	}
 
 	private void AddPdfObjectForm_Load(object sender, EventArgs e) {

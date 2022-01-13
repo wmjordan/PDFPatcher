@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using iTextSharp.text.pdf;
-using PDFPatcher.Model;
+﻿using iTextSharp.text.pdf;
 
 namespace PDFPatcher.Processor;
 
 /// <summary>
-/// 删除指定字典名称项目的处理器。
+///     删除指定字典名称项目的处理器。
 /// </summary>
 internal sealed class RemoveDictionaryItemProcessor : IPageProcessor
 {
@@ -16,6 +12,19 @@ internal sealed class RemoveDictionaryItemProcessor : IPageProcessor
 	public RemoveDictionaryItemProcessor(PdfName itemName) {
 		_ItemName = itemName;
 	}
+
+	#region IDocProcessor 成员
+
+	public bool Process(DocProcessorContext context) {
+		if (context.Pdf.Catalog.Contains(_ItemName)) {
+			context.Pdf.Catalog.Remove(_ItemName);
+			return true;
+		}
+
+		return false;
+	}
+
+	#endregion
 
 	#region IPageProcessor 成员
 
@@ -35,19 +44,6 @@ internal sealed class RemoveDictionaryItemProcessor : IPageProcessor
 	public bool Process(PageProcessorContext context) {
 		if (context.Page.Contains(_ItemName)) {
 			context.Page.Remove(_ItemName);
-			return true;
-		}
-
-		return false;
-	}
-
-	#endregion
-
-	#region IDocProcessor 成员
-
-	public bool Process(DocProcessorContext context) {
-		if (context.Pdf.Catalog.Contains(_ItemName)) {
-			context.Pdf.Catalog.Remove(_ItemName);
 			return true;
 		}
 

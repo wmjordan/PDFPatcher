@@ -13,6 +13,15 @@ public partial class PageRangeConditionEditor : UserControl, IFilterConditionEdi
 		InitializeComponent();
 	}
 
+	private void ControlChanged(object sender, EventArgs e) {
+		if (_lock) {
+			return;
+		}
+
+		_condition.PageRange = _PageRangeBox.Text;
+		EditAdjustmentForm.UpdateFilter(this);
+	}
+
 	#region ITextInfoFilterEditor 成员
 
 	public AutoBookmarkCondition Filter {
@@ -28,13 +37,4 @@ public partial class PageRangeConditionEditor : UserControl, IFilterConditionEdi
 	public UserControl EditorControl => this;
 
 	#endregion
-
-	private void ControlChanged(object sender, EventArgs e) {
-		if (_lock) {
-			return;
-		}
-
-		_condition.PageRange = _PageRangeBox.Text;
-		EditAdjustmentForm.UpdateFilter(this);
-	}
 }

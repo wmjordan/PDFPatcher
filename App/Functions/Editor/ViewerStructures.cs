@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
 using MuPdfSharp;
 using DrawingPoint = System.Drawing.Point;
+using Point = MuPdfSharp.Point;
 using Rectangle = MuPdfSharp.Rectangle;
 
 namespace PDFPatcher.Functions.Editor;
@@ -38,26 +37,26 @@ public readonly struct PagePosition
 	public static readonly PagePosition Empty;
 
 	/// <summary>
-	/// 所在页码。
+	///     所在页码。
 	/// </summary>
 	public readonly int Page;
 
 	/// <summary>
-	/// 在 PDF 页面空间上的位置。
+	///     在 PDF 页面空间上的位置。
 	/// </summary>
 	public readonly float PageX, PageY;
 
 	/// <summary>
-	/// 在渲染页面上的位置。
+	///     在渲染页面上的位置。
 	/// </summary>
 	public readonly int ImageX, ImageY;
 
 	/// <summary>
-	/// 当前点是否在页面上。
+	///     当前点是否在页面上。
 	/// </summary>
 	public readonly bool IsInPage;
 
-	public MuPdfSharp.Point Location => new(PageX, PageY);
+	public Point Location => new(PageX, PageY);
 
 	internal PagePosition(int page, PointF position, DrawingPoint imagePosition, bool isInPage)
 		: this(page, position.X, position.Y, imagePosition.X, imagePosition.Y, isInPage) {
@@ -118,17 +117,17 @@ public struct Selection
 	public static readonly Selection Empty;
 
 	/// <summary>
-	/// 获取选中区域的页码。
+	///     获取选中区域的页码。
 	/// </summary>
 	public readonly int Page;
 
 	/// <summary>
-	/// 获取选中区域在页面上的矩形区域（屏幕左下角点坐标为0，0）。
+	///     获取选中区域在页面上的矩形区域（屏幕左下角点坐标为0，0）。
 	/// </summary>
 	public readonly Rectangle PageRegion;
 
 	/// <summary>
-	/// 获取选中区域在显示图片上的矩形区域。
+	///     获取选中区域在显示图片上的矩形区域。
 	/// </summary>
 	public readonly RectangleF ImageRegion;
 

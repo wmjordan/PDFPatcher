@@ -24,7 +24,7 @@ internal sealed class LoadDocumentCommand : IEditorCommand
 					return;
 				}
 
-				parameters = new string[] {f.FileName};
+				parameters = new[] {f.FileName};
 			}
 		}
 

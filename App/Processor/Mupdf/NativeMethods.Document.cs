@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using CC = System.Runtime.InteropServices.CallingConvention;
@@ -106,7 +107,7 @@ internal static partial class NativeMethods
 	private static IntPtr RequestSystemFont(IntPtr ctx, [MarshalAs(UnmanagedType.LPWStr)] string name, int bold,
 		int italic,
 		int needExactMetrics) {
-		System.Diagnostics.Debug.WriteLine("Requesting system font: " + name);
+		Debug.WriteLine("Requesting system font: " + name);
 		string f = TryLoadCompatibleFont(name);
 		if (f != null) {
 			return LoadFontFromFile(ctx, null, f, 0, 0);
@@ -122,7 +123,7 @@ internal static partial class NativeMethods
 	}
 
 	private static IntPtr RequestSystemCjkFont(IntPtr ctx, string name, int registry, int serifDesired) {
-		System.Diagnostics.Debug.WriteLine("Requesting system CJK font: " + name);
+		Debug.WriteLine("Requesting system CJK font: " + name);
 		string ff = TryLoadCompatibleFont(name);
 		// todo: load fallback font
 		return ff != null ? LoadFontFromFile(ctx, name, ff, 0, 1) : IntPtr.Zero;
@@ -151,7 +152,7 @@ internal static partial class NativeMethods
 
 	private static IntPtr RequestSystemFallbackFont(IntPtr ctx, int script, int language, int serif, int bold,
 		int italic) {
-		System.Diagnostics.Debug.WriteLine("Requesting fallback font: " + script);
+		Debug.WriteLine("Requesting fallback font: " + script);
 		return IntPtr.Zero;
 	}
 

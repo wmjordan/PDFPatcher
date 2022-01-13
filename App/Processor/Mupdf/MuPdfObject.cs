@@ -7,20 +7,15 @@ namespace MuPdfSharp;
 [DebuggerDisplay("({Kind})")]
 public unsafe class MuPdfObject
 {
-	#region 非托管资源成员
-
-	private readonly IntPtr _object;
-	private readonly ContextHandle _context;
-	private NativeObject* NativePointer => (NativeObject*)_object;
-	internal IntPtr Pointer => _object;
-	internal ContextHandle Context => _context;
-
-	#endregion
+	internal MuPdfObject(ContextHandle context, IntPtr obj) {
+		Pointer = obj;
+		Context = context;
+	}
 
 	internal DocumentHandle Document {
 		get {
-			IntPtr d = NativeMethods.GetDocument(_context, _object);
-			return d == IntPtr.Zero ? null : new DocumentHandle(_context, d);
+			IntPtr d = NativeMethods.GetDocument(Context, Pointer);
+			return d == IntPtr.Zero ? null : new DocumentHandle(Context, d);
 		}
 	}
 
@@ -32,35 +27,30 @@ public unsafe class MuPdfObject
 	internal int ReferenceCount => Pointer == IntPtr.Zero ? 0 : NativePointer->_referenceCount;
 
 	/// <summary>
-	/// 返回对象的类型（如对象为引用，则返回其解除引用后的类型）。
+	///     返回对象的类型（如对象为引用，则返回其解除引用后的类型）。
 	/// </summary>
 	public MuPdfObjectKind UnderlyingKind {
 		get {
-			MuPdfObject obj = new(_context, NativeMethods.ResolveIndirect(_context, _object));
+			MuPdfObject obj = new(Context, NativeMethods.ResolveIndirect(Context, Pointer));
 			return obj.Kind;
 		}
 	}
 
-	public bool BooleanValue => NativeMethods.ToBoolean(_context, _object) != 0;
-	public int IntegerValue => NativeMethods.ToInteger(_context, _object);
-	public float FloatValue => NativeMethods.ToSingle(_context, _object);
-	public string NameValue => NativeMethods.ToName(_context, _object);
-	public string StringValue => NativeMethods.ToString(_context, _object);
-	public bool IsNull => NativeMethods.IsNull(_context, _object) != 0;
-	public bool IsArray => NativeMethods.IsArray(_context, _object) != 0;
-	public bool IsDictionary => NativeMethods.IsDictionary(_context, _object) != 0;
-
-	internal MuPdfObject(ContextHandle context, IntPtr obj) {
-		_object = obj;
-		_context = context;
-	}
+	public bool BooleanValue => NativeMethods.ToBoolean(Context, Pointer) != 0;
+	public int IntegerValue => NativeMethods.ToInteger(Context, Pointer);
+	public float FloatValue => NativeMethods.ToSingle(Context, Pointer);
+	public string NameValue => NativeMethods.ToName(Context, Pointer);
+	public string StringValue => NativeMethods.ToString(Context, Pointer);
+	public bool IsNull => NativeMethods.IsNull(Context, Pointer) != 0;
+	public bool IsArray => NativeMethods.IsArray(Context, Pointer) != 0;
+	public bool IsDictionary => NativeMethods.IsDictionary(Context, Pointer) != 0;
 
 	internal MuPdfDictionary AsDictionary() {
-		return new MuPdfDictionary(_context, NativeMethods.ResolveIndirect(_context, _object));
+		return new MuPdfDictionary(Context, NativeMethods.ResolveIndirect(Context, Pointer));
 	}
 
 	internal MuPdfArray AsArray() {
-		return new MuPdfArray(_context, NativeMethods.ResolveIndirect(_context, _object));
+		return new MuPdfArray(Context, NativeMethods.ResolveIndirect(Context, Pointer));
 	}
 
 	protected struct NativeObject
@@ -71,6 +61,15 @@ public unsafe class MuPdfObject
 		internal byte _flags;
 #pragma warning restore 649, 169
 	}
+
+	#region 非托管资源成员
+
+	private NativeObject* NativePointer => (NativeObject*)Pointer;
+	internal IntPtr Pointer { get; }
+
+	internal ContextHandle Context { get; }
+
+	#endregion
 }
 
 public struct MuIndirectReference
@@ -99,16 +98,16 @@ public enum MuPdfObjectKind : byte
 
 public sealed unsafe class MuPdfDictionary : MuPdfObject
 {
-	private NativeDict* NativePointer => (NativeDict*)Pointer;
-
 	internal MuPdfDictionary(ContextHandle context, IntPtr obj)
 		: base(context, obj) {
 	}
 
+	private NativeDict* NativePointer => (NativeDict*)Pointer;
+
 	public int Capacity => Pointer == IntPtr.Zero ? 0 : NativePointer->_capacity;
 
 	/// <summary>
-	/// 获取字典中的项目数量。
+	///     获取字典中的项目数量。
 	/// </summary>
 	public int Count => Pointer == IntPtr.Zero ? 0 : NativePointer->_length;
 
@@ -161,22 +160,22 @@ public sealed unsafe class MuPdfDictionary : MuPdfObject
 
 public sealed unsafe class MuPdfArray : MuPdfObject
 {
+	internal MuPdfArray(ContextHandle context, IntPtr obj)
+		: base(context, obj) {
+	}
+
 	private NativeArray* NativePointer => (NativeArray*)Pointer;
 
 	public int Capacity => Pointer == IntPtr.Zero ? 0 : NativePointer->_capacity;
 
 	/// <summary>
-	/// 获取数组中的项目数量。
+	///     获取数组中的项目数量。
 	/// </summary>
 	public int Count => Pointer == IntPtr.Zero ? 0 : NativePointer->_length;
 
 	public MuPdfObject this[int index] {
 		get => new(Context, NativeMethods.GetArrayItem(Context, Pointer, index));
 		set => NativeMethods.SetArrayItem(Context, Pointer, index, value.Pointer);
-	}
-
-	internal MuPdfArray(ContextHandle context, IntPtr obj)
-		: base(context, obj) {
 	}
 
 	public void Add(MuPdfObject obj) {
@@ -202,13 +201,13 @@ public sealed unsafe class MuPdfArray : MuPdfObject
 
 public sealed unsafe class MuPdfRef : MuPdfObject
 {
+	internal MuPdfRef(ContextHandle context, IntPtr obj) : base(context, obj) {
+	}
+
 	private NativeRef* NativePointer => (NativeRef*)Pointer;
 
 	public int Number => NativePointer->_Num;
 	public int Generation => NativePointer->_Generation;
-
-	internal MuPdfRef(ContextHandle context, IntPtr obj) : base(context, obj) {
-	}
 
 	private struct NativeRef
 	{

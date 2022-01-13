@@ -1,13 +1,16 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using PDFPatcher.Common;
 using PDFPatcher.Model;
+using PDFPatcher.Processor;
+using PDFPatcher.Properties;
 
 namespace PDFPatcher.Functions;
 
@@ -16,15 +19,15 @@ public partial class PatcherControl : FunctionControl
 {
 	private FileListHelper _listHelper;
 
-	public override string FunctionName => "批量修改文档";
-
-	public override System.Drawing.Bitmap IconImage => Properties.Resources.CreateDocument;
-
-	public override Button DefaultButton => _ImportButton;
-
 	public PatcherControl() {
 		InitializeComponent();
 	}
+
+	public override string FunctionName => "批量修改文档";
+
+	public override Bitmap IconImage => Resources.CreateDocument;
+
+	public override Button DefaultButton => _ImportButton;
 
 	private void PatcherControl_OnLoad(object sender, EventArgs e) {
 		//this.Icon = Common.FormHelper.ToIcon (Properties.Resources.CreateDocument);
@@ -58,7 +61,7 @@ public partial class PatcherControl : FunctionControl
 			}
 		};
 		ImageList.ImageCollection fi = _FileTypeList.Images;
-		fi.AddRange(new System.Drawing.Image[] {Properties.Resources.OriginalPdfFile});
+		fi.AddRange(new Image[] {Resources.OriginalPdfFile});
 
 		_ItemList.FixEditControlWidth();
 		_ItemList.ListViewItemSorter = new ListViewItemComparer(0);
@@ -81,7 +84,7 @@ public partial class PatcherControl : FunctionControl
 
 		RecentFileItemClicked = (s, args) => {
 			args.ClickedItem.Owner.Hide();
-			AddFiles(new string[] {args.ClickedItem.ToolTipText}, true);
+			AddFiles(new[] {args.ClickedItem.ToolTipText}, true);
 		};
 	}
 
@@ -191,7 +194,7 @@ public partial class PatcherControl : FunctionControl
 							}
 						}
 
-						Processor.Worker.PatchDocument(file as SourceItem.Pdf,
+						Worker.PatchDocument(file as SourceItem.Pdf,
 							m ? t : FileHelper.CombinePath(targetFolder, file.FilePath.FileName),
 							f.ToString(),
 							AppContext.Importer,
@@ -213,7 +216,7 @@ public partial class PatcherControl : FunctionControl
 					return;
 				}
 
-				Processor.Worker.PatchDocument(files[0] as SourceItem.Pdf,
+				Worker.PatchDocument(files[0] as SourceItem.Pdf,
 					t,
 					a[1] as string,
 					AppContext.Importer,
@@ -285,10 +288,10 @@ public partial class PatcherControl : FunctionControl
 			return;
 		}
 
-		AddItems(new SourceItem[] {item});
+		AddItems(new[] {item});
 	}
 
-	private void AddItems(System.Collections.ICollection items) {
+	private void AddItems(ICollection items) {
 		int i = _ItemList.GetLastSelectedIndex();
 		_ItemList.InsertObjects(++i, items);
 		_ItemList.SelectedIndex = --i + items.Count;

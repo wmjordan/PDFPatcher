@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Runtime.ConstrainedExecution;
+using System.Runtime.InteropServices;
 using System.Security.Permissions;
 
 namespace MuPdfSharp;
 
 [SecurityPermission(SecurityAction.InheritanceDemand, UnmanagedCode = true)]
 [SecurityPermission(SecurityAction.Demand, UnmanagedCode = true)]
-internal abstract class MuHandle : System.Runtime.InteropServices.SafeHandle
+internal abstract class MuHandle : SafeHandle
 {
 	protected MuHandle() : base(IntPtr.Zero, true) { }
 
@@ -22,7 +23,7 @@ internal sealed class ContextHandle : MuHandle
 	private ContextHandle() { }
 
 	/// <summary>
-	/// 创建 MuPDF 的 Context 实例。
+	///     创建 MuPDF 的 Context 实例。
 	/// </summary>
 	/// <returns>指向 Context 的指针。</returns>
 	internal static ContextHandle Create() {
@@ -66,30 +67,29 @@ internal sealed class ContextHandle : MuHandle
 
 internal sealed class DocumentHandle : MuHandle
 {
-	private readonly ContextHandle _context;
 	private readonly bool _releaseContext;
 
 	[ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
 	internal DocumentHandle(ContextHandle context, StreamHandle stream) {
 		handle = NativeMethods.OpenPdfDocumentStream(context, stream);
-		_context = context;
+		Context = context;
 		context.DangerousAddRef(ref _releaseContext);
 	}
 
 	[ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
 	internal DocumentHandle(ContextHandle context, IntPtr documentHandle) {
 		handle = documentHandle;
-		_context = context;
+		Context = context;
 		context.DangerousAddRef(ref _releaseContext);
 	}
 
-	internal ContextHandle Context => _context;
+	internal ContextHandle Context { get; }
 
 	[ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
 	protected override bool ReleaseHandle() {
-		NativeMethods.DropDocument(_context, handle);
+		NativeMethods.DropDocument(Context, handle);
 		if (_releaseContext) {
-			_context.DangerousRelease();
+			Context.DangerousRelease();
 		}
 
 		return true;
@@ -134,7 +134,7 @@ internal sealed class DeviceHandle : MuHandle
 	private readonly ContextHandle _context;
 	private readonly bool _releaseContext;
 
-	private DeviceHandle(ContextHandle context, IntPtr handle) : base() {
+	private DeviceHandle(ContextHandle context, IntPtr handle) {
 		this.handle = handle;
 		_context = context;
 		context.DangerousAddRef(ref _releaseContext);

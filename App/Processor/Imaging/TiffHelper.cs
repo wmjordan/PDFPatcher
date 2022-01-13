@@ -32,7 +32,7 @@ internal static class TiffHelper
 	}
 
 	/// <summary>
-	/// 将图片保存为黑白双色图片。如图片的 <see cref="PixelFormat"/> 不为 <see cref="PixelFormat.Format1bppIndexed"/>，则按默认格式保存。
+	///     将图片保存为黑白双色图片。如图片的 <see cref="PixelFormat" /> 不为 <see cref="PixelFormat.Format1bppIndexed" />，则按默认格式保存。
 	/// </summary>
 	/// <param name="bmp">要保存的图片。</param>
 	/// <param name="fileName">保存路径。</param>

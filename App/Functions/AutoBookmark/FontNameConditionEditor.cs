@@ -15,6 +15,19 @@ public partial class FontNameConditionEditor : UserControl, IFilterConditionEdit
 		InitializeComponent();
 	}
 
+	private void ControlChanged(object sender, EventArgs e) {
+		if (_lock == false) {
+			if (sender == _FontNameBox) {
+				_filter.FontName = _FontNameBox.Text;
+			}
+			else if (sender == _FullMatchBox) {
+				_filter.MatchFullName = _FullMatchBox.Checked;
+			}
+
+			EditAdjustmentForm.UpdateFilter(this);
+		}
+	}
+
 	#region ITextInfoFilterEditor 成员
 
 	public UserControl EditorControl => this;
@@ -31,17 +44,4 @@ public partial class FontNameConditionEditor : UserControl, IFilterConditionEdit
 	}
 
 	#endregion
-
-	private void ControlChanged(object sender, EventArgs e) {
-		if (_lock == false) {
-			if (sender == _FontNameBox) {
-				_filter.FontName = _FontNameBox.Text;
-			}
-			else if (sender == _FullMatchBox) {
-				_filter.MatchFullName = _FullMatchBox.Checked;
-			}
-
-			EditAdjustmentForm.UpdateFilter(this);
-		}
-	}
 }
