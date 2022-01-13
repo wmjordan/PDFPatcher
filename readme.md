@@ -79,7 +79,9 @@ PDF 文档格式中涉及印刷领域的多项技术，并有其独特的文档�
 
 ## 联系作者
 
-除第三方组件外，本软件的源代码完全开放：https://github.com/wmjordan/PDFPatcher
+除第三方组件外，本软件的源代码完全开放：
+https://github.com/wmjordan/PDFPatcher
+https://gitee.com/wmjordan/pdfpatcher
 
 建议通过开放源代码网站通过提交 issue 的方式提交您的建议或需求。因日常工作繁忙，暂不提供加QQ或微信咨询的服务，敬请谅解。
 
