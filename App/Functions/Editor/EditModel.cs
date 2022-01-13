@@ -71,7 +71,7 @@ namespace PDFPatcher.Functions.Editor
 		}
 		internal sealed class AutoBookmarkStyle
 		{
-			internal readonly MuPdfSharp.MuFont Font;
+			internal readonly string InternalFontName;
 			internal readonly string FontName;
 			internal readonly int FontSize;
 			internal readonly BookmarkSettings Style;
@@ -79,10 +79,10 @@ namespace PDFPatcher.Functions.Editor
 
 			internal int Level;
 
-			public AutoBookmarkStyle(int level, MuPdfSharp.MuFont font, int fontSize) {
+			public AutoBookmarkStyle(int level, string internalFontName, int fontSize) {
 				Level = level;
-				Font = font;
-				FontName = PdfDocumentFont.RemoveSubsetPrefix(font.Name);
+				InternalFontName = internalFontName;
+				FontName = PdfDocumentFont.RemoveSubsetPrefix(internalFontName);
 				FontSize = fontSize;
 				Style = new BookmarkSettings();
 			}

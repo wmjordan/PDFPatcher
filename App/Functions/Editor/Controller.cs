@@ -17,10 +17,10 @@ namespace PDFPatcher.Functions.Editor
 {
 	sealed class Controller
 	{
-		public EditModel Model { get; private set; }
-		public IEditView View { get; private set; }
+		public EditModel Model { get; }
+		public IEditView View { get; }
 
-		private BackgroundWorker _loader;
+		BackgroundWorker _loader;
 
 		public Controller(IEditView view) {
 			Model = new EditModel();
@@ -58,7 +58,7 @@ namespace PDFPatcher.Functions.Editor
 			b.Unfreeze();
 			return r;
 		}
-		private HashSet<XmlNode> ProcessBookmarks(IList si, HashSet<XmlElement> processedItems, bool includeDescendant, IPdfInfoXmlProcessor processor) {
+		HashSet<XmlNode> ProcessBookmarks(IList si, HashSet<XmlElement> processedItems, bool includeDescendant, IPdfInfoXmlProcessor processor) {
 			if (si == null || si.Count == 0) {
 				return null;
 			}
@@ -72,15 +72,14 @@ namespace PDFPatcher.Functions.Editor
 			return new HashSet<XmlNode>(undo.AffectedElements);
 		}
 
-		private static void ProcessItem(bool includeDescendant, IPdfInfoXmlProcessor processor, HashSet<XmlElement> processedItems, UndoActionGroup undo, BookmarkElement item) {
+		static void ProcessItem(bool includeDescendant, IPdfInfoXmlProcessor processor, HashSet<XmlElement> processedItems, UndoActionGroup undo, BookmarkElement item) {
 			if (item == null || processedItems.Contains(item)) {
 				return;
 			}
 			undo.Add(processor.Process(item));
 			processedItems.Add(item);
 			if (includeDescendant) {
-				var dl = item.SubBookmarks;
-				foreach (BookmarkElement d in dl) {
+				foreach (BookmarkElement d in item.SubBookmarks) {
 					ProcessItem(includeDescendant, processor, processedItems, undo, d);
 				}
 			}
@@ -98,7 +97,7 @@ namespace PDFPatcher.Functions.Editor
 			View.Bookmark.ClearObjects();
 		}
 
-		private void LoadPdfDocument() {
+		void LoadPdfDocument() {
 			var s = Model.GetPdfFilePath();
 			var v = View.Viewer;
 			if (s != null) {
@@ -192,7 +191,7 @@ namespace PDFPatcher.Functions.Editor
 			//this._BookmarkBox.HeaderControl.Invalidate ();
 		}
 
-		private void _LoadBookmarkWorker_DoWork(object sender, DoWorkEventArgs e) {
+		void _LoadBookmarkWorker_DoWork(object sender, DoWorkEventArgs e) {
 			var args = e.Argument as object[];
 			var path = args[0] as string;
 			bool importMode = (bool)args[1];
@@ -219,7 +218,7 @@ namespace PDFPatcher.Functions.Editor
 			}
 		}
 
-		private void _LoadBookmarkWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
+		void _LoadBookmarkWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
 			((BackgroundWorker)sender).Dispose();
 			Model.IsLoadingDocument = false;
 			View.MainPanel.Enabled = View.BookmarkToolbar.Enabled = true;
@@ -230,12 +229,21 @@ namespace PDFPatcher.Functions.Editor
 				InitBookmarkEditor();
 				return;
 			}
-			var b = r[0] as XmlElement;
 			var importMode = (bool)r[1];
 			if (importMode == false) {
 				View.DocumentPath = r[2] as string;
 			}
-			if (b == null) {
+			if (r[0] is XmlElement b) {
+				var infoDoc = new PdfInfoXmlDocument();
+				var root = infoDoc.DocumentElement;
+				(root.AppendChild(infoDoc.CreateElement(Constants.Units.ThisName)) as XmlElement).SetAttribute(Constants.Units.Unit, Constants.Units.Point);
+				root.AppendChild(infoDoc.ImportNode(b, true));
+				LoadInfoDocument(infoDoc, importMode);
+				if (importMode == false) {
+					infoDoc.PdfDocumentPath = Model.DocumentPath;
+				}
+			}
+			else {
 				if (importMode) {
 					FormHelper.InfoBox("文档不包含书签。");
 					return;
@@ -245,16 +253,6 @@ namespace PDFPatcher.Functions.Editor
 				//if (_currentFilePath != null) {
 				//	Common.FormHelper.InfoBox ("文档不包含书签。");
 				//}
-			}
-			else {
-				var infoDoc = new PdfInfoXmlDocument();
-				var root = infoDoc.DocumentElement;
-				(root.AppendChild(infoDoc.CreateElement(Constants.Units.ThisName)) as XmlElement).SetAttribute(Constants.Units.Unit, Constants.Units.Point);
-				root.AppendChild(infoDoc.ImportNode(b, true));
-				LoadInfoDocument(infoDoc, importMode);
-				if (importMode == false) {
-					infoDoc.PdfDocumentPath = Model.DocumentPath;
-				}
 			}
 			//_viewer = new PdfViewer (this._FilePathBox.Text, _doc.DocumentElement);
 		}
@@ -287,12 +285,12 @@ namespace PDFPatcher.Functions.Editor
 			}
 		}
 
-		private void LoadBookmarks(BookmarkEditorView view, XmlNodeList bookmarks) {
+		void LoadBookmarks(BookmarkEditorView view, XmlNodeList bookmarks) {
 			InitBookmarkEditor();
 			view.LoadBookmarks(bookmarks);
 		}
 
-		private void ImportBookmarks(BookmarkEditorView editView, XmlNodeList bookmarks) {
+		void ImportBookmarks(BookmarkEditorView editView, XmlNodeList bookmarks) {
 			if (Model.Document == null) {
 				Model.Document = new PdfInfoXmlDocument();
 			}
@@ -428,7 +426,7 @@ namespace PDFPatcher.Functions.Editor
 			return new EditModel.Region(pp, t, ts);
 		}
 
-		//private void ShowInsertBookmarkDialog (Point mousePoint, EditModel.Region region) {
+		//void ShowInsertBookmarkDialog (Point mousePoint, EditModel.Region region) {
 		//	var p = region.Position;
 		//	if (p.Page == 0) {
 		//		return;
@@ -716,13 +714,13 @@ namespace PDFPatcher.Functions.Editor
 					bool m = false;
 					int fs = span.Size.ToInt32();
 					foreach (var item in Model.TitleStyles) {
-						if (item.Font.Name == s.Name && item.FontSize == fs) {
+						if (item.InternalFontName == s.Name && item.FontSize == fs) {
 							m = true;
 							goto NEXT;
 						}
 					}
 					if (m == false) {
-						Model.TitleStyles.Add(new EditModel.AutoBookmarkStyle(level, s, fs));
+						Model.TitleStyles.Add(new EditModel.AutoBookmarkStyle(level, s.Name, fs));
 					}
 				}
 			NEXT:;
