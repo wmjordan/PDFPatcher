@@ -31,7 +31,7 @@ namespace PDFPatcher.Functions.Editor
 		}
 	}
 
-	public struct PagePosition
+	public readonly struct PagePosition
 	{
 		public static readonly PagePosition Empty;
 		/// <summary>

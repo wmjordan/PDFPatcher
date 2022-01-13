@@ -259,9 +259,9 @@ namespace PDFPatcher.Functions
 
 		bool IsPinPointVisible {
 			get {
-				var op = GetOffsetPoint(0, 0);
-				var vp = GetImageViewPort();
 				if (PinPoint != DrawingPoint.Empty) {
+					var op = GetOffsetPoint(0, 0);
+					var vp = GetImageViewPort();
 					var pp = PinPoint;
 					pp.Offset(op);
 					if (vp.Contains(pp)) {
@@ -314,7 +314,7 @@ namespace PDFPatcher.Functions
 					var l = _mupdf.PageCount + 1;
 					_pageOffsets = new int[l];
 					_pageBounds = new MuRectangle[l];
-					LoadPageBounds(l);
+					LoadPageBounds();
 					_cache = new RenderResultCache(_mupdf);
 					Tracker.DebugMessage("Calculating document virtual size.");
 					CalculateZoomFactor(_LiteralZoom);
@@ -768,10 +768,9 @@ namespace PDFPatcher.Functions
 					if (block.Type != ContentBlockType.Text || pr.Intersect(block.BBox).IsEmpty) {
 						continue;
 					}
-					var tb = block as MuTextBlock;
 					var s = new HashSet<int>();
 					var r = new List<MuTextLine>();
-					foreach (var line in tb.Lines) {
+					foreach (var line in block.Lines) {
 						if (pr.Intersect(line.BBox).IsEmpty == false) {
 							r.Add(line);
 						}
@@ -787,15 +786,13 @@ namespace PDFPatcher.Functions
 		}
 
 		public List<Model.TextLine> OcrPage(int pageNumber, bool cached) {
-			List<Model.TextLine> r;
-			if (cached && _ocrResults.TryGetValue(pageNumber, out r)) {
+			if (cached && _ocrResults.TryGetValue(pageNumber, out var r)) {
 				return r;
 			}
 			r = Ocr(pageNumber);
 			return _ocrResults[pageNumber] = r;
 		}
 		public string[] CleanUpOcrResult(List<Model.TextLine> result) {
-			var r = new string[result.Count];
 			return result.ConvertAll((t) => Processor.OcrProcessor.CleanUpText(t.Text, _OcrOptions)).ToArray();
 		}
 
@@ -825,8 +822,7 @@ namespace PDFPatcher.Functions
 		public Bitmap GetPageImage(int pageNumber) {
 			var b = _pageBounds[pageNumber];
 			var z = GetZoomFactorForPage(b);
-			var bmp = RenderPage(pageNumber, (z * b.Width).ToInt32(), (z * b.Height).ToInt32());
-			return bmp;
+			return RenderPage(pageNumber, (z * b.Width).ToInt32(), (z * b.Height).ToInt32());
 		}
 
 		public MuPage LoadPage(int pageNumber) {
@@ -870,10 +866,10 @@ namespace PDFPatcher.Functions
 				}
 			}
 			if (p >= _pageOffsets.Length) {
-				p = _pageOffsets.Length - 1;
+				return _pageOffsets.Length - 1;
 			}
 			else if (p < 1) {
-				p = 1;
+				return 1;
 			}
 			return p;
 		}
@@ -1137,7 +1133,7 @@ namespace PDFPatcher.Functions
 			return ShowPage(CurrentPageNumber + deltaPageNumber);
 		}
 
-		void LoadPageBounds(int l) {
+		void LoadPageBounds() {
 			float w = 0, h = 0;
 			for (int i = _mupdf.PageCount; i > 0; i--) {
 				using (var p = _mupdf.LoadPage(i)) {
@@ -1197,10 +1193,6 @@ namespace PDFPatcher.Functions
 				VirtualSize = new Size(GetPageFullWidth(w), h);
 			}
 			_lockDown = false;
-		}
-
-		void _PreviewToolbar_ItemClicked(object sender, ToolStripItemClickedEventArgs e) {
-			ExecuteCommand(e.ClickedItem.Name);
 		}
 
 		public void ExecuteCommand(string cmd) {
