@@ -79,7 +79,7 @@ sh.CurrentDirectory = p;
 	s.SaveToFile (op + "CHANGELOG.txt", 2);
 	s.Close();
 
-var c = "..\\..\\7za.exe u "+op+"PDFPatcher."+v+".7z "+names.join(" ") + " -mx9";
+var c = "..\\..\\7za.exe u "+op+"PDFPatcher."+v+".zip "+names.join(" ") + " -mx9";
 WScript.Echo (c);
 var z = sh.exec(c);
 var i = 0;
