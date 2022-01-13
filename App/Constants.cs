@@ -41,7 +41,7 @@ internal static class Constants
 		internal const string XmlOrTxtFilter = "书签文件 (*.xml, *.txt)|*.xml;*.txt";
 
 		internal const string AllEditableFilter = "所有包含 PDF 信息的文件(*.pdf,*.xml,*.txt)|*.pdf;*.xml;*.txt|" +
-		                                          PdfFilter + "|" + XmlFilter + "|" + TxtFilter;
+												  PdfFilter + "|" + XmlFilter + "|" + TxtFilter;
 
 		internal const string AllFilter = "所有文件|*.*";
 
@@ -61,9 +61,9 @@ internal static class Constants
 		internal const string Ttf = ".ttf";
 		internal const string Ttc = ".ttc";
 		internal const string Otf = ".otf";
-		internal static readonly string[] AllBookmarkExtension = {".xml", ".txt"};
-		internal static readonly string[] PdfAndAllBookmarkExtension = {".pdf", ".xml", ".txt"};
-		internal static readonly string[] AllSupportedImageExtension = {Tif, Jpg, Png, Gif, Tiff, Jpeg, Bmp, Jp2};
+		internal static readonly string[] AllBookmarkExtension = { ".xml", ".txt" };
+		internal static readonly string[] PdfAndAllBookmarkExtension = { ".pdf", ".xml", ".txt" };
+		internal static readonly string[] AllSupportedImageExtension = { Tif, Jpg, Png, Gif, Tiff, Jpeg, Bmp, Jp2 };
 	}
 
 	#region 功能名称
@@ -90,7 +90,7 @@ internal static class Constants
 
 	internal static class ObjectTypes
 	{
-		internal static readonly string[] Names = {"字典", "名称", "数值", "文本", "数组", "布尔", "引用"};
+		internal static readonly string[] Names = { "字典", "名称", "数值", "文本", "数组", "布尔", "引用" };
 
 		internal static readonly int[] IDs = {
 			PdfObject.DICTIONARY, PdfObject.NAME, PdfObject.NUMBER, PdfObject.STRING, PdfObject.ARRAY,
@@ -128,8 +128,8 @@ internal static class Constants
 		internal const float CmToPoint = 72f / 2.54f;
 		internal const float MmToPoint = 7.2f / 2.54f;
 		internal const float DefaultDpi = 72f;
-		internal static readonly string[] Names = {CM, MM, Inch, Point};
-		internal static readonly float[] Factors = {CmToPoint, MmToPoint, DefaultDpi, 1};
+		internal static readonly string[] Names = { CM, MM, Inch, Point };
+		internal static readonly float[] Factors = { CmToPoint, MmToPoint, DefaultDpi, 1 };
 	}
 
 	#endregion
@@ -138,8 +138,8 @@ internal static class Constants
 
 	internal static class Alignments
 	{
-		internal static readonly string[] HorizontalAlignments = {"左对齐", "水平居中", "右对齐"};
-		internal static readonly string[] VerticalAlignments = {"置顶", "垂直居中", "置底"};
+		internal static readonly string[] HorizontalAlignments = { "左对齐", "水平居中", "右对齐" };
+		internal static readonly string[] VerticalAlignments = { "置顶", "垂直居中", "置底" };
 	}
 
 	#endregion
@@ -226,8 +226,8 @@ internal static class Constants
 			internal const string Right = "顺时针90度";
 			internal const string HalfClock = "180度";
 			internal const string Left = "逆时针90度";
-			internal static readonly string[] Names = {Zero, Right, HalfClock, Left};
-			internal static readonly int[] Values = {0, 90, 180, 270};
+			internal static readonly string[] Names = { Zero, Right, HalfClock, Left };
+			internal static readonly int[] Values = { 0, 90, 180, 270 };
 		}
 	}
 
@@ -294,7 +294,7 @@ internal static class Constants
 		internal const string Bgr = "DeviceBGR";
 		internal const string Cmyk = "DeviceCMYK";
 		internal const string Gray = "DeviceGray";
-		internal static string[] Names = {Rgb, Gray};
+		internal static string[] Names = { Rgb, Gray };
 	}
 
 	#endregion
@@ -357,7 +357,7 @@ internal static class Constants
 
 	internal static class PageLayoutType
 	{
-		internal static readonly string[] Names = {"保持不变", "单页连续", "双页连续", "双页连续首页独置", "单页", "双页", "双页首页独置"};
+		internal static readonly string[] Names = { "保持不变", "单页连续", "双页连续", "双页连续首页独置", "单页", "双页", "双页首页独置" };
 
 		internal static readonly PdfName[] PdfNames = {
 			PdfName.NONE, PdfName.ONECOLUMN, PdfName.TWOCOLUMNLEFT, PdfName.TWOCOLUMNRIGHT, PdfName.SINGLEPAGE,
@@ -370,7 +370,7 @@ internal static class Constants
 	internal static class PageModes
 	{
 		internal static readonly string[]
-			Names = {"保持不变", "不显示边栏", "显示文档书签", "显示页面缩略图", "全屏显示", "显示可选内容组", "显示附件栏"};
+			Names = { "保持不变", "不显示边栏", "显示文档书签", "显示页面缩略图", "全屏显示", "显示可选内容组", "显示附件栏" };
 
 		internal static readonly PdfName[] PdfNames = {
 			PdfName.NONE, PdfName.USENONE, PdfName.USEOUTLINES, PdfName.USETHUMBS, PdfName.FULLSCREEN, PdfName.USEOC,
@@ -383,7 +383,7 @@ internal static class Constants
 	internal static class ViewerPreferencesType
 	{
 		internal const string Direction = "阅读方向";
-		internal static readonly string[] Names = {"隐藏菜单", "隐藏工具栏", "只显示文档内容", "窗口适合文档首页", "窗口居中", "显示文档标题"};
+		internal static readonly string[] Names = { "隐藏菜单", "隐藏工具栏", "只显示文档内容", "窗口适合文档首页", "窗口居中", "显示文档标题" };
 
 		internal static readonly PdfName[] PdfNames = {
 			PdfName.HIDEMENUBAR, PdfName.HIDETOOLBAR, PdfName.HIDEWINDOWUI, PdfName.FITWINDOW, PdfName.CENTERWINDOW,
@@ -392,8 +392,8 @@ internal static class Constants
 
 		internal static class DirectionType
 		{
-			internal static readonly string[] Names = {"保持不变", "从左到右", "从右到左"};
-			internal static readonly PdfName[] PdfNames = {PdfName.NONE, PdfName.L2R, PdfName.R2L};
+			internal static readonly string[] Names = { "保持不变", "从左到右", "从右到左" };
+			internal static readonly PdfName[] PdfNames = { PdfName.NONE, PdfName.L2R, PdfName.R2L };
 		}
 	}
 
@@ -405,9 +405,9 @@ internal static class Constants
 
 	internal static class PageLabelStyles
 	{
-		internal static readonly string[] Names = {"数字", "大写罗马数字", "小写罗马数字", "大写英文字母", "小写英文字母"};
-		internal static readonly char[] PdfValues = {'D', 'R', 'r', 'A', 'a'};
-		internal static readonly char[] SimpleInfoIdentifiers = {'0', 'I', 'i', 'A', 'a'};
+		internal static readonly string[] Names = { "数字", "大写罗马数字", "小写罗马数字", "大写英文字母", "小写英文字母" };
+		internal static readonly char[] PdfValues = { 'D', 'R', 'r', 'A', 'a' };
+		internal static readonly char[] SimpleInfoIdentifiers = { '0', 'I', 'i', 'A', 'a' };
 
 		internal static readonly int[] Values = {
 			PdfPageLabels.DECIMAL_ARABIC_NUMERALS, PdfPageLabels.UPPERCASE_ROMAN_NUMERALS,
@@ -433,8 +433,8 @@ internal static class Constants
 	{
 		internal const string ThisName = "页码筛选";
 		internal const string AllPages = "所有页";
-		internal static readonly string[] Names = {AllPages, "单数页", "双数页"};
-		internal static readonly int[] Values = {-1, 1, 0};
+		internal static readonly string[] Names = { AllPages, "单数页", "双数页" };
+		internal static readonly int[] Values = { -1, 1, 0 };
 	}
 
 	#endregion
@@ -466,7 +466,7 @@ internal static class Constants
 			internal const string FitBH = "适合窗口宽度";
 			internal const string FitBV = "适合窗口高度";
 			internal const string FitR = "适合区域";
-			internal static readonly string[] Names = {XYZ, Fit, FitH, FitV, FitB, FitBH, FitBV, FitR};
+			internal static readonly string[] Names = { XYZ, Fit, FitH, FitV, FitB, FitBH, FitBV, FitR };
 
 			internal static readonly PdfName[] PdfNames = {
 				PdfName.XYZ, PdfName.FIT, PdfName.FITH, PdfName.FITV, PdfName.FITB, PdfName.FITBH, PdfName.FITBV,
@@ -482,7 +482,7 @@ internal static class Constants
 		internal const string Launch = "启动程序";
 		internal const string Uri = "打开网址";
 		internal const string Javascript = "执行脚本";
-		internal static readonly string[] Names = {Goto, GotoR, Launch, Uri, Javascript};
+		internal static readonly string[] Names = { Goto, GotoR, Launch, Uri, Javascript };
 
 		internal static readonly PdfName[] PdfNames = {
 			PdfName.GOTO, PdfName.GOTOR, PdfName.LAUNCH, PdfName.URI, PdfName.JAVASCRIPT
@@ -507,7 +507,7 @@ internal static class Constants
 			internal const string Bold = "粗体";
 			internal const string BoldItalic = "粗斜体";
 			internal const string Italic = "斜体";
-			internal static readonly string[] Names = {Normal, Italic, Bold, BoldItalic};
+			internal static readonly string[] Names = { Normal, Italic, Bold, BoldItalic };
 		}
 	}
 

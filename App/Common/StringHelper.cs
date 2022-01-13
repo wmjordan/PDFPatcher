@@ -20,7 +20,7 @@ internal static class StringHelper
 		for (int i = 0; i < source.Length; i++) {
 			ref char c = ref p[i];
 			if ((char.IsControl(c) && c != '\t' && c != '\r' && c != '\n')
-			    || (c > 0xFFFD && (c == 0xFFFF || c == 0xFFFE || c == 0xFFEF))
+				|| (c > 0xFFFD && (c == 0xFFFF || c == 0xFFFE || c == 0xFFEF))
 			   ) {
 				c = ' ';
 				m = true;

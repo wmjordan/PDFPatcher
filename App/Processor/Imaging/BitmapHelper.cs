@@ -357,10 +357,10 @@ internal static class BitmapHelper
 
 		int w = b.Width, h = b.Height;
 		IntPtr hbm = b.GetHbitmap(); // this is step (1)
-		//
-		// Step (2): create the monochrome bitmap.
-		// "BITMAPINFO" is an interop-struct which we define below.
-		// In GDI terms, it's a BITMAPHEADERINFO followed by an array of two RGBQUADs
+									 //
+									 // Step (2): create the monochrome bitmap.
+									 // "BITMAPINFO" is an interop-struct which we define below.
+									 // In GDI terms, it's a BITMAPHEADERINFO followed by an array of two RGBQUADs
 		NativeMethods.BITMAPINFO bmi = new() {
 			biSize = 40, // the size of the BITMAPHEADERINFO struct
 			biWidth = w,
@@ -403,7 +403,7 @@ internal static class BitmapHelper
 		// Step (3): use GDI's BitBlt function to copy from original hbitmap into monocrhome bitmap
 		// GDI programming is kind of confusing... nb. The GDI equivalent of "Graphics" is called a "DC".
 		IntPtr sdc = NativeMethods.GetDC(IntPtr.Zero); // First we obtain the DC for the screen
-		// Next, create a DC for the original hbitmap
+													   // Next, create a DC for the original hbitmap
 		IntPtr hdc = NativeMethods.CreateCompatibleDC(sdc);
 		NativeMethods.SelectObject(hdc, hbm);
 		// and create a DC for the monochrome hbitmap

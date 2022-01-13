@@ -74,7 +74,7 @@ public partial class UpdateForm : Form
 				FormHelper.ErrorBox("版本信息文件格式错误，请稍候重试。");
 			}
 
-			Exit:
+		Exit:
 			_UpdateChecker.Dispose();
 			_UpdateChecker = null;
 		};

@@ -773,8 +773,8 @@ public class GlassButton : Button
 	private void DrawSpecialSymbol(Graphics g) {
 		int offset = 15;
 		int LineWidth = Width / 15;
-		Pen pen = new(specialSymbolBrush, Width / 8) {EndCap = LineCap.ArrowAnchor};
-		Pen aPen = new(specialSymbolBrush, Width / 4) {EndCap = LineCap.ArrowAnchor};
+		Pen pen = new(specialSymbolBrush, Width / 8) { EndCap = LineCap.ArrowAnchor };
+		Pen aPen = new(specialSymbolBrush, Width / 4) { EndCap = LineCap.ArrowAnchor };
 		Font font = new("Arial", LineWidth * 4, FontStyle.Bold);
 
 		switch (specialSymbol) {
@@ -1035,7 +1035,7 @@ public class GlassButton : Button
 	/// <param name="pevent">The <see cref="System.Windows.Forms.PaintEventArgs" /> instance containing the event data.</param>
 	private void DrawForegroundFromButton(PaintEventArgs pevent) {
 		if (imageButton == null) {
-			imageButton = new Button {Parent = new TransparentControl(), BackColor = Color.Transparent};
+			imageButton = new Button { Parent = new TransparentControl(), BackColor = Color.Transparent };
 			imageButton.FlatAppearance.BorderSize = 0;
 			imageButton.FlatStyle = FlatStyle.Flat;
 		}
@@ -1146,7 +1146,7 @@ public class GlassButton : Button
 			}
 			else {
 				path.AddCurve(
-					new Point[3] {new(l, t), new(l + (h / 3), t + (h / 2)), new((int)(l + (h / 2.35)), t + h)});
+					new Point[3] { new(l, t), new(l + (h / 3), t + (h / 2)), new((int)(l + (h / 2.35)), t + h) });
 				path.AddLine((int)(l + (h / 2.35)), t + h, l + w - h, t + h);
 				path.AddArc(l + w - (h * 2), t, h * 2, h * 2, 0, -90);
 			}
@@ -1330,7 +1330,7 @@ public class GlassButton : Button
 		}
 
 		GlowRadialPath.CenterColor = Color.FromArgb(opacity, glowColor);
-		GlowRadialPath.SurroundColors = new[] {Color.FromArgb(0, glowColor)};
+		GlowRadialPath.SurroundColors = new[] { Color.FromArgb(0, glowColor) };
 	}
 
 	/// <summary>

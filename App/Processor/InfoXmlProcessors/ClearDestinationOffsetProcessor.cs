@@ -53,7 +53,7 @@ internal sealed class ClearDestinationOffsetProcessor : IPdfInfoXmlProcessor,
 
 	public IUndoAction Process(XmlElement item) {
 		if (item.GetAttribute(Constants.DestinationAttributes.View) ==
-		    Constants.DestinationAttributes.ViewType.FitR) {
+			Constants.DestinationAttributes.ViewType.FitR) {
 			return null;
 		}
 

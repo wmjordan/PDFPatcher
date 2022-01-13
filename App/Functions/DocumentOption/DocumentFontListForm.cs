@@ -77,10 +77,10 @@ public partial class DocumentFontListForm : Form
 			}
 		};
 		_FontListBox.PersistentCheckBoxes = true;
-		new TypedColumn<PageFont>(_NameColumn) {AspectGetter = o => o.Name};
-		new TypedColumn<PageFont>(_FirstPageColumn) {AspectGetter = o => o.FirstPage};
-		new TypedColumn<PageFont>(_EmbeddedColumn) {AspectGetter = o => o.Embedded};
-		new TypedColumn<PageFont>(_ReferenceColumn) {AspectGetter = o => o.Reference};
+		new TypedColumn<PageFont>(_NameColumn) { AspectGetter = o => o.Name };
+		new TypedColumn<PageFont>(_FirstPageColumn) { AspectGetter = o => o.FirstPage };
+		new TypedColumn<PageFont>(_EmbeddedColumn) { AspectGetter = o => o.Embedded };
+		new TypedColumn<PageFont>(_ReferenceColumn) { AspectGetter = o => o.Reference };
 	}
 
 	internal FontSubstitutionsEditor SubstitutionsEditor { get; set; }

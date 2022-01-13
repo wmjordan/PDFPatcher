@@ -13,7 +13,7 @@ public partial class AddPdfObjectForm : Form
 
 	public AddPdfObjectForm() {
 		InitializeComponent();
-		_editBoxes = new Control[] {_NameValueBox, _NumericValueBox, _BooleanValueBox, _TextValueBox};
+		_editBoxes = new Control[] { _NameValueBox, _NumericValueBox, _BooleanValueBox, _TextValueBox };
 	}
 
 	public string ObjectName => _ObjectNameBox.Text;

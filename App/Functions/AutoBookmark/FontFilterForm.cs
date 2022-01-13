@@ -20,7 +20,7 @@ public partial class FontFilterForm : Form
 
 		TreeListView.TreeRenderer
 			tcr = _FontInfoBox.TreeColumnRenderer;
-		tcr.LinePen = new Pen(SystemColors.ControlDark) {DashCap = DashCap.Round, DashStyle = DashStyle.Dash};
+		tcr.LinePen = new Pen(SystemColors.ControlDark) { DashCap = DashCap.Round, DashStyle = DashStyle.Dash };
 
 		_FontInfoBox.CanExpandGetter = o => {
 			XmlElement f = o as XmlElement;
@@ -91,7 +91,7 @@ public partial class FontFilterForm : Form
 		}
 
 		XmlNodeList fonts = _fontInfo.SelectNodes(Constants.Font.ThisName + "[@" + Constants.Font.Name + " and " +
-		                                          Constants.Font.Size + "]");
+												  Constants.Font.Size + "]");
 		XmlElement[] fi = new XmlElement[fonts.Count];
 		int i = 0;
 		foreach (XmlElement f in fonts) {
@@ -153,7 +153,7 @@ public partial class FontFilterForm : Form
 
 		_AddFilterMenu.Items.Clear();
 		int p = n.IndexOf('+');
-		int m = n.IndexOfAny(new[] {'-', ','}, p != -1 ? p : 0);
+		int m = n.IndexOfAny(new[] { '-', ',' }, p != -1 ? p : 0);
 		string fn;
 		if (p != -1) {
 			if (m > p + 1) {

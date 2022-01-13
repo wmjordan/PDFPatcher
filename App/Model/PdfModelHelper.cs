@@ -110,7 +110,7 @@ internal static class PdfModelHelper
 		using (MemoryStream ms = new(bytes)) {
 			if (encoding == null) {
 				if (bytes.Length >= 2 &&
-				    ((bytes[0] == 0xFF && bytes[1] == 0xFE) || (bytes[0] == 0xFE && bytes[1] == 0xFF))) {
+					((bytes[0] == 0xFF && bytes[1] == 0xFE) || (bytes[0] == 0xFE && bytes[1] == 0xFF))) {
 					using (TextReader r = new StreamReader(ms, true)) {
 						return r.ReadToEnd();
 					}
@@ -121,14 +121,14 @@ internal static class PdfModelHelper
 
 			// 忽略字节顺序标记
 			if (bytes.Length >= 2 &&
-			    ((bytes[0] == 0xFF && bytes[1] == 0xFE) || (bytes[0] == 0xFE && bytes[1] == 0xFF))) {
+				((bytes[0] == 0xFF && bytes[1] == 0xFE) || (bytes[0] == 0xFE && bytes[1] == 0xFF))) {
 				ms.Position += 2;
 			}
 			else if (bytes.Length >= 3 && bytes[0] == 0xef && bytes[1] == 0xbb && bytes[2] == 0xbf) {
 				ms.Position += 3;
 			}
 			else if (bytes.Length >= 4 && bytes[0] == 0 && bytes[1] == 0 && bytes[2] == 0xfe &&
-			         bytes[3] == 0xff) {
+					 bytes[3] == 0xff) {
 				ms.Position += 4;
 			}
 

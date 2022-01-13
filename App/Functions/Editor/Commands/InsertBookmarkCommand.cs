@@ -87,7 +87,7 @@ internal sealed class InsertBookmarkCommand : IEditorCommand
 			return _dialog;
 		}
 
-		_dialog = new InsertBookmarkForm {Controller = controller};
+		_dialog = new InsertBookmarkForm { Controller = controller };
 		_dialog.OkClicked += (object sender, EventArgs e) => {
 			InsertBookmarkForm f = (InsertBookmarkForm)sender;
 			Controller c = f.Controller;

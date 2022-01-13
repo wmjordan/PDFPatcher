@@ -14,11 +14,11 @@ namespace PDFPatcher.Processor;
 internal static class OutlineManager
 {
 	// modifed: added split array for action parameters
-	private static readonly char[] __ActionSplitters = {' ', '\t', '\r', '\n'};
+	private static readonly char[] __ActionSplitters = { ' ', '\t', '\r', '\n' };
 	private static readonly char[] __fullWidthNums = "０１２３４５６７８９".ToCharArray();
 	private static readonly char[] __halfWidthNums = "0123456789".ToCharArray();
-	private static readonly char[] __cmdIdentifiers = {'=', '﹦', '＝', ':', '：'};
-	private static readonly char[] __pageLabelSeparators = {';', '；', ',', '，', ' '};
+	private static readonly char[] __cmdIdentifiers = { '=', '﹦', '＝', ':', '：' };
+	private static readonly char[] __pageLabelSeparators = { ';', '；', ',', '，', ' ' };
 
 	private static void BookmarkDepth(PdfReader reader, PdfActionExporter exporter, PdfDictionary outline,
 		Dictionary<int, int> pageRefMap, XmlWriter target) {
@@ -156,7 +156,7 @@ internal static class OutlineManager
 			++ptr;
 		}
 
-		return new object[] {refs[0], refs[refs.Length - 1], count};
+		return new object[] { refs[0], refs[refs.Length - 1], count };
 	}
 
 	internal static PdfIndirectReference WriteOutline(PdfWriter writer, XmlElement bookmarks, int maxPageNumber) {
@@ -333,7 +333,7 @@ internal static class OutlineManager
 					case "打开书签":
 						cmdData = cmdData.ToLowerInvariant();
 						isOpen = cmdData == "是" || cmdData == "true" || cmdData == "y" || cmdData == "yes" ||
-						         cmdData == "1";
+								 cmdData == "1";
 						break;
 					case Constants.Info.DocumentPath:
 						target.PdfDocumentPath = cmdData.Trim();
@@ -500,7 +500,7 @@ internal static class OutlineManager
 
 			string s = item.GetString(b);
 			if (s.StartsWith(VersionString, StringComparison.Ordinal) ||
-			    s.StartsWith(VersionString2, StringComparison.Ordinal)) {
+				s.StartsWith(VersionString2, StringComparison.Ordinal)) {
 				return item;
 			}
 		}

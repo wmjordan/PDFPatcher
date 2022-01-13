@@ -12,7 +12,7 @@ internal class PathCompiler
 	private const char StartPredicate = '[';
 	private const char EndPredicate = ']';
 
-	private static readonly char[] __PredicateChars = {StartPredicate, EndPredicate};
+	private static readonly char[] __PredicateChars = { StartPredicate, EndPredicate };
 
 	public static IEnumerable<IPathExpression> Compile(string path) {
 		Queue<IPathExpression> r = new();

@@ -28,6 +28,6 @@ internal sealed class SimpleBookmarkCommand<T, P> : IEditorCommand where T : IPd
 			return;
 		}
 
-		controller.ProcessBookmarks(new T {Parameter = _parameter});
+		controller.ProcessBookmarks(new T { Parameter = _parameter });
 	}
 }

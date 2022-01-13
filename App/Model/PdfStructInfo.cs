@@ -44,7 +44,7 @@ internal struct PdfStructInfo
 	private static Dictionary<string, PdfStructInfo> InitStructInfo() {
 		Dictionary<string, PdfStructInfo> d = new();
 		using (Stream s = Assembly.GetExecutingAssembly()
-			       .GetManifestResourceStream("PDFPatcher.Model.PDFStructInfo.xml")) {
+				   .GetManifestResourceStream("PDFPatcher.Model.PDFStructInfo.xml")) {
 			XmlDocument doc = new();
 			doc.Load(s);
 			AddSubItems(d, doc.SelectSingleNode("PDF/Global") as XmlElement);

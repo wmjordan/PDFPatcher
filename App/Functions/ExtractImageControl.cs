@@ -164,7 +164,7 @@ public partial class ExtractImageControl : FunctionControl, IResettableControl
 		option.InvertSoftMask = _InvertSoftMaskBox.Checked;
 		option.SkipRedundantImages = _SkipRedundantImagesBox.Checked;
 		worker.RunWorkerAsync(
-			new object[] {AppContext.SourceFiles, option});
+			new object[] { AppContext.SourceFiles, option });
 	}
 
 	private void _FileNameMaskBox_TextChanged(object sender, EventArgs e) {

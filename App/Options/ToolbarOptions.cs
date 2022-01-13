@@ -46,7 +46,7 @@ public class ToolbarOptions
 			}
 
 			Buttons.Add(new ButtonOption(item.Identifier, item.Name, item.ShowText, false));
-			Next: ;
+		Next:;
 		}
 	}
 

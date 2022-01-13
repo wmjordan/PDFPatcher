@@ -53,7 +53,7 @@ internal static class FileHelper
 						: y == PathDot ? 1
 						: y < '0' || y > '9' ? LocaleInfo.StringComparer(x.ToString(), y.ToString(),
 							CompareOptions.StringSort)
-							// path2 为数字，path1 不为数字，path2 排在前面
+						// path2 为数字，path1 不为数字，path2 排在前面
 						: 1;
 				}
 			}
@@ -189,7 +189,7 @@ internal static class FileHelper
 
 	public static bool IsPathValid(string filePath) {
 		return string.IsNullOrEmpty(filePath) == false && filePath.Trim().Length > 0
-		                                               && filePath.IndexOfAny(FilePath.InvalidPathChars) == -1;
+													   && filePath.IndexOfAny(FilePath.InvalidPathChars) == -1;
 	}
 
 	private static bool IsPathSeparator(char c) {

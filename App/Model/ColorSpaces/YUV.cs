@@ -22,14 +22,14 @@ public struct YUV
 
 	public static bool operator ==(YUV item1, YUV item2) {
 		return item1.Y == item2.Y
-		       && item1.U == item2.U
-		       && item1.V == item2.V;
+			   && item1.U == item2.U
+			   && item1.V == item2.V;
 	}
 
 	public static bool operator !=(YUV item1, YUV item2) {
 		return item1.Y != item2.Y
-		       || item1.U != item2.U
-		       || item1.V != item2.V;
+			   || item1.U != item2.U
+			   || item1.V != item2.V;
 	}
 
 	#endregion

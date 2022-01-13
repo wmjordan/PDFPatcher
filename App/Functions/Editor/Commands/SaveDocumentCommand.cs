@@ -35,12 +35,12 @@ internal sealed class SaveDocumentCommand : IEditorCommand
 		}
 
 		if (t.HasExtension(Constants.FileExtensions.Xml) == false
-		    || showDialog) {
+			|| showDialog) {
 			using (SaveFileDialog d = new() {
-				       DefaultExt = Constants.FileExtensions.Xml,
-				       Title = "指定保存文件的路径",
-				       Filter = Constants.FileExtensions.XmlFilter + "|" + Constants.FileExtensions.TxtFilter
-			       }) {
+				DefaultExt = Constants.FileExtensions.Xml,
+				Title = "指定保存文件的路径",
+				Filter = Constants.FileExtensions.XmlFilter + "|" + Constants.FileExtensions.TxtFilter
+			}) {
 				if (t.ExistsFile) {
 					d.InitialDirectory = t.Directory;
 					d.FileName = t.FileNameWithoutExtension;

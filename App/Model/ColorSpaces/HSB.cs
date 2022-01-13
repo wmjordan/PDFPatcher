@@ -24,14 +24,14 @@ public struct HSB
 
 	public static bool operator ==(HSB item1, HSB item2) {
 		return item1.Hue == item2.Hue
-		       && item1.Saturation == item2.Saturation
-		       && item1.Brightness == item2.Brightness;
+			   && item1.Saturation == item2.Saturation
+			   && item1.Brightness == item2.Brightness;
 	}
 
 	public static bool operator !=(HSB item1, HSB item2) {
 		return item1.Hue != item2.Hue
-		       || item1.Saturation != item2.Saturation
-		       || item1.Brightness != item2.Brightness;
+			   || item1.Saturation != item2.Saturation
+			   || item1.Brightness != item2.Brightness;
 	}
 
 	#endregion

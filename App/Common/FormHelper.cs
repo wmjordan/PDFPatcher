@@ -175,10 +175,10 @@ internal static class FormHelper
 		if (args.Data.GetDataPresent(DataFormats.FileDrop)) {
 			string[] files = args.Data.GetData(DataFormats.FileDrop) as string[];
 			if (Array.Exists(files,
-				    f => {
-					    return Array.Exists(allowedFileExtension,
-						    ext => f.EndsWith(ext, StringComparison.InvariantCultureIgnoreCase));
-				    })) {
+					f => {
+						return Array.Exists(allowedFileExtension,
+							ext => f.EndsWith(ext, StringComparison.InvariantCultureIgnoreCase));
+					})) {
 				args.Effect = DragDropEffects.Copy;
 			}
 		}
@@ -327,11 +327,11 @@ internal static class FormHelper
 
 	public static bool ConfirmOKBox(this Control control, string text) {
 		return MessageBox.Show(text, control.Text, MessageBoxButtons.OKCancel, MessageBoxIcon.Question) ==
-		       DialogResult.OK;
+			   DialogResult.OK;
 	}
 
 	public static bool ConfirmYesBox(this Control control, string text) {
 		return MessageBox.Show(text, control.Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question) ==
-		       DialogResult.Yes;
+			   DialogResult.Yes;
 	}
 }

@@ -14,13 +14,13 @@ internal sealed class ForceInternalLinkProcessor : IPdfInfoXmlProcessor
 
 	public IUndoAction Process(XmlElement item) {
 		if (item.HasAttribute(D.Action)
-		    && item.GetAttribute(D.Path).EndsWith(".pdf", StringComparison.InvariantCultureIgnoreCase)
-		    && ValueHelper.IsInCollection(item.GetAttribute(D.Action), A.GotoR, A.Launch, A.Uri)) {
+			&& item.GetAttribute(D.Path).EndsWith(".pdf", StringComparison.InvariantCultureIgnoreCase)
+			&& ValueHelper.IsInCollection(item.GetAttribute(D.Action), A.GotoR, A.Launch, A.Uri)) {
 			UndoActionGroup undo = new();
 			undo.Add(UndoAttributeAction.GetUndoAction(item, D.Action, A.Goto));
 			if (item.HasAttribute(D.Page) == false
-			    && item.HasAttribute(D.Named) == false
-			    && item.HasAttribute(D.NamedN) == false
+				&& item.HasAttribute(D.Named) == false
+				&& item.HasAttribute(D.NamedN) == false
 			   ) {
 				undo.Add(UndoAttributeAction.GetUndoAction(item, D.Page, "1"));
 			}

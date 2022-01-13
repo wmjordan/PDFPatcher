@@ -348,9 +348,9 @@ public static class WuQuantizer
 		}
 
 		first.Volume = (first.RedMaximum - first.RedMinimum) * (first.GreenMaximum - first.GreenMinimum) *
-		               (first.BlueMaximum - first.BlueMinimum);
+					   (first.BlueMaximum - first.BlueMinimum);
 		second.Volume = (second.RedMaximum - second.RedMinimum) * (second.GreenMaximum - second.GreenMinimum) *
-		                (second.BlueMaximum - second.BlueMinimum);
+						(second.BlueMaximum - second.BlueMinimum);
 
 		return true;
 	}
@@ -380,13 +380,13 @@ public static class WuQuantizer
 		g0 = (g0 << 5) + g0;
 		g1 = (g1 << 5) + g1;
 		return moment[r1 + g1 + b1]
-		       - moment[r1 + g1 + b0]
-		       - moment[r1 + g0 + b1]
-		       + moment[r1 + g0 + b0]
-		       - moment[r0 + g1 + b1]
-		       + moment[r0 + g1 + b0]
-		       + moment[r0 + g0 + b1]
-		       - moment[r0 + g0 + b0];
+			   - moment[r1 + g1 + b0]
+			   - moment[r1 + g0 + b1]
+			   + moment[r1 + g0 + b0]
+			   - moment[r0 + g1 + b1]
+			   + moment[r0 + g1 + b0]
+			   + moment[r0 + g0 + b1]
+			   - moment[r0 + g0 + b0];
 	}
 
 	private static float VolumeFloat(Box cube, float[] moment) {
@@ -401,13 +401,13 @@ public static class WuQuantizer
 		g0 = (g0 << 5) + g0;
 		g1 = (g1 << 5) + g1;
 		return moment[r1 + g1 + b1]
-		       - moment[r1 + g1 + b0]
-		       - moment[r1 + g0 + b1]
-		       + moment[r1 + g0 + b0]
-		       - moment[r0 + g1 + b1]
-		       + moment[r0 + g1 + b0]
-		       + moment[r0 + g0 + b1]
-		       - moment[r0 + g0 + b0];
+			   - moment[r1 + g1 + b0]
+			   - moment[r1 + g0 + b1]
+			   + moment[r1 + g0 + b0]
+			   - moment[r0 + g1 + b1]
+			   + moment[r0 + g1 + b0]
+			   + moment[r0 + g0 + b1]
+			   - moment[r0 + g0 + b0];
 	}
 
 	private static Box[] SplitData(ref int colorCount, ColorData data) {

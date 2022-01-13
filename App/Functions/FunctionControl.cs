@@ -35,7 +35,7 @@ public class FunctionControl : UserControl
 		if (Commands.OpenFile == commandName) {
 			// 将第一个文本框设置为文件路径
 			if (parameters.Length > 0 && string.IsNullOrEmpty(parameters[0]) == false
-			                          && FileHelper.HasExtension(parameters[0], Constants.FileExtensions.Pdf)
+									  && FileHelper.HasExtension(parameters[0], Constants.FileExtensions.Pdf)
 			   ) {
 				foreach (Control c in Controls) {
 					if (c is SourceFileControl i) {

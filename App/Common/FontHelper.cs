@@ -20,7 +20,7 @@ internal static class FontHelper
 	public static Dictionary<string, string> GetInstalledFonts(bool includeFamilyName) {
 		Dictionary<string, string> d = new(50);
 		using (RegistryKey k = Registry.LocalMachine.OpenSubKey(
-			       @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts")) {
+				   @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts")) {
 			foreach (string name in k.GetValueNames()) {
 				string p = k.GetValue(name) as string;
 				if (string.IsNullOrEmpty(p)) {
@@ -34,7 +34,7 @@ internal static class FontHelper
 				FilePath fp = new(p);
 				try {
 					if (fp.HasExtension(Constants.FileExtensions.Ttf)
-					    || fp.HasExtension(Constants.FileExtensions.Otf)) {
+						|| fp.HasExtension(Constants.FileExtensions.Otf)) {
 						AddFontNames(d, p, includeFamilyName);
 					}
 					else if (fp.HasExtension(Constants.FileExtensions.Ttc)) {

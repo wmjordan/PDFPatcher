@@ -18,14 +18,14 @@ public struct CIELab
 
 	public static bool operator ==(CIELab item1, CIELab item2) {
 		return item1.L == item2.L
-		       && item1.A == item2.A
-		       && item1.B == item2.B;
+			   && item1.A == item2.A
+			   && item1.B == item2.B;
 	}
 
 	public static bool operator !=(CIELab item1, CIELab item2) {
 		return item1.L != item2.L
-		       || item1.A != item2.A
-		       || item1.B != item2.B;
+			   || item1.A != item2.A
+			   || item1.B != item2.B;
 	}
 
 	#endregion

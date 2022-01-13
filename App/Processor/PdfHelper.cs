@@ -15,7 +15,7 @@ namespace PDFPatcher.Processor;
 
 internal static class PdfHelper
 {
-	internal static readonly int[] CompoundTypes = {PdfObject.DICTIONARY, PdfObject.ARRAY, PdfObject.STREAM};
+	internal static readonly int[] CompoundTypes = { PdfObject.DICTIONARY, PdfObject.ARRAY, PdfObject.STREAM };
 
 	private static readonly DualKeyDictionary<PdfName, string> __PdfNameMap;
 
@@ -88,7 +88,7 @@ internal static class PdfHelper
 	internal static bool ConfirmUnethicalMode(this PdfReader pdf) {
 		ToggleUnethicalMode(false);
 		bool r = pdf.IsOpenedWithFullPermissions
-		         || FormHelper.YesNoBox(Messages.UserRightRequired) == DialogResult.Yes;
+				 || FormHelper.YesNoBox(Messages.UserRightRequired) == DialogResult.Yes;
 		ToggleUnethicalMode(true);
 		return r;
 	}
@@ -118,24 +118,24 @@ internal static class PdfHelper
 
 	private static DualKeyDictionary<PdfName, string> InitPdfNameMap() {
 		DualKeyDictionary<PdfName, string> m = new() {
-			{PdfName.PAGELAYOUT, Constants.PageLayout},
-			{PdfName.PAGEMODE, Constants.PageMode},
-			{PdfName.DIRECTION, Constants.ViewerPreferencesType.Direction},
-			{PdfName.ST, Constants.PageLabelsAttributes.StartPage},
-			{PdfName.P, Constants.PageLabelsAttributes.Prefix},
-			{PdfName.S, Constants.PageLabelsAttributes.Style},
-			{PdfName.XYZ, Constants.DestinationAttributes.ViewType.XYZ},
-			{PdfName.FIT, Constants.DestinationAttributes.ViewType.Fit},
-			{PdfName.FITB, Constants.DestinationAttributes.ViewType.FitB},
-			{PdfName.FITBH, Constants.DestinationAttributes.ViewType.FitBH},
-			{PdfName.FITBV, Constants.DestinationAttributes.ViewType.FitBV},
-			{PdfName.FITH, Constants.DestinationAttributes.ViewType.FitH},
-			{PdfName.FITR, Constants.DestinationAttributes.ViewType.FitR},
-			{PdfName.FITV, Constants.DestinationAttributes.ViewType.FitV},
-			{PdfName.GOTO, Constants.ActionType.Goto},
-			{PdfName.GOTOR, Constants.ActionType.GotoR},
-			{PdfName.LAUNCH, Constants.ActionType.Launch},
-			{PdfName.URI, Constants.ActionType.Uri}
+			{ PdfName.PAGELAYOUT, Constants.PageLayout },
+			{ PdfName.PAGEMODE, Constants.PageMode },
+			{ PdfName.DIRECTION, Constants.ViewerPreferencesType.Direction },
+			{ PdfName.ST, Constants.PageLabelsAttributes.StartPage },
+			{ PdfName.P, Constants.PageLabelsAttributes.Prefix },
+			{ PdfName.S, Constants.PageLabelsAttributes.Style },
+			{ PdfName.XYZ, Constants.DestinationAttributes.ViewType.XYZ },
+			{ PdfName.FIT, Constants.DestinationAttributes.ViewType.Fit },
+			{ PdfName.FITB, Constants.DestinationAttributes.ViewType.FitB },
+			{ PdfName.FITBH, Constants.DestinationAttributes.ViewType.FitBH },
+			{ PdfName.FITBV, Constants.DestinationAttributes.ViewType.FitBV },
+			{ PdfName.FITH, Constants.DestinationAttributes.ViewType.FitH },
+			{ PdfName.FITR, Constants.DestinationAttributes.ViewType.FitR },
+			{ PdfName.FITV, Constants.DestinationAttributes.ViewType.FitV },
+			{ PdfName.GOTO, Constants.ActionType.Goto },
+			{ PdfName.GOTOR, Constants.ActionType.GotoR },
+			{ PdfName.LAUNCH, Constants.ActionType.Launch },
+			{ PdfName.URI, Constants.ActionType.Uri }
 		};
 
 		return m;
@@ -207,8 +207,8 @@ internal static class PdfHelper
 	/// <returns></returns>
 	internal static DateTimeOffset ParseDateTime(string date) {
 		if (date == null
-		    || (date.Length != 23 && date.Length != 16)
-		    || date.StartsWith("D:") == false) {
+			|| (date.Length != 23 && date.Length != 16)
+			|| date.StartsWith("D:") == false) {
 			return DateTimeOffset.MinValue;
 		}
 
@@ -281,8 +281,8 @@ internal static class PdfHelper
 		PdfArray box;
 		float[] c = new float[4];
 		if ((page.Contains(PdfName.CROPBOX) && (box = page.GetAsArray(PdfName.CROPBOX)) != null && box.Size == 4)
-		    || (page.Contains(PdfName.MEDIABOX) && (box = page.GetAsArray(PdfName.MEDIABOX)) != null &&
-		        box.Size == 4)) {
+			|| (page.Contains(PdfName.MEDIABOX) && (box = page.GetAsArray(PdfName.MEDIABOX)) != null &&
+				box.Size == 4)) {
 			for (int i = 0; i < 4; i++) {
 				c[i] = box.GetAsNumber(i).FloatValue;
 			}
@@ -646,7 +646,7 @@ internal static class PdfHelper
 					}
 
 					if (objs == null) {
-						state.Push(new object[] {ar, k + 1});
+						state.Push(new object[] { ar, k + 1 });
 					}
 					else {
 						objs[1] = k + 1;
@@ -670,7 +670,7 @@ internal static class PdfHelper
 					}
 
 					if (objs == null) {
-						state.Push(new object[] {keys, dic, k + 1});
+						state.Push(new object[] { keys, dic, k + 1 });
 					}
 					else {
 						objs[2] = k + 1;

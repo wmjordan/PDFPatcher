@@ -20,8 +20,8 @@ internal sealed class PdfDocumentCreator
 		".pdf", ".tif", ".jpg", ".gif", ".png", ".tiff", ".bmp", ".jpeg", ".jp2", ".j2k"
 	};
 
-	private static readonly string[] __BuiltInImageTypes = {".png", ".jpg", ".jpeg", ".bmp", ".jp2", ".j2k"};
-	private static readonly string[] __ExtImageTypes = {".tif", ".tiff", ".gif"};
+	private static readonly string[] __BuiltInImageTypes = { ".png", ".jpg", ".jpeg", ".bmp", ".jp2", ".j2k" };
+	private static readonly string[] __ExtImageTypes = { ".tif", ".tiff", ".gif" };
 
 	private static readonly PixelFormat[] __JpgFormats = {
 		PixelFormat.Format16bppGrayScale, PixelFormat.Format16bppRgb555, PixelFormat.Format16bppRgb565,
@@ -74,8 +74,8 @@ internal sealed class PdfDocumentCreator
 		scaleUp = option.AutoScaleUp;
 		scaleDown = option.AutoScaleDown;
 		areMarginsEqual = ps.Margins.Top == ps.Margins.Left
-		                  && ps.Margins.Top == ps.Margins.Right
-		                  && ps.Margins.Top == ps.Margins.Bottom;
+						  && ps.Margins.Top == ps.Margins.Right
+						  && ps.Margins.Top == ps.Margins.Bottom;
 		if (impOptions.ImportBookmarks) {
 			PdfBookmarks = new PdfInfoXmlDocument();
 			BookmarkRootElement root = PdfBookmarks.BookmarkRoot;
@@ -202,7 +202,7 @@ internal sealed class PdfDocumentCreator
 
 	private void AddEmptyPage() {
 		if (_content.SpecialSize == SpecialPaperSize.None ||
-		    _content.SpecialSize == SpecialPaperSize.AsSpecificPage) {
+			_content.SpecialSize == SpecialPaperSize.AsSpecificPage) {
 			// 插入空白页
 			_doc.NewPage();
 			_writer.PageEmpty = false;
@@ -233,7 +233,7 @@ internal sealed class PdfDocumentCreator
 				PdfDictionary p = pdf.GetPageN(i);
 				Rectangle r = p.GetPageVisibleRectangle();
 				if ((rv && r.Width < r.Height)
-				    || (rv == false && r.Width > r.Height)) {
+					|| (rv == false && r.Width > r.Height)) {
 					p.Put(PdfName.ROTATE, (r.Rotation + a) % 360);
 				}
 			}
@@ -345,7 +345,7 @@ internal sealed class PdfDocumentCreator
 					_writer.AddPage(_writer.GetImportedPage(pdf, i));
 				}
 
-				Exit:
+			Exit:
 				Tracker.IncrementProgress(1);
 			}
 		}
@@ -362,11 +362,11 @@ internal sealed class PdfDocumentCreator
 
 	private BookmarkContainer KeepBookmarks(BookmarkContainer bookmark, PdfReader pdf, int[] pageRemapper,
 		CoordinateTranslationSettings[] cts) {
-		XmlElement bm = OutlineManager.GetBookmark(pdf, new UnitConverter {Unit = Constants.Units.Point});
+		XmlElement bm = OutlineManager.GetBookmark(pdf, new UnitConverter { Unit = Constants.Units.Point });
 		List<IInfoDocProcessor> processors = new();
 		if (_option.ViewerPreferences.CollapseBookmark != BookmarkStatus.AsIs) {
 			processors.Add(
-				new CollapseBookmarkProcessor {BookmarkStatus = _option.ViewerPreferences.CollapseBookmark});
+				new CollapseBookmarkProcessor { BookmarkStatus = _option.ViewerPreferences.CollapseBookmark });
 		}
 
 		if (_option.ViewerPreferences.RemoveZoomRate) {
@@ -378,7 +378,9 @@ internal sealed class PdfDocumentCreator
 		}
 
 		processors.Add(new GotoDestinationProcessor {
-			RemoveOrphanDestination = _option.RemoveOrphanBookmarks, PageRemapper = pageRemapper, TransitionMapper = cts
+			RemoveOrphanDestination = _option.RemoveOrphanBookmarks,
+			PageRemapper = pageRemapper,
+			TransitionMapper = cts
 		});
 		ProcessInfoItem(bm, processors);
 		if (bookmark != null) {
@@ -490,9 +492,9 @@ internal sealed class PdfDocumentCreator
 		ext = ext.ToLowerInvariant();
 		using (FreeImageBitmap fi = new(sourceFile.FilePath)) {
 			if (fi.Height < cropOptions.MinHeight // 不满足尺寸限制
-			    || fi.Width < cropOptions.MinWidth
-			    || fi.Height <= cropOptions.Top + cropOptions.Bottom // 裁剪后尺寸小于 0
-			    || fi.Width <= cropOptions.Left + cropOptions.Right
+				|| fi.Width < cropOptions.MinWidth
+				|| fi.Height <= cropOptions.Top + cropOptions.Bottom // 裁剪后尺寸小于 0
+				|| fi.Width <= cropOptions.Left + cropOptions.Right
 			   ) {
 				return Image.GetInstance(sourceFile.FilePath.ToString());
 			}
@@ -501,7 +503,7 @@ internal sealed class PdfDocumentCreator
 				// is JPEG file
 				FilePath t = sourceFile.FilePath.EnsureExtension(Constants.FileExtensions.Jpg);
 				if (FreeImageBitmap.JPEGCrop(sourceFile.FilePath, t, cropOptions.Left, cropOptions.Top,
-					    fi.Width - cropOptions.Right, fi.Height - cropOptions.Bottom)) {
+						fi.Width - cropOptions.Right, fi.Height - cropOptions.Bottom)) {
 					iTextImage image;
 					using (FileStream fs = new(t, FileMode.Open)) {
 						image = Image.GetInstance(fs);
@@ -513,7 +515,7 @@ internal sealed class PdfDocumentCreator
 			}
 
 			using (FreeImageBitmap tmp = fi.Copy(cropOptions.Left, cropOptions.Top, fi.Width - cropOptions.Right,
-				       fi.Height - cropOptions.Bottom))
+					   fi.Height - cropOptions.Bottom))
 			using (MemoryStream ms = new()) {
 				tmp.Save(ms, fi.ImageFormat);
 				ms.Flush();
@@ -525,8 +527,8 @@ internal sealed class PdfDocumentCreator
 
 	private BookmarkElement CreateAutoBookmark(SourceItem sourceFile, XmlElement bookmarkContainer) {
 		if (PdfBookmarks == null
-		    || sourceFile.Bookmark == null
-		    || string.IsNullOrEmpty(sourceFile.Bookmark.Title)) {
+			|| sourceFile.Bookmark == null
+			|| string.IsNullOrEmpty(sourceFile.Bookmark.Title)) {
 			return null;
 		}
 
@@ -548,7 +550,7 @@ internal sealed class PdfDocumentCreator
 		}
 		else if (_content.SpecialSize == SpecialPaperSize.FixedWidthAutoHeight) {
 			if ((scaleDown && image.ScaledWidth > _content.Width) ||
-			    (scaleUp && image.ScaledWidth < _content.Width)) {
+				(scaleUp && image.ScaledWidth < _content.Width)) {
 				image.ScaleToFit(_content.Width, 999999);
 			}
 
@@ -557,16 +559,16 @@ internal sealed class PdfDocumentCreator
 		}
 		else {
 			if (_autoRotate
-			    && ( // 页面不足以放下当前尺寸的图片
-				    ((image.ScaledHeight > _content.Height || image.ScaledWidth > _content.Width)
-				     && ((image.ScaledWidth > image.ScaledHeight && _portrait)
-				         || (image.ScaledHeight > image.ScaledWidth && _portrait == false)))
-				    ||
-				    // 图片较小，可以还原为原始的页面方向
-				    (_portrait != (_option.ContentHeight > _option.ContentWidth)
-				     && image.ScaledHeight <= _content.Height && image.ScaledWidth <= _content.Width
-				     && image.ScaledHeight <= _content.Width && image.ScaledWidth <= _content.Height)
-			    )
+				&& ( // 页面不足以放下当前尺寸的图片
+					((image.ScaledHeight > _content.Height || image.ScaledWidth > _content.Width)
+					 && ((image.ScaledWidth > image.ScaledHeight && _portrait)
+						 || (image.ScaledHeight > image.ScaledWidth && _portrait == false)))
+					||
+					// 图片较小，可以还原为原始的页面方向
+					(_portrait != (_option.ContentHeight > _option.ContentWidth)
+					 && image.ScaledHeight <= _content.Height && image.ScaledWidth <= _content.Width
+					 && image.ScaledHeight <= _content.Width && image.ScaledWidth <= _content.Height)
+				)
 			   ) {
 				float t = _content.Height;
 				_content.Height = _content.Width;
@@ -585,7 +587,7 @@ internal sealed class PdfDocumentCreator
 			}
 
 			if ((scaleDown && (image.ScaledHeight > _content.Height || image.ScaledWidth > _content.Width))
-			    || (scaleUp && image.ScaledHeight < _content.Height && image.ScaledWidth < _content.Width)) {
+				|| (scaleUp && image.ScaledHeight < _content.Height && image.ScaledWidth < _content.Width)) {
 				image.ScaleToFit(_content.Width, _content.Height);
 			}
 
@@ -617,13 +619,13 @@ internal sealed class PdfDocumentCreator
 		SourceItem.CropOptions cropOptions = source.Cropping;
 		FREE_IMAGE_FORMAT format;
 		if (fi.ImageFormat == FREE_IMAGE_FORMAT.FIF_GIF
-		    || fi.InfoHeader.biCompression == FreeImage.BI_PNG) {
+			|| fi.InfoHeader.biCompression == FreeImage.BI_PNG) {
 			format = FREE_IMAGE_FORMAT.FIF_PNG;
 		}
 		else if (fi.ColorDepth > 8
-		         && fi.ColorType == FREE_IMAGE_COLOR_TYPE.FIC_RGB
-		         && fi.HasPalette == false
-		         && __JpgFormats.Contains(fi.PixelFormat)) {
+				 && fi.ColorType == FREE_IMAGE_COLOR_TYPE.FIC_RGB
+				 && fi.HasPalette == false
+				 && __JpgFormats.Contains(fi.PixelFormat)) {
 			format = FREE_IMAGE_FORMAT.FIF_JPEG;
 		}
 		else if (fi.InfoHeader.biCompression == FreeImage.BI_JPEG) {
@@ -638,10 +640,10 @@ internal sealed class PdfDocumentCreator
 
 		using (MemoryStream ms = new()) {
 			if (cropOptions.NeedCropping
-			    && (fi.Height < cropOptions.MinHeight // 不满足尺寸限制
-			        || fi.Width < cropOptions.MinWidth
-			        || fi.Height <= cropOptions.Top + cropOptions.Bottom // 裁剪后尺寸小于 0
-			        || fi.Width <= cropOptions.Left + cropOptions.Right) == false) {
+				&& (fi.Height < cropOptions.MinHeight // 不满足尺寸限制
+					|| fi.Width < cropOptions.MinWidth
+					|| fi.Height <= cropOptions.Top + cropOptions.Bottom // 裁剪后尺寸小于 0
+					|| fi.Width <= cropOptions.Left + cropOptions.Right) == false) {
 				FreeImageBitmap temp = fi.Copy(cropOptions.Left, cropOptions.Top, fi.Width - cropOptions.Right,
 					fi.Height - cropOptions.Bottom);
 				temp.Save(ms, format);

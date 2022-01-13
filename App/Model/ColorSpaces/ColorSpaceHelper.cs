@@ -46,9 +46,9 @@ public static class ColorSpaceHelper
 	/// <param name="color1">First color.</param>
 	/// <param name="color2">Second color.</param>
 	public static double GetColorDistance(Color c1, Color c2) {
-		double[] rgb1 = {c1.R / 255.0, c1.G / 255.0, c1.B / 255.0};
+		double[] rgb1 = { c1.R / 255.0, c1.G / 255.0, c1.B / 255.0 };
 
-		double[] rgb2 = {c2.R / 255.0, c2.G / 255.0, c2.B / 255.0};
+		double[] rgb2 = { c2.R / 255.0, c2.G / 255.0, c2.B / 255.0 };
 
 		return GetColorDistance(rgb1[0], rgb1[1], rgb1[2], rgb2[0], rgb2[1], rgb2[2]);
 	}
@@ -130,26 +130,26 @@ public static class ColorSpaceHelper
 	private static int GetIntFromHex(string strHex) {
 		switch (strHex) {
 			case "A": {
-				return 10;
-			}
+					return 10;
+				}
 			case "B": {
-				return 11;
-			}
+					return 11;
+				}
 			case "C": {
-				return 12;
-			}
+					return 12;
+				}
 			case "D": {
-				return 13;
-			}
+					return 13;
+				}
 			case "E": {
-				return 14;
-			}
+					return 14;
+				}
 			case "F": {
-				return 15;
-			}
+					return 15;
+				}
 			default: {
-				return int.Parse(strHex);
-			}
+					return int.Parse(strHex);
+				}
 		}
 	}
 

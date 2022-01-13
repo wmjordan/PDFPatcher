@@ -175,8 +175,8 @@ internal sealed class ImageInfo
 
 				using (MemoryStream ms = new(decodedBytes))
 				using (FreeImageBitmap bm = PdfName.DEVICECMYK.Equals(info.ColorSpace)
-					       ? new FreeImageBitmap(ms, FREE_IMAGE_LOAD_FLAGS.JPEG_CMYK)
-					       : new FreeImageBitmap(ms)) {
+						   ? new FreeImageBitmap(ms, FREE_IMAGE_LOAD_FLAGS.JPEG_CMYK)
+						   : new FreeImageBitmap(ms)) {
 					info.PixelFormat = bm.PixelFormat;
 					switch (bm.ColorType) {
 						case FREE_IMAGE_COLOR_TYPE.FIC_CMYK:
@@ -212,15 +212,15 @@ internal sealed class ImageInfo
 			info.ExtName = Constants.FileExtensions.Tif;
 		}
 
-		EXIT:
+	EXIT:
 		PRStream sm;
 		if (options.ExtractSoftMask && (
-			    (sm = data.GetAsStream(PdfName.SMASK) as PRStream) != null
-			    || (sm = data.GetAsStream(PdfName.MASK) as PRStream) != null)
+				(sm = data.GetAsStream(PdfName.SMASK) as PRStream) != null
+				|| (sm = data.GetAsStream(PdfName.MASK) as PRStream) != null)
 		   ) {
 			ImageInfo mi = new(sm);
 			byte[] mask = DecodeImage(mi,
-				new ImageExtracterOptions {InvertBlackAndWhiteImages = !options.InvertSoftMask});
+				new ImageExtracterOptions { InvertBlackAndWhiteImages = !options.InvertSoftMask });
 			if (mask != null && mi.BitsPerComponent == 1) {
 				info.MaskBytes = mask;
 				info.MaskSize = new Size(mi.Width, mi.Height);

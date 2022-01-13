@@ -15,7 +15,7 @@ internal struct PageRange : IEnumerable<int>
 
 	public bool Contains(int value) {
 		return (value >= StartValue && value <= EndValue)
-		       || (value >= EndValue && value <= StartValue);
+			   || (value >= EndValue && value <= StartValue);
 	}
 
 	public override string ToString() {

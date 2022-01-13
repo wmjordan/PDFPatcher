@@ -16,7 +16,7 @@ internal sealed class SetTextStyleProcessor : IPdfInfoXmlProcessor
 		string s = element.GetAttribute(Constants.BookmarkAttributes.Style);
 		if (style == Style.SetBold) {
 			if (s != Constants.BookmarkAttributes.StyleType.Bold &&
-			    s != Constants.BookmarkAttributes.StyleType.BoldItalic) {
+				s != Constants.BookmarkAttributes.StyleType.BoldItalic) {
 				_style = Style.SetBold;
 			}
 			else {
@@ -25,7 +25,7 @@ internal sealed class SetTextStyleProcessor : IPdfInfoXmlProcessor
 		}
 		else if (style == Style.SetItalic) {
 			if (s != Constants.BookmarkAttributes.StyleType.Italic &&
-			    s != Constants.BookmarkAttributes.StyleType.BoldItalic) {
+				s != Constants.BookmarkAttributes.StyleType.BoldItalic) {
 				_style = Style.SetItalic;
 			}
 			else {

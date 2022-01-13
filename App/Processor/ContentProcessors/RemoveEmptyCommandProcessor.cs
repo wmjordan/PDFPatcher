@@ -73,7 +73,7 @@ internal sealed class RemoveEmptyCommandProcessor : IPageProcessor
 		foreach (KeyValuePair<PdfName, PdfObject> item in fl) {
 			PRStream f = PdfReader.GetPdfObject(item.Value) as PRStream;
 			if (f == null
-			    || PdfName.FORM.Equals(f.GetAsName(PdfName.SUBTYPE)) == false) {
+				|| PdfName.FORM.Equals(f.GetAsName(PdfName.SUBTYPE)) == false) {
 				continue;
 			}
 

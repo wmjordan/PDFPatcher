@@ -100,8 +100,8 @@ internal sealed class GotoDestinationProcessor : IInfoDocProcessor
 			while (item.HasChildNodes) {
 				XmlElement c = item.LastChild as XmlElement;
 				if (c == null ||
-				    (c.HasAttribute(Constants.DestinationAttributes.Action) == false
-				     && c.HasChildNodes == false)) {
+					(c.HasAttribute(Constants.DestinationAttributes.Action) == false
+					 && c.HasChildNodes == false)) {
 					item.RemoveChild(item.LastChild);
 					continue;
 				}

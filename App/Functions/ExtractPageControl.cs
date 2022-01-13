@@ -104,7 +104,7 @@ public partial class ExtractPageControl : FunctionControl, IResettableControl
 			}
 		};
 		worker.RunWorkerAsync(
-			new object[] {AppContext.SourceFiles, _TargetFileControl.Text, AppContext.ExtractPage});
+			new object[] { AppContext.SourceFiles, _TargetFileControl.Text, AppContext.ExtractPage });
 	}
 
 	private void _ExtractPageRangeBox_TextChanged(object sender, EventArgs e) {

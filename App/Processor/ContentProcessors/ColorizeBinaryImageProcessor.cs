@@ -70,8 +70,8 @@ internal sealed class ColorizeBinaryImageProcessor : IPageProcessor
 		foreach (KeyValuePair<PdfName, PdfObject> item in images) {
 			PRStream im = PdfReader.GetPdfObject(item.Value) as PRStream;
 			if (im == null
-			    || PdfName.IMAGE.Equals(im.GetAsName(PdfName.SUBTYPE)) == false
-			    || im.TryGetInt32(PdfName.BITSPERCOMPONENT, 0) != 1
+				|| PdfName.IMAGE.Equals(im.GetAsName(PdfName.SUBTYPE)) == false
+				|| im.TryGetInt32(PdfName.BITSPERCOMPONENT, 0) != 1
 			   ) {
 				continue;
 			}

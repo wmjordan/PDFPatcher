@@ -366,7 +366,7 @@ internal static class Worker
 				}
 
 				if (pdfEngine.ExtraData.ContainsKey(DocProcessorContext.CoordinateTransition) &&
-				    pdfSettings.UnifiedPageSettings.ScaleContent) {
+					pdfSettings.UnifiedPageSettings.ScaleContent) {
 					processors.Add(new GotoDestinationProcessor {
 						TransitionMapper =
 							pdfEngine.ExtraData[DocProcessorContext.CoordinateTransition] as
@@ -414,13 +414,13 @@ internal static class Worker
 
 				//st.Writer.CompressionLevel = ContextData.CreateDocumentOptions.CompressionLevel;
 				PdfPageLabels labels = DocInfoImporter.ImportPageLabels(pdfSettings.PageLabels) ??
-				                       import.ImportPageLabels();
+									   import.ImportPageLabels();
 				if (labels != null) {
 					st.Writer.PageLabels = labels;
 				}
 
 				if (options.ImportPageLinks ||
-				    pdfSettings.UnifiedPageSettings.PaperSize.PaperName != PaperSize.AsPageSize /* sc*/) {
+					pdfSettings.UnifiedPageSettings.PaperSize.PaperName != PaperSize.AsPageSize /* sc*/) {
 					import.ImportPageLinks(pdf, st);
 				}
 
@@ -433,7 +433,7 @@ internal static class Worker
 				if ((options.ImportBookmarks && pdfSettings.RemoveBookmarks == false) || xInfoDoc != null) {
 					Tracker.TraceMessage("导入书签。");
 					bookmarks = import.GetBookmarks() ??
-					            OutlineManager.GetBookmark(pdf, new UnitConverter {Unit = Constants.Units.Point});
+								OutlineManager.GetBookmark(pdf, new UnitConverter { Unit = Constants.Units.Point });
 				}
 
 				if (bookmarks != null) {
@@ -573,8 +573,8 @@ internal static class Worker
 				// 使用中文的书签
 				string v = root.GetAttribute(Constants.Info.ProductVersion);
 				if (v != Constants.InfoDocVersion
-				    && FormHelper.YesNoBox(string.Concat("信息文件不是用这个版本的程序生成的，可能会导入不成功，是否继续？\n当前程序的版本是：",
-					    Application.ProductVersion, "\n信息文件的导出程序版本是：", v)) == DialogResult.No) {
+					&& FormHelper.YesNoBox(string.Concat("信息文件不是用这个版本的程序生成的，可能会导入不成功，是否继续？\n当前程序的版本是：",
+						Application.ProductVersion, "\n信息文件的导出程序版本是：", v)) == DialogResult.No) {
 					return false;
 				}
 
@@ -692,7 +692,7 @@ internal static class Worker
 					: info, doc);
 				DocInfoImporter.OverrideViewerPreferences(option.ViewerPreferences, null, w);
 				if ((bookmarks == null || bookmarks.HasChildNodes == false) &&
-				    creator.PdfBookmarks.DocumentElement.HasChildNodes) {
+					creator.PdfBookmarks.DocumentElement.HasChildNodes) {
 					bookmarks = creator.PdfBookmarks.BookmarkRoot;
 				}
 
@@ -966,7 +966,7 @@ internal static class Worker
 				Tracker.TraceMessage(ex);
 			}
 
-			Exit:
+		Exit:
 			Tracker.IncrementTotalProgress();
 		}
 
@@ -1007,7 +1007,7 @@ internal static class Worker
 
 		try {
 			using (XmlReader infoReader = XmlReader.Create(infoFile,
-				       new XmlReaderSettings {IgnoreComments = true, IgnoreProcessingInstructions = true})) {
+					   new XmlReaderSettings { IgnoreComments = true, IgnoreProcessingInstructions = true })) {
 				infoReader.MoveToContent(); // 移到根元素
 				using (Stream s = new FileStream(targetFile, FileMode.Create)) {
 					PdfStamper st = new(pdf, s);

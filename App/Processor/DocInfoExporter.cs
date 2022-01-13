@@ -41,7 +41,10 @@ internal sealed class DocInfoExporter
 
 	internal static XmlWriterSettings GetWriterSettings() {
 		return new XmlWriterSettings {
-			Encoding = AppContext.Exporter.GetEncoding(), Indent = true, IndentChars = "\t", CheckCharacters = false
+			Encoding = AppContext.Exporter.GetEncoding(),
+			Indent = true,
+			IndentChars = "\t",
+			CheckCharacters = false
 		};
 	}
 
@@ -292,7 +295,7 @@ internal sealed class DocInfoExporter
 	internal void ExportViewerPreferences(XmlWriter w) {
 		PdfDictionary catalog = _reader.Catalog;
 		if (catalog.Contains(PdfName.VIEWERPREFERENCES) || catalog.Contains(PdfName.PAGELAYOUT) ||
-		    catalog.Contains(PdfName.PAGEMODE)) {
+			catalog.Contains(PdfName.PAGEMODE)) {
 			w.WriteStartElement(Constants.ViewerPreferences);
 			if (catalog.Contains(PdfName.PAGELAYOUT)) {
 				w.WriteAttributeString(Constants.PageLayout,
@@ -353,7 +356,7 @@ internal sealed class DocInfoExporter
 		}
 
 		for (int i = 0; i < ls.Size; i++) {
-			PageLabel l = new() {PageNumber = ls.GetAsNumber(i++).IntValue + 1};
+			PageLabel l = new() { PageNumber = ls.GetAsNumber(i++).IntValue + 1 };
 			PdfDictionary label = ls.GetAsDict(i);
 			if (label.Contains(PdfName.ST)) {
 				l.StartPage = label.GetAsNumber(PdfName.ST).IntValue;
@@ -602,8 +605,8 @@ internal sealed class DocInfoExporter
 					if (annot.Contains(PdfName.H)) {
 						string style = PdfHelper.GetPdfNameString(annot.GetAsName(PdfName.H));
 						style = ValueHelper.MapValue(style,
-							new[] {"N", "I", "O", "P"},
-							new[] {"无", "取反内容", "取反边框", "按下"},
+							new[] { "N", "I", "O", "P" },
+							new[] { "无", "取反内容", "取反边框", "按下" },
 							style
 						);
 						w.WriteAttributeString(Constants.PageLinkAttributes.Style, style);
@@ -639,8 +642,8 @@ internal sealed class DocInfoExporter
 						if (bs.Contains(PdfName.S)) {
 							string style = PdfHelper.GetPdfNameString(bs.GetAsName(PdfName.S));
 							style = ValueHelper.MapValue(style,
-								new[] {"S", "U", "D", "B", "I"},
-								new[] {"方框", "下划线", "虚线", "凸起", "凹陷"},
+								new[] { "S", "U", "D", "B", "I" },
+								new[] { "方框", "下划线", "虚线", "凸起", "凹陷" },
 								style
 							);
 							w.WriteAttributeString("样式", style);

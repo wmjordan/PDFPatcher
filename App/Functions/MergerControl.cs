@@ -26,7 +26,7 @@ public partial class MergerControl : FunctionControl
 
 	public MergerControl() {
 		InitializeComponent();
-		_bookmarkStyleButtonNames = new[] {"_BoldStyleButton", "_BookmarkColorButton", "_ItalicStyleButton"};
+		_bookmarkStyleButtonNames = new[] { "_BoldStyleButton", "_BookmarkColorButton", "_ItalicStyleButton" };
 	}
 
 	public override string FunctionName => "合并文档";
@@ -52,7 +52,7 @@ public partial class MergerControl : FunctionControl
 
 		ImageList.ImageCollection fi = _FileTypeList.Images;
 		fi.AddRange(
-			new Image[] {Resources.EmptyPage, Resources.OriginalPdfFile, Resources.Image, Resources.ImageFolder});
+			new Image[] { Resources.EmptyPage, Resources.OriginalPdfFile, Resources.Image, Resources.ImageFolder });
 
 		_BookmarkControl.FileDialog.CheckFileExists = false;
 		_BookmarkControl.BrowseForFile += FileControl_BrowseForFile;
@@ -156,7 +156,7 @@ public partial class MergerControl : FunctionControl
 			EnableCommand(item, _ItemList.GetItemCount() > 0 && _ItemList.Focused, true);
 		}
 		else if (n.StartsWith(Commands.Copy, StringComparison.Ordinal) ||
-		         n.StartsWith(Commands.Paste, StringComparison.Ordinal) || n == Commands.Delete) {
+				 n.StartsWith(Commands.Paste, StringComparison.Ordinal) || n == Commands.Delete) {
 			EnableCommand(item, _ItemList.GetItemCount() > 0 && _ItemList.GetFirstSelectedIndex() > -1, true);
 		}
 		else if (n == Commands.Options) {
@@ -287,16 +287,16 @@ public partial class MergerControl : FunctionControl
 		string infoFile = _BookmarkControl.Text.Trim();
 		string targetPdfFile = _TargetPdfFile.Text.Trim();
 		if (string.IsNullOrEmpty(targetPdfFile) &&
-		    string.IsNullOrEmpty(targetPdfFile = _TargetPdfFile.BrowseTargetFile())) {
+			string.IsNullOrEmpty(targetPdfFile = _TargetPdfFile.BrowseTargetFile())) {
 			FormHelper.ErrorBox(Messages.TargetFileNotSpecified);
 			return;
 		}
 
 		if (FileHelper.IsPathValid(targetPdfFile) == false) {
 			FormHelper.ErrorBox("输出文件名无效。" +
-			                    (FileHelper.HasFileNameMacro(targetPdfFile)
-				                    ? "\n合并 PDF 文件功能不支持替代符。"
-				                    : string.Empty));
+								(FileHelper.HasFileNameMacro(targetPdfFile)
+									? "\n合并 PDF 文件功能不支持替代符。"
+									: string.Empty));
 			return;
 		}
 
@@ -354,7 +354,7 @@ public partial class MergerControl : FunctionControl
 							break;
 						case SourceItem.ItemType.Pdf:
 						case SourceItem.ItemType.Image:
-							Worker.MergeDocuments(new[] {item}, tn, null);
+							Worker.MergeDocuments(new[] { item }, tn, null);
 							break;
 						case SourceItem.ItemType.Folder:
 							Worker.MergeDocuments(item.Items, tn, null);
@@ -368,7 +368,7 @@ public partial class MergerControl : FunctionControl
 				Worker.MergeDocuments(items, args[1] as string, args[2] as string);
 			}
 		};
-		worker.RunWorkerAsync(new object[] {fl, targetPdfFile, infoFile, fm});
+		worker.RunWorkerAsync(new object[] { fl, targetPdfFile, infoFile, fm });
 	}
 
 	private void _SortMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e) {
@@ -391,11 +391,11 @@ public partial class MergerControl : FunctionControl
 		}
 		else if (sender == _AddFolderButton) {
 			using (OpenFileDialog f = new() {
-				       FileName = "【选择目录】",
-				       Filter = _OpenImageBox.Filter,
-				       CheckFileExists = false,
-				       Title = "选择包含图片或 PDF 的文件夹，点击“打开”按钮"
-			       }) {
+				FileName = "【选择目录】",
+				Filter = _OpenImageBox.Filter,
+				CheckFileExists = false,
+				Title = "选择包含图片或 PDF 的文件夹，点击“打开”按钮"
+			}) {
 				if (f.ShowDialog() == DialogResult.OK) {
 					string p = Path.GetDirectoryName(f.FileName);
 					if (string.IsNullOrEmpty(Path.GetFileName(p))) {
@@ -427,10 +427,10 @@ public partial class MergerControl : FunctionControl
 				break;
 			case Commands.LoadList:
 				using (OpenFileDialog f = new() {
-					       Title = "请选择需要打开的文件列表",
-					       Filter = Constants.FileExtensions.XmlFilter,
-					       DefaultExt = Constants.FileExtensions.Xml
-				       }) {
+					Title = "请选择需要打开的文件列表",
+					Filter = Constants.FileExtensions.XmlFilter,
+					DefaultExt = Constants.FileExtensions.Xml
+				}) {
 					if (f.ShowDialog() == DialogResult.OK) {
 						_ItemList.DeselectAll();
 						_ItemList.ClearObjects();
@@ -443,10 +443,10 @@ public partial class MergerControl : FunctionControl
 				break;
 			case Commands.SaveList:
 				using (SaveFileDialog f = new() {
-					       Title = "请输入需要保存文件列表的文件名",
-					       Filter = Constants.FileExtensions.XmlFilter,
-					       DefaultExt = Constants.FileExtensions.Xml
-				       }) {
+					Title = "请输入需要保存文件列表的文件名",
+					Filter = Constants.FileExtensions.XmlFilter,
+					DefaultExt = Constants.FileExtensions.Xml
+				}) {
 					if (f.ShowDialog() == DialogResult.OK) {
 						SourceItemSerializer.Serialize(_itemsContainer.Items, f.FileName);
 					}
@@ -757,8 +757,8 @@ public partial class MergerControl : FunctionControl
 	private ListViewItem GetFocusedPdfItem() {
 		ListViewItem vi = _ItemList.FocusedItem;
 		if (vi == null
-		    //|| vi.Selected == false
-		    || vi.Text.EndsWith(Constants.FileExtensions.Pdf, StringComparison.OrdinalIgnoreCase) == false) {
+			//|| vi.Selected == false
+			|| vi.Text.EndsWith(Constants.FileExtensions.Pdf, StringComparison.OrdinalIgnoreCase) == false) {
 			return null;
 		}
 
@@ -831,7 +831,7 @@ public partial class MergerControl : FunctionControl
 		StringCollection f = o.GetFileDropList();
 		OLVListItem d = e.DropTargetItem;
 		bool child = d != null &&
-		             e.MouseLocation.X > d.Position.X + (d.GetBounds(ItemBoundsPortion.ItemOnly).Width / 2);
+					 e.MouseLocation.X > d.Position.X + (d.GetBounds(ItemBoundsPortion.ItemOnly).Width / 2);
 		bool after = d == null || e.MouseLocation.Y > d.Position.Y + (d.Bounds.Height / 2);
 		foreach (string item in f) {
 			if (Directory.Exists(item)) {
@@ -844,7 +844,7 @@ public partial class MergerControl : FunctionControl
 
 			string ext = Path.GetExtension(item).ToLowerInvariant();
 			if (ext == Constants.FileExtensions.Pdf ||
-			    Constants.FileExtensions.AllSupportedImageExtension.Contains(ext)) {
+				Constants.FileExtensions.AllSupportedImageExtension.Contains(ext)) {
 				e.Handled = true;
 				e.Effect = DragDropEffects.Copy;
 				e.InfoMessage = string.Concat("添加文件", item, "到", child ? "所有子项" : string.Empty,
@@ -877,7 +877,7 @@ public partial class MergerControl : FunctionControl
 		SourceItem ti = e.ListView.GetModelObject(e.DropTargetIndex) as SourceItem;
 		OLVListItem d = e.DropTargetItem;
 		bool child = d != null &&
-		             e.MouseLocation.X > d.Position.X + (d.GetBounds(ItemBoundsPortion.ItemOnly).Width / 2);
+					 e.MouseLocation.X > d.Position.X + (d.GetBounds(ItemBoundsPortion.ItemOnly).Width / 2);
 		bool after = d != null && e.MouseLocation.Y > d.Position.Y + (d.Bounds.Height / 2);
 		CopyOrMoveElement(sl, ti, child, after, false, true);
 	}
@@ -914,9 +914,9 @@ public partial class MergerControl : FunctionControl
 		if (child == false && copy == false) {
 			int xi = e.DropTargetIndex + (append ? 1 : -1);
 			if (xi > -1 && xi < e.ListView.GetItemCount()
-			            && e.ListView.Items[xi].Selected
-			            && GetParentSourceItem(ti) ==
-			            GetParentSourceItem(_ItemList.GetModelObject(xi) as SourceItem)) {
+						&& e.ListView.Items[xi].Selected
+						&& GetParentSourceItem(ti) ==
+						GetParentSourceItem(_ItemList.GetModelObject(xi) as SourceItem)) {
 				e.Effect = DragDropEffects.None;
 				return;
 			}
@@ -985,7 +985,7 @@ public partial class MergerControl : FunctionControl
 			return;
 		}
 
-		AddItems(new[] {item});
+		AddItems(new[] { item });
 	}
 
 	private void AddItems(ICollection<SourceItem> items) {

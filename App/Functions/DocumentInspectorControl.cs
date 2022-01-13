@@ -25,13 +25,14 @@ namespace PDFPatcher.Functions;
 public sealed partial class DocumentInspectorControl : FunctionControl, IDocumentEditor
 {
 	private static readonly PdfObjectType[] __XmlExportableTypes =
-		new PdfObjectType[] {PdfObjectType.Page, PdfObjectType.Pages, PdfObjectType.Trailer};
+		new PdfObjectType[] { PdfObjectType.Page, PdfObjectType.Pages, PdfObjectType.Trailer };
 
 	private static Dictionary<string, int> __OpNameIcons;
 	private static Dictionary<int, int> __PdfObjectIcons;
 
 	private static readonly ImageExtracterOptions _imgExpOption = new() {
-		OutputPath = Path.GetTempPath(), MergeImages = false
+		OutputPath = Path.GetTempPath(),
+		MergeImages = false
 	};
 
 	private ToolStripItem[] _addPdfObjectMenuItems;
@@ -120,8 +121,8 @@ public sealed partial class DocumentInspectorControl : FunctionControl, IDocumen
 							if (d.ImageKey == null) {
 								string n = d.ExtensiveObject as string;
 								if ((n != null && __OpNameIcons.TryGetValue(n, out int ic))
-								    || (d.Name.StartsWith(Constants.ContentPrefix + ":") &&
-								        __OpNameIcons.TryGetValue(d.Name, out ic))
+									|| (d.Name.StartsWith(Constants.ContentPrefix + ":") &&
+										__OpNameIcons.TryGetValue(d.Name, out ic))
 								   ) {
 									d.ImageKey = ic;
 								}
@@ -170,10 +171,10 @@ public sealed partial class DocumentInspectorControl : FunctionControl, IDocumen
 			}
 
 			if (po.Type == PdfObject.BOOLEAN) {
-				args.Control = new CheckBox() {Checked = (po as PdfBoolean).BooleanValue, Bounds = args.CellBounds};
+				args.Control = new CheckBox() { Checked = (po as PdfBoolean).BooleanValue, Bounds = args.CellBounds };
 			}
 			else if (po.Type == PdfObject.NUMBER) {
-				args.Control = new TextBox() {Text = (po as PdfNumber).DoubleValue.ToText(), Bounds = args.CellBounds};
+				args.Control = new TextBox() { Text = (po as PdfNumber).DoubleValue.ToText(), Bounds = args.CellBounds };
 			}
 			else if (po.Type == PdfObject.INDIRECT || PdfHelper.CompoundTypes.Contains(po.Type)) {
 				args.Cancel = true;
@@ -191,7 +192,7 @@ public sealed partial class DocumentInspectorControl : FunctionControl, IDocumen
 
 			return d.HasChildren;
 		};
-		_ObjectDetailBox.ChildrenGetter = delegate(object o) {
+		_ObjectDetailBox.ChildrenGetter = delegate (object o) {
 			DocumentObject d = o as DocumentObject;
 			if (d == null) {
 				return null;
@@ -292,7 +293,7 @@ public sealed partial class DocumentInspectorControl : FunctionControl, IDocumen
 		}
 
 		if (Commands.CommonSelectionCommands.Contains(n)
-		    || Commands.RecentFiles == n
+			|| Commands.RecentFiles == n
 		   ) {
 			EnableCommand(item, _ObjectDetailBox.GetItemCount() > 0, true);
 		}
@@ -387,7 +388,7 @@ public sealed partial class DocumentInspectorControl : FunctionControl, IDocumen
 		StringCollection f = o.GetFileDropList();
 		foreach (string item in f) {
 			if (FileHelper.HasExtension(item, Constants.FileExtensions.Xml)
-			    || FileHelper.HasExtension(item, Constants.FileExtensions.Pdf)) {
+				|| FileHelper.HasExtension(item, Constants.FileExtensions.Pdf)) {
 				e.Handled = true;
 				e.DropTargetLocation = DropTargetLocation.Background;
 				e.Effect = DragDropEffects.Move;
@@ -472,8 +473,8 @@ public sealed partial class DocumentInspectorControl : FunctionControl, IDocumen
 			string.IsNullOrEmpty(i.Name) || d.Name == i.Name ? d.Name : string.Concat(d.Name, ":", i.Name),
 			i.Description, t);
 		_DeleteButton.Enabled = !i.IsRequired && d != null
-		                                      && (d.Type == PdfObjectType.Normal || d.Type == PdfObjectType.Image ||
-		                                          (d.Type == PdfObjectType.Outline && d.Name == "Outlines"));
+											  && (d.Type == PdfObjectType.Normal || d.Type == PdfObjectType.Image ||
+												  (d.Type == PdfObjectType.Outline && d.Name == "Outlines"));
 	}
 
 	private Dictionary<string, int> InitOpNameIcons() {
@@ -616,7 +617,7 @@ public sealed partial class DocumentInspectorControl : FunctionControl, IDocumen
 			}
 
 			if (PdfName.IMAGE.Equals(s.GetAsName(PdfName.SUBTYPE))
-			    || n.Name == "Thumb") {
+				|| n.Name == "Thumb") {
 				ImageInfo info = new(s);
 				byte[] bytes = info.DecodeImage(_imgExpOption);
 				if (bytes != null) {
@@ -682,7 +683,7 @@ public sealed partial class DocumentInspectorControl : FunctionControl, IDocumen
 				}
 				else if (d.Type == PdfObjectType.Pages) {
 					foreach (PageRange r in PageRangeCollection.Parse((string)d.ExtensiveObject, 1, _pdf.PageCount,
-						         true)) {
+								 true)) {
 						foreach (int p in r) {
 							ep.Add(p);
 						}
@@ -691,7 +692,7 @@ public sealed partial class DocumentInspectorControl : FunctionControl, IDocumen
 			}
 
 			if (ep.Count == 1) {
-				ExportXmlInfo(n.FriendlyName ?? n.Name, exportTrailer, new int[] {(int)n.ExtensiveObject});
+				ExportXmlInfo(n.FriendlyName ?? n.Name, exportTrailer, new int[] { (int)n.ExtensiveObject });
 			}
 			else {
 				ExportXmlInfo(Path.GetFileNameWithoutExtension(_fileName), exportTrailer, ep.ToArray());
@@ -720,15 +721,16 @@ public sealed partial class DocumentInspectorControl : FunctionControl, IDocumen
 
 	private void ExportXmlInfo(string fileName, bool exportTrailer, int[] pages) {
 		using (SaveFileDialog d = new() {
-			       AddExtension = true,
-			       FileName = fileName + Constants.FileExtensions.Xml,
-			       DefaultExt = Constants.FileExtensions.Xml,
-			       Filter = Constants.FileExtensions.XmlFilter,
-			       Title = "请选择信息文件的保存位置"
-		       }) {
+			AddExtension = true,
+			FileName = fileName + Constants.FileExtensions.Xml,
+			DefaultExt = Constants.FileExtensions.Xml,
+			Filter = Constants.FileExtensions.XmlFilter,
+			Title = "请选择信息文件的保存位置"
+		}) {
 			if (d.ShowDialog() == DialogResult.OK) {
 				PdfContentExport exp = new(new ExporterOptions() {
-					ExtractPageDictionary = true, ExportContentOperators = true
+					ExtractPageDictionary = true,
+					ExportContentOperators = true
 				});
 				using (XmlWriter w = XmlWriter.Create(d.FileName, DocInfoExporter.GetWriterSettings())) {
 					w.WriteStartDocument();
@@ -749,12 +751,12 @@ public sealed partial class DocumentInspectorControl : FunctionControl, IDocumen
 
 	private void ExportBinHexStream(DocumentObject n, bool decode) {
 		using (SaveFileDialog d = new() {
-			       AddExtension = true,
-			       FileName = (n.FriendlyName ?? n.Name) + Constants.FileExtensions.Txt,
-			       DefaultExt = Constants.FileExtensions.Txt,
-			       Filter = "文本形式的二进制数据文件(*.txt)|*.txt|" + Constants.FileExtensions.AllFilter,
-			       Title = "请选择文件流的保存位置"
-		       }) {
+			AddExtension = true,
+			FileName = (n.FriendlyName ?? n.Name) + Constants.FileExtensions.Txt,
+			DefaultExt = Constants.FileExtensions.Txt,
+			Filter = "文本形式的二进制数据文件(*.txt)|*.txt|" + Constants.FileExtensions.AllFilter,
+			Title = "请选择文件流的保存位置"
+		}) {
 			if (d.ShowDialog() == DialogResult.OK) {
 				PRStream s = n.ExtensiveObject as PRStream;
 				try {
@@ -770,12 +772,12 @@ public sealed partial class DocumentInspectorControl : FunctionControl, IDocumen
 
 	private void ExportBinaryStream(DocumentObject n, bool decode) {
 		using (SaveFileDialog d = new() {
-			       AddExtension = true,
-			       FileName = (n.FriendlyName ?? n.Name) + ".bin",
-			       DefaultExt = ".bin",
-			       Filter = "二进制数据文件(*.bin,*.dat)|*.bin;*.dat|" + Constants.FileExtensions.AllFilter,
-			       Title = "请选择文件流的保存位置"
-		       }) {
+			AddExtension = true,
+			FileName = (n.FriendlyName ?? n.Name) + ".bin",
+			DefaultExt = ".bin",
+			Filter = "二进制数据文件(*.bin,*.dat)|*.bin;*.dat|" + Constants.FileExtensions.AllFilter,
+			Title = "请选择文件流的保存位置"
+		}) {
 			if (d.ShowDialog() == DialogResult.OK) {
 				PRStream s = n.ExtensiveObject as PRStream;
 				try {
@@ -791,12 +793,12 @@ public sealed partial class DocumentInspectorControl : FunctionControl, IDocumen
 
 	private void ExportToUnicode(DocumentObject n) {
 		using (SaveFileDialog d = new() {
-			       AddExtension = true,
-			       FileName = (n.Parent.FriendlyName ?? n.Name) + ".xml",
-			       DefaultExt = ".xml",
-			       Filter = "统一码映射信息文件(*.xml)|*.xml|" + Constants.FileExtensions.AllFilter,
-			       Title = "请选择统一码映射表的保存位置"
-		       }) {
+			AddExtension = true,
+			FileName = (n.Parent.FriendlyName ?? n.Name) + ".xml",
+			DefaultExt = ".xml",
+			Filter = "统一码映射信息文件(*.xml)|*.xml|" + Constants.FileExtensions.AllFilter,
+			Title = "请选择统一码映射表的保存位置"
+		}) {
 			if (d.ShowDialog() == DialogResult.OK) {
 				PRStream s = n.ExtensiveObject as PRStream;
 				try {
@@ -842,12 +844,12 @@ public sealed partial class DocumentInspectorControl : FunctionControl, IDocumen
 	private void SaveDocument() {
 		string path;
 		using (SaveFileDialog d = new() {
-			       DefaultExt = Constants.FileExtensions.Pdf,
-			       Filter = Constants.FileExtensions.PdfFilter,
-			       AddExtension = true,
-			       FileName = FileHelper.GetNewFileNameFromSourceFile(_fileName, Constants.FileExtensions.Pdf),
-			       InitialDirectory = Path.GetDirectoryName(_fileName)
-		       }) {
+			DefaultExt = Constants.FileExtensions.Pdf,
+			Filter = Constants.FileExtensions.PdfFilter,
+			AddExtension = true,
+			FileName = FileHelper.GetNewFileNameFromSourceFile(_fileName, Constants.FileExtensions.Pdf),
+			InitialDirectory = Path.GetDirectoryName(_fileName)
+		}) {
 			if (d.ShowDialog() != DialogResult.OK) {
 				return;
 			}

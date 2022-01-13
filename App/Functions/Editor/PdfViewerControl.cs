@@ -81,7 +81,7 @@ internal sealed class PdfViewerControl : ImageBoxEx
 		_renderOptions = new ImageRendererOptions();
 		//_ViewBox.SelectionMode = ImageBoxSelectionMode.Rectangle;
 
-		_refreshTimer = new Timer {Interval = 200};
+		_refreshTimer = new Timer { Interval = 200 };
 		_refreshTimer.Tick += (s, args) => {
 			for (int i = _DisplayRange.StartValue; i <= _DisplayRange.EndValue; i++) {
 				bool v;
@@ -96,13 +96,13 @@ internal sealed class PdfViewerControl : ImageBoxEx
 			}
 		};
 
-		_renderWorker = new BackgroundWorker {WorkerSupportsCancellation = true};
+		_renderWorker = new BackgroundWorker { WorkerSupportsCancellation = true };
 		_renderWorker.DoWork += (s, args) => {
 			Tracker.DebugMessage("started prerender job: " + _DisplayRange);
 			_refreshTimer.Stop();
 			for (int i = _DisplayRange.StartValue;
-			     i >= _DisplayRange.StartValue && i < _DisplayRange.EndValue + 2;
-			     i++) {
+				 i >= _DisplayRange.StartValue && i < _DisplayRange.EndValue + 2;
+				 i++) {
 				if (i < 1 || i > _mupdf.PageCount) {
 					continue;
 				}
@@ -417,7 +417,7 @@ internal sealed class PdfViewerControl : ImageBoxEx
 	protected override void OnMouseMove(MouseEventArgs e) {
 		base.OnMouseMove(e);
 		if (SelectionRegion.IsEmpty == false && (IsResizing || IsSelecting || IsMoving) &&
-		    e.Button == MouseButtons.Left) {
+			e.Button == MouseButtons.Left) {
 			LimitSelectionInPage(e.Location);
 		}
 	}
@@ -637,7 +637,7 @@ internal sealed class PdfViewerControl : ImageBoxEx
 				DrawTextBorders(g, p, op);
 			}
 		} while ((HorizontalFlow ? r.Right > 0 : r.Bottom < vp.Height)
-		         && ++p < _pageOffsets.Length);
+				 && ++p < _pageOffsets.Length);
 
 		if (ShowPinPoint && PinPoint != DrawingPoint.Empty) {
 			DrawingPoint pp = PinPoint.Transpose(op);
@@ -748,7 +748,7 @@ internal sealed class PdfViewerControl : ImageBoxEx
 			MuPage page = _cache.LoadPage(position.Page);
 			MuPoint point = position.Location.ToPageCoordinate(page.VisualBound);
 			if (page.VisualBound.Contains(point) == false
-			    || page.TextPage.BBox.Contains(point) == false) {
+				|| page.TextPage.BBox.Contains(point) == false) {
 				return ti;
 			}
 
@@ -792,7 +792,7 @@ internal sealed class PdfViewerControl : ImageBoxEx
 						}
 					}
 
-					NEXT: ;
+				NEXT:;
 				}
 
 				if (l != null) {

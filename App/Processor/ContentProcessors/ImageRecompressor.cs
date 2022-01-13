@@ -10,10 +10,11 @@ namespace PDFPatcher.Processor;
 
 internal sealed class ImageRecompressor : IPageProcessor
 {
-	private static readonly PdfName[] __IgnoreFilters = {PdfName.DCTDECODE, PdfName.JBIG2DECODE};
+	private static readonly PdfName[] __IgnoreFilters = { PdfName.DCTDECODE, PdfName.JBIG2DECODE };
 
 	private static readonly ImageExtracterOptions _imgExpOption = new() {
-		OutputPath = Path.GetTempPath(), MergeImages = false
+		OutputPath = Path.GetTempPath(),
+		MergeImages = false
 	};
 
 	private int _optimizedImageCount;
@@ -51,7 +52,7 @@ internal sealed class ImageRecompressor : IPageProcessor
 		foreach (KeyValuePair<PdfName, PdfObject> item in images) {
 			PRStream im = PdfReader.GetPdfObject(item.Value) as PRStream;
 			if (im == null
-			    || PdfName.IMAGE.Equals(im.GetAsName(PdfName.SUBTYPE)) == false) {
+				|| PdfName.IMAGE.Equals(im.GetAsName(PdfName.SUBTYPE)) == false) {
 				continue;
 			}
 
@@ -76,7 +77,7 @@ internal sealed class ImageRecompressor : IPageProcessor
 			}
 
 			if (OptimizeBinaryImage(item.Value as PdfIndirectReference, im, l.IntValue)
-			    || ReplaceJ2kImage(item.Value as PdfIndirectReference, im, fn)) {
+				|| ReplaceJ2kImage(item.Value as PdfIndirectReference, im, fn)) {
 			}
 		}
 
@@ -87,7 +88,7 @@ internal sealed class ImageRecompressor : IPageProcessor
 		PdfNumber bpc = imgStream.GetAsNumber(PdfName.BITSPERCOMPONENT);
 		PdfBoolean mask = imgStream.GetAsBoolean(PdfName.IMAGEMASK);
 		if ((bpc == null && (mask == null || mask.BooleanValue == false))
-		    || (bpc != null && bpc.IntValue != 1)) {
+			|| (bpc != null && bpc.IntValue != 1)) {
 			return false;
 		}
 

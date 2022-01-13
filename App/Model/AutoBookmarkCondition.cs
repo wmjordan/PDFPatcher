@@ -183,7 +183,7 @@ public abstract class AutoBookmarkCondition : ICloneable
 		}
 
 		public override object Clone() {
-			TextSizeCondition f = new() {_minSize = _minSize, _maxSize = _maxSize};
+			TextSizeCondition f = new() { _minSize = _minSize, _maxSize = _maxSize };
 			f.UpdateRangeDescription();
 			return f;
 		}
@@ -283,7 +283,7 @@ public abstract class AutoBookmarkCondition : ICloneable
 		}
 
 		public override object Clone() {
-			TextPositionCondition f = new() {_position = _position, _minValue = _minValue, _maxValue = _maxValue};
+			TextPositionCondition f = new() { _position = _position, _minValue = _minValue, _maxValue = _maxValue };
 			f.UpdateRangeDescription();
 			return f;
 		}
@@ -322,7 +322,7 @@ public abstract class AutoBookmarkCondition : ICloneable
 		internal override bool IsTextLineFilter => false;
 
 		public override object Clone() {
-			return new PageRangeCondition {PageRange = PageRange};
+			return new PageRangeCondition { PageRange = PageRange };
 		}
 
 		internal override AutoBookmarkFilter CreateFilter() {

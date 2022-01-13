@@ -23,16 +23,16 @@ public struct CMYK
 
 	public static bool operator ==(CMYK item1, CMYK item2) {
 		return item1.Cyan == item2.Cyan
-		       && item1.Magenta == item2.Magenta
-		       && item1.Yellow == item2.Yellow
-		       && item1.Black == item2.Black;
+			   && item1.Magenta == item2.Magenta
+			   && item1.Yellow == item2.Yellow
+			   && item1.Black == item2.Black;
 	}
 
 	public static bool operator !=(CMYK item1, CMYK item2) {
 		return item1.Cyan != item2.Cyan
-		       || item1.Magenta != item2.Magenta
-		       || item1.Yellow != item2.Yellow
-		       || item1.Black != item2.Black;
+			   || item1.Magenta != item2.Magenta
+			   || item1.Yellow != item2.Yellow
+			   || item1.Black != item2.Black;
 	}
 
 	#endregion

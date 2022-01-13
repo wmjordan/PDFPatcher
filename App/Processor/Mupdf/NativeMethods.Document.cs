@@ -132,8 +132,8 @@ internal static partial class NativeMethods
 	private static string TryLoadCompatibleFont(string name) {
 		string ff = Path.GetDirectoryName(Environment.GetFolderPath(Environment.SpecialFolder.System)) + "\\Fonts\\";
 		ff = name.StartsWith("SimKai", StringComparison.OrdinalIgnoreCase) ||
-		     name.StartsWith("楷体_GB2312", StringComparison.OrdinalIgnoreCase) ||
-		     name.StartsWith("Kaiti_GB2312", StringComparison.OrdinalIgnoreCase) ? ff + "simkai.ttf"
+			 name.StartsWith("楷体_GB2312", StringComparison.OrdinalIgnoreCase) ||
+			 name.StartsWith("Kaiti_GB2312", StringComparison.OrdinalIgnoreCase) ? ff + "simkai.ttf"
 			: name.StartsWith("SimSun", StringComparison.OrdinalIgnoreCase) ||
 			  name.StartsWith("宋体", StringComparison.OrdinalIgnoreCase) ||
 			  name.StartsWith("STSong", StringComparison.OrdinalIgnoreCase) ? ff + "simsun.ttc"

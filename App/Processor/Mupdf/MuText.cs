@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
-using CC = System.Runtime.InteropServices.CallingConvention;
 
 #pragma warning disable 649, 169
 namespace MuPdfSharp;

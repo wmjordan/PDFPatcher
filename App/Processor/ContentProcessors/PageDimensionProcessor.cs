@@ -42,7 +42,7 @@ internal sealed class PageDimensionProcessor : IPageProcessor
 
 		// 自动旋转页面适应原页面的方向
 		if (settings.AutoRotation && size.SpecialSize == SpecialPaperSize.None &&
-		    (size.Width > size.Height) ^ (mb.Width > mb.Height)) {
+			(size.Width > size.Height) ^ (mb.Width > mb.Height)) {
 			size = new PaperSize(size.PaperName, size.Height, size.Width);
 		}
 
@@ -54,8 +54,8 @@ internal sealed class PageDimensionProcessor : IPageProcessor
 		float dx = 0, dy = 0;
 		float sw = b.Width, sh = b.Height; // resized width and height
 		if (size.SpecialSize == SpecialPaperSize.FixedWidthAutoHeight ||
-		    size.SpecialSize == SpecialPaperSize.AsWidestPage ||
-		    size.SpecialSize == SpecialPaperSize.AsNarrowestPage) {
+			size.SpecialSize == SpecialPaperSize.AsWidestPage ||
+			size.SpecialSize == SpecialPaperSize.AsNarrowestPage) {
 			size.Height = b.Height * size.Width / b.Width;
 		}
 
@@ -85,7 +85,7 @@ internal sealed class PageDimensionProcessor : IPageProcessor
 			b.Bottom = b.Top - size.Height;
 		}
 
-		float[] a = {b.Left, b.Bottom, b.Right, b.Top};
+		float[] a = { b.Left, b.Bottom, b.Right, b.Top };
 		page.Put(PdfName.CROPBOX, new PdfArray(a));
 		ResizeBox(page, mb, b);
 		if (page.GetAsArray(PdfName.BLEEDBOX) != null) {
@@ -138,7 +138,7 @@ internal sealed class PageDimensionProcessor : IPageProcessor
 		Rectangle mb = GetPageBox(page);
 		bool ls = mb.Width > mb.Height; // Landscape
 		if ((ls && (settings.Filter & PageFilterFlag.Portrait) == PageFilterFlag.Portrait)
-		    || (ls == false && (settings.Filter & PageFilterFlag.Landscape) == PageFilterFlag.Landscape)) {
+			|| (ls == false && (settings.Filter & PageFilterFlag.Landscape) == PageFilterFlag.Landscape)) {
 			return false;
 		}
 
@@ -165,7 +165,7 @@ internal sealed class PageDimensionProcessor : IPageProcessor
 	private static bool FilterPageNumber(int pageNumber, PageFilterFlag filter) {
 		bool odd = (pageNumber & 1) > 0;
 		if ((odd && (filter & PageFilterFlag.Even) == PageFilterFlag.Even)
-		    || (odd == false && (filter & PageFilterFlag.Odd) == PageFilterFlag.Odd)
+			|| (odd == false && (filter & PageFilterFlag.Odd) == PageFilterFlag.Odd)
 		   ) {
 			return false;
 		}
@@ -197,7 +197,7 @@ internal sealed class PageDimensionProcessor : IPageProcessor
 		if (cmds.Count > 0 && cmds[0].Type == PdfPageCommandType.Matrix) {
 			MatrixCommand c = cmds[0] as MatrixCommand;
 			if (c.Name.ToString() == "cm") {
-				c.Multiply(new double[] {ct.XScale, 0, 0, ct.YScale, ct.XTranslation, ct.YTranslation});
+				c.Multiply(new double[] { ct.XScale, 0, 0, ct.YScale, ct.XTranslation, ct.YTranslation });
 			}
 		}
 		else {

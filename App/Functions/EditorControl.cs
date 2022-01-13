@@ -130,11 +130,11 @@ public sealed partial class EditorControl : FunctionControl, IDocumentEditor, IE
 
 		ToolStripItemCollection di = _ChangeZoomRate.DropDownItems;
 		di.AddRange(Array.ConvertAll(Constants.DestinationAttributes.ViewType.Names,
-			n => new ToolStripMenuItem {Name = n, Text = n}));
+			n => new ToolStripMenuItem { Name = n, Text = n }));
 		di.RemoveByKey(Constants.DestinationAttributes.ViewType.FitR);
 		di[0].Text += "...";
 		di.Insert(0,
-			new ToolStripMenuItem {Name = Constants.Coordinates.Unchanged, Text = Constants.Coordinates.Unchanged});
+			new ToolStripMenuItem { Name = Constants.Coordinates.Unchanged, Text = Constants.Coordinates.Unchanged });
 		_ChangeZoomRate.DropDownItemClicked += _MainToolbar_ItemClicked;
 		_ChangeCase.DropDownItemClicked += (object s, ToolStripItemClickedEventArgs args) => {
 			FormHelper.HidePopupMenu(args.ClickedItem);
@@ -294,8 +294,8 @@ public sealed partial class EditorControl : FunctionControl, IDocumentEditor, IE
 
 		el = _BookmarkBox.GetModelObject(i) as BookmarkElement;
 		if (_controller.Model.LockDownViewer == false
-		    && _BookmarkBox.SelectedIndices.Count == 1
-		    && (i = el.Page) > 0) {
+			&& _BookmarkBox.SelectedIndices.Count == 1
+			&& (i = el.Page) > 0) {
 			PdfViewerControl v = _ViewerBox;
 			if (_controller.Model.PdfDocument != null && el.Page > 0 && el.Page <= _ViewerBox.Document.PageCount) {
 				Rectangle b = _ViewerBox.GetPageBound(el.Page);
@@ -456,7 +456,7 @@ public sealed partial class EditorControl : FunctionControl, IDocumentEditor, IE
 					m.DropDownItemClicked += _MainToolbar_ItemClicked;
 					for (int i = 1; i < 8; i++) {
 						m.DropDownItems.Add(
-							new ToolStripMenuItem("&" + i + " 级标题") {Name = "_AutoBookmarkLevel" + i});
+							new ToolStripMenuItem("&" + i + " 级标题") { Name = "_AutoBookmarkLevel" + i });
 					}
 				}
 

@@ -19,8 +19,8 @@ public partial class OcrControl : FunctionControl, IResettableControl
 		InitializeComponent();
 		//this.Icon = Common.FormHelper.ToIcon (Properties.Resources.Ocr);
 		_BookmarkControl.FileDialog.Filter = Constants.FileExtensions.TxtFilter + "|" +
-		                                     Constants.FileExtensions.XmlFilter + "|" +
-		                                     Constants.FileExtensions.XmlOrTxtFilter;
+											 Constants.FileExtensions.XmlFilter + "|" +
+											 Constants.FileExtensions.XmlOrTxtFilter;
 
 		AppContext.MainForm.SetTooltip(_SourceFileControl.FileList, "需要识别文本的 PDF 源文件路径");
 		AppContext.MainForm.SetTooltip(_BookmarkControl.FileList, "指定识别文本后生成的信息文件或文本文件路径，如路径为空则不输出文件");
@@ -160,7 +160,7 @@ public partial class OcrControl : FunctionControl, IResettableControl
 		BackgroundWorker worker = AppContext.MainForm.GetWorker();
 		if (sender != _ImportOcrResultButton) {
 			worker.DoWork += OcrExport;
-			worker.RunWorkerAsync(new object[] {AppContext.SourceFiles, AppContext.BookmarkFile, _options});
+			worker.RunWorkerAsync(new object[] { AppContext.SourceFiles, AppContext.BookmarkFile, _options });
 		}
 		else {
 			worker.DoWork += ImportOcr;

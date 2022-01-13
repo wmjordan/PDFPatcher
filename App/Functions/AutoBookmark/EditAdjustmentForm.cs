@@ -9,7 +9,7 @@ namespace PDFPatcher.Functions;
 
 public partial class EditAdjustmentForm : Form
 {
-	internal static string[] FilterNames = new string[] {"字体名称", "文本尺寸", "文本位置", "页码范围", "文本内容"};
+	internal static string[] FilterNames = new string[] { "字体名称", "文本尺寸", "文本位置", "页码范围", "文本内容" };
 
 	internal static string[] FilterIDs = new string[] {
 		"_FontNameFilter", "_FontSizeFilter", "_FontPositionFilter", "_PageRangeFilter", "_TextFilter"
@@ -150,7 +150,7 @@ public partial class EditAdjustmentForm : Form
 			return null;
 		}
 
-		SetEditor:
+	SetEditor:
 		_filterEditors[t] = c;
 		c.Filter = filter;
 		return c;

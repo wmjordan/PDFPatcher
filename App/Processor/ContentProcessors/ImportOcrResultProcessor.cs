@@ -35,9 +35,9 @@ internal sealed class ImportOcrResultProcessor : IDocProcessor
 		while (x.EOF == false) {
 			// 读取一页识别结果
 			if (x.MoveToContent() != XmlNodeType.Element
-			    || x.Name != Constants.Ocr.Result
-			    || x.GetAttribute(Constants.Content.PageNumber).TryParse(out p) == false
-			    || p < 1 || p > pn) {
+				|| x.Name != Constants.Ocr.Result
+				|| x.GetAttribute(Constants.Content.PageNumber).TryParse(out p) == false
+				|| p < 1 || p > pn) {
 				x.Skip();
 				continue;
 			}
@@ -73,7 +73,7 @@ internal sealed class ImportOcrResultProcessor : IDocProcessor
 						PdfPageCommand.Create ("Tr", new PdfNumber (3))
 						);
 #endif
-				EnclosingCommand bmc = EnclosingCommand.Create("BMC", new PdfObject[] {OcrResultBmcName}, bt);
+				EnclosingCommand bmc = EnclosingCommand.Create("BMC", new PdfObject[] { OcrResultBmcName }, bt);
 				fontUse |= ImportImageOcrResult(bt, image);
 				commands.Add(bmc);
 			}
@@ -98,9 +98,9 @@ internal sealed class ImportOcrResultProcessor : IDocProcessor
 		for (int i = commands.Count - 1; i >= 0; i--) {
 			EnclosingCommand c = commands[i] as EnclosingCommand;
 			if (c == null
-			    || c.HasOperand == false
-			    || c.Name.ToString() != "BMC"
-			    || OcrResultBmcName.Equals(c.Operands[0]) == false) {
+				|| c.HasOperand == false
+				|| c.Name.ToString() != "BMC"
+				|| OcrResultBmcName.Equals(c.Operands[0]) == false) {
 				continue;
 			}
 
@@ -162,7 +162,7 @@ internal sealed class ImportOcrResultProcessor : IDocProcessor
 		fd.Put(PdfName.CAPHEIGHT, new PdfNumber(857));
 		fd.Put(PdfName.DESCENT, new PdfNumber(-143));
 		fd.Put(PdfName.FLAGS, new PdfNumber(4));
-		fd.Put(PdfName.FONTBBOX, new PdfArray(new[] {-250, -143, 600, 857}));
+		fd.Put(PdfName.FONTBBOX, new PdfArray(new[] { -250, -143, 600, 857 }));
 		fd.Put(PdfName.FONTNAME, FontName);
 		//fd.Put (PdfName.ITALICANGLE, new PdfNumber (0));
 		fd.Put(PdfName.STEMV, new PdfNumber(91));
@@ -194,9 +194,9 @@ internal sealed class ImportOcrResultProcessor : IDocProcessor
 		}
 
 		if (result.GetAttribute(Constants.Coordinates.Width).TryParse(out w) == false
-		    || result.GetAttribute(Constants.Coordinates.Height).TryParse(out h) == false
-		    || w <= 0
-		    || h <= 0
+			|| result.GetAttribute(Constants.Coordinates.Height).TryParse(out h) == false
+			|| w <= 0
+			|| h <= 0
 		   ) {
 			Tracker.TraceMessage(string.Concat("识别结果的“", Constants.Ocr.Image, "”元素",
 				w <= 0 ? "宽属性无效" : string.Empty,
@@ -292,18 +292,18 @@ internal sealed class ImportOcrResultProcessor : IDocProcessor
 
 		internal bool GetInfo(XmlElement ocrInfoItem) {
 			if (ocrInfoItem.GetAttribute(Constants.Coordinates.Top).TryParse(out _top) == false
-			    || ocrInfoItem.GetAttribute(Constants.Coordinates.Bottom).TryParse(out _bottom) == false
-			    || ocrInfoItem.GetAttribute(Constants.Coordinates.Left).TryParse(out _left) == false
-			    || ocrInfoItem.GetAttribute(Constants.Coordinates.Right).TryParse(out _right) == false
-			    || _top < 0 || _bottom < 0 || _left < 0 || _right < 0
-			    || _top > ImageHeight || _bottom > ImageHeight || _left > ImageWidth || _right > ImageWidth
-			    || string.IsNullOrEmpty(_text = ocrInfoItem.GetAttribute(Constants.Ocr.Text))
+				|| ocrInfoItem.GetAttribute(Constants.Coordinates.Bottom).TryParse(out _bottom) == false
+				|| ocrInfoItem.GetAttribute(Constants.Coordinates.Left).TryParse(out _left) == false
+				|| ocrInfoItem.GetAttribute(Constants.Coordinates.Right).TryParse(out _right) == false
+				|| _top < 0 || _bottom < 0 || _left < 0 || _right < 0
+				|| _top > ImageHeight || _bottom > ImageHeight || _left > ImageWidth || _right > ImageWidth
+				|| string.IsNullOrEmpty(_text = ocrInfoItem.GetAttribute(Constants.Ocr.Text))
 			   ) {
 				return false;
 			}
 
 			IsVertical = ocrInfoItem.GetAttribute(Constants.Coordinates.Direction) ==
-			             Constants.Coordinates.Vertical;
+						 Constants.Coordinates.Vertical;
 			_size = Math.Abs(IsVertical ? _right - _left : _bottom - _top);
 			if (IsVertical == false) {
 				_bottom = ImageHeight - _bottom;

@@ -35,7 +35,7 @@ internal static class ObjectListViewHelper
 
 	public static void SetTreeViewLine(this TreeListView view) {
 		TreeListView.TreeRenderer tcr = view.TreeColumnRenderer;
-		tcr.LinePen = new Pen(SystemColors.ControlDark) {DashCap = DashCap.Round, DashStyle = DashStyle.Dash};
+		tcr.LinePen = new Pen(SystemColors.ControlDark) { DashCap = DashCap.Round, DashStyle = DashStyle.Dash };
 	}
 
 	public static void ExpandSelected(this TreeListView view) {

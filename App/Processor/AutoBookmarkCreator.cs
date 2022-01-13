@@ -42,7 +42,7 @@ internal sealed class AutoBookmarkCreator
 	internal void AutoCreateBookmarks(XmlWriter writer, PdfReader reader, AutoBookmarkOptions options) {
 		Tracker.IncrementProgress(OpenWorkload);
 		int pn = reader.NumberOfPages + 1;
-		AutoBookmarkContext c = new() {TotalPageNumber = reader.NumberOfPages};
+		AutoBookmarkContext c = new() { TotalPageNumber = reader.NumberOfPages };
 		TextToBookmarkProcessor p = new(options, c);
 		LevelProcessor lp = new(options.LevelAdjustment);
 		PageRangeCollection ranges = PageRangeCollection.Parse(options.PageRanges, 1, reader.NumberOfPages, true);
@@ -178,8 +178,8 @@ internal sealed class AutoBookmarkCreator
 						writer.WriteEndElement();
 
 						if (t.Length == 0
-						    || (t.Length == 1 && options.IgnoreSingleCharacterTitle)
-						    || (options.IgnoreNumericTitle && AutoBookmarkOptions.NumericPattern.IsMatch(t))
+							|| (t.Length == 1 && options.IgnoreSingleCharacterTitle)
+							|| (options.IgnoreNumericTitle && AutoBookmarkOptions.NumericPattern.IsMatch(t))
 						   ) {
 							continue;
 						}
@@ -380,9 +380,9 @@ internal sealed class AutoBookmarkCreator
 				char c1 = l[l.Length - 1];
 				char c2 = ll[0];
 				if ((__AddSpaceAfterCharacters.IndexOf(c1) != -1
-				     || (char.IsLetterOrDigit(c1) && c1 < 0x4E00 /*非中文字符*/))
-				    && (__InsertSpaceBeforeCharacters.IndexOf(c2) != -1
-				        || (char.IsLetterOrDigit(c2) && c2 < 0x4E00))) {
+					 || (char.IsLetterOrDigit(c1) && c1 < 0x4E00 /*非中文字符*/))
+					&& (__InsertSpaceBeforeCharacters.IndexOf(c2) != -1
+						|| (char.IsLetterOrDigit(c2) && c2 < 0x4E00))) {
 					sb.Append(' ');
 				}
 			}
@@ -430,28 +430,28 @@ internal sealed class AutoBookmarkCreator
 
 				cd = li.GetDistance(ir);
 				if ((cd.IsOverlapping // 当前项与文本行交叠
-				     && (md.IsOverlapping == false // 最小距离不是交叠
-				         || cd.DistanceRadial < md.DistanceRadial) // 当前项与文本行的交叠中心距离小于最小距离
-				    )
-				    //&& (options.MergeDifferentFontTitles || li.FirstText.Font.FontID == item.Font.FontID)
-				    || ((md.Location == DistanceInfo.Placement.Unknown // 未知最小距离
-				         || (cd.IsOverlapping == false
-				             && md.IsOverlapping == false
-				             && cd.MinDistance < md.MinDistance) // 当前项与文本行的距离小于最小距离
-				        )
-				        && ((cd.IsHorizontallyAligned // 相对位置为水平
-				             && li.Direction != WritingDirection.Vertical // 文本行方向不为纵向
-				             && item.Region.IsAlignedWith(li.Region, WritingDirection.Hortizontal) // 两者处于同一横行
-				            )
-				            || (cd.IsVerticallyAligned // 相对位置为垂直
-				                && li.Direction != WritingDirection.Hortizontal // 文本行方向不为横向
-				                && item.Region.IsAlignedWith(li.Region, WritingDirection.Vertical) // 两者处于同一纵行
-					            // && Math.Abs (item.Region.Middle - li.Region.Middle) < li.Region.Height // 行间距离小于行高
-				            )
-				        )
-				        && (options.DetectColumns == false || cd.MinDistance < cw)
-				        && (options.MergeDifferentFontTitles || li.FirstText.Font.FontID == item.Font.FontID)
-				    )
+					 && (md.IsOverlapping == false // 最小距离不是交叠
+						 || cd.DistanceRadial < md.DistanceRadial) // 当前项与文本行的交叠中心距离小于最小距离
+					)
+					//&& (options.MergeDifferentFontTitles || li.FirstText.Font.FontID == item.Font.FontID)
+					|| ((md.Location == DistanceInfo.Placement.Unknown // 未知最小距离
+						 || (cd.IsOverlapping == false
+							 && md.IsOverlapping == false
+							 && cd.MinDistance < md.MinDistance) // 当前项与文本行的距离小于最小距离
+						)
+						&& ((cd.IsHorizontallyAligned // 相对位置为水平
+							 && li.Direction != WritingDirection.Vertical // 文本行方向不为纵向
+							 && item.Region.IsAlignedWith(li.Region, WritingDirection.Hortizontal) // 两者处于同一横行
+							)
+							|| (cd.IsVerticallyAligned // 相对位置为垂直
+								&& li.Direction != WritingDirection.Hortizontal // 文本行方向不为横向
+								&& item.Region.IsAlignedWith(li.Region, WritingDirection.Vertical) // 两者处于同一纵行
+																								   // && Math.Abs (item.Region.Middle - li.Region.Middle) < li.Region.Height // 行间距离小于行高
+							)
+						)
+						&& (options.DetectColumns == false || cd.MinDistance < cw)
+						&& (options.MergeDifferentFontTitles || li.FirstText.Font.FontID == item.Font.FontID)
+					)
 				   ) {
 					md = cd;
 					ml = li;
@@ -481,8 +481,8 @@ internal sealed class AutoBookmarkCreator
 					// 检查是否存在交叠重复的文本
 					foreach (TextInfo t in ml.Texts) {
 						if (t.Region.IntersectWith(item.Region) // item 与 TextLine 中某项交叠
-						    && (t.Text.Contains(item.Text) || item.Text.Contains(t.Text) // 交叠的项文本和 item 的文本相同
-						    )
+							&& (t.Text.Contains(item.Text) || item.Text.Contains(t.Text) // 交叠的项文本和 item 的文本相同
+							)
 						   ) {
 							goto Next; // 忽略此项目
 						}
@@ -495,7 +495,7 @@ internal sealed class AutoBookmarkCreator
 				ll.Add(new TextLine(item));
 			}
 
-			Next: ;
+		Next:;
 		}
 
 		return ll;
@@ -521,45 +521,45 @@ internal sealed class AutoBookmarkCreator
 				TextRegion li = ll[i];
 				// 文本尺寸应在误差范围之内
 				if (Math.Abs(item.FirstText.Size - li.Lines[0].FirstText.Size) > ds &&
-				    _options.MergeAdjacentTitles) {
+					_options.MergeAdjacentTitles) {
 					continue;
 				}
 
 				if (_options.MergeDifferentFontTitles == false &&
-				    li.Lines[0].FirstText.Font.FontID != item.FirstText.Font.FontID) {
+					li.Lines[0].FirstText.Font.FontID != item.FirstText.Font.FontID) {
 					break;
 				}
 
 				cd = li.Region.GetDistance(ir, li.Direction);
 				if ((cd.IsOverlapping // 当前项与文本行交叠
-				     && (md.IsOverlapping == false // 最小距离不是交叠
-				         || cd.DistanceRadial < md.DistanceRadial) // 当前项与文本行的交叠中心距离小于最小距离
-				    )
-				    || ((md.Location == DistanceInfo.Placement.Unknown // 未知最小距离
-				         || (cd.IsOverlapping == false
-				             && md.IsOverlapping == false
-				             && cd.MinDistance < md.MinDistance) // 当前项与文本行的距离小于最小距离
-				        )
-				        && ((cd.IsHorizontallyAligned // 相对位置为水平
-				             && li.Direction != WritingDirection.Vertical // 文本行方向不为纵向
-				             && item.Region.IsAlignedWith(li.Region, WritingDirection.Hortizontal) // 两者处于同一横行
-				             && cd.MinDistance < item.Region.Width * _options.MaxDistanceBetweenLines // 行间距离小于指定行宽
-				             && _options.MergeAdjacentTitles
-				             && (_options.MergeDifferentSizeTitles ||
-				                 li.Lines[0].Region.Width == item.Region.Width) // 合并相同尺寸的标题
-				            )
-				            || (cd.IsVerticallyAligned // 相对位置为垂直
-				                && li.Direction != WritingDirection.Hortizontal // 文本行方向不为横向
-				                && item.Region.IsAlignedWith(li.Region, WritingDirection.Vertical) // 两者处于同一纵行
-				                && cd.MinDistance <
-				                item.Region.Height * _options.MaxDistanceBetweenLines // 行间距离小于指定行高
-				                && _options.MergeAdjacentTitles
-				                && (_options.MergeDifferentSizeTitles ||
-				                    li.Lines[0].Region.Height == item.Region.Height) // 合并相同尺寸的标题
-				            )
-				        )
-				        && cd.MinDistance < cw
-				    )
+					 && (md.IsOverlapping == false // 最小距离不是交叠
+						 || cd.DistanceRadial < md.DistanceRadial) // 当前项与文本行的交叠中心距离小于最小距离
+					)
+					|| ((md.Location == DistanceInfo.Placement.Unknown // 未知最小距离
+						 || (cd.IsOverlapping == false
+							 && md.IsOverlapping == false
+							 && cd.MinDistance < md.MinDistance) // 当前项与文本行的距离小于最小距离
+						)
+						&& ((cd.IsHorizontallyAligned // 相对位置为水平
+							 && li.Direction != WritingDirection.Vertical // 文本行方向不为纵向
+							 && item.Region.IsAlignedWith(li.Region, WritingDirection.Hortizontal) // 两者处于同一横行
+							 && cd.MinDistance < item.Region.Width * _options.MaxDistanceBetweenLines // 行间距离小于指定行宽
+							 && _options.MergeAdjacentTitles
+							 && (_options.MergeDifferentSizeTitles ||
+								 li.Lines[0].Region.Width == item.Region.Width) // 合并相同尺寸的标题
+							)
+							|| (cd.IsVerticallyAligned // 相对位置为垂直
+								&& li.Direction != WritingDirection.Hortizontal // 文本行方向不为横向
+								&& item.Region.IsAlignedWith(li.Region, WritingDirection.Vertical) // 两者处于同一纵行
+								&& cd.MinDistance <
+								item.Region.Height * _options.MaxDistanceBetweenLines // 行间距离小于指定行高
+								&& _options.MergeAdjacentTitles
+								&& (_options.MergeDifferentSizeTitles ||
+									li.Lines[0].Region.Height == item.Region.Height) // 合并相同尺寸的标题
+							)
+						)
+						&& cd.MinDistance < cw
+					)
 				   ) {
 					md = cd;
 					mr = li;
@@ -604,7 +604,7 @@ internal sealed class AutoBookmarkCreator
 
 		internal void AddOccurance(string fontName, float size, int page, string instance) {
 			if (oc.ContainsKey(fontName) == false) {
-				oc.Add(fontName, new List<SizeOccurance> {new(size, page, instance)});
+				oc.Add(fontName, new List<SizeOccurance> { new(size, page, instance) });
 			}
 			else {
 				SizeOccurance o = oc[fontName].Find(s => { return s.Size == size; });
@@ -758,7 +758,7 @@ internal sealed class AutoBookmarkCreator
 			//    goto Exit;
 			//}
 			TextList.Add(ti);
-			Exit: ;
+		Exit:;
 		}
 
 		private string DecodeTJText(List<PdfObject> operands, float size) {
@@ -827,9 +827,9 @@ internal sealed class AutoBookmarkCreator
 		/// <returns>小边框完全处于大边框内，则返回 true。</returns>
 		internal static bool IsBoundOutOfRectangle(Rectangle a, Bound b) {
 			return b.Right < a.Left
-			       || b.Top < a.Bottom
-			       || b.Bottom > a.Top
-			       || b.Left > a.Right;
+				   || b.Top < a.Bottom
+				   || b.Bottom > a.Top
+				   || b.Left > a.Right;
 		}
 	}
 

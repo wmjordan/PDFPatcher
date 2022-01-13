@@ -18,7 +18,9 @@ internal sealed class PdfPathDocument : IHierarchicalObject<DocumentObject>
 		Document = PdfHelper.OpenPdfFile(pdfPath, AppContext.LoadPartialPdfFile, false);
 		_pageMapper = Document.GetPageRefMapper();
 		Trailer = new DocumentObject(this, null, "Trailer", Document.Trailer, PdfObjectType.Trailer) {
-			IsKeyObject = true, Description = "文档根节点", FriendlyValue = Path.GetFileNameWithoutExtension(pdfPath)
+			IsKeyObject = true,
+			Description = "文档根节点",
+			FriendlyValue = Path.GetFileNameWithoutExtension(pdfPath)
 		};
 		_hiddenObjects = new DocumentObject(this, null, "隐藏对象", null, PdfObjectType.Hidden);
 		int l = Document.NumberOfPages;

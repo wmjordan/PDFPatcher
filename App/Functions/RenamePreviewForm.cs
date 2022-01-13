@@ -20,10 +20,10 @@ public partial class RenamePreviewForm : Form
 			}
 
 			if (t.ToString().IndexOf('<') == -1) {
-				c.Add(new ListViewItem(new string[] {s.FileName, t.FileName, s.Directory, t.Directory}));
+				c.Add(new ListViewItem(new string[] { s.FileName, t.FileName, s.Directory, t.Directory }));
 			}
 			else {
-				ListViewItem item = c.Add(new ListViewItem(new string[] {s.FileName, t, s.Directory, string.Empty}));
+				ListViewItem item = c.Add(new ListViewItem(new string[] { s.FileName, t, s.Directory, string.Empty }));
 				item.UseItemStyleForSubItems = false;
 				item.SubItems[1].BackColor = Color.LightYellow;
 			}

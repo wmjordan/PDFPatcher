@@ -286,7 +286,7 @@ internal class ImageBoxEx : ImageBox
 		selectionRegion = SelectionRegion;
 
 		if (e.Button == MouseButtons.Left &&
-		    (selectionRegion.Contains(imagePoint) || HitTest(e.Location) != DragHandleAnchor.None)) {
+			(selectionRegion.Contains(imagePoint) || HitTest(e.Location) != DragHandleAnchor.None)) {
 			_dragOrigin = e.Location;
 			_dragOriginOffset = new Point(imagePoint.X - (int)selectionRegion.X,
 				imagePoint.Y - (int)selectionRegion.Y);
@@ -308,7 +308,7 @@ internal class ImageBoxEx : ImageBox
 	protected override void OnMouseMove(MouseEventArgs e) {
 		// start either a move or a resize operation
 		if (!IsSelecting && !IsMoving && !IsResizing && e.Button == MouseButtons.Left && !_dragOrigin.IsEmpty &&
-		    IsOutsideDragZone(e.Location)) {
+			IsOutsideDragZone(e.Location)) {
 			DragHandleAnchor anchor;
 
 			anchor = HitTest(_dragOrigin);
@@ -414,7 +414,7 @@ internal class ImageBoxEx : ImageBox
 	/// </param>
 	protected override void OnSelecting(ImageBoxCancelEventArgs e) {
 		e.Cancel = IsMoving || IsResizing || SelectionRegion.Contains(PointToImage(e.Location)) ||
-		           HitTest(e.Location) != DragHandleAnchor.None;
+				   HitTest(e.Location) != DragHandleAnchor.None;
 
 		base.OnSelecting(e);
 	}
@@ -703,15 +703,15 @@ internal class ImageBoxEx : ImageBox
 
 			// decide which edges we're resizing
 			resizingTopEdge = ResizeAnchor >= DragHandleAnchor.TopLeft &&
-			                  ResizeAnchor <= DragHandleAnchor.TopRight;
+							  ResizeAnchor <= DragHandleAnchor.TopRight;
 			resizingBottomEdge = ResizeAnchor >= DragHandleAnchor.BottomLeft &&
-			                     ResizeAnchor <= DragHandleAnchor.BottomRight;
+								 ResizeAnchor <= DragHandleAnchor.BottomRight;
 			resizingLeftEdge = ResizeAnchor == DragHandleAnchor.TopLeft ||
-			                   ResizeAnchor == DragHandleAnchor.MiddleLeft ||
-			                   ResizeAnchor == DragHandleAnchor.BottomLeft;
+							   ResizeAnchor == DragHandleAnchor.MiddleLeft ||
+							   ResizeAnchor == DragHandleAnchor.BottomLeft;
 			resizingRightEdge = ResizeAnchor == DragHandleAnchor.TopRight ||
-			                    ResizeAnchor == DragHandleAnchor.MiddleRight ||
-			                    ResizeAnchor == DragHandleAnchor.BottomRight;
+								ResizeAnchor == DragHandleAnchor.MiddleRight ||
+								ResizeAnchor == DragHandleAnchor.BottomRight;
 
 			// and resize!
 			if (resizingTopEdge) {

@@ -48,7 +48,7 @@ internal sealed class QuickSelectCommand : IEditorCommand
 
 	internal static void RegisterMenuItems(ToolStripItemCollection container) {
 		foreach (MatchPattern item in __commands) {
-			container.Add(new ToolStripMenuItem(item.Name) {Name = item.Name});
+			container.Add(new ToolStripMenuItem(item.Name) { Name = item.Name });
 		}
 	}
 }

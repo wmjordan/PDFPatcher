@@ -204,7 +204,7 @@ internal class PdfPageExtractor
 			if (options.KeepBookmarks) {
 				Tracker.TraceMessage("导出原文档书签。");
 				pdf.ConsolidateNamedDestinations();
-				bm = OutlineManager.GetBookmark(pdf, new UnitConverter {Unit = Constants.Units.Point});
+				bm = OutlineManager.GetBookmark(pdf, new UnitConverter { Unit = Constants.Units.Point });
 				if (bm != null && bm.HasChildNodes) {
 					IInfoDocProcessor[] processors = {
 						new GotoDestinationProcessor {

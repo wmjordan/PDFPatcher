@@ -35,7 +35,7 @@ internal static class PathAxes
 	}
 
 	private static IList<DocumentObject> CompriseSingleObjectCollection(DocumentObject source) {
-		return source == null ? PathExpression.EmptyMatchResult : new[] {source};
+		return source == null ? PathExpression.EmptyMatchResult : new[] { source };
 	}
 
 	private static string GetLiteralValue(object operand) {

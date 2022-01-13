@@ -95,7 +95,7 @@ public class RichTextBoxEx : RichTextBox
 	}
 
 	public void SetSelectionFontSize(float size) {
-		CHARFORMAT2_STRUCT cf = new() {dwMask = CFM_SIZE};
+		CHARFORMAT2_STRUCT cf = new() { dwMask = CFM_SIZE };
 		cf.cbSize = (uint)Marshal.SizeOf(cf);
 		cf.yHeight = (int)(size * 20f);
 

@@ -7,7 +7,7 @@ namespace PDFPatcher.Functions;
 
 public partial class ViewerPreferenceEditor : UserControl
 {
-	private readonly string[] __bookmarkStatus = {"保持不变", "全部关闭", "全部打开", "打开首层"};
+	private readonly string[] __bookmarkStatus = { "保持不变", "全部关闭", "全部打开", "打开首层" };
 	private ViewerOptions _Options;
 	private bool _settingsLockdown;
 

@@ -16,8 +16,8 @@ internal sealed class FontInfo : CMapAwareDocumentFont
 		new("GBK-EUC-H"), new("GBK-EUC-V"), new("GB-EUC-H"), new("GB-EUC-V")
 	};
 
-	private static readonly string[] __gbkFontNames = {"宋体", "黑体", "楷体_GB2312", "仿宋体", "仿宋_GB2312", "隶书", "幼圆"};
-	private static readonly PdfName[] __IdentityEncodingNames = {new("Identity-H"), new("Identity-V")};
+	private static readonly string[] __gbkFontNames = { "宋体", "黑体", "楷体_GB2312", "仿宋体", "仿宋_GB2312", "隶书", "幼圆" };
+	private static readonly PdfName[] __IdentityEncodingNames = { new("Identity-H"), new("Identity-V") };
 
 	//private readonly static string[] __big5FontNames = new string[] { "MINGLIU" };
 
@@ -136,14 +136,14 @@ internal sealed class FontInfo : CMapAwareDocumentFont
 	internal int DecodeCidToUnicode(int cid) {
 		string s;
 		if (AppContext.Encodings.TextEncoding != null) {
-			s = AppContext.Encodings.TextEncoding.GetString(new[] {(byte)(cid >> 8), (byte)cid});
+			s = AppContext.Encodings.TextEncoding.GetString(new[] { (byte)(cid >> 8), (byte)cid });
 		}
 
 		//if (CjkType == CjkFontType.Chinese) {
 		//	s = __GbkEncoding.GetString (cid < 256 ? new byte[] { (byte)cid } : new byte[] { (byte)cid, (byte)(cid >> 8) });
 		//}
 		//else {
-		s = Decode(new[] {(byte)(cid >> 8), (byte)cid}, 0, 2);
+		s = Decode(new[] { (byte)(cid >> 8), (byte)cid }, 0, 2);
 		//}
 		if (s.Length == 0) {
 			return 0;

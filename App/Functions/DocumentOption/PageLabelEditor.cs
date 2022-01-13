@@ -38,7 +38,8 @@ public partial class PageLabelEditor : UserControl
 			AspectGetter = o => o.Style ?? Constants.PageLabelStyles.Names[0]
 		};
 		new TypedColumn<PageLabel>(_LabelPrefixColumn) {
-			AspectGetter = o => o.Prefix, AspectPutter = (o, v) => o.Prefix = v as string
+			AspectGetter = o => o.Prefix,
+			AspectPutter = (o, v) => o.Prefix = v as string
 		};
 		_PageLabelBox.FormatRow += (s, args) => args.Item.SubItems[0].Text = (args.RowIndex + 1).ToText();
 		_PageLabelBox.FixEditControlWidth();
@@ -75,7 +76,7 @@ public partial class PageLabelEditor : UserControl
 		}
 
 		++i;
-		_Labels.Add(new PageLabel {PageNumber = i, StartPage = 1});
+		_Labels.Add(new PageLabel { PageNumber = i, StartPage = 1 });
 		_LabelBox.Objects = _Labels;
 	}
 

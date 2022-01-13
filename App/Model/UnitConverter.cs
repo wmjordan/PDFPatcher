@@ -62,7 +62,7 @@ public class UnitConverter
 
 	internal float ToPoint(float value) {
 		return (value < _PreservedValue && value >= 0) ||
-		       value >= 10000 // preserve small fragment or extra large values
+			   value >= 10000 // preserve small fragment or extra large values
 			? value
 			: (float)Math.Round(value * UnitFactor, _Precision);
 	}

@@ -24,14 +24,14 @@ public struct HSL
 
 	public static bool operator ==(HSL item1, HSL item2) {
 		return item1.Hue == item2.Hue
-		       && item1.Saturation == item2.Saturation
-		       && item1.Luminance == item2.Luminance;
+			   && item1.Saturation == item2.Saturation
+			   && item1.Luminance == item2.Luminance;
 	}
 
 	public static bool operator !=(HSL item1, HSL item2) {
 		return item1.Hue != item2.Hue
-		       || item1.Saturation != item2.Saturation
-		       || item1.Luminance != item2.Luminance;
+			   || item1.Saturation != item2.Saturation
+			   || item1.Luminance != item2.Luminance;
 	}
 
 	#endregion

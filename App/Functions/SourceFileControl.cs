@@ -56,8 +56,8 @@ public partial class SourceFileControl : UserControl
 	private void _BrowseSourcePdfButton_Click(object sender, EventArgs e) {
 		string t = FileList.Text;
 		if (t.Length > 0
-		    && FileHelper.IsPathValid(t)
-		    && Path.GetFileName(t).Length > 0) {
+			&& FileHelper.IsPathValid(t)
+			&& Path.GetFileName(t).Length > 0) {
 			_OpenPdfBox.FileName = t;
 		}
 
@@ -87,7 +87,7 @@ public partial class SourceFileControl : UserControl
 		}
 
 		if (FileHelper.HasFileNameMacro(FileList.Text) == false) {
-			SelectFiles(new[] {FileList.Text});
+			SelectFiles(new[] { FileList.Text });
 		}
 	}
 

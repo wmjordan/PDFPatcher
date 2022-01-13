@@ -45,10 +45,12 @@ public partial class FontSubstitutionsEditor : UserControl
 			}
 		};
 		new TypedColumn<FontSubstitution>(_OriginalFontColumn) {
-			AspectGetter = o => o.OriginalFont, AspectPutter = (o, v) => o.OriginalFont = v as string
+			AspectGetter = o => o.OriginalFont,
+			AspectPutter = (o, v) => o.OriginalFont = v as string
 		};
 		new TypedColumn<FontSubstitution>(_SubstitutionColumn) {
-			AspectGetter = o => o.Substitution, AspectPutter = (o, v) => o.Substitution = v as string
+			AspectGetter = o => o.Substitution,
+			AspectPutter = (o, v) => o.Substitution = v as string
 		};
 		new TypedColumn<FontSubstitution>(_CharSubstitutionColumn) {
 			AspectGetter = o => string.IsNullOrEmpty(o.OriginalCharacters) ? "添加" : "修改"
@@ -131,7 +133,7 @@ public partial class FontSubstitutionsEditor : UserControl
 	}
 
 	private void _AddPageLabelButton_Click(object sender, EventArgs e) {
-		FontSubstitution s = new() {OriginalFont = "请输入原字体名称"};
+		FontSubstitution s = new() { OriginalFont = "请输入原字体名称" };
 		_Substitutions.Add(s);
 		_FontSubstitutionsBox.AddObject(s);
 		_FontSubstitutionsBox.EditSubItem(_FontSubstitutionsBox.GetLastItemInDisplayOrder(), 1);
@@ -161,7 +163,7 @@ public partial class FontSubstitutionsEditor : UserControl
 				continue;
 			}
 
-			_Substitutions.Add(new FontSubstitution {OriginalFont = item});
+			_Substitutions.Add(new FontSubstitution { OriginalFont = item });
 		}
 
 		_SubstitutionsBox.Objects = _Substitutions;

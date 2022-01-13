@@ -11,8 +11,8 @@ namespace PDFPatcher.Model;
 [DebuggerDisplay("Name = {Name}({FriendlyName}); Value = {Value}; {HasChildren}")]
 public sealed class DocumentObject : IHierarchicalObject<DocumentObject>
 {
-	private static readonly string[] __ReversalRefNames = {"Parent", "Prev", "First", "Last", "P"};
-	private static readonly int[] __CompoundTypes = {PdfObject.DICTIONARY, PdfObject.ARRAY, PdfObject.STREAM};
+	private static readonly string[] __ReversalRefNames = { "Parent", "Prev", "First", "Last", "P" };
+	private static readonly int[] __CompoundTypes = { PdfObject.DICTIONARY, PdfObject.ARRAY, PdfObject.STREAM };
 	private static readonly DocumentObject[] __Leaf = new DocumentObject[0];
 
 	private IList<DocumentObject> _Children;
@@ -37,7 +37,7 @@ public sealed class DocumentObject : IHierarchicalObject<DocumentObject>
 					}
 				}
 				else if (r.Type == PdfObject.STREAM &&
-				         PdfName.IMAGE.Equals(((PdfDictionary)r).GetAsName(PdfName.SUBTYPE))) {
+						 PdfName.IMAGE.Equals(((PdfDictionary)r).GetAsName(PdfName.SUBTYPE))) {
 					type = PdfObjectType.Image;
 				}
 			}
@@ -73,9 +73,9 @@ public sealed class DocumentObject : IHierarchicalObject<DocumentObject>
 	public bool HasChildren {
 		get {
 			if (Type != PdfObjectType.Normal
-			    && (Type == PdfObjectType.Trailer || Type == PdfObjectType.Pages || Type == PdfObjectType.Page ||
-			        Type == PdfObjectType.PageCommands || Type == PdfObjectType.Hidden ||
-			        (Type == PdfObjectType.PageCommand && Children.Count > 0))) {
+				&& (Type == PdfObjectType.Trailer || Type == PdfObjectType.Pages || Type == PdfObjectType.Page ||
+					Type == PdfObjectType.PageCommands || Type == PdfObjectType.Hidden ||
+					(Type == PdfObjectType.PageCommand && Children.Count > 0))) {
 				return true;
 			}
 
@@ -103,8 +103,8 @@ public sealed class DocumentObject : IHierarchicalObject<DocumentObject>
 				}
 
 				return (r.Type == PdfObject.DICTIONARY && __ReversalRefNames.Contains(Name) == false)
-				       || r.Type == PdfObject.ARRAY
-				       || r.Type == PdfObject.STREAM;
+					   || r.Type == PdfObject.ARRAY
+					   || r.Type == PdfObject.STREAM;
 			}
 
 			return false;
@@ -246,7 +246,7 @@ public sealed class DocumentObject : IHierarchicalObject<DocumentObject>
 			case PdfObject.NULL: return "Null";
 		}
 
-		Exit:
+	Exit:
 		return null;
 	}
 
@@ -317,7 +317,7 @@ public sealed class DocumentObject : IHierarchicalObject<DocumentObject>
 			if (Type != PdfObjectType.Normal) {
 				if (Type == PdfObjectType.Page) {
 					r[n++] = new DocumentObject(OwnerDocument, this, Constants.Content.Operators, null,
-						PdfObjectType.PageCommands) {IsKeyObject = true};
+						PdfObjectType.PageCommands) { IsKeyObject = true };
 				}
 				else if (Type == PdfObjectType.Trailer) {
 					DocumentObject d = Array.Find(r, o => { return o.Name == "Root"; });
@@ -343,7 +343,7 @@ public sealed class DocumentObject : IHierarchicalObject<DocumentObject>
 									: null
 							});
 						while ((or = pd.Get(PdfName.NEXT)) != null &&
-						       (pd = PdfReader.GetPdfObject(or) as PdfDictionary) != null) {
+							   (pd = PdfReader.GetPdfObject(or) as PdfDictionary) != null) {
 							o.Add(new DocumentObject(OwnerDocument, this, Constants.Bookmark, or,
 								PdfObjectType.Outline) {
 								Description = pd.Contains(PdfName.TITLE)
@@ -436,7 +436,8 @@ public sealed class DocumentObject : IHierarchicalObject<DocumentObject>
 		}
 
 		DocumentObject o = new(OwnerDocument, this, fn, null, PdfObjectType.PageCommand) {
-			FriendlyName = string.Concat(fn, "(", op, ")"), ExtensiveObject = op
+			FriendlyName = string.Concat(fn, "(", op, ")"),
+			ExtensiveObject = op
 		};
 		if (item.Type == PdfPageCommandType.Text) {
 			TextCommand t = item as TextCommand;

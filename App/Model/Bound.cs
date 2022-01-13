@@ -217,7 +217,7 @@ public class Bound
 					: (other.Bottom < Middle && Middle < other.Top) || (Bottom < other.Middle && other.Middle < Top);
 			case WritingDirection.Vertical:
 				return (other.Left < Center && Center < other.Right)
-				       || (Left < other.Center && other.Center < Right);
+					   || (Left < other.Center && other.Center < Right);
 			default:
 				return IntersectWith(other);
 		}
@@ -225,9 +225,9 @@ public class Bound
 
 	internal bool IntersectWith(Bound other) {
 		return other.Left < Right && Left < other.Right &&
-		       (IsTopDown
-			       ? other.Top < Bottom && Top < other.Bottom
-			       : other.Bottom < Top && Bottom < other.Top);
+			   (IsTopDown
+				   ? other.Top < Bottom && Top < other.Bottom
+				   : other.Bottom < Top && Bottom < other.Top);
 	}
 
 	internal bool Contains(float x, float y) {

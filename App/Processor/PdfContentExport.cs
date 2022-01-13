@@ -192,7 +192,7 @@ internal sealed class PdfContentExport
 				break;
 		}
 
-		EndElement:
+	EndElement:
 		writer.WriteEndElement();
 		_exportPath.RemoveAt(_exportPath.Count - 1);
 	}
@@ -376,7 +376,7 @@ internal sealed class PdfContentExport
 				PdfStream s = i as PdfStream;
 				ExportPdfDictionary(writer, i as PdfDictionary);
 				if (_imageExporter != null &&
-				    PdfName.IMAGE.Equals((i as PdfDictionary).GetAsName(PdfName.SUBTYPE))) {
+					PdfName.IMAGE.Equals((i as PdfDictionary).GetAsName(PdfName.SUBTYPE))) {
 					writer.WriteStartElement(Constants.ContentPrefix, "image", Constants.ContentNamespace);
 					ImageInfo info = _imageExporter.InfoList.Find(ii => ii.InlineImage.PdfRef == r);
 					if (info != null) {
@@ -417,7 +417,7 @@ internal sealed class PdfContentExport
 
 		if (isRaw == false) {
 			if (key == "Contents" || key == "ToUnicode" || (PdfName.XOBJECT.Equals(s.GetAsName(PdfName.TYPE)) &&
-			                                                PdfName.FORM.Equals(s.GetAsName(PdfName.SUBTYPE)))) {
+															PdfName.FORM.Equals(s.GetAsName(PdfName.SUBTYPE)))) {
 				StringBuilder sb = new();
 				byte b;
 				int l = bs.Length;

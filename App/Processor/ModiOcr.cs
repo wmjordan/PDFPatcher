@@ -178,7 +178,7 @@ public class ModiOcr
 				bool sl = cl == lineID && cr == regionID; // 处于同一行
 				if (sl && WritingDirection != WritingDirection.Unknown) {
 					sl = cti != null
-					     && cti.Region.IsAlignedWith(ti.Region, WritingDirection);
+						 && cti.Region.IsAlignedWith(ti.Region, WritingDirection);
 				}
 
 				if (sl) {
@@ -194,7 +194,7 @@ public class ModiOcr
 						results.Add(line);
 					}
 
-					line = new TextLine(ti) {SuppressTextInfoArrangement = true};
+					line = new TextLine(ti) { SuppressTextInfoArrangement = true };
 					lineID = cl;
 					regionID = cr;
 				}
@@ -282,7 +282,7 @@ public class ModiOcr
 
 	private static object Get(object instance, string propertyName, int index) {
 		return instance.GetType().InvokeMember(propertyName, BindingFlags.GetProperty, null, instance,
-			new object[1] {index});
+			new object[1] { index });
 	}
 
 	private static void FinalReleaseComObjects(params object[] objs) {

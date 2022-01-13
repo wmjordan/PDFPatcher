@@ -16,15 +16,15 @@ internal sealed class LoadDocumentCommand : IEditorCommand
 	public void Process(Controller controller, params string[] parameters) {
 		if (_showDialog) {
 			using (OpenFileDialog f = new() {
-				       DefaultExt = _importBookmark ? Constants.FileExtensions.Xml : Constants.FileExtensions.Pdf,
-				       Title = _importBookmark ? "打开需要导入的书签文件" : "打开需要编辑的文件",
-				       Filter = Constants.FileExtensions.AllEditableFilter
-			       }) {
+				DefaultExt = _importBookmark ? Constants.FileExtensions.Xml : Constants.FileExtensions.Pdf,
+				Title = _importBookmark ? "打开需要导入的书签文件" : "打开需要编辑的文件",
+				Filter = Constants.FileExtensions.AllEditableFilter
+			}) {
 				if (f.ShowDialog() != DialogResult.OK) {
 					return;
 				}
 
-				parameters = new[] {f.FileName};
+				parameters = new[] { f.FileName };
 			}
 		}
 

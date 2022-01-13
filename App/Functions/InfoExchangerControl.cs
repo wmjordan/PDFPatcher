@@ -72,7 +72,7 @@ public partial class InfoExchangerControl : FunctionControl
 			}
 		};
 		ImageList.ImageCollection fi = _FileTypeList.Images;
-		fi.AddRange(new Image[] {Resources.OriginalPdfFile});
+		fi.AddRange(new Image[] { Resources.OriginalPdfFile });
 		//_ItemList.SelectedIndexChanged += (s, args) => {
 		//	if (_ItemList.SelectedIndex != -1 && _TargetPdfFile.Text.Trim ().Length > 0) {
 		//		var f = _ItemList.GetModelObject (_ItemList.SelectedIndex) as SourceItem;
@@ -100,7 +100,7 @@ public partial class InfoExchangerControl : FunctionControl
 		_AddFilesButton.DropDownOpening += FileListHelper.OpenPdfButtonDropDownOpeningHandler;
 		_AddFilesButton.DropDownItemClicked += (s, args) => {
 			args.ClickedItem.Owner.Hide();
-			AddFiles(new[] {args.ClickedItem.ToolTipText}, true);
+			AddFiles(new[] { args.ClickedItem.ToolTipText }, true);
 		};
 	}
 
@@ -125,8 +125,8 @@ public partial class InfoExchangerControl : FunctionControl
 	public override void SetupCommand(ToolStripItem item) {
 		string n = item.Name;
 		if (Commands.CommonSelectionCommands.Contains(n)
-		    || n == Commands.Delete
-		    || n == Commands.Action) {
+			|| n == Commands.Delete
+			|| n == Commands.Action) {
 			item.Enabled = _ItemList.GetItemCount() > 0;
 		}
 		else if (n == Commands.SaveBookmark) {
@@ -172,7 +172,7 @@ public partial class InfoExchangerControl : FunctionControl
 		string infoFile = _BookmarkControl.Text.Trim();
 		string targetPdfFile = _TargetPdfFile.Text.Trim();
 		if (string.IsNullOrEmpty(targetPdfFile) &&
-		    string.IsNullOrEmpty(targetPdfFile = _TargetPdfFile.BrowseTargetFile())) {
+			string.IsNullOrEmpty(targetPdfFile = _TargetPdfFile.BrowseTargetFile())) {
 			FormHelper.ErrorBox(Messages.TargetFileNotSpecified);
 			return;
 		}
@@ -229,7 +229,7 @@ public partial class InfoExchangerControl : FunctionControl
 					AppContext.Patcher);
 			}
 		};
-		worker.RunWorkerAsync(new object[] {targetPdfFile, infoFile});
+		worker.RunWorkerAsync(new object[] { targetPdfFile, infoFile });
 	}
 
 	private void _ExportBookmarkButton_Click(object sender, EventArgs e) {
@@ -273,7 +273,7 @@ public partial class InfoExchangerControl : FunctionControl
 				Worker.ExportInfo(files[0].FilePath.ToString(), a[0] as string);
 			}
 		};
-		w.RunWorkerAsync(new object[] {AppContext.BookmarkFile});
+		w.RunWorkerAsync(new object[] { AppContext.BookmarkFile });
 	}
 
 	private List<SourceItem> GetSourceItemList() {
@@ -282,7 +282,7 @@ public partial class InfoExchangerControl : FunctionControl
 		for (int i = 0; i < l; i++) {
 			SourceItem item = _ItemList.GetModelObject(_ItemList.GetNthItemInDisplayOrder(i).Index) as SourceItem;
 			if (item.Type == SourceItem.ItemType.Pdf
-			    && FileHelper.HasExtension(item.FilePath, Constants.FileExtensions.Pdf)) {
+				&& FileHelper.HasExtension(item.FilePath, Constants.FileExtensions.Pdf)) {
 				AppContext.RecentItems.AddHistoryItem(AppContext.Recent.SourcePdfFiles, item.FilePath.ToString());
 			}
 
@@ -382,7 +382,7 @@ public partial class InfoExchangerControl : FunctionControl
 			return;
 		}
 
-		AddItems(new[] {item});
+		AddItems(new[] { item });
 	}
 
 	private void AddItems(ICollection items) {

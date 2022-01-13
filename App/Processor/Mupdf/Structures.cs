@@ -217,9 +217,9 @@ public readonly struct BBox : IEquatable<BBox>
 
 	public bool Equals(BBox other) {
 		return Left == other.Left &&
-		       Top == other.Top &&
-		       Right == other.Right &&
-		       Bottom == other.Bottom;
+			   Top == other.Top &&
+			   Right == other.Right &&
+			   Bottom == other.Bottom;
 	}
 
 	public override int GetHashCode() {
@@ -421,9 +421,9 @@ public readonly struct Rectangle : IEquatable<Rectangle>
 
 	public override int GetHashCode() {
 		return Left.GetHashCode()
-		       ^ ((Right.GetHashCode() << 13) | (Right.GetHashCode() >> 19))
-		       ^ ((Top.GetHashCode() << 26) | (Top.GetHashCode() >> 6))
-		       ^ ((Bottom.GetHashCode() << 7) | (Bottom.GetHashCode() >> 25));
+			   ^ ((Right.GetHashCode() << 13) | (Right.GetHashCode() >> 19))
+			   ^ ((Top.GetHashCode() << 26) | (Top.GetHashCode() >> 6))
+			   ^ ((Bottom.GetHashCode() << 7) | (Bottom.GetHashCode() >> 25));
 	}
 
 	public bool Equals(Rectangle other) {
@@ -475,9 +475,9 @@ public readonly struct Quad : IEquatable<Quad>
 
 	public bool Equals(Quad other) {
 		return UpperLeft.Equals(other.UpperLeft) &&
-		       UpperRight.Equals(other.UpperRight) &&
-		       LowerLeft.Equals(other.LowerLeft) &&
-		       LowerRight.Equals(other.LowerRight);
+			   UpperRight.Equals(other.UpperRight) &&
+			   LowerLeft.Equals(other.LowerLeft) &&
+			   LowerRight.Equals(other.LowerRight);
 	}
 
 	public override int GetHashCode() {
@@ -510,7 +510,7 @@ public readonly struct Matrix : IEquatable<Matrix>
 	///     返回矩阵的放大方向是否对齐坐标轴（没有斜向拉伸或90整数倍以外的旋转）。
 	/// </summary>
 	public bool IsRectilinear => (Math.Abs(B) < float.Epsilon && Math.Abs(C) < float.Epsilon)
-	                             || (Math.Abs(A) < float.Epsilon && Math.Abs(D) < float.Epsilon);
+								 || (Math.Abs(A) < float.Epsilon && Math.Abs(D) < float.Epsilon);
 
 	/// <summary>
 	///     返回矩阵大致的放大比例。

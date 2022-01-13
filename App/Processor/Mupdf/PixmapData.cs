@@ -3,8 +3,6 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using FreeImageAPI;
-using CC = System.Runtime.InteropServices.CallingConvention;
-using DllImport = System.Runtime.InteropServices.DllImportAttribute;
 
 namespace MuPdfSharp;
 

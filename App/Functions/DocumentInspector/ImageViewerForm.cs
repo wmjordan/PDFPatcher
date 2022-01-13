@@ -43,11 +43,11 @@ public sealed partial class ImageViewerForm : Form
 		switch (n) {
 			case "_Save":
 				using (SaveFileDialog f = new() {
-					       Title = "保存图片文件",
-					       DefaultExt = Constants.FileExtensions.Png,
-					       FileName = "导出图片.png",
-					       Filter = Constants.FileExtensions.ImageFilter
-				       }) {
+					Title = "保存图片文件",
+					DefaultExt = Constants.FileExtensions.Png,
+					FileName = "导出图片.png",
+					Filter = Constants.FileExtensions.ImageFilter
+				}) {
 					if (f.ShowDialog() == DialogResult.OK) {
 						try {
 							using (FreeImageBitmap fi = new(_ImageBox.Image)) {

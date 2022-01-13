@@ -22,7 +22,7 @@ internal sealed class PageRangeCollection : List<PageRange>
 	public bool IsInRange(int value) {
 		foreach (PageRange item in this) {
 			if ((item.StartValue < item.EndValue && value >= item.StartValue && value <= item.EndValue)
-			    || (value >= item.EndValue && value <= item.StartValue)) {
+				|| (value >= item.EndValue && value <= item.StartValue)) {
 				return true;
 			}
 		}
@@ -81,7 +81,7 @@ internal sealed class PageRangeCollection : List<PageRange>
 	}
 
 	internal static PageRangeCollection CreateSingle(int minValue, int maxValue) {
-		PageRangeCollection r = new() {new PageRange(minValue, maxValue)};
+		PageRangeCollection r = new() { new PageRange(minValue, maxValue) };
 		return r;
 	}
 
@@ -103,7 +103,7 @@ internal sealed class PageRangeCollection : List<PageRange>
 					startRange = range.Substring(0, rangeIndicator);
 					endRange = range.Substring(rangeIndicator + 1, range.Length - rangeIndicator - 1);
 					if (startRange.TryParse(out startNum) && endRange.TryParse(out endNum) && startNum != 0 &&
-					    endNum != 0) {
+						endNum != 0) {
 						SetReverseNumber(ref startNum, maxValue);
 						SetReverseNumber(ref endNum, maxValue);
 						if (startNum < 0 || endNum < 0) {

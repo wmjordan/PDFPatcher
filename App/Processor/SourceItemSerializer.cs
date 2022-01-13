@@ -68,7 +68,7 @@ internal static class SourceItemSerializer
 		string p = bookmark.GetValue(Constants.DestinationAttributes.Path);
 		SourceItem s = SourceItem.Create(p, false);
 		if (b.Title.IsNullOrWhiteSpace() == false || b.IsOpened || b.IsBold || b.IsItalic ||
-		    b.ForeColor.IsEmptyOrTransparent() == false) {
+			b.ForeColor.IsEmptyOrTransparent() == false) {
 			s.Bookmark = b;
 		}
 

@@ -26,7 +26,7 @@ public partial class ActionEditorForm : Form
 			element.GetAttribute(Constants.DestinationAttributes.Action));
 		_ActionBox.SelectedIndex = i != -1 ? i : 0;
 		if (_ActionBox.SelectedIndex == 0 && element.HasAttribute(Constants.DestinationAttributes.Page) == false &&
-		    element.HasAttribute(Constants.DestinationAttributes.Named) == false) {
+			element.HasAttribute(Constants.DestinationAttributes.Named) == false) {
 			_ActionBox.SelectedItem = NoAction;
 			_DestinationPanel.Enabled = false;
 		}
@@ -41,7 +41,7 @@ public partial class ActionEditorForm : Form
 		}
 
 		if (_ZoomRateBox.Text == Constants.DestinationAttributes.ViewType.XYZ
-		    && element.GetAttribute(Constants.Coordinates.ScaleFactor).TryParse(out float f)) {
+			&& element.GetAttribute(Constants.Coordinates.ScaleFactor).TryParse(out float f)) {
 			_ZoomRateBox.SelectedIndex = -1;
 			_ZoomRateBox.Text = f.ToText();
 		}
@@ -49,11 +49,11 @@ public partial class ActionEditorForm : Form
 		_TitleBox.Text = element.GetAttribute(Constants.BookmarkAttributes.Title);
 		_PathBox.Text = element.GetAttribute(Constants.DestinationAttributes.Path);
 		_NewWindowBox.Checked = element.GetAttribute(Constants.DestinationAttributes.NewWindow) ==
-		                        Constants.Boolean.True;
+								Constants.Boolean.True;
 		_NamedBox.Text = element.GetAttribute(Constants.DestinationAttributes.Named);
 		_GotoNamedDestBox.Checked = string.IsNullOrEmpty(_NamedBox.Text) == false;
 		_GotoLocationBox.Checked = element.HasAttribute(Constants.DestinationAttributes.Named) == false
-		                           && element.HasAttribute(Constants.DestinationAttributes.NamedN) == false;
+								   && element.HasAttribute(Constants.DestinationAttributes.NamedN) == false;
 
 		InitCoordinateValue(element, Constants.DestinationAttributes.Page, _PageBox, null);
 		InitCoordinateValue(element, Constants.Coordinates.Left, _LeftBox, _KeepXBox);
@@ -131,7 +131,7 @@ public partial class ActionEditorForm : Form
 
 		bool a = Action.HasAttribute(name);
 		if ((value == null && a == false)
-		    || (a && Action.GetAttribute(name) == value)) {
+			|| (a && Action.GetAttribute(name) == value)) {
 			return;
 		}
 

@@ -144,7 +144,7 @@ internal abstract class UndoElementAction : IUndoAction
 
 	#region IUndoAction 成员
 
-	public IEnumerable<XmlNode> AffectedElements => new[] {Parent};
+	public IEnumerable<XmlNode> AffectedElements => new[] { Parent };
 	public abstract bool Undo();
 
 	#endregion
@@ -255,7 +255,7 @@ internal abstract class UndoAttributeAction : IUndoAction
 
 	#region IUndoAction 成员
 
-	public IEnumerable<XmlNode> AffectedElements => new XmlNode[] {TargetElement};
+	public IEnumerable<XmlNode> AffectedElements => new XmlNode[] { TargetElement };
 	public abstract bool Undo();
 
 	#endregion

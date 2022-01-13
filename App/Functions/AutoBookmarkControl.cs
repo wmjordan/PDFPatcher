@@ -247,11 +247,11 @@ public partial class AutoBookmarkControl : FunctionControl, IResettableControl
 
 	private void ControlEvent(object sender, EventArgs e) {
 		if (sender == _DeleteAdjustmentButton && _LevelAdjustmentBox.Items.Count > 0 &&
-		    FormHelper.YesNoBox("是否删除选中的项？") == DialogResult.Yes) {
+			FormHelper.YesNoBox("是否删除选中的项？") == DialogResult.Yes) {
 			_LevelAdjustmentBox.RemoveObjects(_LevelAdjustmentBox.SelectedObjects);
 		}
 		else if (sender == _ClearTextFiltersButton && _IgnorePatternsBox.Rows.Count > 0 &&
-		         FormHelper.YesNoBox("是否清空文本过滤列表？") == DialogResult.Yes) {
+				 FormHelper.YesNoBox("是否清空文本过滤列表？") == DialogResult.Yes) {
 			_IgnorePatternsBox.Rows.Clear();
 		}
 		else if (sender == _CopyFilterButton) {
@@ -312,7 +312,9 @@ public partial class AutoBookmarkControl : FunctionControl, IResettableControl
 				if (f.ShowDialog() == DialogResult.OK && f.FilterConditions != null) {
 					foreach (AutoBookmarkCondition item in f.FilterConditions) {
 						_LevelAdjustmentBox.AddObject(new AutoBookmarkOptions.LevelAdjustmentOption() {
-							Condition = item, AdjustmentLevel = 0, RelativeAdjustment = false
+							Condition = item,
+							AdjustmentLevel = 0,
+							RelativeAdjustment = false
 						});
 					}
 				}
@@ -333,7 +335,7 @@ public partial class AutoBookmarkControl : FunctionControl, IResettableControl
 			if (dialog.ShowDialog() == DialogResult.OK) {
 				if (dialog.Filter.Condition != null) {
 					_LevelAdjustmentBox.InsertObjects(i,
-						new AutoBookmarkOptions.LevelAdjustmentOption[] {dialog.Filter});
+						new AutoBookmarkOptions.LevelAdjustmentOption[] { dialog.Filter });
 					_LevelAdjustmentBox.SelectedIndex = i;
 				}
 
@@ -345,7 +347,7 @@ public partial class AutoBookmarkControl : FunctionControl, IResettableControl
 	private void _AddFilterMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e) {
 		AutoBookmarkCondition c = EditAdjustmentForm.CreateCondition(e.ClickedItem.Name);
 		if (c != null) {
-			using (EditAdjustmentForm dialog = new(new AutoBookmarkOptions.LevelAdjustmentOption {Condition = c})) {
+			using (EditAdjustmentForm dialog = new(new AutoBookmarkOptions.LevelAdjustmentOption { Condition = c })) {
 				if (dialog.ShowDialog() == DialogResult.OK && dialog.Filter.Condition != null) {
 					_LevelAdjustmentBox.AddObject(dialog.Filter);
 				}

@@ -27,14 +27,14 @@ public struct CIEXYZ
 
 	public static bool operator ==(CIEXYZ item1, CIEXYZ item2) {
 		return item1.X == item2.X
-		       && item1.Y == item2.Y
-		       && item1.Z == item2.Z;
+			   && item1.Y == item2.Y
+			   && item1.Z == item2.Z;
 	}
 
 	public static bool operator !=(CIEXYZ item1, CIEXYZ item2) {
 		return item1.X != item2.X
-		       || item1.Y != item2.Y
-		       || item1.Z != item2.Z;
+			   || item1.Y != item2.Y
+			   || item1.Z != item2.Z;
 	}
 
 	#endregion

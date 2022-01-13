@@ -61,7 +61,7 @@ public partial class PatcherControl : FunctionControl
 			}
 		};
 		ImageList.ImageCollection fi = _FileTypeList.Images;
-		fi.AddRange(new Image[] {Resources.OriginalPdfFile});
+		fi.AddRange(new Image[] { Resources.OriginalPdfFile });
 
 		_ItemList.FixEditControlWidth();
 		_ItemList.ListViewItemSorter = new ListViewItemComparer(0);
@@ -84,7 +84,7 @@ public partial class PatcherControl : FunctionControl
 
 		RecentFileItemClicked = (s, args) => {
 			args.ClickedItem.Owner.Hide();
-			AddFiles(new[] {args.ClickedItem.ToolTipText}, true);
+			AddFiles(new[] { args.ClickedItem.ToolTipText }, true);
 		};
 	}
 
@@ -145,7 +145,7 @@ public partial class PatcherControl : FunctionControl
 	private void _ImportButton_Click(object sender, EventArgs e) {
 		string targetPdfFile = _TargetPdfFile.Text.Trim();
 		if (string.IsNullOrEmpty(targetPdfFile) &&
-		    string.IsNullOrEmpty(targetPdfFile = _TargetPdfFile.BrowseTargetFile())) {
+			string.IsNullOrEmpty(targetPdfFile = _TargetPdfFile.BrowseTargetFile())) {
 			FormHelper.ErrorBox(Messages.TargetFileNotSpecified);
 			return;
 		}
@@ -223,7 +223,7 @@ public partial class PatcherControl : FunctionControl
 					AppContext.Patcher);
 			}
 		};
-		worker.RunWorkerAsync(new object[] {targetPdfFile, null});
+		worker.RunWorkerAsync(new object[] { targetPdfFile, null });
 	}
 
 	private List<SourceItem> GetSourceItemList() {
@@ -232,7 +232,7 @@ public partial class PatcherControl : FunctionControl
 		for (int i = 0; i < l; i++) {
 			SourceItem item = _ItemList.GetModelObject(_ItemList.GetNthItemInDisplayOrder(i).Index) as SourceItem;
 			if (item.Type == SourceItem.ItemType.Pdf
-			    && FileHelper.HasExtension(item.FilePath, Constants.FileExtensions.Pdf)) {
+				&& FileHelper.HasExtension(item.FilePath, Constants.FileExtensions.Pdf)) {
 				AppContext.RecentItems.AddHistoryItem(AppContext.Recent.SourcePdfFiles, item.FilePath.ToString());
 			}
 
@@ -288,7 +288,7 @@ public partial class PatcherControl : FunctionControl
 			return;
 		}
 
-		AddItems(new[] {item});
+		AddItems(new[] { item });
 	}
 
 	private void AddItems(ICollection items) {

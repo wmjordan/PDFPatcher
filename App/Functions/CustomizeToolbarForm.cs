@@ -26,13 +26,16 @@ public partial class CustomizeToolbarForm : Form
 		}
 
 		new TypedColumn<BO>(_NameColumn) {
-			AspectGetter = o => o.GetToolkit().Name, ImageGetter = o => o.GetToolkit().Icon
+			AspectGetter = o => o.GetToolkit().Name,
+			ImageGetter = o => o.GetToolkit().Icon
 		};
 		new TypedColumn<BO>(_ShowTextColumn) {
-			AspectGetter = o => o.ShowText, AspectPutter = (o, v) => o.ShowText = (bool)v
+			AspectGetter = o => o.ShowText,
+			AspectPutter = (o, v) => o.ShowText = (bool)v
 		};
 		new TypedColumn<BO>(_VisibleColumn) {
-			AspectGetter = o => o.Visible, AspectPutter = (o, v) => o.Visible = (bool)v
+			AspectGetter = o => o.Visible,
+			AspectPutter = (o, v) => o.Visible = (bool)v
 		};
 		new TypedColumn<BO>(_DisplayTextColumn) {
 			AspectGetter = o => o.DisplayName,
@@ -42,7 +45,7 @@ public partial class CustomizeToolbarForm : Form
 		_ItemListBox.IsSimpleDragSource = true;
 		_ItemListBox.IsSimpleDropSink = true;
 		_ItemListBox.DragSource = new SimpleDragSource(true);
-		_ItemListBox.DropSink = new RearrangingDropSink(false) {CanDropBetween = true, CanDropOnItem = false};
+		_ItemListBox.DropSink = new RearrangingDropSink(false) { CanDropBetween = true, CanDropOnItem = false };
 		_ItemListBox.Objects = AppContext.Toolbar.Buttons;
 	}
 

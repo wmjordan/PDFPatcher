@@ -87,7 +87,7 @@ internal sealed class PdfActionExporter
 		else if (PdfName.LAUNCH.Equals(actionType)) {
 			target.WriteAttributeString(Constants.DestinationAttributes.Action, Constants.ActionType.Launch);
 			PdfObject file = PdfReader.GetPdfObjectRelease(action.Get(PdfName.F)) ??
-			                 PdfReader.GetPdfObjectRelease(action.Get(PdfName.WIN));
+							 PdfReader.GetPdfObjectRelease(action.Get(PdfName.WIN));
 			if (file != null) {
 				ExportFileLocation(target, file);
 			}
@@ -114,7 +114,7 @@ internal sealed class PdfActionExporter
 				PdfObject p = a[0];
 				int pn = 0;
 				if (p.Type == PdfObject.INDIRECT &&
-				    pages.TryGetValue(GetNumber((PdfIndirectReference)a[0]), out pn)) {
+					pages.TryGetValue(GetNumber((PdfIndirectReference)a[0]), out pn)) {
 					// use pn
 				}
 				else if (p.Type == PdfObject.NUMBER) {
@@ -225,8 +225,8 @@ internal sealed class PdfActionExporter
 		}
 
 		if (pdfObj.Contains(PdfName.TYPE)
-		    && PdfName.PAGES.Equals(pdfObj.GetAsName(PdfName.TYPE))
-		    && pdfObj.Contains(PdfName.KIDS)) {
+			&& PdfName.PAGES.Equals(pdfObj.GetAsName(PdfName.TYPE))
+			&& pdfObj.Contains(PdfName.KIDS)) {
 			PdfArray kids = (PdfArray)pdfObj.Get(PdfName.KIDS);
 			indirect = (PdfIndirectReference)kids[0];
 		}
