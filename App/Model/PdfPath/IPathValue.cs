@@ -2,15 +2,14 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace PDFPatcher.Model.PdfPath
-{
-	public interface IPathValue
-	{
-		PathValueType ValueType { get; }
-	}
+namespace PDFPatcher.Model.PdfPath;
 
-	public interface IConstantPathValue : IPathValue
-	{
-		string LiteralValue { get; }
-	}
+public interface IPathValue
+{
+	PathValueType ValueType { get; }
+}
+
+public interface IConstantPathValue : IPathValue
+{
+	string LiteralValue { get; }
 }

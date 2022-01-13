@@ -1,11 +1,10 @@
 ﻿using System;
 
 
-namespace PDFPatcher.Functions
+namespace PDFPatcher.Functions;
+
+internal interface IResettableControl
 {
-	interface IResettableControl
-	{
-		void Reset();
-		void Reload();
-	}
+	void Reset();
+	void Reload();
 }

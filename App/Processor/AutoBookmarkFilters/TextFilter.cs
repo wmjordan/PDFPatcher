@@ -2,26 +2,25 @@
 using System.Collections.Generic;
 using PDFPatcher.Model;
 
-namespace PDFPatcher.Processor
+namespace PDFPatcher.Processor;
+
+internal sealed class TextFilter : AutoBookmarkFilter
 {
-	sealed class TextFilter : AutoBookmarkFilter
-	{
-		readonly MatchPattern.IMatcher _matcher;
+	private readonly MatchPattern.IMatcher _matcher;
 
-		public TextFilter(MatchPattern pattern) {
-			_matcher = pattern.CreateMatcher();
-		}
+	public TextFilter(MatchPattern pattern) {
+		_matcher = pattern.CreateMatcher();
+	}
 
-		internal override bool Matches(PDFPatcher.Model.AutoBookmarkContext context) {
-			if (context.TextLine == null) {
-				return _matcher.Matches(context.TextInfo.Text);
-			}
-			else {
-				return _matcher.Matches(context.TextLine.Text);
-			}
+	internal override bool Matches(AutoBookmarkContext context) {
+		if (context.TextLine == null) {
+			return _matcher.Matches(context.TextInfo.Text);
 		}
+		else {
+			return _matcher.Matches(context.TextLine.Text);
+		}
+	}
 
-		internal override void Reset() {
-		}
+	internal override void Reset() {
 	}
 }

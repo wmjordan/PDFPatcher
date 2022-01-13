@@ -1,55 +1,55 @@
 ﻿using System;
 using System.Collections.Generic;
 using iTextSharp.text.pdf;
+using PDFPatcher.Model;
 
-namespace PDFPatcher.Processor
+namespace PDFPatcher.Processor;
+
+internal sealed class FixContentProcessor : IPageProcessor
 {
-	sealed class FixContentProcessor : IPageProcessor
-	{
-		int _processedPageCount;
+	private int _processedPageCount;
 
-		#region IPageProcessor 成员
+	#region IPageProcessor 成员
 
-		public string Name => "修复并删除冗余内容";
+	public string Name => "修复并删除冗余内容";
 
-		public void BeginProcess(DocProcessorContext context) {
-			_processedPageCount = 0;
+	public void BeginProcess(DocProcessorContext context) {
+		_processedPageCount = 0;
+	}
+
+	public bool EndProcess(PdfReader pdf) {
+		Tracker.TraceMessage(Tracker.Category.Notice, Name + "功能：");
+		Tracker.TraceMessage("　　删除了 " + _processedPageCount + " 页的冗余内容。");
+		return false;
+	}
+
+	public int EstimateWorkload(PdfReader pdf) {
+		return pdf.NumberOfPages * 3;
+	}
+
+	public bool Process(PageProcessorContext context) {
+		Tracker.IncrementProgress(3);
+		if (ProcessCommands(context.PageCommands)) {
+			context.IsPageContentModified = true;
+			_processedPageCount++;
+			return true;
 		}
 
-		public bool EndProcess(PdfReader pdf) {
-			Tracker.TraceMessage(Tracker.Category.Notice, Name + "功能：");
-			Tracker.TraceMessage("　　删除了 " + _processedPageCount + " 页的冗余内容。");
-			return false;
-		}
+		return false;
+	}
 
-		public int EstimateWorkload(PdfReader pdf) {
-			return pdf.NumberOfPages * 3;
-		}
+	#endregion
 
-		public bool Process(PageProcessorContext context) {
-			Tracker.IncrementProgress(3);
-			if (ProcessCommands(context.PageCommands)) {
-				context.IsPageContentModified = true;
-				_processedPageCount++;
-				return true;
+	private static bool ProcessCommands(IPdfPageCommandContainer container) {
+		bool r = false;
+		IList<PdfPageCommand> cl = container.Commands;
+		int l = cl.Count;
+		for (int i = 0; i < l; i++) {
+			if (cl[i] is EnclosingCommand ec) {
+				r |= ProcessCommands(ec);
 			}
-
-			return false;
 		}
 
-		#endregion
-
-		static bool ProcessCommands(Model.IPdfPageCommandContainer container) {
-			var r = false;
-			var cl = container.Commands;
-			var l = cl.Count;
-			for (int i = 0; i < l; i++) {
-				if (cl[i] is Model.EnclosingCommand ec) {
-					r |= ProcessCommands(ec);
-				}
-			}
-
-			return r;
-		}
+		return r;
 	}
 }

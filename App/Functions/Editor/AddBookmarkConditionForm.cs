@@ -6,12 +6,11 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
-namespace PDFPatcher.Functions.Editor
+namespace PDFPatcher.Functions.Editor;
+
+public partial class AddBookmarkConditionForm : Form
 {
-	public partial class AddBookmarkConditionForm : Form
-	{
-		public AddBookmarkConditionForm() {
-			InitializeComponent();
-		}
+	public AddBookmarkConditionForm() {
+		InitializeComponent();
 	}
 }

@@ -2,62 +2,61 @@
 using System.Windows.Forms;
 using PDFPatcher.Model;
 
-namespace PDFPatcher.Functions
+namespace PDFPatcher.Functions;
+
+public partial class TextSizeConditionEditor : UserControl, IFilterConditionEditor
 {
-	public partial class TextSizeConditionEditor : UserControl, IFilterConditionEditor
-	{
-		AutoBookmarkCondition.TextSizeCondition _condition;
-		bool _lock;
+	private AutoBookmarkCondition.TextSizeCondition _condition;
+	private bool _lock;
 
-		public TextSizeConditionEditor() {
-			InitializeComponent();
-		}
+	public TextSizeConditionEditor() {
+		InitializeComponent();
+	}
 
-		#region ITextInfoFilterEditor 成员
+	#region ITextInfoFilterEditor 成员
 
-		public AutoBookmarkCondition Filter {
-			get => _condition;
-			set {
-				_condition = (AutoBookmarkCondition.TextSizeCondition)value;
-				_lock = true;
-				if (_condition.MinSize == _condition.MaxSize) {
-					_SizeBox.Checked = true;
-					_SpecificSizeBox.Value = (decimal)_condition.MaxSize;
-				}
-				else {
-					_SizeRangeBox.Checked = true;
-					_MaxSizeBox.Value = (decimal)_condition.MaxSize;
-					_MinSizeBox.Value = (decimal)_condition.MinSize;
-				}
-
-				ToggleControlState();
-				_lock = false;
+	public AutoBookmarkCondition Filter {
+		get => _condition;
+		set {
+			_condition = (AutoBookmarkCondition.TextSizeCondition)value;
+			_lock = true;
+			if (_condition.MinSize == _condition.MaxSize) {
+				_SizeBox.Checked = true;
+				_SpecificSizeBox.Value = (decimal)_condition.MaxSize;
 			}
-		}
+			else {
+				_SizeRangeBox.Checked = true;
+				_MaxSizeBox.Value = (decimal)_condition.MaxSize;
+				_MinSizeBox.Value = (decimal)_condition.MinSize;
+			}
 
-		public UserControl EditorControl => this;
-
-		#endregion
-
-		private void ControlChanged(object sender, EventArgs e) {
 			ToggleControlState();
-			if (_lock) {
-				return;
-			}
+			_lock = false;
+		}
+	}
 
-			if (_SizeBox.Checked) {
-				_condition.SetRange((float)_SpecificSizeBox.Value, (float)_SpecificSizeBox.Value);
-			}
-			else if (_SizeRangeBox.Checked) {
-				_condition.SetRange((float)_MinSizeBox.Value, (float)_MaxSizeBox.Value);
-			}
+	public UserControl EditorControl => this;
 
-			EditAdjustmentForm.UpdateFilter(this);
+	#endregion
+
+	private void ControlChanged(object sender, EventArgs e) {
+		ToggleControlState();
+		if (_lock) {
+			return;
 		}
 
-		private void ToggleControlState() {
-			_MinSizeBox.Enabled = _MaxSizeBox.Enabled = _SizeRangeBox.Checked;
-			_SpecificSizeBox.Enabled = _SizeBox.Checked;
+		if (_SizeBox.Checked) {
+			_condition.SetRange((float)_SpecificSizeBox.Value, (float)_SpecificSizeBox.Value);
 		}
+		else if (_SizeRangeBox.Checked) {
+			_condition.SetRange((float)_MinSizeBox.Value, (float)_MaxSizeBox.Value);
+		}
+
+		EditAdjustmentForm.UpdateFilter(this);
+	}
+
+	private void ToggleControlState() {
+		_MinSizeBox.Enabled = _MaxSizeBox.Enabled = _SizeRangeBox.Checked;
+		_SpecificSizeBox.Enabled = _SizeBox.Checked;
 	}
 }

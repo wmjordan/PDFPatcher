@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace PDFPatcher.Processor
+namespace PDFPatcher.Processor;
+
+internal interface IProcessor
 {
-	interface IProcessor
-	{
-		/// <summary>
-		/// 返回处理器的名称。
-		/// </summary>
-		string Name { get; }
-	}
+	/// <summary>
+	/// 返回处理器的名称。
+	/// </summary>
+	string Name { get; }
 }

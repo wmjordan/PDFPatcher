@@ -2,15 +2,14 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace PDFPatcher.Model
+namespace PDFPatcher.Model;
+
+internal sealed class AutoBookmarkContext
 {
-	sealed class AutoBookmarkContext
-	{
-		internal int CurrentPageNumber { get; set; }
-		internal int TotalPageNumber { get; set; }
-		internal bool IsTextMerged { get; set; }
-		internal TextInfo TextInfo { get; set; }
-		internal TextLine TextLine { get; set; }
-		internal iTextSharp.text.Rectangle PageBox { get; set; }
-	}
+	internal int CurrentPageNumber { get; set; }
+	internal int TotalPageNumber { get; set; }
+	internal bool IsTextMerged { get; set; }
+	internal TextInfo TextInfo { get; set; }
+	internal TextLine TextLine { get; set; }
+	internal iTextSharp.text.Rectangle PageBox { get; set; }
 }

@@ -1,14 +1,13 @@
-﻿namespace PDFPatcher.Model.PdfPath
+﻿namespace PDFPatcher.Model.PdfPath;
+
+public enum PathAxisType
 {
-	public enum PathAxisType
-	{
-		None,
-		Children,
-		Parent,
-		Ancestors,
-		Decendants,
-		Root,
-		Previous,
-		Next
-	}
+	None,
+	Children,
+	Parent,
+	Ancestors,
+	Decendants,
+	Root,
+	Previous,
+	Next
 }

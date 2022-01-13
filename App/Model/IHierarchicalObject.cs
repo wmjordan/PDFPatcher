@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace PDFPatcher.Model
+namespace PDFPatcher.Model;
+
+internal interface IHierarchicalObject<T>
 {
-	interface IHierarchicalObject<T>
-	{
-		bool HasChildren { get; }
-		ICollection<T> Children { get; }
-	}
+	bool HasChildren { get; }
+	ICollection<T> Children { get; }
 }

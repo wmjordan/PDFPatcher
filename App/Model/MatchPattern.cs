@@ -5,137 +5,137 @@ using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 using PowerJson;
 
-namespace PDFPatcher.Model
+namespace PDFPatcher.Model;
+
+public sealed class MatchPattern : ICloneable
 {
-	public sealed class MatchPattern : ICloneable
+	[XmlAttribute("名称")] public string Name { get; set; }
+
+	[XmlAttribute("匹配模板")] public string Text { get; set; }
+
+	[XmlAttribute("匹配大小写")] public bool MatchCase { get; set; }
+
+	[XmlAttribute("匹配全标题")] public bool FullMatch { get; set; }
+
+	[XmlAttribute("使用正则表达式")] public bool UseRegularExpression { get; set; }
+
+	public MatchPattern() {
+	}
+
+	public MatchPattern(string text, bool matchCase, bool fullMatch, bool useRegExp) {
+		Text = text;
+		MatchCase = matchCase;
+		FullMatch = fullMatch;
+		UseRegularExpression = useRegExp;
+	}
+
+	public IMatcher CreateMatcher() {
+		if (UseRegularExpression) {
+			return new RegexMatcher(this);
+		}
+
+		return new SimpleMatcher(this);
+	}
+
+	#region ICloneable 成员
+
+	public object Clone() {
+		return new MatchPattern(Text, MatchCase, FullMatch, UseRegularExpression);
+	}
+
+	#endregion
+
+	public interface IMatcher
 	{
-		[XmlAttribute("名称")] public string Name { get; set; }
+		bool Matches(string text);
+		string Replace(string text, string replacement);
+	}
 
-		[XmlAttribute("匹配模板")] public string Text { get; set; }
+	private sealed class RegexMatcher : IMatcher
+	{
+		private readonly Regex _regex;
+		private readonly bool _fullMatch;
 
-		[XmlAttribute("匹配大小写")] public bool MatchCase { get; set; }
-
-		[XmlAttribute("匹配全标题")] public bool FullMatch { get; set; }
-
-		[XmlAttribute("使用正则表达式")] public bool UseRegularExpression { get; set; }
-
-		public MatchPattern() {
+		public RegexMatcher(MatchPattern pattern) {
+			_regex = new Regex(pattern.Text,
+				RegexOptions.Compiled | (pattern.MatchCase ? RegexOptions.None : RegexOptions.IgnoreCase));
+			_fullMatch = pattern.FullMatch;
 		}
 
-		public MatchPattern(string text, bool matchCase, bool fullMatch, bool useRegExp) {
-			Text = text;
-			MatchCase = matchCase;
-			FullMatch = fullMatch;
-			UseRegularExpression = useRegExp;
+		public bool Matches(string text) {
+			Match m = _regex.Match(text);
+			return m.Success && (_fullMatch == false || text.Length == m.Length);
 		}
 
-		public IMatcher CreateMatcher() {
-			if (UseRegularExpression) {
-				return new RegexMatcher(this);
-			}
+		public string Replace(string text, string replacement) {
+			return _regex.Replace(text, replacement);
+		}
+	}
 
-			return new SimpleMatcher(this);
+	private sealed class SimpleMatcher : IMatcher
+	{
+		private readonly bool _fullMatch;
+		private readonly string _text;
+		private readonly StringComparison _comparison;
+
+		public SimpleMatcher(MatchPattern pattern) {
+			_text = pattern.Text;
+			_fullMatch = pattern.FullMatch;
+			_comparison = pattern.MatchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
 		}
 
-		#region ICloneable 成员
+		public bool Matches(string text) {
+			if (string.IsNullOrEmpty(text)) {
+				return true;
+			}
 
-		public object Clone() {
-			return new MatchPattern(Text, MatchCase, FullMatch, UseRegularExpression);
+			if (_fullMatch && text.Length != _text.Length) {
+				return false;
+			}
+
+			int i = text.IndexOf(_text, _comparison);
+			return i != -1 && (_fullMatch == false || i == 0);
 		}
 
-		#endregion
-
-		public interface IMatcher
-		{
-			bool Matches(string text);
-			string Replace(string text, string replacement);
+		public string Replace(string text, string replacement) {
+			return Replace(text, _text, replacement, _comparison);
 		}
 
-		sealed class RegexMatcher : IMatcher
-		{
-			readonly Regex _regex;
-			readonly bool _fullMatch;
-
-			public RegexMatcher(MatchPattern pattern) {
-				_regex = new Regex(pattern.Text,
-					RegexOptions.Compiled | (pattern.MatchCase ? RegexOptions.None : RegexOptions.IgnoreCase));
-				_fullMatch = pattern.FullMatch;
-			}
-
-			public bool Matches(string text) {
-				var m = _regex.Match(text);
-				return m.Success && (_fullMatch == false || text.Length == m.Length);
-			}
-
-			public string Replace(string text, string replacement) {
-				return _regex.Replace(text, replacement);
-			}
+		private static string Replace(string original, string pattern, string replacement,
+			StringComparison comparisonType) {
+			return Replace(original, pattern, replacement, comparisonType, -1);
 		}
 
-		sealed class SimpleMatcher : IMatcher
-		{
-			readonly bool _fullMatch;
-			readonly string _text;
-			readonly StringComparison _comparison;
-
-			public SimpleMatcher(MatchPattern pattern) {
-				_text = pattern.Text;
-				_fullMatch = pattern.FullMatch;
-				_comparison = pattern.MatchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
+		private static string Replace(string original, string pattern, string replacement,
+			StringComparison comparisonType,
+			int stringBuilderInitialSize) {
+			if (original == null) {
+				return null;
 			}
 
-			public bool Matches(string text) {
-				if (String.IsNullOrEmpty(text)) {
-					return true;
-				}
-
-				if (_fullMatch && text.Length != _text.Length) {
-					return false;
-				}
-
-				var i = text.IndexOf(_text, _comparison);
-				return i != -1 && (_fullMatch == false || i == 0);
+			if (string.IsNullOrEmpty(pattern)) {
+				return original;
 			}
 
-			public string Replace(string text, string replacement) {
-				return Replace(text, _text, replacement, _comparison);
+			int posCurrent = 0;
+			int lenPattern = pattern.Length;
+			int idxNext = original.IndexOf(pattern, comparisonType);
+			StringBuilder result = new(stringBuilderInitialSize < 0
+				? Math.Min(4096, original.Length)
+				: stringBuilderInitialSize);
+
+			while (idxNext >= 0) {
+				result.Append(original, posCurrent, idxNext - posCurrent);
+				result.Append(replacement);
+
+				posCurrent = idxNext + lenPattern;
+
+				idxNext = original.IndexOf(pattern, posCurrent, comparisonType);
 			}
 
-			static string Replace(string original, string pattern, string replacement,
-				StringComparison comparisonType) {
-				return Replace(original, pattern, replacement, comparisonType, -1);
-			}
+			result.Append(original, posCurrent, original.Length - posCurrent);
 
-			static string Replace(string original, string pattern, string replacement, StringComparison comparisonType,
-				int stringBuilderInitialSize) {
-				if (original == null) {
-					return null;
-				}
-
-				if (String.IsNullOrEmpty(pattern)) {
-					return original;
-				}
-
-				var posCurrent = 0;
-				var lenPattern = pattern.Length;
-				var idxNext = original.IndexOf(pattern, comparisonType);
-				var result = new StringBuilder(stringBuilderInitialSize < 0
-					? Math.Min(4096, original.Length)
-					: stringBuilderInitialSize);
-
-				while (idxNext >= 0) {
-					result.Append(original, posCurrent, idxNext - posCurrent);
-					result.Append(replacement);
-
-					posCurrent = idxNext + lenPattern;
-
-					idxNext = original.IndexOf(pattern, posCurrent, comparisonType);
-				}
-
-				result.Append(original, posCurrent, original.Length - posCurrent);
-
-				return result.ToString();
-			}
+			return result.ToString();
 		}
 	}
 }
