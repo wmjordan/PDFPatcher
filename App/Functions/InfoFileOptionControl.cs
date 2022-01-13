@@ -90,6 +90,7 @@ namespace PDFPatcher.Functions
 			if (locked) {
 				return;
 			}
+
 			if (sender == _ExtractPageDictionaryBox) {
 				_expOptions.ExtractPageDictionary = _ExtractPageDictionaryBox.Checked;
 			}

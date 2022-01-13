@@ -16,11 +16,13 @@ namespace PDFPatcher.Processor
 		}
 
 		#region IPageProcessor 成员
+
 		public string Name => "删除页面起始或结束指令";
 
 		public void BeginProcess(DocProcessorContext context) {
 			_processedPageCount = 0;
 		}
+
 		public bool EndProcess(PdfReader pdf) {
 			Tracker.TraceMessage(Tracker.Category.Notice, Name + "功能：");
 			Tracker.TraceMessage("　　删除了 " + _processedPageCount + " 页的指令。");
@@ -39,6 +41,7 @@ namespace PDFPatcher.Processor
 				context.IsPageContentModified = true;
 				_processedPageCount++;
 			}
+
 			return r;
 		}
 
@@ -50,16 +53,19 @@ namespace PDFPatcher.Processor
 				for (int i = _RemoveLeading - 1; i >= 0 && parent.Count > 0; i--) {
 					parent.RemoveAt(i);
 				}
+
 				r = true;
 			}
+
 			if (_RemoveTrailing > 0) {
 				for (int i = _RemoveTrailing - 1; i >= 0 && parent.Count > 0; i--) {
 					parent.RemoveAt(parent.Count - 1);
 				}
+
 				r = true;
 			}
+
 			return r;
 		}
-
 	}
 }

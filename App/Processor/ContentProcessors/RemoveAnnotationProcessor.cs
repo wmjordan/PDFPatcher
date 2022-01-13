@@ -13,16 +13,21 @@ namespace PDFPatcher.Processor
 		public RemoveAnnotationProcessor(PdfName annotationType) {
 			_AnnotationType = annotationType;
 		}
+
 		#region IPageProcessor 成员
+
 		public string Name => "删除批注";
+
 		public void BeginProcess(DocProcessorContext context) {
 			_processedPageCount = 0;
 		}
+
 		public bool EndProcess(PdfReader pdf) {
 			Tracker.TraceMessage(Tracker.Category.Notice, Name + "功能：");
 			Tracker.TraceMessage("　　删除了 " + _processedPageCount + " 页的批注。");
 			return false;
 		}
+
 		public int EstimateWorkload(PdfReader pdf) {
 			return pdf.NumberOfPages;
 		}
@@ -33,10 +38,12 @@ namespace PDFPatcher.Processor
 			if (anns == null) {
 				return false;
 			}
+
 			if (_AnnotationType == null) {
 				context.Page.Remove(PdfName.ANNOTS);
 				return true;
 			}
+
 			bool removed = false;
 			var l = anns.Size;
 			for (int i = l - 1; i >= 0; i--) {
@@ -44,19 +51,24 @@ namespace PDFPatcher.Processor
 				if (ann == null) {
 					continue;
 				}
+
 				if (_AnnotationType.Equals(ann.GetAsName(PdfName.SUBTYPE)) == false) {
 					continue;
 				}
+
 				anns.Remove(i);
 				removed = true;
 			}
+
 			if (anns.Size == 0) {
 				context.Page.Remove(PdfName.ANNOTS);
 			}
+
 			if (removed) {
 				context.IsPageContentModified = true;
 				_processedPageCount++;
 			}
+
 			return removed;
 		}
 

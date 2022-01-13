@@ -36,9 +36,9 @@ namespace PDFPatcher.Functions.Editor
 							b.Collapse(ci);
 						}
 					}
+
 					break;
 			}
 		}
-
 	}
 }

@@ -31,13 +31,12 @@ namespace PDFPatcher.Model
 				Direction = (d.Location == DistanceInfo.Placement.Up || d.Location == DistanceInfo.Placement.Down)
 					? WritingDirection.Vertical
 					: (d.Location == DistanceInfo.Placement.Left || d.Location == DistanceInfo.Placement.Right)
-					? WritingDirection.Hortizontal
-					: WritingDirection.Unknown;
+						? WritingDirection.Hortizontal
+						: WritingDirection.Unknown;
 			}
+
 			Lines.Add(line);
 			Region.Merge(line.Region);
 		}
-
-
 	}
 }

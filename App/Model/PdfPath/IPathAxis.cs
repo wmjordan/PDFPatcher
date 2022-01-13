@@ -10,5 +10,4 @@ namespace PDFPatcher.Model.PdfPath
 		DocumentObject SelectObject(DocumentObject source, string name, IEnumerable<IPathPredicate> predicates);
 		IList<DocumentObject> SelectObjects(DocumentObject source, string name, IEnumerable<IPathPredicate> predicates);
 	}
-
 }

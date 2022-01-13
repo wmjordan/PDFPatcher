@@ -21,7 +21,9 @@ namespace PDFPatcher.Functions
 		public OcrControl() {
 			InitializeComponent();
 			//this.Icon = Common.FormHelper.ToIcon (Properties.Resources.Ocr);
-			_BookmarkControl.FileDialog.Filter = Constants.FileExtensions.TxtFilter + "|" + Constants.FileExtensions.XmlFilter + "|" + Constants.FileExtensions.XmlOrTxtFilter;
+			_BookmarkControl.FileDialog.Filter = Constants.FileExtensions.TxtFilter + "|" +
+			                                     Constants.FileExtensions.XmlFilter + "|" +
+			                                     Constants.FileExtensions.XmlOrTxtFilter;
 
 			AppContext.MainForm.SetTooltip(_SourceFileControl.FileList, "需要识别文本的 PDF 源文件路径");
 			AppContext.MainForm.SetTooltip(_BookmarkControl.FileList, "指定识别文本后生成的信息文件或文本文件路径，如路径为空则不输出文件");
@@ -43,13 +45,16 @@ namespace PDFPatcher.Functions
 					}
 				}
 			}
+
 			if (lb.Count == 0) {
 				lb.Add("无");
 			}
+
 			_ExportBookmarkButton.Enabled = Processor.ModiOcr.ModiInstalled;
 			if (_ExportBookmarkButton.Enabled == false) {
 				AppContext.MainForm.SetTooltip(_OcrLangBox, "当前系统尚未安装识别引擎，请先安装微软 Office 文字识别引擎，再重新启动程序。");
 			}
+
 			Reload();
 
 			var d = _BookmarkControl.FileDialog;
@@ -73,6 +78,7 @@ namespace PDFPatcher.Functions
 				default:
 					break;
 			}
+
 			base.SetupCommand(item);
 		}
 
@@ -84,6 +90,7 @@ namespace PDFPatcher.Functions
 				default:
 					break;
 			}
+
 			base.ExecuteCommand(commandName, parameters);
 		}
 
@@ -116,11 +123,13 @@ namespace PDFPatcher.Functions
 				FormHelper.ErrorBox(Messages.SourceFileNotFound);
 				return;
 			}
+
 			if (sender == _ImportOcrResultButton) {
 				if (FileHelper.IsPathValid(_TargetFileControl.Text) == false) {
 					FormHelper.ErrorBox(Messages.TargetFileNameInvalid);
 					return;
 				}
+
 				if (_BookmarkControl.Text.Length == 0) {
 					FormHelper.ErrorBox("请指定识别结果文件。");
 					return;
@@ -140,6 +149,7 @@ namespace PDFPatcher.Functions
 					_BookmarkControl.FileList.AddHistoryItem();
 				}
 			}
+
 			if (sender == _ImportOcrResultButton) {
 				_TargetFileControl.FileList.AddHistoryItem();
 			}
@@ -151,18 +161,12 @@ namespace PDFPatcher.Functions
 			var worker = AppContext.MainForm.GetWorker();
 			if (sender != _ImportOcrResultButton) {
 				worker.DoWork += new DoWorkEventHandler(OcrExport);
-				worker.RunWorkerAsync(new object[] {
-					AppContext.SourceFiles,
-					AppContext.BookmarkFile,
-					_options
-				});
+				worker.RunWorkerAsync(new object[] {AppContext.SourceFiles, AppContext.BookmarkFile, _options});
 			}
 			else {
 				worker.DoWork += new DoWorkEventHandler(ImportOcr);
 				worker.RunWorkerAsync(new object[] {
-					AppContext.SourceFiles,
-					AppContext.BookmarkFile,
-					AppContext.TargetFile
+					AppContext.SourceFiles, AppContext.BookmarkFile, AppContext.TargetFile
 				});
 			}
 		}
@@ -173,7 +177,8 @@ namespace PDFPatcher.Functions
 			_options.DetectColumns = _DetectColumnsBox.Checked;
 			_options.DetectContentPunctuations = _DetectContentPunctuationsBox.Checked;
 			_options.PageRanges = _PageRangeBox.Text;
-			_options.OcrLangID = (int)ValueHelper.MapValue(_OcrLangBox.Text, Constants.Ocr.LangNames, Constants.Ocr.LangIDs, -1);
+			_options.OcrLangID =
+				(int)ValueHelper.MapValue(_OcrLangBox.Text, Constants.Ocr.LangNames, Constants.Ocr.LangIDs, -1);
 			_options.OrientPage = _OrientBox.Checked;
 			_options.OutputOriginalOcrResult = _OutputOriginalOcrResultBox.Checked;
 			_options.QuantitativeFactor = (float)_QuantitiveFactorBox.Value;
@@ -193,7 +198,8 @@ namespace PDFPatcher.Functions
 				var p = Path.GetDirectoryName(b);
 				var ext = Path.GetExtension(b);
 				foreach (var file in files) {
-					Processor.Worker.Ocr(file, FileHelper.CombinePath(p, Path.GetFileNameWithoutExtension(file) + ext), options);
+					Processor.Worker.Ocr(file, FileHelper.CombinePath(p, Path.GetFileNameWithoutExtension(file) + ext),
+						options);
 					if (AppContext.Abort) {
 						return;
 					}
@@ -213,7 +219,8 @@ namespace PDFPatcher.Functions
 				var p = Path.GetDirectoryName(b);
 				var ext = Path.GetExtension(b);
 				foreach (var file in files) {
-					Processor.Worker.ImportOcr(file, FileHelper.CombinePath(p, Path.GetFileNameWithoutExtension(file) + ext), target);
+					Processor.Worker.ImportOcr(file,
+						FileHelper.CombinePath(p, Path.GetFileNameWithoutExtension(file) + ext), target);
 					if (AppContext.Abort) {
 						return;
 					}
@@ -235,11 +242,10 @@ namespace PDFPatcher.Functions
 			else if (sender == _OutputOriginalOcrResultBox) {
 				_DetectColumnsBox.Enabled
 					= _DetectContentPunctuationsBox.Enabled
-					= _CompressWhiteSpaceBox.Enabled
-					= _RemoveSpaceBetweenChineseBox.Enabled
-					= !_OutputOriginalOcrResultBox.Checked;
+						= _CompressWhiteSpaceBox.Enabled
+							= _RemoveSpaceBetweenChineseBox.Enabled
+								= !_OutputOriginalOcrResultBox.Checked;
 			}
 		}
-
 	}
 }

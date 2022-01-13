@@ -25,10 +25,10 @@ namespace PDFPatcher.Functions.Editor
 			if (_dialog != null && _dialog.IsDisposed == false) {
 				return _dialog;
 			}
+
 			_dialog = new PagePropertyForm();
 			_dialog.Deactivate += (s, args) => ((Form)s).Visible = false;
 			return _dialog;
 		}
-
 	}
 }

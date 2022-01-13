@@ -12,9 +12,10 @@ namespace PDFPatcher
 	internal static class AppContext
 	{
 		static readonly string AppConfigFilePath = FileHelper.CombinePath(
-				Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath),
-				//"config.json");
-				"AppConfig.json");
+			Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath),
+			//"config.json");
+			"AppConfig.json");
+
 		static readonly SerializationManager JsonSm = new SerializationManager(new JsonReflectionController(true)) {
 			UseExtensions = false,
 			SerializeEmptyCollections = false,
@@ -48,12 +49,14 @@ namespace PDFPatcher
 			Toolbar = new ToolbarOptions();
 			Recent = new RecentItems();
 		}
+
 		public static bool SaveAppSettings { get; set; }
 
 		///<summary>获取或指定是否在加载 PDF 文档时仅加载部分文档。</summary>
 		public static bool LoadPartialPdfFile { get; set; }
 
 		private static string[] _SourceFiles = new string[0];
+
 		///<summary>获取或指定要处理的源文件路径列表。</summary>
 		public static string[] SourceFiles {
 			get => _SourceFiles;
@@ -62,6 +65,7 @@ namespace PDFPatcher
 
 		///<summary>获取或指定检查更新的日期。</summary>
 		public static DateTime CheckUpdateDate { get; set; }
+
 		///<summary>获取或指定检查更新的日期间隔。</summary>
 		public static int CheckUpdateInterval { get; set; }
 
@@ -76,26 +80,37 @@ namespace PDFPatcher
 
 		///<summary>获取导出设置。</summary>
 		public static ExporterOptions Exporter { get; internal set; }
+
 		///<summary>获取导入设置。</summary>
 		public static ImporterOptions Importer { get; internal set; }
+
 		///<summary>获取生成文档的设置。</summary>
 		public static MergerOptions Merger { get; internal set; }
+
 		///<summary>获取生成文档的设置。</summary>
 		public static PatcherOptions Patcher { get; internal set; }
+
 		///<summary>获取文档编辑器的设置。</summary>
 		public static PatcherOptions Editor { get; internal set; }
+
 		///<summary>获取自动生成书签的设置。</summary>
 		public static AutoBookmarkOptions AutoBookmarker { get; internal set; }
+
 		///<summary>获取应用程序设置。</summary>
 		public static EncodingOptions Encodings { get; internal set; }
+
 		///<summary>获取导出图像的设置。</summary>
 		public static ImageExtracterOptions ImageExtracter { get; internal set; }
+
 		///<summary>获取转换为图片的设置。</summary>
 		public static ImageRendererOptions ImageRenderer { get; internal set; }
+
 		///<summary>获取提取页面的设置。</summary>
 		public static ExtractPageOptions ExtractPage { get; internal set; }
+
 		///<summary>获取光学字符识别功能的设置。</summary>
 		public static OcrOptions Ocr { get; internal set; }
+
 		///<summary>获取或指定自定义工具栏的项目。</summary>
 		public static ToolbarOptions Toolbar { get; internal set; }
 
@@ -107,21 +122,27 @@ namespace PDFPatcher
 			///<summary>获取最近使用的 PDF 文件列表。</summary>
 			[JsonField("源文件")]
 			public List<string> SourcePdfFiles { get; } = new List<string>();
+
 			///<summary>获取最近使用的 PDF 输出文件列表。</summary>
 			[JsonField("输出文件")]
 			public List<string> TargetPdfFiles { get; } = new List<string>();
+
 			///<summary>获取最近使用的信息文件列表。</summary>
 			[JsonField("信息文件")]
 			public List<string> InfoDocuments { get; } = new List<string>();
+
 			///<summary>获取最近使用的文件名模板列表。</summary>
 			[JsonField("文件名模板")]
 			public List<string> FileNameTemplates { get; } = new List<string>();
+
 			///<summary>获取最近使用的文件夹列表。</summary>
 			[JsonField("文件夹")]
 			public List<string> Folders { get; } = new List<string>();
+
 			///<summary>获取最近使用的查找字符串列表。</summary>
 			[JsonField("查找项")]
 			public List<string> SearchPatterns { get; } = new List<string>();
+
 			///<summary>获取最近使用的替换字符串列表。</summary>
 			[JsonField("替换项")]
 			public List<string> ReplacePatterns { get; } = new List<string>();
@@ -130,6 +151,7 @@ namespace PDFPatcher
 				if (String.IsNullOrEmpty(item)) {
 					return;
 				}
+
 				var i = -1;
 				var m = false;
 				foreach (var li in list) {
@@ -139,20 +161,22 @@ namespace PDFPatcher
 						break;
 					}
 				}
+
 				if (m) {
 					if (i == 0) {
 						return;
 					}
+
 					if (i != -1) {
 						list.RemoveAt(i);
 					}
 				}
+
 				list.Insert(0, item);
 				while (list.Count > MaxHistoryItemCount) {
 					list.RemoveAt(list.Count - 1);
 				}
 			}
-
 		}
 
 		internal static void CleanUpInexistentFiles(IList<string> list) {
@@ -162,6 +186,7 @@ namespace PDFPatcher
 					s.Add(item);
 				}
 			}
+
 			list.Clear();
 			list.AddRange(s);
 		}
@@ -173,6 +198,7 @@ namespace PDFPatcher
 					s.Add(item);
 				}
 			}
+
 			list.Clear();
 			list.AddRange(s);
 		}
@@ -185,9 +211,11 @@ namespace PDFPatcher
 			if (String.IsNullOrEmpty(path)) {
 				path = AppConfigFilePath;
 			}
+
 			if (File.Exists(path) == false) {
 				return false;
 			}
+
 			ConfigurationSerialization conf;
 			try {
 				conf = Json.ToObject<ConfigurationSerialization>(File.ReadAllText(path, Encoding.UTF8), JsonSm);
@@ -199,48 +227,62 @@ namespace PDFPatcher
 			catch (Exception) {
 				return false;
 			}
+
 			CheckUpdateDate = conf.CheckUpdateDate;
 			CheckUpdateInterval = conf.CheckUpdateInterval;
 			LoadPartialPdfFile = conf.PdfLoadMode == Configuration.OptimalMemoryUsage;
 			if (conf.Recent != null) {
 				Recent = conf.Recent;
 			}
+
 			if (conf.ExporterOptions != null) {
 				Exporter = conf.ExporterOptions;
 			}
+
 			if (conf.ImporterOptions != null) {
 				Importer = conf.ImporterOptions;
 			}
+
 			if (conf.MergerOptions != null) {
 				Merger = conf.MergerOptions;
 			}
+
 			if (conf.PatcherOptions != null) {
 				Patcher = conf.PatcherOptions;
 			}
+
 			if (conf.EditorOptions != null) {
 				Editor = conf.EditorOptions;
 			}
+
 			if (conf.AutoBookmarkOptions != null) {
 				AutoBookmarker = conf.AutoBookmarkOptions;
 			}
+
 			if (conf.Encodings != null) {
 				Encodings = conf.Encodings;
 			}
+
 			if (conf.ImageExporterOptions != null) {
 				ImageExtracter = conf.ImageExporterOptions;
 			}
+
 			if (conf.ImageRendererOptions != null) {
 				ImageRenderer = conf.ImageRendererOptions;
 			}
+
 			if (conf.OcrOptions != null) {
 				Ocr = conf.OcrOptions;
 			}
+
 			if (conf.ExtractPageOptions != null) {
 				ExtractPage = conf.ExtractPageOptions;
 			}
+
 			if (conf.ToolbarOptions != null) {
 				Toolbar = conf.ToolbarOptions;
 			}
+
 			return true;
 		}
 
@@ -279,7 +321,7 @@ namespace PDFPatcher
 					ToolbarOptions = Toolbar,
 					Recent = saveHistoryFileList ? Recent : null
 				}
-				: new ConfigurationSerialization { SaveAppSettings = false };
+				: new ConfigurationSerialization {SaveAppSettings = false};
 			File.WriteAllText(path, Json.ToJson(s, JsonSm), Encoding.UTF8);
 		}
 

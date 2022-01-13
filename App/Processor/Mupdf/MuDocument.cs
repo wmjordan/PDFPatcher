@@ -7,42 +7,54 @@ namespace MuPdfSharp
 	public sealed class MuDocument : IDisposable
 	{
 		#region 非托管资源成员
+
 		StreamHandle _sourceStream;
 		DocumentHandle _document;
 		readonly ContextHandle _context;
+
 		#endregion
 
 		#region 托管资源成员
+
 		/// <summary>获取所加载文档的路径。</summary>
 		public string FilePath { get; private set; }
+
 		/// <summary>获取文档的页数。</summary>
 		public int PageCount { get; private set; }
+
 		/// <summary>获取或设置抗锯齿显示级别。</summary>
 		public int AntiAlias {
 			get => NativeMethods.GetAntiAliasLevel(_context);
 			set => NativeMethods.SetAntiAliasLevel(_context, value);
 		}
+
 		/// <summary>获取文件句柄是否打开。</summary>
 		public bool IsDocumentOpened => _document.IsValid() && _sourceStream.IsValid();
+
 		/// <summary>获取文档是否设置了打开密码。</summary>
 		public bool NeedsPassword => NativeMethods.NeedsPdfPassword(_context, _document);
+
 		public bool IsCancellationPending => _cookie.IsCancellationPending;
 		object _SyncObj = new object();
 		public object SyncObj => _SyncObj;
 
 		internal ContextHandle Context => _context;
 		MuPdfDictionary _trailer;
+
 		internal MuPdfDictionary Trailer {
 			get {
 				if (_trailer == null) {
 					_trailer = new MuPdfDictionary(_context, NativeMethods.GetTrailer(_context, _document));
 				}
+
 				return _trailer;
 			}
 		}
+
 		internal MuPdfDictionary Root => Trailer["Root"].AsDictionary();
 		internal MuDocumentInfo Info => new MuDocumentInfo(Trailer["Info"].AsDictionary());
 		PageLabelCollection _PageLabels;
+
 		/// <summary>
 		/// 返回文档的页码标签。
 		/// </summary>
@@ -51,23 +63,29 @@ namespace MuPdfSharp
 				if (_PageLabels == null) {
 					_PageLabels = new PageLabelCollection(this);
 				}
+
 				return _PageLabels;
 			}
 		}
+
 		MuCookie _cookie;
+
 		#endregion
 
 		public MuDocument(string fileName) : this() {
 			LoadPdf(fileName, null);
 		}
+
 		public MuDocument(string fileName, string password) : this() {
 			LoadPdf(fileName, password);
 		}
+
 		private MuDocument() {
 			_context = ContextHandle.Create();
 			_cookie = new MuCookie();
 
-			NativeMethods.LoadSystemFontFuncs(_context, NativeMethods.LoadSystemFont, NativeMethods.LoadSystemCjkFont, NativeMethods.LoadSystemFallbackFont);
+			NativeMethods.LoadSystemFontFuncs(_context, NativeMethods.LoadSystemFont, NativeMethods.LoadSystemCjkFont,
+				NativeMethods.LoadSystemFallbackFont);
 			PageCount = -1;
 		}
 
@@ -75,6 +93,7 @@ namespace MuPdfSharp
 			if (File.Exists(fileName) == false) {
 				throw new FileNotFoundException("找不到 PDF 文件：" + fileName);
 			}
+
 			try {
 				_sourceStream = new StreamHandle(_context, fileName);
 				_document = new DocumentHandle(_context, _sourceStream);
@@ -111,6 +130,7 @@ namespace MuPdfSharp
 		public void AbortAsync() {
 			_cookie.CancelAsync();
 		}
+
 		/// <summary>
 		/// 使用指定的尺寸渲染页面。
 		/// </summary>
@@ -120,6 +140,7 @@ namespace MuPdfSharp
 		public FreeImageAPI.FreeImageBitmap RenderPage(int pageNumber, System.Drawing.Size size) {
 			return RenderPage(pageNumber, size.Width, size.Height, null);
 		}
+
 		/// <summary>
 		/// 使用指定的尺寸渲染页面。
 		/// </summary>
@@ -130,6 +151,7 @@ namespace MuPdfSharp
 		public FreeImageAPI.FreeImageBitmap RenderPage(int pageNumber, int width, int height) {
 			return RenderPage(pageNumber, width, height, null);
 		}
+
 		/// <summary>
 		/// 使用渲染配置渲染指定的页面。
 		/// </summary>
@@ -138,10 +160,12 @@ namespace MuPdfSharp
 		/// <param name="height">页面高度。</param>
 		/// <param name="options">渲染选项。</param>
 		/// <returns>成功渲染后的 <see cref="FreeImageAPI.FreeImageBitmap"/> 实例。如传入的页码在有效页码范围内，则返回空引用。</returns>
-		public FreeImageAPI.FreeImageBitmap RenderPage(int pageNumber, int width, int height, ImageRendererOptions options) {
+		public FreeImageAPI.FreeImageBitmap RenderPage(int pageNumber, int width, int height,
+			ImageRendererOptions options) {
 			if (pageNumber < 1 || pageNumber > PageCount) {
 				return null;
 			}
+
 			using (var p = LoadPage(pageNumber)) {
 				return options != null ? p.RenderPage(width, height, options) : p.RenderPage(width, height);
 			}
@@ -168,6 +192,7 @@ namespace MuPdfSharp
 		}
 
 		#region 实现 IDisposable 接口的属性和方法
+
 		private bool disposed;
 		public bool IsDisposed => disposed;
 
@@ -183,22 +208,27 @@ namespace MuPdfSharp
 			if (!disposed) {
 				if (disposing) {
 					#region 释放托管资源
+
 					_trailer = null;
 					_SyncObj = null;
 					if (_PageLabels != null) {
 						_PageLabels.Clear();
 						_PageLabels = null;
 					}
+
 					#endregion
 				}
 
 				#region 释放非托管资源
+
 				// 注意这里不是线程安全的
 				_document.DisposeHandle();
 				_sourceStream.DisposeHandle();
 				_context.DisposeHandle();
+
 				#endregion
 			}
+
 			disposed = true;
 		}
 
@@ -207,46 +237,62 @@ namespace MuPdfSharp
 		~MuDocument() {
 			Dispose(false);
 		}
+
 		#endregion
 
 		#region 生成对象
+
 		public MuPdfObject Create(bool value) {
 			return new MuPdfObject(_context, NativeMethods.NewBoolean(_context, _document, value ? 1 : 0));
 		}
+
 		public MuPdfObject Create(int value) {
 			return new MuPdfObject(_context, NativeMethods.NewInteger(_context, _document, value));
 		}
+
 		public MuPdfObject Create(float value) {
 			return new MuPdfObject(_context, NativeMethods.NewFloat(_context, _document, value));
 		}
+
 		public MuPdfObject Create(string value) {
 			return new MuPdfObject(_context, NativeMethods.NewString(_context, _document, value, value.Length));
 		}
+
 		public MuPdfObject CreateName(string value) {
 			return new MuPdfObject(_context, NativeMethods.NewName(_context, _document, value));
 		}
+
 		public MuPdfObject Create(int number, int generation) {
-			return new MuPdfObject(_context, NativeMethods.NewIndirectReference(_context, _document, number, generation));
+			return new MuPdfObject(_context,
+				NativeMethods.NewIndirectReference(_context, _document, number, generation));
 		}
+
 		public MuPdfArray Create(Rectangle rect) {
 			return new MuPdfArray(_context, NativeMethods.NewRect(_context, _document, rect));
 		}
+
 		public MuPdfArray Create(Matrix matrix) {
 			return new MuPdfArray(_context, NativeMethods.NewMatrix(_context, _document, matrix));
 		}
+
 		public MuPdfArray CreateArray() {
 			return new MuPdfArray(_context, NativeMethods.NewArray(_context, _document, 4));
 		}
+
 		public MuPdfDictionary CreateDictionary() {
 			return new MuPdfDictionary(_context, NativeMethods.NewDictionary(_context, _document, 4));
 		}
+
 		#endregion
 
 		unsafe struct FzFont
 		{
 #pragma warning disable 649, 169
 			readonly int refs;
-			[MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] readonly byte[] name;
+
+			[MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+			readonly byte[] name;
+
 			internal FzBuffer* Buffer;
 			internal FzFontFlags Flags;
 #pragma warning restore 649, 169

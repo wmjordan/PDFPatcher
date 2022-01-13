@@ -26,16 +26,19 @@ namespace PDFPatcher.Model
 			if (fl == null) {
 				return;
 			}
+
 			foreach (var item in fl) {
 				var fr = item.Value as PdfIndirectReference;
 				if (fr == null) {
 					continue;
 				}
+
 				var f = PdfReader.GetPdfObject(fr) as PdfDictionary;
 				var fn = f.GetAsName(PdfName.BASEFONT);
 				if (fn == null) {
 					continue;
 				}
+
 				fonts.Add(RemoveSubsetPrefix(PdfHelper.GetPdfNameString(fn)));
 			}
 		}
@@ -45,14 +48,17 @@ namespace PDFPatcher.Model
 			if (df == null) {
 				return IsEmbeddedFont(font);
 			}
+
 			if (df.Type == PdfObject.ARRAY) {
 				foreach (var item in (df as PdfArray).ArrayList) {
 					if (IsEmbeddedFont(PdfReader.GetPdfObjectRelease(item) as PdfDictionary) == false) {
 						return false;
 					}
 				}
+
 				return true;
 			}
+
 			df = PdfReader.GetPdfObjectRelease(df);
 			return df.Type == PdfObject.DICTIONARY && IsEmbeddedFont(df as PdfDictionary);
 		}
@@ -62,9 +68,8 @@ namespace PDFPatcher.Model
 			if (fd == null) {
 				return false;
 			}
+
 			return fd.Contains(PdfName.FONTFILE) || fd.Contains(PdfName.FONTFILE2) || fd.Contains(PdfName.FONTFILE3);
 		}
-
-
 	}
 }

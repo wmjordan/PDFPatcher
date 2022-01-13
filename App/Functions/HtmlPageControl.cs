@@ -10,6 +10,7 @@ namespace PDFPatcher.Functions
 			if (i == -1) {
 				return;
 			}
+
 			var p = link.Substring(0, i);
 			switch (p) {
 				case "func":
@@ -17,7 +18,8 @@ namespace PDFPatcher.Functions
 					AppContext.MainForm.SelectFunctionList(func);
 					break;
 				case "recent":
-					AppContext.MainForm.OpenFileWithEditor(AppContext.Recent.SourcePdfFiles[link.Substring(i + 1).ToInt32()]);
+					AppContext.MainForm.OpenFileWithEditor(
+						AppContext.Recent.SourcePdfFiles[link.Substring(i + 1).ToInt32()]);
 					break;
 				case "exec":
 					ExecuteCommand(link.Substring(i + 1));
@@ -30,7 +32,8 @@ namespace PDFPatcher.Functions
 		}
 
 		protected void LoadResourceImage(TheArtOfDev.HtmlRenderer.Core.Entities.HtmlImageLoadEventArgs e) {
-			e.Callback(Properties.Resources.ResourceManager.GetObject(e.Src.Substring("res:".Length)) as System.Drawing.Image);
+			e.Callback(
+				Properties.Resources.ResourceManager.GetObject(e.Src.Substring("res:".Length)) as System.Drawing.Image);
 			e.Handled = true;
 		}
 
@@ -41,8 +44,8 @@ namespace PDFPatcher.Functions
 			if (index != -1) {
 				return source.Substring(index + 1);
 			}
+
 			return String.Empty;
 		}
-
 	}
 }

@@ -14,6 +14,7 @@ namespace PDFPatcher.Model
 				foreach (var item in this) {
 					c += item.Count;
 				}
+
 				return c;
 			}
 		}
@@ -21,10 +22,11 @@ namespace PDFPatcher.Model
 		public bool IsInRange(int value) {
 			foreach (var item in this) {
 				if (item.StartValue < item.EndValue && value >= item.StartValue && value <= item.EndValue
-					|| value >= item.EndValue && value <= item.StartValue) {
+				    || value >= item.EndValue && value <= item.StartValue) {
 					return true;
 				}
 			}
+
 			return false;
 		}
 
@@ -32,6 +34,7 @@ namespace PDFPatcher.Model
 			if (maxValue < minValue) {
 				throw new ArgumentException("maxValue must greater than minValue");
 			}
+
 			for (int i = Count - 1; i >= 0; i--) {
 				var r = this[i];
 				SetReverseNumber(ref r.StartValue, maxValue);
@@ -41,12 +44,15 @@ namespace PDFPatcher.Model
 						RemoveAt(i);
 						continue;
 					}
+
 					if (minValue <= r.StartValue && r.EndValue <= maxValue) {
 						continue;
 					}
+
 					if (r.StartValue < minValue) {
 						r.StartValue = minValue;
 					}
+
 					if (r.EndValue > maxValue) {
 						r.EndValue = maxValue;
 					}
@@ -56,24 +62,26 @@ namespace PDFPatcher.Model
 						RemoveAt(i);
 						continue;
 					}
+
 					if (maxValue >= r.StartValue && r.EndValue >= minValue) {
 						continue;
 					}
+
 					if (r.EndValue < minValue) {
 						r.EndValue = minValue;
 					}
+
 					if (r.StartValue > maxValue) {
 						r.StartValue = maxValue;
 					}
 				}
+
 				this[i] = r;
 			}
 		}
 
 		internal static PageRangeCollection CreateSingle(int minValue, int maxValue) {
-			var r = new PageRangeCollection {
-				new PageRange(minValue, maxValue)
-			};
+			var r = new PageRangeCollection {new PageRange(minValue, maxValue)};
 			return r;
 		}
 
@@ -88,17 +96,20 @@ namespace PDFPatcher.Model
 					if (range.Length == 0) {
 						continue;
 					}
+
 					startNum = endNum = 0;
 					int rangeIndicator = range.Length > 1 ? range.IndexOf('-', 1) /*排除首位可能是负数页码的可能*/ : -1;
 					if (rangeIndicator > 0) {
 						startRange = range.Substring(0, rangeIndicator);
 						endRange = range.Substring(rangeIndicator + 1, range.Length - rangeIndicator - 1);
-						if (startRange.TryParse(out startNum) && endRange.TryParse(out endNum) && startNum != 0 && endNum != 0) {
+						if (startRange.TryParse(out startNum) && endRange.TryParse(out endNum) && startNum != 0 &&
+						    endNum != 0) {
 							SetReverseNumber(ref startNum, maxValue);
 							SetReverseNumber(ref endNum, maxValue);
 							if (startNum < 0 || endNum < 0) {
 								continue;
 							}
+
 							r.Add(new PageRange(startNum, endNum));
 						}
 					}
@@ -107,16 +118,19 @@ namespace PDFPatcher.Model
 						if (startNum < 0) {
 							continue;
 						}
+
 						r.Add(new PageRange(startNum, startNum));
 					}
 				}
 			}
+
 			if (r.Count == 0 && addDefaultRange) {
 				r.Add(new PageRange(minValue, maxValue));
 			}
 			else {
 				r.Collapse(minValue, maxValue);
 			}
+
 			return r;
 		}
 

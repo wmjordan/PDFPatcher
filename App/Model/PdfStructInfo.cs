@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
+
 namespace PDFPatcher.Model
 {
 	struct PdfStructInfo
@@ -21,6 +22,7 @@ namespace PDFPatcher.Model
 
 		public PdfStructInfo(string name, bool isKeyObject) : this(name, isKeyObject, false, null, null) {
 		}
+
 		public PdfStructInfo(string name, bool isKeyObject, bool isRequired, string description, string imageKey) {
 			_Name = name;
 			_IsKeyObject = isKeyObject;
@@ -28,6 +30,7 @@ namespace PDFPatcher.Model
 			_Description = description;
 			_ImageKey = imageKey;
 		}
+
 		internal static PdfStructInfo GetInfo(string context, string name) {
 			PdfStructInfo i;
 			if (_Info.TryGetValue(String.Concat(context, "/", name), out i)) {
@@ -41,12 +44,14 @@ namespace PDFPatcher.Model
 
 		static Dictionary<string, PdfStructInfo> InitStructInfo() {
 			var d = new Dictionary<string, PdfStructInfo>();
-			using (System.IO.Stream s = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("PDFPatcher.Model.PDFStructInfo.xml")) {
+			using (System.IO.Stream s = System.Reflection.Assembly.GetExecutingAssembly()
+				       .GetManifestResourceStream("PDFPatcher.Model.PDFStructInfo.xml")) {
 				var doc = new XmlDocument();
 				doc.Load(s);
 				AddSubItems(d, doc.SelectSingleNode("PDF/Global") as XmlElement);
 				AddSubItems(d, doc.SelectSingleNode("PDF") as XmlElement);
 			}
+
 			return d;
 		}
 
@@ -54,18 +59,23 @@ namespace PDFPatcher.Model
 			if (element.HasChildNodes == false) {
 				return;
 			}
+
 			var currentToken = element.GetAttribute("Token");
 			foreach (XmlNode item in element.ChildNodes) {
 				var e = item as XmlElement;
 				if (e == null) {
 					continue;
 				}
+
 				var t = e.GetAttribute("Token");
 				if (String.IsNullOrEmpty(t)) {
 					continue;
 				}
+
 				if (e.Name == "Info") {
-					AddItem(d, String.IsNullOrEmpty(currentToken) ? t : String.Concat(currentToken, "/", t), new PdfStructInfo(e.GetAttribute("Name"), e.HasChildNodes, e.GetAttribute("Required") == "true", e.GetAttribute("Description"), e.GetAttribute("ImageKey")));
+					AddItem(d, String.IsNullOrEmpty(currentToken) ? t : String.Concat(currentToken, "/", t),
+						new PdfStructInfo(e.GetAttribute("Name"), e.HasChildNodes, e.GetAttribute("Required") == "true",
+							e.GetAttribute("Description"), e.GetAttribute("ImageKey")));
 					AddSubItems(d, e);
 				}
 				else if (e.Name == "RefInfo" && d.ContainsKey(t)) {
@@ -79,8 +89,8 @@ namespace PDFPatcher.Model
 				System.Diagnostics.Debug.WriteLine("已添加 " + key);
 				return;
 			}
+
 			d.Add(key, item);
 		}
-
 	}
 }

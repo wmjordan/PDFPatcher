@@ -1,5 +1,4 @@
-﻿
-namespace PDFPatcher.Processor
+﻿namespace PDFPatcher.Processor
 {
 	sealed class SetTextStyleProcessor : IPdfInfoXmlProcessor
 	{
@@ -9,10 +8,12 @@ namespace PDFPatcher.Processor
 		}
 
 		readonly Style _style;
+
 		public SetTextStyleProcessor(System.Xml.XmlElement element, Style style) {
 			var s = element.GetAttribute(Constants.BookmarkAttributes.Style);
 			if (style == Style.SetBold) {
-				if (s != Constants.BookmarkAttributes.StyleType.Bold && s != Constants.BookmarkAttributes.StyleType.BoldItalic) {
+				if (s != Constants.BookmarkAttributes.StyleType.Bold &&
+				    s != Constants.BookmarkAttributes.StyleType.BoldItalic) {
 					_style = Style.SetBold;
 				}
 				else {
@@ -20,7 +21,8 @@ namespace PDFPatcher.Processor
 				}
 			}
 			else if (style == Style.SetItalic) {
-				if (s != Constants.BookmarkAttributes.StyleType.Italic && s != Constants.BookmarkAttributes.StyleType.BoldItalic) {
+				if (s != Constants.BookmarkAttributes.StyleType.Italic &&
+				    s != Constants.BookmarkAttributes.StyleType.BoldItalic) {
 					_style = Style.SetItalic;
 				}
 				else {
@@ -52,47 +54,66 @@ namespace PDFPatcher.Processor
 			var value = item.GetAttribute(Constants.BookmarkAttributes.Style);
 			var style = 0;
 			switch (value) {
-				case Constants.BookmarkAttributes.StyleType.Bold: style = 1; break;
-				case Constants.BookmarkAttributes.StyleType.Italic: style = 2; break;
-				case Constants.BookmarkAttributes.StyleType.BoldItalic: style = 3; break;
+				case Constants.BookmarkAttributes.StyleType.Bold:
+					style = 1;
+					break;
+				case Constants.BookmarkAttributes.StyleType.Italic:
+					style = 2;
+					break;
+				case Constants.BookmarkAttributes.StyleType.BoldItalic:
+					style = 3;
+					break;
 				default:
 					break;
 			}
+
 			switch (_style) {
 				case Style.SetBold:
 					if ((style & 0x01) > 0) {
 						return null;
 					}
+
 					style |= 0x01;
 					break;
 				case Style.SetItalic:
 					if ((style & 0x02) > 0) {
 						return null;
 					}
+
 					style |= 0x02;
 					break;
 				case Style.RemoveBold:
 					if ((style & 0x01) == 0) {
 						return null;
 					}
+
 					style ^= 0x01;
 					break;
 				case Style.RemoveItalic:
 					if ((style & 0x02) == 0) {
 						return null;
 					}
+
 					style ^= 0x02;
 					break;
 				default: throw new System.ArgumentOutOfRangeException("Style");
 			}
+
 			switch (style) {
-				case 1: value = Constants.BookmarkAttributes.StyleType.Bold; break;
-				case 2: value = Constants.BookmarkAttributes.StyleType.Italic; break;
-				case 3: value = Constants.BookmarkAttributes.StyleType.BoldItalic; break;
+				case 1:
+					value = Constants.BookmarkAttributes.StyleType.Bold;
+					break;
+				case 2:
+					value = Constants.BookmarkAttributes.StyleType.Italic;
+					break;
+				case 3:
+					value = Constants.BookmarkAttributes.StyleType.BoldItalic;
+					break;
 				default:
 					value = null;
 					break;
 			}
+
 			return UndoAttributeAction.GetUndoAction(item, Constants.BookmarkAttributes.Style, value);
 		}
 

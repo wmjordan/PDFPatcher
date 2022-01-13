@@ -17,6 +17,7 @@ namespace PDFPatcher.Model.PdfPath
 			if (source == null || source.Parent == null) {
 				return 0;
 			}
+
 			int i = 0;
 			foreach (var item in source.Parent.Children) {
 				++i;
@@ -24,6 +25,7 @@ namespace PDFPatcher.Model.PdfPath
 					return i;
 				}
 			}
+
 			return i;
 		}
 

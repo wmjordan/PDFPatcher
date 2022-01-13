@@ -15,13 +15,18 @@ namespace PDFPatcher.Processor.Imaging
 		public Matrix Ctm { get; }
 		public float XScale => Ctm[Matrix.I11] / Image.Width;
 		public float YScale => Ctm[Matrix.I22] / Image.Height;
+
 		public ImageDisposition(Matrix ctm, ImageInfo image) {
 			Image = image;
 			Ctm = ctm;
-			var v = new Vector(0, 0, 1).Cross(ctm); ;
-			X = v[0]; Y = v[1]; Z = v[2];
+			var v = new Vector(0, 0, 1).Cross(ctm);
+			;
+			X = v[0];
+			Y = v[1];
+			Z = v[2];
 			image.VerticalFlip = Ctm[Matrix.I22] < 0;
 		}
+
 		public override string ToString() {
 			return String.Concat(Image.InlineImage.PdfRef != null ? Image.InlineImage.PdfRef.Number.ToText() : "内嵌图像",
 				":", X, ",", Y, ",", Z);
@@ -38,5 +43,4 @@ namespace PDFPatcher.Processor.Imaging
 
 		#endregion
 	}
-
 }

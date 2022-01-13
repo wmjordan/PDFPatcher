@@ -15,6 +15,7 @@ namespace PDFPatcher.Functions.Editor
 			if (b.FocusedItem == null) {
 				return;
 			}
+
 			controller.ProcessBookmarks(new T());
 		}
 	}
@@ -32,8 +33,8 @@ namespace PDFPatcher.Functions.Editor
 			if (b.FocusedItem == null) {
 				return;
 			}
-			controller.ProcessBookmarks(new T() { Parameter = _parameter });
-		}
 
+			controller.ProcessBookmarks(new T() {Parameter = _parameter});
+		}
 	}
 }

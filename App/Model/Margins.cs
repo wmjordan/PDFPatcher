@@ -9,12 +9,16 @@ namespace PDFPatcher.Model
 	{
 		[XmlAttribute(Constants.Coordinates.Top)]
 		public float Top { get; set; }
+
 		[XmlAttribute(Constants.Coordinates.Right)]
 		public float Right { get; set; }
+
 		[XmlAttribute(Constants.Coordinates.Left)]
 		public float Left { get; set; }
+
 		[XmlAttribute(Constants.Coordinates.Bottom)]
 		public float Bottom { get; set; }
+
 		[XmlAttribute(Constants.Coordinates.ScaleFactor)]
 		public bool IsRelative { get; set; }
 

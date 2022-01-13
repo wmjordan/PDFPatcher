@@ -6,8 +6,11 @@ namespace PDFPatcher.Processor.Imaging
 	static class TiffHelper
 	{
 		static readonly ImageCodecInfo _tiffCodec = BitmapHelper.GetCodec("image/tiff");
+
 		static readonly EncoderParameters _encoderParameters = new EncoderParameters(1) {
-			Param = new EncoderParameter[] { new EncoderParameter(Encoder.Compression, (long)EncoderValue.CompressionCCITT4) }
+			Param = new EncoderParameter[] {
+				new EncoderParameter(Encoder.Compression, (long)EncoderValue.CompressionCCITT4)
+			}
 		};
 
 		internal static void Save(FreeImageBitmap bmp, string fileName) {
@@ -17,6 +20,7 @@ namespace PDFPatcher.Processor.Imaging
 					// HACK: TIFF编码黑色为1，解决 .NET TIFF 编码器无法正常保存双色图片的问题
 					bmp.Invert();
 				}
+
 				using (var b = bmp.ToBitmap()) {
 					b.Save(fileName, _tiffCodec, _encoderParameters);
 				}
@@ -40,9 +44,11 @@ namespace PDFPatcher.Processor.Imaging
 			}
 		}
 
-		internal static byte[] Decode(ImageInfo info, byte[] bytes, int k, bool endOfLine, bool encodedByteAlign, bool endOfBlock, bool blackIs1) {
+		internal static byte[] Decode(ImageInfo info, byte[] bytes, int k, bool endOfLine, bool encodedByteAlign,
+			bool endOfBlock, bool blackIs1) {
 			using (var s = new MuPdfSharp.MuStream(bytes))
-			using (var img = s.DecodeTiffFax(info.Width, info.Height, k, endOfLine, encodedByteAlign, endOfBlock, blackIs1)) {
+			using (var img = s.DecodeTiffFax(info.Width, info.Height, k, endOfLine, encodedByteAlign, endOfBlock,
+				       blackIs1)) {
 				return img.ReadAll(bytes.Length);
 			}
 			//var outBuf = new byte[(info.Width + 7) / 8 * info.Height];

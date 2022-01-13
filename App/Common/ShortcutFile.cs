@@ -11,14 +11,19 @@ namespace PDFPatcher.Common
 
 		/// <summary>获取或设置快捷方式的目标路径。</summary>
 		public string Destination { get; private set; }
+
 		/// <summary>获取或设置快捷方式的工作目录。</summary>
 		public string WorkingDirectory { get; set; }
+
 		/// <summary>获取或设置快捷方式的描述文本。</summary>
 		public string Description { get; set; }
+
 		/// <summary>获取或设置快捷方式的启动参数。</summary>
 		public string Arguments { get; set; }
+
 		/// <summary>获取或设置快捷方式的图标文件位置。</summary>
 		public string IconLocation { get; set; }
+
 		/// <summary>获取或设置快捷方式的图标文件索引。</summary>
 		public int IconIndex { get; set; }
 
@@ -65,20 +70,25 @@ namespace PDFPatcher.Common
 			if (String.IsNullOrEmpty(WorkingDirectory) == false) {
 				_link.SetWorkingDirectory(WorkingDirectory);
 			}
+
 			if (String.IsNullOrEmpty(Description) == false) {
 				_link.SetDescription(Description);
 			}
+
 			if (String.IsNullOrEmpty(Arguments) == false) {
 				_link.SetArguments(Arguments);
 			}
+
 			if (String.IsNullOrEmpty(IconLocation) == false) {
 				_link.SetIconLocation(IconLocation, IconIndex >= 0 ? IconIndex : 0);
 			}
+
 			var file = (System.Runtime.InteropServices.ComTypes.IPersistFile)_link;
 			file.Save(position, false);
 		}
 
 		#region COM Interops
+
 		[ComImport]
 		[Guid("00021401-0000-0000-C000-000000000046")]
 		class ShellLink
@@ -90,7 +100,9 @@ namespace PDFPatcher.Common
 		[Guid("000214F9-0000-0000-C000-000000000046")]
 		interface IShellLink
 		{
-			void GetPath([Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder pszFile, int cchMaxPath, out IntPtr pfd, int fFlags);
+			void GetPath([Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder pszFile, int cchMaxPath, out IntPtr pfd,
+				int fFlags);
+
 			void GetIDList(out IntPtr ppidl);
 			void SetIDList(IntPtr pidl);
 			void GetDescription([Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder pszName, int cchMaxName);
@@ -103,13 +115,16 @@ namespace PDFPatcher.Common
 			void SetHotkey(short wHotkey);
 			void GetShowCmd(out int piShowCmd);
 			void SetShowCmd(int iShowCmd);
-			void GetIconLocation([Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder pszIconPath, int cchIconPath, out int piIcon);
+
+			void GetIconLocation([Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder pszIconPath, int cchIconPath,
+				out int piIcon);
+
 			void SetIconLocation([MarshalAs(UnmanagedType.LPWStr)] string pszIconPath, int iIcon);
 			void SetRelativePath([MarshalAs(UnmanagedType.LPWStr)] string pszPathRel, int dwReserved);
 			void Resolve(IntPtr hwnd, int fFlags);
 			void SetPath([MarshalAs(UnmanagedType.LPWStr)] string pszFile);
 		}
+
 		#endregion
 	}
-
 }

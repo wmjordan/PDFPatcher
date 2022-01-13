@@ -11,11 +11,13 @@ namespace PDFPatcher.Processor
 		int _processedPageCount;
 
 		#region IPageProcessor 成员
+
 		public string Name => "删除表单区域";
 
 		public void BeginProcess(DocProcessorContext context) {
 			_processedPageCount = 0;
 		}
+
 		public bool EndProcess(PdfReader pdf) {
 			Tracker.TraceMessage(Tracker.Category.Notice, Name + "功能：");
 			Tracker.TraceMessage("　　删除了 " + _processedPageCount + " 页的表单区域。");
@@ -35,10 +37,12 @@ namespace PDFPatcher.Processor
 				r = true;
 				ProcessCommands(p.Commands, fl);
 			}
+
 			if (r) {
 				context.IsPageContentModified = true;
 				_processedPageCount++;
 			}
+
 			return r;
 		}
 
@@ -47,21 +51,26 @@ namespace PDFPatcher.Processor
 			if (fl == null) {
 				return null;
 			}
+
 			var r = new HashSet<PdfName>();
 			foreach (var item in fl) {
 				var f = PdfReader.GetPdfObject(item.Value) as PRStream;
 				if (f == null
-					|| PdfName.FORM.Equals(f.GetAsName(PdfName.SUBTYPE)) == false) {
+				    || PdfName.FORM.Equals(f.GetAsName(PdfName.SUBTYPE)) == false) {
 					continue;
 				}
+
 				r.Add(item.Key);
 			}
+
 			foreach (var item in r) {
 				fl.Remove(item);
 			}
+
 			if (fl.Size == 0) {
 				context.Page.Locate<PdfDictionary>(PdfName.RESOURCES).Remove(PdfName.XOBJECT);
 			}
+
 			return r;
 		}
 
@@ -75,13 +84,14 @@ namespace PDFPatcher.Processor
 				if (ec != null) {
 					r |= ProcessCommands(ec.Commands, formNames);
 				}
+
 				if (cmd.Name.ToString() == "Do" && cmd.HasOperand && formNames.Contains(cmd.Operands[0] as PdfName)) {
 					parent.RemoveAt(i);
 					r = true;
 				}
 			}
+
 			return r;
 		}
-
 	}
 }

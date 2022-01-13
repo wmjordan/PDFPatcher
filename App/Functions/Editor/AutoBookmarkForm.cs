@@ -58,13 +58,15 @@ namespace PDFPatcher.Functions
 							ts.Style.ForeColor = f.Color == Color.White ? Color.Transparent : f.Color;
 							_BookmarkConditionBox.RefreshItem(args.Item);
 						}
-						);
+					);
 				}
 			};
 			_BookmarkConditionBox.RowFormatter = (r) => {
 				var ts = r.RowObject as EditModel.AutoBookmarkStyle;
 				r.UseItemStyleForSubItems = false;
-				r.SubItems[_ColorColumn.Index].ForeColor = ts.Style.ForeColor == Color.Transparent ? _BookmarkConditionBox.ForeColor : ts.Style.ForeColor;
+				r.SubItems[_ColorColumn.Index].ForeColor = ts.Style.ForeColor == Color.Transparent
+					? _BookmarkConditionBox.ForeColor
+					: ts.Style.ForeColor;
 			};
 		}
 

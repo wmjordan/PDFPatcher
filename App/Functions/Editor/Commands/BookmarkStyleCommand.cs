@@ -17,12 +17,13 @@ namespace PDFPatcher.Functions.Editor
 			if (b.FocusedItem == null) {
 				return;
 			}
+
 			var i = b.GetFirstSelectedModel<Model.BookmarkElement>();
 			if (i == null) {
 				return;
 			}
+
 			controller.ProcessBookmarks(new SetTextStyleProcessor(i, _style));
 		}
-
 	}
 }

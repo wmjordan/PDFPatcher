@@ -13,7 +13,7 @@ namespace PDFPatcher.Model.PdfPath
 		const char StartPredicate = '[';
 		const char EndPredicate = ']';
 
-		static readonly char[] __PredicateChars = new char[] { StartPredicate, EndPredicate };
+		static readonly char[] __PredicateChars = new char[] {StartPredicate, EndPredicate};
 
 		sealed class Context
 		{
@@ -26,6 +26,7 @@ namespace PDFPatcher.Model.PdfPath
 			if (String.IsNullOrEmpty(path)) {
 				return r.ToArray();
 			}
+
 			var l = path.Length;
 			var i = 0;
 			string n;
@@ -37,9 +38,11 @@ namespace PDFPatcher.Model.PdfPath
 					r.Enqueue(new PathExpression(ctx.Axis));
 					continue;
 				}
+
 				n = ExtractName(path, l, ref i);
 				r.Enqueue(new PathExpression(ctx.Axis, n));
 			}
+
 			return r.ToArray();
 		}
 
@@ -80,9 +83,11 @@ namespace PDFPatcher.Model.PdfPath
 			if (__PredicateChars.Contains(c)) {
 				throw new FormatException("“[]”筛选表达式前缺少节点名称。");
 			}
+
 			if (c == UniversalName) {
 				return null;
 			}
+
 			var n = new List<char>();
 			while (Char.IsLetter(c) || n.Count > 0 && Char.IsLetterOrDigit(c)) {
 				n.Add(c);
@@ -94,6 +99,7 @@ namespace PDFPatcher.Model.PdfPath
 					break;
 				}
 			}
+
 			return n.Count > 0 ? new String(n.ToArray()) : null;
 		}
 

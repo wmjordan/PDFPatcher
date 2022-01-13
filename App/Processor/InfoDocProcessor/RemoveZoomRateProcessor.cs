@@ -13,6 +13,7 @@ namespace PDFPatcher.Processor
 			if (d != null && d.Value != Constants.DestinationAttributes.ViewType.XYZ) {
 				d.Value = Constants.DestinationAttributes.ViewType.XYZ;
 			}
+
 			item.RemoveAttribute(Constants.Coordinates.ScaleFactor);
 			return true;
 		}

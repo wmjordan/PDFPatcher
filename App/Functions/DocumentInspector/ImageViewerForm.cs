@@ -40,11 +40,11 @@ namespace PDFPatcher.Functions
 			switch (n) {
 				case "_Save":
 					using (var f = new SaveFileDialog {
-						Title = "保存图片文件",
-						DefaultExt = Constants.FileExtensions.Png,
-						FileName = "导出图片.png",
-						Filter = Constants.FileExtensions.ImageFilter
-					}) {
+						       Title = "保存图片文件",
+						       DefaultExt = Constants.FileExtensions.Png,
+						       FileName = "导出图片.png",
+						       Filter = Constants.FileExtensions.ImageFilter
+					       }) {
 						if (f.ShowDialog() == DialogResult.OK) {
 							try {
 								using (var fi = new FreeImageAPI.FreeImageBitmap(_ImageBox.Image)) {
@@ -56,11 +56,14 @@ namespace PDFPatcher.Functions
 							}
 						}
 					}
+
 					break;
 				case "_ZoomReset":
-					_ImageBox.ActualSize(); break;
+					_ImageBox.ActualSize();
+					break;
 				case "_FitWindow":
-					_ImageBox.ZoomToFit(); break;
+					_ImageBox.ZoomToFit();
+					break;
 				default:
 					break;
 			}

@@ -9,6 +9,7 @@ namespace PDFPatcher
 	public class ExporterOptions
 	{
 		private bool _ExportDocProperties = true;
+
 		///<summary>获取或指定是否导出文档属性。</summary>
 		[XmlAttribute("导出文档属性")]
 		public bool ExportDocProperties {
@@ -17,6 +18,7 @@ namespace PDFPatcher
 		}
 
 		private bool _ExportBookmarks = true;
+
 		///<summary>获取或指定是否导出书签。</summary>
 		[XmlAttribute("导出文档书签")]
 		public bool ExportBookmarks {
@@ -25,6 +27,7 @@ namespace PDFPatcher
 		}
 
 		private bool _ExtractPageLinks = true;
+
 		///<summary>获取或指定是否导出页面内的连接。</summary>
 		[XmlAttribute("导出页面链接")]
 		public bool ExtractPageLinks {
@@ -33,6 +36,7 @@ namespace PDFPatcher
 		}
 
 		private bool _ExportViewerPreferences = true;
+
 		///<summary>获取或指定是否导出阅读器设置。</summary>
 		[XmlAttribute("导出阅读器设置")]
 		public bool ExportViewerPreferences {
@@ -41,6 +45,7 @@ namespace PDFPatcher
 		}
 
 		private bool _ExtractPageSettings = true;
+
 		///<summary>获取或指定是否导出页面的阅读设置。</summary>
 		[XmlAttribute("导出页面设置")]
 		public bool ExtractPageSettings {
@@ -77,6 +82,7 @@ namespace PDFPatcher
 		public bool ExportContentOperators { get; set; }
 
 		private int _ExportBinaryStream = 200;
+
 		///<summary>获取或指定导出二进制流的字节数。</summary>
 		[XmlAttribute("导出二进制流")]
 		public int ExportBinaryStream {
@@ -89,11 +95,13 @@ namespace PDFPatcher
 		public bool ConsolidateNamedDestinations { get; set; }
 
 		private readonly ImageExtracterOptions _Images = new ImageExtracterOptions();
+
 		///<summary>获取导出图像的选项。</summary>
 		[XmlIgnore]
 		public ImageExtracterOptions Images => _Images;
 
 		private UnitConverter _UnitConverter = new UnitConverter();
+
 		[XmlElement("导出尺寸单位")]
 		public UnitConverter UnitConverter {
 			get => _UnitConverter;
@@ -102,6 +110,7 @@ namespace PDFPatcher
 
 		private Encoding _Encoding = E.Default;
 		private string _EncodingName;
+
 		///<summary>获取或指定导出文件时所用的编码。</summary>
 		[XmlAttribute("文本编码")]
 		public string Encoding {
@@ -109,6 +118,7 @@ namespace PDFPatcher
 				if (_Encoding.EncodingName == E.Default.EncodingName) {
 					return Constants.Encoding.SystemDefault;
 				}
+
 				return _EncodingName;
 			}
 			set {
@@ -130,6 +140,5 @@ namespace PDFPatcher
 		public Encoding GetEncoding() {
 			return _Encoding;
 		}
-
 	}
 }

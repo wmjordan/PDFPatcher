@@ -15,10 +15,9 @@ namespace PDFPatcher.Functions
 	public sealed class DocumentChangedEventArgs : EventArgs
 	{
 		public string Path { get; private set; }
+
 		internal DocumentChangedEventArgs(string path) {
 			Path = path;
 		}
 	}
-
-
 }

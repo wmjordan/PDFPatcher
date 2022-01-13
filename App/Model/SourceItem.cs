@@ -15,11 +15,13 @@ namespace PDFPatcher.Model
 		public BookmarkSettings Bookmark { get; set; }
 		public int PageCount { get; private set; }
 		public abstract int FileSize { get; }
+
 		public List<SourceItem> Items {
 			get {
 				if (_Items == null) {
 					_Items = new List<SourceItem>();
 				}
+
 				return _Items;
 			}
 		}
@@ -27,6 +29,7 @@ namespace PDFPatcher.Model
 		public bool HasSubItems => _Items.HasContent();
 
 		public abstract ItemType Type { get; }
+
 		public static void SortFileList(string[] fileList) {
 			if (AppContext.Merger.CajSort && CajSort(fileList)) {
 				return;
@@ -50,6 +53,7 @@ namespace PDFPatcher.Model
 		{
 			Empty, Pdf, Image, Folder
 		}
+
 		/// <summary>
 		/// 创建新的空白页。
 		/// </summary>
@@ -72,9 +76,11 @@ namespace PDFPatcher.Model
 			if (((string)path).IsNullOrWhiteSpace()) {
 				return Create();
 			}
+
 			if (path.ExistsDirectory) {
 				return new Folder(path.ToString(), refresh);
 			}
+
 			if (path.HasExtension(Constants.FileExtensions.Pdf)) {
 				try {
 					var reader = Processor.PdfHelper.OpenPdfFile(path.ToString(), true, false);
@@ -83,7 +89,9 @@ namespace PDFPatcher.Model
 					if (refresh) {
 						r = new PageRange(1, c).ToString();
 					}
-					var info = Processor.DocInfoExporter.RewriteDocInfoWithEncoding(reader, AppContext.Encodings.DocInfoEncoding);
+
+					var info = Processor.DocInfoExporter.RewriteDocInfoWithEncoding(reader,
+						AppContext.Encodings.DocInfoEncoding);
 					reader.Close();
 					return new Pdf(path, r, c, info);
 				}
@@ -94,8 +102,10 @@ namespace PDFPatcher.Model
 					FormHelper.ErrorBox(String.Concat("打开 PDF 文件时“", path, "”出错。"));
 					// ignore corrupted 
 				}
+
 				return null;
 			}
+
 			if (path.HasExtension(Constants.FileExtensions.AllSupportedImageExtension)) {
 				return new Image(path);
 				//try {
@@ -109,13 +119,15 @@ namespace PDFPatcher.Model
 				//    // ignore unsupported images
 				//}
 			}
+
 			FormHelper.ErrorBox(String.Concat("不支持文件“", path, "”。"));
 			return null;
 		}
 
 		internal string GetInfoFileName() {
 			// 优先采用与输入文件同名的 XML 信息文件
-			var f = new FilePath(FileHelper.CombinePath(FolderName, Path.ChangeExtension(FileName, Constants.FileExtensions.Xml)));
+			var f = new FilePath(FileHelper.CombinePath(FolderName,
+				Path.ChangeExtension(FileName, Constants.FileExtensions.Xml)));
 			if (f.ExistsFile == false) {
 				// 次之采用与输入文件同名的 TXT 信息文件
 				f = f.ChangeExtension(Constants.FileExtensions.Txt);
@@ -127,15 +139,17 @@ namespace PDFPatcher.Model
 					}
 				}
 			}
+
 			return f.ToString();
 		}
 
 		internal string GetTargetPdfFileName(string targetPath) {
 			string targetFolder = null;
-			var m = FileHelper.HasFileNameMacro(targetPath);   // 包含替换符
+			var m = FileHelper.HasFileNameMacro(targetPath); // 包含替换符
 			if (m == false) {
 				targetFolder = Path.GetDirectoryName(targetPath);
 			}
+
 			return m ? targetPath : FileHelper.CombinePath(targetFolder, FilePath.FileName);
 		}
 
@@ -176,8 +190,9 @@ namespace PDFPatcher.Model
 
 			public bool Equals(CropOptions i) {
 				return Top == i.Top && Bottom == i.Bottom && Left == i.Left && Right == i.Right &&
-					MinHeight == i.MinHeight && MinWidth == i.MinWidth;
+				       MinHeight == i.MinHeight && MinWidth == i.MinWidth;
 			}
+
 			public void CopyTo(CropOptions target) {
 				target.Top = Top;
 				target.Bottom = Bottom;
@@ -200,11 +215,13 @@ namespace PDFPatcher.Model
 
 			public CropOptions Cropping { get; set; }
 			public override ItemType Type => ItemType.Image;
+
 			public override int FileSize {
 				get {
 					if (_FileSize == -1) {
 						_FileSize = GetFileKB(FilePath);
 					}
+
 					return _FileSize;
 				}
 			}
@@ -243,11 +260,13 @@ namespace PDFPatcher.Model
 			public ImageExtracterOptions ExtractImageOptions { get; private set; }
 			public Model.GeneralInfo DocInfo { get; private set; }
 			public override ItemType Type => ItemType.Pdf;
+
 			public override int FileSize {
 				get {
 					if (_FileSize == -1) {
 						_FileSize = GetFileKB(FilePath);
 					}
+
 					return _FileSize;
 				}
 			}
@@ -263,14 +282,13 @@ namespace PDFPatcher.Model
 			}
 
 			public override SourceItem Clone() {
-				var n = new Pdf(FilePath, PageRanges, PageCount, DocInfo) {
-					ImportImagesOnly = ImportImagesOnly
-				};
+				var n = new Pdf(FilePath, PageRanges, PageCount, DocInfo) {ImportImagesOnly = ImportImagesOnly};
 				CopyProperties(n);
 				return n;
 			}
 
 			int _FileSize = -1;
+
 			private void Refresh(string path, Encoding encoding) {
 				try {
 					using (var reader = Processor.PdfHelper.OpenPdfFile(path, true, false)) {
@@ -290,6 +308,7 @@ namespace PDFPatcher.Model
 		{
 			public Folder(string path) : base(path, 0) {
 			}
+
 			public Folder(string path, bool loadSubItems)
 				: this(path) {
 				if (loadSubItems) {
@@ -326,7 +345,7 @@ namespace PDFPatcher.Model
 				var fl = Array.FindAll(Directory.GetFiles(folderPath), (i) => {
 					var ext = Path.GetExtension(i).ToLowerInvariant();
 					return Constants.FileExtensions.Pdf == ext
-						|| Constants.FileExtensions.AllSupportedImageExtension.Contains(ext);
+					       || Constants.FileExtensions.AllSupportedImageExtension.Contains(ext);
 				});
 				var d = Array.ConvertAll(Directory.GetDirectories(folderPath), (i) => i + "\\");
 				var s = new string[fl.Length + d.Length];
@@ -350,7 +369,7 @@ namespace PDFPatcher.Model
 					foreach (var item in fl) {
 						var ext = Path.GetExtension(item).ToLowerInvariant();
 						if (Constants.FileExtensions.Pdf == ext
-							|| Constants.FileExtensions.AllSupportedImageExtension.Contains(ext)) {
+						    || Constants.FileExtensions.AllSupportedImageExtension.Contains(ext)) {
 							list.Add(Create(item));
 						}
 					}
@@ -380,6 +399,7 @@ namespace PDFPatcher.Model
 				if (AppContext.Merger.AutoBookmarkTitle == false) {
 					return;
 				}
+
 				var t = path.ExistsDirectory ? FileName : path.FileNameWithoutExtension;
 				if (t.Length > 0) {
 					Bookmark = CreateBookmarkSettings(t);
@@ -391,6 +411,7 @@ namespace PDFPatcher.Model
 			if (fileName.ExistsFile == false) {
 				return 0;
 			}
+
 			var f = fileName.ToFileInfo();
 			return (int)Math.Ceiling((double)(f.Length >> 10));
 		}
@@ -402,13 +423,16 @@ namespace PDFPatcher.Model
 					target._Items.Add(item.Clone());
 				}
 			}
+
 			if (Bookmark != null) {
 				target.Bookmark = Bookmark.Clone();
 			}
+
 			target.PageCount = PageCount;
 		}
 
 		List<SourceItem> _Items;
+
 		static BookmarkSettings CreateBookmarkSettings(string t) {
 			if (AppContext.Merger.CajSort && t.Length == 6) {
 				if (MatchCajPattern(t, Constants.CajNaming.Cover)) {
@@ -432,6 +456,7 @@ namespace PDFPatcher.Model
 					return new BookmarkSettings("正文");
 				}
 			}
+
 			if (AppContext.Merger.IgnoreLeadingNumbers) {
 				int i;
 				for (i = 0; i < t.Length; i++) {
@@ -439,10 +464,13 @@ namespace PDFPatcher.Model
 						break;
 					}
 				}
+
 				t = t.Substring(i);
 			}
+
 			return new BookmarkSettings(t);
 		}
+
 		static bool CajSort(string[] fileList) {
 			var m = false; // match Caj naming
 			var cov = new List<string>(1);
@@ -455,20 +483,23 @@ namespace PDFPatcher.Model
 				var f = Path.GetFileNameWithoutExtension(path);
 				if (f.Length == 6) {
 					if (MatchCajPatternAddPath(path, f, Constants.CajNaming.Cover, cov)
-						|| MatchCajPatternAddPath(path, f, Constants.CajNaming.TitlePage, bok)
-						|| MatchCajPatternAddPath(path, f, Constants.CajNaming.CopyrightPage, leg)
-						|| MatchCajPatternAddPath(path, f, Constants.CajNaming.Foreword, fow)
-						|| MatchCajPatternAddPath(path, f, Constants.CajNaming.Contents, cnt)
-						) {
+					    || MatchCajPatternAddPath(path, f, Constants.CajNaming.TitlePage, bok)
+					    || MatchCajPatternAddPath(path, f, Constants.CajNaming.CopyrightPage, leg)
+					    || MatchCajPatternAddPath(path, f, Constants.CajNaming.Foreword, fow)
+					    || MatchCajPatternAddPath(path, f, Constants.CajNaming.Contents, cnt)
+					   ) {
 						m = true;
 						continue;
 					}
 				}
+
 				body.Add(path);
 			}
+
 			if (m == false) {
 				return false;
 			}
+
 			cov.Sort(StringComparer.OrdinalIgnoreCase);
 			bok.Sort(StringComparer.OrdinalIgnoreCase);
 			leg.Sort(StringComparer.OrdinalIgnoreCase);
@@ -483,6 +514,7 @@ namespace PDFPatcher.Model
 			else {
 				p = CopyItem(fileList, cov, p);
 			}
+
 			p = CopyItem(fileList, bok, p);
 			p = CopyItem(fileList, leg, p);
 			p = CopyItem(fileList, fow, p);
@@ -491,6 +523,7 @@ namespace PDFPatcher.Model
 			if (cov.Count == 2) {
 				fileList[p] = cov[1];
 			}
+
 			return true;
 		}
 
@@ -505,6 +538,7 @@ namespace PDFPatcher.Model
 				container.Add(path);
 				return true;
 			}
+
 			return false;
 		}
 
@@ -517,6 +551,7 @@ namespace PDFPatcher.Model
 					return null;
 				}
 			}
+
 			return new BookmarkSettings(text);
 		}
 
@@ -524,15 +559,18 @@ namespace PDFPatcher.Model
 			if (text.StartsWith(pattern, StringComparison.OrdinalIgnoreCase) == false) {
 				return false;
 			}
+
 			int l = pattern.Length;
 			if (text.Length == l) {
 				return false;
 			}
+
 			foreach (var ch in text.Substring(l)) {
 				if (ch < '0' || ch > '9') {
 					return false;
 				}
 			}
+
 			return true;
 		}
 	}

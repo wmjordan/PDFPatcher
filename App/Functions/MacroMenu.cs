@@ -32,18 +32,18 @@ namespace PDFPatcher.Functions
 
 		internal void LoadStandardSourceFileMacros() {
 			Items.AddRange(new ToolStripItem[] {
-				new ToolStripMenuItem (InsertText + Constants.FileNameMacros.PathName),
-				new ToolStripMenuItem (InsertText + Constants.FileNameMacros.FileName),
-				new ToolStripMenuItem (InsertText + Constants.FileNameMacros.FolderName)
+				new ToolStripMenuItem(InsertText + Constants.FileNameMacros.PathName),
+				new ToolStripMenuItem(InsertText + Constants.FileNameMacros.FileName),
+				new ToolStripMenuItem(InsertText + Constants.FileNameMacros.FolderName)
 			});
 		}
 
 		internal void LoadStandardInfoMacros() {
 			Items.AddRange(new ToolStripItem[] {
-				new ToolStripMenuItem (InsertText + Constants.FileNameMacros.TitleProperty),
-				new ToolStripMenuItem (InsertText + Constants.FileNameMacros.AuthorProperty),
-				new ToolStripMenuItem (InsertText + Constants.FileNameMacros.SubjectProperty),
-				new ToolStripMenuItem (InsertText + Constants.FileNameMacros.KeywordsProperty)
+				new ToolStripMenuItem(InsertText + Constants.FileNameMacros.TitleProperty),
+				new ToolStripMenuItem(InsertText + Constants.FileNameMacros.AuthorProperty),
+				new ToolStripMenuItem(InsertText + Constants.FileNameMacros.SubjectProperty),
+				new ToolStripMenuItem(InsertText + Constants.FileNameMacros.KeywordsProperty)
 			});
 		}
 
@@ -56,12 +56,12 @@ namespace PDFPatcher.Functions
 					c.SelectedText = t;
 					return;
 				}
+
 				var cb = SourceControl as ComboBox;
 				if (cb != null) {
 					cb.SelectedText = t;
 				}
 			}
 		}
-
 	}
 }

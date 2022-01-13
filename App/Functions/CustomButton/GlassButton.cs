@@ -19,10 +19,12 @@ namespace EnhancedGlassButton
 	/// <summary>
 	/// Represents a glass button control.
 	/// </summary>
-	[ToolboxBitmap(typeof(System.Windows.Forms.Button)), ToolboxItem(true), ToolboxItemFilter("System.Windows.Forms"), Description("Raises an event when the user clicks it.")]
+	[ToolboxBitmap(typeof(System.Windows.Forms.Button)), ToolboxItem(true), ToolboxItemFilter("System.Windows.Forms"),
+	 Description("Raises an event when the user clicks it.")]
 	public partial class GlassButton : Button
 	{
 		#region " Global Vareables "
+
 		private System.ComponentModel.IContainer components = null;
 		private Timer timer;
 
@@ -101,7 +103,9 @@ namespace EnhancedGlassButton
 
 			RecalcRect((float)currentFrame / (framesCount - 1f));
 
-			SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.ResizeRedraw | ControlStyles.SupportsTransparentBackColor | ControlStyles.UserPaint, true);
+			SetStyle(
+				ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.ResizeRedraw |
+				ControlStyles.SupportsTransparentBackColor | ControlStyles.UserPaint, true);
 			SetStyle(ControlStyles.Opaque, false);
 
 			SizeChanged += new EventHandler(GlassButton_SizeChanged);
@@ -120,7 +124,6 @@ namespace EnhancedGlassButton
 			// 
 			timer.Tick += new System.EventHandler(timer_Tick);
 			ResumeLayout(false);
-
 		}
 
 		/// <summary>
@@ -136,8 +139,11 @@ namespace EnhancedGlassButton
 					imageButton = null;
 				}
 
-				DisposeAll(outerBorderPath, ContentPath, GlowClip, GlowBottomRadial, ShinePath, BorderPath, GlowRadialPath, ShineBrush, outerBorderPen, BorderPen, specialSymbolBrush, ContentBrush, toolTip, components);
+				DisposeAll(outerBorderPath, ContentPath, GlowClip, GlowBottomRadial, ShinePath, BorderPath,
+					GlowRadialPath, ShineBrush, outerBorderPen, BorderPen, specialSymbolBrush, ContentBrush, toolTip,
+					components);
 			}
+
 			base.Dispose(disposing);
 		}
 
@@ -148,11 +154,13 @@ namespace EnhancedGlassButton
 				}
 			}
 		}
+
 		#endregion
 
 		#region " Fields and Properties "
 
 		private Color backColor;
+
 		/// <summary>
 		/// Gets or sets the background color of the control.
 		/// </summary>
@@ -187,11 +195,13 @@ namespace EnhancedGlassButton
 		}
 
 		private Color innerBorderColor;
+
 		/// <summary>
 		/// Gets or sets the inner border color of the control.
 		/// </summary>
 		/// <returns>A <see cref="T:System.Drawing.Color" /> value representing the color of the inner border.</returns>
-		[DefaultValue(typeof(Color), "Black"), Category("Appearance"), Description("The inner border color of the control.")]
+		[DefaultValue(typeof(Color), "Black"), Category("Appearance"),
+		 Description("The inner border color of the control.")]
 		public Color InnerBorderColor {
 			get => innerBorderColor;
 			set {
@@ -211,7 +221,8 @@ namespace EnhancedGlassButton
 		/// Gets or sets the color of the special symbol.
 		/// </summary>
 		/// <value>The color of the special symbol.</value>
-		[DefaultValue(typeof(Color), "White"), Category("Appearance"), Description("The inner border color of the control.")]
+		[DefaultValue(typeof(Color), "White"), Category("Appearance"),
+		 Description("The inner border color of the control.")]
 		public Color SpecialSymbolColor {
 			get => specialSymbolColor;
 			set {
@@ -227,6 +238,7 @@ namespace EnhancedGlassButton
 		}
 
 		private int roundCorner;
+
 		/// <summary>
 		/// Gets or sets the corner radius.
 		/// </summary>
@@ -248,11 +260,13 @@ namespace EnhancedGlassButton
 		}
 
 		string toolTipText;
+
 		/// <summary>
 		/// Gets or sets the tool tip text.
 		/// </summary>
 		/// <value>The tool tip text.</value>
-		[DefaultValue(""), Category("Appearance"), Description("The ToolTip-Text of the button. Leave blank to not show a ToolTip.")]
+		[DefaultValue(""), Category("Appearance"),
+		 Description("The ToolTip-Text of the button. Leave blank to not show a ToolTip.")]
 		public string ToolTipText {
 			get => toolTipText;
 			set {
@@ -270,6 +284,7 @@ namespace EnhancedGlassButton
 		}
 
 		private bool alternativeForm;
+
 		/// <summary>
 		/// Gets or sets the alternative form.
 		/// </summary>
@@ -291,6 +306,7 @@ namespace EnhancedGlassButton
 		}
 
 		private bool animateGlow;
+
 		/// <summary>
 		/// Gets or sets a value indicating whether the glow is animated.
 		/// </summary>
@@ -309,11 +325,13 @@ namespace EnhancedGlassButton
 		}
 
 		private bool showSpecialSymbol;
+
 		/// <summary>
 		/// Gets or sets a value indicating whether a special symbol is drawn.
 		/// </summary>
 		/// <value><c>true</c> if special symbol is drawn; otherwise, <c>false</c>.</value>
-		[DefaultValue(false), Category("Appearance"), Description("If true, the selectet special symbol will be drawn on the button.")]
+		[DefaultValue(false), Category("Appearance"),
+		 Description("If true, the selectet special symbol will be drawn on the button.")]
 		public bool ShowSpecialSymbol {
 			get => showSpecialSymbol;
 			set {
@@ -351,11 +369,13 @@ namespace EnhancedGlassButton
 		}
 
 		private SpecialSymbols specialSymbol;
+
 		/// <summary>
 		/// Gets or sets the special symbol.
 		/// </summary>
 		/// <value>The special symbol.</value>
-		[DefaultValue(typeof(SpecialSymbols), "Play"), Category("Appearance"), Description("Sets the type of the special symbol on the button.")]
+		[DefaultValue(typeof(SpecialSymbols), "Play"), Category("Appearance"),
+		 Description("Sets the type of the special symbol on the button.")]
 		public SpecialSymbols SpecialSymbol {
 			get => specialSymbol;
 			set {
@@ -376,11 +396,13 @@ namespace EnhancedGlassButton
 		}
 
 		private Direction alternativeFormDirection;
+
 		/// <summary>
 		/// Gets or sets the alternative form direction.
 		/// </summary>
 		/// <value>The alternative form direction.</value>
-		[DefaultValue(typeof(Direction), "Left"), Category("Appearance"), Description("Sets the Direction of the alternative Form.")]
+		[DefaultValue(typeof(Direction), "Left"), Category("Appearance"),
+		 Description("Sets the Direction of the alternative Form.")]
 		public Direction AlternativeFormDirection {
 			get => alternativeFormDirection;
 			set {
@@ -397,11 +419,13 @@ namespace EnhancedGlassButton
 		}
 
 		private bool showFocusBorder;
+
 		/// <summary>
 		/// Gets or sets a value indicating whether the focus border is shown.
 		/// </summary>
 		/// <value><c>true</c> if focus border shown; otherwise, <c>false</c>.</value>
-		[DefaultValue(false), Category("Appearance"), Description("Draw the normal Focus-Border. Alternativ Focus-Border will be drawed if false.")]
+		[DefaultValue(false), Category("Appearance"),
+		 Description("Draw the normal Focus-Border. Alternativ Focus-Border will be drawed if false.")]
 		public bool ShowFocusBorder {
 			get => showFocusBorder;
 			set {
@@ -418,11 +442,13 @@ namespace EnhancedGlassButton
 		}
 
 		private Color alternativeFocusBorderColor;
+
 		/// <summary>
 		/// Gets or sets the color of the alternative focus border.
 		/// </summary>
 		/// <value>The color of the alternative focus border.</value>
-		[DefaultValue(typeof(Color), "Black"), Category("Appearance"), Description("The color of the alternative Focus-Border.")]
+		[DefaultValue(typeof(Color), "Black"), Category("Appearance"),
+		 Description("The color of the alternative Focus-Border.")]
 		public Color AlternativeFocusBorderColor {
 			get => alternativeFocusBorderColor;
 			set {
@@ -439,11 +465,13 @@ namespace EnhancedGlassButton
 		}
 
 		private Color outerBorderColor;
+
 		/// <summary>
 		/// Gets or sets the outer border color of the control.
 		/// </summary>
 		/// <returns>A <see cref="T:System.Drawing.Color" /> value representing the color of the outer border.</returns>
-		[DefaultValue(typeof(Color), "White"), Category("Appearance"), Description("The outer border color of the control.")]
+		[DefaultValue(typeof(Color), "White"), Category("Appearance"),
+		 Description("The outer border color of the control.")]
 		public Color OuterBorderColor {
 			get => outerBorderColor;
 			set {
@@ -460,6 +488,7 @@ namespace EnhancedGlassButton
 		}
 
 		private Color shineColor;
+
 		/// <summary>
 		/// Gets or sets the shine color of the control.
 		/// </summary>
@@ -481,11 +510,13 @@ namespace EnhancedGlassButton
 		}
 
 		private Color glowColor;
+
 		/// <summary>
 		/// Gets or sets the glow color of the control.
 		/// </summary>
 		/// <returns>A <see cref="T:System.Drawing.Color" /> value representing the glow color.</returns>
-		[DefaultValue(typeof(Color), "255,141,189,255"), Category("Appearance"), Description("The glow color of the control.")]
+		[DefaultValue(typeof(Color), "255,141,189,255"), Category("Appearance"),
+		 Description("The glow color of the control.")]
 		public Color GlowColor {
 			get => glowColor;
 			set {
@@ -518,15 +549,19 @@ namespace EnhancedGlassButton
 				if (!Enabled) {
 					return PushButtonState.Disabled;
 				}
+
 				if (isPressed) {
 					return PushButtonState.Pressed;
 				}
+
 				if (isHovered) {
 					return PushButtonState.Hot;
 				}
+
 				if (isFocused || IsDefault) {
 					return PushButtonState.Default;
 				}
+
 				return PushButtonState.Normal;
 			}
 		}
@@ -572,6 +607,7 @@ namespace EnhancedGlassButton
 				isKeyDown = true;
 				Invalidate();
 			}
+
 			base.OnKeyDown(kevent);
 		}
 
@@ -584,6 +620,7 @@ namespace EnhancedGlassButton
 				isKeyDown = false;
 				Invalidate();
 			}
+
 			base.OnKeyUp(kevent);
 		}
 
@@ -597,6 +634,7 @@ namespace EnhancedGlassButton
 				isFocusedByKey = false;
 				Invalidate();
 			}
+
 			base.OnMouseDown(e);
 		}
 
@@ -609,6 +647,7 @@ namespace EnhancedGlassButton
 				isMouseDown = false;
 				Invalidate();
 			}
+
 			base.OnMouseUp(e);
 		}
 
@@ -712,138 +751,195 @@ namespace EnhancedGlassButton
 		private void DrawSpecialSymbol(Graphics g) {
 			var offset = 15;
 			var LineWidth = Width / 15;
-			var pen = new Pen(specialSymbolBrush, Width / 8) {
-				EndCap = LineCap.ArrowAnchor
-			};
-			var aPen = new Pen(specialSymbolBrush, Width / 4) {
-				EndCap = LineCap.ArrowAnchor
-			};
+			var pen = new Pen(specialSymbolBrush, Width / 8) {EndCap = LineCap.ArrowAnchor};
+			var aPen = new Pen(specialSymbolBrush, Width / 4) {EndCap = LineCap.ArrowAnchor};
 			var font = new Font("Arial", LineWidth * 4, FontStyle.Bold);
 
 			switch (specialSymbol) {
 				#region " Arrow Left "
+
 				case SpecialSymbols.ArrowLeft:
 					g.DrawLine(aPen, Width - Width / 5, Height / 2, Width / 8, Height / 2);
 					break;
+
 				#endregion
+
 				#region " Arrow Right "
+
 				case SpecialSymbols.ArrowRight:
 					g.DrawLine(aPen, Width / 6, Height / 2, Width - Width / 8, Height / 2);
 					break;
+
 				#endregion
+
 				#region " Arrow Up "
+
 				case SpecialSymbols.ArrowUp:
 					g.DrawLine(aPen, Width / 2, Height - Height / 5, Width / 2, Height / 8);
 					break;
+
 				#endregion
+
 				#region " Arrow Down "
+
 				case SpecialSymbols.ArrowDown:
 					g.DrawLine(aPen, Width / 2, Height / 5, Width / 2, Height - Height / 8);
 					break;
+
 				#endregion
+
 				#region " Play "
+
 				case SpecialSymbols.Play:
-					g.FillPolygon(specialSymbolBrush, new Point[3]{
-						new Point(Width / 4 + Width / 20, Height / 4),
-						new Point(Width - Width / 4 + Width / 20, Height / 2),
-						new Point(Width / 4 + Width / 20, Height - Height / 4)});
+					g.FillPolygon(specialSymbolBrush,
+						new Point[3] {
+							new Point(Width / 4 + Width / 20, Height / 4),
+							new Point(Width - Width / 4 + Width / 20, Height / 2),
+							new Point(Width / 4 + Width / 20, Height - Height / 4)
+						});
 					break;
+
 				#endregion
+
 				#region " Pause "
+
 				case SpecialSymbols.Pause:
 					g.FillRectangle(specialSymbolBrush, new Rectangle(Width / 4, Height / 4,
 						(Width / 2 - Width / 10) / 2, Height / 2));
 					g.FillRectangle(specialSymbolBrush, new Rectangle(Width / 2 + Width / 20, Height / 4,
 						(Width / 2 - Width / 10) / 2, Height / 2));
 					break;
+
 				#endregion
+
 				#region " Stop "
+
 				case SpecialSymbols.Stop:
 					g.FillRectangle(specialSymbolBrush, new Rectangle(Width / 4 + Width / 20, Height / 4 + Height / 20,
 						Width / 2 - Width / 10, Height / 2 - Width / 10));
 					break;
+
 				#endregion
+
 				#region " FastForward "
+
 				case SpecialSymbols.FastForward:
-					g.FillPolygon(specialSymbolBrush, new Point[3]{
-						new Point(Width / 4, Height / 4),
-						new Point(Width / 2, Height / 2),
-						new Point(Width / 4, Height - Height / 4)});
-					g.FillPolygon(specialSymbolBrush, new Point[3]{
-						new Point(Width / 2, Height / 4),
-						new Point(3 * Width / 4, Height / 2),
-						new Point(Width / 2, Height - Height / 4)});
+					g.FillPolygon(specialSymbolBrush,
+						new Point[3] {
+							new Point(Width / 4, Height / 4), new Point(Width / 2, Height / 2),
+							new Point(Width / 4, Height - Height / 4)
+						});
+					g.FillPolygon(specialSymbolBrush,
+						new Point[3] {
+							new Point(Width / 2, Height / 4), new Point(3 * Width / 4, Height / 2),
+							new Point(Width / 2, Height - Height / 4)
+						});
 					g.FillRectangle(specialSymbolBrush, new Rectangle(3 * Width / 4, Height / 4,
 						Width / 12, Height / 2));
 					break;
+
 				#endregion
+
 				#region " Forward "
+
 				case SpecialSymbols.Forward:
-					g.FillPolygon(specialSymbolBrush, new Point[3]{
-						new Point(Width / 4 + Width / 12, Height / 4),
-						new Point(Width / 2 + Width / 12, Height / 2),
-						new Point(Width / 4 + Width / 12, Height - Height / 4)});
-					g.FillPolygon(specialSymbolBrush, new Point[3]{
-						new Point(Width / 2 + Width / 12, Height / 4),
-						new Point(3 * Width / 4 + Width / 12, Height / 2),
-						new Point(Width / 2 + Width / 12, Height - Height / 4)});
+					g.FillPolygon(specialSymbolBrush,
+						new Point[3] {
+							new Point(Width / 4 + Width / 12, Height / 4),
+							new Point(Width / 2 + Width / 12, Height / 2),
+							new Point(Width / 4 + Width / 12, Height - Height / 4)
+						});
+					g.FillPolygon(specialSymbolBrush,
+						new Point[3] {
+							new Point(Width / 2 + Width / 12, Height / 4),
+							new Point(3 * Width / 4 + Width / 12, Height / 2),
+							new Point(Width / 2 + Width / 12, Height - Height / 4)
+						});
 					break;
+
 				#endregion
+
 				#region " Backward "
+
 				case SpecialSymbols.Backward:
-					g.FillPolygon(specialSymbolBrush, new Point[3]{
-						new Point(Width / 4 - Width / 12, Height / 2),
-						new Point(Width / 2 - Width / 12, Height / 4),
-						new Point(Width / 2 - Width / 12, Height - Height / 4)});
-					g.FillPolygon(specialSymbolBrush, new Point[3]{
-						new Point(Width / 2 - Width / 12, Height / 2),
-						new Point(3 * Width / 4 - Width / 12, Height / 4),
-						new Point(3 * Width / 4 - Width / 12, Height - Height / 4)});
+					g.FillPolygon(specialSymbolBrush,
+						new Point[3] {
+							new Point(Width / 4 - Width / 12, Height / 2),
+							new Point(Width / 2 - Width / 12, Height / 4),
+							new Point(Width / 2 - Width / 12, Height - Height / 4)
+						});
+					g.FillPolygon(specialSymbolBrush,
+						new Point[3] {
+							new Point(Width / 2 - Width / 12, Height / 2),
+							new Point(3 * Width / 4 - Width / 12, Height / 4),
+							new Point(3 * Width / 4 - Width / 12, Height - Height / 4)
+						});
 					break;
+
 				#endregion
+
 				#region " FastBackward "
+
 				case SpecialSymbols.FastBackward:
-					g.FillPolygon(specialSymbolBrush, new Point[3]{
-						new Point(Width / 4, Height / 2),
-						new Point(Width / 2, Height / 4),
-						new Point(Width / 2, Height - Height / 4)});
-					g.FillPolygon(specialSymbolBrush, new Point[3]{
-						new Point(Width / 2, Height / 2),
-						new Point(3 * Width / 4, Height / 4),
-						new Point(3 * Width / 4, Height - Height / 4)});
+					g.FillPolygon(specialSymbolBrush,
+						new Point[3] {
+							new Point(Width / 4, Height / 2), new Point(Width / 2, Height / 4),
+							new Point(Width / 2, Height - Height / 4)
+						});
+					g.FillPolygon(specialSymbolBrush,
+						new Point[3] {
+							new Point(Width / 2, Height / 2), new Point(3 * Width / 4, Height / 4),
+							new Point(3 * Width / 4, Height - Height / 4)
+						});
 					g.FillRectangle(specialSymbolBrush, new Rectangle(Width / 4 - Width / 12, Height / 4,
 						Width / 12, Height / 2));
 					break;
+
 				#endregion
+
 				#region " Speaker "
+
 				case SpecialSymbols.Speaker:
-					g.DrawPolygon(new Pen(specialSymbolBrush, Width / 20), new Point[6] {
-						new Point(Width / 2 - Width / 6 - Width / offset, Height / 4 + Height / 10),
-						new Point(Width / 2 - Width / offset, Height / 4 + Height / 10),
-						new Point(Width / 2 + Width / 5 - Width / offset, Height / 4),
-						new Point(Width / 2 + Width / 5 - Width / offset, 3 * Height / 4),
-						new Point(Width / 2 - Width / offset, 3 * Height / 4 - Height / 10),
-						new Point(Width / 2 - Width / 6 - Width / offset, 3 * Height / 4 - Height / 10)});
+					g.DrawPolygon(new Pen(specialSymbolBrush, Width / 20),
+						new Point[6] {
+							new Point(Width / 2 - Width / 6 - Width / offset, Height / 4 + Height / 10),
+							new Point(Width / 2 - Width / offset, Height / 4 + Height / 10),
+							new Point(Width / 2 + Width / 5 - Width / offset, Height / 4),
+							new Point(Width / 2 + Width / 5 - Width / offset, 3 * Height / 4),
+							new Point(Width / 2 - Width / offset, 3 * Height / 4 - Height / 10),
+							new Point(Width / 2 - Width / 6 - Width / offset, 3 * Height / 4 - Height / 10)
+						});
 					g.DrawLine(new Pen(specialSymbolBrush, Width / 20), Width / 2 - Width / offset,
-						Height / 4 + Height / 10 + Width / 40, Width / 2 - Width / offset, Height - (Height / 4 + Height / 10 + Width / 40));
+						Height / 4 + Height / 10 + Width / 40, Width / 2 - Width / offset,
+						Height - (Height / 4 + Height / 10 + Width / 40));
 					break;
+
 				#endregion
+
 				#region " NoSpeaker "
+
 				case SpecialSymbols.NoSpeaker:
-					g.DrawPolygon(new Pen(specialSymbolBrush, Width / 20), new Point[6] {
-						new Point(Width / 2 - Width / 6 - Width / offset, Height / 4 + Height / 10),
-						new Point(Width / 2 - Width / offset, Height / 4 + Height / 10),
-						new Point(Width / 2 + Width / 5 - Width / offset, Height / 4),
-						new Point(Width / 2 + Width / 5 - Width / offset, 3 * Height / 4),
-						new Point(Width / 2 - Width / offset, 3 * Height / 4 - Height / 10),
-						new Point(Width / 2 - Width / 6 - Width / offset, 3 * Height / 4 - Height / 10)});
+					g.DrawPolygon(new Pen(specialSymbolBrush, Width / 20),
+						new Point[6] {
+							new Point(Width / 2 - Width / 6 - Width / offset, Height / 4 + Height / 10),
+							new Point(Width / 2 - Width / offset, Height / 4 + Height / 10),
+							new Point(Width / 2 + Width / 5 - Width / offset, Height / 4),
+							new Point(Width / 2 + Width / 5 - Width / offset, 3 * Height / 4),
+							new Point(Width / 2 - Width / offset, 3 * Height / 4 - Height / 10),
+							new Point(Width / 2 - Width / 6 - Width / offset, 3 * Height / 4 - Height / 10)
+						});
 					g.DrawLine(new Pen(specialSymbolBrush, Width / 20), Width / 2 - Width / offset,
-						Height / 4 + Height / 10 + Width / 40, Width / 2 - Width / offset, Height - (Height / 4 + Height / 10 + Width / 40));
-					g.DrawLine(new Pen(specialSymbolBrush, Width / 20), (int)(Width / 2 - Width / 3.5 - Width / offset), 3 * Height / 4 - Height / 10,
+						Height / 4 + Height / 10 + Width / 40, Width / 2 - Width / offset,
+						Height - (Height / 4 + Height / 10 + Width / 40));
+					g.DrawLine(new Pen(specialSymbolBrush, Width / 20), (int)(Width / 2 - Width / 3.5 - Width / offset),
+						3 * Height / 4 - Height / 10,
 						Width / 2 + Width / 3 - Width / offset, Height / 4 + Height / 12 + Width / 40);
 					break;
+
 				#endregion
+
 				#region " Repeat "
+
 				case SpecialSymbols.Repeat:
 					g.DrawLine(new Pen(specialSymbolBrush, LineWidth),
 						new Point((int)(Width / 4), (int)(Height / 3)),
@@ -857,8 +953,11 @@ namespace EnhancedGlassButton
 						new Point((int)(Width / 3.2), (int)(Height - Height / 3)),
 						new Point((int)(Width / 4), (int)(Height - Height / 3)));
 					break;
+
 				#endregion
+
 				#region " RepeatAll "
+
 				case SpecialSymbols.RepeatAll:
 					g.DrawLine(new Pen(specialSymbolBrush, LineWidth),
 						new Point((int)(Width / 2.4), (int)(Height / 3)),
@@ -874,18 +973,25 @@ namespace EnhancedGlassButton
 					g.DrawArc(new Pen(specialSymbolBrush, LineWidth), (int)(Width / 4), (int)(Height / 3),
 						(int)(Width / 3), (int)(Height / 3), 90, 180);
 					break;
+
 				#endregion
+
 				#region " Shuffle "
+
 				case SpecialSymbols.Shuffle:
 					g.DrawString("1", font, specialSymbolBrush, (Width / 2) / 4, Height / 2 - LineWidth * 2);
 					var sWidth = (int)g.MeasureString("2", font).Width;
 					var sHeigth = (int)g.MeasureString("2", font).Height;
-					g.DrawString("2", font, specialSymbolBrush, Width / 2 - sWidth / 2 - Width / (2 * offset), Height - LineWidth - sHeigth);
+					g.DrawString("2", font, specialSymbolBrush, Width / 2 - sWidth / 2 - Width / (2 * offset),
+						Height - LineWidth - sHeigth);
 					sWidth = (int)g.MeasureString("3", font).Width;
-					g.DrawString("3", font, specialSymbolBrush, Width - (Width / 2) / 4 - sWidth - Width / (2 * offset), Height / 2 - LineWidth * 2);
+					g.DrawString("3", font, specialSymbolBrush, Width - (Width / 2) / 4 - sWidth - Width / (2 * offset),
+						Height / 2 - LineWidth * 2);
 					g.DrawArc(pen, (Width / 2) / 2, Height / 6, Width - (Width / 2), (int)(Height / 2.2), 170, 210);
 					break;
+
 				#endregion
+
 				default:
 					break;
 			}
@@ -904,22 +1010,22 @@ namespace EnhancedGlassButton
 		}
 
 		private Button imageButton;
+
 		/// <summary>
 		/// Draws the foreground from button.
 		/// </summary>
 		/// <param name="pevent">The <see cref="System.Windows.Forms.PaintEventArgs"/> instance containing the event data.</param>
 		private void DrawForegroundFromButton(PaintEventArgs pevent) {
 			if (imageButton == null) {
-				imageButton = new Button {
-					Parent = new TransparentControl(),
-					BackColor = Color.Transparent
-				};
+				imageButton = new Button {Parent = new TransparentControl(), BackColor = Color.Transparent};
 				imageButton.FlatAppearance.BorderSize = 0;
 				imageButton.FlatStyle = FlatStyle.Flat;
 			}
+
 			if (direction != 0) {
 				imageButton.SuspendLayout();
 			}
+
 			imageButton.ForeColor = ForeColor;
 			imageButton.Font = Font;
 			imageButton.RightToLeft = RightToLeft;
@@ -938,6 +1044,7 @@ namespace EnhancedGlassButton
 			if (direction != 0) {
 				imageButton.ResumeLayout();
 			}
+
 			InvokePaint(imageButton, pevent);
 		}
 
@@ -966,20 +1073,18 @@ namespace EnhancedGlassButton
 					path.AddArc(l, t, h, h, 90, 180);
 					path.AddLine(l + h, t, l + w, t);
 					path.AddCurve(new Point[5] {
-						new Point(l + w, t),
-						new Point(l + w - h / 6, t + h / 4),
-						new Point((int)(l + w - (double)(h / 4.7)), t + h / 2),
-						new Point(l + w - h / 6, t + 3 * h / 4),
-						new Point(l + w, t + h) });
+						new Point(l + w, t), new Point(l + w - h / 6, t + h / 4),
+						new Point((int)(l + w - (double)(h / 4.7)), t + h / 2), new Point(l + w - h / 6, t + 3 * h / 4),
+						new Point(l + w, t + h)
+					});
 					path.AddLine(l + h, t + h, l + w, t + h);
 				}
 				else {
 					path.AddCurve(new Point[5] {
-						new Point(l, t),
-						new Point(l + h / 6, t + h / 4),
-						new Point((int)(l + (double)(h / 4.85)), t + h / 2),
-						new Point(l + h / 6, t + 3 * h / 4),
-						new Point(l, t + h) });
+						new Point(l, t), new Point(l + h / 6, t + h / 4),
+						new Point((int)(l + (double)(h / 4.85)), t + h / 2), new Point(l + h / 6, t + 3 * h / 4),
+						new Point(l, t + h)
+					});
 					path.AddLine(l, t + h, l + w - h, t + h);
 					path.AddArc(l + w - h, t, h, h, 90, -180);
 					path.AddLine(l + w - h, t, l, t);
@@ -1020,15 +1125,15 @@ namespace EnhancedGlassButton
 					path.AddArc(l, t, h * 2, h * 2, 180, 90);
 					path.AddLine(l + h, t, l + w, t);
 					path.AddCurve(new Point[3] {
-						new Point(l + w, t),
-						new Point(l + w - h / 3, t + h / 2),
-						new Point((int)(l + w - (double)(h / 2.35)), t + h)});
+						new Point(l + w, t), new Point(l + w - h / 3, t + h / 2),
+						new Point((int)(l + w - (double)(h / 2.35)), t + h)
+					});
 				}
 				else {
 					path.AddCurve(new Point[3] {
-						new Point(l, t),
-						new Point(l + h / 3, t + h / 2),
-						new Point((int)(l + (double)(h / 2.35)), t + h)});
+						new Point(l, t), new Point(l + h / 3, t + h / 2),
+						new Point((int)(l + (double)(h / 2.35)), t + h)
+					});
 					path.AddLine((int)(l + (double)(h / 2.35)), t + h, l + w - h, t + h);
 					path.AddArc(l + w - h * 2, t, h * 2, h * 2, 0, -90);
 				}
@@ -1160,7 +1265,8 @@ namespace EnhancedGlassButton
 				var opacity = 0x99;
 				if (isPressed)
 					opacity = (int)(.4f * opacity + .5f);
-				ShineBrush = new LinearGradientBrush(rect2, Color.FromArgb(opacity, shineColor), Color.FromArgb(opacity / 3, shineColor), LinearGradientMode.Vertical);
+				ShineBrush = new LinearGradientBrush(rect2, Color.FromArgb(opacity, shineColor),
+					Color.FromArgb(opacity / 3, shineColor), LinearGradientMode.Vertical);
 
 				rect2.Height -= 2;
 
@@ -1168,6 +1274,7 @@ namespace EnhancedGlassButton
 			}
 			else
 				drawShine = false;
+
 			return rect2;
 		}
 
@@ -1199,7 +1306,7 @@ namespace EnhancedGlassButton
 			}
 
 			GlowRadialPath.CenterColor = Color.FromArgb(opacity, glowColor);
-			GlowRadialPath.SurroundColors = new Color[] { Color.FromArgb(0, glowColor) };
+			GlowRadialPath.SurroundColors = new Color[] {Color.FromArgb(0, glowColor)};
 		}
 
 		/// <summary>
@@ -1268,12 +1375,14 @@ namespace EnhancedGlassButton
 
 		/// <summary>This property is not relevant for this class.</summary>
 		/// <returns>This property is not relevant for this class.</returns>
-		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
+		 EditorBrowsable(EditorBrowsableState.Never)]
 		public new FlatButtonAppearance FlatAppearance => base.FlatAppearance;
 
 		/// <summary>This property is not relevant for this class.</summary>
 		/// <returns>This property is not relevant for this class.</returns>
-		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
+		 EditorBrowsable(EditorBrowsableState.Never)]
 		public new FlatStyle FlatStyle {
 			get => base.FlatStyle;
 			set => base.FlatStyle = value;
@@ -1281,7 +1390,8 @@ namespace EnhancedGlassButton
 
 		/// <summary>This property is not relevant for this class.</summary>
 		/// <returns>This property is not relevant for this class.</returns>
-		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), EditorBrowsable(EditorBrowsableState.Never)]
+		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden),
+		 EditorBrowsable(EditorBrowsableState.Never)]
 		public new bool UseVisualStyleBackColor {
 			get => base.UseVisualStyleBackColor;
 			set => base.UseVisualStyleBackColor = value;
@@ -1322,6 +1432,7 @@ namespace EnhancedGlassButton
 				direction = 0;
 				return;
 			}
+
 			if (currentFrame == framesCount) {
 				currentFrame = framesCount - 1;
 				timer.Enabled = false;

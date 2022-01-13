@@ -10,6 +10,7 @@ namespace PDFPatcher.Processor
 		public bool SkipZero { get; private set; }
 
 		public ChangePageNumberProcessor(int amount) : this(amount, false, false) { }
+
 		public ChangePageNumberProcessor(int amount, bool isAbsolute, bool skipZero) {
 			IsAbsolute = isAbsolute;
 			Amount = amount;
@@ -23,22 +24,28 @@ namespace PDFPatcher.Processor
 		public IUndoAction Process(System.Xml.XmlElement item) {
 			int p;
 			var a = item.GetAttribute(Constants.DestinationAttributes.Action);
-			if ((String.IsNullOrEmpty(a) && SkipZero == false || a == Constants.ActionType.Goto || a == Constants.ActionType.GotoR) == false && item.HasAttribute(Constants.DestinationAttributes.Page) == false) {
+			if ((String.IsNullOrEmpty(a) && SkipZero == false || a == Constants.ActionType.Goto ||
+			     a == Constants.ActionType.GotoR) == false &&
+			    item.HasAttribute(Constants.DestinationAttributes.Page) == false) {
 				return null;
 			}
+
 			if (item.GetAttribute(Constants.DestinationAttributes.Page).TryParse(out p)) {
 				if (IsAbsolute) {
 					if (p == Amount) {
 						return null;
 					}
+
 					p = Amount;
 				}
 				else {
 					p += Amount;
 				}
+
 				if (p < 1) {
 					return null;
 				}
+
 				return UndoAttributeAction.GetUndoAction(item, Constants.DestinationAttributes.Page, p.ToText());
 			}
 			else {
@@ -47,6 +54,7 @@ namespace PDFPatcher.Processor
 				if (String.IsNullOrEmpty(a)) {
 					undo.SetAttribute(item, Constants.DestinationAttributes.Action, Constants.ActionType.Goto);
 				}
+
 				return undo;
 			}
 		}

@@ -1,75 +1,86 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8"?>
+
 <html>
-	<head>
-		<title>关于 $AppName</title>
-		<style>
-body {
-	margin: 0;
-	padding: 5pt;
-}
-h1 {
-	font-size: 15pt;
-	color: #6666cc;
-	border-bottom: 1px dashed #9900ff;
-	margin: 5pt 0;
-}
-p, td {
-	padding: 3pt 0pt;
-	margin: 0pt;
-	font-size: 11pt;
-}
-h2 {
-	font-size: 12pt;
-	padding: 3pt 0;
-	margin: 0;
-	color: #6666cc;
-}
-span {
-	display: inline-block;
-	width: 50%;
-}
-		</style>
-	</head>
-	<body>
-		<h1>关于 $AppName</h1>
-		<div style="padding: 0 10pt;">
-			<table style="width: 100%; max-width: 800px">
-				<tr>
-					<td rowspan="5"><img src="res:Logo" /></td>
-					<td colspan="2">$AssemblyCopyright</td>
-				</tr>
-				<tr>
-					<td>软件版本：</td>
-					<td>$AssemblyVersion <a href="exec:_CheckUpdate">检查新版本</a></td>
-				</tr>
-				<tr>
-					<td>主页网址：</td>
-					<td><a href="$AppHomePage">$AppHomePage</a></td>
-				</tr>
-				<tr>
-					<td>源代码网址：</td>
-					<td><a href="$AppHubPage">$AppHubPage</a></td>
-				</tr>
-				<tr>
-					<td>作者电邮：</td>
-					<td>$AssemblyCompany</td>
-				</tr>
-			</table>
-			<p>PDF 补丁丁是开放源代码的免费软件。在使用该软件之前，您必须同意此软件附带的使用协议。使用此软件表示您同意并遵守该软件使用协议的条款，并清楚使用该软件的责任。</p>
-			<p>本软件及源代码采用“<strong>良心授权</strong>”协议——<strong>用户每次使用本软件后如有所获益，应行一善事；如使用源代码开发了新的软件并获得收益，应将收益中不低于千分之一的金额捐赠给社会的弱势群体。</strong>对于因安装、复制、使用本软件而引致的任何损失，本软件及其著作权人不负任何责任。</p>
-			<p>本软件使用了如下开放源代码项目的成果，特此致谢：</p>
-			<ol>
-				<li>PDF 组件：<a href="http://itextsharp.sourceforge.net">http://itextsharp.sourceforge.net</a></li>
-				<li>PDF 引擎：<a href="http://mupdf.com">http://mupdf.com</a></li>
-				<li>图像处理：<a href="http://freeimage.sourceforge.net">http://freeimage.sourceforge.net</a></li>
-				<li>JBIG2 解码：<a href="http://artifex.com/">http://artifex.com/</a></li>
-				<li>JBIG2 编码：Adam Langley，<a href="https://github.com/agl/jbig2enc">https://github.com/agl/jbig2enc</a></li>
-				<li>数据编辑：Phillip Piper，<a href="http://objectlistview.sourceforge.net">http://objectlistview.sourceforge.net</a></li>
-				<li>网页界面：ArthurHub，<a href="https://github.com/ArthurHub/HTML-Renderer">https://github.com/ArthurHub/HTML-Renderer</a></li>
-				<li>界面图标：Yusuke Kamiyamane，<a href="http://p.yusukekamiyamane.com">http://p.yusukekamiyamane.com</a></li>
-				<li>图像浏览：Cyotek ImageBox，<a href="http://www.cyotek.com/">http://www.cyotek.com/</a></li>
-				<li>图像量化算法：武筱林，<a href="http://www.ece.mcmaster.ca/~xwu/cq.c">http://www.ece.mcmaster.ca/~xwu/cq.c</a></li>
-			</ol>
-　　		</div>
-	</body>
+<head>
+	<title>关于 $AppName</title>
+	<style>
+		body {
+			margin: 0;
+			padding: 5pt;
+		}
+
+		h1 {
+			font-size: 15pt;
+			color: #6666cc;
+			border-bottom: 1px dashed #9900ff;
+			margin: 5pt 0;
+		}
+
+		p, td {
+			padding: 3pt 0pt;
+			margin: 0pt;
+			font-size: 11pt;
+		}
+
+		h2 {
+			font-size: 12pt;
+			padding: 3pt 0;
+			margin: 0;
+			color: #6666cc;
+		}
+
+		span {
+			display: inline-block;
+			width: 50%;
+		}
+	</style>
+</head>
+<body>
+<h1>关于 $AppName</h1>
+<div style="padding: 0 10pt;">
+	<table style="width: 100%; max-width: 800px">
+		<tr>
+			<td rowspan="5">
+				<img src="res:Logo"/>
+			</td>
+			<td colspan="2">$AssemblyCopyright</td>
+		</tr>
+		<tr>
+			<td>软件版本：</td>
+			<td>$AssemblyVersion <a href="exec:_CheckUpdate">检查新版本</a></td>
+		</tr>
+		<tr>
+			<td>主页网址：</td>
+			<td>
+				<a href="$AppHomePage">$AppHomePage</a>
+			</td>
+		</tr>
+		<tr>
+			<td>源代码网址：</td>
+			<td>
+				<a href="$AppHubPage">$AppHubPage</a>
+			</td>
+		</tr>
+		<tr>
+			<td>作者电邮：</td>
+			<td>$AssemblyCompany</td>
+		</tr>
+	</table>
+	<p>PDF 补丁丁是开放源代码的免费软件。在使用该软件之前，您必须同意此软件附带的使用协议。使用此软件表示您同意并遵守该软件使用协议的条款，并清楚使用该软件的责任。</p>
+	<p>本软件及源代码采用“<strong>良心授权</strong>”协议——<strong>用户每次使用本软件后如有所获益，应行一善事；如使用源代码开发了新的软件并获得收益，应将收益中不低于千分之一的金额捐赠给社会的弱势群体。</strong>对于因安装、复制、使用本软件而引致的任何损失，本软件及其著作权人不负任何责任。</p>
+	<p>本软件使用了如下开放源代码项目的成果，特此致谢：</p>
+	<ol>
+		<li>PDF 组件：<a href="http://itextsharp.sourceforge.net">http://itextsharp.sourceforge.net</a></li>
+		<li>PDF 引擎：<a href="http://mupdf.com">http://mupdf.com</a></li>
+		<li>图像处理：<a href="http://freeimage.sourceforge.net">http://freeimage.sourceforge.net</a></li>
+		<li>JBIG2 解码：<a href="http://artifex.com/">http://artifex.com/</a></li>
+		<li>JBIG2 编码：Adam Langley，<a href="https://github.com/agl/jbig2enc">https://github.com/agl/jbig2enc</a></li>
+		<li>数据编辑：Phillip Piper，<a href="http://objectlistview.sourceforge.net">http://objectlistview.sourceforge.net</a></li>
+		<li>网页界面：ArthurHub，<a href="https://github.com/ArthurHub/HTML-Renderer">https://github.com/ArthurHub/HTML-Renderer</a></li>
+		<li>界面图标：Yusuke Kamiyamane，<a href="http://p.yusukekamiyamane.com">http://p.yusukekamiyamane.com</a></li>
+		<li>图像浏览：Cyotek ImageBox，<a href="http://www.cyotek.com/">http://www.cyotek.com/</a></li>
+		<li>图像量化算法：武筱林，<a href="http://www.ece.mcmaster.ca/~xwu/cq.c">http://www.ece.mcmaster.ca/~xwu/cq.c</a></li>
+	</ol>
+</div>
+</body>
 </html>

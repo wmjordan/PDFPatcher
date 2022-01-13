@@ -28,6 +28,7 @@ namespace PDFPatcher.Functions.Editor
 				_SubjectBox.Text = info.Subject;
 				_TitleBox.Text = info.Title;
 			}
+
 			if (InfoDucument != null) {
 				var info = InfoDucument.InfoNode;
 				SetText(_AuthorBox, info.Author);
@@ -40,6 +41,7 @@ namespace PDFPatcher.Functions.Editor
 			else {
 				_OkButton.Enabled = false;
 			}
+
 			_OkButton.Click += (s, args) => {
 				DialogResult = DialogResult.OK;
 				var info = InfoDucument.InfoNode;
@@ -64,6 +66,7 @@ namespace PDFPatcher.Functions.Editor
 			if (value == null) {
 				return;
 			}
+
 			control.Text = value;
 		}
 	}

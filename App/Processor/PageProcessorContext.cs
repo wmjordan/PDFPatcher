@@ -16,17 +16,20 @@ namespace PDFPatcher.Processor
 		public bool IsPageContentModified { get; set; }
 
 		PdfDictionary _Page;
+
 		/// <summary>获取正在处理的页面。</summary>
 		public PdfDictionary Page {
 			get {
 				if (_Page == null) {
 					_Page = Pdf.GetPageN(PageNumber);
 				}
+
 				return _Page;
 			}
 		}
 
 		PdfPageCommandProcessor _processor;
+
 		/// <summary>获取正在处理的页面指令集合。</summary>
 		public Model.IPdfPageCommandContainer PageCommands {
 			get {
@@ -35,6 +38,7 @@ namespace PDFPatcher.Processor
 					var resources = Page.Locate<PdfDictionary>(PdfName.RESOURCES);
 					_processor.ProcessContent(PdfReader.GetPageContent(Page), resources);
 				}
+
 				return _processor;
 			}
 		}

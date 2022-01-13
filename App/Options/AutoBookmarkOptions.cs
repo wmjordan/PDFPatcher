@@ -11,6 +11,7 @@ namespace PDFPatcher
 		public readonly static Regex NumericPattern = new Regex("^[0-9]+$", RegexOptions.Compiled);
 
 		#region 识别选项
+
 		/// <summary>
 		/// 页码范围。
 		/// </summary>
@@ -55,13 +56,12 @@ namespace PDFPatcher
 		[XmlAttribute("合并不同尺寸标题")]
 		public bool MergeDifferentSizeTitles { get; set; }
 
-		[XmlAttribute("合并不同字体标题")]
-		public bool MergeDifferentFontTitles { get; set; }
+		[XmlAttribute("合并不同字体标题")] public bool MergeDifferentFontTitles { get; set; }
 
-		[XmlAttribute("忽略重叠文本")]
-		public bool IgnoreOverlappedText { get; set; }
+		[XmlAttribute("忽略重叠文本")] public bool IgnoreOverlappedText { get; set; }
 
 		private readonly Collection<MatchPattern> _IgnorePatterns = new Collection<MatchPattern>();
+
 		/// <summary>
 		/// 忽略指定的表达式。
 		/// </summary>
@@ -70,38 +70,34 @@ namespace PDFPatcher
 		public Collection<MatchPattern> IgnorePatterns => _IgnorePatterns;
 
 		private readonly Collection<LevelAdjustmentOption> _LevelAdjustment = new Collection<LevelAdjustmentOption>();
+
 		[XmlElement("级别调整")]
 		[PowerJson.JsonField("级别调整")]
 		public Collection<LevelAdjustmentOption> LevelAdjustment => _LevelAdjustment;
 
-		[XmlAttribute("自动组织标题层次")]
-		public bool AutoHierarchicalArrangement { get; set; }
+		[XmlAttribute("自动组织标题层次")] public bool AutoHierarchicalArrangement { get; set; }
 
-		[XmlAttribute("列出字体统计信息")]
-		public bool DisplayFontStatistics { get; set; }
+		[XmlAttribute("列出字体统计信息")] public bool DisplayFontStatistics { get; set; }
 
-		[XmlAttribute("列出所有字体")]
-		public bool DisplayAllFonts { get; set; }
+		[XmlAttribute("列出所有字体")] public bool DisplayAllFonts { get; set; }
 
-		[XmlAttribute("排版")]
-		public WritingDirection WritingDirection { get; set; }
+		[XmlAttribute("排版")] public WritingDirection WritingDirection { get; set; }
 
-		[XmlAttribute("最大合并行距")]
-		public float MaxDistanceBetweenLines { get; set; }
+		[XmlAttribute("最大合并行距")] public float MaxDistanceBetweenLines { get; set; }
 
-		[XmlAttribute("识别分栏")]
-		public bool DetectColumns { get; set; }
+		[XmlAttribute("识别分栏")] public bool DetectColumns { get; set; }
 
-		[XmlAttribute("为首页生成书签")]
-		public bool CreateBookmarkForFirstPage { get; set; }
+		[XmlAttribute("为首页生成书签")] public bool CreateBookmarkForFirstPage { get; set; }
 
 		/// <summary>
 		/// 首页书签名称。指定此属性，则为首页生成书签。
 		/// </summary>
 		internal string FirstPageTitle { get; set; }
+
 		#endregion
 
 		#region 定位选项
+
 		/// <summary>
 		/// 连接目标的页面 Y 轴偏移量。
 		/// </summary>
@@ -113,6 +109,7 @@ namespace PDFPatcher
 		/// </summary>
 		[XmlAttribute("定位到页面顶端")]
 		public int PageTopForLevel { get; set; }
+
 		#endregion
 
 		/// <summary>
@@ -140,18 +137,20 @@ namespace PDFPatcher
 		public class LevelAdjustmentOption
 		{
 			[XmlElement(AutoBookmarkCondition.MultiCondition.ThisName, typeof(AutoBookmarkCondition.MultiCondition))]
-			[XmlElement(AutoBookmarkCondition.FontNameCondition.ThisName, typeof(AutoBookmarkCondition.FontNameCondition))]
-			[XmlElement(AutoBookmarkCondition.TextSizeCondition.ThisName, typeof(AutoBookmarkCondition.TextSizeCondition))]
-			[XmlElement(AutoBookmarkCondition.TextPositionCondition.ThisName, typeof(AutoBookmarkCondition.TextPositionCondition))]
-			[XmlElement(AutoBookmarkCondition.PageRangeCondition.ThisName, typeof(AutoBookmarkCondition.PageRangeCondition))]
+			[XmlElement(AutoBookmarkCondition.FontNameCondition.ThisName,
+				typeof(AutoBookmarkCondition.FontNameCondition))]
+			[XmlElement(AutoBookmarkCondition.TextSizeCondition.ThisName,
+				typeof(AutoBookmarkCondition.TextSizeCondition))]
+			[XmlElement(AutoBookmarkCondition.TextPositionCondition.ThisName,
+				typeof(AutoBookmarkCondition.TextPositionCondition))]
+			[XmlElement(AutoBookmarkCondition.PageRangeCondition.ThisName,
+				typeof(AutoBookmarkCondition.PageRangeCondition))]
 			[XmlElement(AutoBookmarkCondition.TextCondition.ThisName, typeof(AutoBookmarkCondition.TextCondition))]
 			public AutoBookmarkCondition Condition { get; set; }
 
-			[XmlAttribute("合并前筛选")]
-			public bool FilterBeforeMergeTitle { get; set; }
+			[XmlAttribute("合并前筛选")] public bool FilterBeforeMergeTitle { get; set; }
 
-			[XmlAttribute("相对级别调整")]
-			public bool RelativeAdjustment { get; set; }
+			[XmlAttribute("相对级别调整")] public bool RelativeAdjustment { get; set; }
 
 			/// <summary>
 			/// 标题的调整级别。
@@ -167,7 +166,5 @@ namespace PDFPatcher
 				};
 			}
 		}
-
 	}
-
 }

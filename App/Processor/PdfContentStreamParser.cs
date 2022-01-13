@@ -12,12 +12,17 @@ namespace PDFPatcher.Processor
 		// Fields
 		readonly Stack<Model.GraphicsState> gsStack = new Stack<Model.GraphicsState>();
 		readonly Stack<MarkedContentInfo> markedContentStack = new Stack<MarkedContentInfo>();
+
 		readonly IDictionary<string, IContentOperator> operators = new Dictionary<string, IContentOperator>();
+
 		//IRenderListener renderListener;
 		ResourceDictionary _Resources;
 		Matrix _TextLineMatrix;
 		Matrix _TextMatrix;
-		readonly Dictionary<PdfName, IXObjectDoHandler> _XObjectDoHandlers = new Dictionary<PdfName, IXObjectDoHandler>();
+
+		readonly Dictionary<PdfName, IXObjectDoHandler> _XObjectDoHandlers =
+			new Dictionary<PdfName, IXObjectDoHandler>();
+
 		readonly Dictionary<int, WeakReference> _FontCache = new Dictionary<int, WeakReference>();
 		readonly Dictionary<int, string> _FontNameCache = new Dictionary<int, string>();
 		public readonly static IContentOperator NopOperator = new IgnoreOperatorContentOperator();
@@ -49,6 +54,7 @@ namespace PDFPatcher.Processor
 		private void BeginText() {
 			//this.renderListener.BeginTextBlock ();
 		}
+
 		private Model.FontInfo GetFont(PRIndirectReference fontRef) {
 			WeakReference r;
 			if (_FontCache.TryGetValue(fontRef.Number, out r)) {
@@ -152,13 +158,14 @@ namespace PDFPatcher.Processor
 				var oper = (PdfLiteral)operands[operands.Count - 1];
 				if ("BI".Equals(oper.ToString())) {
 					var img = InlineImageUtils.ParseInlineImage(ps, resources.GetAsDict(PdfName.COLORSPACE));
-					InvokeOperator(oper, new List<PdfObject> { img, oper });
+					InvokeOperator(oper, new List<PdfObject> {img, oper});
 					//    this.renderListener.RenderImage (renderInfo);
 				}
 				else {
 					InvokeOperator(oper, operands);
 				}
 			}
+
 			_Resources.Pop();
 		}
 
@@ -167,6 +174,7 @@ namespace PDFPatcher.Processor
 				operators.Remove(operatorString);
 				return null;
 			}
+
 			return (operators[operatorString] = oper);
 		}
 
@@ -186,10 +194,12 @@ namespace PDFPatcher.Processor
 		}
 
 		#region Nested Types
+
 		internal interface IContentOperator
 		{
 			void Invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands);
 		}
+
 		internal interface IXObjectDoHandler
 		{
 			void HandleXObject(PdfContentStreamProcessor processor, PdfStream stream, PdfIndirectReference refi);
@@ -206,17 +216,20 @@ namespace PDFPatcher.Processor
 		protected sealed class BeginMarkedContentDictionary : IContentOperator
 		{
 			// Methods
-			private PdfDictionary GetPropertiesDictionary(PdfObject operand1, PdfContentStreamProcessor.ResourceDictionary resources) {
+			private PdfDictionary GetPropertiesDictionary(PdfObject operand1,
+				PdfContentStreamProcessor.ResourceDictionary resources) {
 				if (operand1.IsDictionary()) {
 					return (PdfDictionary)operand1;
 				}
+
 				var dictionaryName = (PdfName)operand1;
 				return resources.GetAsDict(dictionaryName);
 			}
 
 			public void Invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
 				var properties = operands[1];
-				processor.BeginMarkedContent((PdfName)operands[0], GetPropertiesDictionary(properties, processor._Resources));
+				processor.BeginMarkedContent((PdfName)operands[0],
+					GetPropertiesDictionary(properties, processor._Resources));
 			}
 		}
 
@@ -260,7 +273,8 @@ namespace PDFPatcher.Processor
 		protected sealed class FormXObjectDoHandler : IXObjectDoHandler
 		{
 			// Methods
-			public void HandleXObject(PdfContentStreamProcessor processor, PdfStream stream, PdfIndirectReference refi) {
+			public void HandleXObject(PdfContentStreamProcessor processor, PdfStream stream,
+				PdfIndirectReference refi) {
 				var resources = stream.GetAsDict(PdfName.RESOURCES);
 				var contentBytes = ContentByteUtils.GetContentBytesFromContentObject(stream);
 				var matrix = stream.GetAsArray(PdfName.MATRIX);
@@ -272,8 +286,10 @@ namespace PDFPatcher.Processor
 					float d = matrix.GetAsNumber(3).FloatValue;
 					float e = matrix.GetAsNumber(4).FloatValue;
 					float f = matrix.GetAsNumber(5).FloatValue;
-					processor.CurrentGraphicState.TransMatrix = new Matrix(a, b, c, d, e, f).Multiply(processor.CurrentGraphicState.TransMatrix);
+					processor.CurrentGraphicState.TransMatrix =
+						new Matrix(a, b, c, d, e, f).Multiply(processor.CurrentGraphicState.TransMatrix);
 				}
+
 				processor.ProcessContent(contentBytes, resources);
 				new PdfContentStreamProcessor.PopGraphicsState().Invoke(processor, null, null);
 			}
@@ -289,14 +305,16 @@ namespace PDFPatcher.Processor
 		protected sealed class IgnoreXObjectDoHandler : IXObjectDoHandler
 		{
 			// Methods
-			public void HandleXObject(PdfContentStreamProcessor processor, PdfStream xobjectStream, PdfIndirectReference refi) {
+			public void HandleXObject(PdfContentStreamProcessor processor, PdfStream xobjectStream,
+				PdfIndirectReference refi) {
 			}
 		}
 
 		protected sealed class ImageXObjectDoHandler : IXObjectDoHandler
 		{
 			// Methods
-			public void HandleXObject(PdfContentStreamProcessor processor, PdfStream xobjectStream, PdfIndirectReference refi) {
+			public void HandleXObject(PdfContentStreamProcessor processor, PdfStream xobjectStream,
+				PdfIndirectReference refi) {
 				//ImageRenderInfo renderInfo = ImageRenderInfo.CreateForXObject (processor.CurrentGraphicState.TransMatrix, refi);
 				//processor.renderListener.RenderImage (renderInfo);
 			}
@@ -344,7 +362,8 @@ namespace PDFPatcher.Processor
 			private readonly IContentOperator setTextWordSpacing;
 
 			// Methods
-			public MoveNextLineAndShowTextWithSpacing(IContentOperator setTextWordSpacing, IContentOperator setTextCharacterSpacing, IContentOperator moveNextLineAndShowText) {
+			public MoveNextLineAndShowTextWithSpacing(IContentOperator setTextWordSpacing,
+				IContentOperator setTextCharacterSpacing, IContentOperator moveNextLineAndShowText) {
 				this.setTextWordSpacing = setTextWordSpacing;
 				this.setTextCharacterSpacing = setTextCharacterSpacing;
 				this.moveNextLineAndShowText = moveNextLineAndShowText;
@@ -381,12 +400,17 @@ namespace PDFPatcher.Processor
 				var dictionaryName = (PdfName)operands[0];
 				var extGState = processor._Resources.GetAsDict(PdfName.EXTGSTATE);
 				if (extGState == null) {
-					throw new ArgumentException(MessageLocalization.GetComposedMessage("resources.do.not.contain.extgstate.entry.unable.to.process.oper.1", oper));
+					throw new ArgumentException(MessageLocalization.GetComposedMessage(
+						"resources.do.not.contain.extgstate.entry.unable.to.process.oper.1", oper));
 				}
+
 				var gsDic = extGState.GetAsDict(dictionaryName);
 				if (gsDic == null) {
-					throw new ArgumentException(MessageLocalization.GetComposedMessage("1.is.an.unknown.graphics.state.dictionary", dictionaryName));
+					throw new ArgumentException(
+						MessageLocalization.GetComposedMessage("1.is.an.unknown.graphics.state.dictionary",
+							dictionaryName));
 				}
+
 				var fontParameter = gsDic.GetAsArray(PdfName.FONT);
 				if (fontParameter != null) {
 					var font = processor.GetFont((PRIndirectReference)fontParameter[0]);
@@ -421,6 +445,7 @@ namespace PDFPatcher.Processor
 						}
 					}
 				}
+
 				return base.GetDirectObject(key);
 			}
 
@@ -462,6 +487,7 @@ namespace PDFPatcher.Processor
 					g.FontID = fref.Number;
 					g.Font = font;
 				}
+
 				g.FontSize = size;
 			}
 		}
@@ -534,8 +560,10 @@ namespace PDFPatcher.Processor
 							adj += ((PdfNumber)item).FloatValue;
 						}
 					}
+
 					processor.DisplayPdfString(new PdfString(ms.ToArray()));
 				}
+
 				processor.ApplyTextAdjust(adj);
 			}
 		}
@@ -607,7 +635,8 @@ namespace PDFPatcher.Processor
 			private readonly SetTextLeading setTextLeading;
 
 			// Methods
-			public TextMoveStartNextLineWithLeading(TextMoveStartNextLine moveStartNextLine, SetTextLeading setTextLeading) {
+			public TextMoveStartNextLineWithLeading(TextMoveStartNextLine moveStartNextLine,
+				SetTextLeading setTextLeading) {
 				this.moveStartNextLine = moveStartNextLine;
 				this.setTextLeading = setTextLeading;
 			}
@@ -657,17 +686,20 @@ namespace PDFPatcher.Processor
 			 * equivalent image dictionary keys
 			 */
 			private static readonly IDictionary<PdfName, PdfName> inlineImageEntryAbbreviationMap;
+
 			/**
 			 * Map between value abbreviations allowed in dictionary of inline images for COLORSPACE
 			 */
 			private static readonly IDictionary<PdfName, PdfName> inlineImageColorSpaceAbbreviationMap;
+
 			/**
 			 * Map between value abbreviations allowed in dictionary of inline images for FILTER
 			 */
 			private static readonly IDictionary<PdfName, PdfName> inlineImageFilterAbbreviationMap;
-			static InlineImageUtils() { // static initializer
-				inlineImageEntryAbbreviationMap = new Dictionary<PdfName, PdfName> {
 
+			static InlineImageUtils() {
+				// static initializer
+				inlineImageEntryAbbreviationMap = new Dictionary<PdfName, PdfName> {
 					// allowed entries - just pass these through
 					[PdfName.BITSPERCOMPONENT] = PdfName.BITSPERCOMPONENT,
 					[PdfName.COLORSPACE] = PdfName.COLORSPACE,
@@ -718,7 +750,8 @@ namespace PDFPatcher.Processor
 			 * @throws IOException if anything goes wring with the parsing
 			 * @throws InlineImageParseException if parsing of the inline image failed due to issues specific to inline image processing
 			 */
-			public static PDFPatcher.Model.PdfImageData ParseInlineImage(PdfContentParser ps, PdfDictionary colorSpaceDic) {
+			public static PDFPatcher.Model.PdfImageData ParseInlineImage(PdfContentParser ps,
+				PdfDictionary colorSpaceDic) {
 				var d = ParseInlineImageDictionary(ps);
 				return new PDFPatcher.Model.PdfImageData(d, ParseInlineImageSamples(d, colorSpaceDic, ps));
 			}
@@ -734,7 +767,9 @@ namespace PDFPatcher.Processor
 				// by the time we get to here, we have already parsed the BI operator
 				var dictionary = new PdfDictionary();
 
-				for (PdfObject key = ps.ReadPRObject(); key != null && !"ID".Equals(key.ToString()); key = ps.ReadPRObject()) {
+				for (PdfObject key = ps.ReadPRObject();
+				     key != null && !"ID".Equals(key.ToString());
+				     key = ps.ReadPRObject()) {
 					var value = ps.ReadPRObject();
 
 					PdfName resolvedKey;
@@ -773,6 +808,7 @@ namespace PDFPatcher.Processor
 						for (int i = 0; i < count; i++) {
 							altArray.Add(GetAlternateValue(key, array[i]));
 						}
+
 						return altArray;
 					}
 				}
@@ -845,7 +881,8 @@ namespace PDFPatcher.Processor
 			 * @return the samples of the image
 			 * @throws IOException if anything bad happens during parsing
 			 */
-			private static byte[] ParseUnfilteredSamples(PdfDictionary imageDictionary, PdfDictionary colorSpaceDic, PdfContentParser ps) {
+			private static byte[] ParseUnfilteredSamples(PdfDictionary imageDictionary, PdfDictionary colorSpaceDic,
+				PdfContentParser ps) {
 				// special case:  when no filter is specified, we just read the number of bits
 				// per component, multiplied by the width and height.
 				if (imageDictionary.Contains(PdfName.FILTER))
@@ -857,14 +894,16 @@ namespace PDFPatcher.Processor
 				var bytes = new byte[bytesToRead];
 				var tokeniser = ps.GetTokeniser();
 
-				int shouldBeWhiteSpace = tokeniser.Read(); // skip next character (which better be a whitespace character - I suppose we could check for this)
-														   // from the PDF spec:  Unless the image uses ASCIIHexDecode or ASCII85Decode as one of its filters, the ID operator shall be followed by a single white-space character, and the next character shall be interpreted as the first byte of image data.
-														   // unfortunately, we've seen some PDFs where there is no space following the ID, so we have to capture this case and handle it
+				int shouldBeWhiteSpace =
+					tokeniser.Read(); // skip next character (which better be a whitespace character - I suppose we could check for this)
+				// from the PDF spec:  Unless the image uses ASCIIHexDecode or ASCII85Decode as one of its filters, the ID operator shall be followed by a single white-space character, and the next character shall be interpreted as the first byte of image data.
+				// unfortunately, we've seen some PDFs where there is no space following the ID, so we have to capture this case and handle it
 				int startIndex = 0;
 				if (!PRTokeniser.IsWhitespace(shouldBeWhiteSpace) || shouldBeWhiteSpace == 0) {
 					bytes[0] = (byte)shouldBeWhiteSpace;
 					startIndex++;
 				}
+
 				for (int i = startIndex; i < bytesToRead; i++) {
 					int ch = tokeniser.Read();
 					if (ch == -1)
@@ -872,6 +911,7 @@ namespace PDFPatcher.Processor
 
 					bytes[i] = (byte)ch;
 				}
+
 				var ei = ps.ReadPRObject();
 				if (!ei.ToString().Equals("EI"))
 					throw new InlineImageParseException("EI not found after end of image data");
@@ -889,7 +929,8 @@ namespace PDFPatcher.Processor
 			 * @return the samples of the image
 			 * @throws IOException if anything bad happens during parsing
 			 */
-			private static byte[] ParseInlineImageSamples(PdfDictionary imageDictionary, PdfDictionary colorSpaceDic, PdfContentParser ps) {
+			private static byte[] ParseInlineImageSamples(PdfDictionary imageDictionary, PdfDictionary colorSpaceDic,
+				PdfContentParser ps) {
 				// by the time we get to here, we have already parsed the ID operator
 
 				if (!imageDictionary.Contains(PdfName.FILTER)) {
@@ -943,6 +984,7 @@ namespace PDFPatcher.Processor
 						found = 0;
 					}
 				}
+
 				throw new InlineImageParseException("Could not find image data or EI");
 			}
 		}

@@ -13,11 +13,12 @@ namespace PDFPatcher.Processor
 
 		public bool Process(System.Xml.XmlElement item) {
 			var a = item.GetAttributeNode(Constants.DestinationAttributes.Page);
-			if (a != null && a.Value.TryParse(out int pageNum)/* && pageNum > 0*/) {
+			if (a != null && a.Value.TryParse(out int pageNum) /* && pageNum > 0*/) {
 				pageNum += Offset;
 				a.Value = pageNum.ToText();
 				return true;
 			}
+
 			return false;
 		}
 

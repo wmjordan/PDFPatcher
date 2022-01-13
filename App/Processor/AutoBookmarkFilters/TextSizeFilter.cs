@@ -31,6 +31,7 @@ namespace PDFPatcher.Processor
 						return true;
 					}
 				}
+
 				return false;
 			}
 		}
@@ -41,6 +42,5 @@ namespace PDFPatcher.Processor
 
 		internal override void Reset() {
 		}
-
 	}
 }

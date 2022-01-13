@@ -13,20 +13,23 @@ namespace Devcorp.Controls.Design
 		public readonly static CMYK Empty = new CMYK();
 
 		#region Fields
+
 		private double c;
 		private double m;
 		private double y;
 		private double k;
+
 		#endregion
 
 		#region Operators
+
 		public static bool operator ==(CMYK item1, CMYK item2) {
 			return (
 				item1.Cyan == item2.Cyan
 				&& item1.Magenta == item2.Magenta
 				&& item1.Yellow == item2.Yellow
 				&& item1.Black == item2.Black
-				);
+			);
 		}
 
 		public static bool operator !=(CMYK item1, CMYK item2) {
@@ -35,13 +38,13 @@ namespace Devcorp.Controls.Design
 				|| item1.Magenta != item2.Magenta
 				|| item1.Yellow != item2.Yellow
 				|| item1.Black != item2.Black
-				);
+			);
 		}
-
 
 		#endregion
 
 		#region Accessors
+
 		public double Cyan {
 			get => c;
 			set {
@@ -73,6 +76,7 @@ namespace Devcorp.Controls.Design
 				k = (k > 1) ? 1 : ((k < 0) ? 0 : k);
 			}
 		}
+
 		#endregion
 
 		/// <summary>
@@ -86,6 +90,7 @@ namespace Devcorp.Controls.Design
 		}
 
 		#region Methods
+
 		public override bool Equals(Object obj) {
 			if (obj == null || GetType() != obj.GetType()) return false;
 

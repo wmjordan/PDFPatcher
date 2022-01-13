@@ -7,9 +7,11 @@ namespace PDFPatcher.Processor
 	sealed class TextFilter : AutoBookmarkFilter
 	{
 		readonly MatchPattern.IMatcher _matcher;
+
 		public TextFilter(MatchPattern pattern) {
 			_matcher = pattern.CreateMatcher();
 		}
+
 		internal override bool Matches(PDFPatcher.Model.AutoBookmarkContext context) {
 			if (context.TextLine == null) {
 				return _matcher.Matches(context.TextInfo.Text);

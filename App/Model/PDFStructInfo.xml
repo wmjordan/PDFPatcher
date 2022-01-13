@@ -1,217 +1,238 @@
 <?xml version="1.0" encoding="GB2312"?>
+
 <PDF xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="PDFStructInfo.xsd">
-	<Global>
-		<Info Token="ColorSpace" Name="色域" Description="用于渲染图片或文本的色域。&#13;&#10;常见的色域有：DeviceRGB（红绿蓝三色）、DeviceGray（灰度、黑白）、DeviceCMYK（青紫黄黑四色印刷）和 Indexed（从指定颜色表索引的颜色，不超过256色）"/>
-		<Info Token="DecodeParms" Name="解压缩参数"/>
-		<Info Token="PieceInfo" Name="私有信息"/>
-		<Info Token="Filter" Name="压缩方式" Description="压缩流数据的方式">
-			<RefInfo Token="DecodeParms"/>
-		</Info>
-		<Info Token="Length" Name="数据流长度"/>
-		<Info Token="ProcSet" Name="过程集合" Description="在页面或批注中使用的过程集合（Procedure Set），常见过程有：PDF、Text（文本）、ImageB（黑白图像）和 ImageC（彩色图像）"/>
-		<Info Token="Resources" Name="资源对象" Description="页面、批注等使用的图片、字体等二进制资源">
-			<Info Token="XObject" Name="外部对象" Description="表示在渲染页面指令中使用的对象。&#13;&#10;由于这些对象是在页面指令之外定义的，故称为“外部对象”（External Object）。&#13;&#10;在页面指令中，使用“Do”操作符显示外部对象。">
-				<Info Token="Image" Name="图片">
-					<Info Token="Subtype" Name="外部对象类型" Description="Image 表示图片"/>
-					<Info Token="Height" Name="图片的原始高度" Description="单位：像素" Required="true"/>
-					<Info Token="Width" Name="图片的原始宽度" Description="单位：像素" Required="true"/>
-					<Info Token="BitsPerComponent" Name="像素构件位数" Description="颜色组件的位数。其取值代表的颜色数为：&#xD;&#xA;1：双色；&#xD;&#xA;2：4 色；&#xD;&#xA;4：16 色；&#xD;&#xA;8或16：256 色以上。"/>
-					<Info Token="ImageMask" Name="蒙版" Description="蒙版图像必须是双色图像。一般情况下，蒙版图像在阅读器中是不能被选中的。"/>
-					<Info Token="Decode" Name="解码参数"/>
-					<Info Token="Mask" Name="蒙版图像或蒙版颜色"/>
-					<Info Token="SMask" Name="蒙版图像"/>
-					<Info Token="Interpolate" Name="插值" Description="是否采用插值算法显示图像"/>
-					<Info Token="Filter" Name="压缩方式" Description="用于压缩图像的算法，常见算法有：DCTDecode（JPEG 压缩）、FlateDecode（相当于 PNG 压缩）、CCITTFaxDecode 或 JBIG2Decode（高效的双色图像压缩算法）、JPXDecode（JPEG2000 压缩）">
-					</Info>
-				</Info>
-				<Info Token="Form" Name="表单" Description="表单除了用于填写数据之外，还可以视为一幅内嵌的 PDF 页面">
-					<Info Token="Subtype" Name="外部对象类型" Description="Form 表示表单"/>
-					<Info Token="BBox" Name="表单边框的坐标"/>
-				</Info>
-			</Info>
-			<Info Token="Font" Name="字体">
-				<Info Token="BaseFont" Name="基础字体"/>
-				<Info Token="Subtype" Name="字体类型" Description="取值所表示的类型如下：&#xD;&#xA;Type0：可由多个子字体组合而成的复合字体；&#xD;&#xA;Type1：使用 PostScript Type 1 技术制作的字体；&#xD;&#xA;MMType1：多属主（Multiple Master）的 Type1 字体；&#xD;&#xA;Type3：包含 PDF 图形操作符的字体；&#xD;&#xA;TrueType：使用 True Type 技术制作的字体；&#xD;&#xA;CIDFontType0：使用 Type 1 技术制作的字符标识字体（CID Font）；&#xD;&#xA;CIDFontType2：使用 True Type 技术制作的字符标识字体。&#xD;&#xA;字符标识字体通常是由大量字符组成的字库，如汉字。在输出 PDF 文档内容时，TJ 等输出指令以字符标识值指定输出的字符。字符标识通常并不是统一码数值，如果需要提取文本输出指令输出的文本，就需要借助 ToUnicode 项的转换表，将字符标识转换为统一码表示的字符。"/>
-				<Info Token="Encoding" Name="编码" Description="字体所用的编码方式"/>
-				<Info Token="BaseEncoding" Name="基础编码" Description="字体所用的基础编码方式"/>
-				<Info Token="Differences" Name="编码差异" Description="字体所用的编码与基础编码的差别（不应用于 True Type 字体）"/>
-				<Info Token="DescendantFonts" Name="字体子集"/>
-				<Info Token="FirstChar" Name="字体宽度表首字符编号"/>
-				<Info Token="LastChar" Name="字体宽度表尾字符编号"/>
-				<Info Token="Widths" Name="字体宽度表" Description="表示从 FirstChar 到 LastChar 范围内各字符宽度的数组，每个字符数值除以 1000 才是单位宽度"/>
-				<Info Token="FontDescriptor" Name="字体描述信息">
-					<Info Token="FontName" Name="字体名称"/>
-					<Info Token="FontBBox" Name="字体边框"/>
-					<Info Token="Ascent" Name="最大基线高度" Description="各字符顶部距离字体基线上方的最大距离"/>
-					<Info Token="Descent" Name="最大基线深度" Description="各字符底部距离字体基线下方的最大距离，此数值应为负数"/>
-					<Info Token="AvgWidth" Name="平均宽度"/>
-					<Info Token="MaxWidth" Name="最大宽度"/>
-					<Info Token="CharSet" Name="字符集"/>
-					<Info Token="FontFamily" Name="字体族" Description="不包含样式名称的字体名称，例如 Times Bold Italic（Times 粗斜体）的字体族名称为 Times"/>
-					<Info Token="FontWeight" Name="字重" Description="字体粗细程度"/>
-					<Info Token="Lang" Name="语种"/>
-					<Info Token="ItalicAngle" Name="斜体角度" Description="字体的反时针倾斜角度"/>
-					<Info Token="FontFile" Name="内嵌字体" Description="内嵌的 Type 0 字体" ImageKey="Font"/>
-					<Info Token="FontFile2" Name="内嵌字体" Description="内嵌的 True Type 字体" ImageKey="Font"/>
-					<Info Token="FontFile3" Name="内嵌字体" Description="由子类指定类型的内嵌字体" ImageKey="Font"/>
-					<Info Token="Length1" Name="解压缩流的长度" Description="将内嵌字体解压缩后的字节数"/>
-				</Info>
-				<Info Token="ToUnicode" Name="统一码映射表" Description="内嵌字体的字符标识数值到统一码数值的转换映射表"/>
-				<Info Token="FontBBox" Name="字体边框"/>
-				<Info Token="CharProcs" Name="字符绘制过程" Description="包含字体符号和用于绘制字体指令集的内容流的字典"/>
-				<Info Token="FontMatrix" Name="字体矩阵" Description="将字体符号坐标系转换为文本坐标系的转换矩阵"/>
-				<Info Token="Resources" Name="资源" Description="由 Type 3 字体使用的字体或图像资源"/>
-				<Info Token="CIDSystemInfo" Name="字符标识系统信息"/>
-				<Info Token="DW" Name="默认字符宽度" Description="默认为 1000"/>
-				<Info Token="W" Name="字形宽度列表" Description="表示CID字体字符宽度的数组（每个字符数值除以 1000 才是单位宽度）&#xD;&#xA;默认宽度值由 DW 值指定&#xD;&#xA;数组字符宽度有两种格式：&#xD;&#xA;①单独字符宽度；&#xD;&#xA;②起止字符宽度&#xD;&#xA;单独字符宽度的格式为：字符索引后跟一个数组，如“120 [400 325 500]”，表示字符编号 120 到 122 的宽度分别为 400、325 和 500 单位；&#xD;&#xA;起止字符宽度的格式为：开始字符索引、结束字符索引、宽度，如“7080 8080 1000”，表示字符编号 7080 到 8080 的宽度为 1000 单位"/>
-				<Info Token="DW2" Name="默认字符宽度和高度" Description="默认为[880 -1000]"/>
-				<Info Token="W2" Name="字符宽度和高度"/>
-				<Info Token="CIDToGIDMap" Name="字符标识到字体字符标识的映射表" Description="默认情况下，字符标识就是字符在字体内的位置"/>
-			</Info>
-			<RefInfo Token="ProcSet"/>
-			<RefInfo Token="ColorSpace"/>
-		</Info>
-		<Info Token="AP" Name="外观样式"/>
-		<Info Token="BS" Name="边框样式"/>
-		<Info Token="C" Name="颜色"/>
-		<Info Token="D" Name="转到特定位置的动作"/>
-		<Info Token="Dests" Name="跳转目标"/>
-		<Info Token="Dest" Name="跳转目标" />
-		<Info Token="A" Name="动作" />
-		<Info Token="Matrix" Name="用于绘图的转置矩阵"/>
-		<Info Token="Rect" Name="矩形区域"/>
-		<Info Token="Type" Name="字典类型"/>
-		<Info Token="SubType" Name="子类型"/>
-		<Info Token="StructParent" Name="文档结构的上级节点"/>
-	</Global>
-	<Info Token="Trailer" Name="文档根节点">
-		<Info Token="Root" Name="文档编录" ImageKey="Trailer" Required="true">
-			<Info Token="Pages" Name="文档页面集合" Description="文档的所有页面" ImageKey="Pages" Required="true">
-				<Info Token="Kids" Name="文档页面子集">
-					<Info Token="Count" Name="页面数量"/>
-					<Info Token="Kids" Name="文档页面子集"/>
-				</Info>
-				<Info Token="Parent" Name="上级页面集合"/>
-				<Info Token="Count" Name="页面总数"/>
-			</Info>
-			<Info Token="Outlines" Name="文档书签" ImageKey="Outlines">
-				<Info Token="First" Name="第一个子书签" />
-				<Info Token="Last" Name="最后一个子书签" />
-				<Info Token="Parent" Name="上级子书签" />
-				<Info Token="Prev" Name="前一个子书签" />
-				<Info Token="Next" Name="下一个子书签" />
-				<Info Token="Title" Name="书签文本" />
-				<Info Token="C" Name="颜色"/>
-				<Info Token="F" Name="样式" Description="1：斜体；2：粗体；3：粗斜体"/>
-				<Info Token="Count" Name="子书签数量" Description="当前层级子书签的数量。正数：书签默认打开，负数：书签默认折叠" />
-				<RefInfo Token="Dest"/>
-				<RefInfo Token="A"/>
-			</Info>
-			<Info Token="StructTreeRoot" Name="文档结构树"/>
-			<Info Token="Metadata" Name="元数据信息" Description="一般为XML"/>
-			<Info Token="PageLabels" Name="页码标签">
-				<Info Token="Nums" Name="页码标签数值编号方式"/>
-			</Info>
-			<Info Token="Names" Name="命名位置" Description="文档以特定名称命名的位置（可作为书签、页面链接的跳转目标）"/>
-			<Info Token="AcroForm" Name="交互表单"/>
-			<Info Token="ViewerPreferences" Name="阅读器设定"/>
-			<Info Token="PageMode" Name="初始模式"/>
-			<Info Token="PageLayout" Name="页面布局"/>
-			<Info Token="OpenAction" Name="打开动作" Description="打开文档时自动执行的动作"/>
-			<Info Token="AA" Name="额外动作" Description="由事件触发的动作"/>
-			<Info Token="Perms" Name="权限许可"/>
-		</Info>
-		<Info Token="ID" Name="文档标记" Description="用于识别文档的两个二进制数据标记，加密文档必须具有此标记"/>
-		<Info Token="Info" Name="文档信息" ImageKey="Info">
-			<Info Token="Title" Name="文档标题"/>
-			<Info Token="Producer" Name="处理程序"/>
-			<Info Token="Creator" Name="创建程序"/>
-			<Info Token="CreationDate" Name="创建日期"/>
-			<Info Token="ModDate" Name="修改日期"/>
-			<Info Token="Subject" Name="主题"/>
-			<Info Token="Keywords" Name="关键词"/>
-		</Info>
-		<Info Token="Size" Name="项目数量" Description="PDF 文档项目索引表中项目的数量" />
-		<Info Token="Encrypt" Name="加密信息" />
-	</Info>
-	<Info Token="Pages" Name="文档页面集合" Description="文档的所有页面">
-		<Info Token="Page" Name="文档页面" Required="true">
-			<Info Token="Contents" Name="页面内容" Description="绘制页面的指令。具体内容请见“命令”节点。" Required="true"/>
-			<Info Token="ArtBox" Name="内容边框" Description="由左、下、右、上四个坐标值构成"/>
-			<Info Token="BleedBox" Name="出血边框" Description="由左、下、右、上四个坐标值构成"/>
-			<Info Token="CropBox" Name="截取边框" Description="表示截取页面边框后的可见区域，由左、下、右、上四个坐标值构成，截取边框区域不应超出页面边框限定的区域。要缩小文档的显示或打印区域，可调整此边框值。要扩张显示或打印区域，则可能需要同时调整此边框和页面边框。"/>
-			<Info Token="MediaBox" Name="页面边框" Description="表示绘制文档的区域，由左、下、右、上四个坐标值构成（PDF 使用笛卡尔坐标系，即页面左下角的坐标为 (0,0)）。页面必须有 MediaBox 项指定页面边框。" Required="true"/>
-			<Info Token="TrimBox" Name="裁剪边框" Description="由左、下、右、上四个坐标值构成"/>
-			<Info Token="Thumb" Name="页面缩略图"/>
-			<Info Token="Annots" Name="页面批注">
-				<Info Token="Rect" Name="批注区域"/>
-				<Info Token="Contents" Name="批注的文本内容"/>
-				<Info Token="P" Name="批注所属页面"/>
-				<Info Token="NM" Name="批注名称" Description="相同页面内唯一识别此批注的标识符"/>
-				<Info Token="M" Name="最近修改时间"/>
-				<Info Token="F" Name="标志位"/>
-				<Info Token="AP" Name="批注外观"/>
-				<Info Token="Border" Name="批注边框" Description="参数：水平圆角半径、垂直圆角半径、线宽，以及可选的线型样式数组"/>
-				<Info Token="C" Name="批注颜色"/>
-				<RefInfo Token="Dest"/>
-				<RefInfo Token="A"/>
-			</Info>
-			<Info Token="Parent" Name="所属页面集合"/>
-			<Info Token="UserUnit" Name="用户空间单位" Description="1/72 英寸整数倍的值（默认为 1）"/>
-			<Info Token="Rotate" Name="旋转角度" Description="页面在浏览或打印时顺时针旋转的角度，必须为 90 的整数倍或为 0"/>
-			<Info Token="AA" Name="额外动作" Description="打开或关闭页面时触发的动作"/>
-			<RefInfo Token="Resources"/>
-			<RefInfo Token="PieceInfo"/>
-			<Info Token="命令" Name="页面绘制指令" Description="此节点的内容是绘制页面的指令集合。此节点是虚拟节点，是通过解释 Contents 节点的内容生成的。">
-				<Info Token="矩阵" Description="用于拉伸、旋转和平移内容的转置矩阵([a1,a2,0; b1,b2,0; c1,c2,1])。&#xD;&#xA;设转置前坐标为 (x,y)，则转置后坐标为：&#xD;&#xA;x' = a1 × x + b1 × y + c1;&#xD;&#xA;y' = a2 × x + b2 × y + c2。&#xD;&#xA;转置矩阵的作用是累积的，后面的转置矩阵要首先与前面出现的矩阵相乘，才是最终的矩阵值。&#xD;&#xA;转置矩阵将影响后续的绘图和文本渲染结果。" />
-				<Info Token="绘制对象" Description="绘制指定的资源对象（见Resources的XObject项目）。&#xD;&#xA;常见的资源对象有图片（Image）和表单（Form）。&#xD;&#xA;无论原始对象的尺寸如何，其宽、高在处理前均被压缩到 1 个单位。&#xD;&#xA;对象的实际渲染尺寸是由前面的转置矩阵决定的（例如：当前转置矩阵为[500 0 0 700 0 0]，则渲染后对象宽高为 500×700）。"/>
-				<Info Token="绘图状态" Description="指定绘图状态区域，实际是成对出现的指令（q和Q）。&#xD;&#xA;绘图状态包含转置矩阵、颜色、色域、文本、蒙版等状态。&#xD;&#xA;进入绘图状态（q）时，先将前面的绘图状态压入堆栈，然后创建全新的绘图状态。&#xD;&#xA;离开绘图状态时（Q），将前面的绘图状态弹出堆栈，即恢复原来的绘图状态。"/>
-				<Info Token="绘图参数" Description="使用 Resources 中对应的 ExtGState 参数设置绘图状态"/>
-				<Info Token="非线色域" Description="使用 Resources 中对应的 ColorSpace 参数设置非线（Nonstroking）色域"/>
-				<Info Token="画线色域" Description="使用 Resources 中对应的 ColorSpace 参数设置画线（Stroking）色域"/>
-				<Info Token="非线颜色" Description="设置非线（Nonstroking）颜色。&#xD;&#xA;可用参数由之前的非线色域（cs）操作符决定。"/>
-				<Info Token="画线颜色" Description="设置画线（Stroking）颜色。&#xD;&#xA;可用参数由之前的画线色域（CS）操作符决定。"/>
-				<Info Token="非线三色" Description="设置非线（Nonstroking）的红、绿、蓝三分量颜色"/>
-				<Info Token="画线三色" Description="设置画线（Stroking）的红、绿、蓝三分量颜色"/>
-				<Info Token="非线四色" Description="设置非线（Nonstroking）的青、红、黄、黑四分量颜色"/>
-				<Info Token="画线四色" Description="设置画线（Stroking）的青、红、黄、黑四分量颜色"/>
-				<Info Token="非线灰色" Description="设置非线（Nonstroking）的灰度颜色"/>
-				<Info Token="画线灰色" Description="设置画线（Stroking）的灰度颜色"/>
-				<Info Token="文本区" Description="指定文本区域，实际是成对出现的指令（BT 和 ET）。&#xD;&#xA;进入文本区域（BT）时，文本转置矩阵将被重置。离开文本区域（ET）时，文本转置矩阵将被丢弃。"/>
-				<Info Token="换行字符串" Description="输出换行和字符串。&#xD;&#xA;单引号操作符（'）输出换行和文本；双引号操作符（&quot;）指定词距、字距，再输出换行和文本。"/>
-				<Info Token="字符串" Description="输出字符串。&#xD;&#xA;Tj操作符输出文本；&#xD;&#xA;TJ操作符输出具有额外字符间距的文本。&#xD;&#xA;TJ操作符的参数为数组，字符串类型的值指定文本，数值类型的值除以 -1000 指定后续文本单位偏移量。"/>
-				<Info Token="文本矩阵" Description="用于拉伸、旋转和平移文本内容的转置矩阵([a1,a2,0; b1,b2,0; c1,c2,1])。&#xD;&#xA;设转置前坐标为 (x,y)，则转置后坐标为：&#xD;&#xA;x' = a1 × x + b1 × y + c1;&#xD;&#xA;y' = a2 × x + b2 × y + c2。&#xD;&#xA;文本转置矩阵的作用不是累积的，后面的文本转置矩阵替换前面的矩阵。在定位文本时，还需要考虑由换行操作符所设置的横向起始位置。"/>
-				<Info Token="换行" Description="设置起始位置并偏移换行。&#xD;&#xA;Td操作符用其横、纵两方向的偏移参数换行；&#xD;&#xA;TD操作符用其横、纵两方向的偏移参数换行，在换行的同时还会将纵向偏移参数设置为行距（TL）；&#xD;&#xA;T*操作符将使用当前的行距换行，不改变横向偏移量"/>
-				<Info Token="字体" Description="指定Resources对应的字体，并设置字体单位尺寸。&#xD;&#xA;将字体单位尺寸与文本转置矩阵相乘，才能确定字体渲染出来的尺寸。"/>
-				<Info Token="文本水平拉伸" Description="设置文本水平拉伸的百分比（默认值为100）。此参数还将影响到词距和字距间隔。"/>
-				<Info Token="词距" Description="设置词的间距（以未被文本转置矩阵拉伸的文本单位尺寸计算，初始值为 0）。词距实际上就是半角空格（统一码为 32）字符的宽度。如设置了水平拉伸，词距与水平拉伸百分比相乘才是实际距离。"/>
-				<Info Token="字距" Description="设置字的间距（以未被文本转置矩阵拉伸的文本单位尺寸计算，初始值为 0）。如设置了水平拉伸，字距与水平拉伸相乘才是实际距离。"/>
-				<Info Token="行距" Description="为换行操作符设置其使用的行间距离（以未被文本转置矩阵拉伸的文本单位尺寸计算，初始值为 0）"/>
-				<Info Token="文本渲染" Description="设置文本渲染方式（初始值为 0）。可用模式有：&#xD;&#xA;0：填充；1：描边空心字；2：描边实心字；3：不显示（隐形）；&#xD;&#xA;4：填充并加纹样；5：描边并加纹样；6：描边实心字加纹样；7：隐形字上加纹样"/>
-				<Info Token="文本垂直偏移" Description="设置文本垂直偏移基线的距离。一般情况下，正数上移，负数下移（以未被文本转置矩阵拉伸的文本单位尺寸计算，初始值为0）。"/>
-				<Info Token="线端样式" Description="设置矢量线端样式。可用样式有：&#xD;&#xA;0：无线头；1：圆角线头；2：方形线头。"/>
-				<Info Token="连接线样式" Description="设置矢量线连接位置的样式。可用样式有：&#xD;&#xA;0：尖角连接；1：圆角连接；2：方角连接。"/>
-				<Info Token="虚线图案" Description="设置矢量线的虚线图案"/>
-				<Info Token="始点" Description="设置矢量线从指定点开始"/>
-				<Info Token="终点" Description="设置矢量线到当前点结束，将始点和终点连接起来"/>
-				<Info Token="直线" Description="从前一个矢量点画直线到指定点"/>
-				<Info Token="曲线" Description="从前一个矢量点画 Cubic Bézier 曲线到指定点 (x3,y3)。共有 6 个参数，分别为头尾控制点 (x1,y1)、(x2,y2) 和终点 (x3,y3)"/>
-				<Info Token="控尾曲线" Description="从前一个矢量点画 Cubic Bézier 曲线到指定点 (x3,y3)。共有 4 个参数，分别为线尾控制点 (x2,y2) 和终点 (x3,y3)"/>
-				<Info Token="控首曲线" Description="从前一个矢量点画 Cubic Bézier 曲线到指定点 (x3,y3)。共有 4 个参数，分别为线头控制点 (x1,y1) 和终点 (x3,y3)"/>
-				<Info Token="矩形" Description="在给定的 (x,y) 点以指定的宽和高画矩形"/>
-				<Info Token="画线" Description="用之前指定的画线（Stroking）颜色、线头、线尾、连接线样式、虚线等样式画线"/>
-				<Info Token="画封闭线" Description="设置当前点为终点，并用画线（Stroking）颜色画线"/>
-				<Info Token="非零填充" Description="使用非零（Nonzero winding number）规则填充已闭合的曲线"/>
-				<Info Token="奇偶填充" Description="使用奇偶（Even-odd）规则填充已闭合的曲线"/>
-				<Info Token="非零画线填充" Description="画线，并用非零（Nonzero winding number）规则填充已闭合的曲线"/>
-				<Info Token="奇偶画线填充" Description="画线，并用奇偶（Even-odd）规则填充已闭合的曲线"/>
-				<Info Token="闭合非零画线填充" Description="闭合曲线，画线，并用非零（Nonzero winding number）规则填充已闭合的曲线"/>
-				<Info Token="闭合奇偶画线填充" Description="闭合曲线，画线，并用奇偶（Even-odd）规则填充已闭合的曲线"/>
-				<Info Token="闭合路径不填充" Description="闭合矢量路径，不填充，不画线，一般用于完成裁剪路径"/>
-				<Info Token="非零裁剪" Description="使用非零（Nonzero winding number）规则，以闭合曲线构成的矢量图形裁剪内容"/>
-				<Info Token="奇偶裁剪" Description="使用奇偶（Even-odd）规则，以闭合曲线构成的矢量图形裁剪内容"/>
-				<Info Token="内嵌图像" Description="在内容流中内嵌的图像&#xD;&#xA;实际上是三个指令：BI（图像起始）、ID（图像二进制数据）和EI（图像结束）"/>
-			</Info>
-		</Info>
-	</Info>
+  <Global>
+    <Info Token="ColorSpace" Name="色域"
+          Description="用于渲染图片或文本的色域。&#13;&#10;常见的色域有：DeviceRGB（红绿蓝三色）、DeviceGray（灰度、黑白）、DeviceCMYK（青紫黄黑四色印刷）和 Indexed（从指定颜色表索引的颜色，不超过256色）" />
+    <Info Token="DecodeParms" Name="解压缩参数" />
+    <Info Token="PieceInfo" Name="私有信息" />
+    <Info Token="Filter" Name="压缩方式" Description="压缩流数据的方式">
+      <RefInfo Token="DecodeParms" />
+    </Info>
+    <Info Token="Length" Name="数据流长度" />
+    <Info Token="ProcSet" Name="过程集合"
+          Description="在页面或批注中使用的过程集合（Procedure Set），常见过程有：PDF、Text（文本）、ImageB（黑白图像）和 ImageC（彩色图像）" />
+    <Info Token="Resources" Name="资源对象" Description="页面、批注等使用的图片、字体等二进制资源">
+      <Info Token="XObject" Name="外部对象"
+            Description="表示在渲染页面指令中使用的对象。&#13;&#10;由于这些对象是在页面指令之外定义的，故称为“外部对象”（External Object）。&#13;&#10;在页面指令中，使用“Do”操作符显示外部对象。">
+        <Info Token="Image" Name="图片">
+          <Info Token="Subtype" Name="外部对象类型" Description="Image 表示图片" />
+          <Info Token="Height" Name="图片的原始高度" Description="单位：像素" Required="true" />
+          <Info Token="Width" Name="图片的原始宽度" Description="单位：像素" Required="true" />
+          <Info Token="BitsPerComponent" Name="像素构件位数"
+                Description="颜色组件的位数。其取值代表的颜色数为：&#xD;&#xA;1：双色；&#xD;&#xA;2：4 色；&#xD;&#xA;4：16 色；&#xD;&#xA;8或16：256 色以上。" />
+          <Info Token="ImageMask" Name="蒙版" Description="蒙版图像必须是双色图像。一般情况下，蒙版图像在阅读器中是不能被选中的。" />
+          <Info Token="Decode" Name="解码参数" />
+          <Info Token="Mask" Name="蒙版图像或蒙版颜色" />
+          <Info Token="SMask" Name="蒙版图像" />
+          <Info Token="Interpolate" Name="插值" Description="是否采用插值算法显示图像" />
+          <Info Token="Filter" Name="压缩方式"
+                Description="用于压缩图像的算法，常见算法有：DCTDecode（JPEG 压缩）、FlateDecode（相当于 PNG 压缩）、CCITTFaxDecode 或 JBIG2Decode（高效的双色图像压缩算法）、JPXDecode（JPEG2000 压缩）">
+          </Info>
+        </Info>
+        <Info Token="Form" Name="表单" Description="表单除了用于填写数据之外，还可以视为一幅内嵌的 PDF 页面">
+          <Info Token="Subtype" Name="外部对象类型" Description="Form 表示表单" />
+          <Info Token="BBox" Name="表单边框的坐标" />
+        </Info>
+      </Info>
+      <Info Token="Font" Name="字体">
+        <Info Token="BaseFont" Name="基础字体" />
+        <Info Token="Subtype" Name="字体类型"
+              Description="取值所表示的类型如下：&#xD;&#xA;Type0：可由多个子字体组合而成的复合字体；&#xD;&#xA;Type1：使用 PostScript Type 1 技术制作的字体；&#xD;&#xA;MMType1：多属主（Multiple Master）的 Type1 字体；&#xD;&#xA;Type3：包含 PDF 图形操作符的字体；&#xD;&#xA;TrueType：使用 True Type 技术制作的字体；&#xD;&#xA;CIDFontType0：使用 Type 1 技术制作的字符标识字体（CID Font）；&#xD;&#xA;CIDFontType2：使用 True Type 技术制作的字符标识字体。&#xD;&#xA;字符标识字体通常是由大量字符组成的字库，如汉字。在输出 PDF 文档内容时，TJ 等输出指令以字符标识值指定输出的字符。字符标识通常并不是统一码数值，如果需要提取文本输出指令输出的文本，就需要借助 ToUnicode 项的转换表，将字符标识转换为统一码表示的字符。" />
+        <Info Token="Encoding" Name="编码" Description="字体所用的编码方式" />
+        <Info Token="BaseEncoding" Name="基础编码" Description="字体所用的基础编码方式" />
+        <Info Token="Differences" Name="编码差异" Description="字体所用的编码与基础编码的差别（不应用于 True Type 字体）" />
+        <Info Token="DescendantFonts" Name="字体子集" />
+        <Info Token="FirstChar" Name="字体宽度表首字符编号" />
+        <Info Token="LastChar" Name="字体宽度表尾字符编号" />
+        <Info Token="Widths" Name="字体宽度表" Description="表示从 FirstChar 到 LastChar 范围内各字符宽度的数组，每个字符数值除以 1000 才是单位宽度" />
+        <Info Token="FontDescriptor" Name="字体描述信息">
+          <Info Token="FontName" Name="字体名称" />
+          <Info Token="FontBBox" Name="字体边框" />
+          <Info Token="Ascent" Name="最大基线高度" Description="各字符顶部距离字体基线上方的最大距离" />
+          <Info Token="Descent" Name="最大基线深度" Description="各字符底部距离字体基线下方的最大距离，此数值应为负数" />
+          <Info Token="AvgWidth" Name="平均宽度" />
+          <Info Token="MaxWidth" Name="最大宽度" />
+          <Info Token="CharSet" Name="字符集" />
+          <Info Token="FontFamily" Name="字体族" Description="不包含样式名称的字体名称，例如 Times Bold Italic（Times 粗斜体）的字体族名称为 Times" />
+          <Info Token="FontWeight" Name="字重" Description="字体粗细程度" />
+          <Info Token="Lang" Name="语种" />
+          <Info Token="ItalicAngle" Name="斜体角度" Description="字体的反时针倾斜角度" />
+          <Info Token="FontFile" Name="内嵌字体" Description="内嵌的 Type 0 字体" ImageKey="Font" />
+          <Info Token="FontFile2" Name="内嵌字体" Description="内嵌的 True Type 字体" ImageKey="Font" />
+          <Info Token="FontFile3" Name="内嵌字体" Description="由子类指定类型的内嵌字体" ImageKey="Font" />
+          <Info Token="Length1" Name="解压缩流的长度" Description="将内嵌字体解压缩后的字节数" />
+        </Info>
+        <Info Token="ToUnicode" Name="统一码映射表" Description="内嵌字体的字符标识数值到统一码数值的转换映射表" />
+        <Info Token="FontBBox" Name="字体边框" />
+        <Info Token="CharProcs" Name="字符绘制过程" Description="包含字体符号和用于绘制字体指令集的内容流的字典" />
+        <Info Token="FontMatrix" Name="字体矩阵" Description="将字体符号坐标系转换为文本坐标系的转换矩阵" />
+        <Info Token="Resources" Name="资源" Description="由 Type 3 字体使用的字体或图像资源" />
+        <Info Token="CIDSystemInfo" Name="字符标识系统信息" />
+        <Info Token="DW" Name="默认字符宽度" Description="默认为 1000" />
+        <Info Token="W" Name="字形宽度列表"
+              Description="表示CID字体字符宽度的数组（每个字符数值除以 1000 才是单位宽度）&#xD;&#xA;默认宽度值由 DW 值指定&#xD;&#xA;数组字符宽度有两种格式：&#xD;&#xA;①单独字符宽度；&#xD;&#xA;②起止字符宽度&#xD;&#xA;单独字符宽度的格式为：字符索引后跟一个数组，如“120 [400 325 500]”，表示字符编号 120 到 122 的宽度分别为 400、325 和 500 单位；&#xD;&#xA;起止字符宽度的格式为：开始字符索引、结束字符索引、宽度，如“7080 8080 1000”，表示字符编号 7080 到 8080 的宽度为 1000 单位" />
+        <Info Token="DW2" Name="默认字符宽度和高度" Description="默认为[880 -1000]" />
+        <Info Token="W2" Name="字符宽度和高度" />
+        <Info Token="CIDToGIDMap" Name="字符标识到字体字符标识的映射表" Description="默认情况下，字符标识就是字符在字体内的位置" />
+      </Info>
+      <RefInfo Token="ProcSet" />
+      <RefInfo Token="ColorSpace" />
+    </Info>
+    <Info Token="AP" Name="外观样式" />
+    <Info Token="BS" Name="边框样式" />
+    <Info Token="C" Name="颜色" />
+    <Info Token="D" Name="转到特定位置的动作" />
+    <Info Token="Dests" Name="跳转目标" />
+    <Info Token="Dest" Name="跳转目标" />
+    <Info Token="A" Name="动作" />
+    <Info Token="Matrix" Name="用于绘图的转置矩阵" />
+    <Info Token="Rect" Name="矩形区域" />
+    <Info Token="Type" Name="字典类型" />
+    <Info Token="SubType" Name="子类型" />
+    <Info Token="StructParent" Name="文档结构的上级节点" />
+  </Global>
+  <Info Token="Trailer" Name="文档根节点">
+    <Info Token="Root" Name="文档编录" ImageKey="Trailer" Required="true">
+      <Info Token="Pages" Name="文档页面集合" Description="文档的所有页面" ImageKey="Pages" Required="true">
+        <Info Token="Kids" Name="文档页面子集">
+          <Info Token="Count" Name="页面数量" />
+          <Info Token="Kids" Name="文档页面子集" />
+        </Info>
+        <Info Token="Parent" Name="上级页面集合" />
+        <Info Token="Count" Name="页面总数" />
+      </Info>
+      <Info Token="Outlines" Name="文档书签" ImageKey="Outlines">
+        <Info Token="First" Name="第一个子书签" />
+        <Info Token="Last" Name="最后一个子书签" />
+        <Info Token="Parent" Name="上级子书签" />
+        <Info Token="Prev" Name="前一个子书签" />
+        <Info Token="Next" Name="下一个子书签" />
+        <Info Token="Title" Name="书签文本" />
+        <Info Token="C" Name="颜色" />
+        <Info Token="F" Name="样式" Description="1：斜体；2：粗体；3：粗斜体" />
+        <Info Token="Count" Name="子书签数量" Description="当前层级子书签的数量。正数：书签默认打开，负数：书签默认折叠" />
+        <RefInfo Token="Dest" />
+        <RefInfo Token="A" />
+      </Info>
+      <Info Token="StructTreeRoot" Name="文档结构树" />
+      <Info Token="Metadata" Name="元数据信息" Description="一般为XML" />
+      <Info Token="PageLabels" Name="页码标签">
+        <Info Token="Nums" Name="页码标签数值编号方式" />
+      </Info>
+      <Info Token="Names" Name="命名位置" Description="文档以特定名称命名的位置（可作为书签、页面链接的跳转目标）" />
+      <Info Token="AcroForm" Name="交互表单" />
+      <Info Token="ViewerPreferences" Name="阅读器设定" />
+      <Info Token="PageMode" Name="初始模式" />
+      <Info Token="PageLayout" Name="页面布局" />
+      <Info Token="OpenAction" Name="打开动作" Description="打开文档时自动执行的动作" />
+      <Info Token="AA" Name="额外动作" Description="由事件触发的动作" />
+      <Info Token="Perms" Name="权限许可" />
+    </Info>
+    <Info Token="ID" Name="文档标记" Description="用于识别文档的两个二进制数据标记，加密文档必须具有此标记" />
+    <Info Token="Info" Name="文档信息" ImageKey="Info">
+      <Info Token="Title" Name="文档标题" />
+      <Info Token="Producer" Name="处理程序" />
+      <Info Token="Creator" Name="创建程序" />
+      <Info Token="CreationDate" Name="创建日期" />
+      <Info Token="ModDate" Name="修改日期" />
+      <Info Token="Subject" Name="主题" />
+      <Info Token="Keywords" Name="关键词" />
+    </Info>
+    <Info Token="Size" Name="项目数量" Description="PDF 文档项目索引表中项目的数量" />
+    <Info Token="Encrypt" Name="加密信息" />
+  </Info>
+  <Info Token="Pages" Name="文档页面集合" Description="文档的所有页面">
+    <Info Token="Page" Name="文档页面" Required="true">
+      <Info Token="Contents" Name="页面内容" Description="绘制页面的指令。具体内容请见“命令”节点。" Required="true" />
+      <Info Token="ArtBox" Name="内容边框" Description="由左、下、右、上四个坐标值构成" />
+      <Info Token="BleedBox" Name="出血边框" Description="由左、下、右、上四个坐标值构成" />
+      <Info Token="CropBox" Name="截取边框"
+            Description="表示截取页面边框后的可见区域，由左、下、右、上四个坐标值构成，截取边框区域不应超出页面边框限定的区域。要缩小文档的显示或打印区域，可调整此边框值。要扩张显示或打印区域，则可能需要同时调整此边框和页面边框。" />
+      <Info Token="MediaBox" Name="页面边框"
+            Description="表示绘制文档的区域，由左、下、右、上四个坐标值构成（PDF 使用笛卡尔坐标系，即页面左下角的坐标为 (0,0)）。页面必须有 MediaBox 项指定页面边框。"
+            Required="true" />
+      <Info Token="TrimBox" Name="裁剪边框" Description="由左、下、右、上四个坐标值构成" />
+      <Info Token="Thumb" Name="页面缩略图" />
+      <Info Token="Annots" Name="页面批注">
+        <Info Token="Rect" Name="批注区域" />
+        <Info Token="Contents" Name="批注的文本内容" />
+        <Info Token="P" Name="批注所属页面" />
+        <Info Token="NM" Name="批注名称" Description="相同页面内唯一识别此批注的标识符" />
+        <Info Token="M" Name="最近修改时间" />
+        <Info Token="F" Name="标志位" />
+        <Info Token="AP" Name="批注外观" />
+        <Info Token="Border" Name="批注边框" Description="参数：水平圆角半径、垂直圆角半径、线宽，以及可选的线型样式数组" />
+        <Info Token="C" Name="批注颜色" />
+        <RefInfo Token="Dest" />
+        <RefInfo Token="A" />
+      </Info>
+      <Info Token="Parent" Name="所属页面集合" />
+      <Info Token="UserUnit" Name="用户空间单位" Description="1/72 英寸整数倍的值（默认为 1）" />
+      <Info Token="Rotate" Name="旋转角度" Description="页面在浏览或打印时顺时针旋转的角度，必须为 90 的整数倍或为 0" />
+      <Info Token="AA" Name="额外动作" Description="打开或关闭页面时触发的动作" />
+      <RefInfo Token="Resources" />
+      <RefInfo Token="PieceInfo" />
+      <Info Token="命令" Name="页面绘制指令" Description="此节点的内容是绘制页面的指令集合。此节点是虚拟节点，是通过解释 Contents 节点的内容生成的。">
+        <Info Token="矩阵"
+              Description="用于拉伸、旋转和平移内容的转置矩阵([a1,a2,0; b1,b2,0; c1,c2,1])。&#xD;&#xA;设转置前坐标为 (x,y)，则转置后坐标为：&#xD;&#xA;x' = a1 × x + b1 × y + c1;&#xD;&#xA;y' = a2 × x + b2 × y + c2。&#xD;&#xA;转置矩阵的作用是累积的，后面的转置矩阵要首先与前面出现的矩阵相乘，才是最终的矩阵值。&#xD;&#xA;转置矩阵将影响后续的绘图和文本渲染结果。" />
+        <Info Token="绘制对象"
+              Description="绘制指定的资源对象（见Resources的XObject项目）。&#xD;&#xA;常见的资源对象有图片（Image）和表单（Form）。&#xD;&#xA;无论原始对象的尺寸如何，其宽、高在处理前均被压缩到 1 个单位。&#xD;&#xA;对象的实际渲染尺寸是由前面的转置矩阵决定的（例如：当前转置矩阵为[500 0 0 700 0 0]，则渲染后对象宽高为 500×700）。" />
+        <Info Token="绘图状态"
+              Description="指定绘图状态区域，实际是成对出现的指令（q和Q）。&#xD;&#xA;绘图状态包含转置矩阵、颜色、色域、文本、蒙版等状态。&#xD;&#xA;进入绘图状态（q）时，先将前面的绘图状态压入堆栈，然后创建全新的绘图状态。&#xD;&#xA;离开绘图状态时（Q），将前面的绘图状态弹出堆栈，即恢复原来的绘图状态。" />
+        <Info Token="绘图参数" Description="使用 Resources 中对应的 ExtGState 参数设置绘图状态" />
+        <Info Token="非线色域" Description="使用 Resources 中对应的 ColorSpace 参数设置非线（Nonstroking）色域" />
+        <Info Token="画线色域" Description="使用 Resources 中对应的 ColorSpace 参数设置画线（Stroking）色域" />
+        <Info Token="非线颜色" Description="设置非线（Nonstroking）颜色。&#xD;&#xA;可用参数由之前的非线色域（cs）操作符决定。" />
+        <Info Token="画线颜色" Description="设置画线（Stroking）颜色。&#xD;&#xA;可用参数由之前的画线色域（CS）操作符决定。" />
+        <Info Token="非线三色" Description="设置非线（Nonstroking）的红、绿、蓝三分量颜色" />
+        <Info Token="画线三色" Description="设置画线（Stroking）的红、绿、蓝三分量颜色" />
+        <Info Token="非线四色" Description="设置非线（Nonstroking）的青、红、黄、黑四分量颜色" />
+        <Info Token="画线四色" Description="设置画线（Stroking）的青、红、黄、黑四分量颜色" />
+        <Info Token="非线灰色" Description="设置非线（Nonstroking）的灰度颜色" />
+        <Info Token="画线灰色" Description="设置画线（Stroking）的灰度颜色" />
+        <Info Token="文本区"
+              Description="指定文本区域，实际是成对出现的指令（BT 和 ET）。&#xD;&#xA;进入文本区域（BT）时，文本转置矩阵将被重置。离开文本区域（ET）时，文本转置矩阵将被丢弃。" />
+        <Info Token="换行字符串" Description="输出换行和字符串。&#xD;&#xA;单引号操作符（'）输出换行和文本；双引号操作符（&quot;）指定词距、字距，再输出换行和文本。" />
+        <Info Token="字符串"
+              Description="输出字符串。&#xD;&#xA;Tj操作符输出文本；&#xD;&#xA;TJ操作符输出具有额外字符间距的文本。&#xD;&#xA;TJ操作符的参数为数组，字符串类型的值指定文本，数值类型的值除以 -1000 指定后续文本单位偏移量。" />
+        <Info Token="文本矩阵"
+              Description="用于拉伸、旋转和平移文本内容的转置矩阵([a1,a2,0; b1,b2,0; c1,c2,1])。&#xD;&#xA;设转置前坐标为 (x,y)，则转置后坐标为：&#xD;&#xA;x' = a1 × x + b1 × y + c1;&#xD;&#xA;y' = a2 × x + b2 × y + c2。&#xD;&#xA;文本转置矩阵的作用不是累积的，后面的文本转置矩阵替换前面的矩阵。在定位文本时，还需要考虑由换行操作符所设置的横向起始位置。" />
+        <Info Token="换行"
+              Description="设置起始位置并偏移换行。&#xD;&#xA;Td操作符用其横、纵两方向的偏移参数换行；&#xD;&#xA;TD操作符用其横、纵两方向的偏移参数换行，在换行的同时还会将纵向偏移参数设置为行距（TL）；&#xD;&#xA;T*操作符将使用当前的行距换行，不改变横向偏移量" />
+        <Info Token="字体" Description="指定Resources对应的字体，并设置字体单位尺寸。&#xD;&#xA;将字体单位尺寸与文本转置矩阵相乘，才能确定字体渲染出来的尺寸。" />
+        <Info Token="文本水平拉伸" Description="设置文本水平拉伸的百分比（默认值为100）。此参数还将影响到词距和字距间隔。" />
+        <Info Token="词距"
+              Description="设置词的间距（以未被文本转置矩阵拉伸的文本单位尺寸计算，初始值为 0）。词距实际上就是半角空格（统一码为 32）字符的宽度。如设置了水平拉伸，词距与水平拉伸百分比相乘才是实际距离。" />
+        <Info Token="字距" Description="设置字的间距（以未被文本转置矩阵拉伸的文本单位尺寸计算，初始值为 0）。如设置了水平拉伸，字距与水平拉伸相乘才是实际距离。" />
+        <Info Token="行距" Description="为换行操作符设置其使用的行间距离（以未被文本转置矩阵拉伸的文本单位尺寸计算，初始值为 0）" />
+        <Info Token="文本渲染"
+              Description="设置文本渲染方式（初始值为 0）。可用模式有：&#xD;&#xA;0：填充；1：描边空心字；2：描边实心字；3：不显示（隐形）；&#xD;&#xA;4：填充并加纹样；5：描边并加纹样；6：描边实心字加纹样；7：隐形字上加纹样" />
+        <Info Token="文本垂直偏移" Description="设置文本垂直偏移基线的距离。一般情况下，正数上移，负数下移（以未被文本转置矩阵拉伸的文本单位尺寸计算，初始值为0）。" />
+        <Info Token="线端样式" Description="设置矢量线端样式。可用样式有：&#xD;&#xA;0：无线头；1：圆角线头；2：方形线头。" />
+        <Info Token="连接线样式" Description="设置矢量线连接位置的样式。可用样式有：&#xD;&#xA;0：尖角连接；1：圆角连接；2：方角连接。" />
+        <Info Token="虚线图案" Description="设置矢量线的虚线图案" />
+        <Info Token="始点" Description="设置矢量线从指定点开始" />
+        <Info Token="终点" Description="设置矢量线到当前点结束，将始点和终点连接起来" />
+        <Info Token="直线" Description="从前一个矢量点画直线到指定点" />
+        <Info Token="曲线"
+              Description="从前一个矢量点画 Cubic Bézier 曲线到指定点 (x3,y3)。共有 6 个参数，分别为头尾控制点 (x1,y1)、(x2,y2) 和终点 (x3,y3)" />
+        <Info Token="控尾曲线" Description="从前一个矢量点画 Cubic Bézier 曲线到指定点 (x3,y3)。共有 4 个参数，分别为线尾控制点 (x2,y2) 和终点 (x3,y3)" />
+        <Info Token="控首曲线" Description="从前一个矢量点画 Cubic Bézier 曲线到指定点 (x3,y3)。共有 4 个参数，分别为线头控制点 (x1,y1) 和终点 (x3,y3)" />
+        <Info Token="矩形" Description="在给定的 (x,y) 点以指定的宽和高画矩形" />
+        <Info Token="画线" Description="用之前指定的画线（Stroking）颜色、线头、线尾、连接线样式、虚线等样式画线" />
+        <Info Token="画封闭线" Description="设置当前点为终点，并用画线（Stroking）颜色画线" />
+        <Info Token="非零填充" Description="使用非零（Nonzero winding number）规则填充已闭合的曲线" />
+        <Info Token="奇偶填充" Description="使用奇偶（Even-odd）规则填充已闭合的曲线" />
+        <Info Token="非零画线填充" Description="画线，并用非零（Nonzero winding number）规则填充已闭合的曲线" />
+        <Info Token="奇偶画线填充" Description="画线，并用奇偶（Even-odd）规则填充已闭合的曲线" />
+        <Info Token="闭合非零画线填充" Description="闭合曲线，画线，并用非零（Nonzero winding number）规则填充已闭合的曲线" />
+        <Info Token="闭合奇偶画线填充" Description="闭合曲线，画线，并用奇偶（Even-odd）规则填充已闭合的曲线" />
+        <Info Token="闭合路径不填充" Description="闭合矢量路径，不填充，不画线，一般用于完成裁剪路径" />
+        <Info Token="非零裁剪" Description="使用非零（Nonzero winding number）规则，以闭合曲线构成的矢量图形裁剪内容" />
+        <Info Token="奇偶裁剪" Description="使用奇偶（Even-odd）规则，以闭合曲线构成的矢量图形裁剪内容" />
+        <Info Token="内嵌图像" Description="在内容流中内嵌的图像&#xD;&#xA;实际上是三个指令：BI（图像起始）、ID（图像二进制数据）和EI（图像结束）" />
+      </Info>
+    </Info>
+  </Info>
 </PDF>

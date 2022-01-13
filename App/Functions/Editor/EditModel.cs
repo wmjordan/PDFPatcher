@@ -23,10 +23,12 @@ namespace PDFPatcher.Functions.Editor
 		internal string LastSavedPdfPath { get; set; }
 		internal MuPdfSharp.MuDocument PdfDocument { get; set; }
 		internal List<AutoBookmarkStyle> TitleStyles { get; }
+
 		internal string GetPdfFilePath() {
 			if (DocumentPath == null) {
 				return null;
 			}
+
 			var s = FileHelper.HasExtension(DocumentPath, Constants.FileExtensions.Pdf) ? DocumentPath : null;
 			if (string.IsNullOrEmpty(s)) {
 				s = Document.PdfDocumentPath;
@@ -34,9 +36,11 @@ namespace PDFPatcher.Functions.Editor
 					s = Path.Combine(Path.GetDirectoryName(DocumentPath), s);
 				}
 			}
+
 			if (File.Exists(s) == false) {
 				s = null;
 			}
+
 			return s;
 		}
 
@@ -45,6 +49,7 @@ namespace PDFPatcher.Functions.Editor
 			internal PagePosition Position { get; private set; }
 			internal string Text { get; private set; }
 			internal TextSource TextSource { get; private set; }
+
 			internal string LiteralTextSource {
 				get {
 					switch (TextSource) {
@@ -69,6 +74,7 @@ namespace PDFPatcher.Functions.Editor
 		{
 			Empty, Text, OcrText, OcrError
 		}
+
 		internal sealed class AutoBookmarkStyle
 		{
 			internal readonly string InternalFontName;
@@ -101,5 +107,4 @@ namespace PDFPatcher.Functions.Editor
 		SplitContainer MainPanel { get; }
 		string DocumentPath { get; set; }
 	}
-
 }

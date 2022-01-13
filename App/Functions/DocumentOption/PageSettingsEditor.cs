@@ -15,10 +15,14 @@ namespace PDFPatcher.Functions
 	{
 		readonly TypedObjectListView<Model.PageBoxSettings> _SettingsBox;
 		private List<Model.PageBoxSettings> _Settings;
+
 		[Browsable(false)]
 		public List<Model.PageBoxSettings> Settings {
 			get => _Settings;
-			set { _Settings = value; _SettingsBox.Objects = value; }
+			set {
+				_Settings = value;
+				_SettingsBox.Objects = value;
+			}
 		}
 
 		public PageSettingsEditor() {
@@ -68,9 +72,11 @@ namespace PDFPatcher.Functions
 					o.Filter &= ~PageFilterFlag.Landscape;
 					o.Filter ^= PageFilterFlag.Portrait;
 				}
+
 				if (o.Filter == PageFilterFlag.All) {
 					o.Filter = PageFilterFlag.NotSpecified;
 				}
+
 				_PageSettingsBox.RefreshObject(_PageSettingsBox.SelectedObject);
 			};
 			new TypedColumn<Model.PageBoxSettings>(_PageFilterColumn) {
@@ -78,7 +84,8 @@ namespace PDFPatcher.Functions
 					var f = o.Filter;
 					var eo = f & (PageFilterFlag.Even | PageFilterFlag.Odd);
 					var pl = f & (PageFilterFlag.Landscape | PageFilterFlag.Portrait);
-					return f == PageFilterFlag.NotSpecified ? "所有页面"
+					return f == PageFilterFlag.NotSpecified
+						? "所有页面"
 						: String.Concat(
 							eo == PageFilterFlag.Odd ? "单数"
 							: eo == PageFilterFlag.Even ? "双数"
@@ -94,12 +101,23 @@ namespace PDFPatcher.Functions
 				foreach (ToolStripMenuItem item in _RotateMenu.DropDownItems) {
 					item.Checked = false;
 				}
+
 				switch (r) {
-					case 0: _RotateZeroMenuItem.Checked = true; break;
-					case 90: _RotateRightMenuItem.Checked = true; break;
-					case 180: _Rotate180MenuItem.Checked = true; break;
-					case 270: _RotateLeftMenuItem.Checked = true; break;
-					default: _RotateZeroMenuItem.Checked = true; break;
+					case 0:
+						_RotateZeroMenuItem.Checked = true;
+						break;
+					case 90:
+						_RotateRightMenuItem.Checked = true;
+						break;
+					case 180:
+						_Rotate180MenuItem.Checked = true;
+						break;
+					case 270:
+						_RotateLeftMenuItem.Checked = true;
+						break;
+					default:
+						_RotateZeroMenuItem.Checked = true;
+						break;
 				}
 			};
 			_RotateMenu.DropDownItemClicked += (s, args) => {
@@ -117,22 +135,25 @@ namespace PDFPatcher.Functions
 				else if (_Rotate180MenuItem == i) {
 					o.Rotation = 180;
 				}
+
 				_PageSettingsBox.RefreshObject(o);
 			};
 			new TypedColumn<PageBoxSettings>(_SettingsColumn) {
 				AspectGetter = (o) => {
 					var r = o.Rotation;
 					return String.Concat(
-							r == 0 ? Constants.Content.RotationDirections.Zero
-							: r == 90 ? Constants.Content.RotationDirections.Right
-							: r == 180 ? Constants.Content.RotationDirections.HalfClock
-							: r == 270 ? Constants.Content.RotationDirections.Left
-							: Constants.Content.RotationDirections.Zero
-						);
+						r == 0 ? Constants.Content.RotationDirections.Zero
+						: r == 90 ? Constants.Content.RotationDirections.Right
+						: r == 180 ? Constants.Content.RotationDirections.HalfClock
+						: r == 270 ? Constants.Content.RotationDirections.Left
+						: Constants.Content.RotationDirections.Zero
+					);
 				}
 			};
 			new TypedColumn<Model.PageBoxSettings>(_PageRangeColumn) {
-				AspectGetter = (o) => { return String.IsNullOrEmpty(o.PageRanges) ? Constants.PageFilterTypes.AllPages : o.PageRanges; },
+				AspectGetter = (o) => {
+					return String.IsNullOrEmpty(o.PageRanges) ? Constants.PageFilterTypes.AllPages : o.PageRanges;
+				},
 				AspectPutter = (o, v) => {
 					var s = v as string;
 					o.PageRanges = s != Constants.PageFilterTypes.AllPages ? s : null;
@@ -155,7 +176,5 @@ namespace PDFPatcher.Functions
 			_Settings.Clear();
 			_Settings.AddRange(_SettingsBox.Objects);
 		}
-
-
 	}
 }

@@ -34,14 +34,18 @@ namespace PDFPatcher.Processor
 		internal static bool ModiInstalled => __ModiInstalled;
 
 		#region COMInterop
+
 		static readonly object[] EmptyArray = new object[0];
+
 		static object Create(string type) {
 			var t = Type.GetTypeFromProgID(type);
 			if (t == null) {
 				return null;
 			}
+
 			return Activator.CreateInstance(t);
 		}
+
 		static object Call(object instance, string method, params object[] parameters) {
 			try {
 				return instance.GetType().InvokeMember(method, BindingFlags.InvokeMethod, null, instance, parameters);
@@ -50,23 +54,30 @@ namespace PDFPatcher.Processor
 				if (ex.InnerException != null) {
 					throw ex.InnerException;
 				}
+
 				throw;
 			}
 		}
+
 		static object Get(object instance, string propertyName) {
 			return instance.GetType().InvokeMember(propertyName, BindingFlags.GetProperty, null, instance, EmptyArray);
 		}
+
 		static T Get<T>(object instance, string propertyName) {
 			return (T)Get(instance, propertyName);
 		}
+
 		static object Get(object instance, string propertyName, int index) {
-			return instance.GetType().InvokeMember(propertyName, BindingFlags.GetProperty, null, instance, new object[1] { index });
+			return instance.GetType().InvokeMember(propertyName, BindingFlags.GetProperty, null, instance,
+				new object[1] {index});
 		}
+
 		static void FinalReleaseComObjects(params object[] objs) {
 			for (int i = 0; i < objs.Length; i++) {
 				if (objs[i] == null) {
 					continue;
 				}
+
 				try {
 					var r = Marshal.ReleaseComObject(objs[i]);
 					System.Diagnostics.Debug.Assert(r == 0);
@@ -76,16 +87,19 @@ namespace PDFPatcher.Processor
 				}
 			}
 		}
+
 		#endregion
 
 		static bool DetectModi() {
 			if (__InstalledLanguage.Count == 0) {
 				return false;
 			}
+
 			var ocr = Create("MODI.Document");
 			if (ocr == null) {
 				return false;
 			}
+
 			FinalReleaseComObjects(ocr);
 			return true;
 		}
@@ -100,6 +114,7 @@ namespace PDFPatcher.Processor
 				using (var k = Registry.CurrentUser.OpenSubKey(__UserRegistryPath)) {
 					DetectInstalledLanguages(k, l);
 				}
+
 				using (var k = Registry.ClassesRoot.OpenSubKey(__MachineRegistryPath)) {
 					DetectInstalledLanguages(k, l);
 				}
@@ -107,6 +122,7 @@ namespace PDFPatcher.Processor
 			catch (Exception ex) {
 				Tracker.DebugMessage("OCR registry error: " + ex.Message);
 			}
+
 			return l;
 		}
 
@@ -114,11 +130,13 @@ namespace PDFPatcher.Processor
 			if (k == null) {
 				return;
 			}
+
 			foreach (var n in k.GetValueNames()) {
 				var i = n.ToInt32();
 				if (i == 0) {
 					continue;
 				}
+
 				if (Constants.Ocr.LangIDs.Contains(i) && list.Contains(i) == false) {
 					list.Add(i);
 				}
@@ -147,7 +165,8 @@ namespace PDFPatcher.Processor
 #if DEBUGOCR
 				Tracker.TraceMessage("执行识别：" + LangID);
 #endif
-				Call(ocr, "OCR", ValueHelper.MapValue(LangID, Constants.Ocr.LangIDs, Constants.Ocr.OcrLangIDs), OrientPage, StretchPage);
+				Call(ocr, "OCR", ValueHelper.MapValue(LangID, Constants.Ocr.LangIDs, Constants.Ocr.OcrLangIDs),
+					OrientPage, StretchPage);
 
 				Environment.CurrentDirectory = p;
 #if DEBUGOCR
@@ -172,20 +191,25 @@ namespace PDFPatcher.Processor
 						if (r < pos[0] || pos[0] == 0) {
 							pos[0] = r;
 						}
+
 						r = Get<int>(rect, "Top");
 						if (r > pos[1]) {
 							pos[1] = r;
 						}
+
 						r = Get<int>(rect, "Right");
 						if (r > pos[2]) {
 							pos[2] = r;
 						}
+
 						r = Get<int>(rect, "Bottom");
 						if (r < pos[3] || pos[3] == 0) {
 							pos[3] = r;
 						}
+
 						FinalReleaseComObjects(rect);
 					}
+
 					Marshal.ReleaseComObject(rects);
 					ti.Region = new Bound(pos[0], pos[3], pos[2], pos[1]);
 					ti.Font = null;
@@ -203,16 +227,19 @@ namespace PDFPatcher.Processor
 								break;
 						}
 					}
+
 					if (Char.IsLetterOrDigit(ti.Text[0]) && ti.Size > 0) {
 						ti.LetterWidth = ti.Size;
 					}
+
 					cl = Get<int>(word, "LineID");
 					cr = Get<int>(word, "RegionID");
 					var sl = (cl == lineID && cr == regionID); // 处于同一行
 					if (sl && WritingDirection != WritingDirection.Unknown) {
 						sl = cti != null
-								&& cti.Region.IsAlignedWith(ti.Region, WritingDirection);
+						     && cti.Region.IsAlignedWith(ti.Region, WritingDirection);
 					}
+
 					if (sl) {
 						if (cti != null && cti.Region == ti.Region) {
 							cti.Text += ti.Text;
@@ -225,18 +252,20 @@ namespace PDFPatcher.Processor
 						if (line != null) {
 							results.Add(line);
 						}
-						line = new TextLine(ti) {
-							SuppressTextInfoArrangement = true
-						};
+
+						line = new TextLine(ti) {SuppressTextInfoArrangement = true};
 						lineID = cl;
 						regionID = cr;
 					}
+
 					cti = ti;
 #if DEBUGOCR && DEBUG
-					l.WriteLine(String.Concat(ti.Size, "\t", ti.Text, "\t", ti.Region.Top, " ", ti.Region.Left, " ", ti.Region.Bottom, " ", ti.Region.Right));
+					l.WriteLine(String.Concat(ti.Size, "\t", ti.Text, "\t", ti.Region.Top, " ", ti.Region.Left, " ",
+						ti.Region.Bottom, " ", ti.Region.Right));
 #endif
 					FinalReleaseComObjects(word);
 				}
+
 				Marshal.ReleaseComObject(words);
 				if (line != null) {
 					results.Add(line);
@@ -274,7 +303,6 @@ namespace PDFPatcher.Processor
 				ocr = images = image = layout = null;
 				merge = mergeImages = null;
 			}
-
 		}
 
 		//private static string FindModi () {

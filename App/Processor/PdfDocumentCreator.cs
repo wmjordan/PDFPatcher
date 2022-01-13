@@ -15,53 +15,38 @@ namespace PDFPatcher.Processor
 {
 	sealed class PdfDocumentCreator
 	{
-		internal static readonly string[] SupportedFileTypes = new string[] { ".pdf", ".tif", ".jpg", ".gif", ".png", ".tiff", ".bmp", ".jpeg", ".jp2", ".j2k" };
-		static readonly string[] __BuiltInImageTypes = { ".png", ".jpg", ".jpeg", ".bmp", ".jp2", ".j2k" };
-		static readonly string[] __ExtImageTypes = { ".tif", ".tiff", ".gif" };
+		internal static readonly string[] SupportedFileTypes = new string[] {
+			".pdf", ".tif", ".jpg", ".gif", ".png", ".tiff", ".bmp", ".jpeg", ".jp2", ".j2k"
+		};
+
+		static readonly string[] __BuiltInImageTypes = {".png", ".jpg", ".jpeg", ".bmp", ".jp2", ".j2k"};
+		static readonly string[] __ExtImageTypes = {".tif", ".tiff", ".gif"};
+
 		static readonly PixelFormat[] __JpgFormats = new PixelFormat[] {
-									PixelFormat.Format16bppGrayScale,
-									PixelFormat.Format16bppRgb555,
-									PixelFormat.Format16bppRgb565,
-									PixelFormat.Format24bppRgb,
-									PixelFormat.Format32bppRgb,
-									PixelFormat.Format48bppRgb};
+			PixelFormat.Format16bppGrayScale, PixelFormat.Format16bppRgb555, PixelFormat.Format16bppRgb565,
+			PixelFormat.Format24bppRgb, PixelFormat.Format32bppRgb, PixelFormat.Format48bppRgb
+		};
 
 		internal static readonly PaperSize[] PaperSizes = new PaperSize[] {
-				new PaperSize (PaperSize.AsPageSize, 0, 0),
-				new PaperSize (PaperSize.FixedWidthAutoHeight, 0, 0),
-				new PaperSize (PaperSize.AsWidestPage, 0, 0),
-				new PaperSize (PaperSize.AsNarrowestPage, 0, 0),
-				new PaperSize (PaperSize.AsLargestPage, 0, 0),
-				new PaperSize (PaperSize.AsSmallestPage, 0, 0),
-				new PaperSize ("16 开 (18.4*26.0)", 1840, 2601),
-				new PaperSize ("32 开 (13.0*18.4)", 1300, 1840),
-				new PaperSize ("大 32 开 (14.0*20.3)", 1400, 2030),
-				new PaperSize ("A4 (21.0*29.7)", 2100, 2970),
-				new PaperSize ("A3 (29.7*42.0)", 2971, 4201),
-				new PaperSize ("自定义", 0, 0),
-				new PaperSize ("————————————", 0, 0),
-				new PaperSize ("8 开 (26.0*36.8)", 2601, 3681),
-				new PaperSize ("16 开 (18.4*26.0)", 1840, 2601),
-				new PaperSize ("大 16 开 (21.0*28.5)", 2100, 2851),
-				new PaperSize ("32 开 (13.0*18.4)", 1300, 1840),
-				new PaperSize ("大 32 开 (14.0*20.3)", 1400, 2030),
-				new PaperSize ("8 K (27.3*39.3)", 2731, 3931),
-				new PaperSize ("16 K (19.6*27.3)", 1960, 2731),
-				new PaperSize ("A0 (84.1*118.9)", 8410, 11890),
-				new PaperSize ("A1 (59.4*84.1)", 5940, 8410),
-				new PaperSize ("A2 (42.0*59.4)", 4200, 5940),
-				new PaperSize ("A3 (29.7*42.0)", 2971, 4201),
-				new PaperSize ("A4 (21.0*29.7)", 2100, 2971),
-				new PaperSize ("A5 (14.8*21.0)", 1480, 2100),
-				new PaperSize ("A6 (10.5*14.8)", 1050, 1480),
-				new PaperSize ("B0 (100.0*141.3)", 10000, 14130),
-				new PaperSize ("B1 (70.7*100.0)", 7070, 10000),
-				new PaperSize ("B2 (50.0*70.7)", 5000, 7070),
-				new PaperSize ("B3 (35.3*50.0)", 3530, 5000),
-				new PaperSize ("B4 (25.0*35.3)", 2500, 3530),
-				new PaperSize ("B5 (17.6*25.0)", 1760, 2501),
-				new PaperSize ("B6 (12.5*17.6)", 1250, 1760)
-			};
+			new PaperSize(PaperSize.AsPageSize, 0, 0), new PaperSize(PaperSize.FixedWidthAutoHeight, 0, 0),
+			new PaperSize(PaperSize.AsWidestPage, 0, 0), new PaperSize(PaperSize.AsNarrowestPage, 0, 0),
+			new PaperSize(PaperSize.AsLargestPage, 0, 0), new PaperSize(PaperSize.AsSmallestPage, 0, 0),
+			new PaperSize("16 开 (18.4*26.0)", 1840, 2601), new PaperSize("32 开 (13.0*18.4)", 1300, 1840),
+			new PaperSize("大 32 开 (14.0*20.3)", 1400, 2030), new PaperSize("A4 (21.0*29.7)", 2100, 2970),
+			new PaperSize("A3 (29.7*42.0)", 2971, 4201), new PaperSize("自定义", 0, 0),
+			new PaperSize("————————————", 0, 0), new PaperSize("8 开 (26.0*36.8)", 2601, 3681),
+			new PaperSize("16 开 (18.4*26.0)", 1840, 2601), new PaperSize("大 16 开 (21.0*28.5)", 2100, 2851),
+			new PaperSize("32 开 (13.0*18.4)", 1300, 1840), new PaperSize("大 32 开 (14.0*20.3)", 1400, 2030),
+			new PaperSize("8 K (27.3*39.3)", 2731, 3931), new PaperSize("16 K (19.6*27.3)", 1960, 2731),
+			new PaperSize("A0 (84.1*118.9)", 8410, 11890), new PaperSize("A1 (59.4*84.1)", 5940, 8410),
+			new PaperSize("A2 (42.0*59.4)", 4200, 5940), new PaperSize("A3 (29.7*42.0)", 2971, 4201),
+			new PaperSize("A4 (21.0*29.7)", 2100, 2971), new PaperSize("A5 (14.8*21.0)", 1480, 2100),
+			new PaperSize("A6 (10.5*14.8)", 1050, 1480), new PaperSize("B0 (100.0*141.3)", 10000, 14130),
+			new PaperSize("B1 (70.7*100.0)", 7070, 10000), new PaperSize("B2 (50.0*70.7)", 5000, 7070),
+			new PaperSize("B3 (35.3*50.0)", 3530, 5000), new PaperSize("B4 (25.0*35.3)", 2500, 3530),
+			new PaperSize("B5 (17.6*25.0)", 1760, 2501), new PaperSize("B6 (12.5*17.6)", 1250, 1760)
+		};
+
 		readonly MergerOptions _option;
 		readonly ImporterOptions _impOptions;
 		readonly Document _doc;
@@ -81,7 +66,8 @@ namespace PDFPatcher.Processor
 		/// </summary>
 		public PdfInfoXmlDocument PdfBookmarks { get; }
 
-		public PdfDocumentCreator(DocumentSink sink, MergerOptions option, ImporterOptions impOptions, Document document, PdfSmartCopy writer) {
+		public PdfDocumentCreator(DocumentSink sink, MergerOptions option, ImporterOptions impOptions,
+			Document document, PdfSmartCopy writer) {
 			_sink = sink;
 			_option = option;
 			_impOptions = impOptions;
@@ -96,12 +82,13 @@ namespace PDFPatcher.Processor
 			scaleUp = option.AutoScaleUp;
 			scaleDown = option.AutoScaleDown;
 			areMarginsEqual = (ps.Margins.Top == ps.Margins.Left
-				&& ps.Margins.Top == ps.Margins.Right
-				&& ps.Margins.Top == ps.Margins.Bottom);
+			                   && ps.Margins.Top == ps.Margins.Right
+			                   && ps.Margins.Top == ps.Margins.Bottom);
 			if (impOptions.ImportBookmarks) {
 				PdfBookmarks = new PdfInfoXmlDocument();
 				var root = PdfBookmarks.BookmarkRoot;
 			}
+
 			if (_content.SpecialSize == SpecialPaperSize.None) {
 				_doc.SetPageSize(new Rectangle(ps.PaperSize.Width, ps.PaperSize.Height));
 			}
@@ -111,6 +98,7 @@ namespace PDFPatcher.Processor
 			if (sourceFile.Type != SourceItem.ItemType.Empty) {
 				Tracker.TraceMessage(Tracker.Category.InputFile, sourceFile.FilePath.ToString());
 			}
+
 			var b = CreateAutoBookmark(sourceFile, bookmarkContainer);
 			switch (sourceFile.Type) {
 				case SourceItem.ItemType.Empty:
@@ -134,6 +122,7 @@ namespace PDFPatcher.Processor
 				default:
 					break;
 			}
+
 			if (sourceFile.HasSubItems) {
 				var p = false;
 				var pn = _writer.CurrentPageNumber;
@@ -142,6 +131,7 @@ namespace PDFPatcher.Processor
 					if (p) {
 						continue;
 					}
+
 					p = true;
 					var t = b;
 					while (b?.Page == 0) {
@@ -150,6 +140,7 @@ namespace PDFPatcher.Processor
 						b.Top = _doc.PageSize.Height;
 						b = b.ParentBookmark;
 					}
+
 					b = t;
 				}
 			}
@@ -162,12 +153,19 @@ namespace PDFPatcher.Processor
 				if (ext == Constants.FileExtensions.Jpg || ext == Constants.FileExtensions.Jpeg) {
 					if (Processor.Imaging.JpgHelper.TryGetExifOrientation(source.FilePath, out var o) && o != 0) {
 						switch (o) {
-							case 6: image.RotationDegrees = -90; break;
-							case 3: image.RotationDegrees = 180; break;
-							case 8: image.RotationDegrees = 90; break;
+							case 6:
+								image.RotationDegrees = -90;
+								break;
+							case 3:
+								image.RotationDegrees = 180;
+								break;
+							case 8:
+								image.RotationDegrees = 90;
+								break;
 						}
 					}
 				}
+
 				if (image == null) {
 					Tracker.TraceMessage("无法添加文件：" + source.FilePath);
 				}
@@ -195,20 +193,21 @@ namespace PDFPatcher.Processor
 					}
 				}
 			}
-
 		}
 
 		private void SetBookmarkAction(BookmarkElement bookmark) {
 			if (bookmark == null) {
 				return;
 			}
+
 			bookmark.Page = _writer.PageEmpty ? _writer.CurrentPageNumber - 1 : _writer.CurrentPageNumber;
 			bookmark.DestinationView = Constants.DestinationAttributes.ViewType.XYZ;
 			bookmark.Top = _doc.PageSize.Height;
 		}
 
 		private void AddEmptyPage() {
-			if (_content.SpecialSize == SpecialPaperSize.None || _content.SpecialSize == SpecialPaperSize.AsSpecificPage) {
+			if (_content.SpecialSize == SpecialPaperSize.None ||
+			    _content.SpecialSize == SpecialPaperSize.AsSpecificPage) {
 				// 插入空白页
 				_doc.NewPage();
 				_writer.PageEmpty = false;
@@ -225,8 +224,10 @@ namespace PDFPatcher.Processor
 				if (_sink.DecrementReference(sourceFile.FilePath) < 1) {
 					pdf.Close();
 				}
+
 				return;
 			}
+
 			var ranges = PageRangeCollection.Parse(sourceFile.PageRanges, 1, pdf.NumberOfPages, true);
 			var pageRemapper = new int[pdf.NumberOfPages + 1];
 			// 统一页面旋转角度
@@ -237,28 +238,41 @@ namespace PDFPatcher.Processor
 					var p = pdf.GetPageN(i);
 					var r = PdfHelper.GetPageVisibleRectangle(p);
 					if (rv && r.Width < r.Height
-						|| rv == false && r.Width > r.Height) {
+					    || rv == false && r.Width > r.Height) {
 						p.Put(PdfName.ROTATE, (r.Rotation + a) % 360);
 					}
 				}
 			}
+
 			if (bookmark != null) {
 				var n = _writer.CurrentPageNumber + 1;
 				if (_writer.PageEmpty) {
 					n--;
 				}
+
 				bookmark.SetAttribute(Constants.DestinationAttributes.Page, n.ToText());
-				bookmark.SetAttribute(Constants.DestinationAttributes.View, Constants.DestinationAttributes.ViewType.XYZ);
+				bookmark.SetAttribute(Constants.DestinationAttributes.View,
+					Constants.DestinationAttributes.ViewType.XYZ);
 				var r = PdfHelper.GetPageVisibleRectangle(pdf.GetPageN(ranges[0].StartValue));
 				float t = 0;
 				switch ((r.Rotation % 360) / 90) {
-					case 0: t = r.Top; break;
-					case 1: t = r.Right; break;
-					case 2: t = r.Bottom; break;
-					case 3: t = r.Left; break;
+					case 0:
+						t = r.Top;
+						break;
+					case 1:
+						t = r.Right;
+						break;
+					case 2:
+						t = r.Bottom;
+						break;
+					case 3:
+						t = r.Left;
+						break;
 				}
+
 				bookmark.SetAttribute(Constants.Coordinates.Top, t.ToText());
 			}
+
 			var pdfItem = (sourceFile as SourceItem.Pdf);
 			bool importImagesOnly = pdfItem.ImportImagesOnly;
 			int pn = pdf.NumberOfPages;
@@ -266,19 +280,25 @@ namespace PDFPatcher.Processor
 			if (importImagesOnly) {
 				imgExp = new ImageExtractor(pdfItem.ExtractImageOptions, pdf);
 			}
+
 			if (_option.KeepBookmarks) {
 				pdf.ConsolidateNamedDestinations();
 			}
+
 			var pp = new byte[pdf.NumberOfPages + 1]; // 已处理过的页面
-			var cts = _pageSettings.PaperSize.SpecialSize != SpecialPaperSize.AsPageSize ? new CoordinateTranslationSettings[pdf.NumberOfPages + 1] : null; // 页面的位置偏移量
+			var cts = _pageSettings.PaperSize.SpecialSize != SpecialPaperSize.AsPageSize
+				? new CoordinateTranslationSettings[pdf.NumberOfPages + 1]
+				: null; // 页面的位置偏移量
 			foreach (var r in ranges) {
 				foreach (var i in r) {
 					if (i < 1 || i > pn) {
 						goto Exit;
 					}
+
 					if (pageRemapper != null) {
 						pageRemapper[i] = _writer.CurrentPageNumber;
 					}
+
 					_doc.NewPage();
 					if (imgExp != null) {
 						imgExp.ExtractPageImages(pdf, i);
@@ -306,9 +326,11 @@ namespace PDFPatcher.Processor
 								if (_pageSettings.ScaleContent) {
 									PageDimensionProcessor.ScaleContent(pdf, i, ct);
 								}
+
 								if (cts != null) {
 									cts[i] = ct;
 								}
+
 								pdf.ResetReleasePage();
 							}
 							//var og = new OperatorGroup (null);
@@ -323,9 +345,11 @@ namespace PDFPatcher.Processor
 
 							pp[i] = 1;
 						}
+
 						_writer.AddPage(_writer.GetImportedPage(pdf, i));
 					}
-				Exit:
+
+					Exit:
 					Tracker.IncrementProgress(1);
 				}
 			}
@@ -333,24 +357,31 @@ namespace PDFPatcher.Processor
 			if (_option.KeepBookmarks) {
 				bookmark = KeepBookmarks(bookmark, pdf, pageRemapper, cts);
 			}
+
 			if (_sink.DecrementReference(sourceFile.FilePath) < 1) {
 				_writer.FreeReader(pdf);
 				pdf.Close();
 			}
 		}
 
-		private BookmarkContainer KeepBookmarks(BookmarkContainer bookmark, PdfReader pdf, int[] pageRemapper, CoordinateTranslationSettings[] cts) {
-			var bm = OutlineManager.GetBookmark(pdf, new UnitConverter() { Unit = Constants.Units.Point });
+		private BookmarkContainer KeepBookmarks(BookmarkContainer bookmark, PdfReader pdf, int[] pageRemapper,
+			CoordinateTranslationSettings[] cts) {
+			var bm = OutlineManager.GetBookmark(pdf, new UnitConverter() {Unit = Constants.Units.Point});
 			var processors = new List<IInfoDocProcessor>();
 			if (_option.ViewerPreferences.CollapseBookmark != BookmarkStatus.AsIs) {
-				processors.Add(new CollapseBookmarkProcessor() { BookmarkStatus = _option.ViewerPreferences.CollapseBookmark });
+				processors.Add(new CollapseBookmarkProcessor() {
+					BookmarkStatus = _option.ViewerPreferences.CollapseBookmark
+				});
 			}
+
 			if (_option.ViewerPreferences.RemoveZoomRate) {
 				processors.Add(new RemoveZoomRateProcessor());
 			}
+
 			if (_option.ViewerPreferences.ForceInternalLink) {
 				processors.Add(new ForceInternalDestinationProcessor());
 			}
+
 			processors.Add(new GotoDestinationProcessor() {
 				RemoveOrphanDestination = _option.RemoveOrphanBookmarks,
 				PageRemapper = pageRemapper,
@@ -360,7 +391,8 @@ namespace PDFPatcher.Processor
 			if (bookmark != null) {
 				bookmark.SetAttribute(Constants.BookmarkAttributes.Open,
 					_option.ViewerPreferences.CollapseBookmark == BookmarkStatus.CollapseAll
-						? Constants.Boolean.False : Constants.Boolean.True);
+						? Constants.Boolean.False
+						: Constants.Boolean.True);
 			}
 			else if (PdfBookmarks != null) {
 				bookmark = PdfBookmarks.BookmarkRoot;
@@ -368,14 +400,17 @@ namespace PDFPatcher.Processor
 			else {
 				return bookmark;
 			}
+
 			if (bm != null) {
 				while (bm.FirstChild != null) {
 					if (bm.FirstChild.NodeType == XmlNodeType.Element) {
 						bookmark.AppendChild(bookmark.OwnerDocument.ImportNode(bm.FirstChild, true));
 					}
+
 					bm.RemoveChild(bm.FirstChild);
 				}
 			}
+
 			return bookmark;
 		}
 
@@ -383,6 +418,7 @@ namespace PDFPatcher.Processor
 			if (item == null) {
 				return;
 			}
+
 			foreach (var p in processors) {
 				p.Process(item);
 			}
@@ -396,6 +432,7 @@ namespace PDFPatcher.Processor
 				if (ce != null) {
 					ProcessInfoItem(ce, processors);
 				}
+
 				if (c.ParentNode == null) {
 					// 节点在处理过程中被删除
 					//while (c.HasChildNodes) {
@@ -456,29 +493,34 @@ namespace PDFPatcher.Processor
 			if (imageItem == null || cropOptions.NeedCropping == false) {
 				return Image.GetInstance(sourceFile.FilePath.ToString());
 			}
+
 			ext = ext.ToLowerInvariant();
 			using (var fi = new FreeImageBitmap(sourceFile.FilePath)) {
 				if (fi.Height < cropOptions.MinHeight // 不满足尺寸限制
-					|| fi.Width < cropOptions.MinWidth
-					|| fi.Height <= cropOptions.Top + cropOptions.Bottom // 裁剪后尺寸小于 0
-					|| fi.Width <= cropOptions.Left + cropOptions.Right
-					) {
+				    || fi.Width < cropOptions.MinWidth
+				    || fi.Height <= cropOptions.Top + cropOptions.Bottom // 裁剪后尺寸小于 0
+				    || fi.Width <= cropOptions.Left + cropOptions.Right
+				   ) {
 					return Image.GetInstance(sourceFile.FilePath.ToString());
 				}
+
 				if (ext == Constants.FileExtensions.Jpg || ext == ".jpeg") {
 					// is JPEG file
 					var t = sourceFile.FilePath.EnsureExtension(Constants.FileExtensions.Jpg);
-					if (FreeImageBitmap.JPEGCrop(sourceFile.FilePath, t, cropOptions.Left, cropOptions.Top, fi.Width - cropOptions.Right, fi.Height - cropOptions.Bottom)) {
+					if (FreeImageBitmap.JPEGCrop(sourceFile.FilePath, t, cropOptions.Left, cropOptions.Top,
+						    fi.Width - cropOptions.Right, fi.Height - cropOptions.Bottom)) {
 						iTextImage image;
 						using (var fs = new FileStream(t, FileMode.Open)) {
 							image = Image.GetInstance(fs);
 						}
+
 						File.Delete(t);
 						return image;
 					}
 				}
 
-				using (var tmp = fi.Copy(cropOptions.Left, cropOptions.Top, fi.Width - cropOptions.Right, fi.Height - cropOptions.Bottom))
+				using (var tmp = fi.Copy(cropOptions.Left, cropOptions.Top, fi.Width - cropOptions.Right,
+					       fi.Height - cropOptions.Bottom))
 				using (MemoryStream ms = new MemoryStream()) {
 					tmp.Save(ms, fi.ImageFormat);
 					ms.Flush();
@@ -490,10 +532,11 @@ namespace PDFPatcher.Processor
 
 		private BookmarkElement CreateAutoBookmark(SourceItem sourceFile, XmlElement bookmarkContainer) {
 			if (PdfBookmarks == null
-				|| sourceFile.Bookmark == null
-				|| String.IsNullOrEmpty(sourceFile.Bookmark.Title)) {
+			    || sourceFile.Bookmark == null
+			    || String.IsNullOrEmpty(sourceFile.Bookmark.Title)) {
 				return null;
 			}
+
 			var b = PdfBookmarks.CreateBookmark(sourceFile.Bookmark);
 			bookmarkContainer.AppendChild(b);
 			return b;
@@ -503,30 +546,35 @@ namespace PDFPatcher.Processor
 			if (_option.AutoMaskBWImages && image.IsMaskCandidate()) {
 				image.MakeMask();
 			}
-			image.ScalePercent(72f / image.DpiX.SubstituteDefault(72) * 100f, 72f / image.DpiY.SubstituteDefault(72) * 100f);
+
+			image.ScalePercent(72f / image.DpiX.SubstituteDefault(72) * 100f,
+				72f / image.DpiY.SubstituteDefault(72) * 100f);
 			if (_content.SpecialSize == SpecialPaperSize.AsPageSize) {
-				_doc.SetPageSize(new Rectangle(image.ScaledWidth + _doc.LeftMargin + _doc.RightMargin, image.ScaledHeight + _doc.TopMargin + _doc.BottomMargin));
+				_doc.SetPageSize(new Rectangle(image.ScaledWidth + _doc.LeftMargin + _doc.RightMargin,
+					image.ScaledHeight + _doc.TopMargin + _doc.BottomMargin));
 			}
 			else if (_content.SpecialSize == SpecialPaperSize.FixedWidthAutoHeight) {
 				if ((scaleDown && image.ScaledWidth > _content.Width) ||
-					(scaleUp && image.ScaledWidth < _content.Width)) {
+				    (scaleUp && image.ScaledWidth < _content.Width)) {
 					image.ScaleToFit(_content.Width, 999999);
 				}
-				_doc.SetPageSize(new Rectangle(_content.Width, image.ScaledHeight + _doc.TopMargin + _doc.BottomMargin));
+
+				_doc.SetPageSize(new Rectangle(_content.Width,
+					image.ScaledHeight + _doc.TopMargin + _doc.BottomMargin));
 			}
 			else {
 				if (_autoRotate
-					&& (// 页面不足以放下当前尺寸的图片
-						(image.ScaledHeight > _content.Height || image.ScaledWidth > _content.Width)
-							&& (image.ScaledWidth > image.ScaledHeight && _portrait == true
-								|| image.ScaledHeight > image.ScaledWidth && _portrait == false)
-						||
-						// 图片较小，可以还原为原始的页面方向
-						(_portrait != _option.ContentHeight > _option.ContentWidth
-							&& image.ScaledHeight <= _content.Height && image.ScaledWidth <= _content.Width
-							&& image.ScaledHeight <= _content.Width && image.ScaledWidth <= _content.Height)
-					)
-					) {
+				    && ( // 页面不足以放下当前尺寸的图片
+					    (image.ScaledHeight > _content.Height || image.ScaledWidth > _content.Width)
+					    && (image.ScaledWidth > image.ScaledHeight && _portrait == true
+					        || image.ScaledHeight > image.ScaledWidth && _portrait == false)
+					    ||
+					    // 图片较小，可以还原为原始的页面方向
+					    (_portrait != _option.ContentHeight > _option.ContentWidth
+					     && image.ScaledHeight <= _content.Height && image.ScaledWidth <= _content.Width
+					     && image.ScaledHeight <= _content.Width && image.ScaledWidth <= _content.Height)
+				    )
+				   ) {
 					var t = _content.Height;
 					_content.Height = _content.Width;
 					_content.Width = t;
@@ -539,12 +587,15 @@ namespace PDFPatcher.Processor
 							_doc.SetMargins(_doc.TopMargin, _doc.BottomMargin, _doc.RightMargin, _doc.LeftMargin);
 						}
 					}
+
 					_portrait = !_portrait;
 				}
+
 				if ((scaleDown && (image.ScaledHeight > _content.Height || image.ScaledWidth > _content.Width))
-					|| (scaleUp && image.ScaledHeight < _content.Height && image.ScaledWidth < _content.Width)) {
+				    || (scaleUp && image.ScaledHeight < _content.Height && image.ScaledWidth < _content.Width)) {
 					image.ScaleToFit(_content.Width, _content.Height);
 				}
+
 				float px = 0, py = 0;
 				if (hAlign == HorizontalAlignment.Center) {
 					px = (_content.Width - image.ScaledWidth) / 2f;
@@ -552,14 +603,17 @@ namespace PDFPatcher.Processor
 				else if (hAlign == HorizontalAlignment.Right) {
 					px = _content.Width - image.ScaledWidth;
 				}
+
 				if (vAlign == VerticalAlignment.Middle) {
 					py = (_content.Height - image.ScaledHeight) / 2f;
 				}
 				else if (vAlign == VerticalAlignment.Top) {
 					py = _content.Height - image.ScaledHeight;
 				}
+
 				image.SetAbsolutePosition(_doc.LeftMargin + px, _doc.BottomMargin + py);
 			}
+
 			_doc.NewPage();
 			_doc.Add(image);
 			_doc.NewPage();
@@ -570,13 +624,13 @@ namespace PDFPatcher.Processor
 			var cropOptions = source.Cropping;
 			FREE_IMAGE_FORMAT format;
 			if (fi.ImageFormat == FREE_IMAGE_FORMAT.FIF_GIF
-				|| fi.InfoHeader.biCompression == FreeImage.BI_PNG) {
+			    || fi.InfoHeader.biCompression == FreeImage.BI_PNG) {
 				format = FREE_IMAGE_FORMAT.FIF_PNG;
 			}
 			else if (fi.ColorDepth > 8
-				&& fi.ColorType == FREE_IMAGE_COLOR_TYPE.FIC_RGB
-				&& fi.HasPalette == false
-				&& __JpgFormats.Contains(fi.PixelFormat)) {
+			         && fi.ColorType == FREE_IMAGE_COLOR_TYPE.FIC_RGB
+			         && fi.HasPalette == false
+			         && __JpgFormats.Contains(fi.PixelFormat)) {
 				format = FREE_IMAGE_FORMAT.FIF_JPEG;
 			}
 			else if (fi.InfoHeader.biCompression == FreeImage.BI_JPEG) {
@@ -588,13 +642,15 @@ namespace PDFPatcher.Processor
 			else {
 				format = fi.ImageFormat;
 			}
+
 			using (MemoryStream ms = new MemoryStream()) {
 				if (cropOptions.NeedCropping
-					&& (fi.Height < cropOptions.MinHeight // 不满足尺寸限制
-						|| fi.Width < cropOptions.MinWidth
-						|| fi.Height <= cropOptions.Top + cropOptions.Bottom // 裁剪后尺寸小于 0
-						|| fi.Width <= cropOptions.Left + cropOptions.Right) == false) {
-					var temp = fi.Copy(cropOptions.Left, cropOptions.Top, fi.Width - cropOptions.Right, fi.Height - cropOptions.Bottom);
+				    && (fi.Height < cropOptions.MinHeight // 不满足尺寸限制
+				        || fi.Width < cropOptions.MinWidth
+				        || fi.Height <= cropOptions.Top + cropOptions.Bottom // 裁剪后尺寸小于 0
+				        || fi.Width <= cropOptions.Left + cropOptions.Right) == false) {
+					var temp = fi.Copy(cropOptions.Left, cropOptions.Top, fi.Width - cropOptions.Right,
+						fi.Height - cropOptions.Bottom);
 					temp.Save(ms, format);
 					fi.Dispose();
 					fi = temp;
@@ -602,6 +658,7 @@ namespace PDFPatcher.Processor
 				else {
 					fi.Save(ms, format);
 				}
+
 				ms.Flush();
 				ms.Position = 0;
 				if (recompressWithJbig2 && fi.PixelFormat == PixelFormat.Format1bppIndexed) {
@@ -617,13 +674,14 @@ namespace PDFPatcher.Processor
 					}
 				}
 			}
+
 			if (fi.HorizontalResolution != fi.VerticalResolution) {
 				image.SetDpi(fi.HorizontalResolution.ToInt32(), fi.VerticalResolution.ToInt32());
 			}
+
 			//image.ScaleAbsoluteHeight (fi.Height * 72 / fi.VerticalResolution);
 			//image.ScaleAbsoluteWidth (fi.Width * 72 / fi.HorizontalResolution);
 			return image;
 		}
-
 	}
 }

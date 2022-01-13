@@ -6,7 +6,9 @@ namespace PDFPatcher
 	static class Commands
 	{
 		internal const string File = "_File";
+
 		#region File menu
+
 		internal const string Open = "_Open";
 		internal const string OpenFile = "OpenFile";
 		internal const string LoadList = "_LoadList";
@@ -25,17 +27,23 @@ namespace PDFPatcher
 		internal const string SaveList = "_SaveList";
 		internal const string CleanUpInexistentFiles = "_CleanUpInexistentFiles";
 		internal const string Exit = "_Exit";
+
 		#endregion
 
 		internal const string Tools = "_ToolBox";
+
 		#region Tools menu
+
 		internal const string LogWindow = "_LogWindow";
 		internal const string ShowGeneralToolbar = "_ShowGeneralToolbar";
 		internal const string CustomizeToolbar = "_CustomizeToolbar";
+
 		#endregion
 
 		internal const string Selection = "_Select";
+
 		#region Selection menu
+
 		internal const string Copy = "_Copy";
 		internal const string Delete = "_Delete";
 		internal const string Paste = "_Paste";
@@ -46,22 +54,29 @@ namespace PDFPatcher
 		internal const string InvertSelectItem = "_InvertSelect";
 		internal const string SelectNone = "_SelectNone";
 		internal const string ItemTypeSeparator = "_ItemTypeSeparator";
+
 		#endregion
 
 		#region Options menu
+
 		internal const string PatcherOptions = "_PatcherOptions";
 		internal const string MergerOptions = "_MergerOptions";
 		internal const string InfoFileOptions = "_InfoFileOptions";
+
 		#endregion
 
 		internal const string Help = "_Help";
+
 		#region Help menu
+
 		internal const string CreateShortcut = "_CreateShortcut";
 		internal const string VisitHomePage = "_VisitHomePage";
 		internal const string CheckUpdate = "_CheckUpdate";
+
 		#endregion
 
 		#region Editor
+
 		internal const string EditorInsertBookmark = "_BookmarkHere";
 		internal const string EditorSavePdf = "_SavePDF";
 		internal const string EditorBookmarkLevelUp = "_LevelUp";
@@ -75,20 +90,19 @@ namespace PDFPatcher
 		internal const string EditorOcrPage = "_OcrPage";
 		internal const string EditorPageProperties = "_PageProperties";
 		internal const string EditorSavePageImage = "_SavePageImage";
+
 		#endregion
-		internal static readonly string[] TopMenuItems = { File, Tools, Selection };
-		internal static readonly string[] CommonSelectionCommands = { SelectAllItems, SelectNone, InvertSelectItem };
+
+		internal static readonly string[] TopMenuItems = {File, Tools, Selection};
+		internal static readonly string[] CommonSelectionCommands = {SelectAllItems, SelectNone, InvertSelectItem};
+
 		internal static readonly HashSet<string> DefaultDisabledItems = new HashSet<string>(
-			new string[] {
-				SelectAllItems, InvertSelectItem, SelectNone,
-				Copy, Delete,
-				Options
-			});
+			new string[] {SelectAllItems, InvertSelectItem, SelectNone, Copy, Delete, Options});
+
 		internal static readonly HashSet<string> DefaultHiddenItems = new HashSet<string>(
 			new string[] {
-				ImportBookmark, SaveBookmark, SaveAsInfoFile, DocumentProperties,
-				SelectAllPdf, SelectAllImages, SelectAllFolders, ItemTypeSeparator
+				ImportBookmark, SaveBookmark, SaveAsInfoFile, DocumentProperties, SelectAllPdf, SelectAllImages,
+				SelectAllFolders, ItemTypeSeparator
 			});
-
 	}
 }

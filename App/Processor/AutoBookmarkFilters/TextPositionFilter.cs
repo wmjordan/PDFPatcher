@@ -27,6 +27,7 @@ namespace PDFPatcher.Processor
 						return true;
 					}
 				}
+
 				return false;
 			}
 		}

@@ -21,6 +21,7 @@ namespace PDFPatcher.Processor.Imaging
 					globalptr = NativeMethods.MakeGlobal(ctxptr);
 					ctxptr = NativeMethods.New(globalptr);
 				}
+
 				c = NativeMethods.ReadData(ctxptr, data, (uint)data.Length);
 				c = NativeMethods.CompletePage(ctxptr);
 				if ((imageptr = NativeMethods.Decode(ctxptr)) != IntPtr.Zero) {
@@ -28,12 +29,14 @@ namespace PDFPatcher.Processor.Imaging
 					decodedData = image.GetData();
 					NativeMethods.ReleasePage(ctxptr, imageptr);
 				}
+
 				return decodedData;
 			}
 			finally {
 				if (globalptr != IntPtr.Zero) {
 					NativeMethods.Free(globalptr);
 				}
+
 				if (ctxptr != IntPtr.Zero) {
 					NativeMethods.Free(ctxptr);
 				}
@@ -45,8 +48,10 @@ namespace PDFPatcher.Processor.Imaging
 			internal static IntPtr New(IntPtr globalCtx) {
 				return New(IntPtr.Zero, JBIG2_OPTIONS_EMBEDDED, globalCtx, null, IntPtr.Zero, 0, 19);
 			}
+
 			[DllImport(DLL, EntryPoint = "jbig2_ctx_new_imp", CallingConvention = CallingConvention.Cdecl)]
-			extern static IntPtr New(IntPtr allocator, int options, IntPtr globalCtx, Jbig2ErrorCallback error_callback, IntPtr error_callback_data, int major, int minor);
+			extern static IntPtr New(IntPtr allocator, int options, IntPtr globalCtx, Jbig2ErrorCallback error_callback,
+				IntPtr error_callback_data, int major, int minor);
 
 			[DllImport(DLL, EntryPoint = "jbig2_ctx_free", CallingConvention = CallingConvention.Cdecl)]
 			internal extern static IntPtr Free(IntPtr ctx);
@@ -71,6 +76,5 @@ namespace PDFPatcher.Processor.Imaging
 				return 0;
 			}
 		}
-
 	}
 }

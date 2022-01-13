@@ -23,6 +23,7 @@ namespace PDFPatcher.Processor
 				_resolvedReferences.Add(k, type);
 				return true;
 			}
+
 			return false;
 		}
 
@@ -34,12 +35,14 @@ namespace PDFPatcher.Processor
 		internal void ExportTrailer(XmlWriter writer, PdfReader reader) {
 			Tracker.TraceMessage("导出文档总索引。");
 			writer.WriteStartElement("Trailer");
-			writer.WriteAttributeString(Constants.ContentPrefix, "http://www.w3.org/2000/xmlns/", Constants.ContentNamespace);
+			writer.WriteAttributeString(Constants.ContentPrefix, "http://www.w3.org/2000/xmlns/",
+				Constants.ContentNamespace);
 			foreach (var item in reader.Trailer) {
 				if (PdfName.ROOT.Equals(item.Key) == false) {
 					ExportPdfDictionaryItem(item, writer);
 				}
 			}
+
 			ExportCatalog(writer, reader);
 			writer.WriteEndElement();
 		}
@@ -47,7 +50,8 @@ namespace PDFPatcher.Processor
 		private void ExportCatalog(XmlWriter writer, PdfReader reader) {
 			Tracker.TraceMessage("导出文档编录。");
 			writer.WriteStartElement(Constants.Catalog);
-			writer.WriteAttributeString(Constants.ContentPrefix, "http://www.w3.org/2000/xmlns/", Constants.ContentNamespace);
+			writer.WriteAttributeString(Constants.ContentPrefix, "http://www.w3.org/2000/xmlns/",
+				Constants.ContentNamespace);
 			foreach (var item in reader.Catalog) {
 				if (PdfName.OUTLINES.Equals(item.Key)) {
 					var o = PdfReader.GetPdfObjectRelease(item.Value) as PdfDictionary;
@@ -59,6 +63,7 @@ namespace PDFPatcher.Processor
 					ExportPdfDictionaryItem(item, writer);
 				}
 			}
+
 			writer.WriteEndElement();
 		}
 
@@ -66,8 +71,10 @@ namespace PDFPatcher.Processor
 			if (_options.ExtractImages) {
 				_imageExporter = new ImageExtractor(_options.Images, reader);
 			}
+
 			writer.WriteStartElement(Constants.Body);
-			writer.WriteAttributeString(Constants.ContentPrefix, "http://www.w3.org/2000/xmlns/", Constants.ContentNamespace);
+			writer.WriteAttributeString(Constants.ContentPrefix, "http://www.w3.org/2000/xmlns/",
+				Constants.ContentNamespace);
 
 			var ranges = PageRangeCollection.Parse(_options.ExtractPageRange, 1, reader.NumberOfPages, true);
 			ExtractPages(reader, ranges, writer);
@@ -101,12 +108,14 @@ namespace PDFPatcher.Processor
 							break;
 					}
 				}
+
 				var f = PdfReader.GetPdfObjectRelease(outline.Get(PdfName.FIRST)) as PdfDictionary;
 				if (f != null) {
 					writer.WriteStartElement(Constants.ContentPrefix, "Outlines", Constants.ContentNamespace);
 					ExportPdfOutline(f, writer);
 					writer.WriteEndElement();
 				}
+
 				writer.WriteEndElement();
 				outline = PdfReader.GetPdfObjectRelease(outline.Get(PdfName.NEXT)) as PdfDictionary;
 			}
@@ -134,11 +143,13 @@ namespace PDFPatcher.Processor
 				writer.WriteStartElement(Constants.Content.Item, Constants.ContentNamespace);
 				writer.WriteAttributeString(Constants.Content.Name, Constants.ContentNamespace, key);
 			}
+
 			_exportPath.Add(key);
 			if (value == null) {
 				writer.WriteAttributeString(PdfHelper.GetTypeName(value.Type), val);
 				goto EndElement;
 			}
+
 			switch (value.Type) {
 				case PdfObject.ARRAY:
 					var a = value as PdfArray;
@@ -149,19 +160,24 @@ namespace PDFPatcher.Processor
 						val = PdfHelper.GetArrayString(a);
 						ExportArray(a.ArrayList, writer);
 					}
+
 					break;
 				case PdfObject.STRING:
 					val = (value as PdfString).ToUnicodeString();
 					if (val.StartsWith("<?xml")) {
-						writer.WriteStartElement(Constants.ContentPrefix, Constants.Content.Value, Constants.ContentNamespace);
+						writer.WriteStartElement(Constants.ContentPrefix, Constants.Content.Value,
+							Constants.ContentNamespace);
 						writer.WriteCData(val);
 						writer.WriteEndElement();
 					}
 					else
-						writer.WriteAttributeString(PdfHelper.GetTypeName(value.Type), PdfHelper.GetValidXmlString(val));
+						writer.WriteAttributeString(PdfHelper.GetTypeName(value.Type),
+							PdfHelper.GetValidXmlString(val));
+
 					break;
 				case PdfObject.INDIRECT:
-					writer.WriteAttributeString(Constants.Content.Type, Constants.ContentNamespace, PdfHelper.GetTypeName(PdfObject.INDIRECT));
+					writer.WriteAttributeString(Constants.Content.Type, Constants.ContentNamespace,
+						PdfHelper.GetTypeName(PdfObject.INDIRECT));
 					ExportIndirectReference(value as PdfIndirectReference, writer, key);
 					break;
 				case PdfObject.DICTIONARY:
@@ -171,7 +187,8 @@ namespace PDFPatcher.Processor
 					writer.WriteAttributeString(PdfHelper.GetTypeName(value.Type), val);
 					break;
 			}
-		EndElement:
+
+			EndElement:
 			writer.WriteEndElement();
 			_exportPath.RemoveAt(_exportPath.Count - 1);
 		}
@@ -183,6 +200,7 @@ namespace PDFPatcher.Processor
 			if (b != null) {
 				writer.WriteAttributeString("base", a.GetAsName(1).ToString());
 			}
+
 			writer.WriteAttributeString("hival", a.GetAsNumber(2).ToString());
 			writer.WriteStartAttribute("lookup");
 			var cs = a.GetDirectObject(3);
@@ -193,6 +211,7 @@ namespace PDFPatcher.Processor
 			else if (cs.IsStream()) {
 				l = PdfReader.GetStreamBytes(cs as PRStream);
 			}
+
 			if (l != null) {
 				int g;
 				if (b == null) {
@@ -207,15 +226,18 @@ namespace PDFPatcher.Processor
 				else {
 					g = l.Length;
 				}
+
 				for (int i = 0; i < l.Length; i += g) {
 					writer.WriteBinHex(l, i, g);
 					writer.WriteString(" ");
 				}
 			}
+
 			writer.WriteEndAttribute();
 			if (a[1].IsArray()) {
 				ExportArray(a.GetAsArray(1).ArrayList, writer);
 			}
+
 			writer.WriteEndElement();
 		}
 
@@ -236,6 +258,7 @@ namespace PDFPatcher.Processor
 					break;
 				}
 			}
+
 			if (ValueHelper.IsInCollection(iType, PdfObject.NAME, PdfObject.NUMBER, PdfObject.BOOLEAN)) {
 				writer.WriteAttributeString(Constants.Content.Type, PdfHelper.GetTypeName(iType));
 				writer.WriteStartAttribute(Constants.Content.Value);
@@ -244,8 +267,10 @@ namespace PDFPatcher.Processor
 					if (i > 0) {
 						writer.WriteString(" ");
 					}
+
 					writer.WriteString(l[i].ToString());
 				}
+
 				writer.WriteEndAttribute();
 			}
 			else {
@@ -253,7 +278,8 @@ namespace PDFPatcher.Processor
 					var subArray = i as PdfArray;
 					if (subArray == null) {
 						if (PdfHelper.GetTypeName(i.Type).Length > 0) {
-							writer.WriteStartElement(Constants.ContentPrefix, PdfHelper.GetTypeName(i.Type), Constants.ContentNamespace);
+							writer.WriteStartElement(Constants.ContentPrefix, PdfHelper.GetTypeName(i.Type),
+								Constants.ContentNamespace);
 						}
 #if DEBUG
 						else {
@@ -280,20 +306,26 @@ namespace PDFPatcher.Processor
 											if ((bi % 2) == 0 && bi > 0) {
 												chArray[num++] = ' ';
 											}
+
 											chArray[num++] = "0123456789ABCDEF"[b >> 4];
 											chArray[num++] = "0123456789ABCDEF"[b & 15];
 											bi++;
 										}
+
 										writer.WriteAttributeString(Constants.Content.Type, "字节");
 										writer.WriteAttributeString(Constants.Content.Value, new string(chArray));
 									}
+
 									break;
 								}
+
 								goto default;
 							default:
-								writer.WriteAttributeString(Constants.Content.Value, PdfHelper.GetValidXmlString(i.ToString()));
+								writer.WriteAttributeString(Constants.Content.Value,
+									PdfHelper.GetValidXmlString(i.ToString()));
 								break;
 						}
+
 						writer.WriteEndElement();
 					}
 					else {
@@ -311,6 +343,7 @@ namespace PDFPatcher.Processor
 			if (AddReferenceRecord(r, key) == false || i == null) {
 				return;
 			}
+
 			switch (i.Type) {
 				case PdfObject.DICTIONARY:
 					var type = (i as PdfDictionary).GetAsName(PdfName.TYPE);
@@ -325,9 +358,11 @@ namespace PDFPatcher.Processor
 								if (key == "Parent") {
 									return;
 								}
+
 								break;
 						}
 					}
+
 					ExportPdfDictionary(writer, i as PdfDictionary);
 					break;
 				case PdfObject.ARRAY:
@@ -336,19 +371,23 @@ namespace PDFPatcher.Processor
 				case PdfObject.STREAM:
 					var s = i as PdfStream;
 					ExportPdfDictionary(writer, i as PdfDictionary);
-					if (_imageExporter != null && PdfName.IMAGE.Equals((i as PdfDictionary).GetAsName(PdfName.SUBTYPE))) {
+					if (_imageExporter != null &&
+					    PdfName.IMAGE.Equals((i as PdfDictionary).GetAsName(PdfName.SUBTYPE))) {
 						writer.WriteStartElement(Constants.ContentPrefix, "image", Constants.ContentNamespace);
 						var info = _imageExporter.InfoList.Find(ii => ii.InlineImage.PdfRef == r);
 						if (info != null) {
 							writer.WriteAttributeString(Constants.Content.Path, Path.GetFileName(info.FileName));
 						}
+
 						writer.WriteEndElement();
 						break;
 					}
+
 					ExportStreamContent(writer, s);
 					break;
 				default:
-					writer.WriteAttributeString(PdfHelper.GetTypeName(i.Type), Constants.ContentNamespace, i.ToString());
+					writer.WriteAttributeString(PdfHelper.GetTypeName(i.Type), Constants.ContentNamespace,
+						i.ToString());
 					break;
 			}
 		}
@@ -358,6 +397,7 @@ namespace PDFPatcher.Processor
 			if (prs == null || writer is NullXmlWriter) {
 				return;
 			}
+
 			var key = _exportPath[_exportPath.Count - 1];
 			writer.WriteStartElement(Constants.ContentPrefix, "stream", Constants.ContentNamespace);
 			byte[] bs;
@@ -370,8 +410,10 @@ namespace PDFPatcher.Processor
 				isRaw = true;
 				writer.WriteAttributeString(Constants.Content.Raw, Constants.Boolean.True);
 			}
+
 			if (isRaw == false) {
-				if (key == "Contents" || key == "ToUnicode" || PdfName.XOBJECT.Equals(s.GetAsName(PdfName.TYPE)) && PdfName.FORM.Equals(s.GetAsName(PdfName.SUBTYPE))) {
+				if (key == "Contents" || key == "ToUnicode" || PdfName.XOBJECT.Equals(s.GetAsName(PdfName.TYPE)) &&
+				    PdfName.FORM.Equals(s.GetAsName(PdfName.SUBTYPE))) {
 					var sb = new StringBuilder();
 					byte b;
 					int l = bs.Length;
@@ -389,9 +431,11 @@ namespace PDFPatcher.Processor
 								sb.Append(Encoding.ASCII.GetString(bs, p1, p2 - p1));
 								sb.AppendLine();
 							}
+
 							if (b == 0x0D && i + 1 < l && bs[i + 1] == 0x0A) {
 								i++;
 							}
+
 							p1 = i + 1;
 						}
 					}
@@ -404,6 +448,7 @@ namespace PDFPatcher.Processor
 							sb.Append(Encoding.Default.GetString(bs, p1, p2));
 						}
 					}
+
 					writer.WriteCData(sb.ToString());
 				}
 				else if (key == "Metadata") {
@@ -427,6 +472,7 @@ namespace PDFPatcher.Processor
 
 				ExportRawStreamContent(writer, bs);
 			}
+
 			writer.WriteEndElement();
 		}
 
@@ -436,7 +482,8 @@ namespace PDFPatcher.Processor
 				writer.WriteBinHex(bs, 0, bs.Length);
 			}
 			else {
-				writer.WriteBinHex(bs, 0, bs.Length < _options.ExportBinaryStream ? bs.Length : _options.ExportBinaryStream);
+				writer.WriteBinHex(bs, 0,
+					bs.Length < _options.ExportBinaryStream ? bs.Length : _options.ExportBinaryStream);
 				if (bs.Length > _options.ExportBinaryStream) {
 					writer.WriteString("....");
 				}
@@ -459,6 +506,7 @@ namespace PDFPatcher.Processor
 						else {
 							escape = true;
 						}
+
 						continue;
 					case '(':
 						if (escape) {
@@ -470,6 +518,7 @@ namespace PDFPatcher.Processor
 							beginTextPosition = c;
 							sb.Append(ch);
 						}
+
 						continue;
 					case ')':
 						if (escape) {
@@ -479,18 +528,21 @@ namespace PDFPatcher.Processor
 							inText = false;
 							//sb.Append (Encoding.BigEndianUnicode.GetString (buffer, beginTextPosition + 1, c - 1 - beginTextPosition));
 						}
+
 						sb.Append(ch);
 						continue;
 					default:
 						if (escape) {
 							escape = false;
 						}
+
 						if (inText == false) {
 							sb.Append(ch);
 						}
 						else {
 							sb.Append(((byte)ch).ToString("X2"));
 						}
+
 						break;
 				}
 			}
@@ -511,20 +563,25 @@ namespace PDFPatcher.Processor
 			if (_imageExporter != null) {
 				_imageExporter.ExtractPageImages(reader, pageNum);
 			}
+
 			if (_options.ExtractPageDictionary) {
 				ExportPdfDictionary(writer, reader.GetPageNRelease(pageNum));
 			}
+
 			if (_options.ExportContentOperators || _options.ExportDecodedText) {
 				if (_options.ExportContentOperators) {
 					writer.WriteStartElement(Constants.Content.Operators);
 				}
+
 				exportProcessor.Reset();
-				exportProcessor.ProcessContent(reader.GetPageContent(pageNum), reader.GetPageNRelease(pageNum).GetAsDict(PdfName.RESOURCES));
+				exportProcessor.ProcessContent(reader.GetPageContent(pageNum),
+					reader.GetPageNRelease(pageNum).GetAsDict(PdfName.RESOURCES));
 				if (_options.ExportContentOperators) {
 					exportProcessor.End();
 					writer.WriteEndElement();
 				}
 			}
+
 			//if (_imageExporter != null && _imageExporter.InfoList.Count > 0) {
 			//    writer.WriteStartElement ("images", Constants.ContentNamespace);
 			//    foreach (var item in _imageExporter.InfoList) {
@@ -545,6 +602,7 @@ namespace PDFPatcher.Processor
 			{
 				public string Name;
 				public string Value;
+
 				public NameValuePair(string name, string value) {
 					Name = name;
 					Value = value;
@@ -573,6 +631,7 @@ namespace PDFPatcher.Processor
 				if (_writeOperators == false) {
 					return;
 				}
+
 				while (_writerLevel > 0) {
 					_writer.WriteEndElement();
 					_writerLevel--;
@@ -580,6 +639,7 @@ namespace PDFPatcher.Processor
 			}
 
 			internal List<TextInfo> TextInfoList => _textContainer;
+
 			protected override void DisplayPdfString(PdfString str) {
 				var gs = CurrentGraphicState;
 				var font = gs.Font;
@@ -619,6 +679,7 @@ namespace PDFPatcher.Processor
 							_writer.WriteEndElement();
 							_writerLevel--;
 						}
+
 						return;
 					case "TJ":
 						var array = (PdfArray)operands[0];
@@ -628,8 +689,10 @@ namespace PDFPatcher.Processor
 									ms.Write((item as PdfString).GetBytes(), 0, item.Length);
 								}
 							}
+
 							t = CurrentGraphicState.Font.DecodeText(new PdfString(ms.ToArray()));
 						}
+
 						AddTextInfo(t);
 						_operands.Add(new NameValuePair(Constants.Content.OperandNames.Text, t));
 						goto default;
@@ -642,7 +705,8 @@ namespace PDFPatcher.Processor
 						goto default;
 					case "Tf":
 						_operands.Add(new NameValuePair(Constants.Font.ThisName, CurrentGraphicState.Font.FontName));
-						_operands.Add(new NameValuePair(Constants.Content.OperandNames.ResourceName, operands[0].ToString()));
+						_operands.Add(new NameValuePair(Constants.Content.OperandNames.ResourceName,
+							operands[0].ToString()));
 						_operands.Add(new NameValuePair(Constants.Content.OperandNames.Size, operands[1].ToString()));
 						hasDescriptiveOperands = true;
 						goto default;
@@ -658,18 +722,22 @@ namespace PDFPatcher.Processor
 						if (_writeOperators == false) {
 							return;
 						}
+
 						_writer.WriteStartElement(fn ?? "未知操作符");
 						_writer.WriteAttributeString("name", o);
 						foreach (var item in _operands) {
 							_writer.WriteAttributeString(item.Name, PdfHelper.GetValidXmlString(item.Value));
 						}
+
 						break;
 				}
+
 				if (hasDescriptiveOperands == false) {
 					if (operands.Count > 0) {
 						// 删除操作符
 						operands.RemoveAt(operands.Count - 1);
 					}
+
 					if (operands.Count > 0) {
 						_writer.WriteStartElement(Constants.Content.Operands);
 						_export.ExportArrayContent(operands, _writer, true);
@@ -681,13 +749,15 @@ namespace PDFPatcher.Processor
 						}
 					}
 				}
+
 				if (open == false && _writerLevel >= 0) {
 					_writer.WriteEndElement();
 				}
 			}
 
 			private static string GetOperandsTextValue(List<PdfObject> operands) {
-				var n = operands.ConvertAll((po) => po.Type == PdfObject.NUMBER ? ((PdfNumber)po).DoubleValue.ToText() : null);
+				var n = operands.ConvertAll((po) =>
+					po.Type == PdfObject.NUMBER ? ((PdfNumber)po).DoubleValue.ToText() : null);
 				n.RemoveAt(n.Count - 1);
 				return String.Join(" ", n.ToArray());
 			}
@@ -697,12 +767,12 @@ namespace PDFPatcher.Processor
 					_textContainer.Add(new TextInfo() {
 						Text = t,
 						Size = CurrentGraphicState.FontSize * TextMatrix[Matrix.I11],
-						Region = new Bound(TextMatrix[Matrix.I31], TextMatrix[Matrix.I32], TextMatrix[Matrix.I31] + _textWidth, 0),
+						Region = new Bound(TextMatrix[Matrix.I31], TextMatrix[Matrix.I32],
+							TextMatrix[Matrix.I31] + _textWidth, 0),
 						Font = CurrentGraphicState.Font
 					});
 				}
 			}
 		}
-
 	}
 }

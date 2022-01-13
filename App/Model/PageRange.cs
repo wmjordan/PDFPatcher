@@ -7,25 +7,27 @@ namespace PDFPatcher.Model
 	internal struct PageRange : IEnumerable<int>
 	{
 		public int StartValue, EndValue;
+
 		public PageRange(int startValue, int endValue) {
 			StartValue = startValue;
 			EndValue = endValue;
 		}
+
 		public bool Contains(int value) {
 			return value >= StartValue && value <= EndValue
-				|| value >= EndValue && value <= StartValue;
+			       || value >= EndValue && value <= StartValue;
 		}
 
 		public override string ToString() {
-			return StartValue != EndValue ? String.Concat(StartValue.ToText(), '-', EndValue.ToText()) : StartValue.ToText();
+			return StartValue != EndValue
+				? String.Concat(StartValue.ToText(), '-', EndValue.ToText())
+				: StartValue.ToText();
 		}
 
 		/// <summary>
 		/// 返回范围中包含的数量。
 		/// </summary>
-		public int Count => (EndValue > StartValue ?
-					EndValue - StartValue :
-					StartValue - EndValue) + 1;
+		public int Count => (EndValue > StartValue ? EndValue - StartValue : StartValue - EndValue) + 1;
 
 		#region IEnumerable<int> 成员
 
@@ -55,6 +57,7 @@ namespace PDFPatcher.Model
 				_end = end;
 				_Current = _isIncremental ? start - 1 : start + 1;
 			}
+
 			#region IEnumerator<int> 成员
 
 			public int Current => _Current;
@@ -80,6 +83,7 @@ namespace PDFPatcher.Model
 					_Current--;
 					return true;
 				}
+
 				return false;
 			}
 

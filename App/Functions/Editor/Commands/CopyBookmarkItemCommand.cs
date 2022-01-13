@@ -11,6 +11,5 @@ namespace PDFPatcher.Functions.Editor
 		public void Process(Controller controller, params string[] parameters) {
 			controller.View.Bookmark.CopySelectedBookmark();
 		}
-
 	}
 }

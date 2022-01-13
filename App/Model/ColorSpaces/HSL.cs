@@ -14,18 +14,21 @@ namespace Devcorp.Controls.Design
 		public static readonly HSL Empty = new HSL();
 
 		#region Fields
+
 		private double hue;
 		private double saturation;
 		private double luminance;
+
 		#endregion
 
 		#region Operators
+
 		public static bool operator ==(HSL item1, HSL item2) {
 			return (
 				item1.Hue == item2.Hue
 				&& item1.Saturation == item2.Saturation
 				&& item1.Luminance == item2.Luminance
-				);
+			);
 		}
 
 		public static bool operator !=(HSL item1, HSL item2) {
@@ -33,12 +36,13 @@ namespace Devcorp.Controls.Design
 				item1.Hue != item2.Hue
 				|| item1.Saturation != item2.Saturation
 				|| item1.Luminance != item2.Luminance
-				);
+			);
 		}
 
 		#endregion
 
 		#region Accessors
+
 		/// <summary>
 		/// Gets or sets the hue component.
 		/// </summary>
@@ -81,6 +85,7 @@ namespace Devcorp.Controls.Design
 		}
 
 		#region Methods
+
 		public override bool Equals(Object obj) {
 			if (obj == null || GetType() != obj.GetType()) return false;
 

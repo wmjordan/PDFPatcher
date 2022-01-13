@@ -43,16 +43,20 @@ namespace PDFPatcher.Functions
 			_ProgressBar.Value = 0;
 			_ProgressBar.Maximum = goalValue;
 		}
+
 		internal void SetTotalGoal(int goalValue) {
 			_TotalProgressBar.Value = 0;
 			_TotalProgressBar.Maximum = goalValue;
 		}
+
 		internal void SetProgress(int p) {
 			_ProgressBar.Value = p > _ProgressBar.Maximum ? _ProgressBar.Maximum : p;
 		}
+
 		internal void IncrementProgress(int progress) {
 			_ProgressBar.Increment(progress);
 		}
+
 		internal void IncrementTotalProgress() {
 			try {
 				_TotalProgressBar.Value++;
@@ -61,6 +65,7 @@ namespace PDFPatcher.Functions
 				System.Diagnostics.Debug.WriteLine("Total Progress too big: " + _TotalProgressBar.Value);
 			}
 		}
+
 		internal void PrintMessage(string text, Tracker.Category category) {
 			switch (category) {
 				case Tracker.Category.Message:
@@ -95,6 +100,7 @@ namespace PDFPatcher.Functions
 					break;
 			}
 		}
+
 		internal void Reset() {
 			_LogBox.Clear();
 			_ProgressBar.Value = 0;
@@ -104,6 +110,7 @@ namespace PDFPatcher.Functions
 			_CancelButton.Text = "取消";
 			_CancelButton.Image = Properties.Resources.Reset;
 		}
+
 		internal void Complete() {
 			_ProgressBar.Value = _ProgressBar.Maximum;
 			_TotalProgressBar.Value = _TotalProgressBar.Maximum;
@@ -122,6 +129,5 @@ namespace PDFPatcher.Functions
 				}
 			}
 		}
-
 	}
 }

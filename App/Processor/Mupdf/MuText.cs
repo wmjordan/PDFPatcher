@@ -48,7 +48,9 @@ namespace MuPdfSharp
 		IEnumerable<MuTextBlock> _Blocks;
 
 		public Rectangle BBox => _TextPage.MediaBox;
-		public IEnumerable<MuTextBlock> Blocks => _Blocks ?? (_Blocks = MuContentBlock.GetTextBlocks(_TextPage._FirstBlock));
+
+		public IEnumerable<MuTextBlock> Blocks =>
+			_Blocks ?? (_Blocks = MuContentBlock.GetTextBlocks(_TextPage._FirstBlock));
 
 		internal MuTextPage(TextPageHandle nativePage) {
 			_handle = nativePage;
@@ -70,8 +72,11 @@ namespace MuPdfSharp
 
 		struct NativeTextPage
 		{
-			readonly IntPtr /*fz_pool*/ _Pool;
+			readonly IntPtr /*fz_pool*/
+				_Pool;
+
 			readonly Rectangle _MediaBox;
+
 			/* fz_text_block */
 			internal IntPtr _FirstBlock, _LastBlock;
 
@@ -79,6 +84,7 @@ namespace MuPdfSharp
 		}
 
 		#region IDisposable Support
+
 		private bool disposedValue = false; // 要检测冗余调用
 
 		void Dispose(bool disposing) {
@@ -101,6 +107,7 @@ namespace MuPdfSharp
 			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
+
 		#endregion
 	}
 
@@ -110,6 +117,7 @@ namespace MuPdfSharp
 	{
 		public abstract Rectangle BBox { get; }
 		public abstract ContentBlockType Type { get; }
+
 		internal static IEnumerable<MuContentBlock> GetBlocks(IntPtr firstBlock) {
 			foreach (var item in firstBlock.EnumerateLinkedList<NativeContentBlock>()) {
 				switch (item.Data.Type) {
@@ -122,6 +130,7 @@ namespace MuPdfSharp
 				}
 			}
 		}
+
 		internal static IEnumerable<MuTextBlock> GetTextBlocks(IntPtr firstBlock) {
 			foreach (var item in firstBlock.EnumerateLinkedList<NativeContentBlock>()) {
 				if (item.Data.Type == ContentBlockType.Text) {
@@ -142,10 +151,12 @@ namespace MuPdfSharp
 			readonly Matrix _Transform;
 			readonly IntPtr _Image;
 			readonly IntPtr _PreviousBlock, _NextBlock;
+
 			internal MuContentBlock ToMuBlock() {
 				return new MuImageBlock(_BBox, _Transform, _Image);
 			}
 		}
+
 		struct NativeContentBlock : Interop.ILinkedList
 		{
 			readonly ContentBlockType _Type;
@@ -160,6 +171,7 @@ namespace MuPdfSharp
 
 			IntPtr Interop.ILinkedList.Next => _NextBlock;
 			internal ContentBlockType Type => _Type;
+
 			internal MuContentBlock ToMuBlock() {
 				return new MuTextBlock(_BBox, _Ptr1, _Ptr2);
 			}
@@ -207,7 +219,10 @@ namespace MuPdfSharp
 		IEnumerable<MuTextChar> _Characters;
 
 		public Rectangle BBox => _textLine.BBox;
-		public IEnumerable<MuTextChar> Characters => _Characters ?? (_Characters = MuTextChar.GetCharacters(_textLine._FirstChar));
+
+		public IEnumerable<MuTextChar> Characters =>
+			_Characters ?? (_Characters = MuTextChar.GetCharacters(_textLine._FirstChar));
+
 		public IList<MuTextSpan> Spans => MuTextChar.GetSpans(this, _textLine._FirstChar, _textLine._LastChar);
 		public string Text => _Text ?? (_Text = GetText());
 		public MuTextChar FirstCharacter => MuTextChar.GetChar(_textLine._FirstChar);
@@ -221,6 +236,7 @@ namespace MuPdfSharp
 			foreach (var ch in Characters) {
 				sb.Append(char.ConvertFromUtf32(ch.Unicode));
 			}
+
 			return sb.ToString();
 		}
 
@@ -240,6 +256,7 @@ namespace MuPdfSharp
 
 			//fz_rect bbox;
 			readonly Rectangle _BBox;
+
 			//fz_stext_char *first_char, *last_char;
 			internal IntPtr _FirstChar, _LastChar;
 
@@ -252,7 +269,8 @@ namespace MuPdfSharp
 		}
 	}
 
-	[DebuggerDisplay("Point={Point}; Size={Size}, Char={System.Char.ConvertFromUtf32(Unicode)}({Unicode}); Font={FontID}")]
+	[DebuggerDisplay(
+		"Point={Point}; Size={Size}, Char={System.Char.ConvertFromUtf32(Unicode)}({Unicode}); Font={FontID}")]
 	public sealed class MuTextChar : IMuBoundedElement
 	{
 		NativeTextChar _textChar;
@@ -268,18 +286,22 @@ namespace MuPdfSharp
 		MuTextChar(NativeTextChar textChar) {
 			_textChar = textChar;
 		}
+
 		internal static MuTextChar GetChar(IntPtr charPtr) {
 			return new MuTextChar(charPtr.MarshalAs<NativeTextChar>());
 		}
+
 		internal static IEnumerable<MuTextChar> GetCharacters(IntPtr firstChar) {
 			foreach (var item in firstChar.EnumerateLinkedList<NativeTextChar>()) {
 				yield return new MuTextChar(item.Data);
 			}
 		}
+
 		internal unsafe static IList<MuTextSpan> GetSpans(MuTextLine textLine, IntPtr firstChar, IntPtr lastChar) {
 			if (firstChar == IntPtr.Zero) {
 				return new MuTextSpan[0];
 			}
+
 			var r = new List<MuTextSpan>(2);
 			var ch = (NativeTextChar*)firstChar;
 			var start = ch;
@@ -294,11 +316,14 @@ namespace MuPdfSharp
 				if ((IntPtr)ch == IntPtr.Zero) {
 					break;
 				}
+
 				if (ch->_Size == size && ch->_Font == font && ch->_Color == color) {
 					t.Append((char)ch->_Unicode);
 					continue;
 				}
-				r.Add(new MuTextSpan(textLine, start->_Point, t.ToString(), size, font, start->_Quad.Union(ch->_Quad).ToRectangle(), color));
+
+				r.Add(new MuTextSpan(textLine, start->_Point, t.ToString(), size, font,
+					start->_Quad.Union(ch->_Quad).ToRectangle(), color));
 				t.Length = 0;
 				size = ch->_Size;
 				font = ch->_Font;
@@ -306,28 +331,38 @@ namespace MuPdfSharp
 				start = ch;
 				t.Append((char)ch->_Unicode);
 			} while (ch != end);
+
 			if (t.Length > 0) {
 				var s = t.ToString().TrimEnd();
 				if (s.Length > 0) {
-					r.Add(new MuTextSpan(textLine, start->_Point, s, size, font, start->_Quad.Union(end->_Quad).ToRectangle(), color));
+					r.Add(new MuTextSpan(textLine, start->_Point, s, size, font,
+						start->_Quad.Union(end->_Quad).ToRectangle(), color));
 				}
 			}
+
 			return r;
 		}
+
 		unsafe struct NativeTextChar : Interop.ILinkedList
 		{
 			//int c;
 			internal int _Unicode;
+
 			// color
 			internal int _Color; // sRGB hex value
-								 //fz_point origin;
+
+			//fz_point origin;
 			internal Point _Point;
+
 			//fz_quad quad;
 			internal Quad _Quad;
+
 			//float size;
 			internal float _Size;
+
 			//fz_font* font;
 			internal IntPtr _Font;
+
 			//fz_stext_char* next;
 			internal NativeTextChar* _Next;
 
@@ -338,7 +373,8 @@ namespace MuPdfSharp
 	[DebuggerDisplay("Point={Point}; FontID={FontID}; Size={Size}; Color={Color}; Text={Text}")]
 	public sealed class MuTextSpan
 	{
-		public MuTextSpan(MuTextLine line, Point point, string text, float size, IntPtr fontID, Rectangle box, int color) {
+		public MuTextSpan(MuTextLine line, Point point, string text, float size, IntPtr fontID, Rectangle box,
+			int color) {
 			Line = line;
 			Point = point;
 			Text = text;

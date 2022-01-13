@@ -19,6 +19,7 @@ namespace PDFPatcher
 
 		///<summary>获取或指定书签文件路径的值。</summary>
 		internal HistoryComboBox FileList => _TargetPdfBox;
+
 		internal FileDialog FileDialog => _SavePdfBox;
 		internal Functions.MacroMenu FileMacroMenu => _FileMacroMenu;
 
@@ -48,7 +49,10 @@ namespace PDFPatcher
 			if (BrowseForFile != null) {
 				BrowseForFile(sender, e);
 			}
-			FilePath sourceFile = (AppContext.SourceFiles != null && AppContext.SourceFiles.Length > 0) ? AppContext.SourceFiles[0] : String.Empty;
+
+			FilePath sourceFile = (AppContext.SourceFiles != null && AppContext.SourceFiles.Length > 0)
+				? AppContext.SourceFiles[0]
+				: String.Empty;
 			var t = _TargetPdfBox.Text;
 			if (t.Length > 0 && FileHelper.IsPathValid(t) && Path.GetFileName(t).Length > 0) {
 				_SavePdfBox.SetLocation(t);
@@ -57,6 +61,7 @@ namespace PDFPatcher
 				t = FileHelper.GetNewFileNameFromSourceFile(sourceFile, Constants.FileExtensions.Pdf);
 				_SavePdfBox.SetLocation(t);
 			}
+
 			if (_SavePdfBox.ShowDialog() == DialogResult.OK) {
 				if (TargetFileChangedByBrowseButton != null) {
 					var a = new CancelEventArgs();
@@ -65,6 +70,7 @@ namespace PDFPatcher
 						return;
 					}
 				}
+
 				Text = _SavePdfBox.FileName;
 			}
 		}
@@ -89,8 +95,8 @@ namespace PDFPatcher
 			else if (Visible == false) {
 				_TargetPdfBox.Contents = null;
 			}
+
 			Text = t;
 		}
-
 	}
 }

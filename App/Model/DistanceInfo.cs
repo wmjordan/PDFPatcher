@@ -29,19 +29,21 @@ namespace PDFPatcher.Model
 		internal bool IsVerticallyAligned => (Location & (Placement.Up | Placement.Down)) != Placement.Unknown;
 		internal bool IsHorizontallyAligned => (Location & (Placement.Left | Placement.Right)) != Placement.Unknown;
 
-		internal float MinDistance => (Location & Placement.Left) != Placement.Unknown || (Location & Placement.Right) != Placement.Unknown
-					? DistanceX
-					: (Location & Placement.Down) != Placement.Unknown || (Location & Placement.Up) != Placement.Unknown
-					? DistanceY : DistanceRadial;
+		internal float MinDistance => (Location & Placement.Left) != Placement.Unknown ||
+		                              (Location & Placement.Right) != Placement.Unknown
+			? DistanceX
+			: (Location & Placement.Down) != Placement.Unknown || (Location & Placement.Up) != Placement.Unknown
+				? DistanceY
+				: DistanceRadial;
+
 		internal float DistanceRadial => DistanceX == Single.MaxValue || DistanceY == Single.MaxValue
-					? Single.MaxValue
-					: (float)Math.Sqrt(DistanceX * DistanceX + DistanceY * DistanceY);
+			? Single.MaxValue
+			: (float)Math.Sqrt(DistanceX * DistanceX + DistanceY * DistanceY);
 
 		internal DistanceInfo(Placement location, float distanceX, float distanceY) {
 			Location = location;
 			DistanceX = distanceX;
 			DistanceY = distanceY;
 		}
-
 	}
 }

@@ -9,13 +9,17 @@ namespace PDFPatcher
 {
 	public partial class MainForm : Form
 	{
-		static readonly Dictionary<Function, FunctionControl> __FunctionControls = new Dictionary<Function, FunctionControl>();
+		static readonly Dictionary<Function, FunctionControl> __FunctionControls =
+			new Dictionary<Function, FunctionControl>();
 
 		ReportControl _LogControl;
+
 		#region 公共功能
+
 		private BackgroundWorker _Worker;
 		private readonly FormState _formState = new FormState();
 		private bool _FullScreen;
+
 		///<summary>获取或指定全屏显示的值。</summary>
 		public bool FullScreen {
 			get => _FullScreen;
@@ -23,6 +27,7 @@ namespace PDFPatcher
 				if (value == _FullScreen) {
 					return;
 				}
+
 				_FullScreen = value;
 				if (value) {
 					_MainMenu.Visible = _GeneralToolbar.Visible = false;
@@ -52,20 +57,20 @@ namespace PDFPatcher
 		}
 
 		#region Worker
+
 		///<summary>获取或指定后台进程。</summary>
 		internal BackgroundWorker GetWorker() {
 			if (_Worker == null) {
-				_Worker = new BackgroundWorker {
-					WorkerReportsProgress = true,
-					WorkerSupportsCancellation = true
-				};
+				_Worker = new BackgroundWorker {WorkerReportsProgress = true, WorkerSupportsCancellation = true};
 				_Worker.DoWork += Worker_DoWork;
 				_Worker.ProgressChanged += Worker_ProgressChanged;
 				_Worker.RunWorkerCompleted += Worker_RunWorkerCompleted;
 				Tracker.SetWorker(_Worker);
 			}
+
 			return _Worker;
 		}
+
 		internal bool IsWorkerBusy => _Worker?.IsBusy == true;
 
 		void Worker_DoWork(object sender, DoWorkEventArgs e) {
@@ -79,6 +84,7 @@ namespace PDFPatcher
 			foreach (TabPage item in _FunctionContainer.TabPages) {
 				item.Enabled = true;
 			}
+
 			if (e.Error == null || e.Cancelled == false) {
 				_LogControl.Complete();
 			}
@@ -89,6 +95,7 @@ namespace PDFPatcher
 				if (_Worker.IsBusy) {
 					throw new InvalidOperationException("Worker is busy. Can't be reset.");
 				}
+
 				_Worker.Dispose();
 				_Worker = null;
 			}
@@ -110,6 +117,7 @@ namespace PDFPatcher
 			else if (s == "TGOAL") {
 				_LogControl.SetTotalGoal(e.ProgressPercentage);
 			}
+
 			if (e.ProgressPercentage > 0) {
 				_LogControl.SetProgress(e.ProgressPercentage);
 			}
@@ -118,6 +126,7 @@ namespace PDFPatcher
 				foreach (TabPage item in _FunctionContainer.TabPages) {
 					item.Enabled = false;
 				}
+
 				_LogControl.Reset();
 				ShowLogControl();
 			}
@@ -125,12 +134,14 @@ namespace PDFPatcher
 				_LogControl.PrintMessage(s, (Tracker.Category)e.ProgressPercentage);
 			}
 		}
+
 		#endregion
 
 		internal FunctionControl GetFunctionControl(Function functionName) {
 			if (__FunctionControls.TryGetValue(functionName, out FunctionControl f) && f.IsDisposed == false) {
 				return f;
 			}
+
 			switch (functionName) {
 				case Function.FrontPage:
 					__FunctionControls[functionName] = new FrontPageControl();
@@ -191,10 +202,11 @@ namespace PDFPatcher
 					break;
 				default:
 					return null;
-					//__FunctionControls[Form.Functions.Default] = new Label ();
-					//functionName = Form.Functions.Default;
-					//break;
+				//__FunctionControls[Form.Functions.Default] = new Label ();
+				//functionName = Form.Functions.Default;
+				//break;
 			}
+
 			return __FunctionControls[functionName];
 		}
 
@@ -206,11 +218,13 @@ namespace PDFPatcher
 				if (p.Length > 20) {
 					p = p.Substring(0, 17) + "...";
 				}
+
 				if (sender is Control f) {
 					f = f.Parent;
 					if (f == null) {
 						return;
 					}
+
 					f.Text = p;
 				}
 			}
@@ -233,6 +247,7 @@ namespace PDFPatcher
 			catch (Exception) {
 				// ignore loading exception
 			}
+
 			Text = Constants.AppName + " [" + Application.ProductVersion + "]";
 			MinimumSize = Size;
 			StartPosition = FormStartPosition.CenterScreen;
@@ -254,7 +269,8 @@ namespace PDFPatcher
 			Controls.Add(_LogControl);
 			HideLogControl();
 			_LogControl.VisibleChanged += (s, args) => _FunctionContainer.Visible = !_LogControl.Visible;
-			_OpenConfigDialog.FileName = _SaveConfigDialog.FileName = Constants.AppName + "配置文件" + Constants.FileExtensions.Json;
+			_OpenConfigDialog.FileName =
+				_SaveConfigDialog.FileName = Constants.AppName + "配置文件" + Constants.FileExtensions.Json;
 			_OpenConfigDialog.Filter = _SaveConfigDialog.Filter = Constants.FileExtensions.JsonFilter;
 			_FunctionContainer.ImageList = new ImageList();
 			_FunctionContainer.AllowDrop = true;
@@ -269,6 +285,7 @@ namespace PDFPatcher
 					args.Cancel = true;
 					return;
 				}
+
 				var i = args.TabPageIndex;
 				var c = _FunctionContainer.TabCount;
 				if (i == 0 && c > 1) {
@@ -277,6 +294,7 @@ namespace PDFPatcher
 				else if (i < c) {
 					_FunctionContainer.SelectedIndex = i - 1;
 				}
+
 				_FunctionContainer.TabPages.RemoveAt(i);
 				t.Dispose();
 				_MainStatusLabel.Text = String.Empty;
@@ -286,7 +304,7 @@ namespace PDFPatcher
 
 			// 关闭启动屏幕窗口
 			using (var closeSplashEvent = new System.Threading.EventWaitHandle(false,
-				System.Threading.EventResetMode.ManualReset, "CloseSplashScreenEvent" + Constants.AppEngName)) {
+				       System.Threading.EventResetMode.ManualReset, "CloseSplashScreenEvent" + Constants.AppEngName)) {
 				closeSplashEvent.Set();
 			}
 
@@ -299,6 +317,7 @@ namespace PDFPatcher
 					AppContext.CheckUpdateDate = DateTime.Today + TimeSpan.FromDays(AppContext.CheckUpdateInterval);
 				}
 			}
+
 			var ca = Environment.GetCommandLineArgs();
 			if (ca.HasContent()) {
 				OpenFiles(ca);
@@ -323,21 +342,23 @@ namespace PDFPatcher
 				if (args.Error != null) {
 					goto Exit;
 				}
+
 				try {
 					var x = new System.Xml.XmlDocument();
 					x.Load(new System.IO.MemoryStream(args.Result));
 					var r = x.DocumentElement;
 					var u = r.GetAttribute("url");
 					if (String.IsNullOrEmpty(u) == false
-						&& new Version(ProductVersion) < new Version(r.GetAttribute("version"))
-						&& this.ConfirmOKBox("发现新版本，是否前往下载？")) {
+					    && new Version(ProductVersion) < new Version(r.GetAttribute("version"))
+					    && this.ConfirmOKBox("发现新版本，是否前往下载？")) {
 						ShowDialogWindow(new UpdateForm());
 					}
 				}
 				catch (Exception) {
 					FormHelper.ErrorBox("版本信息文件格式错误，请稍候重试。");
 				}
-			Exit:
+
+				Exit:
 				client.Dispose();
 				client = null;
 			};
@@ -349,6 +370,7 @@ namespace PDFPatcher
 				if (_FunctionContainer.GetTabRect(i).Contains(args.Location) == false) {
 					continue;
 				}
+
 				if (_FunctionContainer.TabPages[i].Tag.CastOrDefault<Function>() != Function.FrontPage) {
 					_FunctionContainer.TabPages[i].Dispose();
 				}
@@ -363,6 +385,7 @@ namespace PDFPatcher
 				SelectFunctionList(func);
 				return;
 			}
+
 			ci.HidePopupMenu();
 			if (ci.OwnerItem == _RecentFiles) {
 				var f = GetActiveFunctionControl() as FunctionControl;
@@ -376,7 +399,7 @@ namespace PDFPatcher
 		internal void ExecuteCommand(string commandName) {
 			if (commandName == Commands.ResetOptions) {
 				if (GetActiveFunctionControl() is IResettableControl f
-					&& FormHelper.YesNoBox("是否将当前功能恢复为默认设置？") == DialogResult.Yes) {
+				    && FormHelper.YesNoBox("是否将当前功能恢复为默认设置？") == DialogResult.Yes) {
 					f.Reset();
 				}
 			}
@@ -385,9 +408,11 @@ namespace PDFPatcher
 					FormHelper.ErrorBox("无法加载指定的配置文件。");
 					return;
 				}
+
 				foreach (Control item in __FunctionControls.Values) {
 					(item as IResettableControl)?.Reload();
 				}
+
 				SetupCustomizeToolbar();
 			}
 			else if (commandName == Commands.SaveOptions && _SaveConfigDialog.ShowDialog() == DialogResult.OK) {
@@ -409,6 +434,7 @@ namespace PDFPatcher
 				if (_FunctionContainer.SelectedTab.Tag.CastOrDefault<Function>() == Function.FrontPage) {
 					return;
 				}
+
 				_FunctionContainer.SelectedTab.Dispose();
 			}
 			else if (commandName == Commands.CustomizeToolbar || commandName == "_CustomizeToolbarCommand") {
@@ -417,7 +443,8 @@ namespace PDFPatcher
 			}
 			else if (commandName == Commands.ShowGeneralToolbar) {
 				_FunctionContainer.SuspendLayout();
-				_GeneralToolbar.Visible = AppContext.Toolbar.ShowGeneralToolbar = !AppContext.Toolbar.ShowGeneralToolbar;
+				_GeneralToolbar.Visible =
+					AppContext.Toolbar.ShowGeneralToolbar = !AppContext.Toolbar.ShowGeneralToolbar;
 				_FunctionContainer.PerformLayout();
 			}
 			else if (commandName == Commands.Exit) {
@@ -438,10 +465,12 @@ namespace PDFPatcher
 			for (int i = _GeneralToolbar.Items.Count - 1; i > 0; i--) {
 				_GeneralToolbar.Items[i].Dispose();
 			}
+
 			foreach (var item in AppContext.Toolbar.Buttons) {
 				if (item.Visible == false) {
 					continue;
 				}
+
 				_GeneralToolbar.Items.Add(item.CreateButton());
 			}
 		}
@@ -458,6 +487,7 @@ namespace PDFPatcher
 			if (t == null || t.HasChildren == false) {
 				return null;
 			}
+
 			return t.Controls[0];
 		}
 
@@ -474,7 +504,7 @@ namespace PDFPatcher
 
 		internal void SelectFunctionList(Function func) {
 			if (func == Function.PatcherOptions) {
-				ShowDialogWindow(new PatcherOptionForm(false) { Options = AppContext.Patcher });
+				ShowDialogWindow(new PatcherOptionForm(false) {Options = AppContext.Patcher});
 			}
 			else if (func == Function.MergerOptions) {
 				ShowDialogWindow(new MergerOptionForm());
@@ -483,7 +513,7 @@ namespace PDFPatcher
 				ShowDialogWindow(new InfoFileOptionControl());
 			}
 			else if (func == Function.EditorOptions) {
-				ShowDialogWindow(new PatcherOptionForm(true) { Options = AppContext.Editor });
+				ShowDialogWindow(new PatcherOptionForm(true) {Options = AppContext.Editor});
 			}
 			else if (func == Function.Options) {
 				ShowDialogWindow(new AppOptionForm());
@@ -498,12 +528,12 @@ namespace PDFPatcher
 						if (String.IsNullOrEmpty(p) == false) {
 							c.ExecuteCommand(Commands.OpenFile, p);
 						}
+
 						return;
 					}
 				}
-				var t = new TabPage(c.FunctionName) {
-					Font = System.Drawing.SystemFonts.SmallCaptionFont
-				};
+
+				var t = new TabPage(c.FunctionName) {Font = System.Drawing.SystemFonts.SmallCaptionFont};
 				var im = _FunctionContainer.ImageList.Images;
 				for (int i = im.Count - 1; i >= 0; i--) {
 					if (im[i] == c.IconImage) {
@@ -511,10 +541,12 @@ namespace PDFPatcher
 						break;
 					}
 				}
+
 				if (t.ImageIndex < 0) {
 					im.Add(c.IconImage);
 					t.ImageIndex = im.Count - 1;
 				}
+
 				t.Tag = func;
 				_FunctionContainer.TabPages.Add(t);
 				c.Size = t.ClientSize;
@@ -565,6 +597,7 @@ namespace PDFPatcher
 		void HideLogControl() {
 			_LogControl.Hide();
 		}
+
 		void ShowLogControl() {
 			_LogControl.Show();
 		}

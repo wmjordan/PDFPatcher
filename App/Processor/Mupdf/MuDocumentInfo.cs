@@ -7,9 +7,11 @@ namespace MuPdfSharp
 	public class MuDocumentInfo
 	{
 		readonly MuPdfDictionary _info;
+
 		public MuDocumentInfo(MuPdfDictionary dictionary) {
 			_info = dictionary;
 		}
+
 		public string Title => _info["Title"].StringValue;
 		public string Subject => _info["Subject"].StringValue;
 		public string Producer => _info["Producer"].StringValue;

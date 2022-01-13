@@ -21,6 +21,7 @@ namespace PDFPatcher.Functions
 				foreach (PageFont item in _FontListBox.CheckedObjects) {
 					sf.Add(item.Name);
 				}
+
 				return sf;
 			}
 		}
@@ -52,6 +53,7 @@ namespace PDFPatcher.Functions
 				if (_pageFonts.HasContent()) {
 					_FontListBox.AddObjects(_pageFonts.Values);
 				}
+
 				_ListFontsButton.Enabled = true;
 			};
 			_Worker.DoWork += (s, args) => {
@@ -69,10 +71,12 @@ namespace PDFPatcher.Functions
 								if (_Worker.CancellationPending) {
 									return;
 								}
+
 								_Worker.ReportProgress(++i);
 								if (pp[page] != 0) {
 									continue;
 								}
+
 								pp[page] = 1;
 								GetPageFonts(p, page);
 							}
@@ -84,18 +88,10 @@ namespace PDFPatcher.Functions
 				}
 			};
 			_FontListBox.PersistentCheckBoxes = true;
-			new TypedColumn<PageFont>(_NameColumn) {
-				AspectGetter = (o) => o.Name
-			};
-			new TypedColumn<PageFont>(_FirstPageColumn) {
-				AspectGetter = (o) => o.FirstPage
-			};
-			new TypedColumn<PageFont>(_EmbeddedColumn) {
-				AspectGetter = (o) => o.Embedded
-			};
-			new TypedColumn<PageFont>(_ReferenceColumn) {
-				AspectGetter = (o) => o.Reference
-			};
+			new TypedColumn<PageFont>(_NameColumn) {AspectGetter = (o) => o.Name};
+			new TypedColumn<PageFont>(_FirstPageColumn) {AspectGetter = (o) => o.FirstPage};
+			new TypedColumn<PageFont>(_EmbeddedColumn) {AspectGetter = (o) => o.Embedded};
+			new TypedColumn<PageFont>(_ReferenceColumn) {AspectGetter = (o) => o.Reference};
 		}
 
 		private void GetPageFonts(PdfReader pdf, int pageNumber) {
@@ -104,20 +100,24 @@ namespace PDFPatcher.Functions
 			if (fl == null) {
 				return;
 			}
+
 			foreach (var item in fl) {
 				var fr = item.Value as PdfIndirectReference;
 				if (fr == null) {
 					continue;
 				}
+
 				if (_fontIdNames.TryGetValue(fr.Number, out string fn)) {
 					_pageFonts[fn].IncrementReference();
 					continue;
 				}
+
 				if (PdfReader.GetPdfObjectRelease(fr) is PdfDictionary f) {
 					var bf = f.GetAsName(PdfName.BASEFONT);
 					if (bf == null) {
 						continue;
 					}
+
 					fn = PdfHelper.GetPdfNameString(bf, AppContext.Encodings.FontNameEncoding); // 字体名称
 					fn = PdfDocumentFont.RemoveSubsetPrefix(fn);
 					_fontIdNames.Add(fr.Number, fn);
@@ -125,12 +125,14 @@ namespace PDFPatcher.Functions
 						pf.IncrementReference();
 						continue;
 					}
+
 					_pageFonts.Add(fn, new PageFont(fn, pageNumber, PdfDocumentFont.HasEmbeddedFont(f)));
 				}
 			}
 		}
 
 		private void SetGoal(int goal) { _ProgressBar.Maximum = goal; }
+
 		private void _ListFontsButton_Click(object sender, EventArgs e) {
 			_ProgressBar.Value = 0;
 			_ListFontsButton.Enabled = false;
@@ -160,12 +162,14 @@ namespace PDFPatcher.Functions
 			if (_FontListBox.GetItemCount() == 0) {
 				return;
 			}
+
 			if (_FontListBox.GetItem(0).Checked == false) {
 				_FontListBox.CheckObjects(_FontListBox.Objects);
 			}
 			else {
 				_FontListBox.CheckedObjects = null;
 			}
+
 			_FontListBox.Focus();
 		}
 
@@ -173,11 +177,13 @@ namespace PDFPatcher.Functions
 			if (SubstitutionsEditor == null) {
 				return;
 			}
+
 			var sf = SelectedFonts;
 			if (sf.Count == 0) {
 				FormHelper.ErrorBox("请选择需要添加到替换列表的字体。");
 				return;
 			}
+
 			SubstitutionsEditor.AddFonts(sf);
 			Close();
 		}

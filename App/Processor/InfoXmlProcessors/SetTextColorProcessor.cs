@@ -1,5 +1,4 @@
-﻿
-using System.Drawing;
+﻿using System.Drawing;
 using PDFPatcher.Common;
 
 namespace PDFPatcher.Processor
@@ -8,6 +7,7 @@ namespace PDFPatcher.Processor
 	{
 		readonly string r, g, b;
 		public Color Color { get; private set; }
+
 		public SetTextColorProcessor(Color color) {
 			if (color != Color.Transparent && color != Color.White) {
 				r = ValueHelper.ToText(color.R / 255f);
@@ -32,6 +32,7 @@ namespace PDFPatcher.Processor
 				undo.RemoveAttribute(item, Constants.Colors.Green);
 				undo.RemoveAttribute(item, Constants.Colors.Blue);
 			}
+
 			undo.RemoveAttribute(item, Constants.Color);
 			return undo;
 		}

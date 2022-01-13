@@ -31,6 +31,7 @@ namespace PDFPatcher.Processor
 						return true;
 					}
 				}
+
 				return false;
 			}
 		}
@@ -39,6 +40,7 @@ namespace PDFPatcher.Processor
 			if (font == null) {
 				return true;
 			}
+
 			bool result;
 			if (_matchResultCache.TryGetValue(font.FontID, out result)) {
 				return result;
@@ -46,17 +48,19 @@ namespace PDFPatcher.Processor
 
 			if (MatchFullName) {
 				//_matchResultCache[font.FontID] = String.Compare (this.FontName, font.PostscriptFontName, StringComparison.OrdinalIgnoreCase) == 0;
-				_matchResultCache[font.FontID] = String.Compare(FontName, font.FontName, StringComparison.OrdinalIgnoreCase) == 0;
+				_matchResultCache[font.FontID] =
+					String.Compare(FontName, font.FontName, StringComparison.OrdinalIgnoreCase) == 0;
 			}
 			else {
-				_matchResultCache[font.FontID] = font.PostscriptFontName.IndexOf(FontName, StringComparison.OrdinalIgnoreCase) > -1;
+				_matchResultCache[font.FontID] =
+					font.PostscriptFontName.IndexOf(FontName, StringComparison.OrdinalIgnoreCase) > -1;
 			}
+
 			return _matchResultCache[font.FontID];
 		}
 
 		internal override void Reset() {
 			_matchResultCache.Clear();
 		}
-
 	}
 }

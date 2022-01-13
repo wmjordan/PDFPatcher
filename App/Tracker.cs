@@ -35,16 +35,20 @@ namespace PDFPatcher
 		internal static void IncrementTotalProgress() {
 			ReportProgress(1, "TINC");
 		}
+
 		internal static void SetProgressGoal(int goalNumber) {
 			ReportProgress(goalNumber, "GOAL");
 		}
+
 		internal static void SetTotalProgressGoal(int goalNumber) {
 			ReportProgress(goalNumber, "TGOAL");
 		}
+
 		internal static void DebugMessage(string message) {
 			Debug.Write(DateTime.Now.ToString("HH:mm:ss.fff "));
 			Debug.WriteLine(message);
 		}
+
 		internal static void TraceMessage(Category level, string message) {
 			Trace.Write(DateTime.Now.ToString("HH:mm:ss.fff "));
 			Trace.WriteLine(message);
@@ -53,9 +57,11 @@ namespace PDFPatcher
 				worker.ReportProgress((int)level, message);
 			}
 		}
+
 		internal static void TraceMessage(string message) {
 			TraceMessage(Category.Message, message);
 		}
+
 		internal static void TraceMessage(Exception exception) {
 			TraceMessage(Category.Error, exception.Message);
 #if DEBUG
@@ -68,11 +74,12 @@ namespace PDFPatcher
 			if (worker == null) {
 				return;
 			}
+
 			if (worker.CancellationPending) {
 				throw new OperationCanceledException();
 			}
+
 			worker.ReportProgress(progress, category);
 		}
 	}
-
 }

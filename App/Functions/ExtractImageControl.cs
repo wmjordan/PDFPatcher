@@ -20,12 +20,16 @@ namespace PDFPatcher.Functions
 				if (_AutoOutputDirBox.Checked == false) {
 					return;
 				}
+
 				var sourceFile = _SourceFileControl.FirstFile;
 				if (sourceFile.Length > 0) {
-					_TargetBox.Text = FileHelper.CombinePath(Path.GetDirectoryName(sourceFile), Path.GetFileNameWithoutExtension(sourceFile));
+					_TargetBox.Text = FileHelper.CombinePath(Path.GetDirectoryName(sourceFile),
+						Path.GetFileNameWithoutExtension(sourceFile));
 				}
 			};
-			_AutoOutputDirBox.CheckedChanged += (object sender, EventArgs e) => { AppContext.ImageExtracter.AutoOutputFolder = _AutoOutputDirBox.Checked; };
+			_AutoOutputDirBox.CheckedChanged += (object sender, EventArgs e) => {
+				AppContext.ImageExtracter.AutoOutputFolder = _AutoOutputDirBox.Checked;
+			};
 		}
 
 		protected override void OnLoad(EventArgs e) {
@@ -34,8 +38,10 @@ namespace PDFPatcher.Functions
 			AppContext.MainForm.SetTooltip(_SourceFileControl.FileList, "包含图片的 PDF 文件路径");
 			AppContext.MainForm.SetTooltip(_TargetBox, "放置输出图片的文件夹路径");
 			AppContext.MainForm.SetTooltip(_ExtractPageRangeBox, "在此指定需提取图片的页码范围，不指定页码范围时提取所有页面的图片");
-			AppContext.MainForm.SetTooltip(_FileNameMaskBox, "提取的图片文件名按其所在页码数字命名，可在此修改命名规则\n“0000”：不足四位用0补足四位\n“0”：文件名按实际页码，不用0补位\n可用英文双引号将文本括起来（如“\"相约2000\"0”，前面的“2000”不会被解释为占位符）");
-			AppContext.MainForm.SetTooltip(_MergeImageBox, "尝试将相同页面下的图片合并为同一个文件\n①合并图片的格式必须相同\n②宽度必须相同\n③仅限 PNG 和 TIFF 格式");
+			AppContext.MainForm.SetTooltip(_FileNameMaskBox,
+				"提取的图片文件名按其所在页码数字命名，可在此修改命名规则\n“0000”：不足四位用0补足四位\n“0”：文件名按实际页码，不用0补位\n可用英文双引号将文本括起来（如“\"相约2000\"0”，前面的“2000”不会被解释为占位符）");
+			AppContext.MainForm.SetTooltip(_MergeImageBox,
+				"尝试将相同页面下的图片合并为同一个文件\n①合并图片的格式必须相同\n②宽度必须相同\n③仅限 PNG 和 TIFF 格式");
 			AppContext.MainForm.SetTooltip(_VerticalFlipImageBox, "某些 PDF 文件导出的图片上下颠倒，可用此选项将其还原");
 			AppContext.MainForm.SetTooltip(_InvertBlackAndWhiteBox, "翻转 PNG 和 TIFF 黑白图片的颜色");
 			AppContext.MainForm.SetTooltip(_MinHeightBox, "忽略高度小于此处指定值的图片");
@@ -77,6 +83,7 @@ namespace PDFPatcher.Functions
 			else if (sourceFile.Length > 0) {
 				_SaveImageBox.SelectedPath = Path.GetDirectoryName(sourceFile);
 			}
+
 			if (_SaveImageBox.ShowDialog() == DialogResult.OK) {
 				_TargetBox.Text =
 					_SaveImageBox.SelectedPath
@@ -91,6 +98,7 @@ namespace PDFPatcher.Functions
 				FormHelper.ErrorBox(Messages.SourceFileNotFound);
 				return;
 			}
+
 			if (_TargetBox.Text.IsNullOrWhiteSpace()) {
 				_BrowseTargetPdfButton_Click(_BrowseTargetPdfButton, e);
 				if (_TargetBox.Text.IsNullOrWhiteSpace()) {
@@ -115,7 +123,8 @@ namespace PDFPatcher.Functions
 					var ep = options.OutputPath;
 					Tracker.SetTotalProgressGoal(files.Length);
 					foreach (var file in files) {
-						options.OutputPath = new FilePath(ep).Combine(new FilePath(file).FileNameWithoutExtension).Normalize();
+						options.OutputPath = new FilePath(ep).Combine(new FilePath(file).FileNameWithoutExtension)
+							.Normalize();
 						Processor.Worker.ExtractImages(file, options);
 						Tracker.IncrementTotalProgress();
 						if (AppContext.Abort) {
@@ -127,7 +136,9 @@ namespace PDFPatcher.Functions
 					Processor.Worker.ExtractImages(files[0], options);
 				}
 			};
-			worker.RunWorkerCompleted += (dummy, arg) => { AppContext.ImageExtracter.OutputPath = _ExtractPageRangeBox.Text; };
+			worker.RunWorkerCompleted += (dummy, arg) => {
+				AppContext.ImageExtracter.OutputPath = _ExtractPageRangeBox.Text;
+			};
 			var option = AppContext.ImageExtracter;
 			option.ExtractAnnotationImages = _ExportAnnotImagesBox.Checked;
 			option.PageRange = _ExtractPageRangeBox.Text;
@@ -144,9 +155,7 @@ namespace PDFPatcher.Functions
 			option.InvertSoftMask = _InvertSoftMaskBox.Checked;
 			option.SkipRedundantImages = _SkipRedundantImagesBox.Checked;
 			worker.RunWorkerAsync(
-				new object[] {
-				AppContext.SourceFiles, option
-			});
+				new object[] {AppContext.SourceFiles, option});
 		}
 
 		#region IDefaultButtonControl 成员
@@ -185,6 +194,5 @@ namespace PDFPatcher.Functions
 			//    this._TargetBox.DataSource = null;
 			//}
 		}
-
 	}
 }

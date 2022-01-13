@@ -12,17 +12,22 @@ namespace PDFPatcher.Processor
 	sealed class RemoveDictionaryItemProcessor : IPageProcessor
 	{
 		readonly PdfName _ItemName;
+
 		public RemoveDictionaryItemProcessor(PdfName itemName) {
 			_ItemName = itemName;
 		}
 
 		#region IPageProcessor 成员
+
 		public string Name => "删除字典项目";
+
 		public void BeginProcess(DocProcessorContext context) {
 		}
+
 		public bool EndProcess(PdfReader pdf) {
 			return false;
 		}
+
 		public int EstimateWorkload(PdfReader pdf) {
 			return 0;
 		}
@@ -32,6 +37,7 @@ namespace PDFPatcher.Processor
 				context.Page.Remove(_ItemName);
 				return true;
 			}
+
 			return false;
 		}
 
@@ -44,6 +50,7 @@ namespace PDFPatcher.Processor
 				context.Pdf.Catalog.Remove(_ItemName);
 				return true;
 			}
+
 			return false;
 		}
 

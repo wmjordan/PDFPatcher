@@ -25,8 +25,7 @@ namespace PDFPatcher.Functions.Editor
 
 		static SaveFileDialog InitDialog() {
 			return _dialog ?? (_dialog = new SaveFileDialog {
-				DefaultExt = Constants.FileExtensions.Png,
-				Filter = Constants.FileExtensions.ImageFilter
+				DefaultExt = Constants.FileExtensions.Png, Filter = Constants.FileExtensions.ImageFilter
 			});
 		}
 	}

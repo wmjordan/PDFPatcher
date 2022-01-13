@@ -22,6 +22,7 @@ namespace MuPdfSharp
 			if (_buffer.ContainsKey(pageNumber)) {
 				return _buffer[pageNumber].Page;
 			}
+
 			var p = _document.LoadPage(pageNumber);
 			_buffer.Add(pageNumber, new RenderResult(p));
 			return p;
@@ -31,6 +32,7 @@ namespace MuPdfSharp
 			if (_buffer == null || _document.IsDisposed) {
 				return null;
 			}
+
 			RenderResult result;
 			_buffer.TryGetValue(pageNumber, out result);
 			return result != null ? result.Image : null;
@@ -43,6 +45,7 @@ namespace MuPdfSharp
 					i.Image.Dispose();
 				}
 			}
+
 			_buffer[pageNumber].Image = bmp;
 			TrimBitmapBuffer(pageNumber);
 		}
@@ -57,6 +60,7 @@ namespace MuPdfSharp
 						i = item;
 					}
 				}
+
 				_buffer[i].Dispose();
 				_buffer.Remove(i);
 				//Tracker.DebugMessage ("removed buffered result " + i);
@@ -67,10 +71,12 @@ namespace MuPdfSharp
 			if (_buffer.HasContent() == false) {
 				return;
 			}
+
 			foreach (var item in _buffer) {
 				//Tracker.DebugMessage ("Disposing page " + item.Key + " result.");
 				item.Value.Dispose();
 			}
+
 			_buffer.Clear();
 		}
 
@@ -92,11 +98,11 @@ namespace MuPdfSharp
 				if (Page != null) {
 					Page.Dispose();
 				}
+
 				if (Image != null) {
 					Image.Dispose();
 				}
 			}
 		}
 	}
-
 }

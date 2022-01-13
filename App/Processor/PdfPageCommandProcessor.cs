@@ -9,12 +9,13 @@ namespace PDFPatcher.Processor
 {
 	sealed class PdfPageCommandProcessor : PdfContentStreamProcessor, IPdfPageCommandContainer
 	{
-
 		public bool HasCommand => Commands.Count > 0;
+
 		/// <summary>
 		/// 分析内容后得到的 PDF 命令操作符及操作数列表。
 		/// </summary>
 		public IList<PdfPageCommand> Commands { get; }
+
 		readonly Stack<EnclosingCommand> _commandStack;
 		EnclosingCommand _currentCommand;
 		float _textWidth;
@@ -38,6 +39,7 @@ namespace PDFPatcher.Processor
 			if (font == null) {
 				return;
 			}
+
 			float totalWidth = 0;
 			foreach (var c in font.DecodeText(str)) {
 				var w = font.GetWidth(c) / 1000.0f;
@@ -54,7 +56,8 @@ namespace PDFPatcher.Processor
 			var o = oper.ToString();
 			switch (o) {
 				case "TJ":
-					cmd = new PaceAndTextCommand(oper, operands, GetTextInfo(new PdfString()), CurrentGraphicState.Font);
+					cmd = new PaceAndTextCommand(oper, operands, GetTextInfo(new PdfString()),
+						CurrentGraphicState.Font);
 					break;
 				case "Tj":
 				case "'":
@@ -72,7 +75,9 @@ namespace PDFPatcher.Processor
 					cmd = new InlineImageCommand(oper, operands);
 					break;
 				default:
-					cmd = EnclosingCommand.IsStartingCommand(o) ? new EnclosingCommand(oper, operands) : new PdfPageCommand(oper, operands);
+					cmd = EnclosingCommand.IsStartingCommand(o)
+						? new EnclosingCommand(oper, operands)
+						: new PdfPageCommand(oper, operands);
 					break;
 			}
 
@@ -81,12 +86,14 @@ namespace PDFPatcher.Processor
 				_currentCommand = _commandStack.Count > 0 ? _commandStack.Peek() : null;
 				return;
 			}
+
 			if (_currentCommand != null) {
 				_currentCommand.Commands.Add(cmd);
 			}
 			else {
 				Commands.Add(cmd);
 			}
+
 			if (cmd is EnclosingCommand ec) {
 				_commandStack.Push(ec);
 				_currentCommand = ec;
@@ -121,7 +128,8 @@ namespace PDFPatcher.Processor
 		}
 
 		private static string GetOperandsTextValue(List<PdfObject> operands) {
-			var n = operands.ConvertAll((po) => po.Type == PdfObject.NUMBER ? ValueHelper.ToText(((PdfNumber)po).DoubleValue) : null);
+			var n = operands.ConvertAll((po) =>
+				po.Type == PdfObject.NUMBER ? ValueHelper.ToText(((PdfNumber)po).DoubleValue) : null);
 			n.RemoveAt(n.Count - 1);
 			return String.Join(" ", n.ToArray());
 		}

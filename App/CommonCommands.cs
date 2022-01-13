@@ -10,8 +10,7 @@ namespace PDFPatcher
 		internal static void CreateShortcut() {
 			var p = System.IO.Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath);
 			var s = new ShortcutFile(FileHelper.CombinePath(p, Constants.AppEngName + ".exe")) {
-				WorkingDirectory = p,
-				Description = Constants.AppName
+				WorkingDirectory = p, Description = Constants.AppName
 			};
 			var desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
 			s.Save(FileHelper.CombinePath(desktopPath, Constants.AppName + ".lnk"));

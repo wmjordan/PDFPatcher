@@ -15,7 +15,7 @@ namespace PDFPatcher.Functions
 	public partial class RenameControl : FunctionControl
 	{
 		FileListHelper _listHelper;
-		static readonly string[] __EnabledCommands = { Commands.Copy, Commands.Delete };
+		static readonly string[] __EnabledCommands = {Commands.Copy, Commands.Delete};
 
 		public override string FunctionName => "重命名文件";
 
@@ -41,25 +41,29 @@ namespace PDFPatcher.Functions
 				int i;
 				var f = _TargetPdfFile.FileDialog.FileName;
 				if (_ItemList.Items.Count > 1 && (i = f.LastIndexOf(Path.DirectorySeparatorChar)) != -1) {
-					_TargetPdfFile.Text = String.Concat(f.Substring(0, i), Path.DirectorySeparatorChar, Constants.FileNameMacros.FileName, Path.GetExtension(f));
+					_TargetPdfFile.Text = String.Concat(f.Substring(0, i), Path.DirectorySeparatorChar,
+						Constants.FileNameMacros.FileName, Path.GetExtension(f));
 					args.Cancel = true;
 				}
 			};
 			var fi = _FileTypeList.Images;
-			fi.AddRange(new System.Drawing.Image[] {
-				Properties.Resources.OriginalPdfFile
-			});
+			fi.AddRange(new System.Drawing.Image[] {Properties.Resources.OriginalPdfFile});
 			_ItemList.FixEditControlWidth();
 			_listHelper = new FileListHelper(_ItemList);
 			_listHelper.SetupDragAndDrop(AddFiles);
 			_listHelper.SetupHotkeys();
-			FileListHelper.SetupCommonPdfColumns(_AuthorColumn, _KeywordsColumn, _SubjectColumn, _TitleColumn, _PageCountColumn, _NameColumn, _FolderColumn);
-			_RefreshInfoButton.ButtonClick += (s, args) => _listHelper.RefreshInfo(AppContext.Encodings.DocInfoEncoding);
+			FileListHelper.SetupCommonPdfColumns(_AuthorColumn, _KeywordsColumn, _SubjectColumn, _TitleColumn,
+				_PageCountColumn, _NameColumn, _FolderColumn);
+			_RefreshInfoButton.ButtonClick +=
+				(s, args) => _listHelper.RefreshInfo(AppContext.Encodings.DocInfoEncoding);
 			_RefreshInfoButton.DropDown = _RefreshInfoMenu;
 			foreach (var item in Constants.Encoding.EncodingNames) {
 				_RefreshInfoMenu.Items.Add(item);
 			}
-			_RefreshInfoMenu.ItemClicked += (s, args) => _listHelper.RefreshInfo(ValueHelper.MapValue(args.ClickedItem.Text, Constants.Encoding.EncodingNames, Constants.Encoding.Encodings));
+
+			_RefreshInfoMenu.ItemClicked += (s, args) =>
+				_listHelper.RefreshInfo(ValueHelper.MapValue(args.ClickedItem.Text, Constants.Encoding.EncodingNames,
+					Constants.Encoding.Encodings));
 			_AddFilesButton.DropDownOpening += FileListHelper.OpenPdfButtonDropDownOpeningHandler;
 			_AddFilesButton.DropDownItemClicked += (s, args) => {
 				args.ClickedItem.Owner.Hide();
@@ -70,9 +74,10 @@ namespace PDFPatcher.Functions
 
 		public override void SetupCommand(ToolStripItem item) {
 			if (__EnabledCommands.Contains(item.Name)
-				|| Commands.CommonSelectionCommands.Contains(item.Name)) {
+			    || Commands.CommonSelectionCommands.Contains(item.Name)) {
 				EnableCommand(item, _ItemList.GetItemCount() > 0 && _ItemList.Focused, true);
 			}
+
 			base.SetupCommand(item);
 		}
 
@@ -80,6 +85,7 @@ namespace PDFPatcher.Functions
 			if (_listHelper.ProcessCommonMenuCommand(commandName)) {
 				return;
 			}
+
 			switch (commandName) {
 				case Commands.Open:
 					var b = _OpenPdfBox;
@@ -87,6 +93,7 @@ namespace PDFPatcher.Functions
 					if (b.ShowDialog() == DialogResult.OK) {
 						AddFiles(b.FileNames, true);
 					}
+
 					break;
 				case Commands.OpenFile:
 					AddFiles(parameters, true);
@@ -94,6 +101,7 @@ namespace PDFPatcher.Functions
 				default:
 					break;
 			}
+
 			base.ExecuteCommand(commandName, parameters);
 		}
 
@@ -103,7 +111,8 @@ namespace PDFPatcher.Functions
 
 		private void _RenameButton_Click(object sender, EventArgs e) {
 			var targetPdfFile = _TargetPdfFile.Text.Trim();
-			if (String.IsNullOrEmpty(targetPdfFile) && String.IsNullOrEmpty(targetPdfFile = _TargetPdfFile.BrowseTargetFile())) {
+			if (String.IsNullOrEmpty(targetPdfFile) &&
+			    String.IsNullOrEmpty(targetPdfFile = _TargetPdfFile.BrowseTargetFile())) {
 				FormHelper.ErrorBox(Messages.TargetFileNotSpecified);
 				return;
 			}
@@ -113,6 +122,7 @@ namespace PDFPatcher.Functions
 				FormHelper.InfoBox("请添加需要重命名的 PDF 文件。");
 				return;
 			}
+
 			var files = GetSourceItemList();
 			_TargetPdfFile.FileList.AddHistoryItem();
 
@@ -129,15 +139,19 @@ namespace PDFPatcher.Functions
 			if (files == null || files.Length == 0) {
 				return;
 			}
+
 			if ((ModifierKeys & Keys.Control) != Keys.None || _AutoClearListBox.Checked) {
 				_ItemList.ClearObjects();
 			}
+
 			if (files.Length > 3) {
 				AppContext.MainForm.Enabled = false;
 			}
+
 			if (files.Length == 0) {
 				return;
 			}
+
 			_AddDocumentWorker.RunWorkerAsync(files);
 		}
 
@@ -147,11 +161,13 @@ namespace PDFPatcher.Functions
 			for (int i = 0; i < l; i++) {
 				var item = _ItemList.GetModelObject(_ItemList.GetNthItemInDisplayOrder(i).Index) as SourceItem;
 				if (item.Type == SourceItem.ItemType.Pdf
-					&& FileHelper.HasExtension(item.FilePath, Constants.FileExtensions.Pdf)) {
+				    && FileHelper.HasExtension(item.FilePath, Constants.FileExtensions.Pdf)) {
 					AppContext.RecentItems.AddHistoryItem(AppContext.Recent.SourcePdfFiles, item.FilePath.ToString());
 				}
+
 				files.Add(item);
 			}
+
 			return files;
 		}
 
@@ -188,6 +204,7 @@ namespace PDFPatcher.Functions
 				FormHelper.ErrorBox(Messages.TargetFileNotSpecified);
 				return;
 			}
+
 			var pdfs = _listHelper.GetSourceItems<SourceItem.Pdf>(false);
 			if (pdfs.Count == 0) {
 				FormHelper.InfoBox("请添加需要重命名的 PDF 文件。");
@@ -219,6 +236,7 @@ namespace PDFPatcher.Functions
 							t = "<输出文件名为空>";
 						}
 					}
+
 					source[i] = s.ToString();
 					result[i] = t;
 					i++;
@@ -227,12 +245,14 @@ namespace PDFPatcher.Functions
 					FormHelper.ErrorBox(ex.Message);
 				}
 			}
+
 			using (var f = new Functions.RenamePreviewForm(source, result)) {
 				f.ShowDialog();
 			}
 		}
 
 		#region AddDocumentWorker
+
 		private void _AddDocumentWorker_DoWork(object sender, DoWorkEventArgs e) {
 			var files = e.Argument as string[];
 			Array.ForEach(files, f => ((BackgroundWorker)sender).ReportProgress(0, f));
@@ -252,7 +272,8 @@ namespace PDFPatcher.Functions
 			if (item == null) {
 				return;
 			}
-			AddItems(new SourceItem[] { item });
+
+			AddItems(new SourceItem[] {item});
 		}
 
 		private void AddItems(System.Collections.ICollection items) {
@@ -260,6 +281,7 @@ namespace PDFPatcher.Functions
 			_ItemList.InsertObjects(++i, items);
 			_ItemList.SelectedIndex = --i + items.Count;
 		}
+
 		#endregion
 
 		#region IDefaultButtonControl 成员
@@ -267,6 +289,5 @@ namespace PDFPatcher.Functions
 		public override Button DefaultButton => _RenameButton;
 
 		#endregion
-
 	}
 }

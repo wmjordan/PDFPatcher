@@ -29,6 +29,7 @@ namespace PDFPatcher.Functions
 					_MaxSizeBox.Value = (decimal)_condition.MaxSize;
 					_MinSizeBox.Value = (decimal)_condition.MinSize;
 				}
+
 				ToggleControlState();
 				_lock = false;
 			}
@@ -43,12 +44,14 @@ namespace PDFPatcher.Functions
 			if (_lock) {
 				return;
 			}
+
 			if (_SizeBox.Checked) {
 				_condition.SetRange((float)_SpecificSizeBox.Value, (float)_SpecificSizeBox.Value);
 			}
 			else if (_SizeRangeBox.Checked) {
 				_condition.SetRange((float)_MinSizeBox.Value, (float)_MaxSizeBox.Value);
 			}
+
 			EditAdjustmentForm.UpdateFilter(this);
 		}
 

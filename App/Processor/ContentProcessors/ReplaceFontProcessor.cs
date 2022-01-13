@@ -9,8 +9,11 @@ namespace PDFPatcher.Processor
 {
 	sealed class ReplaceFontProcessor : IPageProcessor
 	{
-		static readonly string[] __LegacyFonts = { "宋体", "楷体_GB2312", "仿宋_GB2312", "黑体", "STSONG-LIGHT-GB-EUC-H", "STSONG-LIGHT-GBK-EUC-H" };
-		static readonly string[] __AlternativeFonts = { "宋体", "楷体", "仿宋", "微软雅黑", "宋体", "宋体" };
+		static readonly string[] __LegacyFonts = {
+			"宋体", "楷体_GB2312", "仿宋_GB2312", "黑体", "STSONG-LIGHT-GB-EUC-H", "STSONG-LIGHT-GBK-EUC-H"
+		};
+
+		static readonly string[] __AlternativeFonts = {"宋体", "楷体", "仿宋", "微软雅黑", "宋体", "宋体"};
 		static readonly PdfName __GbkEncoding = new PdfName("GBK-EUC-H");
 		static readonly PdfName __GbEncoding = new PdfName("GB-EUC-H");
 
@@ -26,20 +29,26 @@ namespace PDFPatcher.Processor
 		Dictionary<string, FontSubstitution> _fontSubstitutions;
 		Dictionary<int, NewFont> _fontRefIDMap;
 		Dictionary<PdfDictionary, Dictionary<PdfName, PRIndirectReference>> _fontDictMap;
+
 		HashSet<int> _bypassFonts;
 		//bool _usedStyle;
 
-		public ReplaceFontProcessor(bool embedLegacyFonts, bool trimTrailingWhiteSpace, Dictionary<string, FontSubstitution> fontSubstitutions) {
+		public ReplaceFontProcessor(bool embedLegacyFonts, bool trimTrailingWhiteSpace,
+			Dictionary<string, FontSubstitution> fontSubstitutions) {
 			_embedLegacyFonts = embedLegacyFonts;
 			_trimTrailingWhiteSpace = trimTrailingWhiteSpace;
 			_fontSubstitutions = fontSubstitutions;
 		}
+
 		#region IPageProcessor 成员
+
 		public string Name => "嵌入汉字库";
+
 		public void BeginProcess(DocProcessorContext context) {
 			if (_fontSubstitutions == null) {
 				_fontSubstitutions = new Dictionary<string, FontSubstitution>(0);
 			}
+
 			var l = __LegacyFonts.Length + _fontSubstitutions.Count;
 			_newFonts = new Dictionary<string, NewFont>(l, StringComparer.CurrentCultureIgnoreCase);
 			_fontMap = new Dictionary<PdfName, NewFont>(l);
@@ -59,6 +68,7 @@ namespace PDFPatcher.Processor
 			}
 			//_fontFactory.RegisterDirectory (Common.FontHelper.FontDirectory);
 		}
+
 		public bool EndProcess(PdfReader pdf) {
 			// 用新的字体引用替代字体资源表的字体
 			foreach (var map in _fontDictMap) {
@@ -67,6 +77,7 @@ namespace PDFPatcher.Processor
 					d.Put(item.Key, item.Value);
 				}
 			}
+
 			SubSetFontData(pdf);
 			return false;
 		}
@@ -81,6 +92,7 @@ namespace PDFPatcher.Processor
 			if (fonts == null) {
 				return false;
 			}
+
 			//bool hasAnsiCjkFont = DetectLegacyCjkFont (context, fonts);
 			//if (hasAnsiCjkFont == false) {
 			//    return false;
@@ -93,10 +105,12 @@ namespace PDFPatcher.Processor
 			if (_fontMap.Count == 0) {
 				return false;
 			}
+
 			if (ProcessCommands(context.PageCommands.Commands)) {
 				context.IsPageContentModified = true;
 				return true;
 			}
+
 			return false;
 		}
 
@@ -111,6 +125,7 @@ namespace PDFPatcher.Processor
 				if (ec == null) {
 					continue;
 				}
+
 				var n = ec.Name.ToString();
 				if (n == "BT") {
 					foreach (var item in ec.Commands) {
@@ -125,6 +140,7 @@ namespace PDFPatcher.Processor
 							}
 						}
 					}
+
 					//if (_usedStyle) {
 					//	_usedStyle = false;
 					//}
@@ -144,6 +160,7 @@ namespace PDFPatcher.Processor
 					_currentFont = cf;
 				}
 			}
+
 			return r;
 		}
 
@@ -155,8 +172,9 @@ namespace PDFPatcher.Processor
 					//Tracker.TraceMessage ("找不到字体：" + cf.ToString ());
 					_currentNewFont = null;
 				}
+
 				if (_fontNameIDMap.TryGetValue(cf, out int ni) == false
-					|| _fontInfoMap.TryGetValue(ni, out _currentFont) == false) {
+				    || _fontInfoMap.TryGetValue(ni, out _currentFont) == false) {
 					_currentFont = null;
 				}
 			}
@@ -164,8 +182,10 @@ namespace PDFPatcher.Processor
 				if (_currentNewFont == null || _currentFont == null) {
 					return false;
 				}
+
 				RewriteTextOut(_currentNewFont, _currentFont, item);
 			}
+
 			//else if (_usedStyle && item.Type == PdfPageCommandType.Matrix) {
 			//	var m = item as MatrixCommand;
 			//	if (m.Operands[0] is PdfNumber mn && mn.FloatValue == 10.522f) {
@@ -186,13 +206,15 @@ namespace PDFPatcher.Processor
 			if (ops.Length == 0) {
 				return;
 			}
+
 			var op = ops[0];
 			string t;
 			if (op.Type == PdfObject.STRING) {
-				t = fontInfo.DecodeText(op as PdfString);//.TrimEnd ();
+				t = fontInfo.DecodeText(op as PdfString); //.TrimEnd ();
 				if (_trimTrailingWhiteSpace) {
 					t = t.TrimEnd();
 				}
+
 				ops[0] = RewriteText(ef, f, t);
 				//AddCustomDefaultWidth (ef, fontInfo, t);
 			}
@@ -203,9 +225,10 @@ namespace PDFPatcher.Processor
 					op = a[i];
 					if (op.Type == PdfObject.STRING) {
 						t = fontInfo.DecodeText(op as PdfString);
-						if (_trimTrailingWhiteSpace/* && i == l - 1*/) {
+						if (_trimTrailingWhiteSpace /* && i == l - 1*/) {
 							t = t.TrimEnd();
 						}
+
 						a[i] = RewriteText(ef, f, t);
 						//AddCustomDefaultWidth (ef, fontInfo, t);
 					}
@@ -217,6 +240,7 @@ namespace PDFPatcher.Processor
 			if (fontInfo.DefaultWidth == FontInfo.DefaultDefaultWidth) {
 				return;
 			}
+
 			var dw = fontInfo.DefaultWidth;
 			var w = newFont.GlyphWidths;
 			//newFont.DefaultWidth = dw;
@@ -234,6 +258,7 @@ namespace PDFPatcher.Processor
 					if (cs == false || newFont.CharSubstitutions.TryGetValue(ch, out char c) == false) {
 						c = ch;
 					}
+
 					if (newFont.UsedCidMap.TryGetValue(c, out int cid) == false) {
 						//if (ttf == null) {
 						//    ;
@@ -243,13 +268,16 @@ namespace PDFPatcher.Processor
 							newFont.AbsentChars.Add(c);
 							continue;
 						}
+
 						cid = tt[0];
 						newFont.UsedCidMap[c] = cid;
 						newFont.GlyphWidths[cid] = tt[1];
 					}
+
 					bb.Append((byte)(cid >> 8));
 					bb.Append((byte)cid);
 				}
+
 				return new PdfString(bb.ToByteArray());
 			}
 		}
@@ -257,10 +285,12 @@ namespace PDFPatcher.Processor
 		static bool DetectLegacyCjkFont(PdfDictionary font) {
 			var en = font.GetAsName(PdfName.ENCODING);
 			if (en == null
-				|| (PdfName.WIN_ANSI_ENCODING.Equals(en) || __GbkEncoding.Equals(en) || __GbEncoding.Equals(en)) == false
-				) {
+			    || (PdfName.WIN_ANSI_ENCODING.Equals(en) || __GbkEncoding.Equals(en) || __GbEncoding.Equals(en)) ==
+			    false
+			   ) {
 				return false;
 			}
+
 			return PdfDocumentFont.HasEmbeddedFont(font) == false;
 		}
 
@@ -271,18 +301,21 @@ namespace PDFPatcher.Processor
 				string n; // 字体名称
 				var fr = item.Value as PdfIndirectReference;
 				if (fr == null
-					|| _bypassFonts.Contains(fr.Number)) {
+				    || _bypassFonts.Contains(fr.Number)) {
 					continue;
 				}
+
 				if (_fontRefIDMap.TryGetValue(fr.Number, out NewFont nf) == false) {
 					var f = fr.CastAs<PdfDictionary>();
 					if (f == null) {
 						goto BYPASSFONT;
 					}
+
 					var fn = f.GetAsName(PdfName.BASEFONT);
 					if (fn == null) {
 						goto BYPASSFONT;
 					}
+
 					n = PdfDocumentFont.RemoveSubsetPrefix(PdfHelper.GetPdfNameString(fn)); // 字体名称
 					var p = -1;
 					FontSubstitution fs;
@@ -293,18 +326,22 @@ namespace PDFPatcher.Processor
 						if (_embedLegacyFonts == false || DetectLegacyCjkFont(f) == false) {
 							goto BYPASSFONT;
 						}
+
 						p = Array.IndexOf(__LegacyFonts, n.ToUpperInvariant());
 						if (p == -1) {
 							goto BYPASSFONT;
 						}
+
 						sn = null;
 					}
+
 					if (_newFonts.TryGetValue(sn ?? n, out nf) == false) {
 						try {
 							Tracker.TraceMessage("加载字体：" + (sn != null ? String.Concat(sn, "(替换 ", n, ")") : n));
 							if (sn != null) {
 								n = sn;
 							}
+
 							string sf = null;
 							foreach (var font in Common.FontUtility.InstalledFonts) {
 								if (font.DisplayName == n) {
@@ -312,6 +349,7 @@ namespace PDFPatcher.Processor
 									break;
 								}
 							}
+
 							nf = new NewFont {
 								Font = _fontFactory.GetFont(sf ?? n, BaseFont.IDENTITY_H),
 								FontRef = context.Pdf.AddPdfObject(new PdfDictionary()),
@@ -323,15 +361,19 @@ namespace PDFPatcher.Processor
 									if (i >= sl) {
 										break;
 									}
+
 									nf.CharSubstitutions[fs.OriginalCharacters[i]] = fs.SubstituteCharacters[i];
 								}
 							}
+
 							if (sn == null && p != -1 && nf.Font.BaseFont == null) {
 								nf.Font = _fontFactory.GetFont(__AlternativeFonts[p], BaseFont.IDENTITY_H);
 							}
+
 							if (nf.Font.BaseFont == null) {
 								throw new System.IO.FileNotFoundException("无法加载字体：" + n);
 							}
+
 							_newFonts.Add(n, nf);
 						}
 						catch (Exception) {
@@ -339,6 +381,7 @@ namespace PDFPatcher.Processor
 							throw;
 						}
 					}
+
 					r[item.Key] = nf.FontRef;
 					if (_fontInfoMap.ContainsKey(fr.Number) == false) {
 						var fi = new FontInfo(f, fr.Number);
@@ -351,15 +394,18 @@ namespace PDFPatcher.Processor
 						//	Tracker.TraceMessage (Tracker.Category.ImportantMessage, "字体“" + n + "”的 CID 宽度表错误。");
 						//}
 					}
+
 					_fontRefIDMap[nf.FontRef.Number] = nf;
 				}
+
 				//ef.FontDictionaries[(item.Value as PdfIndirectReference).Number] = f;
 				_fontMap[item.Key] = nf;
 				_fontNameIDMap[item.Key] = fr.Number;
 				continue;
-			BYPASSFONT:
+				BYPASSFONT:
 				_bypassFonts.Add(fr.Number);
 			}
+
 			if (r.Count > 0) {
 				_fontDictMap[fonts] = r;
 			}
@@ -370,23 +416,28 @@ namespace PDFPatcher.Processor
 			if (wl == null) {
 				return;
 			}
+
 			var fc = font.TryGetInt32(PdfName.FIRSTCHAR, 0);
 			var widths = newfont.GlyphWidths;
 			foreach (PdfNumber item in wl) {
 				if (item == null) {
 					continue;
 				}
-				var s = fontInfo.Decode(new byte[] { (byte)fc }, 0, 1);
+
+				var s = fontInfo.Decode(new byte[] {(byte)fc}, 0, 1);
 				if (s.Length == 0) {
 					continue;
 				}
+
 				int w;
 				if (widths.TryGetValue(s[0], out w) == false || w == 0) {
 					widths[s[0]] = item.IntValue;
 				}
+
 				++fc;
 			}
 		}
+
 		static void ReadCidFontWidths(PdfDictionary font, FontInfo fontInfo, NewFont newfont) {
 			var w = font.GetAsArray(PdfName.W);
 			if (w == null) {
@@ -395,6 +446,7 @@ namespace PDFPatcher.Processor
 					return;
 				}
 			}
+
 			var l = w.Size;
 			PdfObject cw;
 			int cid;
@@ -404,6 +456,7 @@ namespace PDFPatcher.Processor
 				if (++i >= l) {
 					break;
 				}
+
 				cw = w[i];
 				if (cw.Type == PdfObject.ARRAY) {
 					foreach (var width in cw as PdfArray) {
@@ -412,9 +465,11 @@ namespace PDFPatcher.Processor
 							Console.WriteLine(cid.ToString() + "－无法解码CID");
 							continue;
 						}
+
 						++cid;
 						widths[u] = (width as PdfNumber).IntValue;
-						Console.WriteLine(String.Join(" ", new string[] { cid.ToString(), ((char)u).ToString(), widths[u].ToString() }));
+						Console.WriteLine(String.Join(" ",
+							new string[] {cid.ToString(), ((char)u).ToString(), widths[u].ToString()}));
 					}
 				}
 				else if (cw.Type == PdfObject.NUMBER) {
@@ -426,8 +481,10 @@ namespace PDFPatcher.Processor
 							Console.WriteLine(cid.ToString() + "－无法解码CID");
 							continue;
 						}
+
 						widths[u] = width;
-						Console.WriteLine(String.Join(" ", new string[] { cid.ToString(), ((char)u).ToString(), width.ToString() }));
+						Console.WriteLine(String.Join(" ",
+							new string[] {cid.ToString(), ((char)u).ToString(), width.ToString()}));
 					} while (++cid < cid2);
 				}
 			}
@@ -443,8 +500,9 @@ namespace PDFPatcher.Processor
 			var metrics = new int[font.UsedCidMap.Count][];
 			var i = -1;
 			foreach (var m in font.UsedCidMap) {
-				metrics[++i] = new int[] { m.Value, 0, m.Key };
+				metrics[++i] = new int[] {m.Value, 0, m.Key};
 			}
+
 			var ttf = (font.Font.BaseFont as TrueTypeFontUnicode);
 			Array.Sort(metrics, ttf);
 			var u = pdf.AddPdfObject(ttf.GetToUnicode(metrics));
@@ -456,6 +514,7 @@ namespace PDFPatcher.Processor
 			if (l == 0) {
 				return;
 			}
+
 			var widths = new CharacterWidth[l];
 			var i = -1;
 			int width;
@@ -463,8 +522,10 @@ namespace PDFPatcher.Processor
 				if (item.Value == FontInfo.DefaultDefaultWidth) {
 					continue;
 				}
+
 				widths[++i] = new CharacterWidth(item.Key, item.Value);
 			}
+
 			l = ++i;
 			Array.Resize(ref widths, l);
 			Array.Sort(widths, CharacterWidth.Compare);
@@ -477,17 +538,17 @@ namespace PDFPatcher.Processor
 				width = widths[i].Width;
 				var i2 = i;
 				id2 = id;
-				var wl = new PdfArray {
-					new PdfNumber(width)
-				};
+				var wl = new PdfArray {new PdfNumber(width)};
 				while (++i2 < l && (cw = widths[i2]).ID == ++id2 && cw.Width != width) {
 					wl.Add(new PdfNumber(cw.Width));
 				}
+
 				if (wl.Size > 1) {
 					w.Add(wl);
 					i = i2 - 1;
 					continue;
 				}
+
 				id2 = id;
 				for (i2 = i + 1; i2 < l; i2++) {
 					cw = widths[i2];
@@ -497,6 +558,7 @@ namespace PDFPatcher.Processor
 						break;
 					}
 				}
+
 				if (i2 > i) {
 					w.Add(new PdfNumber(id2));
 					w.Add(new PdfNumber(width));
@@ -506,6 +568,7 @@ namespace PDFPatcher.Processor
 					w.Add(wl);
 				}
 			}
+
 			if (w.Size > 0) {
 				fontDictionary.Put(PdfName.W, w);
 			}
@@ -516,8 +579,11 @@ namespace PDFPatcher.Processor
 				var newFont = font.Value;
 				Tracker.TraceMessage("嵌入字体：" + newFont.Font.Familyname + "(" + newFont.UsedCidMap.Count + "字)");
 				if (newFont.AbsentChars.Count > 0) {
-					Tracker.TraceMessage(Tracker.Category.ImportantMessage, String.Concat("丢失", newFont.AbsentChars.Count, "字：", new String(newFont.AbsentChars.ToArray())));
+					Tracker.TraceMessage(Tracker.Category.ImportantMessage,
+						String.Concat("丢失", newFont.AbsentChars.Count, "字：",
+							new String(newFont.AbsentChars.ToArray())));
 				}
+
 				ChangeLegacyFontDictionary(pdf, newFont);
 
 				var ttf = newFont.Font.BaseFont as TrueTypeFontUnicode;
@@ -539,7 +605,6 @@ namespace PDFPatcher.Processor
 				csi.Put(PdfName.ORDERING, new PdfString("Identity"));
 				csi.Put(PdfName.SUPPLEMENT, new PdfNumber(0));
 				df.Put(PdfName.CIDSYSTEMINFO, csi);
-
 			}
 		}
 
@@ -551,8 +616,9 @@ namespace PDFPatcher.Processor
 				var d = new Dictionary<int, int[]>(ef.UsedCidMap.Count);
 				foreach (var item in ef.UsedCidMap) {
 					metricsTT = ttf.GetMetricsTT(item.Key);
-					d.Add(item.Value, new int[] { metricsTT[0], metricsTT[1], item.Key });
+					d.Add(item.Value, new int[] {metricsTT[0], metricsTT[1], item.Key});
 				}
+
 				//ttf.AddRangeUni (d, false, true);
 				var f = new CFFFontSubset(new RandomAccessFileOrArray(ttf.ReadCffFont()), d);
 				b = f.Process(f.GetNames()[0]);
@@ -560,13 +626,16 @@ namespace PDFPatcher.Processor
 			else {
 				var r = new int[ef.UsedCidMap.Count];
 				ef.UsedCidMap.Values.CopyTo(r, 0);
-				var ts = new TrueTypeFontSubSet(ttf.FileName, new RandomAccessFileOrArray(ttf.FileName), new System.util.collections.HashSet2<int>(r), ttf.DirectoryOffset, true, true);
+				var ts = new TrueTypeFontSubSet(ttf.FileName, new RandomAccessFileOrArray(ttf.FileName),
+					new System.util.collections.HashSet2<int>(r), ttf.DirectoryOffset, true, true);
 				b = ts.Process();
 			}
+
 			var s = new PdfStream(b);
 			if (ttf.Cff) {
 				s.Put(PdfName.SUBTYPE, new PdfName("CIDFontType0C"));
 			}
+
 			s.FlateCompress();
 			s.Put(PdfName.LENGTH1, new PdfNumber(b.Length));
 			return s;
@@ -581,6 +650,7 @@ namespace PDFPatcher.Processor
 				ID = id;
 				Width = width;
 			}
+
 			public static int Compare(CharacterWidth x, CharacterWidth y) {
 				return x.ID.CompareTo(y.ID);
 			}
@@ -592,19 +662,23 @@ namespace PDFPatcher.Processor
 			public Dictionary<int, PdfDictionary> FontDictionaries { get; set; }
 			public PRIndirectReference FontRef { get; set; }
 			public PdfIndirectReference DescendantFontRef { get; set; }
+
 			/// <summary>
 			/// 字体 Unicode 到宽度的映射表。
 			/// </summary>
 			public Dictionary<int, int> GlyphWidths { get; }
+
 			/// <summary>
 			/// 字体 Unicode 和 CID 的映射表。
 			/// </summary>
 			public Dictionary<int, int> UsedCidMap { get; }
+
 			public string SubsetPrefix { get; private set; }
 			public string FontName => SubsetPrefix + _Font.Familyname;
 			public HashSet<char> AbsentChars { get; }
 			public Dictionary<char, char> CharSubstitutions { get; }
 			Font _Font;
+
 			public Font Font {
 				get => _Font;
 				set {

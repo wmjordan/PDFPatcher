@@ -17,6 +17,5 @@ namespace PDFPatcher.Model
 
 		[XmlAttribute(Constants.PageLabelsAttributes.Style)]
 		public string Style { get; set; }
-
 	}
 }

@@ -7,9 +7,10 @@ namespace PDFPatcher.Functions
 {
 	public partial class ViewerPreferenceEditor : UserControl
 	{
-		readonly string[] __bookmarkStatus = new string[] { "保持不变", "全部关闭", "全部打开", "打开首层" };
+		readonly string[] __bookmarkStatus = new string[] {"保持不变", "全部关闭", "全部打开", "打开首层"};
 		bool _settingsLockdown;
 		ViewerOptions _Options;
+
 		internal ViewerOptions Options {
 			get => _Options;
 			set {
@@ -42,9 +43,9 @@ namespace PDFPatcher.Functions
 			_settingsLockdown = true;
 			_ForceBookmarkOpenBox.FormattingEnabled
 				= _ForceDirectionBox.FormattingEnabled
-				= _ForceInitialModeBox.FormattingEnabled
-				= _ForceInitialViewBox.FormattingEnabled
-				= false;
+					= _ForceInitialModeBox.FormattingEnabled
+						= _ForceInitialViewBox.FormattingEnabled
+							= false;
 			_ForceBookmarkOpenBox.AddRange(__bookmarkStatus).Select(0);
 			_ForceInitialViewBox.AddRange(Constants.PageLayoutType.Names).Select(0);
 			_ForceDirectionBox.AddRange(Constants.ViewerPreferencesType.DirectionType.Names).Select(0);
@@ -76,7 +77,7 @@ namespace PDFPatcher.Functions
 			else if (sender == _OverrideUISettingsBox) {
 				Options.SpecifyViewerPreferences
 					= _UISettingsPanel.Enabled
-					= _OverrideUISettingsBox.Checked;
+						= _OverrideUISettingsBox.Checked;
 			}
 			else if (sender == _HideMenuBox) {
 				Options.HideMenu = _HideMenuBox.Checked;

@@ -17,6 +17,7 @@ namespace PDFPatcher.Common
 
 		private int _Precision;
 		private float _PreservedValue;
+
 		///<summary>获取或指定转换精度的值。</summary>
 		[XmlIgnore]
 		public int Precision {
@@ -25,12 +26,14 @@ namespace PDFPatcher.Common
 				if (value < 0 || value > 6) {
 					throw new ArgumentException("转换精度不能小于 0 或大于 6。");
 				}
+
 				_Precision = value;
 				_PreservedValue = (float)Math.Pow(0.1, _Precision);
 			}
 		}
 
 		private string _Unit;
+
 		///<summary>获取或指定转换使用的单位。</summary>
 		[XmlAttribute("单位")]
 		public string Unit {
@@ -40,6 +43,7 @@ namespace PDFPatcher.Common
 				if (f == 0) {
 					throw new ArgumentException("尺寸单位无效。");
 				}
+
 				UnitFactor = f;
 				_Unit = value;
 			}
@@ -52,28 +56,32 @@ namespace PDFPatcher.Common
 
 		internal float FromPoint(float point) {
 			return (point < _PreservedValue && point >= 0) // preserve small fragment
-					? point
-					: (float)Math.Round(point / UnitFactor, _Precision);
+				? point
+				: (float)Math.Round(point / UnitFactor, _Precision);
 		}
 
 		internal float ToPoint(float value) {
-			return (value < _PreservedValue && value >= 0 || value >= 10000) // preserve small fragment or extra large values
-					? value
-					: (float)Math.Round(value * UnitFactor, _Precision);
+			return (value < _PreservedValue && value >= 0 ||
+			        value >= 10000) // preserve small fragment or extra large values
+				? value
+				: (float)Math.Round(value * UnitFactor, _Precision);
 		}
 
 		internal static string FromPoint(string point, float unitFactor) {
 			if (String.IsNullOrEmpty(point) || point == Null) {
 				return Null;
 			}
+
 			if (unitFactor == 1) {
 				return point;
 			}
+
 			if (point.TryParse(out float v)) {
 				return (v < 0.01 && v >= 0) // preserve small fragment
 					? point
 					: (v / unitFactor).ToString(ToStringFormat, NumberFormatInfo.InvariantInfo);
 			}
+
 			return point;
 		}
 
@@ -87,24 +95,24 @@ namespace PDFPatcher.Common
 			if (String.IsNullOrEmpty(value) || value == Null) {
 				return Null;
 			}
+
 			if (value.TryParse(out float v)) {
 				return (v < 0.01 && v >= 0) // preserve small fragment
 					? value
 					: (v * unitFactor).ToString(ToStringFormat, NumberFormatInfo.InvariantInfo);
 			}
+
 			return value;
 		}
 
 		internal static float ToPoint(float value, float unitFactor) {
 			return (value < 0.01 && value >= 0 || value >= 10000) // preserve small fragment or extra large values
-					? value
-					: (value * unitFactor);
+				? value
+				: (value * unitFactor);
 		}
 
 		internal static float[] ConvertUnit(float[] source, float factor) {
 			return Array.ConvertAll(source, i => ToPoint(i, factor));
 		}
-
-
 	}
 }

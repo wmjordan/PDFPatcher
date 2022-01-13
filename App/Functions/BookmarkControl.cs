@@ -35,6 +35,7 @@ namespace PDFPatcher
 		}
 
 		private bool _UseForBookmarkExport;
+
 		///<summary>获取或指定是否用于导出书签。</summary>
 		[DefaultValue(false)]
 		[Description("点击浏览按钮时是否打开保存对话框")]
@@ -47,7 +48,9 @@ namespace PDFPatcher
 
 		private void _BrowseSourcePdfButton_Click(object sender, EventArgs e) {
 			BrowseForFile?.Invoke(sender, e);
-			var sourceFile = (AppContext.SourceFiles != null && AppContext.SourceFiles.Length > 0) ? AppContext.SourceFiles[0] : String.Empty;
+			var sourceFile = (AppContext.SourceFiles != null && AppContext.SourceFiles.Length > 0)
+				? AppContext.SourceFiles[0]
+				: String.Empty;
 			if (FileHelper.IsPathValid(_BookmarkBox.Text) && System.IO.Path.GetFileName(_BookmarkBox.Text).Length > 0) {
 				var p = new FilePath(_BookmarkBox.Text);
 				_OpenBookmarkBox.SetLocation(p);
@@ -58,6 +61,7 @@ namespace PDFPatcher
 				_SaveBookmarkBox.SetLocation(p);
 				_OpenBookmarkBox.SetLocation(p);
 			}
+
 			if (_UseForBookmarkExport) {
 				if (_SaveBookmarkBox.ShowDialog() == DialogResult.OK) {
 					_BookmarkBox.Text = _SaveBookmarkBox.FileName;
@@ -67,6 +71,7 @@ namespace PDFPatcher
 				if (_OpenBookmarkBox.FileName == _BookmarkBox.Text) {
 					return;
 				}
+
 				_BookmarkBox.Text = _OpenBookmarkBox.FileName;
 			}
 		}
@@ -94,8 +99,8 @@ namespace PDFPatcher
 			else if (Visible == false) {
 				_BookmarkBox.Contents = null;
 			}
+
 			_BookmarkBox.Text = t;
 		}
-
 	}
 }

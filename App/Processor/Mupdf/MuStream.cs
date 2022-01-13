@@ -10,33 +10,41 @@ namespace MuPdfSharp
 		const int __CompressionBomb = 100 << 20;
 
 		#region 非托管资源成员
+
 		readonly StreamHandle _stream;
 		readonly ContextHandle _context;
 		GCHandle _data;
+
 		#endregion
 
 		#region 托管资源成员
+
 		readonly int _knownDataLength;
 		readonly bool _sharedContext;
+
 		/// <summary>获取或设置游标位置。</summary>
 		public int Position {
 			get => NativeMethods.GetPosition(_context, _stream);
 			set => Seek(value, SeekOrigin.Begin);
 		}
+
 		#endregion
 
 		internal MuStream(byte[] data) {
 			var ctx = ContextHandle.Create();
 			_knownDataLength = data.Length;
 			_data = GCHandle.Alloc(data, GCHandleType.Pinned);
-			_stream = new StreamHandle(ctx, NativeMethods.OpenMemory(ctx, _data.AddrOfPinnedObject(), _knownDataLength));
+			_stream = new StreamHandle(ctx,
+				NativeMethods.OpenMemory(ctx, _data.AddrOfPinnedObject(), _knownDataLength));
 			_context = ctx;
 		}
+
 		internal MuStream(ContextHandle ctx, string fileName) {
 			_stream = new StreamHandle(ctx, fileName);
 			_knownDataLength = -1;
 			_sharedContext = true;
 		}
+
 		private MuStream(ContextHandle ctx, StreamHandle stream) {
 			_context = ctx;
 			_stream = stream;
@@ -75,6 +83,7 @@ namespace MuPdfSharp
 							throw new IOException("Compression bomb detected.");
 						}
 					}
+
 					ms.Flush();
 					return ms.ToArray();
 				}
@@ -87,7 +96,8 @@ namespace MuPdfSharp
 		/// <param name="offset">偏移位置。</param>
 		/// <param name="origin">跳转方式。</param>
 		public void Seek(int offset, SeekOrigin origin) {
-			NativeMethods.Seek(_context, _stream, offset, origin == SeekOrigin.Begin ? 0 : origin == SeekOrigin.Current ? 1 : 2);
+			NativeMethods.Seek(_context, _stream, offset,
+				origin == SeekOrigin.Begin ? 0 : origin == SeekOrigin.Current ? 1 : 2);
 		}
 
 		/// <summary>
@@ -101,15 +111,20 @@ namespace MuPdfSharp
 		/// <param name="endOfBlock"></param>
 		/// <param name="blackIs1"></param>
 		/// <returns>解压缩后的图像数据。</returns>
-		public MuStream DecodeTiffFax(int width, int height, int k, bool endOfLine, bool encodedByteAlign, bool endOfBlock, bool blackIs1) {
+		public MuStream DecodeTiffFax(int width, int height, int k, bool endOfLine, bool encodedByteAlign,
+			bool endOfBlock, bool blackIs1) {
 			return new MuStream(
 				_context,
-				new StreamHandle(_context, NativeMethods.DecodeCcittFax(_context, _stream, k, endOfLine ? 1 : 0, encodedByteAlign ? 1 : 0, width, height, endOfBlock ? 1 : 0, blackIs1 ? 1 : 0))
-				);
+				new StreamHandle(_context,
+					NativeMethods.DecodeCcittFax(_context, _stream, k, endOfLine ? 1 : 0, encodedByteAlign ? 1 : 0,
+						width, height, endOfBlock ? 1 : 0, blackIs1 ? 1 : 0))
+			);
 		}
 
 		#region 实现 IDisposable 接口的属性和方法
+
 		private bool disposed;
+
 		public void Dispose() {
 			Dispose(true);
 			GC.SuppressFinalize(this); // 抑制析构函数
@@ -121,23 +136,30 @@ namespace MuPdfSharp
 			if (!disposed) {
 				if (disposing) {
 					#region 释放托管资源
+
 					//_components.Dispose ();
+
 					#endregion
 				}
 
 				#region 释放非托管资源
+
 				// 注意这里不是线程安全的
 				if (_stream.IsValid()) {
 					_stream.Dispose();
 				}
+
 				if (_sharedContext == false && _context.IsValid()) {
 					_context.Dispose();
 				}
+
 				if (_data.IsAllocated) {
 					_data.Free();
 				}
+
 				#endregion
 			}
+
 			disposed = true;
 		}
 
@@ -146,6 +168,7 @@ namespace MuPdfSharp
 		~MuStream() {
 			Dispose(false);
 		}
+
 		#endregion
 	}
 }

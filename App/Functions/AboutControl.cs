@@ -30,13 +30,15 @@ namespace PDFPatcher
 
 		public string AssemblyTitle {
 			get {
-				var attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
+				var attributes = Assembly.GetExecutingAssembly()
+					.GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
 				if (attributes.Length > 0) {
 					var titleAttribute = (AssemblyTitleAttribute)attributes[0];
 					if (titleAttribute.Title != "") {
 						return titleAttribute.Title;
 					}
 				}
+
 				return System.IO.Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().CodeBase);
 			}
 		}
@@ -45,31 +47,38 @@ namespace PDFPatcher
 
 		public string AssemblyDescription {
 			get {
-				var attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyDescriptionAttribute), false);
-				return attributes.Length == 0 ? String.Empty : ((AssemblyDescriptionAttribute)attributes[0]).Description;
+				var attributes = Assembly.GetExecutingAssembly()
+					.GetCustomAttributes(typeof(AssemblyDescriptionAttribute), false);
+				return attributes.Length == 0
+					? String.Empty
+					: ((AssemblyDescriptionAttribute)attributes[0]).Description;
 			}
 		}
 
 		public string AssemblyProduct {
 			get {
-				var attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyProductAttribute), false);
+				var attributes = Assembly.GetExecutingAssembly()
+					.GetCustomAttributes(typeof(AssemblyProductAttribute), false);
 				return attributes.Length == 0 ? String.Empty : ((AssemblyProductAttribute)attributes[0]).Product;
 			}
 		}
 
 		public string AssemblyCopyright {
 			get {
-				var attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
+				var attributes = Assembly.GetExecutingAssembly()
+					.GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
 				return attributes.Length == 0 ? String.Empty : ((AssemblyCopyrightAttribute)attributes[0]).Copyright;
 			}
 		}
 
 		public string AssemblyCompany {
 			get {
-				var attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCompanyAttribute), false);
+				var attributes = Assembly.GetExecutingAssembly()
+					.GetCustomAttributes(typeof(AssemblyCompanyAttribute), false);
 				return attributes.Length == 0 ? String.Empty : ((AssemblyCompanyAttribute)attributes[0]).Company;
 			}
 		}
+
 		#endregion
 
 		public override void ExecuteCommand(string commandName, params string[] parameters) {
@@ -81,11 +90,13 @@ namespace PDFPatcher
 			}
 		}
 
-		private void _FrontPageBox_ImageLoad(object sender, TheArtOfDev.HtmlRenderer.Core.Entities.HtmlImageLoadEventArgs e) {
+		private void _FrontPageBox_ImageLoad(object sender,
+			TheArtOfDev.HtmlRenderer.Core.Entities.HtmlImageLoadEventArgs e) {
 			LoadResourceImage(e);
 		}
 
-		private void _FrontPageBox_LinkClicked(object sender, TheArtOfDev.HtmlRenderer.Core.Entities.HtmlLinkClickedEventArgs e) {
+		private void _FrontPageBox_LinkClicked(object sender,
+			TheArtOfDev.HtmlRenderer.Core.Entities.HtmlLinkClickedEventArgs e) {
 			HandleLinkClicked(e.Link);
 			e.Handled = true;
 		}

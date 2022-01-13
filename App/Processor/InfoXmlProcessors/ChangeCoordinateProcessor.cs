@@ -38,6 +38,7 @@ namespace PDFPatcher.Processor
 			else {
 				return null;
 			}
+
 			return UndoAttributeAction.GetUndoAction(item, CoordinateName, v);
 		}
 

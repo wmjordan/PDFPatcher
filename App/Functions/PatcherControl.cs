@@ -52,33 +52,36 @@ namespace PDFPatcher.Functions
 				int i;
 				var f = _TargetPdfFile.FileDialog.FileName;
 				if (_ItemList.Items.Count > 1 && (i = f.LastIndexOf(Path.DirectorySeparatorChar)) != -1) {
-					_TargetPdfFile.Text = String.Concat(f.Substring(0, i), Path.DirectorySeparatorChar, Constants.FileNameMacros.FileName, Path.GetExtension(f));
+					_TargetPdfFile.Text = String.Concat(f.Substring(0, i), Path.DirectorySeparatorChar,
+						Constants.FileNameMacros.FileName, Path.GetExtension(f));
 					args.Cancel = true;
 				}
 			};
 			var fi = _FileTypeList.Images;
-			fi.AddRange(new System.Drawing.Image[] {
-				Properties.Resources.OriginalPdfFile
-			});
+			fi.AddRange(new System.Drawing.Image[] {Properties.Resources.OriginalPdfFile});
 
 			_ItemList.FixEditControlWidth();
 			_ItemList.ListViewItemSorter = new ListViewItemComparer(0);
 			_listHelper = new FileListHelper(_ItemList);
 			_listHelper.SetupHotkeys();
 			_listHelper.SetupDragAndDrop(AddFiles);
-			FileListHelper.SetupCommonPdfColumns(_AuthorColumn, _KeywordsColumn, _SubjectColumn, _TitleColumn, _PageCountColumn, _NameColumn, _FolderColumn);
-			_RefreshInfoButton.ButtonClick += (s, args) => _listHelper.RefreshInfo(AppContext.Encodings.DocInfoEncoding);
+			FileListHelper.SetupCommonPdfColumns(_AuthorColumn, _KeywordsColumn, _SubjectColumn, _TitleColumn,
+				_PageCountColumn, _NameColumn, _FolderColumn);
+			_RefreshInfoButton.ButtonClick +=
+				(s, args) => _listHelper.RefreshInfo(AppContext.Encodings.DocInfoEncoding);
 			_RefreshInfoButton.DropDown = _RefreshInfoMenu;
 			foreach (var item in Constants.Encoding.EncodingNames) {
 				_RefreshInfoMenu.Items.Add(item);
 			}
+
 			_RefreshInfoMenu.ItemClicked += (s, args) => {
-				_listHelper.RefreshInfo(ValueHelper.MapValue(args.ClickedItem.Text, Constants.Encoding.EncodingNames, Constants.Encoding.Encodings));
+				_listHelper.RefreshInfo(ValueHelper.MapValue(args.ClickedItem.Text, Constants.Encoding.EncodingNames,
+					Constants.Encoding.Encodings));
 			};
 
 			RecentFileItemClicked = (s, args) => {
 				args.ClickedItem.Owner.Hide();
-				AddFiles(new string[] { args.ClickedItem.ToolTipText }, true);
+				AddFiles(new string[] {args.ClickedItem.ToolTipText}, true);
 			};
 		}
 
@@ -108,6 +111,7 @@ namespace PDFPatcher.Functions
 				EnableCommand(item, true, true);
 				item.Tag = nameof(Function.PatcherOptions);
 			}
+
 			base.SetupCommand(item);
 		}
 
@@ -119,21 +123,26 @@ namespace PDFPatcher.Functions
 			if (files == null || files.Length == 0) {
 				return;
 			}
+
 			if ((ModifierKeys & Keys.Control) != Keys.None || _AutoClearListBox.Checked) {
 				_ItemList.ClearObjects();
 			}
+
 			if (files.Length > 3) {
 				AppContext.MainForm.Enabled = false;
 			}
+
 			if (files.Length == 0) {
 				return;
 			}
+
 			_AddDocumentWorker.RunWorkerAsync(files);
 		}
 
 		void _ImportButton_Click(object sender, EventArgs e) {
 			var targetPdfFile = _TargetPdfFile.Text.Trim();
-			if (String.IsNullOrEmpty(targetPdfFile) && String.IsNullOrEmpty(targetPdfFile = _TargetPdfFile.BrowseTargetFile())) {
+			if (String.IsNullOrEmpty(targetPdfFile) &&
+			    String.IsNullOrEmpty(targetPdfFile = _TargetPdfFile.BrowseTargetFile())) {
 				Common.FormHelper.ErrorBox(Messages.TargetFileNotSpecified);
 				return;
 			}
@@ -147,6 +156,7 @@ namespace PDFPatcher.Functions
 				Common.FormHelper.InfoBox("请添加需要处理的 PDF 文件。");
 				return;
 			}
+
 			var files = GetSourceItemList();
 			_TargetPdfFile.FileList.AddHistoryItem();
 
@@ -161,12 +171,14 @@ namespace PDFPatcher.Functions
 					if (m == false) {
 						targetFolder = Path.GetDirectoryName(t);
 					}
+
 					Tracker.SetTotalProgressGoal(files.Count);
 					foreach (var file in files) {
 						if (file.Type == SourceItem.ItemType.Pdf) {
 							// 确定信息文件名
 							// 优先采用与输入文件同名的 XML 信息文件
-							var f = new FilePath(FileHelper.CombinePath(file.FolderName, Path.ChangeExtension(file.FileName, Constants.FileExtensions.Xml)));
+							var f = new FilePath(FileHelper.CombinePath(file.FolderName,
+								Path.ChangeExtension(file.FileName, Constants.FileExtensions.Xml)));
 							if (f.ExistsFile == false) {
 								// 次之采用与输入文件同名的 TXT 信息文件
 								f = f.ChangeExtension(Constants.FileExtensions.Txt);
@@ -188,6 +200,7 @@ namespace PDFPatcher.Functions
 						else {
 							Tracker.TraceMessage("输入文件不是 PDF 文件。");
 						}
+
 						Tracker.IncrementTotalProgress();
 						if (AppContext.Abort) {
 							return;
@@ -199,6 +212,7 @@ namespace PDFPatcher.Functions
 						Tracker.TraceMessage("输入文件不是 PDF 文件。");
 						return;
 					}
+
 					Processor.Worker.PatchDocument(files[0] as SourceItem.Pdf,
 						t,
 						a[1] as string,
@@ -206,7 +220,7 @@ namespace PDFPatcher.Functions
 						AppContext.Patcher);
 				}
 			};
-			worker.RunWorkerAsync(new object[] { targetPdfFile, null });
+			worker.RunWorkerAsync(new object[] {targetPdfFile, null});
 		}
 
 		List<SourceItem> GetSourceItemList() {
@@ -215,11 +229,13 @@ namespace PDFPatcher.Functions
 			for (int i = 0; i < l; i++) {
 				var item = _ItemList.GetModelObject(_ItemList.GetNthItemInDisplayOrder(i).Index) as SourceItem;
 				if (item.Type == SourceItem.ItemType.Pdf
-					&& FileHelper.HasExtension(item.FilePath, Constants.FileExtensions.Pdf)) {
+				    && FileHelper.HasExtension(item.FilePath, Constants.FileExtensions.Pdf)) {
 					AppContext.RecentItems.AddHistoryItem(AppContext.Recent.SourcePdfFiles, item.FilePath.ToString());
 				}
+
 				files.Add(item);
 			}
+
 			return files;
 		}
 
@@ -246,6 +262,7 @@ namespace PDFPatcher.Functions
 		}
 
 		#region AddDocumentWorker
+
 		void _AddDocumentWorker_DoWork(object sender, DoWorkEventArgs e) {
 			var files = e.Argument as string[];
 			Array.ForEach(files, f => {
@@ -267,7 +284,8 @@ namespace PDFPatcher.Functions
 			if (item == null) {
 				return;
 			}
-			AddItems(new SourceItem[] { item });
+
+			AddItems(new SourceItem[] {item});
 		}
 
 		void AddItems(System.Collections.ICollection items) {
@@ -275,7 +293,7 @@ namespace PDFPatcher.Functions
 			_ItemList.InsertObjects(++i, items);
 			_ItemList.SelectedIndex = --i + items.Count;
 		}
-		#endregion
 
+		#endregion
 	}
 }

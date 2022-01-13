@@ -9,10 +9,12 @@ namespace PDFPatcher.Functions.Editor
 	sealed class SaveDocumentCommand : IEditorCommand
 	{
 		readonly bool _showDialog, _saveAsBookmark;
+
 		public SaveDocumentCommand(bool showDialog, bool saveAsBookmark) {
 			_saveAsBookmark = saveAsBookmark;
 			_showDialog = showDialog;
 		}
+
 		public void Process(Controller controller, params string[] parameters) {
 			if (_saveAsBookmark) {
 				SaveBookmark(controller, _showDialog);
@@ -31,16 +33,17 @@ namespace PDFPatcher.Functions.Editor
 			}
 
 			if (t.HasExtension(Constants.FileExtensions.Xml) == false
-				|| showDialog) {
+			    || showDialog) {
 				using (var d = new SaveFileDialog() {
-					DefaultExt = Constants.FileExtensions.Xml,
-					Title = "指定保存文件的路径",
-					Filter = Constants.FileExtensions.XmlFilter + "|" + Constants.FileExtensions.TxtFilter
-				}) {
+					       DefaultExt = Constants.FileExtensions.Xml,
+					       Title = "指定保存文件的路径",
+					       Filter = Constants.FileExtensions.XmlFilter + "|" + Constants.FileExtensions.TxtFilter
+				       }) {
 					if (t.ExistsFile) {
 						d.InitialDirectory = t.Directory;
 						d.FileName = t.FileNameWithoutExtension;
 					}
+
 					if (d.ShowDialog() == DialogResult.OK) {
 						t = d.FileName;
 					}
@@ -57,6 +60,7 @@ namespace PDFPatcher.Functions.Editor
 					if (mudoc != null) {
 						writer.WriteLine("#" + Constants.Info.DocumentPath + "=" + mudoc.FilePath);
 					}
+
 					writer.WriteLine("#缩进标记=" + indentString);
 					writer.WriteLine("#首页页码=1");
 					writer.WriteLine();
@@ -69,8 +73,10 @@ namespace PDFPatcher.Functions.Editor
 					if (mudoc != null) {
 						idoc.PdfDocumentPath = mudoc.FilePath;
 					}
+
 					idoc.WriteContentTo(writer);
 				}
+
 				controller.View.DocumentPath = t;
 
 				RecentFileMenuHelper.AddRecentHistoryFile(t);
@@ -84,9 +90,13 @@ namespace PDFPatcher.Functions.Editor
 				FormHelper.ErrorBox("尚未加载书签文档。");
 				return;
 			}
+
 			using (var f = new SavePdfForm(m.GetPdfFilePath(), m.LastSavedPdfPath, m.Document)) {
 				f.DoWork = (s, args) => vv.CloseFile();
-				f.Finished = (s, args) => { vv.Reopen(); vv.Enabled = true; };
+				f.Finished = (s, args) => {
+					vv.Reopen();
+					vv.Enabled = true;
+				};
 
 				if (f.ShowDialog() == DialogResult.OK) {
 					vv.Enabled = false;
@@ -95,6 +105,5 @@ namespace PDFPatcher.Functions.Editor
 				}
 			}
 		}
-
 	}
 }

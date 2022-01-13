@@ -32,6 +32,7 @@ namespace PDFPatcher.Functions.Editor
 		internal IEnumerable<XmlNode> ProcessBookmarks(IPdfInfoXmlProcessor processor) {
 			return ProcessBookmarks(View.AffectsDescendantBookmarks, true, processor);
 		}
+
 		/// <summary>
 		/// 逐个处理选中的书签。
 		/// </summary>
@@ -39,7 +40,8 @@ namespace PDFPatcher.Functions.Editor
 		/// <param name="selectChildren">处理时是否遍历选中的内层书签。</param>
 		/// <param name="processor">用于处理书签的 <see cref="IPdfInfoXmlProcessor"/>。</param>
 		/// <returns>处理后的书签。</returns>
-		internal IEnumerable<XmlNode> ProcessBookmarks(bool includeDescendant, bool selectChildren, IPdfInfoXmlProcessor processor) {
+		internal IEnumerable<XmlNode> ProcessBookmarks(bool includeDescendant, bool selectChildren,
+			IPdfInfoXmlProcessor processor) {
 			var b = View.Bookmark;
 			b.Freeze();
 			var si = b.GetSelectedElements(selectChildren);
@@ -53,29 +55,38 @@ namespace PDFPatcher.Functions.Editor
 						break;
 					}
 				}
+
 				b.RefreshObjects(r.ToArray());
 			}
+
 			b.Unfreeze();
 			return r;
 		}
-		HashSet<XmlNode> ProcessBookmarks(IList si, HashSet<XmlElement> processedItems, bool includeDescendant, IPdfInfoXmlProcessor processor) {
+
+		HashSet<XmlNode> ProcessBookmarks(IList si, HashSet<XmlElement> processedItems, bool includeDescendant,
+			IPdfInfoXmlProcessor processor) {
 			if (si == null || si.Count == 0) {
 				return null;
 			}
+
 			var undo = new UndoActionGroup();
 			foreach (BookmarkElement item in si) {
 				ProcessItem(includeDescendant, processor, processedItems, undo, item);
 			}
+
 			if (undo.Count > 0) {
 				Model.Undo.AddUndo(processor.Name, undo);
 			}
+
 			return new HashSet<XmlNode>(undo.AffectedElements);
 		}
 
-		static void ProcessItem(bool includeDescendant, IPdfInfoXmlProcessor processor, HashSet<XmlElement> processedItems, UndoActionGroup undo, BookmarkElement item) {
+		static void ProcessItem(bool includeDescendant, IPdfInfoXmlProcessor processor,
+			HashSet<XmlElement> processedItems, UndoActionGroup undo, BookmarkElement item) {
 			if (item == null || processedItems.Contains(item)) {
 				return;
 			}
+
 			undo.Add(processor.Process(item));
 			processedItems.Add(item);
 			if (includeDescendant) {
@@ -89,6 +100,7 @@ namespace PDFPatcher.Functions.Editor
 			if (Model.Document == null) {
 				Model.Document = new PdfInfoXmlDocument();
 			}
+
 			return Model.Document.BookmarkRoot;
 		}
 
@@ -114,6 +126,7 @@ namespace PDFPatcher.Functions.Editor
 					s = null;
 				}
 			}
+
 			if (s == null) {
 				v.Document.TryDispose();
 				View.AutoBookmark.TryDispose();
@@ -132,6 +145,7 @@ namespace PDFPatcher.Functions.Editor
 				_loader.RunWorkerCompleted -= _LoadBookmarkWorker_RunWorkerCompleted;
 				_loader.Dispose();
 			}
+
 			Model.PdfDocument.TryDispose();
 			View.AutoBookmark.TryDispose();
 		}
@@ -149,6 +163,7 @@ namespace PDFPatcher.Functions.Editor
 				FormHelper.ErrorBox("找不到文件：" + path);
 				return;
 			}
+
 			var ext = Path.GetExtension(path).ToLowerInvariant();
 			var infoDoc = new PdfInfoXmlDocument();
 			switch (ext) {
@@ -164,20 +179,23 @@ namespace PDFPatcher.Functions.Editor
 						View.DocumentPath = path;
 						LoadPdfDocument();
 					}
+
 					if (Model.PdfDocument == null) {
 						return;
 					}
+
 					_loader = new BackgroundWorker();
 					_loader.RunWorkerCompleted += _LoadBookmarkWorker_RunWorkerCompleted;
 					_loader.DoWork += _LoadBookmarkWorker_DoWork;
 					Model.IsLoadingDocument = true;
-					_loader.RunWorkerAsync(new object[] { path, importMode });
+					_loader.RunWorkerAsync(new object[] {path, importMode});
 					break;
 				case "<load>":
 					if (importMode) {
 						LoadInfoDocument(infoDoc, importMode);
 						break;
 					}
+
 					View.Bookmark.ClearObjects();
 					View.DocumentPath = path;
 					LoadInfoDocument(infoDoc, importMode);
@@ -186,6 +204,7 @@ namespace PDFPatcher.Functions.Editor
 				default:
 					return;
 			}
+
 			RecentFileMenuHelper.AddRecentHistoryFile(path);
 			//// 书签编辑器窗口需要重画表头
 			//this._BookmarkBox.HeaderControl.Invalidate ();
@@ -202,10 +221,9 @@ namespace PDFPatcher.Functions.Editor
 					reader.ConsolidateNamedDestinations();
 					Tracker.DebugMessage("get bookmark");
 					e.Result = new object[] {
-					OutlineManager.GetBookmark (reader, new UnitConverter () { Unit = Constants.Units.Point }),
-					importMode,
-					path
-				};
+						OutlineManager.GetBookmark(reader, new UnitConverter() {Unit = Constants.Units.Point}),
+						importMode, path
+					};
 					Tracker.DebugMessage("finished loading");
 				}
 				catch (iTextSharp.text.exceptions.BadPasswordException) {
@@ -229,14 +247,17 @@ namespace PDFPatcher.Functions.Editor
 				InitBookmarkEditor();
 				return;
 			}
+
 			var importMode = (bool)r[1];
 			if (importMode == false) {
 				View.DocumentPath = r[2] as string;
 			}
+
 			if (r[0] is XmlElement b) {
 				var infoDoc = new PdfInfoXmlDocument();
 				var root = infoDoc.DocumentElement;
-				(root.AppendChild(infoDoc.CreateElement(Constants.Units.ThisName)) as XmlElement).SetAttribute(Constants.Units.Unit, Constants.Units.Point);
+				(root.AppendChild(infoDoc.CreateElement(Constants.Units.ThisName)) as XmlElement).SetAttribute(
+					Constants.Units.Unit, Constants.Units.Point);
 				root.AppendChild(infoDoc.ImportNode(b, true));
 				LoadInfoDocument(infoDoc, importMode);
 				if (importMode == false) {
@@ -248,6 +269,7 @@ namespace PDFPatcher.Functions.Editor
 					FormHelper.InfoBox("文档不包含书签。");
 					return;
 				}
+
 				ClearBookmarks();
 				InitBookmarkEditor();
 				//if (_currentFilePath != null) {
@@ -264,8 +286,10 @@ namespace PDFPatcher.Functions.Editor
 				if (m.Count > 0) {
 					ImportBookmarks(b, m);
 				}
+
 				return;
 			}
+
 			// 文档不包含书签
 			if (m.Count == 0) {
 				ClearBookmarks();
@@ -274,6 +298,7 @@ namespace PDFPatcher.Functions.Editor
 				PrepareBookmarkDocument();
 				return;
 			}
+
 			Model.Document = document;
 			LoadBookmarks(b, m);
 			if (Model.PdfDocument != null && document.PageLabelRoot.HasChildNodes) {
@@ -294,6 +319,7 @@ namespace PDFPatcher.Functions.Editor
 			if (Model.Document == null) {
 				Model.Document = new PdfInfoXmlDocument();
 			}
+
 			var d = Model.Document;
 			var g = new UndoActionGroup();
 			var s = editView.GetFirstSelectedModel<BookmarkElement>();
@@ -305,6 +331,7 @@ namespace PDFPatcher.Functions.Editor
 					g.Add(new RemoveElementAction(n));
 					il.Add(n);
 				}
+
 				editView.RefreshObject(s);
 				editView.Expand(s);
 			}
@@ -315,8 +342,10 @@ namespace PDFPatcher.Functions.Editor
 					g.Add(new RemoveElementAction(n));
 					il.Add(n);
 				}
+
 				editView.Roots = d.Bookmarks;
 			}
+
 			editView.SelectedObjects = il;
 			Model.Undo.AddUndo("导入书签", g);
 		}
@@ -355,14 +384,17 @@ namespace PDFPatcher.Functions.Editor
 					if (sb.Length > 100) {
 						break;
 					}
+
 					t = line.Text.TrimEnd();
 					if (sb.Length > 0 && t.Length > 0) {
 						var c = t[0];
 						sb.Append(' ');
 						r = r.Union(line.BBox);
 					}
+
 					sb.Append(t);
 				}
+
 				t = sb.ToString();
 				var b = v.MuRectangleToImageRegion(pp.Page, r);
 				v.SelectionRegion = b;
@@ -391,8 +423,10 @@ namespace PDFPatcher.Functions.Editor
 									sb.Append(' ');
 									b = b.Union(line.Region);
 								}
+
 								sb.Append(t);
 							}
+
 							t = sb.ToString();
 						}
 					}
@@ -404,6 +438,7 @@ namespace PDFPatcher.Functions.Editor
 							b = (RectangleF)tl.Region;
 						}
 					}
+
 					if (b != RectangleF.Empty) {
 						b.Offset(v.GetVirtualImageOffset(pp.Page));
 						v.SelectionRegion = b;
@@ -423,6 +458,7 @@ namespace PDFPatcher.Functions.Editor
 				v.PinPoint = v.PointToImage(cp);
 				ts = EditModel.TextSource.Empty;
 			}
+
 			return new EditModel.Region(pp, t, ts);
 		}
 
@@ -480,19 +516,21 @@ namespace PDFPatcher.Functions.Editor
 			if (position.Page == 0) {
 				return;
 			}
+
 			var l = Model.PdfDocument.PageLabels;
 			if (l == null) {
 				return;
 			}
+
 			var v = View.Viewer;
 			var f = new InsertPageLabelForm {
-				Location = Cursor.Position.Transpose(-16, -16),
-				PageNumber = position.Page
+				Location = Cursor.Position.Transpose(-16, -16), PageNumber = position.Page
 			};
 			var pl = l.Find(position.Page);
 			if (pl.IsEmpty == false) {
 				f.SetValues(pl);
 			}
+
 			f.FormClosed += InsertPageLabelForm_Closed;
 			f.Show();
 		}
@@ -502,21 +540,25 @@ namespace PDFPatcher.Functions.Editor
 			if (form.DialogResult == DialogResult.Cancel) {
 				return;
 			}
+
 			var l = Model.PdfDocument.PageLabels;
 			if (form.DialogResult == DialogResult.OK) {
 				if (l == null) {
 					return;
 				}
+
 				l.Add(form.PageLabel);
 			}
 			else if (form.DialogResult == DialogResult.Abort) {
 				Model.PdfDocument.PageLabels.Remove(form.PageLabel);
 			}
+
 			var pl = Model.Document.PageLabelRoot;
 			pl.InnerText = String.Empty;
 			foreach (var item in l) {
 				pl.AppendChild(Model.Document.CreatePageLabel(item));
 			}
+
 			View.Viewer.Invalidate();
 		}
 
@@ -528,6 +570,7 @@ namespace PDFPatcher.Functions.Editor
 				if (pt < p) {
 					p = pt;
 				}
+
 				InsertBookmark(null, pn, p, InsertBookmarkPositionType.AfterCurrent);
 			}
 			else {
@@ -548,7 +591,7 @@ namespace PDFPatcher.Functions.Editor
 					string.IsNullOrEmpty(s) ? Constants.Bookmark : s,
 					pageNumber > 0 ? pageNumber : 1,
 					position);
-				b.Roots = new XmlElement[] { c };
+				b.Roots = new XmlElement[] {c};
 			}
 			else {
 				var o = b.GetModelObject(i != -1 ? i : b.GetItemCount() - 1) as BookmarkElement;
@@ -559,7 +602,8 @@ namespace PDFPatcher.Functions.Editor
 					g.SetAttribute(o, Constants.BookmarkAttributes.Title, t);
 					g.SetAttribute(o, Constants.DestinationAttributes.Action, Constants.ActionType.Goto);
 					g.SetAttribute(o, Constants.DestinationAttributes.Page, p.ToText());
-					g.SetAttribute(o, Constants.DestinationAttributes.View, Constants.DestinationAttributes.ViewType.XYZ);
+					g.SetAttribute(o, Constants.DestinationAttributes.View,
+						Constants.DestinationAttributes.ViewType.XYZ);
 					g.SetAttribute(o, Constants.Coordinates.Top, position.ToText());
 					Model.Undo.AddUndo("替换书签", g);
 					c = o;
@@ -580,6 +624,7 @@ namespace PDFPatcher.Functions.Editor
 							else {
 								goto default;
 							}
+
 							break;
 						case InsertBookmarkPositionType.BeforeCurrent:
 							o.ParentNode.InsertBefore(c, o);
@@ -588,8 +633,10 @@ namespace PDFPatcher.Functions.Editor
 							o.ParentNode.InsertAfter(c, o);
 							break;
 					}
+
 					Model.Undo.AddUndo("插入书签", new RemoveElementAction(c));
 				}
+
 				if (c.ParentNode.Name == Constants.DocumentBookmark) {
 					b.SetObjects(c.Parent.SubBookmarks);
 				}
@@ -598,13 +645,15 @@ namespace PDFPatcher.Functions.Editor
 					b.RefreshObject(c);
 				}
 			}
+
 			if (c != null) {
 				if (c.ParentNode.Name == Constants.Bookmark) {
 					b.Expand(c.ParentNode);
 				}
+
 				b.Expand(c);
-				b.EnsureItemsVisible(new BookmarkElement[] { c });
-				b.SelectedObjects = new BookmarkElement[] { c };
+				b.EnsureItemsVisible(new BookmarkElement[] {c});
+				b.SelectedObjects = new BookmarkElement[] {c};
 				b.FocusedObject = c;
 				//_BookmarkBox.ModelToItem (c).BeginEdit ();
 			}
@@ -614,6 +663,7 @@ namespace PDFPatcher.Functions.Editor
 			if (Model.Undo.CanUndo == false) {
 				return;
 			}
+
 			Model.LockDownViewer = true;
 			var sl = View.Bookmark.SelectedObjects;
 			XmlElement e;
@@ -636,6 +686,7 @@ namespace PDFPatcher.Functions.Editor
 			if (r) {
 				View.Bookmark.Roots = Model.Document.Bookmarks;
 			}
+
 			View.Bookmark.SelectedObjects = sl;
 			View.UndoButton.Enabled = Model.Undo.CanUndo;
 			Model.LockDownViewer = false;
@@ -646,6 +697,7 @@ namespace PDFPatcher.Functions.Editor
 			if (l < 2) {
 				return;
 			}
+
 			var p = es[0].ParentNode;
 			for (int i = 1; i < l; i++) {
 				//if (es[i].SelectSingleNode (Constants.Bookmark) != null) {
@@ -657,6 +709,7 @@ namespace PDFPatcher.Functions.Editor
 					return;
 				}
 			}
+
 			var undo = new UndoActionGroup();
 			var ts = new string[l];
 			var dest = es[0];
@@ -670,14 +723,17 @@ namespace PDFPatcher.Functions.Editor
 						ts[i] = " " + ts[i];
 					}
 				}
+
 				while (es[i].HasChildNodes) {
 					var c = es[i].FirstChild as XmlElement;
 					if (c == null) {
 						continue;
 					}
+
 					undo.Add(new AddElementAction(c));
 					ct.AppendChild(c);
 				}
+
 				if (es[i].ParentNode == p) {
 					undo.Add(new AddElementAction(es[i]));
 					p.RemoveChild(es[i]);
@@ -687,9 +743,11 @@ namespace PDFPatcher.Functions.Editor
 					dest.RemoveChild(es[i]);
 				}
 			}
+
 			while (ct.HasChildNodes) {
 				dest.AppendChild(ct.FirstChild);
 			}
+
 			undo.Add(UndoAttributeAction.GetUndoAction(dest, Constants.BookmarkAttributes.Title, String.Concat(ts)));
 			var b = View.Bookmark;
 			if (p.Name != Constants.DocumentBookmark) {
@@ -698,6 +756,7 @@ namespace PDFPatcher.Functions.Editor
 			else {
 				b.SetObjects(p.SelectNodes(Constants.Bookmark));
 			}
+
 			Model.Undo.AddUndo("合并书签", undo);
 			b.RefreshObject(dest);
 			b.SelectObject(dest);
@@ -708,6 +767,7 @@ namespace PDFPatcher.Functions.Editor
 			if (textInfo.Spans == null) {
 				return;
 			}
+
 			foreach (var span in textInfo.Spans) {
 				var s = textInfo.Page.GetFont(span);
 				if (s != null) {
@@ -719,12 +779,15 @@ namespace PDFPatcher.Functions.Editor
 							goto NEXT;
 						}
 					}
+
 					if (m == false) {
 						Model.TitleStyles.Add(new EditModel.AutoBookmarkStyle(level, s.Name, fs));
 					}
 				}
-			NEXT:;
+
+				NEXT: ;
 			}
+
 			ShowAutoBookmarkForm();
 		}
 
@@ -734,6 +797,7 @@ namespace PDFPatcher.Functions.Editor
 				f.Location = Cursor.Position.Transpose(-16, -16);
 				f.Show(View.Viewer);
 			}
+
 			f.SetValues(Model.TitleStyles);
 		}
 
@@ -746,16 +810,19 @@ namespace PDFPatcher.Functions.Editor
 			if (bs.Count == 0) {
 				return;
 			}
+
 			bs.Sort((x, y) => x.Level - y.Level);
 			var mp = new MatchPattern.IMatcher[bs.Count];
 			for (var i = 0; i < bs.Count; i++) {
 				mp[i] = bs[i].MatchPattern?.CreateMatcher();
 			}
+
 			var ug = new UndoActionGroup();
 			Model.Undo.AddUndo("自动生成书签", ug);
 			foreach (XmlElement item in bm.SubBookmarks) {
 				ug.Add(new AddElementAction(item));
 			}
+
 			bm.RemoveAll();
 			var spans = new List<MuPdfSharp.MuTextSpan>(3);
 			var bl = 0;
@@ -770,18 +837,21 @@ namespace PDFPatcher.Functions.Editor
 									var style = bs[si];
 									var matcher = mp[si];
 									if (style.FontName != PdfDocumentFont.RemoveSubsetPrefix(p.GetFont(span).Name)
-										|| style.FontSize != span.Size.ToInt32()) {
+									    || style.FontSize != span.Size.ToInt32()) {
 										continue;
 									}
+
 									var t = span.Text;
 									var b = span.Box;
 									if (t.Length == 0) {
 										continue;
 									}
+
 									if (bl < style.Level) {
 										if (matcher?.Matches(line.Text) == false) {
 											continue;
 										}
+
 										bm = CreateNewSiblingBookmark(bm, spans);
 										++bl;
 									}
@@ -793,8 +863,9 @@ namespace PDFPatcher.Functions.Editor
 										var lt = b.Top - b.Height * 2 + dh;
 										var lb = b.Bottom;
 										if (cb.Page == p.PageNumber
-											&& (bb >= lt && bb <= lb || bt >= lt && bt <= lb || bt < lt && bb > lb)
-											&& (mergeAdjacentTitle || spans.Count == 1 || spans[spans.Count - 1].Point.Y == span.Point.Y)) {
+										    && (bb >= lt && bb <= lb || bt >= lt && bt <= lb || bt < lt && bb > lb)
+										    && (mergeAdjacentTitle || spans.Count == 1 ||
+										        spans[spans.Count - 1].Point.Y == span.Point.Y)) {
 											//var m = false;
 											//var bs = b.Size.Area();
 											//foreach (var ss in spans) {
@@ -810,24 +881,28 @@ namespace PDFPatcher.Functions.Editor
 											//		break;
 											//	}
 											//}
-											if (/*m == false &&*/ t.Length > 0) {
+											if ( /*m == false &&*/ t.Length > 0) {
 												// 保留英文和数字文本之间的空格
 												var ct = cb.Title;
 												if (ct.Length > 0) {
 													var lc = ct[ct.Length - 1];
 													cb.Title = (Char.IsLetterOrDigit(lc) || Char.IsPunctuation(lc)
-															&& lc != '-') && t[0] != ' '
+														&& lc != '-') && t[0] != ' '
 														? ct + ' ' + t
 														: ct + t;
 												}
+
 												cb.Bottom = h - lb;
 												spans.Add(span);
 											}
+
 											continue;
 										}
+
 										if (matcher?.Matches(line.Text) == false) {
 											continue;
 										}
+
 										bm = CreateNewSiblingBookmarkForParent(bm, spans);
 									}
 									else {
@@ -835,11 +910,14 @@ namespace PDFPatcher.Functions.Editor
 											bm = bm.ParentBookmark;
 											--bl;
 										}
+
 										if (matcher?.Matches(line.Text) == false) {
 											continue;
 										}
+
 										bm = CreateNewSiblingBookmarkForParent(bm, spans);
 									}
+
 									var be = bm as BookmarkElement;
 									be.Title = t;
 									be.Top = h - b.Top + b.Height + dh;
@@ -853,9 +931,11 @@ namespace PDFPatcher.Functions.Editor
 											: s.IsItalic ? FontStyle.Italic
 											: FontStyle.Regular;
 									}
+
 									if (s.IsOpened) {
 										be.IsOpen = true;
 									}
+
 									be.ForeColor = s.ForeColor;
 									//todo+ 删除尾随的空格
 									ug.Add(new RemoveElementAction(bm));
@@ -867,11 +947,13 @@ namespace PDFPatcher.Functions.Editor
 					}
 				}
 			}
+
 			View.Bookmark.Roots = Model.Document.Bookmarks;
 			View.Bookmark.RebuildAll(false);
 		}
 
-		static BookmarkContainer CreateNewSiblingBookmarkForParent(BookmarkContainer bm, List<MuPdfSharp.MuTextSpan> spans) {
+		static BookmarkContainer CreateNewSiblingBookmarkForParent(BookmarkContainer bm,
+			List<MuPdfSharp.MuTextSpan> spans) {
 			TrimBookmarkText(bm);
 			bm = bm.Parent.AppendBookmark();
 			spans.Clear();

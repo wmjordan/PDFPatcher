@@ -9,12 +9,9 @@ namespace PDFPatcher.Functions
 {
 	public class FunctionControl : System.Windows.Forms.UserControl
 	{
-		[Browsable(false)]
-		public virtual string FunctionName => null;
-		[Browsable(false)]
-		public virtual System.Drawing.Bitmap IconImage => null;
-		[Browsable(false)]
-		public virtual Button DefaultButton => null;
+		[Browsable(false)] public virtual string FunctionName => null;
+		[Browsable(false)] public virtual System.Drawing.Bitmap IconImage => null;
+		[Browsable(false)] public virtual Button DefaultButton => null;
 
 		public EventHandler ListRecentFiles;
 
@@ -29,8 +26,8 @@ namespace PDFPatcher.Functions
 			if (Commands.OpenFile == commandName) {
 				// 将第一个文本框设置为文件路径
 				if (parameters.Length > 0 && String.IsNullOrEmpty(parameters[0]) == false
-				&& FileHelper.HasExtension(parameters[0], Constants.FileExtensions.Pdf)
-				) {
+				                          && FileHelper.HasExtension(parameters[0], Constants.FileExtensions.Pdf)
+				   ) {
 					foreach (Control c in Controls) {
 						if (c is SourceFileControl i) {
 							i.Text = parameters[0];
@@ -58,6 +55,7 @@ namespace PDFPatcher.Functions
 		internal void SetupMenu(ToolStripMenuItem menu) {
 			SetupMenu(menu.DropDownItems);
 		}
+
 		internal void SetupMenu(ToolStripItemCollection items) {
 			var pvs = false; // 前一个可见项目是否为分隔符
 			foreach (ToolStripItem item in items) {
@@ -69,6 +67,7 @@ namespace PDFPatcher.Functions
 							item.Text = b.Text.Trim();
 							item.ToolTipText = b.Tag as string;
 						}
+
 						EnableCommand(item, true, true);
 						break;
 					case Commands.SaveBookmark:
@@ -86,9 +85,10 @@ namespace PDFPatcher.Functions
 						EnableCommand(item,
 							Commands.DefaultDisabledItems.Contains(item.Name) == false,
 							Commands.DefaultHiddenItems.Contains(item.Name) == false
-							);
+						);
 						break;
 				}
+
 				SetupCommand(item);
 				if (item.Visible) {
 					var s = item is ToolStripSeparator;
@@ -107,6 +107,7 @@ namespace PDFPatcher.Functions
 			if (item == null) {
 				return;
 			}
+
 			item.Enabled = enabled;
 			item.Visible = visible;
 		}

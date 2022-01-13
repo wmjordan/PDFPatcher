@@ -13,5 +13,4 @@ namespace PDFPatcher.Model.PdfPath
 	{
 		string LiteralValue { get; }
 	}
-
 }

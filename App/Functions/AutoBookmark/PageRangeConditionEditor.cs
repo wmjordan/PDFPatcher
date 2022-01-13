@@ -33,6 +33,7 @@ namespace PDFPatcher.Functions
 			if (_lock) {
 				return;
 			}
+
 			_condition.PageRange = _PageRangeBox.Text;
 			EditAdjustmentForm.UpdateFilter(this);
 		}

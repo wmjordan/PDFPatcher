@@ -27,7 +27,9 @@ namespace PDFPatcher.Processor
 
 		public ImportOcrResultProcessor() {
 		}
+
 		#region IDocProcessor 成员
+
 		public string Name => "导入光学字符识别结果";
 
 		public int EstimateWorkload(PdfReader pdf) {
@@ -39,10 +41,12 @@ namespace PDFPatcher.Processor
 			if (x == null) {
 				return;
 			}
+
 			if (x.Name == Constants.PdfInfo) {
 				x.Read();
 				x.MoveToContent();
 			}
+
 			CreateGlobalOcrFontReference(context);
 		}
 
@@ -51,12 +55,14 @@ namespace PDFPatcher.Processor
 			if (x == null || x.Name != Constants.Ocr.Result) {
 				return false;
 			}
+
 			ImportOcrResult(context, x);
 			return true;
 		}
 
 		public void EndProcess(DocProcessorContext context) {
 		}
+
 		#endregion
 
 		private void ImportOcrResult(DocProcessorContext context, XmlReader x) {
@@ -69,15 +75,17 @@ namespace PDFPatcher.Processor
 			while (x.EOF == false) {
 				// 读取一页识别结果
 				if (x.MoveToContent() != XmlNodeType.Element
-					|| x.Name != Constants.Ocr.Result
-					|| x.GetAttribute(Constants.Content.PageNumber).TryParse(out p) == false
-					|| p < 1 || p > pn) {
+				    || x.Name != Constants.Ocr.Result
+				    || x.GetAttribute(Constants.Content.PageNumber).TryParse(out p) == false
+				    || p < 1 || p > pn) {
 					x.Skip();
 					continue;
 				}
+
 				using (var r = x.ReadSubtree()) {
 					xd.Load(r);
 				}
+
 				page = pdf.GetPageN(p);
 				var cp = new PdfPageCommandProcessor();
 				cp.ProcessContent(pdf.GetPageContent(p), page.GetAsDict(PdfName.RESOURCES));
@@ -89,9 +97,11 @@ namespace PDFPatcher.Processor
 					foreach (var item in commands) {
 						q.Commands.Add(item);
 					}
+
 					commands.Clear();
 					commands.Add(q);
 				}
+
 				// 写入各图像的识别结果
 				var ir = xd.SelectNodes(Constants.Ocr.Result + "/" + Constants.Ocr.Image);
 				var fontUse = 0;
@@ -103,17 +113,20 @@ namespace PDFPatcher.Processor
 						PdfPageCommand.Create ("Tr", new PdfNumber (3))
 						);
 #endif
-					var bmc = EnclosingCommand.Create("BMC", new PdfObject[] { OcrResultBmcName }, bt);
+					var bmc = EnclosingCommand.Create("BMC", new PdfObject[] {OcrResultBmcName}, bt);
 					fontUse |= ImportImageOcrResult(bt, image);
 					commands.Add(bmc);
 				}
+
 				cp.WritePdfCommands(pdf, p);
 				if ((fontUse & 1) > 0) {
 					CreatePageOcrFontReference(context, page, font);
 				}
+
 				if ((fontUse & 2) > 0) {
 					CreatePageOcrFontReference(context, page, fontV);
 				}
+
 				if (l < pn) {
 					l++;
 					Tracker.IncrementProgress(1);
@@ -125,11 +138,12 @@ namespace PDFPatcher.Processor
 			for (int i = commands.Count - 1; i >= 0; i--) {
 				var c = commands[i] as EnclosingCommand;
 				if (c == null
-					|| c.HasOperand == false
-					|| c.Name.ToString() != "BMC"
-					|| OcrResultBmcName.Equals(c.Operands[0]) == false) {
+				    || c.HasOperand == false
+				    || c.Name.ToString() != "BMC"
+				    || OcrResultBmcName.Equals(c.Operands[0]) == false) {
 					continue;
 				}
+
 				commands.RemoveAt(i);
 			}
 		}
@@ -141,11 +155,13 @@ namespace PDFPatcher.Processor
 				d = c.CreateDictionaryPath(PieceInfo, ApplicationName);
 				d.Put(LastModified, new PdfString("D:" + DateTime.Now.ToString("yyMMddHHmmss")));
 			}
+
 			font = CreateOcrFont(context, d, false);
 			fontV = CreateOcrFont(context, d, true);
 		}
 
-		private static PdfIndirectReference CreateOcrFont(DocProcessorContext context, PdfDictionary d, bool isVertical) {
+		private static PdfIndirectReference
+			CreateOcrFont(DocProcessorContext context, PdfDictionary d, bool isVertical) {
 			PdfIndirectReference fontRef;
 			var fontName = isVertical ? OcrFontV : OcrFont;
 			fontRef = d.GetAsIndirectObject(fontName);
@@ -153,6 +169,7 @@ namespace PDFPatcher.Processor
 				fontRef = CreateOcrFont(context, isVertical);
 				d.Put(fontName, fontRef);
 			}
+
 			return fontRef;
 		}
 
@@ -185,7 +202,7 @@ namespace PDFPatcher.Processor
 			fd.Put(PdfName.CAPHEIGHT, new PdfNumber(857));
 			fd.Put(PdfName.DESCENT, new PdfNumber(-143));
 			fd.Put(PdfName.FLAGS, new PdfNumber(4));
-			fd.Put(PdfName.FONTBBOX, new PdfArray(new int[] { -250, -143, 600, 857 }));
+			fd.Put(PdfName.FONTBBOX, new PdfArray(new int[] {-250, -143, 600, 857}));
 			fd.Put(PdfName.FONTNAME, FontName);
 			//fd.Put (PdfName.ITALICANGLE, new PdfNumber (0));
 			fd.Put(PdfName.STEMV, new PdfNumber(91));
@@ -193,13 +210,15 @@ namespace PDFPatcher.Processor
 			return context.Pdf.AddPdfObject(f);
 		}
 
-		private PdfName CreatePageOcrFontReference(DocProcessorContext context, PdfDictionary page, PdfIndirectReference fontRef) {
+		private PdfName CreatePageOcrFontReference(DocProcessorContext context, PdfDictionary page,
+			PdfIndirectReference fontRef) {
 			var f = page.CreateDictionaryPath(PdfName.RESOURCES, PdfName.FONT);
 			foreach (var item in f) {
 				if (PdfHelper.PdfReferencesAreEqual(fontRef, item.Value as PdfIndirectReference)) {
 					return item.Key;
 				}
 			}
+
 			context.IsModified = true;
 			var n = PdfHelper.PdfReferencesAreEqual(fontRef, font) ? OcrFont : OcrFontV;
 			f.Put(n, fontRef);
@@ -213,31 +232,38 @@ namespace PDFPatcher.Processor
 			if (chars.Count == 0) {
 				return 0;
 			}
+
 			if (result.GetAttribute(Constants.Coordinates.Width).TryParse(out w) == false
-				|| result.GetAttribute(Constants.Coordinates.Height).TryParse(out h) == false
-				|| w <= 0
-				|| h <= 0
-				) {
-				Tracker.TraceMessage(String.Concat("识别结果的“", Constants.Ocr.Image, "”元素", (w <= 0 ? "宽属性无效" : String.Empty),
+			    || result.GetAttribute(Constants.Coordinates.Height).TryParse(out h) == false
+			    || w <= 0
+			    || h <= 0
+			   ) {
+				Tracker.TraceMessage(String.Concat("识别结果的“", Constants.Ocr.Image, "”元素",
+					(w <= 0 ? "宽属性无效" : String.Empty),
 					(h <= 0 ? "高属性无效" : String.Empty), "。"));
 				return 0;
 			}
+
 			var m = result.GetAttribute(Constants.Content.OperandNames.Matrix);
 			if (String.IsNullOrEmpty(m)) {
-				Tracker.TraceMessage(String.Concat("识别结果的“", Constants.Ocr.Image, "”元素缺少", Constants.Content.OperandNames.Matrix, "属性。"));
+				Tracker.TraceMessage(String.Concat("识别结果的“", Constants.Ocr.Image, "”元素缺少",
+					Constants.Content.OperandNames.Matrix, "属性。"));
 				return 0;
 			}
+
 			var matrix = DocInfoImporter.ToSingleArray(m, true);
 			if (matrix == null || matrix.Length < 6) {
-				Tracker.TraceMessage(String.Concat("识别结果的“", Constants.Ocr.Image, "”元素中，", Constants.Content.OperandNames.Matrix, "属性值无效。"));
+				Tracker.TraceMessage(String.Concat("识别结果的“", Constants.Ocr.Image, "”元素中，",
+					Constants.Content.OperandNames.Matrix, "属性值无效。"));
 				return 0;
 			}
+
 			var info = new OcrContentInfo(w, h, matrix);
 			sc.Add(PdfPageCommand.Create("Tm",
 				new PdfNumber(matrix[OcrContentInfo.A1] / w), new PdfNumber(matrix[OcrContentInfo.A2] / w),
 				new PdfNumber(matrix[OcrContentInfo.B1] / h), new PdfNumber(matrix[OcrContentInfo.B2] / h),
 				new PdfNumber(matrix[OcrContentInfo.DX]), new PdfNumber(matrix[OcrContentInfo.DY])
-				)); // 设置初始偏移
+			)); // 设置初始偏移
 			var fSize = -1f;
 			bool isV = false, hasHFont = false, hasVFont = false;
 			PdfName fn;
@@ -251,6 +277,7 @@ namespace PDFPatcher.Processor
 						hasHFont = true;
 						fn = OcrFont;
 					}
+
 					if (info.FontSize != fSize) {
 						sc.Add(PdfPageCommand.Create("Tf", fn, new PdfNumber(info.FontSize)));
 						fSize = info.FontSize;
@@ -259,10 +286,12 @@ namespace PDFPatcher.Processor
 					else if (isV != info.IsVertical) {
 						sc.Add(PdfPageCommand.Create("Tf", fn, new PdfNumber(fSize)));
 					}
+
 					sc.Add(PdfPageCommand.Create("Td", new PdfNumber(info.DeltaX), new PdfNumber(info.DeltaY)));
 					sc.Add(PdfPageCommand.Create("Tj", new PdfString(GbkEncoding.GetBytes(info.Text))));
 				}
 			}
+
 			return (hasHFont ? 1 : 0) + (hasVFont ? 2 : 0);
 		}
 
@@ -278,10 +307,13 @@ namespace PDFPatcher.Processor
 			internal float FontSize => _size;
 
 			bool _isVertical;
+
 			//float _ix, _iy, _dx, _dy;
 			string _text;
 			int _top, _bottom, _left, _right, _size;
+
 			int _cx, _cy, _dx, _dy;
+
 			//float _m11, _m12, _m21, _m22, _mx, _my;
 			internal OcrContentInfo(int imageWidth, int imageHeight, float[] matrix) {
 				ImageHeight = imageHeight;
@@ -295,18 +327,21 @@ namespace PDFPatcher.Processor
 				//_ix = 1 / (float)imageWidth;
 				//_iy = 1 / (float)imageHeight;
 			}
+
 			internal bool GetInfo(XmlElement ocrInfoItem) {
 				if (ocrInfoItem.GetAttribute(Constants.Coordinates.Top).TryParse(out _top) == false
-					|| ocrInfoItem.GetAttribute(Constants.Coordinates.Bottom).TryParse(out _bottom) == false
-					|| ocrInfoItem.GetAttribute(Constants.Coordinates.Left).TryParse(out _left) == false
-					|| ocrInfoItem.GetAttribute(Constants.Coordinates.Right).TryParse(out _right) == false
-					|| _top < 0 || _bottom < 0 || _left < 0 || _right < 0
-					|| _top > ImageHeight || _bottom > ImageHeight || _left > ImageWidth || _right > ImageWidth
-					|| String.IsNullOrEmpty(_text = ocrInfoItem.GetAttribute(Constants.Ocr.Text))
-					) {
+				    || ocrInfoItem.GetAttribute(Constants.Coordinates.Bottom).TryParse(out _bottom) == false
+				    || ocrInfoItem.GetAttribute(Constants.Coordinates.Left).TryParse(out _left) == false
+				    || ocrInfoItem.GetAttribute(Constants.Coordinates.Right).TryParse(out _right) == false
+				    || _top < 0 || _bottom < 0 || _left < 0 || _right < 0
+				    || _top > ImageHeight || _bottom > ImageHeight || _left > ImageWidth || _right > ImageWidth
+				    || String.IsNullOrEmpty(_text = ocrInfoItem.GetAttribute(Constants.Ocr.Text))
+				   ) {
 					return false;
 				}
-				_isVertical = ocrInfoItem.GetAttribute(Constants.Coordinates.Direction) == Constants.Coordinates.Vertical;
+
+				_isVertical = ocrInfoItem.GetAttribute(Constants.Coordinates.Direction) ==
+				              Constants.Coordinates.Vertical;
 				_size = Math.Abs(_isVertical ? _right - _left : _bottom - _top);
 				if (_isVertical == false) {
 					_bottom = ImageHeight - _bottom;
@@ -322,6 +357,7 @@ namespace PDFPatcher.Processor
 					_cx = _left;
 					_cy = _top;
 				}
+
 				Text = _text;
 				return true;
 			}

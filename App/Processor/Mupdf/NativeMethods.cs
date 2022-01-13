@@ -14,13 +14,15 @@ namespace MuPdfSharp
 		const uint FZ_STORE_DEFAULT = 256 << 20;
 
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_new_context_imp", BestFitMapping = false)]
-		static extern ContextHandle NewContext(IntPtr alloc, IntPtr locks, uint max_store, [MarshalAs(UnmanagedType.LPStr)] string fz_version);
+		static extern ContextHandle NewContext(IntPtr alloc, IntPtr locks, uint max_store,
+			[MarshalAs(UnmanagedType.LPStr)] string fz_version);
 
 		internal static ContextHandle NewContext() {
 			var c = NewContext(IntPtr.Zero, IntPtr.Zero, FZ_STORE_DEFAULT, FZ_VERSION);
 			if (c.IsInvalid) {
 				throw new MuPdfException("MuPDF 引擎版本不匹配。");
 			}
+
 			return c;
 		}
 
@@ -28,19 +30,26 @@ namespace MuPdfSharp
 		internal static extern void DropContext(IntPtr ctx);
 
 		#region Colorspace
+
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_device_gray")]
 		internal static extern IntPtr GetGrayColorSpace(ContextHandle ctx);
+
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_device_rgb")]
 		internal static extern IntPtr GetRgbColorSpace(ContextHandle ctx);
+
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_device_bgr")]
 		internal static extern IntPtr GetBgrColorSpace(ContextHandle ctx);
+
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_device_cmyk")]
 		internal static extern IntPtr GetCmykColorSpace(ContextHandle ctx);
+
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_device_lab")]
 		internal static extern IntPtr GetLabColorSpace(ContextHandle ctx);
+
 		#endregion
 
 		#region Document and file stream
+
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_open_document_with_stream")]
 		internal static extern IntPtr OpenPdfDocumentStream(ContextHandle ctx, StreamHandle stm);
 
@@ -52,9 +61,11 @@ namespace MuPdfSharp
 
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_load_jpx")]
 		internal static extern IntPtr LoadJpeg2000(ContextHandle ctx, byte[] data, int size, IntPtr colorspace);
+
 		#endregion
 
 		#region Device
+
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_new_bbox_device")]
 		internal static extern IntPtr NewBBoxDevice(ContextHandle ctx, ref Rectangle bbox);
 
@@ -78,9 +89,11 @@ namespace MuPdfSharp
 
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_drop_device")]
 		internal static extern void DropDevice(ContextHandle context, IntPtr dev);
+
 		#endregion
 
 		#region Page
+
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_load_page")]
 		internal static extern IntPtr LoadPage(ContextHandle context, DocumentHandle doc, int pageNumber);
 
@@ -92,14 +105,18 @@ namespace MuPdfSharp
 
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_flatten_inheritable_page_items")]
 		public static extern void FlatternInheritablePageItems(ContextHandle doc, IntPtr pageNode);
+
 		#endregion
 
 		#region Pixmap and display list
+
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_new_pixmap")]
-		internal static extern IntPtr NewPixmap(ContextHandle ctx, IntPtr colorspace, int width, int height, IntPtr separations, int alpha);
+		internal static extern IntPtr NewPixmap(ContextHandle ctx, IntPtr colorspace, int width, int height,
+			IntPtr separations, int alpha);
 
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_new_pixmap_with_bbox")]
-		internal static extern IntPtr NewPixmap(ContextHandle ctx, IntPtr colorspace, BBox bbox, IntPtr separations, int alpha);
+		internal static extern IntPtr NewPixmap(ContextHandle ctx, IntPtr colorspace, BBox bbox, IntPtr separations,
+			int alpha);
 
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_drop_pixmap")]
 		internal static extern void DropPixmap(ContextHandle ctx, IntPtr pix);
@@ -154,17 +171,21 @@ namespace MuPdfSharp
 
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_new_display_list")]
 		internal static extern IntPtr NewDisplayList(ContextHandle ctx, Rectangle mediaBox);
+
 		#endregion
 
 		#region Text page
+
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_new_stext_page")]
 		internal static extern IntPtr NewTextPage(ContextHandle ctx, Rectangle mediaBox);
 
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_drop_stext_page")]
 		internal static extern void DropTextPage(ContextHandle ctx, IntPtr page);
+
 		#endregion
 
 		#region 图像渲染函数
+
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_clear_pixmap_with_value")]
 		public static extern void ClearPixmap(ContextHandle ctx, PixmapHandle pix, int byteValue);
 
@@ -177,6 +198,7 @@ namespace MuPdfSharp
 		#endregion
 
 		#region 文本函数
+
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_new_stext_page")]
 		public static extern TextPageHandle GetTextPage(ContextHandle ctx, Rectangle mediaBox);
 
@@ -185,14 +207,18 @@ namespace MuPdfSharp
 
 		//[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_copy_selection")]
 		//public static extern IntPtr CopySelection (ContextHandle ctx, IntPtr page, Rectangle rect);
+
 		#endregion
 
 		#region Render page content and annotation
+
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_run_page")]
-		public static extern void RunPage(ContextHandle context, PageHandle page, DeviceHandle dev, Matrix transform, ref MuCookie cookie);
+		public static extern void RunPage(ContextHandle context, PageHandle page, DeviceHandle dev, Matrix transform,
+			ref MuCookie cookie);
 
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_run_page_contents")]
-		public static extern void RunPageContents(ContextHandle context, PageHandle page, DeviceHandle dev, Matrix transform, ref MuCookie cookie);
+		public static extern void RunPageContents(ContextHandle context, PageHandle page, DeviceHandle dev,
+			Matrix transform, ref MuCookie cookie);
 
 		/// <summary>
 		/// (Re)-run a display list through a device.
@@ -204,13 +230,17 @@ namespace MuPdfSharp
 		/// <param name="scissor">Only the part of the contents of the display list visible within this area will be considered when the list is run through the device.This does not imply for tile objects contained in the display list.</param>
 		/// <param name="cookie">Communication mechanism between caller and library running the page.Intended for multi-threaded applications, while single-threaded applications set cookie to NULL.The caller may abort an ongoing page run.Cookie also communicates progress information back to the caller.The fields inside cookie are continually updated while the page is being run.</param>
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_run_display_list")]
-		public static extern void RunDisplayList(ContextHandle context, DisplayListHandle list, DeviceHandle dev, Matrix ctm, Rectangle scissor, ref MuCookie cookie);
+		public static extern void RunDisplayList(ContextHandle context, DisplayListHandle list, DeviceHandle dev,
+			Matrix ctm, Rectangle scissor, ref MuCookie cookie);
 
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_run_page_annots")]
-		public static extern void RunPageAnnotations(ContextHandle context, PageHandle page, DeviceHandle dev, Matrix transform, ref MuCookie cookie);
+		public static extern void RunPageAnnotations(ContextHandle context, PageHandle page, DeviceHandle dev,
+			Matrix transform, ref MuCookie cookie);
 
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_run_page_widgets")]
-		public static extern void RunPageWidgets(ContextHandle context, PageHandle page, DeviceHandle dev, Matrix transform, ref MuCookie cookie);
+		public static extern void RunPageWidgets(ContextHandle context, PageHandle page, DeviceHandle dev,
+			Matrix transform, ref MuCookie cookie);
+
 		#endregion
 	}
 }

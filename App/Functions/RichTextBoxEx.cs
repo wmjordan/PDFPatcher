@@ -9,6 +9,7 @@ namespace RichTextBoxLinks
 	public class RichTextBoxEx : RichTextBox
 	{
 		#region Interop-Defines
+
 		[StructLayout(LayoutKind.Sequential)]
 		private struct CHARFORMAT2_STRUCT
 		{
@@ -20,8 +21,10 @@ namespace RichTextBoxLinks
 			public Int32 crTextColor;
 			public byte bCharSet;
 			public byte bPitchAndFamily;
+
 			[MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
 			public char[] szFaceName;
+
 			public UInt16 wWeight;
 			public UInt16 sSpacing;
 			public int crBackColor; // Color.ToArgb() -> int
@@ -47,6 +50,7 @@ namespace RichTextBoxLinks
 		private const int SCF_ALL = 0x0004;
 
 		#region CHARFORMAT2 Flags
+
 		private const UInt32 CFE_BOLD = 0x0001;
 		private const UInt32 CFE_ITALIC = 0x0002;
 		private const UInt32 CFE_UNDERLINE = 0x0004;
@@ -54,27 +58,27 @@ namespace RichTextBoxLinks
 		private const UInt32 CFE_PROTECTED = 0x0010;
 		private const UInt32 CFE_LINK = 0x0020;
 		private const UInt32 CFE_AUTOCOLOR = 0x40000000;
-		private const UInt32 CFE_SUBSCRIPT = 0x00010000;        /* Superscript and subscript are */
-		private const UInt32 CFE_SUPERSCRIPT = 0x00020000;      /*  mutually exclusive			 */
+		private const UInt32 CFE_SUBSCRIPT = 0x00010000; /* Superscript and subscript are */
+		private const UInt32 CFE_SUPERSCRIPT = 0x00020000; /*  mutually exclusive			 */
 
-		private const int CFM_SMALLCAPS = 0x0040;           /* (*)	*/
-		private const int CFM_ALLCAPS = 0x0080;         /* Displayed by 3.0	*/
-		private const int CFM_HIDDEN = 0x0100;          /* Hidden by 3.0 */
-		private const int CFM_OUTLINE = 0x0200;         /* (*)	*/
-		private const int CFM_SHADOW = 0x0400;          /* (*)	*/
-		private const int CFM_EMBOSS = 0x0800;          /* (*)	*/
-		private const int CFM_IMPRINT = 0x1000;         /* (*)	*/
+		private const int CFM_SMALLCAPS = 0x0040; /* (*)	*/
+		private const int CFM_ALLCAPS = 0x0080; /* Displayed by 3.0	*/
+		private const int CFM_HIDDEN = 0x0100; /* Hidden by 3.0 */
+		private const int CFM_OUTLINE = 0x0200; /* (*)	*/
+		private const int CFM_SHADOW = 0x0400; /* (*)	*/
+		private const int CFM_EMBOSS = 0x0800; /* (*)	*/
+		private const int CFM_IMPRINT = 0x1000; /* (*)	*/
 		private const int CFM_DISABLED = 0x2000;
 		private const int CFM_REVISED = 0x4000;
 
 		private const int CFM_BACKCOLOR = 0x04000000;
 		private const int CFM_LCID = 0x02000000;
-		private const int CFM_UNDERLINETYPE = 0x00800000;       /* Many displayed by 3.0 */
+		private const int CFM_UNDERLINETYPE = 0x00800000; /* Many displayed by 3.0 */
 		private const int CFM_WEIGHT = 0x00400000;
-		private const int CFM_SPACING = 0x00200000;     /* Displayed by 3.0	*/
-		private const int CFM_KERNING = 0x00100000;     /* (*)	*/
-		private const int CFM_STYLE = 0x00080000;       /* (*)	*/
-		private const int CFM_ANIMATION = 0x00040000;       /* (*)	*/
+		private const int CFM_SPACING = 0x00200000; /* Displayed by 3.0	*/
+		private const int CFM_KERNING = 0x00100000; /* (*)	*/
+		private const int CFM_STYLE = 0x00080000; /* (*)	*/
+		private const int CFM_ANIMATION = 0x00040000; /* (*)	*/
 		private const int CFM_REVAUTHOR = 0x00008000;
 
 
@@ -184,6 +188,7 @@ namespace RichTextBoxLinks
 		public void SetSelectionLink(bool link) {
 			SetSelectionStyle(CFM_LINK, link ? CFE_LINK : 0);
 		}
+
 		/// <summary>
 		/// Get the link style for the current selection
 		/// </summary>
@@ -193,9 +198,7 @@ namespace RichTextBoxLinks
 		}
 
 		public void SetSelectionFontSize(float size) {
-			var cf = new CHARFORMAT2_STRUCT {
-				dwMask = CFM_SIZE
-			};
+			var cf = new CHARFORMAT2_STRUCT {dwMask = CFM_SIZE};
 			cf.cbSize = (UInt32)Marshal.SizeOf(cf);
 			cf.yHeight = (int)(size * 20f);
 
@@ -209,6 +212,7 @@ namespace RichTextBoxLinks
 		public void SetSelectionBold(bool bold) {
 			SetSelectionStyle(CFM_BOLD, bold ? CFE_BOLD : 0);
 		}
+
 		public void SetSelectionUnderline(bool underline) {
 			SetSelectionStyle(CFM_UNDERLINE, underline ? CFE_UNDERLINE : 0);
 		}

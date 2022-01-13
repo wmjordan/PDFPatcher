@@ -9,7 +9,6 @@ namespace PDFPatcher.Common
 		private readonly Dictionary<V, K> _reverseDictionary = new Dictionary<V, K>();
 
 		public DualKeyDictionary() {
-
 		}
 
 		public K GetKeyByValue(V value) {
@@ -26,6 +25,7 @@ namespace PDFPatcher.Common
 		public bool ContainsKey(K key) {
 			return _keyDictionary.ContainsKey(key);
 		}
+
 		public bool ContainsValue(V value) {
 			return _reverseDictionary.ContainsKey(value);
 		}
@@ -36,6 +36,7 @@ namespace PDFPatcher.Common
 			if (_keyDictionary.ContainsKey(key) == false) {
 				return false;
 			}
+
 			var value = _keyDictionary[key];
 			_keyDictionary.Remove(key);
 			_reverseDictionary.Remove(value);

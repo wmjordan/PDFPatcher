@@ -12,12 +12,14 @@ namespace Devcorp.Controls.Design
 		/// Gets an empty CIEXYZ structure.
 		/// </summary>
 		public static readonly CIEXYZ Empty = new CIEXYZ();
+
 		/// <summary>
 		/// Gets the CIE D65 (white) structure.
 		/// </summary>
 		public static readonly CIEXYZ D65 = new CIEXYZ(0.9505, 1.0, 1.0890);
 
 		#region Fields
+
 		private double x;
 		private double y;
 		private double z;
@@ -25,12 +27,13 @@ namespace Devcorp.Controls.Design
 		#endregion
 
 		#region Operators
+
 		public static bool operator ==(CIEXYZ item1, CIEXYZ item2) {
 			return (
 				item1.X == item2.X
 				&& item1.Y == item2.Y
 				&& item1.Z == item2.Z
-				);
+			);
 		}
 
 		public static bool operator !=(CIEXYZ item1, CIEXYZ item2) {
@@ -38,12 +41,13 @@ namespace Devcorp.Controls.Design
 				item1.X != item2.X
 				|| item1.Y != item2.Y
 				|| item1.Z != item2.Z
-				);
+			);
 		}
 
 		#endregion
 
 		#region Accessors
+
 		/// <summary>
 		/// Gets or sets X component.
 		/// </summary>
@@ -77,6 +81,7 @@ namespace Devcorp.Controls.Design
 		}
 
 		#region Methods
+
 		public override bool Equals(Object obj) {
 			if (obj == null || GetType() != obj.GetType()) return false;
 

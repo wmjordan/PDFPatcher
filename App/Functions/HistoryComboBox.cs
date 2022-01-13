@@ -17,6 +17,7 @@ namespace PDFPatcher
 				if (Contents == null) {
 					return;
 				}
+
 				Items.AddRange(Contents.ToArray());
 			};
 		}
@@ -29,18 +30,22 @@ namespace PDFPatcher
 			if (text.Length == 0) {
 				return;
 			}
+
 			var i = IndexOf(text);
 			if (i == 0) {
 				return;
 			}
+
 			//Trace.WriteLine ("add history item:" + text);
 			if (i != -1) {
 				RemoveAt(i);
 			}
+
 			Insert(0, text);
 			while (Contents.Count > MaxItemCount) {
 				RemoveAt(Contents.Count - 1);
 			}
+
 			Text = text;
 		}
 

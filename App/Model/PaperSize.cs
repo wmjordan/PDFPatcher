@@ -14,28 +14,45 @@ namespace PDFPatcher.Model
 		public const string AsSmallestPage = "等同最小页面尺寸";
 
 		string _PaperName;
+
 		[XmlAttribute("名称")]
 		public string PaperName {
 			get => _PaperName;
 			set {
 				_PaperName = value;
 				switch (_PaperName) {
-					case AsPageSize: SpecialSize = SpecialPaperSize.AsPageSize; break;
-					case FixedWidthAutoHeight: SpecialSize = SpecialPaperSize.FixedWidthAutoHeight; break;
-					case AsSpecificPage: SpecialSize = SpecialPaperSize.AsSpecificPage; break;
-					case AsWidestPage: SpecialSize = SpecialPaperSize.AsWidestPage; break;
-					case AsNarrowestPage: SpecialSize = SpecialPaperSize.AsNarrowestPage; break;
-					case AsLargestPage: SpecialSize = SpecialPaperSize.AsLargestPage; break;
-					case AsSmallestPage: SpecialSize = SpecialPaperSize.AsSmallestPage; break;
-					default: SpecialSize = SpecialPaperSize.None; break;
+					case AsPageSize:
+						SpecialSize = SpecialPaperSize.AsPageSize;
+						break;
+					case FixedWidthAutoHeight:
+						SpecialSize = SpecialPaperSize.FixedWidthAutoHeight;
+						break;
+					case AsSpecificPage:
+						SpecialSize = SpecialPaperSize.AsSpecificPage;
+						break;
+					case AsWidestPage:
+						SpecialSize = SpecialPaperSize.AsWidestPage;
+						break;
+					case AsNarrowestPage:
+						SpecialSize = SpecialPaperSize.AsNarrowestPage;
+						break;
+					case AsLargestPage:
+						SpecialSize = SpecialPaperSize.AsLargestPage;
+						break;
+					case AsSmallestPage:
+						SpecialSize = SpecialPaperSize.AsSmallestPage;
+						break;
+					default:
+						SpecialSize = SpecialPaperSize.None;
+						break;
 				}
 			}
 		}
 
-		[XmlIgnore]
-		public SpecialPaperSize SpecialSize { get; private set; }
+		[XmlIgnore] public SpecialPaperSize SpecialSize { get; private set; }
 
 		private float _Height;
+
 		///<summary>获取或指定页面高度的值。</summary>
 		[XmlAttribute("高度")]
 		public float Height {
@@ -44,11 +61,13 @@ namespace PDFPatcher.Model
 				if (value < 0) {
 					throw new ArgumentException("页面高度不可小于 0。");
 				}
+
 				_Height = value;
 			}
 		}
 
 		private float _Width;
+
 		///<summary>获取或指定页面宽度的值。</summary>
 		[XmlAttribute("宽度")]
 		public float Width {
@@ -57,6 +76,7 @@ namespace PDFPatcher.Model
 				if (value < 0) {
 					throw new ArgumentException("页面宽度不可小于 0。");
 				}
+
 				_Width = value;
 			}
 		}
@@ -75,6 +95,7 @@ namespace PDFPatcher.Model
 		internal PaperSize Scale(float xFactor, float yFactor) {
 			return new PaperSize(PaperName, Width * xFactor, Height * yFactor);
 		}
+
 		internal PaperSize Scale(float factor) {
 			return new PaperSize(PaperName, Width * factor, Height * factor);
 		}
@@ -86,7 +107,6 @@ namespace PDFPatcher.Model
 		public override string ToString() {
 			return PaperName;
 		}
-
 	}
 
 	public enum SpecialPaperSize
@@ -100,5 +120,4 @@ namespace PDFPatcher.Model
 		AsLargestPage,
 		AsSmallestPage
 	}
-
 }

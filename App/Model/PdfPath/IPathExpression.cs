@@ -19,6 +19,7 @@ namespace PDFPatcher.Model.PdfPath
 		internal static readonly IList<DocumentObject> EmptyMatchResult = new DocumentObject[0];
 
 		#region IPathExpression 成员
+
 		public PathValueType ValueType => PathValueType.Expression;
 
 		public IPathAxis Axis { get; private set; }
@@ -26,6 +27,7 @@ namespace PDFPatcher.Model.PdfPath
 		public string Name { get; private set; }
 
 		private IList<IPathPredicate> _Predicates;
+
 		///<summary>获取匹配条件列表。</summary>
 		public IList<IPathPredicate> Predicates {
 			get {
@@ -48,12 +50,10 @@ namespace PDFPatcher.Model.PdfPath
 		public PathExpression(PathAxisType axis) {
 			Axis = PathAxes.Create(axis);
 		}
+
 		public PathExpression(PathAxisType axis, string name) {
 			Axis = PathAxes.Create(axis);
 			Name = name;
 		}
-
-
 	}
-
 }

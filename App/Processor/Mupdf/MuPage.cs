@@ -6,13 +6,16 @@ namespace MuPdfSharp
 	public sealed class MuPage : IDisposable
 	{
 		#region 非托管资源成员
+
 		private readonly ContextHandle _context;
 		private DocumentHandle _document;
 		private readonly PageHandle _page;
 		private DisplayListHandle _displayList;
+
 		#endregion
 
 		#region 托管资源成员
+
 		static readonly ImageRendererOptions __defaultOptions = new ImageRendererOptions();
 		MuCookie _cookie;
 		MuTextPage _TextPage;
@@ -20,8 +23,10 @@ namespace MuPdfSharp
 
 		/// <summary>获取当前页面的页码。</summary>
 		public int PageNumber { get; private set; }
+
 		/// <summary>获取当前页面的尺寸（左下角坐标置为“0,0”）。如需获取页面字典中的原始可视区域，请使用 <see cref="VisualBound"/> 属性。</summary>
 		public Rectangle Bound => NativeMethods.BoundPage(_context, _page);
+
 		/// <summary>获取当前页面可视区域的坐标及尺寸。</summary>
 		public Rectangle VisualBound => Matrix.Identity.RotateTo(Rotation).Transform(VisualBox);
 
@@ -30,7 +35,14 @@ namespace MuPdfSharp
 		public Rectangle CropBox => LookupPageBox("CropBox");
 		public Rectangle TrimBox => LookupPageBox("TrimBox");
 		public Rectangle MediaBox => LookupPageBox("MediaBox");
-		public Rectangle VisualBox { get { var b = LookupPageBox("CropBox"); return b.IsEmpty ? LookupPageBox("MediaBox") : b; } }
+
+		public Rectangle VisualBox {
+			get {
+				var b = LookupPageBox("CropBox");
+				return b.IsEmpty ? LookupPageBox("MediaBox") : b;
+			}
+		}
+
 		public int Rotation => LookupPage("Rotate").IntegerValue;
 
 		public MuTextPage TextPage {
@@ -46,14 +58,17 @@ namespace MuPdfSharp
 				NativeMethods.FlatternInheritablePageItems(_context, d);
 				_flattened = true;
 			}
+
 			var a = new MuPdfDictionary(_context, _page.PageDictionary);
 			var ra = a[name].AsArray();
 			return ra.Count == 4 ? Rectangle.FromArray(a[name]) : Rectangle.Empty;
 		}
+
 		private MuPdfObject LookupPage(string name) {
 			var a = new MuPdfDictionary(_context, _page.PageDictionary);
 			return a[name];
 		}
+
 		#endregion
 
 		internal MuPage(ContextHandle context, DocumentHandle document, int pageNumber, ref MuCookie cookie) {
@@ -112,6 +127,7 @@ namespace MuPdfSharp
 					return pix.ToFreeImageBitmap(options);
 				}
 			}
+
 			return null;
 		}
 
@@ -128,19 +144,23 @@ namespace MuPdfSharp
 					return pix.ToBitmap(options);
 				}
 			}
+
 			return null;
 		}
 
 		public MuFont GetFont(MuTextChar character) {
 			return new MuFont(_context, character.FontID);
 		}
+
 		public MuFont GetFont(MuTextSpan span) {
 			return new MuFont(_context, span.FontID);
 		}
+
 		private DisplayListHandle GetDisplayList() {
 			if (_displayList.IsValid()) {
 				return _displayList;
 			}
+
 			_displayList = _context.CreateDisplayList(Bound);
 			using (var d = new DeviceHandle(_context, _displayList)) {
 				//if (hideAnnotations) {
@@ -151,9 +171,11 @@ namespace MuPdfSharp
 				d.EndOperations();
 				//}
 			}
+
 			if (_cookie.ErrorCount > 0) {
 				System.Diagnostics.Debug.WriteLine("在第 " + PageNumber + " 页有 " + _cookie.ErrorCount + " 个错误。");
 			}
+
 			return _displayList;
 		}
 
@@ -161,6 +183,7 @@ namespace MuPdfSharp
 			if (_TextPage != null) {
 				return;
 			}
+
 			var vb = VisualBound;
 			var text = new TextPageHandle(_context, vb);
 			try {
@@ -168,12 +191,14 @@ namespace MuPdfSharp
 					NativeMethods.RunDisplayList(_context, GetDisplayList(), dev, Matrix.Identity, vb, ref _cookie);
 					dev.EndOperations();
 				}
+
 				_TextPage = new MuTextPage(text);
 			}
 			catch (AccessViolationException) {
 				text.DisposeHandle();
 				throw;
 			}
+
 			return;
 		}
 
@@ -182,6 +207,7 @@ namespace MuPdfSharp
 			if (b.Width == 0 || b.Height == 0) {
 				return null;
 			}
+
 			var ctm = CalculateMatrix(width, height, options);
 			var bbox = width > 0 && height > 0 ? new BBox(0, 0, width, height) : ctm.Transform(b).Round;
 
@@ -190,11 +216,14 @@ namespace MuPdfSharp
 				NativeMethods.ClearPixmap(_context, pix, 0xFF);
 				using (var dev = new DeviceHandle(_context, pix, Matrix.Identity)) {
 					if (options.LowQuality) {
-						NativeMethods.EnableDeviceHints(_context, dev, DeviceHints.IgnoreShade | DeviceHints.DontInterporateImages | DeviceHints.NoCache);
+						NativeMethods.EnableDeviceHints(_context, dev,
+							DeviceHints.IgnoreShade | DeviceHints.DontInterporateImages | DeviceHints.NoCache);
 					}
+
 					if (_cookie.IsCancellationPending) {
 						return null;
 					}
+
 					NativeMethods.RunPageContents(_context, _page, dev, ctm, ref _cookie);
 					if (options.HideAnnotations == false) {
 						NativeMethods.RunPageAnnotations(_context, _page, dev, ctm, ref _cookie);
@@ -209,13 +238,16 @@ namespace MuPdfSharp
 					if (_cookie.IsCancellationPending) {
 						return null;
 					}
+
 					var pd = new PixmapData(_context, pix);
 					if (options.TintColor != Color.Transparent) {
 						pd.Tint(options.TintColor);
 					}
+
 					if (options.Gamma != 1.0f) {
 						pd.Gamma(options.Gamma);
 					}
+
 					return pd;
 				}
 			}
@@ -232,9 +264,11 @@ namespace MuPdfSharp
 				if (w < 0) {
 					w = -w;
 				}
+
 				if (h < 0) {
 					h = -h;
 				}
+
 				if (options.FitArea && w != 0 && h != 0) {
 					var rw = w / b.Width;
 					var rh = h / b.Height;
@@ -245,7 +279,9 @@ namespace MuPdfSharp
 						w = 0;
 					}
 				}
-				if (w == 0 && h == 0) { // No resize
+
+				if (w == 0 && h == 0) {
+					// No resize
 					w = b.Width;
 					h = b.Height;
 				}
@@ -265,9 +301,11 @@ namespace MuPdfSharp
 			if (options.VerticalFlipImages) {
 				ctm = Matrix.Concat(ctm, Matrix.VeritcalFlip);
 			}
+
 			if (options.HorizontalFlipImages) {
 				ctm = Matrix.Concat(ctm, Matrix.HorizontalFlip);
 			}
+
 			return ctm;
 		}
 
@@ -294,27 +332,34 @@ namespace MuPdfSharp
 		}
 
 		#region 实现 IDisposable 接口的属性和方法
+
 		private bool disposed;
+
 		public void Dispose() {
 			Dispose(true);
-			GC.SuppressFinalize(this);  // 抑制析构函数
+			GC.SuppressFinalize(this); // 抑制析构函数
 		}
 
 		/// <summary>释放由 MuPdfPage 占用的资源。</summary>
 		/// <param name="disposing">是否手动释放托管资源。</param>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "_page")]
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed",
+			MessageId = "_page")]
 		void Dispose(bool disposing) {
 			if (!disposed) {
 				if (disposing) {
 					#region 释放托管资源
+
 					if (_TextPage != null) {
 						_TextPage.Dispose();
 					}
+
 					_TextPage = null;
+
 					#endregion
 				}
 
 				#region 释放非托管资源
+
 				// 注意这里不是线程安全的
 				//int retry = 0;
 				//_cookie.CancelAsync ();
@@ -324,8 +369,10 @@ namespace MuPdfSharp
 				_page.DisposeHandle();
 				_displayList.DisposeHandle();
 				_document = null;
+
 				#endregion
 			}
+
 			disposed = true;
 		}
 
@@ -334,6 +381,7 @@ namespace MuPdfSharp
 		~MuPage() {
 			Dispose(false);
 		}
+
 		#endregion
 
 		//protected override bool ReleaseHandle () {

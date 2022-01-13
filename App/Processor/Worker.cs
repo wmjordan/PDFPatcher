@@ -19,7 +19,8 @@ namespace PDFPatcher.Processor
 
 		private static PdfReader OpenPdf(string sourceFile, bool loadPartial, bool removeUnusedObjects) {
 			try {
-				Tracker.TraceMessage(Tracker.Category.ImportantMessage, String.Concat("打开 PDF 文件：<<", sourceFile, ">>。"));
+				Tracker.TraceMessage(Tracker.Category.ImportantMessage,
+					String.Concat("打开 PDF 文件：<<", sourceFile, ">>。"));
 				return PdfHelper.OpenPdfFile(sourceFile, loadPartial, removeUnusedObjects);
 			}
 			catch (FileNotFoundException) {
@@ -52,6 +53,7 @@ namespace PDFPatcher.Processor
 			if (Directory.Exists(targetPath) == false) {
 				Directory.CreateDirectory(targetPath);
 			}
+
 			var ranges = PageRangeCollection.Parse(options.PageRange, 1, pdf.NumberOfPages, true);
 			var loadCount = loadDocProgressWeight + ranges.TotalPages;
 			Tracker.SetProgressGoal(loadCount);
@@ -63,19 +65,24 @@ namespace PDFPatcher.Processor
 				if (FileHelper.HasFileNameMacro(op)) {
 					options.OutputPath = ReplaceTargetFileNameMacros(sourceFile, op, pdf);
 				}
+
 				if (FileHelper.HasFileNameMacro(om)) {
 					options.FileMask = ReplaceTargetFileNameMacros(sourceFile, om, pdf);
 				}
+
 				var exp = new ImageExtractor(options, pdf);
 				foreach (var range in ranges) {
 					foreach (var i in range) {
 						exp.ExtractPageImages(pdf, i);
 						if (exp.InfoList.Count > 0) {
-							Tracker.TraceMessage(Tracker.Category.OutputFile, exp.InfoList[exp.InfoList.Count - 1].FileName);
+							Tracker.TraceMessage(Tracker.Category.OutputFile,
+								exp.InfoList[exp.InfoList.Count - 1].FileName);
 						}
+
 						Tracker.IncrementProgress(1);
 					}
 				}
+
 				Tracker.TrackProgress(loadCount);
 				Tracker.TraceMessage(Tracker.Category.Alert, "成功提取图片文件，存放目录为：<<" + targetPath + ">>。");
 			}
@@ -100,6 +107,7 @@ namespace PDFPatcher.Processor
 			if (Directory.Exists(options.ExtractImagePath) == false) {
 				Directory.CreateDirectory(options.ExtractImagePath);
 			}
+
 			MuDocument mupdf = null;
 			try {
 				mupdf = PdfHelper.OpenMuDocument(sourceFile);
@@ -110,7 +118,8 @@ namespace PDFPatcher.Processor
 				Tracker.TrackProgress(loadDocProgressWeight);
 				foreach (var range in ranges) {
 					foreach (var i in range) {
-						var fn = FileHelper.CombinePath(options.ExtractImagePath, i.ToString(options.FileMask) + options.FileFormatExtension);
+						var fn = FileHelper.CombinePath(options.ExtractImagePath,
+							i.ToString(options.FileMask) + options.FileFormatExtension);
 						using (var p = mupdf.LoadPage(i))
 						using (var bmp = p.RenderBitmapPage(options.ImageWidth, 0, options)) {
 							if (bmp == null) {
@@ -141,10 +150,12 @@ namespace PDFPatcher.Processor
 								}
 							}
 						}
+
 						Tracker.TraceMessage(Tracker.Category.OutputFile, fn);
 						Tracker.IncrementProgress(1);
 					}
 				}
+
 				Tracker.TrackProgress(loadCount);
 				Tracker.TraceMessage(Tracker.Category.Alert, "成功转换图片文件，存放目录为：<<" + options.ExtractImagePath + ">>。");
 			}
@@ -169,15 +180,18 @@ namespace PDFPatcher.Processor
 			if (r == null) {
 				return;
 			}
+
 			if (FileHelper.IsPathValid(targetFile) == false || Path.GetFileName(targetFile).Length == 0) {
 				Tracker.TraceMessage(Tracker.Category.Error, Messages.InfoFileNameInvalid);
 				FormHelper.ErrorBox(Messages.InfoFileNameInvalid);
 				return;
 			}
+
 			targetFile = FileHelper.MakePathRootedAndWithExtension(targetFile, sourceFile, Ext.Xml, false);
 			var export = new DocInfoExporter(r, AppContext.Exporter);
 			if (AppContext.Exporter.ExtractImages) {
-				AppContext.Exporter.Images.OutputPath = FileHelper.CombinePath(Path.GetDirectoryName(targetFile), Path.GetFileNameWithoutExtension(targetFile) + "图片文件\\");
+				AppContext.Exporter.Images.OutputPath = FileHelper.CombinePath(Path.GetDirectoryName(targetFile),
+					Path.GetFileNameWithoutExtension(targetFile) + "图片文件\\");
 			}
 
 			try {
@@ -204,6 +218,7 @@ namespace PDFPatcher.Processor
 						w.WriteEndElement();
 					}
 				}
+
 				Tracker.TraceMessage(Tracker.Category.Alert, "成功导出信息文件到 <<" + targetFile + ">>。");
 				//if (this._BookmarkBox.Text.Length == 0) {
 				//    this._BookmarkBox.Text = targetFile;
@@ -237,6 +252,7 @@ namespace PDFPatcher.Processor
 				using (var w = XmlWriter.Create(targetFile, DocInfoExporter.GetWriterSettings())) {
 					infoDoc.Save(w);
 				}
+
 				Tracker.TraceMessage(Tracker.Category.Alert, "成功转换信息文件到 <<" + targetFile + ">>。");
 			}
 			catch (OperationCanceledException) {
@@ -248,16 +264,19 @@ namespace PDFPatcher.Processor
 			}
 		}
 
-		internal static void PatchDocument(SourceItem.Pdf sourceFile, FilePath targetFile, object infoDoc, ImporterOptions options, PatcherOptions pdfSettings) {
+		internal static void PatchDocument(SourceItem.Pdf sourceFile, FilePath targetFile, object infoDoc,
+			ImporterOptions options, PatcherOptions pdfSettings) {
 			var sourcePath = sourceFile.FilePath.ToString();
 			if (sourceFile.FilePath.IsEmpty) {
 				Tracker.TraceMessage(Tracker.Category.Error, "输入文件名为空。");
 				return;
 			}
+
 			if (String.IsNullOrEmpty(targetFile) || targetFile.IsEmpty) {
 				Tracker.TraceMessage(Tracker.Category.Error, "输出文件名为空。");
 				return;
 			}
+
 			Tracker.TraceMessage(Tracker.Category.InputFile, sourcePath);
 			Tracker.TraceMessage(Tracker.Category.OutputFile, targetFile);
 			bool overwriteSource = false;
@@ -265,6 +284,7 @@ namespace PDFPatcher.Processor
 			if (pdf == null) {
 				return;
 			}
+
 			try {
 				DocInfoImporter import;
 				var xInfoDoc = infoDoc as PdfInfoXmlDocument;
@@ -283,6 +303,7 @@ namespace PDFPatcher.Processor
 					if (import.InfoDoc != null && VerifyInfoDocument(import.InfoDoc) == false)
 						return;
 				}
+
 				var pdfEngine = new PdfProcessingEngine(pdf);
 				pdfEngine.CreateProcessors(pdfSettings);
 				int workload = 110;
@@ -301,13 +322,14 @@ namespace PDFPatcher.Processor
 					//: sourceFile.DocInfo;
 					// 不再使用书签文件的文件属性
 					: import.ImportDocumentInfomation()
-					?? sourceFile.DocInfo;
+					  ?? sourceFile.DocInfo;
 				DocInfoImporter.ImportDocumentInfomation(info, pdf, sourcePath);
 				Tracker.TrackProgress(20);
 
 				if (FileHelper.HasFileNameMacro(targetFile)) {
 					targetFile = ReplaceTargetFileNameMacros(sourcePath, targetFile, pdf);
 				}
+
 				targetFile = FileHelper.MakePathRootedAndWithExtension(targetFile, sourcePath, Ext.Pdf, true);
 				targetFile = targetFile.Normalize();
 
@@ -317,6 +339,7 @@ namespace PDFPatcher.Processor
 						Tracker.TraceMessage(Tracker.Category.Error, Messages.SourceFileEqualsTargetFile);
 						return;
 					}
+
 					overwriteSource = true;
 					targetFile = sourceFile.FilePath.ChangeExtension(Ext.Tmp).ToString();
 				}
@@ -329,19 +352,27 @@ namespace PDFPatcher.Processor
 				using (Stream s = new FileStream(targetFile, FileMode.Create)) {
 					var st = new PdfStamper(pdf, s);
 					pdfEngine.ProcessDocument(st.Writer);
+
 					#region 处理信息文件
+
 					var processors = new List<IInfoDocProcessor>();
 					if (pdfSettings.ViewerPreferences.RemoveZoomRate) {
 						processors.Add(new RemoveZoomRateProcessor());
 					}
-					if (pdfEngine.ExtraData.ContainsKey(DocProcessorContext.CoordinateTransition) && pdfSettings.UnifiedPageSettings.ScaleContent) {
+
+					if (pdfEngine.ExtraData.ContainsKey(DocProcessorContext.CoordinateTransition) &&
+					    pdfSettings.UnifiedPageSettings.ScaleContent) {
 						processors.Add(new GotoDestinationProcessor() {
-							TransitionMapper = pdfEngine.ExtraData[DocProcessorContext.CoordinateTransition] as CoordinateTranslationSettings[]
+							TransitionMapper =
+								pdfEngine.ExtraData[DocProcessorContext.CoordinateTransition] as
+									CoordinateTranslationSettings[]
 						});
 					}
+
 					if (pdfSettings.ViewerPreferences.ForceInternalLink) {
 						processors.Add(new ForceInternalDestinationProcessor());
 					}
+
 					//var cts = new CoordinateTranslationSettings[pdf.NumberOfPages + 1]; // 页面的位置偏移量
 					//var sc = false;
 					//if (pdfSettings.PageSettings.Count > 0) {
@@ -365,32 +396,45 @@ namespace PDFPatcher.Processor
 					if (pdfSettings.UnifiedPageSettings.PaperSize.PaperName == PaperSize.AsPageSize) {
 						import.ImportPageSettings(pdf);
 					}
+
 					//if (sc == false) {
 					//    cts = null;
 					//}
+
 					#endregion
 
 					if (pdfSettings.FullCompression) {
 						st.SetFullCompression();
 					}
+
 					//st.Writer.CompressionLevel = ContextData.CreateDocumentOptions.CompressionLevel;
 					var labels = DocInfoImporter.ImportPageLabels(pdfSettings.PageLabels) ?? import.ImportPageLabels();
 					if (labels != null) {
 						st.Writer.PageLabels = labels;
 					}
-					if (options.ImportPageLinks || pdfSettings.UnifiedPageSettings.PaperSize.PaperName != PaperSize.AsPageSize/* sc*/) {
+
+					if (options.ImportPageLinks ||
+					    pdfSettings.UnifiedPageSettings.PaperSize.PaperName != PaperSize.AsPageSize /* sc*/) {
 						import.ImportPageLinks(pdf, st);
 					}
-					PdfDocumentCreator.ProcessInfoItem(import.InfoDoc.DocumentElement.SelectSingleNode(Constants.PageLink) as XmlElement, processors);
-					PdfDocumentCreator.ProcessInfoItem(import.InfoDoc.DocumentElement.SelectSingleNode(Constants.NamedDestination) as XmlElement, processors);
+
+					PdfDocumentCreator.ProcessInfoItem(
+						import.InfoDoc.DocumentElement.SelectSingleNode(Constants.PageLink) as XmlElement, processors);
+					PdfDocumentCreator.ProcessInfoItem(
+						import.InfoDoc.DocumentElement.SelectSingleNode(Constants.NamedDestination) as XmlElement,
+						processors);
 					XmlElement bookmarks = null;
 					if (options.ImportBookmarks && pdfSettings.RemoveBookmarks == false || xInfoDoc != null) {
 						Tracker.TraceMessage("导入书签。");
-						bookmarks = import.GetBookmarks() ?? OutlineManager.GetBookmark(pdf, new UnitConverter() { Unit = Constants.Units.Point });
+						bookmarks = import.GetBookmarks() ??
+						            OutlineManager.GetBookmark(pdf, new UnitConverter() {Unit = Constants.Units.Point});
 					}
+
 					if (bookmarks != null) {
 						// 预处理书签
-						processors.Add(new CollapseBookmarkProcessor() { BookmarkStatus = pdfSettings.ViewerPreferences.CollapseBookmark });
+						processors.Add(new CollapseBookmarkProcessor() {
+							BookmarkStatus = pdfSettings.ViewerPreferences.CollapseBookmark
+						});
 						PdfDocumentCreator.ProcessInfoItem(bookmarks, processors);
 						if (bookmarks.ChildNodes.Count > 0 || xInfoDoc != null) {
 							import.ImportNamedDestinations(pdf, st.Writer);
@@ -399,6 +443,7 @@ namespace PDFPatcher.Processor
 							if (bm != null) {
 								pdf.Catalog.Put(PdfName.OUTLINES, bm);
 							}
+
 							if (pdf.Catalog.Contains(PdfName.PAGEMODE) == false) {
 								pdf.Catalog.Put(PdfName.PAGEMODE, PdfName.USEOUTLINES);
 							}
@@ -407,6 +452,7 @@ namespace PDFPatcher.Processor
 							OutlineManager.KillOutline(pdf);
 						}
 					}
+
 					Tracker.IncrementProgress(10);
 					Tracker.TraceMessage("导入文档设置。");
 					import.ImportViewerPreferences(pdf);
@@ -418,6 +464,7 @@ namespace PDFPatcher.Processor
 					if (pdf.AcroForm == null) {
 						pdf.Trailer.Locate<PdfDictionary>(PdfName.ROOT).Remove(PdfName.ACROFORM);
 					}
+
 					Tracker.IncrementProgress(10);
 					Tracker.TraceMessage("保存文件：" + targetFile);
 					st.Close();
@@ -444,6 +491,7 @@ namespace PDFPatcher.Processor
 					}
 				}
 			}
+
 			if (overwriteSource) {
 				try {
 					Tracker.TraceMessage("覆盖输入文件。");
@@ -455,6 +503,7 @@ namespace PDFPatcher.Processor
 					FormHelper.ErrorBox("无法覆盖输入文件。\n请手工将“" + Ext.Tmp + "”后缀的临时文件更名为输入文件。");
 				}
 			}
+
 			Tracker.TraceMessage(Tracker.Category.Alert, "成功导入信息到 <<" + targetFile + ">>。");
 		}
 
@@ -466,6 +515,7 @@ namespace PDFPatcher.Processor
 				return ReplaceTargetFileNameMacros(sourceFile, targetFile, null as PdfDictionary);
 			}
 		}
+
 		/// <summary>
 		/// 替换目标文件名的替代符。
 		/// </summary>
@@ -479,27 +529,35 @@ namespace PDFPatcher.Processor
 				if (info.Contains(PdfName.TITLE)) {
 					p = FileHelper.GetValidFileName(info.GetAsString(PdfName.TITLE).ToUnicodeString());
 				}
-				targetFile = targetFile.Replace(Constants.FileNameMacros.TitleProperty, p ?? Path.GetFileNameWithoutExtension(sourceFile));
+
+				targetFile = targetFile.Replace(Constants.FileNameMacros.TitleProperty,
+					p ?? Path.GetFileNameWithoutExtension(sourceFile));
 				p = String.Empty;
 				if (info.Contains(PdfName.SUBJECT)) {
 					p = FileHelper.GetValidFileName(info.GetAsString(PdfName.SUBJECT).ToUnicodeString());
 				}
+
 				targetFile = targetFile.Replace(Constants.FileNameMacros.SubjectProperty, p);
 				p = String.Empty;
 				if (info.Contains(PdfName.AUTHOR)) {
 					p = FileHelper.GetValidFileName(info.GetAsString(PdfName.AUTHOR).ToUnicodeString());
 				}
+
 				targetFile = targetFile.Replace(Constants.FileNameMacros.AuthorProperty, p);
 				p = String.Empty;
 				if (info.Contains(PdfName.KEYWORDS)) {
 					p = FileHelper.GetValidFileName(info.GetAsString(PdfName.KEYWORDS).ToUnicodeString());
 				}
+
 				targetFile = targetFile.Replace(Constants.FileNameMacros.KeywordsProperty, p);
 			}
+
 			return targetFile
 				.Replace(Constants.FileNameMacros.FileName, Path.GetFileNameWithoutExtension(sourceFile))
 				.Replace(Constants.FileNameMacros.FolderName, Path.GetFileName(Path.GetDirectoryName(sourceFile)))
-				.Replace(Constants.FileNameMacros.PathName, FileHelper.CombinePath(sourceFile.Substring(0, sourceFile.LastIndexOf(Path.DirectorySeparatorChar)), String.Empty));
+				.Replace(Constants.FileNameMacros.PathName,
+					FileHelper.CombinePath(sourceFile.Substring(0, sourceFile.LastIndexOf(Path.DirectorySeparatorChar)),
+						String.Empty));
 		}
 
 		private static bool VerifyInfoDocument(XmlDocument infoDoc) {
@@ -509,14 +567,17 @@ namespace PDFPatcher.Processor
 					// 使用中文的书签
 					var v = root.GetAttribute(Constants.Info.ProductVersion);
 					if (v != Constants.InfoDocVersion
-						&& FormHelper.YesNoBox(String.Concat("信息文件不是用这个版本的程序生成的，可能会导入不成功，是否继续？\n当前程序的版本是：", Application.ProductVersion, "\n信息文件的导出程序版本是：", v)) == DialogResult.No) {
+					    && FormHelper.YesNoBox(String.Concat("信息文件不是用这个版本的程序生成的，可能会导入不成功，是否继续？\n当前程序的版本是：",
+						    Application.ProductVersion, "\n信息文件的导出程序版本是：", v)) == DialogResult.No) {
 						return false;
 					}
+
 					break;
 				default:
 					FormHelper.ErrorBox("信息文件格式有误，根元素不是“" + Constants.PdfInfo + "”。");
 					return false;
 			}
+
 			return true;
 		}
 
@@ -527,10 +588,12 @@ namespace PDFPatcher.Processor
 			if (r == null) {
 				return;
 			}
+
 			try {
 				if (r.ConfirmUnethicalMode() == false) {
 					return;
 				}
+
 				PdfPageExtractor.ExtractPages(options, sourceFile, targetFile, r);
 			}
 			catch (OperationCanceledException) {
@@ -564,6 +627,7 @@ namespace PDFPatcher.Processor
 				Tracker.TraceMessage(Tracker.Category.ImportantMessage, "合并文件列表不包含图片或 PDF 文件。");
 				return;
 			}
+
 			Tracker.SetProgressGoal(10 + sink.Workload);
 			Tracker.TrackProgress(1);
 			try {
@@ -571,12 +635,14 @@ namespace PDFPatcher.Processor
 				PdfPageLabels labels = null;
 				BookmarkContainer bookmarks = null;
 				if (String.IsNullOrEmpty(infoFile) == false) {
-					Tracker.TraceMessage(Tracker.Category.ImportantMessage, String.Concat("加载信息文件：<<", infoFile, ">>。"));
+					Tracker.TraceMessage(Tracker.Category.ImportantMessage,
+						String.Concat("加载信息文件：<<", infoFile, ">>。"));
 					var import = new DocInfoImporter(impOptions, infoFile);
 					info = import.ImportDocumentInfomation();
 					labels = import.ImportPageLabels();
 					bookmarks = import.GetBookmarks();
 				}
+
 				if (labels == null && option.PageLabels.Count > 0) {
 					labels = DocInfoImporter.ImportPageLabels(option.PageLabels);
 				}
@@ -588,17 +654,19 @@ namespace PDFPatcher.Processor
 					Tracker.TraceMessage(Tracker.Category.Error, "输出文件路径无效。");
 					return;
 				}
+
 				f.CreateContainingDirectory();
 				using (Stream s = new FileStream(f, FileMode.Create)) {
 					var ps = option.PageSettings;
 					doc = new Document(
 						new iTextSharp.text.Rectangle(ps.PaperSize.Width, ps.PaperSize.Height),
 						ps.Margins.Left, ps.Margins.Right, ps.Margins.Top, ps.Margins.Bottom
-						);
+					);
 					var w = new PdfSmartCopy(doc, s);
 					if (option.FullCompression) {
 						w.SetFullCompression();
 					}
+
 					//w.CompressionLevel = ContextData.CreateDocumentOptions.CompressionLevel;
 					doc.Open();
 					doc.AddCreator(Application.ProductName + " " + Application.ProductVersion);
@@ -611,19 +679,24 @@ namespace PDFPatcher.Processor
 					foreach (var item in sources) {
 						creator.ProcessFile(item, creator.PdfBookmarks.BookmarkRoot);
 					}
+
 					Tracker.TraceMessage("设置文档选项。");
 					DocInfoImporter.ImportDocumentInfomation(option.MetaData.SpecifyMetaData
-							? option.MetaData
-							: info, doc);
+						? option.MetaData
+						: info, doc);
 					DocInfoImporter.OverrideViewerPreferences(option.ViewerPreferences, null, w);
-					if ((bookmarks == null || bookmarks.HasChildNodes == false) && creator.PdfBookmarks.DocumentElement.HasChildNodes) {
+					if ((bookmarks == null || bookmarks.HasChildNodes == false) &&
+					    creator.PdfBookmarks.DocumentElement.HasChildNodes) {
 						bookmarks = creator.PdfBookmarks.BookmarkRoot;
 					}
+
 					if (bookmarks != null && bookmarks.HasChildNodes) {
 						Tracker.TraceMessage("写入文档书签。");
-						OutlineManager.WriteOutline(w, bookmarks, w.PageEmpty ? w.CurrentPageNumber - 1 : w.CurrentPageNumber);
+						OutlineManager.WriteOutline(w, bookmarks,
+							w.PageEmpty ? w.CurrentPageNumber - 1 : w.CurrentPageNumber);
 						w.ViewerPreferences = PdfWriter.PageModeUseOutlines;
 					}
+
 					Tracker.TraceMessage("写入文件索引。");
 					Tracker.TraceMessage(Tracker.Category.Alert, "生成文件：<<" + targetFile.ToString() + ">>。");
 					w.Close();
@@ -656,17 +729,20 @@ namespace PDFPatcher.Processor
 			if (r == null) {
 				return;
 			}
+
 			if (FileHelper.IsPathValid(bookmarkFile) == false || Path.GetFileName(bookmarkFile).Length == 0) {
 				Tracker.TraceMessage(Tracker.Category.Error, Messages.InfoFileNameInvalid);
 				FormHelper.ErrorBox(Messages.InfoFileNameInvalid);
 				return;
 			}
+
 			bookmarkFile = FileHelper.MakePathRootedAndWithExtension(bookmarkFile, sourceFile, Ext.Xml, true);
 			Tracker.TraceMessage(Tracker.Category.OutputFile, bookmarkFile);
 
 			if (options.CreateBookmarkForFirstPage) {
 				options.FirstPageTitle = Path.GetFileNameWithoutExtension(sourceFile);
 			}
+
 			var creator = new AutoBookmarkCreator(r, options);
 
 			try {
@@ -685,6 +761,7 @@ namespace PDFPatcher.Processor
 					creator.ExportAutoBookmarks(w, options);
 					w.WriteEndElement();
 				}
+
 				Tracker.TraceMessage(Tracker.Category.Alert, "成功导出信息文件到 <<" + bookmarkFile + ">>。");
 			}
 			catch (OperationCanceledException) {
@@ -712,6 +789,7 @@ namespace PDFPatcher.Processor
 			if (r == null) {
 				return;
 			}
+
 			bool noOutputFile = false;
 			if (String.IsNullOrEmpty(bookmarkFile)) {
 				noOutputFile = true;
@@ -721,6 +799,7 @@ namespace PDFPatcher.Processor
 				FormHelper.ErrorBox(Messages.InfoFileNameInvalid);
 				return;
 			}
+
 			try {
 				if (FileHelper.CheckOverwrite(bookmarkFile) == false) {
 					return;
@@ -729,6 +808,7 @@ namespace PDFPatcher.Processor
 			catch (OperationCanceledException) {
 				return;
 			}
+
 			bookmarkFile = FileHelper.MakePathRootedAndWithExtension(bookmarkFile, sourceFile, Ext.Xml, false);
 			Tracker.TraceMessage(Tracker.Category.OutputFile, bookmarkFile);
 
@@ -811,6 +891,7 @@ namespace PDFPatcher.Processor
 			else if (Path.GetFileName(t).Length > 0) {
 				t = new FilePath(t).EnsureExtension(Ext.Pdf).ToString();
 			}
+
 			return Path.GetFullPath(t);
 		}
 
@@ -824,6 +905,7 @@ namespace PDFPatcher.Processor
 						Tracker.TraceMessage(Tracker.Category.Error, String.Concat("找不到 PDF 文件：", s));
 						continue;
 					}
+
 					var t = RenameFile(template, item);
 					Tracker.TraceMessage(Tracker.Category.InputFile, s.ToString());
 					Tracker.TraceMessage(Tracker.Category.OutputFile, t);
@@ -833,6 +915,7 @@ namespace PDFPatcher.Processor
 						Tracker.TraceMessage(Tracker.Category.Error, String.Concat("输出文件名 ", t, " 无效。"));
 						goto Exit;
 					}
+
 					if (s.Equals(t)) {
 						Tracker.TraceMessage("源文件与目标文件名称相同。不需重命名。");
 						goto Exit;
@@ -849,12 +932,15 @@ namespace PDFPatcher.Processor
 						else if (r == DialogResult.Cancel) {
 							throw new OperationCanceledException();
 						}
+
 						// r == DialogResult.Yes
 						File.Delete(t);
 					}
+
 					if (Directory.Exists(Path.GetDirectoryName(t)) == false) {
 						Directory.CreateDirectory(Path.GetDirectoryName(t));
 					}
+
 					if (keepSourceFile) {
 						File.Copy(s.ToString(), t);
 					}
@@ -869,9 +955,11 @@ namespace PDFPatcher.Processor
 				catch (Exception ex) {
 					Tracker.TraceMessage(ex);
 				}
-			Exit:
+
+				Exit:
 				Tracker.IncrementTotalProgress();
 			}
+
 			Tracker.TraceMessage("重命名操作已完成。");
 		}
 
@@ -880,29 +968,36 @@ namespace PDFPatcher.Processor
 				Tracker.TraceMessage(Tracker.Category.Error, "输入 PDF 文件路径无效。");
 				return;
 			}
+
 			if (FileHelper.IsPathValid(targetFile) == false) {
 				Tracker.TraceMessage(Tracker.Category.Error, "输出 PDF 文件路径无效。");
 				return;
 			}
+
 			if (FileHelper.IsPathValid(infoFile) == false) {
 				Tracker.TraceMessage(Tracker.Category.Error, "信息文件路径无效。");
 				return;
 			}
+
 			Tracker.TraceMessage(Tracker.Category.InputFile, sourceFile);
 			Tracker.TraceMessage(Tracker.Category.OutputFile, targetFile);
 			if (FileHelper.ComparePath(sourceFile, targetFile)) {
 				Tracker.TraceMessage(Tracker.Category.Error, "输入文件和输出文件不能相同。");
 				return;
 			}
+
 			if (FileHelper.CheckOverwrite(targetFile) == false) {
 				return;
 			}
+
 			var pdf = OpenPdf(sourceFile, AppContext.LoadPartialPdfFile, false);
 			if (pdf == null) {
 				return;
 			}
+
 			try {
-				using (var infoReader = XmlReader.Create(infoFile, new XmlReaderSettings() { IgnoreComments = true, IgnoreProcessingInstructions = true })) {
+				using (var infoReader = XmlReader.Create(infoFile,
+					       new XmlReaderSettings() {IgnoreComments = true, IgnoreProcessingInstructions = true})) {
 					infoReader.MoveToContent(); // 移到根元素
 					using (Stream s = new FileStream(targetFile, FileMode.Create)) {
 						var st = new PdfStamper(pdf, s);
@@ -914,6 +1009,7 @@ namespace PDFPatcher.Processor
 						st.Close();
 					}
 				}
+
 				Tracker.TraceMessage(Tracker.Category.ImportantMessage, "成功写入识别结果到文件：<<" + targetFile + ">>。");
 			}
 			catch (OperationCanceledException) {

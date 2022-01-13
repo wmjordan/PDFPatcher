@@ -8,6 +8,7 @@ namespace PDFPatcher
 	public partial class SourceFileControl : UserControl
 	{
 		bool _controlLockDown;
+
 		public SourceFileControl() {
 			_controlLockDown = true;
 			InitializeComponent();
@@ -25,6 +26,7 @@ namespace PDFPatcher
 		/// 获取选定的 PDF 文件列表。
 		/// </summary>
 		internal string[] Files { get; private set; }
+
 		/// <summary>
 		/// 获取选定的 PDF 文件列表的第一项。
 		/// </summary>
@@ -53,10 +55,11 @@ namespace PDFPatcher
 		private void _BrowseSourcePdfButton_Click(object sender, EventArgs e) {
 			var t = _SourcePdfBox.Text;
 			if (t.Length > 0
-				&& FileHelper.IsPathValid(t)
-				&& System.IO.Path.GetFileName(t).Length > 0) {
+			    && FileHelper.IsPathValid(t)
+			    && System.IO.Path.GetFileName(t).Length > 0) {
 				_OpenPdfBox.FileName = t;
 			}
+
 			if (_OpenPdfBox.ShowDialog() == DialogResult.OK) {
 				SelectFiles(_OpenPdfBox.FileNames);
 				if (BrowseSelectedFiles != null) {
@@ -73,6 +76,7 @@ namespace PDFPatcher
 			else if (files[0] != t) {
 				Text = files[0];
 			}
+
 			Files = files;
 		}
 
@@ -80,8 +84,9 @@ namespace PDFPatcher
 			if (_controlLockDown == true) {
 				return;
 			}
+
 			if (FileHelper.HasFileNameMacro(_SourcePdfBox.Text) == false) {
-				SelectFiles(new string[] { _SourcePdfBox.Text });
+				SelectFiles(new string[] {_SourcePdfBox.Text});
 			}
 		}
 
@@ -103,17 +108,15 @@ namespace PDFPatcher
 			else if (Visible == false) {
 				_SourcePdfBox.Contents = null;
 			}
+
 			Text = t;
 			_controlLockDown = false;
 		}
 
 		private void label1_Click(object sender, EventArgs e) {
-
 		}
 
 		private void _SourcePdfBox_SelectedIndexChanged(object sender, EventArgs e) {
-
 		}
-
 	}
 }

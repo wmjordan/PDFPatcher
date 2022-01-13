@@ -12,24 +12,31 @@ namespace PDFPatcher.Model
 		///<summary>获取或指定页面范围的值。</summary>
 		[XmlAttribute(Constants.PageRange)]
 		public string PageRange { get; set; }
+
 		///<summary>获取或指定页面筛选的值。</summary>
 		[XmlAttribute(Constants.PageFilterTypes.ThisName)]
 		public string Filter { get; set; }
+
 		///<summary>获取或指定页面尺寸的值。</summary>
 		[XmlAttribute(Constants.Content.PageSettings.MediaBox)]
 		public string PageSize { get; set; }
+
 		///<summary>获取或指定裁剪框的值。</summary>
 		[XmlAttribute(Constants.Content.PageSettings.CropBox)]
 		public string CropBox { get; set; }
+
 		///<summary>获取或指定修剪框的值。</summary>
 		[XmlAttribute(Constants.Content.PageSettings.TrimBox)]
 		public string TrimBox { get; set; }
+
 		///<summary>获取或指定艺术框的值。</summary>
 		[XmlAttribute(Constants.Content.PageSettings.ArtBox)]
 		public string ArtBox { get; set; }
+
 		///<summary>获取或指定出血框的值。</summary>
 		[XmlAttribute(Constants.Content.PageSettings.BleedBox)]
 		public string BleedBox { get; set; }
+
 		///<summary>获取或指定旋转角度的值。</summary>
 		[XmlAttribute(Constants.Content.PageSettings.Rotation)]
 		[DefaultValue(0)]
@@ -68,11 +75,13 @@ namespace PDFPatcher.Model
 			else if (s1 == null || s2 == null) {
 				return false;
 			}
+
 			if (s1.Rotation != s2.Rotation || s1.PageSize != s2.PageSize
-				|| s1.CropBox != s2.CropBox || s1.TrimBox != s2.TrimBox
-				|| s1.BleedBox != s2.BleedBox || s1.ArtBox != s2.ArtBox) {
+			                               || s1.CropBox != s2.CropBox || s1.TrimBox != s2.TrimBox
+			                               || s1.BleedBox != s2.BleedBox || s1.ArtBox != s2.ArtBox) {
 				return false;
 			}
+
 			return true;
 		}
 
@@ -81,20 +90,25 @@ namespace PDFPatcher.Model
 				System.Diagnostics.Debug.WriteLine("Empty page range.");
 				return;
 			}
+
 			writer.WriteAttributeString(Constants.PageRange, PageRange);
 			writer.WriteAttributeString(Constants.Content.PageSettings.MediaBox, PageSize);
 			if (CropBox != null) {
 				writer.WriteAttributeString(Constants.Content.PageSettings.CropBox, CropBox);
 			}
+
 			if (TrimBox != null) {
 				writer.WriteAttributeString(Constants.Content.PageSettings.TrimBox, TrimBox);
 			}
+
 			if (ArtBox != null) {
 				writer.WriteAttributeString(Constants.Content.PageSettings.ArtBox, ArtBox);
 			}
+
 			if (BleedBox != null) {
 				writer.WriteAttributeString(Constants.Content.PageSettings.BleedBox, BleedBox);
 			}
+
 			if (Rotation != 0) {
 				writer.WriteAttributeString(Constants.Content.PageSettings.Rotation, Rotation.ToText());
 			}

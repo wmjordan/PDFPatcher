@@ -8,12 +8,10 @@ namespace PDFPatcher.Functions.Editor
 	{
 		public void Process(Controller controller, params string[] parameters) {
 			using (var f = new DocumentInfoForm() {
-				Document = controller.Model.PdfDocument,
-				InfoDucument = controller.Model.Document
-			}) {
+				       Document = controller.Model.PdfDocument, InfoDucument = controller.Model.Document
+			       }) {
 				f.ShowDialog();
 			}
 		}
-
 	}
 }

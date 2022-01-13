@@ -12,7 +12,6 @@ namespace PDFPatcher.Functions
 		}
 
 		private void ZoomRateEntryForm_Load(object sender, EventArgs e) {
-
 		}
 
 		protected void _OkButton_Click(Object source, EventArgs args) {

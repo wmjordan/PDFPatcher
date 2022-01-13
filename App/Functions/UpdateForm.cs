@@ -32,11 +32,20 @@ namespace PDFPatcher.Functions
 			};
 			_CheckUpdateIntervalBox.SelectedIndexChanged += (s, args) => {
 				switch (_CheckUpdateIntervalBox.SelectedIndex) {
-					case 0: AppContext.CheckUpdateInterval = 7; break;
-					case 1: AppContext.CheckUpdateInterval = 14; break;
-					case 2: AppContext.CheckUpdateInterval = 30; break;
-					default: AppContext.CheckUpdateInterval = Int32.MaxValue; break;
+					case 0:
+						AppContext.CheckUpdateInterval = 7;
+						break;
+					case 1:
+						AppContext.CheckUpdateInterval = 14;
+						break;
+					case 2:
+						AppContext.CheckUpdateInterval = 30;
+						break;
+					default:
+						AppContext.CheckUpdateInterval = Int32.MaxValue;
+						break;
 				}
+
 				if (AppContext.CheckUpdateInterval != Int32.MaxValue) {
 					AppContext.CheckUpdateDate = DateTime.Today + TimeSpan.FromDays(AppContext.CheckUpdateInterval);
 				}
@@ -52,6 +61,7 @@ namespace PDFPatcher.Functions
 					_InfoBox.AppendText("检查新版本失败：" + args.Error.Message);
 					goto Exit;
 				}
+
 				try {
 					var x = new XmlDocument();
 					x.Load(new System.IO.MemoryStream(args.Result));
@@ -60,7 +70,8 @@ namespace PDFPatcher.Functions
 				catch (Exception) {
 					FormHelper.ErrorBox("版本信息文件格式错误，请稍候重试。");
 				}
-			Exit:
+
+				Exit:
 				_UpdateChecker.Dispose();
 				_UpdateChecker = null;
 			};
@@ -74,6 +85,7 @@ namespace PDFPatcher.Functions
 				_InfoBox.AppendLine("版本信息文件格式错误，请稍候重试。");
 				return;
 			}
+
 			var v = r.GetAttribute("version");
 			var d = r.GetAttribute("date");
 			var u = r.GetAttribute("url");
@@ -89,9 +101,7 @@ namespace PDFPatcher.Functions
 				}
 			}
 			else {
-				_InfoBox.AppendLine(String.Join("\n", new string[] {
-							"未发现新版本。", "服务器上发布的版本是：", v + " " + d
-						}));
+				_InfoBox.AppendLine(String.Join("\n", new string[] {"未发现新版本。", "服务器上发布的版本是：", v + " " + d}));
 			}
 		}
 	}

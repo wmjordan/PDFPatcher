@@ -49,6 +49,7 @@ namespace PDFPatcher.Functions
 			else {
 				Options = AppContext.Patcher = new PatcherOptions();
 			}
+
 			Reload();
 		}
 
@@ -97,15 +98,18 @@ namespace PDFPatcher.Functions
 					_PageSizeBox.SelectedIndex = i;
 				}
 			}
+
 			if (_PageSizeBox.SelectedIndex == -1) {
 				_PageSizeBox.SelectedIndex = 0;
 			}
+
 			_ResizePdfPagesBox.Checked = ps.ScaleContent == false;
 			_ScalePdfPagesBox.Checked = ps.ScaleContent;
 			if (_PageSizeBox.SelectedIndex == 0) {
 				_HeightBox.Value = 26.01M;
 				_WidthBox.Value = 18M;
 			}
+
 			_uiLockDown = false;
 		}
 
@@ -152,63 +156,65 @@ namespace PDFPatcher.Functions
 			if (_PageSizeBox.SelectedIndex == -1) {
 				return;
 			}
+
 			var p = _PageSizeBox.SelectedItem as PaperSize;
 			if (p.Width > 0 && p.Height > 0) {
 				_WidthBox.SetValue((decimal)p.Width / 100);
 				_HeightBox.SetValue((decimal)p.Height / 100);
 			}
+
 			paperName = p.PaperName;
 			switch (paperName) {
 				case PaperSize.FixedWidthAutoHeight:
 					_AutoRotateBox.Enabled =
-					_HeightBox.Enabled =
-					_ImageVAlignBox.Enabled =
-					false;
+						_HeightBox.Enabled =
+							_ImageVAlignBox.Enabled =
+								false;
 					_ScalePdfPagesBox.Enabled =
-					_ResizePdfPagesBox.Enabled =
-					_ImageHAlignBox.Enabled =
-					_WidthBox.Enabled = true;
+						_ResizePdfPagesBox.Enabled =
+							_ImageHAlignBox.Enabled =
+								_WidthBox.Enabled = true;
 					break;
 				case PaperSize.AsNarrowestPage:
 				case PaperSize.AsWidestPage:
 					_AutoRotateBox.Enabled =
-					_HeightBox.Enabled =
-					_ImageVAlignBox.Enabled =
-					_WidthBox.Enabled =
-					false;
+						_HeightBox.Enabled =
+							_ImageVAlignBox.Enabled =
+								_WidthBox.Enabled =
+									false;
 					_ScalePdfPagesBox.Enabled =
-					_ResizePdfPagesBox.Enabled =
-					_ImageHAlignBox.Enabled = true;
+						_ResizePdfPagesBox.Enabled =
+							_ImageHAlignBox.Enabled = true;
 					break;
 				case PaperSize.AsPageSize:
 					_AutoRotateBox.Enabled =
-					_WidthBox.Enabled =
-					_ImageHAlignBox.Enabled =
-					_ImageVAlignBox.Enabled =
-					_ScalePdfPagesBox.Enabled =
-					_ResizePdfPagesBox.Enabled =
-					_HeightBox.Enabled = false;
+						_WidthBox.Enabled =
+							_ImageHAlignBox.Enabled =
+								_ImageVAlignBox.Enabled =
+									_ScalePdfPagesBox.Enabled =
+										_ResizePdfPagesBox.Enabled =
+											_HeightBox.Enabled = false;
 					break;
 				case PaperSize.AsLargestPage:
 				case PaperSize.AsSmallestPage:
 					_AutoRotateBox.Enabled =
-					_HeightBox.Enabled =
-					_WidthBox.Enabled =
-					false;
+						_HeightBox.Enabled =
+							_WidthBox.Enabled =
+								false;
 					_ImageVAlignBox.Enabled =
-					_ImageHAlignBox.Enabled =
-					_ScalePdfPagesBox.Enabled =
-					_ResizePdfPagesBox.Enabled = true;
+						_ImageHAlignBox.Enabled =
+							_ScalePdfPagesBox.Enabled =
+								_ResizePdfPagesBox.Enabled = true;
 					break;
 				default:
 					_AutoRotateBox.Enabled =
-					_WidthBox.Enabled =
-					_HeightBox.Enabled =
-					_ImageHAlignBox.Enabled =
-					_ImageVAlignBox.Enabled =
-					_ScalePdfPagesBox.Enabled =
-					_ResizePdfPagesBox.Enabled =
-					true;
+						_WidthBox.Enabled =
+							_HeightBox.Enabled =
+								_ImageHAlignBox.Enabled =
+									_ImageVAlignBox.Enabled =
+										_ScalePdfPagesBox.Enabled =
+											_ResizePdfPagesBox.Enabled =
+												true;
 					break;
 			}
 		}
@@ -217,10 +223,10 @@ namespace PDFPatcher.Functions
 			if (_SyncMarginsBox.Checked == false || _uiLockDown) {
 				return;
 			}
+
 			var c = sender as NumericUpDown;
 			var d = c.Value;
 			_TopMarginBox.Value = _BottomMarginBox.Value = _LeftMarginBox.Value = _RightMarginBox.Value = d;
 		}
-
 	}
 }

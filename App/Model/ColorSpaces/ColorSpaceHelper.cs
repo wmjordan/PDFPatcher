@@ -11,6 +11,7 @@ namespace Devcorp.Controls.Design
 	public static class ColorSpaceHelper
 	{
 		#region Color processing
+
 		/// <summary>
 		/// Gets the "distance" between two colors.
 		/// RGB colors must be normalized (eg. values in [0.0, 1.0]).
@@ -47,25 +48,17 @@ namespace Devcorp.Controls.Design
 		/// <param name="color1">First color.</param>
 		/// <param name="color2">Second color.</param>
 		public static double GetColorDistance(Color c1, Color c2) {
-			var rgb1 = new double[]{
-											(double)c1.R/255.0,
-											(double)c1.G/255.0,
-											(double)c1.B/255.0
-										};
+			var rgb1 = new double[] {(double)c1.R / 255.0, (double)c1.G / 255.0, (double)c1.B / 255.0};
 
-			var rgb2 = new double[]{
-											(double)c2.R/255.0,
-											(double)c2.G/255.0,
-											(double)c2.B/255.0
-										};
+			var rgb2 = new double[] {(double)c2.R / 255.0, (double)c2.G / 255.0, (double)c2.B / 255.0};
 
 			return GetColorDistance(rgb1[0], rgb1[1], rgb1[2], rgb2[0], rgb2[1], rgb2[2]);
 		}
 
-
 		#endregion
 
 		#region Light Spectrum processing
+
 		/// <summary>
 		/// Gets visible colors (color wheel).
 		/// </summary>
@@ -112,36 +105,36 @@ namespace Devcorp.Controls.Design
 			return GetSpectrumColors(255);
 		}
 
-
 		#endregion
 
 		#region Hexa convert
+
 		/// <summary>
 		/// Gets the int equivalent for a hexadecimal value.
 		/// </summary>
 		private static int GetIntFromHex(string strHex) {
 			switch (strHex) {
 				case ("A"): {
-						return 10;
-					}
+					return 10;
+				}
 				case ("B"): {
-						return 11;
-					}
+					return 11;
+				}
 				case ("C"): {
-						return 12;
-					}
+					return 12;
+				}
 				case ("D"): {
-						return 13;
-					}
+					return 13;
+				}
 				case ("E"): {
-						return 14;
-					}
+					return 14;
+				}
 				case ("F"): {
-						return 15;
-					}
+					return 15;
+				}
 				default: {
-						return int.Parse(strHex);
-					}
+					return int.Parse(strHex);
+				}
 			}
 		}
 
@@ -193,6 +186,7 @@ namespace Devcorp.Controls.Design
 		#endregion
 
 		#region HSB convert
+
 		/// <summary>
 		/// Converts HSB to RGB.
 		/// </summary>
@@ -256,7 +250,7 @@ namespace Devcorp.Controls.Design
 				Convert.ToInt32(Double.Parse(String.Format("{0:0.00}", r * 255.0))),
 				Convert.ToInt32(Double.Parse(String.Format("{0:0.00}", g * 255.0))),
 				Convert.ToInt32(Double.Parse(String.Format("{0:0.00}", b * 255.0)))
-				);
+			);
 		}
 
 		/// <summary>
@@ -340,6 +334,7 @@ namespace Devcorp.Controls.Design
 		#endregion
 
 		#region HSL convert
+
 		/// <summary>
 		/// Converts HSL to RGB.
 		/// </summary>
@@ -353,7 +348,7 @@ namespace Devcorp.Controls.Design
 					Convert.ToInt32(Double.Parse(String.Format("{0:0.00}", l * 255.0))),
 					Convert.ToInt32(Double.Parse(String.Format("{0:0.00}", l * 255.0))),
 					Convert.ToInt32(Double.Parse(String.Format("{0:0.00}", l * 255.0)))
-					);
+				);
 			}
 			else {
 				double q = (l < 0.5) ? (l * (1.0 + s)) : (l + s - (l * s));
@@ -361,9 +356,9 @@ namespace Devcorp.Controls.Design
 
 				double Hk = h / 360.0;
 				var T = new double[3];
-				T[0] = Hk + (1.0 / 3.0);    // Tr
-				T[1] = Hk;              // Tb
-				T[2] = Hk - (1.0 / 3.0);    // Tg
+				T[0] = Hk + (1.0 / 3.0); // Tr
+				T[1] = Hk; // Tb
+				T[2] = Hk - (1.0 / 3.0); // Tg
 
 				for (int i = 0; i < 3; i++) {
 					if (T[i] < 0) T[i] += 1.0;
@@ -387,7 +382,7 @@ namespace Devcorp.Controls.Design
 					Convert.ToInt32(Double.Parse(String.Format("{0:0.00}", T[0] * 255.0))),
 					Convert.ToInt32(Double.Parse(String.Format("{0:0.00}", T[1] * 255.0))),
 					Convert.ToInt32(Double.Parse(String.Format("{0:0.00}", T[2] * 255.0)))
-					);
+				);
 			}
 		}
 
@@ -449,6 +444,7 @@ namespace Devcorp.Controls.Design
 		#endregion
 
 		#region RGB convert
+
 		/// <summary> 
 		/// Converts RGB to HSL.
 		/// </summary>
@@ -501,7 +497,7 @@ namespace Devcorp.Controls.Design
 				Double.Parse(String.Format("{0:0.##}", h)),
 				Double.Parse(String.Format("{0:0.##}", s)),
 				Double.Parse(String.Format("{0:0.##}", l))
-				);
+			);
 		}
 
 		/// <summary> 
@@ -628,6 +624,7 @@ namespace Devcorp.Controls.Design
 		public static YUV RGBtoYUV(Color c) {
 			return RGBtoYUV(c.R, c.G, c.B);
 		}
+
 		/// <summary>
 		/// Converts RGB to YUV.
 		/// </summary>
@@ -658,14 +655,16 @@ namespace Devcorp.Controls.Design
 				(r * 0.4124 + g * 0.3576 + b * 0.1805),
 				(r * 0.2126 + g * 0.7152 + b * 0.0722),
 				(r * 0.0193 + g * 0.1192 + b * 0.9505)
-				);
+			);
 		}
+
 		/// <summary>
 		/// Converts RGB to CIEXYZ.
 		/// </summary>
 		public static CIEXYZ RGBtoXYZ(RGB rgb) {
 			return RGBtoXYZ(rgb.Red, rgb.Green, rgb.Blue);
 		}
+
 		/// <summary>
 		/// Converts RGB to CIEXYZ.
 		/// </summary>
@@ -687,6 +686,7 @@ namespace Devcorp.Controls.Design
 		public static CIELab RGBtoLab(RGB rgb) {
 			return XYZtoLab(RGBtoXYZ(rgb.Red, rgb.Green, rgb.Blue));
 		}
+
 		/// <summary>
 		/// Converts RGB to CIELab.
 		/// </summary>
@@ -694,10 +694,10 @@ namespace Devcorp.Controls.Design
 			return XYZtoLab(RGBtoXYZ(color.R, color.G, color.B));
 		}
 
-
 		#endregion
 
 		#region CMYK convert
+
 		/// <summary>
 		/// 将四色分量（必须为 0～1）转换为 RGB 颜色。
 		/// </summary>
@@ -789,6 +789,7 @@ namespace Devcorp.Controls.Design
 		#endregion
 
 		#region YUV convert
+
 		/// <summary>
 		/// Converts YUV to RGB.
 		/// </summary>
@@ -872,6 +873,7 @@ namespace Devcorp.Controls.Design
 		#endregion
 
 		#region CIE XYZ convert
+
 		/// <summary>
 		/// Converts CIEXYZ to RGB structure.
 		/// </summary>
@@ -882,14 +884,16 @@ namespace Devcorp.Controls.Design
 			Clinear[2] = x * 0.0556 - y * 0.2040 + z * 1.0570; // blue
 
 			for (int i = 0; i < 3; i++) {
-				Clinear[i] = (Clinear[i] <= 0.0031308) ? 12.92 * Clinear[i] : (1 + 0.055) * Math.Pow(Clinear[i], (1.0 / 2.4)) - 0.055;
+				Clinear[i] = (Clinear[i] <= 0.0031308)
+					? 12.92 * Clinear[i]
+					: (1 + 0.055) * Math.Pow(Clinear[i], (1.0 / 2.4)) - 0.055;
 			}
 
 			return new RGB(
 				Convert.ToInt32(Double.Parse(String.Format("{0:0.00}", Clinear[0] * 255.0))),
 				Convert.ToInt32(Double.Parse(String.Format("{0:0.00}", Clinear[1] * 255.0))),
 				Convert.ToInt32(Double.Parse(String.Format("{0:0.00}", Clinear[2] * 255.0)))
-				);
+			);
 		}
 
 		/// <summary>
@@ -929,10 +933,10 @@ namespace Devcorp.Controls.Design
 			return XYZtoLab(xyz.X, xyz.Y, xyz.Z);
 		}
 
-
 		#endregion
 
 		#region CIE L*a*b* convert
+
 		/// <summary>
 		/// Converts CIELab to CIEXYZ.
 		/// </summary>
@@ -947,7 +951,7 @@ namespace Devcorp.Controls.Design
 				(fx > theta) ? CIEXYZ.D65.X * (fx * fx * fx) : (fx - 16.0 / 116.0) * 3 * (theta * theta) * CIEXYZ.D65.X,
 				(fy > theta) ? CIEXYZ.D65.Y * (fy * fy * fy) : (fy - 16.0 / 116.0) * 3 * (theta * theta) * CIEXYZ.D65.Y,
 				(fz > theta) ? CIEXYZ.D65.Z * (fz * fz * fz) : (fz - 16.0 / 116.0) * 3 * (theta * theta) * CIEXYZ.D65.Z
-				);
+			);
 		}
 
 		/// <summary>
@@ -964,6 +968,7 @@ namespace Devcorp.Controls.Design
 		public static RGB LabtoRGB(double l, double a, double b) {
 			return XYZtoRGB(LabtoXYZ(l, a, b));
 		}
+
 		/// <summary>
 		/// Converts CIELab to RGB.
 		/// </summary>
@@ -971,8 +976,6 @@ namespace Devcorp.Controls.Design
 			return XYZtoRGB(LabtoXYZ(lab));
 		}
 
-
 		#endregion
-
 	}
 }

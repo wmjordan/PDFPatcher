@@ -31,6 +31,7 @@ namespace PDFPatcher.Functions.Editor
 			if (_PageDimensionBox.Items.Count > 0) {
 				_PageDimensionBox.SelectedIndex = 0;
 			}
+
 			var ts = new HashSet<MuFontAndSize>(new FontAndSizeComparer());
 			foreach (var block in page.TextPage.Blocks) {
 				foreach (var line in block.Lines) {
@@ -38,6 +39,7 @@ namespace PDFPatcher.Functions.Editor
 					ts.Add(new MuFontAndSize(Model.PdfDocumentFont.RemoveSubsetPrefix(page.GetFont(c).Name), c.Size));
 				}
 			}
+
 			_TextStyleBox.Objects = ts;
 			_TextStyleBox.Sort(_SizeColumn, SortOrder.Descending);
 			PageNumber = page.PageNumber;
@@ -54,6 +56,7 @@ namespace PDFPatcher.Functions.Editor
 			if (v == null) {
 				return;
 			}
+
 			var r = v.Rect;
 			_TopBox.Text = r.Bottom.ToText();
 			_RightBox.Text = r.Right.ToText();
@@ -72,10 +75,12 @@ namespace PDFPatcher.Functions.Editor
 		{
 			public readonly MuRectangle Rect;
 			public readonly string Title;
+
 			public Box(MuRectangle rect, string title) {
 				Rect = rect;
 				Title = title;
 			}
+
 			public override string ToString() {
 				return Title;
 			}
@@ -91,6 +96,7 @@ namespace PDFPatcher.Functions.Editor
 				Size = size;
 			}
 		}
+
 		sealed class FontAndSizeComparer : IEqualityComparer<MuFontAndSize>
 		{
 			public bool Equals(MuFontAndSize x, MuFontAndSize y) {

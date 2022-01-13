@@ -10,21 +10,22 @@ namespace PDFPatcher.Processor.Imaging
 	static class JpgHelper
 	{
 		static readonly ImageCodecInfo _jpgCodec = BitmapHelper.GetCodec("image/jpeg");
+
 		static EncoderParameters GetEncoderParameters(int quality) {
 			return new EncoderParameters(2) {
 				Param = new EncoderParameter[] {
-					new EncoderParameter (Encoder.Compression, (long)EncoderValue.RenderProgressive),
-					new EncoderParameter (Encoder.Quality, quality)
+					new EncoderParameter(Encoder.Compression, (long)EncoderValue.RenderProgressive),
+					new EncoderParameter(Encoder.Quality, quality)
 				}
 			};
 		}
+
 		// JPEG 编码器不支持 8 位图像输出
 		static EncoderParameters GetEncoderParameters(int quality, int colorDepth) {
 			return new EncoderParameters(3) {
 				Param = new EncoderParameter[] {
-					new EncoderParameter (Encoder.Compression, (long)EncoderValue.RenderProgressive),
-					new EncoderParameter (Encoder.Quality, quality),
-					new EncoderParameter (Encoder.ColorDepth, colorDepth)
+					new EncoderParameter(Encoder.Compression, (long)EncoderValue.RenderProgressive),
+					new EncoderParameter(Encoder.Quality, quality), new EncoderParameter(Encoder.ColorDepth, colorDepth)
 				}
 			};
 		}
@@ -61,7 +62,8 @@ namespace PDFPatcher.Processor.Imaging
 		/// </summary>
 		class ExifReader : IDisposable
 		{
-			private static readonly Regex _nullDateTimeMatcher = new Regex(@"^[\s0]{4}[:\s][\s0]{2}[:\s][\s0]{5}[:\s][\s0]{2}[:\s][\s0]{2}$");
+			private static readonly Regex _nullDateTimeMatcher =
+				new Regex(@"^[\s0]{4}[:\s][\s0]{2}[:\s][\s0]{5}[:\s][\s0]{2}[:\s][\s0]{2}$");
 
 			private readonly bool _leaveOpen;
 			private Stream _stream;
@@ -97,10 +99,12 @@ namespace PDFPatcher.Processor.Imaging
 			private bool _isInitialized;
 
 			public ExifReader(string fileName)
-				: this(new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) { }
+				: this(new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) {
+			}
 
 			public ExifReader(Stream stream)
-				: this(stream, false) { }
+				: this(stream, false) {
+			}
 
 			public ExifReader(Stream stream, bool leaveOpen) {
 				if (stream == null)
@@ -247,7 +251,7 @@ namespace PDFPatcher.Processor.Imaging
 				var numerator = ToUint(numeratorData);
 				var denominator = ToUint(denominatorData);
 
-				return new[] { numerator, denominator };
+				return new[] {numerator, denominator};
 			}
 
 
@@ -279,7 +283,7 @@ namespace PDFPatcher.Processor.Imaging
 				int numerator = ToInt(numeratorData);
 				int denominator = ToInt(denominatorData);
 
-				return new[] { numerator, denominator };
+				return new[] {numerator, denominator};
 			}
 
 			/// <summary>
@@ -467,6 +471,7 @@ namespace PDFPatcher.Processor.Imaging
 					CatalogueIFD(ref _ifd1Catalogue);
 				}
 			}
+
 			#endregion
 
 			#region Exif data catalog and retrieval methods
@@ -522,7 +527,6 @@ namespace PDFPatcher.Processor.Imaging
 
 							result = (T)(object)dateResult;
 							return success;
-
 						}
 
 						result = (T)(object)str;
@@ -553,6 +557,7 @@ namespace PDFPatcher.Processor.Imaging
 						}
 						else
 							result = (T)(object)GetArray(tagData, fieldLength, ToURational);
+
 						return true;
 					case 6:
 						// signed byte
@@ -594,6 +599,7 @@ namespace PDFPatcher.Processor.Imaging
 						}
 						else
 							result = (T)(object)GetArray(tagData, fieldLength, ToRational);
+
 						return true;
 					case 11:
 						// single float
@@ -643,7 +649,8 @@ namespace PDFPatcher.Processor.Imaging
 			/// number of characters in the string</param>
 			/// <param name="tagDictionary"></param>
 			/// <param name="tagId"></param>
-			private byte[] GetTagBytes(IDictionary<ushort, long> tagDictionary, ushort tagId, out ushort tiffDataType, out uint numberOfComponents) {
+			private byte[] GetTagBytes(IDictionary<ushort, long> tagDictionary, ushort tagId, out ushort tiffDataType,
+				out uint numberOfComponents) {
 				// Get the tag's offset from the catalogue and do some basic error checks
 				if (_stream == null || _reader == null || tagDictionary == null || !tagDictionary.ContainsKey(tagId)) {
 					tiffDataType = 0;
@@ -707,6 +714,7 @@ namespace PDFPatcher.Processor.Imaging
 			#endregion
 
 			#region Thumbnail retrieval
+
 			/// <summary>
 			/// Retrieves a JPEG thumbnail from the image if one is present. Note that this method cannot retrieve thumbnails encoded in other formats,
 			/// but since the DCF specification specifies that thumbnails must be JPEG, this method will be sufficient for most purposes
@@ -749,7 +757,6 @@ namespace PDFPatcher.Processor.Imaging
 						break;
 
 					previousByte = currentByte;
-
 				}
 
 				if (currentByte != 0xD8)
@@ -771,6 +778,7 @@ namespace PDFPatcher.Processor.Imaging
 
 				return imageBytes;
 			}
+
 			#endregion
 
 			#region IDisposable Members
@@ -790,6 +798,7 @@ namespace PDFPatcher.Processor.Imaging
 							_stream.Dispose();
 					}
 				}
+
 				_reader = null;
 				_stream = null;
 			}

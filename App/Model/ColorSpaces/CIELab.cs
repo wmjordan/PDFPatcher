@@ -14,6 +14,7 @@ namespace Devcorp.Controls.Design
 		public static readonly CIELab Empty = new CIELab();
 
 		#region Fields
+
 		private double l;
 		private double a;
 		private double b;
@@ -21,12 +22,13 @@ namespace Devcorp.Controls.Design
 		#endregion
 
 		#region Operators
+
 		public static bool operator ==(CIELab item1, CIELab item2) {
 			return (
 				item1.L == item2.L
 				&& item1.A == item2.A
 				&& item1.B == item2.B
-				);
+			);
 		}
 
 		public static bool operator !=(CIELab item1, CIELab item2) {
@@ -34,12 +36,13 @@ namespace Devcorp.Controls.Design
 				item1.L != item2.L
 				|| item1.A != item2.A
 				|| item1.B != item2.B
-				);
+			);
 		}
 
 		#endregion
 
 		#region Accessors
+
 		/// <summary>
 		/// Gets or sets L component.
 		/// </summary>
@@ -73,6 +76,7 @@ namespace Devcorp.Controls.Design
 		}
 
 		#region Methods
+
 		public override bool Equals(Object obj) {
 			if (obj == null || GetType() != obj.GetType()) return false;
 

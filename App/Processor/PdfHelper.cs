@@ -12,10 +12,13 @@ namespace PDFPatcher.Processor
 {
 	internal static class PdfHelper
 	{
-		internal static readonly int[] CompoundTypes = new int[] { PdfObject.DICTIONARY, PdfObject.ARRAY, PdfObject.STREAM };
+		internal static readonly int[] CompoundTypes =
+			new int[] {PdfObject.DICTIONARY, PdfObject.ARRAY, PdfObject.STREAM};
 
 		private static readonly DualKeyDictionary<PdfName, string> __PdfNameMap;
-		private static readonly Dictionary<string, byte[]> __PdfPasswordBox = new Dictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase);
+
+		private static readonly Dictionary<string, byte[]> __PdfPasswordBox =
+			new Dictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase);
 
 		/// <summary>
 		/// 切换强制读取加密文档模式。
@@ -24,6 +27,7 @@ namespace PDFPatcher.Processor
 		internal static void ToggleUnethicalMode(bool unethicalreading) {
 			PdfReader.unethicalreading = unethicalreading;
 		}
+
 		/// <summary>
 		/// 切换容错模式（忽略 PDF 文档的错误）。
 		/// </summary>
@@ -46,6 +50,7 @@ namespace PDFPatcher.Processor
 					if (File.Exists(sourceFile) == false) {
 						throw new FileNotFoundException(String.Concat("找不到文件：", sourceFile));
 					}
+
 					PdfReader r;
 					if (partial) {
 						r = new PdfReader(new RandomAccessFileOrArray(sourceFile), password);
@@ -53,12 +58,15 @@ namespace PDFPatcher.Processor
 					else {
 						r = new PdfReader(sourceFile, password);
 					}
+
 					if (password != null && password.Length > 0) {
 						__PdfPasswordBox[sourceFile] = password;
 					}
+
 					if (removeUnusedObjects) {
 						r.RemoveUnusedObjects();
 					}
+
 					return r;
 				}
 				catch (iTextSharp.text.exceptions.BadPasswordException) {
@@ -66,6 +74,7 @@ namespace PDFPatcher.Processor
 					if (f.ShowDialog() == System.Windows.Forms.DialogResult.Cancel) {
 						throw new iTextSharp.text.exceptions.BadPasswordException("密码错误，没有权限打开 PDF 文件。");
 					}
+
 					password = Encoding.Default.GetBytes(f.Password);
 				}
 			}
@@ -74,7 +83,7 @@ namespace PDFPatcher.Processor
 		internal static bool ConfirmUnethicalMode(this PdfReader pdf) {
 			ToggleUnethicalMode(false);
 			var r = pdf.IsOpenedWithFullPermissions
-					|| FormHelper.YesNoBox(Messages.UserRightRequired) == System.Windows.Forms.DialogResult.Yes;
+			        || FormHelper.YesNoBox(Messages.UserRightRequired) == System.Windows.Forms.DialogResult.Yes;
 			ToggleUnethicalMode(true);
 			return r;
 		}
@@ -83,17 +92,21 @@ namespace PDFPatcher.Processor
 			byte[] password;
 			__PdfPasswordBox.TryGetValue(sourceFile, out password);
 			while (true) {
-				var r = new MuPdfSharp.MuDocument(sourceFile, password != null ? Encoding.Default.GetString(password) : String.Empty);
+				var r = new MuPdfSharp.MuDocument(sourceFile,
+					password != null ? Encoding.Default.GetString(password) : String.Empty);
 				if (password != null && password.Length > 0) {
 					__PdfPasswordBox[sourceFile] = password;
 				}
+
 				if (r.NeedsPassword) {
 					var f = new PasswordEntryForm(sourceFile);
 					if (f.ShowDialog() == System.Windows.Forms.DialogResult.Cancel) {
 						throw new iTextSharp.text.exceptions.BadPasswordException("密码错误，没有权限打开 PDF 文件。");
 					}
+
 					password = Encoding.Default.GetBytes(f.Password);
 				}
+
 				return r;
 			}
 		}
@@ -104,29 +117,24 @@ namespace PDFPatcher.Processor
 
 		private static DualKeyDictionary<PdfName, string> InitPdfNameMap() {
 			var m = new DualKeyDictionary<PdfName, string> {
-				{ PdfName.PAGELAYOUT, Constants.PageLayout },
-
-				{ PdfName.PAGEMODE, Constants.PageMode },
-
-				{ PdfName.DIRECTION, Constants.ViewerPreferencesType.Direction },
-
-				{ PdfName.ST, Constants.PageLabelsAttributes.StartPage },
-				{ PdfName.P, Constants.PageLabelsAttributes.Prefix },
-				{ PdfName.S, Constants.PageLabelsAttributes.Style },
-
-				{ PdfName.XYZ, Constants.DestinationAttributes.ViewType.XYZ },
-				{ PdfName.FIT, Constants.DestinationAttributes.ViewType.Fit },
-				{ PdfName.FITB, Constants.DestinationAttributes.ViewType.FitB },
-				{ PdfName.FITBH, Constants.DestinationAttributes.ViewType.FitBH },
-				{ PdfName.FITBV, Constants.DestinationAttributes.ViewType.FitBV },
-				{ PdfName.FITH, Constants.DestinationAttributes.ViewType.FitH },
-				{ PdfName.FITR, Constants.DestinationAttributes.ViewType.FitR },
-				{ PdfName.FITV, Constants.DestinationAttributes.ViewType.FitV },
-
-				{ PdfName.GOTO, Constants.ActionType.Goto },
-				{ PdfName.GOTOR, Constants.ActionType.GotoR },
-				{ PdfName.LAUNCH, Constants.ActionType.Launch },
-				{ PdfName.URI, Constants.ActionType.Uri }
+				{PdfName.PAGELAYOUT, Constants.PageLayout},
+				{PdfName.PAGEMODE, Constants.PageMode},
+				{PdfName.DIRECTION, Constants.ViewerPreferencesType.Direction},
+				{PdfName.ST, Constants.PageLabelsAttributes.StartPage},
+				{PdfName.P, Constants.PageLabelsAttributes.Prefix},
+				{PdfName.S, Constants.PageLabelsAttributes.Style},
+				{PdfName.XYZ, Constants.DestinationAttributes.ViewType.XYZ},
+				{PdfName.FIT, Constants.DestinationAttributes.ViewType.Fit},
+				{PdfName.FITB, Constants.DestinationAttributes.ViewType.FitB},
+				{PdfName.FITBH, Constants.DestinationAttributes.ViewType.FitBH},
+				{PdfName.FITBV, Constants.DestinationAttributes.ViewType.FitBV},
+				{PdfName.FITH, Constants.DestinationAttributes.ViewType.FitH},
+				{PdfName.FITR, Constants.DestinationAttributes.ViewType.FitR},
+				{PdfName.FITV, Constants.DestinationAttributes.ViewType.FitV},
+				{PdfName.GOTO, Constants.ActionType.Goto},
+				{PdfName.GOTOR, Constants.ActionType.GotoR},
+				{PdfName.LAUNCH, Constants.ActionType.Launch},
+				{PdfName.URI, Constants.ActionType.Uri}
 			};
 
 			return m;
@@ -155,13 +163,16 @@ namespace PDFPatcher.Processor
 		internal static string GetPdfFriendlyName(PdfName name) {
 			return (__PdfNameMap.ContainsKey(name) ? __PdfNameMap[name] : GetPdfNameString(name));
 		}
+
 		/// <summary>
 		/// 解析 PdfName。
 		/// </summary>
 		/// <param name="friendlyName">从 <seealso cref="GetPdfFriendlyName"/> 转换所得的 PdfName 说明文本。</param>
 		/// <returns>与文本说明对应的 PdfName。</returns>
 		internal static PdfName ResolvePdfName(string friendlyName) {
-			return (__PdfNameMap.ContainsValue(friendlyName) ? __PdfNameMap.GetKeyByValue(friendlyName) : new PdfName(friendlyName));
+			return (__PdfNameMap.ContainsValue(friendlyName)
+				? __PdfNameMap.GetKeyByValue(friendlyName)
+				: new PdfName(friendlyName));
 		}
 
 		internal static string DecodeKeyName(object name) {
@@ -184,6 +195,7 @@ namespace PDFPatcher.Processor
 				pages[reader.GetPageOrigRef(k).Number] = k;
 				reader.ReleasePage(k);
 			}
+
 			return pages;
 		}
 
@@ -194,16 +206,17 @@ namespace PDFPatcher.Processor
 		/// <returns></returns>
 		internal static DateTimeOffset ParseDateTime(string date) {
 			if (date == null
-				|| date.Length != 23 && date.Length != 16
-				|| date.StartsWith("D:") == false) {
+			    || date.Length != 23 && date.Length != 16
+			    || date.StartsWith("D:") == false) {
 				return DateTimeOffset.MinValue;
 			}
+
 			try {
 				return new DateTimeOffset(
 					date.Take(2, 4).ToInt32(), date.Take(6, 2).ToInt32(), date.Take(8, 2).ToInt32(),
 					date.Take(10, 2).ToInt32(), date.Take(12, 2).ToInt32(), date.Take(14, 2).ToInt32(),
 					new TimeSpan(date.Take(16, 3).ToInt32(), date.Take(20, 2).ToInt32(), 0)
-					);
+				);
 			}
 			catch (Exception) {
 				return DateTimeOffset.MinValue;
@@ -247,8 +260,10 @@ namespace PDFPatcher.Processor
 				else {
 					buf[l] = (byte)c;
 				}
+
 				l++;
 			}
+
 			return (encoding ?? System.Text.Encoding.Default).GetString(buf, 0, l);
 		}
 
@@ -261,18 +276,22 @@ namespace PDFPatcher.Processor
 			if (page == null) {
 				return null;
 			}
+
 			PdfArray box;
 			var c = new float[4];
 			if ((page.Contains(PdfName.CROPBOX) && (box = page.GetAsArray(PdfName.CROPBOX)) != null && box.Size == 4)
-				|| (page.Contains(PdfName.MEDIABOX) && (box = page.GetAsArray(PdfName.MEDIABOX)) != null && box.Size == 4)) {
+			    || (page.Contains(PdfName.MEDIABOX) && (box = page.GetAsArray(PdfName.MEDIABOX)) != null &&
+			        box.Size == 4)) {
 				for (int i = 0; i < 4; i++) {
 					c[i] = box.GetAsNumber(i).FloatValue;
 				}
+
 				var rect = new iTextSharp.text.Rectangle(c[0], c[1], c[2], c[3]);
 				var r = page.GetAsNumber(PdfName.ROTATE);
 				if (r != null) {
 					return new iTextSharp.text.Rectangle(c[0], c[1], c[2], c[3], r.IntValue);
 				}
+
 				return rect;
 			}
 			else
@@ -302,10 +321,12 @@ namespace PDFPatcher.Processor
 						arr.RemoveAt(j);
 					}
 				}
+
 				if (annots.ArrayList.Count == 0) {
 					pageDic.Remove(PdfName.ANNOTS);
 				}
 			}
+
 			r.ResetReleasePage();
 		}
 
@@ -313,6 +334,7 @@ namespace PDFPatcher.Processor
 			if (String.IsNullOrEmpty(value)) {
 				return String.Empty;
 			}
+
 			var marks = new List<int>(3);
 			int p = 0;
 			foreach (char c in value) {
@@ -327,23 +349,30 @@ namespace PDFPatcher.Processor
 							if (marks.Count == 0) {
 								marks.Add(0);
 							}
+
 							marks.Add(p + 1);
 						}
+
 						break;
 				}
+
 				p++;
 			}
+
 			if (marks.Count > 0) {
 				marks.Add(value.Length + 1);
 			}
+
 			if (marks.Count > 1) {
 				var sb = new StringBuilder();
 				for (int i = 1; i < marks.Count; i++) {
 					if (i > 1) {
 						sb.Append(' ');
 					}
+
 					sb.Append(value, marks[i - 1], marks[i] - 1 - marks[i - 1]);
 				}
+
 				return sb.ToString();
 			}
 			else {
@@ -362,6 +391,7 @@ namespace PDFPatcher.Processor
 				if (++k > 1) {
 					sb.Append(' ');
 				}
+
 				if (item.Type == PdfObject.ARRAY) {
 					sb.Append('[');
 					sb.Append(GetArrayString(item as PdfArray));
@@ -374,6 +404,7 @@ namespace PDFPatcher.Processor
 					sb.Append(item);
 				}
 			}
+
 			return sb.ToString();
 		}
 
@@ -383,6 +414,7 @@ namespace PDFPatcher.Processor
 				if (k != 0) {
 					sb.Append(' ');
 				}
+
 				if (a.GetAsArray(k) != null) {
 					sb.Append('[');
 					sb.Append(a.GetAsArray(k));
@@ -390,30 +422,39 @@ namespace PDFPatcher.Processor
 				}
 				else {
 					var o = a.ArrayList[k];
-					sb.Append(o.Type == PdfObject.NUMBER ? UnitConverter.FromPoint(o.ToString(), unitFactor) : o.ToString());
+					sb.Append(o.Type == PdfObject.NUMBER
+						? UnitConverter.FromPoint(o.ToString(), unitFactor)
+						: o.ToString());
 				}
 			}
+
 			return sb.ToString();
 		}
 
 		internal static void Put(this PdfDictionary dict, PdfName key, string value) {
 			dict.Put(key, value.ToPdfString());
 		}
+
 		internal static void Put(this PdfDictionary dict, PdfName key, int value) {
 			dict.Put(key, new PdfNumber(value));
 		}
+
 		internal static void Put(this PdfDictionary dict, PdfName key, double value) {
 			dict.Put(key, new PdfNumber(value));
 		}
+
 		internal static void Put(this PdfDictionary dict, PdfName key, float value) {
 			dict.Put(key, new PdfNumber(value));
 		}
+
 		internal static void Put(this PdfDictionary dict, PdfName key, bool value) {
 			dict.Put(key, new PdfBoolean(value));
 		}
+
 		internal static void Put(this PdfDictionary dict, PdfName key, float[] values) {
 			dict.Put(key, new PdfArray(values));
 		}
+
 		internal static void Put(this PdfDictionary dict, PdfName key, int[] values) {
 			dict.Put(key, new PdfArray(values));
 		}
@@ -426,14 +467,17 @@ namespace PDFPatcher.Processor
 					if (d == null) {
 						throw new InvalidCastException(item.ToString() + "不是 PdfDictionary。");
 					}
+
 					source = d;
 					continue;
 				}
+
 				d = new PdfDictionary();
 				source.Put(item, d);
 				source = d;
 				d = null;
 			}
+
 			return source;
 		}
 
@@ -441,6 +485,7 @@ namespace PDFPatcher.Processor
 			if (r1 == null || r2 == null) {
 				return false;
 			}
+
 			return r1.Number == r2.Number && r1.Generation == r2.Generation;
 		}
 
@@ -460,11 +505,13 @@ namespace PDFPatcher.Processor
 					if (rotation < 0) {
 						rotation += 360;
 					}
+
 					return (rotation / 90 * 90);
 			}
 		}
 
-		internal static IList<PdfObject> GetObjectDirectOrFromContainerArray(this PdfDictionary d, PdfName name, int pdfObjectType) {
+		internal static IList<PdfObject> GetObjectDirectOrFromContainerArray(this PdfDictionary d, PdfName name,
+			int pdfObjectType) {
 			var results = new List<PdfObject>();
 
 			PdfObject tmp;
@@ -481,16 +528,19 @@ namespace PDFPatcher.Processor
 					if (tmp == null) {
 						continue;
 					}
+
 					if (tmp.Type == pdfObjectType) {
 						results.Add(tmp);
 					}
 				}
 			}
+
 			return results;
 		}
 
 		internal static string MatrixToString(iTextSharp.text.pdf.parser.Matrix ctm) {
-			return String.Join(" ", ctm[0].ToText(), ctm[1].ToText(), ctm[3].ToText(), ctm[4].ToText(), ctm[6].ToText(), ctm[7].ToText());
+			return String.Join(" ", ctm[0].ToText(), ctm[1].ToText(), ctm[3].ToText(), ctm[4].ToText(), ctm[6].ToText(),
+				ctm[7].ToText());
 		}
 
 		/// <summary>
@@ -508,8 +558,10 @@ namespace PDFPatcher.Processor
 				if (item == false && i > 0) {
 					result.Add(i);
 				}
+
 				++i;
 			}
+
 			return result;
 		}
 
@@ -521,6 +573,7 @@ namespace PDFPatcher.Processor
 				if (content.Length > 30) {
 					cs.FlateCompress();
 				}
+
 				p.Put(PdfName.CONTENTS, pdf.AddPdfObject(cs));
 			}
 			else {
@@ -560,6 +613,7 @@ namespace PDFPatcher.Processor
 								hits[num] = true;
 								state.Push(PdfReader.GetPdfObjectRelease(refi));
 							}
+
 							continue;
 						default:
 							continue;
@@ -577,6 +631,7 @@ namespace PDFPatcher.Processor
 						idx = (int)objs[2];
 					}
 				}
+
 				if (ar != null) {
 					for (int k = idx; k < ar.Count; ++k) {
 						var v = ar[k];
@@ -587,13 +642,15 @@ namespace PDFPatcher.Processor
 								continue;
 							}
 						}
+
 						if (objs == null) {
-							state.Push(new object[] { ar, k + 1 });
+							state.Push(new object[] {ar, k + 1});
 						}
 						else {
 							objs[1] = k + 1;
 							state.Push(objs);
 						}
+
 						state.Push(v);
 						break;
 					}
@@ -609,19 +666,20 @@ namespace PDFPatcher.Processor
 								continue;
 							}
 						}
+
 						if (objs == null) {
-							state.Push(new object[] { keys, dic, k + 1 });
+							state.Push(new object[] {keys, dic, k + 1});
 						}
 						else {
 							objs[2] = k + 1;
 							state.Push(objs);
 						}
+
 						state.Push(v);
 						break;
 					}
 				}
 			}
 		}
-
 	}
 }

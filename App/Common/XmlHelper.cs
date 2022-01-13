@@ -16,6 +16,7 @@ namespace PDFPatcher.Common
 			if (element == null) {
 				return defaultValue;
 			}
+
 			var a = element.GetAttributeNode(name);
 			return a != null ? a.Value.ToBoolean(defaultValue) : defaultValue;
 		}
@@ -30,6 +31,7 @@ namespace PDFPatcher.Common
 			if (element == null) {
 				return defaultValue;
 			}
+
 			var a = element.GetAttributeNode(name);
 			return a != null ? a.Value.ToInt32(defaultValue) : defaultValue;
 		}
@@ -39,6 +41,7 @@ namespace PDFPatcher.Common
 			if (element == null) {
 				return defaultValue;
 			}
+
 			var a = element.GetAttributeNode(name);
 			return a != null ? a.Value.ToInt64(defaultValue) : defaultValue;
 		}
@@ -48,6 +51,7 @@ namespace PDFPatcher.Common
 			if (element == null) {
 				return defaultValue;
 			}
+
 			var a = element.GetAttributeNode(name);
 			return a != null ? a.Value.ToSingle(defaultValue) : defaultValue;
 		}
@@ -57,33 +61,41 @@ namespace PDFPatcher.Common
 			if (element == null) {
 				return defaultValue;
 			}
+
 			var a = element.GetAttributeNode(name);
 			if (a == null) {
 				return defaultValue;
 			}
+
 			return a.Value.ToDouble(defaultValue);
 		}
+
 		[DebuggerStepThrough]
 		public static bool GetValue(this XmlReader reader, string name, bool defaultValue) {
 			if (reader == null) {
 				return defaultValue;
 			}
+
 			var a = reader.GetAttribute(name);
 			return a == null ? defaultValue : a.ToBoolean(defaultValue);
 		}
+
 		[DebuggerStepThrough]
 		public static int GetValue(this XmlReader reader, string name, int defaultValue) {
 			if (reader == null) {
 				return defaultValue;
 			}
+
 			var a = reader.GetAttribute(name);
 			return a == null ? defaultValue : a.ToInt32(defaultValue);
 		}
+
 		[DebuggerStepThrough]
 		public static float GetValue(this XmlReader reader, string name, float defaultValue) {
 			if (reader == null) {
 				return defaultValue;
 			}
+
 			var a = reader.GetAttribute(name);
 			return a == null ? defaultValue : a.ToSingle(defaultValue);
 		}
@@ -97,9 +109,11 @@ namespace PDFPatcher.Common
 		public static string GetValue(this XmlElement element, string name, string defaultValue) {
 			return element?.GetAttributeNode(name)?.Value ?? defaultValue;
 		}
+
 		[DebuggerStepThrough]
 		public static void SetValue(this XmlElement element, string name, bool value, bool defaultValue) {
 			if (element == null) { return; }
+
 			if (value == defaultValue) {
 				element.RemoveAttribute(name);
 			}
@@ -111,6 +125,7 @@ namespace PDFPatcher.Common
 		[DebuggerStepThrough]
 		public static void SetValue(this XmlElement element, string name, int value, int defaultValue) {
 			if (element == null) { return; }
+
 			if (value == defaultValue) {
 				element.RemoveAttribute(name);
 			}
@@ -122,6 +137,7 @@ namespace PDFPatcher.Common
 		[DebuggerStepThrough]
 		public static void SetValue(this XmlElement element, string name, float value, float defaultValue) {
 			if (element == null) { return; }
+
 			if (value == defaultValue) {
 				element.RemoveAttribute(name);
 			}
@@ -133,6 +149,7 @@ namespace PDFPatcher.Common
 		[DebuggerStepThrough]
 		public static void SetValue(this XmlElement element, string name, string value) {
 			if (element == null) { return; }
+
 			if (string.IsNullOrEmpty(value)) {
 				element.RemoveAttribute(name);
 			}
@@ -144,6 +161,7 @@ namespace PDFPatcher.Common
 		[DebuggerStepThrough]
 		public static void SetValue(this XmlElement element, string name, string value, string defaultValue) {
 			if (element == null) { return; }
+
 			if (value == null || value == defaultValue) {
 				element.RemoveAttribute(name);
 			}
@@ -151,6 +169,7 @@ namespace PDFPatcher.Common
 				element.SetAttribute(name, value);
 			}
 		}
+
 		[DebuggerStepThrough]
 		public static void WriteValue(this XmlWriter writer, string name, bool value) {
 			writer?.WriteAttributeString(name, value ? BooleanYes : BooleanNo);
@@ -192,24 +211,30 @@ namespace PDFPatcher.Common
 				? null
 				: GetElement(parent, name) ?? parent.AppendElement(name);
 		}
+
 		public static XmlElement GetElement(this XmlNode parent, string name) {
 			if (parent == null) {
 				return null;
 			}
+
 			var n = parent.FirstChild;
 			while (n != null) {
 				if (n.NodeType == XmlNodeType.Element && n.Name == name) {
 					return n as XmlElement;
 				}
+
 				n = n.NextSibling;
 			}
+
 			return null;
 		}
+
 		[DebuggerStepThrough]
 		public static XmlElement AppendElement(this XmlNode element, string name) {
 			if (element == null) {
 				return null;
 			}
+
 			var d = element.NodeType != XmlNodeType.Document ? element.OwnerDocument : element as XmlDocument;
 			var e = d.CreateElement(name);
 			element.AppendChild(e);
@@ -220,23 +245,28 @@ namespace PDFPatcher.Common
 			if (nodes == null) {
 				return Empty<XmlNode>.Item;
 			}
+
 			var a = new XmlNode[nodes.Count];
 			var i = -1;
 			foreach (XmlNode item in nodes) {
 				a[++i] = item;
 			}
+
 			return a;
 		}
+
 		public static IList<TNode> ToNodeList<TNode>(this XmlNodeList nodes) where TNode : XmlNode {
 			if (nodes == null) {
 				return Empty<TNode>.Item;
 			}
+
 			var a = new List<TNode>(7);
 			foreach (var item in nodes) {
 				if (item is TNode n) {
 					a.Add(n);
 				}
 			}
+
 			return a;
 		}
 

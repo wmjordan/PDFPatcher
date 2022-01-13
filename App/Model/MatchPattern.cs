@@ -9,20 +9,15 @@ namespace PDFPatcher.Model
 {
 	public sealed class MatchPattern : ICloneable
 	{
-		[XmlAttribute("名称")]
-		public string Name { get; set; }
+		[XmlAttribute("名称")] public string Name { get; set; }
 
-		[XmlAttribute("匹配模板")]
-		public string Text { get; set; }
+		[XmlAttribute("匹配模板")] public string Text { get; set; }
 
-		[XmlAttribute("匹配大小写")]
-		public bool MatchCase { get; set; }
+		[XmlAttribute("匹配大小写")] public bool MatchCase { get; set; }
 
-		[XmlAttribute("匹配全标题")]
-		public bool FullMatch { get; set; }
+		[XmlAttribute("匹配全标题")] public bool FullMatch { get; set; }
 
-		[XmlAttribute("使用正则表达式")]
-		public bool UseRegularExpression { get; set; }
+		[XmlAttribute("使用正则表达式")] public bool UseRegularExpression { get; set; }
 
 		public MatchPattern() {
 		}
@@ -38,6 +33,7 @@ namespace PDFPatcher.Model
 			if (UseRegularExpression) {
 				return new RegexMatcher(this);
 			}
+
 			return new SimpleMatcher(this);
 		}
 
@@ -54,13 +50,15 @@ namespace PDFPatcher.Model
 			bool Matches(string text);
 			string Replace(string text, string replacement);
 		}
+
 		sealed class RegexMatcher : IMatcher
 		{
 			readonly Regex _regex;
 			readonly bool _fullMatch;
+
 			public RegexMatcher(MatchPattern pattern) {
 				_regex = new Regex(pattern.Text,
-							 RegexOptions.Compiled | (pattern.MatchCase ? RegexOptions.None : RegexOptions.IgnoreCase));
+					RegexOptions.Compiled | (pattern.MatchCase ? RegexOptions.None : RegexOptions.IgnoreCase));
 				_fullMatch = pattern.FullMatch;
 			}
 
@@ -68,10 +66,12 @@ namespace PDFPatcher.Model
 				var m = _regex.Match(text);
 				return m.Success && (_fullMatch == false || text.Length == m.Length);
 			}
+
 			public string Replace(string text, string replacement) {
 				return _regex.Replace(text, replacement);
 			}
 		}
+
 		sealed class SimpleMatcher : IMatcher
 		{
 			readonly bool _fullMatch;
@@ -88,20 +88,26 @@ namespace PDFPatcher.Model
 				if (String.IsNullOrEmpty(text)) {
 					return true;
 				}
+
 				if (_fullMatch && text.Length != _text.Length) {
 					return false;
 				}
+
 				var i = text.IndexOf(_text, _comparison);
 				return i != -1 && (_fullMatch == false || i == 0);
 			}
+
 			public string Replace(string text, string replacement) {
 				return Replace(text, _text, replacement, _comparison);
 			}
-			static string Replace(string original, string pattern, string replacement, StringComparison comparisonType) {
+
+			static string Replace(string original, string pattern, string replacement,
+				StringComparison comparisonType) {
 				return Replace(original, pattern, replacement, comparisonType, -1);
 			}
 
-			static string Replace(string original, string pattern, string replacement, StringComparison comparisonType, int stringBuilderInitialSize) {
+			static string Replace(string original, string pattern, string replacement, StringComparison comparisonType,
+				int stringBuilderInitialSize) {
 				if (original == null) {
 					return null;
 				}
@@ -113,7 +119,9 @@ namespace PDFPatcher.Model
 				var posCurrent = 0;
 				var lenPattern = pattern.Length;
 				var idxNext = original.IndexOf(pattern, comparisonType);
-				var result = new StringBuilder(stringBuilderInitialSize < 0 ? Math.Min(4096, original.Length) : stringBuilderInitialSize);
+				var result = new StringBuilder(stringBuilderInitialSize < 0
+					? Math.Min(4096, original.Length)
+					: stringBuilderInitialSize);
 
 				while (idxNext >= 0) {
 					result.Append(original, posCurrent, idxNext - posCurrent);

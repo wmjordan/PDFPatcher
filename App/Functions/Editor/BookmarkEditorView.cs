@@ -38,10 +38,15 @@ namespace PDFPatcher.Functions
 			if (IsDesignMode) {
 				return;
 			}
+
 			UseOverlays = false;
+
 			#region 修复树视图无法正确选择节点的问题
+
 			SmallImageList = new ImageList();
+
 			#endregion
+
 			this.SetTreeViewLine();
 			this.FixEditControlWidth();
 			CanExpandGetter = (object x) => x is BookmarkElement e && e.HasSubBookmarks;
@@ -61,6 +66,7 @@ namespace PDFPatcher.Functions
 					if (e.Title == s) {
 						return;
 					}
+
 					var p = new ReplaceTitleTextProcessor(s);
 					Undo?.AddUndo("编辑书签文本", p.Process(e));
 				}
@@ -71,6 +77,7 @@ namespace PDFPatcher.Functions
 					if (e == null || e.HasSubBookmarks == false) {
 						return;
 					}
+
 					var p = new BookmarkOpenStatusProcessor((bool)newValue);
 					Undo.AddUndo(p.Name, p.Process(e));
 				}
@@ -80,6 +87,7 @@ namespace PDFPatcher.Functions
 					if (e == null) {
 						return 0;
 					}
+
 					int p = e.GetValue(Constants.DestinationAttributes.Page, 0);
 					if (e.HasAttribute(Constants.DestinationAttributes.FirstPageNumber)) {
 						int o = e.GetValue(Constants.DestinationAttributes.FirstPageNumber, 0);
@@ -88,12 +96,14 @@ namespace PDFPatcher.Functions
 							e.RemoveAttribute(Constants.DestinationAttributes.FirstPageNumber);
 						}
 					}
+
 					return p;
 				},
 				AspectPutter = (e, value) => {
 					if (e == null) {
 						return;
 					}
+
 					if (value.ToString().TryParse(out int n)) {
 						var p = new ChangePageNumberProcessor(n, true, false);
 						Undo.AddUndo(p.Name, p.Process(e));
@@ -105,31 +115,38 @@ namespace PDFPatcher.Functions
 				if (e == null) {
 					return String.Empty;
 				}
+
 				var a = e.GetAttribute(Constants.DestinationAttributes.Action);
 				if (String.IsNullOrEmpty(a)) {
 					return e.HasAttribute(Constants.DestinationAttributes.Page) ? Constants.ActionType.Goto : "无";
 				}
+
 				return a;
 			};
 		}
+
 		protected override void OnBeforeSorting(BeforeSortingEventArgs e) {
 			e.Canceled = true; // 禁止排序
 			base.OnBeforeSorting(e);
 		}
+
 		protected override void OnItemActivate(EventArgs e) {
 			base.OnItemActivate(e);
 			EditSubItem(SelectedItem, 0);
 		}
+
 		#region 拖放操作
+
 		protected override void OnCanDrop(OlvDropEventArgs args) {
 			var o = args.DataObject as DataObject;
 			if (o == null) {
 				return;
 			}
+
 			var f = o.GetFileDropList();
 			foreach (var item in f) {
 				if (FileHelper.HasExtension(item, Constants.FileExtensions.Xml)
-					|| FileHelper.HasExtension(item, Constants.FileExtensions.Pdf)) {
+				    || FileHelper.HasExtension(item, Constants.FileExtensions.Pdf)) {
 					args.Handled = true;
 					args.DropTargetLocation = DropTargetLocation.Background;
 					args.Effect = DragDropEffects.Copy;
@@ -137,8 +154,10 @@ namespace PDFPatcher.Functions
 					return;
 				}
 			}
+
 			base.OnCanDrop(args);
 		}
+
 		protected override void OnModelCanDrop(ModelDropEventArgs e) {
 			var si = e.SourceModels;
 			var ti = e.TargetModel as XmlElement;
@@ -146,12 +165,15 @@ namespace PDFPatcher.Functions
 				e.Effect = DragDropEffects.None;
 				return;
 			}
-			var copy = (Control.ModifierKeys & Keys.Control) != Keys.None || (e.SourceModels[0] as XmlElement).OwnerDocument != ti.OwnerDocument;
+
+			var copy = (Control.ModifierKeys & Keys.Control) != Keys.None ||
+			           (e.SourceModels[0] as XmlElement).OwnerDocument != ti.OwnerDocument;
 			if (copy == false) {
 				if (e.DropTargetItem.Selected) {
 					e.Effect = DragDropEffects.None;
 					return;
 				}
+
 				foreach (XmlElement item in si) {
 					if (IsAncestorOrSelf(item, ti)) {
 						e.Effect = DragDropEffects.None;
@@ -160,6 +182,7 @@ namespace PDFPatcher.Functions
 					}
 				}
 			}
+
 			var d = e.DropTargetItem;
 			var ml = e.MouseLocation;
 			var child = ml.X > d.Position.X + d.GetBounds(ItemBoundsPortion.ItemOnly).Width / 2;
@@ -167,14 +190,16 @@ namespace PDFPatcher.Functions
 			if (child == false && copy == false) {
 				var xi = e.DropTargetIndex + (append ? 1 : -1);
 				if (xi > -1 && xi < e.ListView.Items.Count
-					&& e.ListView.Items[xi].Selected
-					&& ti.ParentNode == (e.ListView.GetModelObject(xi) as XmlElement).ParentNode) {
+				            && e.ListView.Items[xi].Selected
+				            && ti.ParentNode == (e.ListView.GetModelObject(xi) as XmlElement).ParentNode) {
 					e.Effect = DragDropEffects.None;
 					return;
 				}
 			}
+
 			e.Effect = copy ? DragDropEffects.Copy : DragDropEffects.Move;
-			e.InfoMessage = String.Concat((copy ? "复制" : "移动"), "到", (child ? "所有子书签" : String.Empty), (append ? "后面" : "前面"));
+			e.InfoMessage = String.Concat((copy ? "复制" : "移动"), "到", (child ? "所有子书签" : String.Empty),
+				(append ? "后面" : "前面"));
 			base.OnModelCanDrop(e);
 		}
 
@@ -185,13 +210,15 @@ namespace PDFPatcher.Functions
 			if (se == null) {
 				return;
 			}
+
 			var ti = args.TargetModel as BookmarkElement;
 			var d = args.DropTargetItem;
 			var ml = args.MouseLocation;
 			Freeze();
 			var child = ml.X > d.Position.X + d.GetBounds(ItemBoundsPortion.ItemOnly).Width / 2;
 			var append = ml.Y > d.Position.Y + d.Bounds.Height / 2;
-			var copy = (Control.ModifierKeys & Keys.Control) != Keys.None || (args.SourceModels[0] as BookmarkElement).OwnerDocument != ti.OwnerDocument;
+			var copy = (Control.ModifierKeys & Keys.Control) != Keys.None ||
+			           (args.SourceModels[0] as BookmarkElement).OwnerDocument != ti.OwnerDocument;
 			var deepCopy = copy && (OperationAffectsDecendants || (Control.ModifierKeys & Keys.Shift) != Keys.None);
 			var tii = TopItemIndex;
 			CopyOrMoveElement(se, ti, child, append, copy, deepCopy);
@@ -200,6 +227,7 @@ namespace PDFPatcher.Functions
 			Unfreeze();
 			args.Handled = true;
 		}
+
 		#endregion
 
 		internal void LoadBookmarks(XmlNodeList bookmarks) {
@@ -209,6 +237,7 @@ namespace PDFPatcher.Functions
 					Expand(item);
 				}
 			}
+
 			_markers.Clear();
 			Mark(bookmarks);
 		}
@@ -218,6 +247,7 @@ namespace PDFPatcher.Functions
 				if (item == null || item.MarkerColor == 0) {
 					continue;
 				}
+
 				_markers.Add(item, Color.FromArgb(item.MarkerColor));
 				Mark(item.ChildNodes);
 			}
@@ -232,7 +262,8 @@ namespace PDFPatcher.Functions
 		/// <param name="after">是否复制到后面。</param>
 		/// <param name="copy">是否复制书签。</param>
 		/// <param name="deepCopy">是否深度复制书签。</param>
-		internal void CopyOrMoveElement(List<BookmarkElement> source, XmlElement target, bool child, bool after, bool copy, bool deepCopy) {
+		internal void CopyOrMoveElement(List<BookmarkElement> source, XmlElement target, bool child, bool after,
+			bool copy, bool deepCopy) {
 			var undo = new UndoActionGroup();
 			bool spr = false; // source parent is root
 			bool tpr = false; // target parent is root
@@ -248,6 +279,7 @@ namespace PDFPatcher.Functions
 						clones.Add(td.ImportNode(item, deepCopy) as BookmarkElement);
 					}
 				}
+
 				source = clones;
 			}
 			else {
@@ -258,9 +290,11 @@ namespace PDFPatcher.Functions
 						pn = null;
 						break;
 					}
+
 					pn.Add(e);
 				}
 			}
+
 			//else {
 			//	foreach (var item in source) {
 			//		this.Collapse (item);
@@ -274,6 +308,7 @@ namespace PDFPatcher.Functions
 						if (!copy) {
 							undo.Add(new AddElementAction(item));
 						}
+
 						target.AppendChild(item);
 						undo.Add(new RemoveElementAction(item));
 					}
@@ -284,10 +319,12 @@ namespace PDFPatcher.Functions
 						if (!copy) {
 							undo.Add(new AddElementAction(item));
 						}
+
 						target.PrependChild(item);
 						undo.Add(new RemoveElementAction(item));
 					}
 				}
+
 				Expand(target);
 			}
 			else {
@@ -299,6 +336,7 @@ namespace PDFPatcher.Functions
 						if (!copy) {
 							undo.Add(new AddElementAction(item));
 						}
+
 						p.InsertAfter(item, target);
 						undo.Add(new RemoveElementAction(item));
 					}
@@ -308,18 +346,22 @@ namespace PDFPatcher.Functions
 						if (!copy) {
 							undo.Add(new AddElementAction(item));
 						}
+
 						p.InsertBefore(item, target);
 						undo.Add(new RemoveElementAction(item));
 					}
 				}
 			}
+
 			Undo?.AddUndo(copy ? "复制书签" : "移动书签", undo);
 			if (copy == false && spr || tpr) {
 				Roots = (target.OwnerDocument as PdfInfoXmlDocument).BookmarkRoot.SubBookmarks;
 			}
+
 			if (pn != null) {
 				RefreshObjects(pn);
 			}
+
 			RefreshObject(target);
 			SelectedObjects = source;
 		}
@@ -333,6 +375,7 @@ namespace PDFPatcher.Functions
 					return true;
 				}
 			} while ((target = target.ParentNode as XmlElement) != null);
+
 			return false;
 		}
 
@@ -341,8 +384,10 @@ namespace PDFPatcher.Functions
 				_markers[item] = color;
 				item.MarkerColor = color.ToArgb();
 			}
+
 			RefreshObjects(items);
 		}
+
 		internal List<BookmarkElement> SelectMarkedItems(Color color) {
 			Freeze();
 			var items = new List<BookmarkElement>();
@@ -356,25 +401,31 @@ namespace PDFPatcher.Functions
 						r.Add(k);
 						continue;
 					}
+
 					items.Add(k);
 					MakeItemVisible(k);
 				}
 			}
+
 			foreach (var item in r) {
 				_markers.Remove(item);
 			}
+
 			SelectObjects(items);
 			EnsureItemsVisible(items);
 			Unfreeze();
 			return items;
 		}
+
 		internal void UnmarkItems(List<BookmarkElement> items) {
 			foreach (var item in items) {
 				_markers.Remove(item);
 				item.MarkerColor = 0;
 			}
+
 			RefreshObjects(items);
 		}
+
 		internal void ClearMarks(bool refresh) {
 			if (refresh) {
 				var items = new List<XmlElement>(_markers.Count);
@@ -382,6 +433,7 @@ namespace PDFPatcher.Functions
 					items.Add(item.Key);
 					item.Key.MarkerColor = 0;
 				}
+
 				_markers.Clear();
 				RefreshObjects(items);
 			}
@@ -399,6 +451,7 @@ namespace PDFPatcher.Functions
 				p = p.ParentNode;
 				a.Push(p);
 			}
+
 			while (a.Peek() != null) {
 				Expand(a.Pop());
 			}
@@ -408,6 +461,7 @@ namespace PDFPatcher.Functions
 			if (items.Count == 0) {
 				return;
 			}
+
 			var cr = ClientRectangle;
 			OLVListItem fi = null, li = null;
 			foreach (var item in items) {
@@ -417,12 +471,14 @@ namespace PDFPatcher.Functions
 					if (r.Top >= cr.Top && r.Bottom <= cr.Bottom) {
 						return;
 					}
+
 					li = i;
 					if (fi == null) {
 						fi = i;
 					}
 				}
 			}
+
 			if ((fi ?? li) != null) {
 				EnsureVisible(fi.Index);
 			}
@@ -432,6 +488,7 @@ namespace PDFPatcher.Functions
 			_copiedBookmarks = GetSelectedElements(false);
 			Clipboard.Clear();
 		}
+
 		internal void PasteBookmarks(XmlElement target, bool asChild) {
 			try {
 				var t = Clipboard.GetText();
@@ -441,12 +498,15 @@ namespace PDFPatcher.Functions
 					using (var s = new System.IO.StringReader(t)) {
 						OutlineManager.ImportSimpleBookmarks(s, doc);
 					}
+
 					_copiedBookmarks = doc.Bookmarks.ToNodeList<BookmarkElement>() as List<BookmarkElement>;
 					c = true;
 				}
+
 				if (_copiedBookmarks == null || _copiedBookmarks.Count == 0) {
 					return;
 				}
+
 				CopyOrMoveElement(_copiedBookmarks, target, asChild, true, true, c || OperationAffectsDecendants);
 			}
 			catch (Exception) {
@@ -455,11 +515,16 @@ namespace PDFPatcher.Functions
 		}
 
 		internal List<BookmarkElement> GetSelectedElements() { return GetSelectedElements(this, true); }
-		internal List<BookmarkElement> GetSelectedElements(bool selectChildren) { return GetSelectedElements(this, selectChildren); }
+
+		internal List<BookmarkElement> GetSelectedElements(bool selectChildren) {
+			return GetSelectedElements(this, selectChildren);
+		}
+
 		private static List<BookmarkElement> GetSelectedElements(TreeListView treeList, bool selectChildren) {
 			if (treeList == null) {
 				return null;
 			}
+
 			var si = treeList.SelectedIndices;
 			var il = new int[si.Count];
 			si.CopyTo(il, 0);
@@ -477,6 +542,7 @@ namespace PDFPatcher.Functions
 					el.Add(e);
 				}
 			}
+
 			return el;
 		}
 
@@ -491,15 +557,18 @@ namespace PDFPatcher.Functions
 				e.CancelEdit = true;
 				return;
 			}
+
 			var p = new ReplaceTitleTextProcessor(e.Label);
 			Undo?.AddUndo("编辑书签文本", p.Process(o));
 			var i = GetItem(e.Item);
 			if (o.HasChildNodes && FormHelper.IsCtrlKeyDown == false) {
 				Expand(o);
 			}
+
 			if (i.Index < Items.Count - 1) {
 				GetItem(i.Index + 1).BeginEdit();
 			}
+
 			RefreshItem(i);
 		}
 
@@ -507,6 +576,7 @@ namespace PDFPatcher.Functions
 			if (e.Column != _ActionColumn) {
 				return;
 			}
+
 			e.Handled = true;
 			ShowBookmarkProperties(e.Model as BookmarkElement);
 		}
@@ -515,6 +585,7 @@ namespace PDFPatcher.Functions
 			if (bookmark == null) {
 				return;
 			}
+
 			using (var form = new ActionEditorForm(bookmark)) {
 				if (form.ShowDialog() == DialogResult.OK && form.UndoActions.Count > 0) {
 					Undo?.AddUndo("更改书签动作属性", form.UndoActions);
@@ -525,11 +596,12 @@ namespace PDFPatcher.Functions
 
 		void BookmarkEditor_HotItemChanged(object sender, BrightIdeasSoftware.HotItemChangedEventArgs e) {
 			if ((e.HotColumnIndex == _ActionColumn.Index || e.OldHotColumnIndex == _ActionColumn.Index)
-				//&& (e.HotRowIndex != e.OldHotRowIndex || e.HotColumnIndex != e.OldHotColumnIndex)
-				) {
+			    //&& (e.HotRowIndex != e.OldHotRowIndex || e.HotColumnIndex != e.OldHotColumnIndex)
+			   ) {
 				// e.handled = false;
 				return;
 			}
+
 			e.Handled = true;
 		}
 
@@ -538,20 +610,24 @@ namespace PDFPatcher.Functions
 			if (b == null) {
 				return;
 			}
+
 			e.Item.UseItemStyleForSubItems = false;
 			e.UseCellFormatEvents = false;
 			Color c;
 			if (b.MarkerColor != 0) {
 				e.Item.BackColor = Color.FromArgb(b.MarkerColor);
 			}
+
 			c = b.ForeColor;
 			if (c != Color.Transparent) {
 				e.Item.ForeColor = c;
 			}
+
 			var ts = b.TextStyle;
 			if (ts != FontStyle.Regular) {
 				e.Item.Font = new Font(e.Item.Font, ts);
 			}
+
 			if (_ActionColumn.Index != -1) {
 				e.Item.SubItems[_ActionColumn.Index].ForeColor = Color.Blue;
 			}
@@ -565,6 +641,7 @@ namespace PDFPatcher.Functions
 					return null;
 				}
 			}
+
 			var n = s.CreateNavigator();
 			BookmarkElement e;
 			while (n.MoveToFollowing(Constants.Bookmark, String.Empty)) {
@@ -576,6 +653,7 @@ namespace PDFPatcher.Functions
 					return e;
 				}
 			}
+
 			return null;
 		}
 
@@ -590,11 +668,13 @@ namespace PDFPatcher.Functions
 			catch (Exception ex) {
 				FormHelper.ErrorBox("在匹配文本时出现错误：" + ex.Message);
 			}
+
 			Unfreeze();
 			if (matches.Count > 0) {
 				EnsureItemsVisible(matches);
 				SelectedObjects = matches;
 			}
+
 			return matches;
 		}
 
@@ -604,12 +684,11 @@ namespace PDFPatcher.Functions
 					SearchBookmarks(matcher, matches, c);
 				}
 			}
+
 			if (matcher.Match(item)) {
 				matches.Add(item);
 				MakeItemVisible(item);
 			}
 		}
-
-
 	}
 }

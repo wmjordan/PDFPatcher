@@ -11,10 +11,14 @@ namespace PDFPatcher.Functions
 	{
 		private readonly TypedObjectListView<Model.PageLabel> _LabelBox;
 		private List<Model.PageLabel> _Labels;
+
 		[Browsable(false)]
 		public List<Model.PageLabel> Labels {
 			get => _Labels;
-			set { _Labels = value; _PageLabelBox.Objects = value; }
+			set {
+				_Labels = value;
+				_PageLabelBox.Objects = value;
+			}
 		}
 
 		public PageLabelEditor() {
@@ -22,20 +26,26 @@ namespace PDFPatcher.Functions
 			foreach (var item in Constants.PageLabelStyles.Names) {
 				_LabelStyleMenu.Items.Add(item);
 			}
+
 			new TypedColumn<Model.PageLabel>(_PageNumColumn) {
 				AspectGetter = (o) => o.PageNumber,
-				AspectPutter = (o, v) => { int i = v.ToString().ToInt32(); o.PageNumber = i > 0 ? i : 1; }
+				AspectPutter = (o, v) => {
+					int i = v.ToString().ToInt32();
+					o.PageNumber = i > 0 ? i : 1;
+				}
 			};
 			new TypedColumn<Model.PageLabel>(_StartNumColumn) {
 				AspectGetter = (o) => o.StartPage,
-				AspectPutter = (o, v) => { int i = v.ToString().ToInt32(); o.StartPage = i > 0 ? i : 1; }
+				AspectPutter = (o, v) => {
+					int i = v.ToString().ToInt32();
+					o.StartPage = i > 0 ? i : 1;
+				}
 			};
 			new TypedColumn<Model.PageLabel>(_LabelStyleColumn) {
 				AspectGetter = (o) => o.Style ?? Constants.PageLabelStyles.Names[0]
 			};
 			new TypedColumn<Model.PageLabel>(_LabelPrefixColumn) {
-				AspectGetter = (o) => o.Prefix,
-				AspectPutter = (o, v) => o.Prefix = v as string
+				AspectGetter = (o) => o.Prefix, AspectPutter = (o, v) => o.Prefix = v as string
 			};
 			_PageLabelBox.FormatRow += (s, args) => args.Item.SubItems[0].Text = (args.RowIndex + 1).ToText();
 			_PageLabelBox.FixEditControlWidth();
@@ -61,8 +71,9 @@ namespace PDFPatcher.Functions
 					i = item.PageNumber;
 				}
 			}
+
 			++i;
-			_Labels.Add(new Model.PageLabel() { PageNumber = i, StartPage = 1 });
+			_Labels.Add(new Model.PageLabel() {PageNumber = i, StartPage = 1});
 			_LabelBox.Objects = _Labels;
 		}
 
@@ -71,6 +82,5 @@ namespace PDFPatcher.Functions
 			_Labels.Clear();
 			_Labels.AddRange(_LabelBox.Objects);
 		}
-
 	}
 }

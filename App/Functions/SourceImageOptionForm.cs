@@ -44,6 +44,5 @@ namespace PDFPatcher.Functions
 			DialogResult = DialogResult.Cancel;
 			Close();
 		}
-
 	}
 }

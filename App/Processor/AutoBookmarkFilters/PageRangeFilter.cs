@@ -18,17 +18,18 @@ namespace PDFPatcher.Processor
 			if (_range == null) {
 				_range = Model.PageRangeCollection.Parse(_rangeText, 1, context.TotalPageNumber, false);
 			}
+
 			foreach (var item in _range) {
 				if (p <= item.EndValue && p >= item.StartValue) {
 					return true;
 				}
 			}
+
 			return false;
 		}
 
 		internal override void Reset() {
 			_range = null;
 		}
-
 	}
 }

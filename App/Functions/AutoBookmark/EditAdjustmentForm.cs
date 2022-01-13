@@ -7,10 +7,15 @@ namespace PDFPatcher.Functions
 {
 	public partial class EditAdjustmentForm : Form
 	{
-		internal static string[] FilterNames = new string[] { "字体名称", "文本尺寸", "文本位置", "页码范围", "文本内容" };
-		internal static string[] FilterIDs = new string[] { "_FontNameFilter", "_FontSizeFilter", "_FontPositionFilter", "_PageRangeFilter", "_TextFilter" };
+		internal static string[] FilterNames = new string[] {"字体名称", "文本尺寸", "文本位置", "页码范围", "文本内容"};
 
-		readonly Dictionary<Type, IFilterConditionEditor> _filterEditors = new Dictionary<Type, IFilterConditionEditor>();
+		internal static string[] FilterIDs = new string[] {
+			"_FontNameFilter", "_FontSizeFilter", "_FontPositionFilter", "_PageRangeFilter", "_TextFilter"
+		};
+
+		readonly Dictionary<Type, IFilterConditionEditor> _filterEditors =
+			new Dictionary<Type, IFilterConditionEditor>();
+
 		internal AutoBookmarkOptions.LevelAdjustmentOption Filter { get; private set; }
 		AutoBookmarkCondition.MultiCondition conditions;
 
@@ -20,12 +25,15 @@ namespace PDFPatcher.Functions
 			foreach (var item in FilterNames) {
 				_AddFilterMenuItem.DropDownItems.Add(item).Name = FilterIDs[i++];
 			}
-			_FilterBox.BeforeSorting += (object sender, BrightIdeasSoftware.BeforeSortingEventArgs e) => e.Canceled = true;
+
+			_FilterBox.BeforeSorting +=
+				(object sender, BrightIdeasSoftware.BeforeSortingEventArgs e) => e.Canceled = true;
 			_ConditionColumn.AspectGetter = (object x) => x is AutoBookmarkCondition f ? f.Description : (object)null;
 			_IsInclusiveColumn.AspectGetter = (object x) => {
 				if (x is AutoBookmarkCondition f) {
 					return f.IsInclusive ? "包含匹配项" : "过滤匹配项";
 				}
+
 				return null;
 			};
 			_TypeColumn.AspectGetter = (object x) => x is AutoBookmarkCondition f ? f.Name : null;
@@ -36,13 +44,13 @@ namespace PDFPatcher.Functions
 				conditions = new AutoBookmarkCondition.MultiCondition(filter.Condition);
 				_FilterBox.Objects = conditions.Conditions;
 			}
+
 			if (_FilterBox.Items.Count > 0) {
 				_FilterBox.SelectedIndex = 0;
 			}
 		}
 
 		private void EditAdjustmentForm_Load(object sender, EventArgs e) {
-
 		}
 
 		protected void _OkButton_Click(Object source, EventArgs args) {
@@ -51,6 +59,7 @@ namespace PDFPatcher.Functions
 			foreach (ListViewItem item in _FilterBox.Items) {
 				conditions.Conditions.Add((AutoBookmarkCondition)_FilterBox.GetModelObject(item.Index));
 			}
+
 			if (conditions.Conditions.Count == 1) {
 				Filter.Condition = conditions.Conditions[0];
 			}
@@ -60,6 +69,7 @@ namespace PDFPatcher.Functions
 			else {
 				Filter.Condition = conditions;
 			}
+
 			Close();
 		}
 
@@ -81,10 +91,12 @@ namespace PDFPatcher.Functions
 			if (o == null) {
 				return;
 			}
+
 			var ed = GetFilterEditor(o as AutoBookmarkCondition);
 			if (ed == null) {
 				return;
 			}
+
 			_EditFilterPanel.Controls.Add(ed.EditorControl);
 			ed.EditorControl.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Bottom;
 			ed.EditorControl.Left = ed.EditorControl.Top = 0;
@@ -97,7 +109,10 @@ namespace PDFPatcher.Functions
 				case "_FontSizeFilter": return new AutoBookmarkCondition.TextSizeCondition(0, 10);
 				case "_FontPositionFilter": return new AutoBookmarkCondition.TextPositionCondition(1, -9999, 9999);
 				case "_PageRangeFilter": return new AutoBookmarkCondition.PageRangeCondition();
-				case "_TextFilter": return new AutoBookmarkCondition.TextCondition() { Pattern = new MatchPattern("筛选条件", false, false, false) };
+				case "_TextFilter":
+					return new AutoBookmarkCondition.TextCondition() {
+						Pattern = new MatchPattern("筛选条件", false, false, false)
+					};
 				default: return null;
 			}
 		}
@@ -133,7 +148,8 @@ namespace PDFPatcher.Functions
 				Common.FormHelper.ErrorBox("无法编辑选中的筛选条件。");
 				return null;
 			}
-		SetEditor:
+
+			SetEditor:
 			_filterEditors[t] = c;
 			c.Filter = filter;
 			return c;

@@ -8,11 +8,15 @@ namespace PDFPatcher.Processor
 	sealed class RemoveBookmarkProcessor : IDocProcessor
 	{
 		#region IDocProcessor 成员
+
 		public string Name => "删除导航书签";
+
 		public void BeginProcess(DocProcessorContext context) {
 		}
+
 		public void EndProcess(DocProcessorContext context) {
 		}
+
 		public int EstimateWorkload(PdfReader pdf) {
 			return 1;
 		}

@@ -53,6 +53,7 @@ namespace PDFPatcher.Functions
 					list.SelectedIndex = list.Items.Count - 1;
 				}
 			}
+
 			if (list.SelectedIndex == -1) {
 				list.SelectedIndex = 0;
 			}
@@ -92,6 +93,5 @@ namespace PDFPatcher.Functions
 		private void _CreateShortcutButton_Click(object sender, EventArgs e) {
 			CommonCommands.CreateShortcut();
 		}
-
 	}
 }

@@ -25,14 +25,14 @@ namespace Cyotek.Windows.Forms.Demo
 
 		public DragHandleCollection() {
 			_items = new Dictionary<DragHandleAnchor, DragHandle> {
-				{ DragHandleAnchor.TopLeft, new DragHandle(DragHandleAnchor.TopLeft) },
-				{ DragHandleAnchor.TopCenter, new DragHandle(DragHandleAnchor.TopCenter) },
-				{ DragHandleAnchor.TopRight, new DragHandle(DragHandleAnchor.TopRight) },
-				{ DragHandleAnchor.MiddleLeft, new DragHandle(DragHandleAnchor.MiddleLeft) },
-				{ DragHandleAnchor.MiddleRight, new DragHandle(DragHandleAnchor.MiddleRight) },
-				{ DragHandleAnchor.BottomLeft, new DragHandle(DragHandleAnchor.BottomLeft) },
-				{ DragHandleAnchor.BottomCenter, new DragHandle(DragHandleAnchor.BottomCenter) },
-				{ DragHandleAnchor.BottomRight, new DragHandle(DragHandleAnchor.BottomRight) }
+				{DragHandleAnchor.TopLeft, new DragHandle(DragHandleAnchor.TopLeft)},
+				{DragHandleAnchor.TopCenter, new DragHandle(DragHandleAnchor.TopCenter)},
+				{DragHandleAnchor.TopRight, new DragHandle(DragHandleAnchor.TopRight)},
+				{DragHandleAnchor.MiddleLeft, new DragHandle(DragHandleAnchor.MiddleLeft)},
+				{DragHandleAnchor.MiddleRight, new DragHandle(DragHandleAnchor.MiddleRight)},
+				{DragHandleAnchor.BottomLeft, new DragHandle(DragHandleAnchor.BottomLeft)},
+				{DragHandleAnchor.BottomCenter, new DragHandle(DragHandleAnchor.BottomCenter)},
+				{DragHandleAnchor.BottomRight, new DragHandle(DragHandleAnchor.BottomRight)}
 			};
 		}
 

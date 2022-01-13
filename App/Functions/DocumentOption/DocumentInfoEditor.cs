@@ -13,6 +13,7 @@ namespace PDFPatcher.Functions
 	{
 		bool _settingsLockdown;
 		GeneralInfo _Options;
+
 		internal GeneralInfo Options {
 			get => _Options;
 			set {
@@ -30,15 +31,16 @@ namespace PDFPatcher.Functions
 
 		public DocumentInfoEditor() {
 			InitializeComponent();
-
 		}
 
 		void DocumentInfoEditor_Load(object sender, EventArgs e) {
 			if (DesignMode) {
 				return;
 			}
+
 			_settingsLockdown = true;
-			_TitleBox.ContextMenuStrip = _SubjectBox.ContextMenuStrip = _AuthorBox.ContextMenuStrip = _KeywordsBox.ContextMenuStrip = _PropertyMacroMenu;
+			_TitleBox.ContextMenuStrip = _SubjectBox.ContextMenuStrip =
+				_AuthorBox.ContextMenuStrip = _KeywordsBox.ContextMenuStrip = _PropertyMacroMenu;
 			_PropertyMacroMenu.AddInsertMacroMenuItem(Constants.FileNameMacros.FileName);
 			_PropertyMacroMenu.AddInsertMacroMenuItem(Constants.FileNameMacros.FolderName);
 			_PropertyMacroMenu.ItemClicked += _PropertyMacroMenu.ProcessInsertMacroCommand;

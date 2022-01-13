@@ -15,6 +15,7 @@ namespace PDFPatcher.Model
 		/// 获取此区域坐标是否属于笛卡尔坐标系。
 		/// </summary>
 		internal bool IsTopUp { get; private set; }
+
 		/// <summary>
 		/// 获取此坐标区域是否属于绘图坐标系。
 		/// </summary>
@@ -38,12 +39,14 @@ namespace PDFPatcher.Model
 				right = left;
 				left = t;
 			}
+
 			Left = left;
 			Bottom = bottom;
 			Right = right;
 			Top = top;
 			RecalculateSize();
 		}
+
 		/// <summary>
 		/// 创建宽度和高度均为 0 的区域（点）实例。
 		/// </summary>
@@ -74,6 +77,7 @@ namespace PDFPatcher.Model
 				if (Top < source.Top) {
 					Top = source.Top;
 				}
+
 				if (Bottom > source.Bottom) {
 					Bottom = source.Bottom;
 				}
@@ -82,16 +86,20 @@ namespace PDFPatcher.Model
 				if (Top > source.Top) {
 					Top = source.Top;
 				}
+
 				if (Bottom < source.Bottom) {
 					Bottom = source.Bottom;
 				}
 			}
+
 			if (Left > source.Left) {
 				Left = source.Left;
 			}
+
 			if (Right < source.Right) {
 				Right = source.Right;
 			}
+
 			RecalculateSize();
 			return this;
 		}
@@ -135,6 +143,7 @@ namespace PDFPatcher.Model
 					hp = DistanceInfo.Placement.Left;
 					hd = -hd;
 				}
+
 				vd = other.Middle - Middle;
 				if (vd > 0) {
 					vp = IsTopUp ? DistanceInfo.Placement.Up : DistanceInfo.Placement.Down;
@@ -142,6 +151,7 @@ namespace PDFPatcher.Model
 				else if (vd < 0) {
 					vp = IsTopUp ? DistanceInfo.Placement.Down : DistanceInfo.Placement.Up;
 				}
+
 				if (vd == 0 && hd == 0) {
 					return new DistanceInfo(DistanceInfo.Placement.Overlapping, 0, 0);
 				}
@@ -164,6 +174,7 @@ namespace PDFPatcher.Model
 				hp = DistanceInfo.Placement.Left;
 				hd = Left - other.Right;
 			}
+
 			if (bd <= au) {
 				vp = DistanceInfo.Placement.Up;
 				vd = au - bd;
@@ -172,9 +183,11 @@ namespace PDFPatcher.Model
 				vp = DistanceInfo.Placement.Down;
 				vd = bu - ad;
 			}
+
 			if (hp == DistanceInfo.Placement.Unknown && vp == DistanceInfo.Placement.Unknown) {
 				throw new ArgumentOutOfRangeException("位置错误。");
 			}
+
 			var v = new DistanceInfo(ov ? DistanceInfo.Placement.Overlapping | vp : vp, hd, vd);
 			var h = new DistanceInfo(ov ? DistanceInfo.Placement.Overlapping | hp : hp, hd, vd);
 			if (writingDirection == WritingDirection.Vertical) {
@@ -197,10 +210,12 @@ namespace PDFPatcher.Model
 		internal bool IsAlignedWith(Bound other, WritingDirection direction) {
 			switch (direction) {
 				case WritingDirection.Hortizontal:
-					return IsTopDown ? (other.Top < Middle && Middle < other.Bottom || Top < other.Middle && other.Middle < Bottom) : (other.Bottom < Middle && Middle < other.Top || Bottom < other.Middle && other.Middle < Top);
+					return IsTopDown
+						? (other.Top < Middle && Middle < other.Bottom || Top < other.Middle && other.Middle < Bottom)
+						: (other.Bottom < Middle && Middle < other.Top || Bottom < other.Middle && other.Middle < Top);
 				case WritingDirection.Vertical:
 					return other.Left < Center && Center < other.Right
-						|| Left < other.Center && other.Center < Right;
+					       || Left < other.Center && other.Center < Right;
 				default:
 					return IntersectWith(other);
 			}
@@ -208,9 +223,9 @@ namespace PDFPatcher.Model
 
 		internal bool IntersectWith(Bound other) {
 			return other.Left < Right && Left < other.Right &&
-				(IsTopDown
-					? (other.Top < Bottom && Top < other.Bottom)
-					: (other.Bottom < Top && Bottom < other.Top));
+			       (IsTopDown
+				       ? (other.Top < Bottom && Top < other.Bottom)
+				       : (other.Bottom < Top && Bottom < other.Top));
 		}
 
 		internal bool Contains(float x, float y) {
@@ -225,23 +240,29 @@ namespace PDFPatcher.Model
 				y1 = Top;
 				y2 = Bottom;
 			}
+
 			return x1 <= x && x <= x2 && y1 <= y && y <= y2;
 		}
 
 		public static bool operator ==(Bound a, Bound b) {
 			return a.Top == b.Top && a.Bottom == b.Bottom && a.Left == b.Left && a.Right == b.Right;
 		}
+
 		public static bool operator !=(Bound a, Bound b) {
 			return a.Top != b.Top || a.Bottom != b.Bottom || a.Left != b.Left || a.Right != b.Right;
 		}
+
 		public override bool Equals(object obj) {
 			return this == (Bound)obj;
 		}
+
 		public override int GetHashCode() {
 			return Top.GetHashCode() ^ Bottom.GetHashCode() ^ Left.GetHashCode() ^ Right.GetHashCode();
 		}
+
 		public static implicit operator System.Drawing.RectangleF(Bound bound) {
-			return new System.Drawing.RectangleF(Math.Min(bound.Left, bound.Right), Math.Min(bound.Top, bound.Bottom), Math.Abs(bound.Left - bound.Right), Math.Abs(bound.Top - bound.Bottom));
+			return new System.Drawing.RectangleF(Math.Min(bound.Left, bound.Right), Math.Min(bound.Top, bound.Bottom),
+				Math.Abs(bound.Left - bound.Right), Math.Abs(bound.Top - bound.Bottom));
 		}
 	}
 }

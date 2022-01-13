@@ -22,8 +22,10 @@ namespace MuPdfSharp
 					var s = d["S"].NameValue;
 					pl.Add(new PageLabel(n, sp, p, s.Length == 0 ? PageLabelStyle.Digit : (PageLabelStyle)(byte)s[0]));
 				}
+
 				pl.Sort();
 			}
+
 			_labels = pl;
 		}
 
@@ -47,12 +49,14 @@ namespace MuPdfSharp
 			if (l == 0) {
 				return String.Empty;
 			}
+
 			for (int i = l - 1; i >= 0; i--) {
 				var p = _labels[i];
 				if (pageNumber > p.FromPageNumber) {
 					return p.Format(pageNumber);
 				}
 			}
+
 			return String.Empty;
 		}
 
@@ -63,6 +67,7 @@ namespace MuPdfSharp
 					return _labels[i];
 				}
 			}
+
 			return PageLabel.Empty;
 		}
 
@@ -81,6 +86,7 @@ namespace MuPdfSharp
 					return true;
 				}
 			}
+
 			return false;
 		}
 
@@ -104,6 +110,7 @@ namespace MuPdfSharp
 					return true;
 				}
 			}
+
 			return false;
 		}
 

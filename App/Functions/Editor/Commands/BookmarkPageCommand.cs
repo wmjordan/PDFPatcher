@@ -19,11 +19,12 @@ namespace PDFPatcher.Functions.Editor
 					if (form.ShowDialog() != DialogResult.OK || form.ShiftNumber == 0) {
 						return;
 					}
+
 					n = form.ShiftNumber;
 				}
 			}
+
 			controller.ProcessBookmarks(new ChangePageNumberProcessor(n, false, true));
 		}
-
 	}
 }

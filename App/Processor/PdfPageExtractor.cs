@@ -12,12 +12,14 @@ namespace PDFPatcher.Processor
 {
 	class PdfPageExtractor
 	{
-		internal static void ExtractPages(ExtractPageOptions options, string sourceFile, string targetFile, PdfReader pdf) {
+		internal static void ExtractPages(ExtractPageOptions options, string sourceFile, string targetFile,
+			PdfReader pdf) {
 			var pn = pdf.NumberOfPages;
 			if (pn == 1) {
 				Tracker.TraceMessage("文档只有一页，无法拆分。");
 				return;
 			}
+
 			switch (options.SeparatingMode) {
 				case 0: goto default;
 				case 1: // 按顶层书签拆分
@@ -32,27 +34,32 @@ namespace PDFPatcher.Processor
 			}
 		}
 
-		private static void SeparateByPageNumber(ExtractPageOptions options, string sourceFile, string targetFile, ref PdfReader pdf) {
+		private static void SeparateByPageNumber(ExtractPageOptions options, string sourceFile, string targetFile,
+			ref PdfReader pdf) {
 			var c = 1;
 			var pn = pdf.NumberOfPages;
 			if (pn <= options.SeperateByPage) {
 				Tracker.TraceMessage("拆分的页数超过文档页数，无法拆分。");
 				return;
 			}
+
 			for (int i = 1; i <= pn; i += options.SeperateByPage) {
 				if (pdf == null) {
 					pdf = PdfHelper.OpenPdfFile(sourceFile, AppContext.LoadPartialPdfFile, false);
 				}
+
 				var tf = RewriteTargetFileName(sourceFile, targetFile, pdf);
 				var e = i + options.SeperateByPage - 1;
 				if (e > pn) {
 					e = pn;
 				}
+
 				//var r = String.Concat (i.ToText (), "-", e.ToText ());
 				var s = options.NumberFileNames || c > 1 ? String.Concat("[", c.ToText(), "]") : null;
 				if (s != null) {
 					tf = string.Concat(tf.Substring(0, tf.LastIndexOf('.')), s, Ext.Pdf);
 				}
+
 				ExtractPages(options, sourceFile, tf, pdf, PageRangeCollection.CreateSingle(i, e));
 				pdf.Close();
 				pdf = null;
@@ -61,7 +68,8 @@ namespace PDFPatcher.Processor
 			}
 		}
 
-		private static void SeparateByPageRanges(ExtractPageOptions options, string sourceFile, string targetFile, ref PdfReader pdf) {
+		private static void SeparateByPageRanges(ExtractPageOptions options, string sourceFile, string targetFile,
+			ref PdfReader pdf) {
 			var rl = options.PageRanges.Split(';', '；');
 			var pn = pdf.NumberOfPages;
 			var i = 1;
@@ -69,16 +77,19 @@ namespace PDFPatcher.Processor
 			foreach (var range in rl) {
 				c += PageRangeCollection.Parse(range, 1, pn, true).TotalPages;
 			}
+
 			Tracker.SetProgressGoal(c);
 			foreach (var range in rl) {
 				if (pdf == null) {
 					pdf = PdfHelper.OpenPdfFile(sourceFile, AppContext.LoadPartialPdfFile, false);
 				}
+
 				var tf = RewriteTargetFileName(sourceFile, targetFile, pdf);
 				var s = options.NumberFileNames || i > 1 ? String.Concat("[", i.ToText(), "]") : null;
 				if (s != null) {
 					tf = string.Concat(tf.Substring(0, tf.LastIndexOf('.')), s, Ext.Pdf);
 				}
+
 				var ranges = PageRangeCollection.Parse(range, 1, pn, true);
 				ExtractPages(options, sourceFile, tf, pdf, ranges);
 				pdf.Close();
@@ -88,7 +99,8 @@ namespace PDFPatcher.Processor
 			}
 		}
 
-		private static void SeparateByBookmarks(ExtractPageOptions options, string sourceFile, string targetFile, ref PdfReader pdf) {
+		private static void SeparateByBookmarks(ExtractPageOptions options, string sourceFile, string targetFile,
+			ref PdfReader pdf) {
 			var n = pdf.NumberOfPages;
 			Tracker.TraceMessage("导出文档书签。");
 			pdf.ConsolidateNamedDestinations();
@@ -98,6 +110,7 @@ namespace PDFPatcher.Processor
 				Tracker.TraceMessage("文档没有书签，无法拆分。");
 				return;
 			}
+
 			Tracker.SetProgressGoal(n);
 			var l = new List<KeyValuePair<int, string>>();
 			var pp = 0;
@@ -105,25 +118,31 @@ namespace PDFPatcher.Processor
 				if (item == null) {
 					continue;
 				}
+
 				var p = item.GetAttribute(Constants.DestinationAttributes.Page).ToInt32();
 				var t = FileHelper.GetValidFileName(item.GetAttribute(Constants.BookmarkAttributes.Title));
 				var a = item.GetAttribute(Constants.DestinationAttributes.Action);
 				if (a.Length > 0 && a != Constants.ActionType.Goto) {
 					continue;
 				}
+
 				if (p == 0 || p > n || p <= pp || t.Length == 0) {
 					continue;
 				}
+
 				l.Add(new KeyValuePair<int, string>(p, t));
 				pp = p;
 			}
+
 			if (l.Count == 1 && l[0].Key == 1) {
 				Tracker.TraceMessage("文档只有一个有效书签，无法拆分。");
 				return;
 			}
+
 			if (l[0].Key > 1) {
 				l.Insert(0, new KeyValuePair<int, string>(1, Path.GetFileNameWithoutExtension(sourceFile)));
 			}
+
 			targetFile = RewriteTargetFileName(sourceFile, targetFile, pdf);
 			var dn = Path.GetDirectoryName(targetFile);
 			var fn = Path.GetFileNameWithoutExtension(targetFile);
@@ -140,15 +159,16 @@ namespace PDFPatcher.Processor
 				pdf.Close();
 				Tracker.IncrementProgress(e - s + 1);
 			}
-
 		}
 
-		private static void ExtractPages(ExtractPageOptions options, string sourceFile, FilePath targetFile, PdfReader pdf, PageRangeCollection ranges) {
+		private static void ExtractPages(ExtractPageOptions options, string sourceFile, FilePath targetFile,
+			PdfReader pdf, PageRangeCollection ranges) {
 			Tracker.TraceMessage(Tracker.Category.OutputFile, targetFile);
 			if (FileHelper.ComparePath(sourceFile, targetFile)) {
 				Tracker.TraceMessage(Tracker.Category.Error, "输入文件和输出文件不能相同。");
 				return;
 			}
+
 			if (FileHelper.CheckOverwrite(targetFile) == false) {
 				return;
 			}
@@ -165,48 +185,54 @@ namespace PDFPatcher.Processor
 						remapper[item] = -1;
 					}
 				}
+
 				foreach (var range in ranges) {
 					foreach (var item in range) {
 						if (remapper[item] < 0) {
 							continue;
 						}
+
 						pages[i++] = item;
 						if (remapper[item] == 0) {
 							remapper[item] = i;
 						}
 					}
 				}
+
 				var w = new PdfStamper(pdf, s);
 				XmlElement bm = null;
 				if (options.KeepBookmarks) {
 					Tracker.TraceMessage("导出原文档书签。");
 					pdf.ConsolidateNamedDestinations();
-					bm = OutlineManager.GetBookmark(pdf, new UnitConverter() { Unit = Constants.Units.Point });
+					bm = OutlineManager.GetBookmark(pdf, new UnitConverter() {Unit = Constants.Units.Point});
 					if (bm != null && bm.HasChildNodes) {
-						var processors = new IInfoDocProcessor[]
-							{
-								new GotoDestinationProcessor () {
-									RemoveOrphanDestination = options.RemoveOrphanBookmarks,
-									PageRemapper = remapper,
-									TransitionMapper = null
-								}
-							};
+						var processors = new IInfoDocProcessor[] {
+							new GotoDestinationProcessor() {
+								RemoveOrphanDestination = options.RemoveOrphanBookmarks,
+								PageRemapper = remapper,
+								TransitionMapper = null
+							}
+						};
 						PdfDocumentCreator.ProcessInfoItem(bm, processors);
 					}
 				}
 				else {
 					OutlineManager.KillOutline(pdf);
 				}
+
 				pdf.SelectPages(pages);
 				if (options.KeepDocumentProperties == false) {
 					pdf.Trailer.Remove(PdfName.INFO);
 					pdf.Catalog.Remove(PdfName.METADATA);
 				}
+
 				if (bm != null) {
 					pdf.Catalog.Put(PdfName.OUTLINES, OutlineManager.WriteOutline(w.Writer, bm, ranges.TotalPages));
 					w.ViewerPreferences = PdfWriter.PageModeUseOutlines;
 				}
-				w.Writer.Info.Put(PdfName.PRODUCER, new PdfString(String.Concat(Application.ProductName, " ", Application.ProductVersion)));
+
+				w.Writer.Info.Put(PdfName.PRODUCER,
+					new PdfString(String.Concat(Application.ProductName, " ", Application.ProductVersion)));
 				Tracker.TraceMessage("保存文件：" + targetFile);
 				w.Close();
 				//Document doc = new Document ();
@@ -237,6 +263,5 @@ namespace PDFPatcher.Processor
 			targetFile = FileHelper.MakePathRootedAndWithExtension(targetFile, sourceFile, Ext.Pdf, true);
 			return targetFile;
 		}
-
 	}
 }

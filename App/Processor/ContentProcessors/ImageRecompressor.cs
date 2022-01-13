@@ -10,22 +10,24 @@ namespace PDFPatcher.Processor
 {
 	sealed class ImageRecompressor : IPageProcessor
 	{
-		static readonly PdfName[] __IgnoreFilters = new PdfName[] { PdfName.DCTDECODE, PdfName.JBIG2DECODE };
+		static readonly PdfName[] __IgnoreFilters = new PdfName[] {PdfName.DCTDECODE, PdfName.JBIG2DECODE};
+
 		static readonly ImageExtracterOptions _imgExpOption = new ImageExtracterOptions() {
-			OutputPath = System.IO.Path.GetTempPath(),
-			MergeImages = false
+			OutputPath = System.IO.Path.GetTempPath(), MergeImages = false
 		};
 
 		int _processedImageCount;
 		int _optimizedImageCount;
 
 		#region IPageProcessor 成员
+
 		public string Name => "优化压缩黑白图片";
 
 		public void BeginProcess(DocProcessorContext context) {
 			_processedImageCount = 0;
 			_optimizedImageCount = 0;
 		}
+
 		public bool EndProcess(PdfReader pdf) {
 			Tracker.TraceMessage(Tracker.Category.Notice, Name + "功能：");
 			Tracker.TraceMessage("　　处理了 " + _processedImageCount + " 幅图片。");
@@ -44,17 +46,20 @@ namespace PDFPatcher.Processor
 			if (images == null) {
 				return false;
 			}
+
 			foreach (var item in images) {
 				var im = PdfReader.GetPdfObject(item.Value) as PRStream;
 				if (im == null
-					|| PdfName.IMAGE.Equals(im.GetAsName(PdfName.SUBTYPE)) == false) {
+				    || PdfName.IMAGE.Equals(im.GetAsName(PdfName.SUBTYPE)) == false) {
 					continue;
 				}
+
 				_processedImageCount++;
 				var l = im.GetAsNumber(PdfName.LENGTH);
 				if (l == null || l.IntValue < 400 /*忽略小图片*/) {
 					continue;
 				}
+
 				var f = im.Get(PdfName.FILTER);
 				PdfName fn = null;
 				if (f.Type == PdfObject.ARRAY) {
@@ -64,14 +69,16 @@ namespace PDFPatcher.Processor
 				else if (f.Type == PdfObject.NAME) {
 					fn = f as PdfName;
 				}
+
 				if (fn != null && __IgnoreFilters.Contains(fn)) {
 					continue;
 				}
 
 				if (OptimizeBinaryImage(item.Value as PdfIndirectReference, im, l.IntValue)
-					|| ReplaceJ2kImage(item.Value as PdfIndirectReference, im, fn)) {
+				    || ReplaceJ2kImage(item.Value as PdfIndirectReference, im, fn)) {
 				}
 			}
+
 			return true;
 		}
 
@@ -79,7 +86,7 @@ namespace PDFPatcher.Processor
 			var bpc = imgStream.GetAsNumber(PdfName.BITSPERCOMPONENT);
 			var mask = imgStream.GetAsBoolean(PdfName.IMAGEMASK);
 			if (bpc == null && (mask == null || mask.BooleanValue == false)
-				|| bpc != null && bpc.IntValue != 1) {
+			    || bpc != null && bpc.IntValue != 1) {
 				return false;
 			}
 
@@ -90,11 +97,13 @@ namespace PDFPatcher.Processor
 				if (sb.Length > length) {
 					return false;
 				}
+
 				imgStream.SetData(sb, false);
 				imgStream.Put(PdfName.FILTER, PdfName.JBIG2DECODE);
 				if (imgStream.GetAsArray(PdfName.COLORSPACE) == null) {
 					imgStream.Put(PdfName.COLORSPACE, PdfName.DEVICEGRAY);
 				}
+
 				imgStream.Put(PdfName.BITSPERCOMPONENT, new PdfNumber(1));
 				imgStream.Put(PdfName.LENGTH, new PdfNumber(sb.Length));
 				imgStream.Remove(PdfName.K);
@@ -112,6 +121,7 @@ namespace PDFPatcher.Processor
 				imgStream.Remove(PdfName.DECODE);
 				_optimizedImageCount++;
 			}
+
 			return true;
 		}
 
@@ -125,9 +135,13 @@ namespace PDFPatcher.Processor
 			using (var ms = new System.IO.MemoryStream(info.DecodeImage(_imgExpOption)))
 			using (var js = new System.IO.MemoryStream())
 			using (var fi = new FreeImageAPI.FreeImageBitmap(ms)) {
-				fi.Save(js, FreeImageAPI.FREE_IMAGE_FORMAT.FIF_JPEG, FreeImageAPI.FREE_IMAGE_SAVE_FLAGS.JPEG_BASELINE | FreeImageAPI.FREE_IMAGE_SAVE_FLAGS.JPEG_QUALITYNORMAL | FreeImageAPI.FREE_IMAGE_SAVE_FLAGS.JPEG_PROGRESSIVE);
+				fi.Save(js, FreeImageAPI.FREE_IMAGE_FORMAT.FIF_JPEG,
+					FreeImageAPI.FREE_IMAGE_SAVE_FLAGS.JPEG_BASELINE |
+					FreeImageAPI.FREE_IMAGE_SAVE_FLAGS.JPEG_QUALITYNORMAL |
+					FreeImageAPI.FREE_IMAGE_SAVE_FLAGS.JPEG_PROGRESSIVE);
 				jpg = js.ToArray();
 			}
+
 			imgStream.SetData(jpg, false);
 			imgStream.Put(PdfName.FILTER, PdfName.DCTDECODE);
 			imgStream.Put(PdfName.LENGTH, new PdfNumber(jpg.Length));

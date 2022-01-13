@@ -16,6 +16,7 @@ namespace PDFPatcher.Functions.Editor
 			if (pp.Page == 0) {
 				return;
 			}
+
 			var or = v.OcrPage(pp.Page, true);
 			if (or != null) {
 				Clipboard.SetText(String.Join(Environment.NewLine, v.CleanUpOcrResult(or)));
@@ -24,6 +25,5 @@ namespace PDFPatcher.Functions.Editor
 				FormHelper.InfoBox("页面不包含可识别的文本，或出现识别引擎错误。");
 			}
 		}
-
 	}
 }

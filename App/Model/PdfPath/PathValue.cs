@@ -15,6 +15,7 @@ namespace PDFPatcher.Model.PdfPath
 					if (p == null) {
 						return Double.NaN;
 					}
+
 					return Double.TryParse(p.FriendlyValue ?? p.LiteralValue, out d) ? d : Double.NaN;
 				case PathValueType.String:
 					return Double.TryParse((value as PathStringValue).Value, out d) ? d : Double.NaN;
@@ -34,6 +35,7 @@ namespace PDFPatcher.Model.PdfPath
 					if (p == null) {
 						return String.Empty;
 					}
+
 					return p.FriendlyValue ?? p.LiteralValue ?? String.Empty;
 				case PathValueType.String:
 					return (value as PathStringValue).Value;
@@ -100,6 +102,5 @@ namespace PDFPatcher.Model.PdfPath
 				Value = value;
 			}
 		}
-
 	}
 }

@@ -8,11 +8,13 @@ namespace MuPdfSharp
 	public unsafe class MuPdfObject
 	{
 		#region 非托管资源成员
+
 		readonly IntPtr _object;
 		readonly ContextHandle _context;
 		NativeObject* NativePointer => (NativeObject*)_object;
 		internal IntPtr Pointer => _object;
 		internal ContextHandle Context => _context;
+
 		#endregion
 
 		internal DocumentHandle Document {
@@ -23,7 +25,8 @@ namespace MuPdfSharp
 		}
 
 		/// <summary>返回对象的类型。</summary>
-		public MuPdfObjectKind Kind => Pointer == IntPtr.Zero ? MuPdfObjectKind.PDF_NULL : (MuPdfObjectKind)NativePointer->_kind;
+		public MuPdfObjectKind Kind =>
+			Pointer == IntPtr.Zero ? MuPdfObjectKind.PDF_NULL : (MuPdfObjectKind)NativePointer->_kind;
 
 		/// <summary>返回对象的引用数量。</summary>
 		internal int ReferenceCount => Pointer == IntPtr.Zero ? 0 : NativePointer->_referenceCount;
@@ -55,6 +58,7 @@ namespace MuPdfSharp
 		internal MuPdfDictionary AsDictionary() {
 			return new MuPdfDictionary(_context, NativeMethods.ResolveIndirect(_context, _object));
 		}
+
 		internal MuPdfArray AsArray() {
 			return new MuPdfArray(_context, NativeMethods.ResolveIndirect(_context, _object));
 		}
@@ -109,9 +113,10 @@ namespace MuPdfSharp
 		public int Count => Pointer == IntPtr.Zero ? 0 : NativePointer->_length;
 
 		public KeyValuePair<string, MuPdfObject> this[int index] => new KeyValuePair<string, MuPdfObject>(
-					new MuPdfObject(Context, NativeMethods.GetKey(Context, Pointer, index)).NameValue,
-					new MuPdfObject(Context, NativeMethods.GetValue(Context, Pointer, index))
-					);
+			new MuPdfObject(Context, NativeMethods.GetKey(Context, Pointer, index)).NameValue,
+			new MuPdfObject(Context, NativeMethods.GetValue(Context, Pointer, index))
+		);
+
 		public MuPdfObject this[string key] {
 			get => new MuPdfObject(Context, NativeMethods.Get(Context, Pointer, key));
 			set => NativeMethods.Put(Context, Pointer, key, value.Pointer);
@@ -120,18 +125,23 @@ namespace MuPdfSharp
 		public MuPdfObject GetKey(int index) {
 			return new MuPdfObject(Context, NativeMethods.GetKey(Context, Pointer, index));
 		}
+
 		public MuPdfObject GetValue(int index) {
 			return new MuPdfObject(Context, NativeMethods.GetValue(Context, Pointer, index));
 		}
+
 		public MuPdfObject Locate(string path) {
 			return new MuPdfObject(Context, NativeMethods.Locate(Context, Pointer, path));
 		}
+
 		public void LocatePut(string path, MuPdfObject value) {
 			NativeMethods.LocatePut(Context, Pointer, path, value.Pointer);
 		}
+
 		public void Delete(string key) {
 			NativeMethods.Delete(Context, Pointer, key);
 		}
+
 		public void Delete(int index) {
 			NativeMethods.Delete(Context, Pointer, NativeMethods.GetKey(Context, Pointer, index));
 		}

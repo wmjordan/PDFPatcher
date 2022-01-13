@@ -20,6 +20,7 @@ namespace PDFPatcher.Processor
 			foreach (var item in list) {
 				SerializeSourceItem(d, b, item);
 			}
+
 			try {
 				d.Save(path);
 			}
@@ -34,6 +35,7 @@ namespace PDFPatcher.Processor
 			if (item.Type == SourceItem.ItemType.Pdf) {
 				e.SetValue(Constants.PageRange, ((SourceItem.Pdf)item).PageRanges);
 			}
+
 			container.AppendChild(e);
 			if (item.HasSubItems) {
 				foreach (var sub in item.Items) {
@@ -50,11 +52,13 @@ namespace PDFPatcher.Processor
 			catch (Exception ex) {
 				FormHelper.ErrorBox("在加载文件列表时遇到错误：" + ex.Message);
 			}
+
 			var bl = d.Bookmarks;
 			var l = new List<SourceItem>(bl.Count);
 			foreach (BookmarkElement item in bl) {
 				DeserializeSourceItem(l, item);
 			}
+
 			return l;
 		}
 
@@ -62,12 +66,15 @@ namespace PDFPatcher.Processor
 			var b = new BookmarkSettings(bookmark);
 			var p = bookmark.GetValue(Constants.DestinationAttributes.Path);
 			var s = SourceItem.Create(p, false);
-			if (b.Title.IsNullOrWhiteSpace() == false || b.IsOpened || b.IsBold || b.IsItalic || b.ForeColor.IsEmptyOrTransparent() == false) {
+			if (b.Title.IsNullOrWhiteSpace() == false || b.IsOpened || b.IsBold || b.IsItalic ||
+			    b.ForeColor.IsEmptyOrTransparent() == false) {
 				s.Bookmark = b;
 			}
+
 			if (s.Type == SourceItem.ItemType.Pdf) {
 				((SourceItem.Pdf)s).PageRanges = bookmark.GetValue(Constants.PageRange);
 			}
+
 			list.Add(s);
 			if (bookmark.HasSubBookmarks) {
 				foreach (BookmarkElement sub in bookmark.SubBookmarks) {

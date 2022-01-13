@@ -12,6 +12,7 @@ namespace PDFPatcher.Processor
 			if (item.ParentNode.Name != Constants.Bookmark) {
 				return null;
 			}
+
 			var undo = new UndoActionGroup();
 			var fs = item.SelectNodes("following-sibling::" + Constants.Bookmark);
 			foreach (System.Xml.XmlElement f in fs) {
@@ -19,6 +20,7 @@ namespace PDFPatcher.Processor
 				item.AppendChild(f);
 				undo.Add(new RemoveElementAction(f));
 			}
+
 			undo.Add(new AddElementAction(item));
 			item.ParentNode.ParentNode.InsertAfter(item, item.ParentNode);
 			undo.Add(new RemoveElementAction(item));

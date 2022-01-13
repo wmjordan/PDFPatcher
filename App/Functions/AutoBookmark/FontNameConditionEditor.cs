@@ -16,6 +16,7 @@ namespace PDFPatcher.Functions
 		}
 
 		#region ITextInfoFilterEditor 成员
+
 		public UserControl EditorControl => this;
 
 		public AutoBookmarkCondition Filter {
@@ -39,6 +40,7 @@ namespace PDFPatcher.Functions
 				else if (sender == _FullMatchBox) {
 					_filter.MatchFullName = _FullMatchBox.Checked;
 				}
+
 				EditAdjustmentForm.UpdateFilter(this);
 			}
 		}

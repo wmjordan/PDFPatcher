@@ -19,9 +19,11 @@ namespace PDFPatcher.Functions
 			if (String.IsNullOrEmpty(sourcePath) == false) {
 				_SourceFileBox.Text = sourcePath;
 			}
+
 			if (String.IsNullOrEmpty(targePath) == false) {
 				_TargetFileBox.Text = targePath;
 			}
+
 			_bookmarkDocument = new PdfInfoXmlDocument();
 			using (var r = bookmarkDocument.CreateNavigator().ReadSubtree()) {
 				_bookmarkDocument.Load(r);
@@ -46,17 +48,20 @@ namespace PDFPatcher.Functions
 				Common.FormHelper.ErrorBox(Messages.SourceFileNotFound);
 				return;
 			}
+
 			if (String.IsNullOrEmpty(t)) {
 				Common.FormHelper.ErrorBox(Messages.TargetFileNotSpecified);
 				return;
 			}
+
 			_SourceFileBox.FileList.AddHistoryItem();
 			_TargetFileBox.FileList.AddHistoryItem();
 
 			var worker = AppContext.MainForm.GetWorker();
 			worker.DoWork += (dummy, arg) => {
 				DoWork?.Invoke(this, null);
-				Processor.Worker.PatchDocument(new SourceItem.Pdf(s), t, _bookmarkDocument, AppContext.Importer, AppContext.Editor);
+				Processor.Worker.PatchDocument(new SourceItem.Pdf(s), t, _bookmarkDocument, AppContext.Importer,
+					AppContext.Editor);
 			};
 			worker.RunWorkerCompleted += (dummy, arg) => {
 				if (Finished != null) {

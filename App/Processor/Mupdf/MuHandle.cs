@@ -43,13 +43,16 @@ namespace MuPdfSharp
 		internal PixmapHandle CreatePixmap(ColorSpace colorspace, BBox box) {
 			return new PixmapHandle(this, FindDeviceColorSpace(colorspace), box);
 		}
+
 		internal DisplayListHandle CreateDisplayList(Rectangle mediaBox) {
 			return new DisplayListHandle(this, mediaBox);
 		}
+
 		internal PixmapHandle LoadJpeg2000(byte[] data) {
 			var p = NativeMethods.LoadJpeg2000(this, data, data.Length, IntPtr.Zero);
 			return new PixmapHandle(this, p);
 		}
+
 		IntPtr FindDeviceColorSpace(ColorSpace colorspace) {
 			switch (colorspace) {
 				case ColorSpace.Rgb: return NativeMethods.GetRgbColorSpace(this);
@@ -65,12 +68,14 @@ namespace MuPdfSharp
 	{
 		readonly ContextHandle _context;
 		readonly bool _releaseContext;
+
 		[ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
 		internal DocumentHandle(ContextHandle context, StreamHandle stream) {
 			handle = NativeMethods.OpenPdfDocumentStream(context, stream);
 			_context = context;
 			context.DangerousAddRef(ref _releaseContext);
 		}
+
 		[ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
 		internal DocumentHandle(ContextHandle context, IntPtr documentHandle) {
 			handle = documentHandle;
@@ -86,6 +91,7 @@ namespace MuPdfSharp
 			if (_releaseContext) {
 				_context.DangerousRelease();
 			}
+
 			return true;
 		}
 	}
@@ -105,6 +111,7 @@ namespace MuPdfSharp
 		internal StreamHandle(ContextHandle context, string filePath)
 			: this(context, NativeMethods.OpenFile(context, filePath)) {
 		}
+
 		internal ContextHandle Context { get; }
 
 		[ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
@@ -113,6 +120,7 @@ namespace MuPdfSharp
 			if (_releaseContext) {
 				Context.DangerousRelease();
 			}
+
 			return true;
 		}
 
@@ -136,22 +144,27 @@ namespace MuPdfSharp
 		internal DeviceHandle(ContextHandle context, ref Rectangle rectangle)
 			: this(context, NativeMethods.NewBBoxDevice(context, ref rectangle)) {
 		}
+
 		[ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
 		internal DeviceHandle(ContextHandle context, PixmapHandle pixmap, Matrix matrix)
 			: this(context, NativeMethods.NewDrawDevice(context, matrix, pixmap)) {
 		}
+
 		[ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
 		internal DeviceHandle(ContextHandle context, PixmapHandle pixmap, Matrix matrix, ref BBox box)
 			: this(context, NativeMethods.NewDrawDevice(context, matrix, pixmap, ref box)) {
 		}
+
 		[ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
 		internal DeviceHandle(ContextHandle context, DisplayListHandle displayList)
 			: this(context, NativeMethods.NewListDevice(context, displayList)) {
 		}
+
 		[ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
 		internal DeviceHandle(ContextHandle context, TextPageHandle page)
 			: this(context, NativeMethods.NewTextDevice(context, page, null)) {
 		}
+
 		internal void EndOperations() {
 			NativeMethods.CloseDevice(_context, handle);
 		}
@@ -162,6 +175,7 @@ namespace MuPdfSharp
 			if (_releaseContext) {
 				_context.DangerousRelease();
 			}
+
 			return true;
 		}
 	}
@@ -170,6 +184,7 @@ namespace MuPdfSharp
 	{
 		readonly DocumentHandle _document;
 		readonly bool _releaseDocument;
+
 		[ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
 		public PageHandle(DocumentHandle document, int pageNumber) {
 			handle = NativeMethods.LoadPage(document.Context, document, pageNumber);
@@ -185,6 +200,7 @@ namespace MuPdfSharp
 			if (_releaseDocument) {
 				_document.DangerousRelease();
 			}
+
 			return true;
 		}
 
@@ -200,6 +216,7 @@ namespace MuPdfSharp
 			readonly IntPtr Annots, AnnotTailp;
 			readonly IntPtr Widgets, WidgetTailp;
 		}
+
 		struct NativeFzPage
 		{
 			readonly int Refs;
@@ -207,19 +224,45 @@ namespace MuPdfSharp
 			readonly int Chapter;
 			readonly int Number;
 			readonly int Incomplete;
-			readonly IntPtr /*fz_page_drop_page_fn*/ DropPage;
-			readonly IntPtr /*fz_page_bound_page_fn*/ BoundPage;
-			readonly IntPtr /*fz_page_run_page_fn*/ RunPageContents;
-			readonly IntPtr /*fz_page_run_page_fn*/ RunPageAnnots;
-			readonly IntPtr /*fz_page_run_page_fn*/ RunPageWidgets;
-			readonly IntPtr /*fz_page_load_links_fn*/ LoadLinks;
-			readonly IntPtr /*fz_page_page_presentation_fn*/ PagePresentation;
-			readonly IntPtr /*fz_page_control_separation_fn*/ ControlSeparation;
-			readonly IntPtr /*fz_page_separation_disabled_fn*/ SeparationDisabled;
-			readonly IntPtr /*fz_page_separations_fn*/ GetSeparations;
-			readonly IntPtr /*fz_page_uses_overprint_fn*/ GetOverprint;
-			readonly IntPtr /*fz_page_create_link_fn*/ CreateLink;
-			readonly IntPtr /*fz_page ** prev, *next*/ Prev, Next;
+
+			readonly IntPtr /*fz_page_drop_page_fn*/
+				DropPage;
+
+			readonly IntPtr /*fz_page_bound_page_fn*/
+				BoundPage;
+
+			readonly IntPtr /*fz_page_run_page_fn*/
+				RunPageContents;
+
+			readonly IntPtr /*fz_page_run_page_fn*/
+				RunPageAnnots;
+
+			readonly IntPtr /*fz_page_run_page_fn*/
+				RunPageWidgets;
+
+			readonly IntPtr /*fz_page_load_links_fn*/
+				LoadLinks;
+
+			readonly IntPtr /*fz_page_page_presentation_fn*/
+				PagePresentation;
+
+			readonly IntPtr /*fz_page_control_separation_fn*/
+				ControlSeparation;
+
+			readonly IntPtr /*fz_page_separation_disabled_fn*/
+				SeparationDisabled;
+
+			readonly IntPtr /*fz_page_separations_fn*/
+				GetSeparations;
+
+			readonly IntPtr /*fz_page_uses_overprint_fn*/
+				GetOverprint;
+
+			readonly IntPtr /*fz_page_create_link_fn*/
+				CreateLink;
+
+			readonly IntPtr /*fz_page ** prev, *next*/
+				Prev, Next;
 		}
 #pragma warning restore 649, 169
 	}
@@ -228,6 +271,7 @@ namespace MuPdfSharp
 	{
 		readonly ContextHandle _context;
 		readonly bool _releaseContext;
+
 		[ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
 		internal DisplayListHandle(ContextHandle context, Rectangle mediaBox) {
 			handle = NativeMethods.NewDisplayList(context, mediaBox);
@@ -241,6 +285,7 @@ namespace MuPdfSharp
 			if (_releaseContext) {
 				_context.DangerousRelease();
 			}
+
 			return true;
 		}
 	}
@@ -249,12 +294,14 @@ namespace MuPdfSharp
 	{
 		readonly ContextHandle _context;
 		readonly bool _releaseContext;
+
 		[ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
 		internal PixmapHandle(ContextHandle context, IntPtr pixmap) {
 			handle = pixmap;
 			_context = context;
 			context.DangerousAddRef(ref _releaseContext);
 		}
+
 		[ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
 		internal PixmapHandle(ContextHandle context, IntPtr colorspace, int width, int height) {
 			handle = NativeMethods.NewPixmap(context, colorspace, width, height, IntPtr.Zero, 0);
@@ -275,6 +322,7 @@ namespace MuPdfSharp
 			if (_releaseContext) {
 				_context.DangerousRelease();
 			}
+
 			return true;
 		}
 	}
@@ -283,6 +331,7 @@ namespace MuPdfSharp
 	{
 		readonly ContextHandle _context;
 		readonly bool _releaseContext;
+
 		[ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
 		internal TextPageHandle(ContextHandle context, Rectangle mediaBox) {
 			handle = NativeMethods.NewTextPage(context, mediaBox);
@@ -296,6 +345,7 @@ namespace MuPdfSharp
 			if (_releaseContext) {
 				_context.DangerousRelease();
 			}
+
 			return true;
 		}
 	}

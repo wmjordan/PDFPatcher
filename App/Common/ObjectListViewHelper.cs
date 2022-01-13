@@ -24,6 +24,7 @@ namespace BrightIdeasSoftware
 			if (b.Width < 60) {
 				b.Width = 60;
 			}
+
 			if (e.Control is System.Windows.Forms.Control c) {
 				c.Bounds = b;
 				c.Location = b.Location;
@@ -32,10 +33,7 @@ namespace BrightIdeasSoftware
 
 		public static void SetTreeViewLine(this TreeListView view) {
 			var tcr = view.TreeColumnRenderer as TreeListView.TreeRenderer;
-			tcr.LinePen = new Pen(SystemColors.ControlDark) {
-				DashCap = DashCap.Round,
-				DashStyle = DashStyle.Dash
-			};
+			tcr.LinePen = new Pen(SystemColors.ControlDark) {DashCap = DashCap.Round, DashStyle = DashStyle.Dash};
 		}
 
 		public static void ExpandSelected(this TreeListView view) {
@@ -44,25 +42,32 @@ namespace BrightIdeasSoftware
 				view.Expand(item);
 			}
 		}
+
 		public static TypedObjectListView<T> AsTyped<T>(this ObjectListView view) where T : class {
 			return view.AsTyped<T>(null);
 		}
 
-		public static TypedObjectListView<T> AsTyped<T>(this ObjectListView view, Action<TypedObjectListView<T>> configurator) where T : class {
+		public static TypedObjectListView<T> AsTyped<T>(this ObjectListView view,
+			Action<TypedObjectListView<T>> configurator) where T : class {
 			var v = new TypedObjectListView<T>(view);
 			configurator?.Invoke(v);
 			return v;
 		}
-		public static TypedObjectListView<T> ConfigColumn<T>(this TypedObjectListView<T> view, OLVColumn column, Action<TypedColumn<T>> configurator) where T : class {
+
+		public static TypedObjectListView<T> ConfigColumn<T>(this TypedObjectListView<T> view, OLVColumn column,
+			Action<TypedColumn<T>> configurator) where T : class {
 			var t = new TypedColumn<T>(column);
 			configurator(t);
 			return view;
 		}
-		public static TypedColumn<T> AsTyped<T>(this OLVColumn column, Action<TypedColumn<T>> configurator) where T : class {
+
+		public static TypedColumn<T> AsTyped<T>(this OLVColumn column, Action<TypedColumn<T>> configurator)
+			where T : class {
 			var t = new TypedColumn<T>(column);
 			configurator(t);
 			return t;
 		}
+
 		public static T GetParentModel<T>(this TreeListView view, T model) where T : class {
 			return view.GetParent(model) as T;
 		}
@@ -72,6 +77,7 @@ namespace BrightIdeasSoftware
 			do {
 				r.Add(model);
 			} while ((model = view.GetParent(model) as T) != null);
+
 			return r;
 		}
 
@@ -87,6 +93,7 @@ namespace BrightIdeasSoftware
 			if (si < 1) {
 				return;
 			}
+
 			var so = view.SelectedObjects;
 			view.MoveObjects(--si, so);
 			view.SelectedObjects = so;
@@ -97,10 +104,12 @@ namespace BrightIdeasSoftware
 			if (ls == null || ls.Selected == true) {
 				return;
 			}
+
 			var si = view.GetFirstSelectedIndex();
 			if (si < 0) {
 				return;
 			}
+
 			var so = view.SelectedObjects;
 			view.MoveObjects(si + 2, so);
 			view.SelectedObjects = so;
@@ -119,6 +128,7 @@ namespace BrightIdeasSoftware
 					i = item;
 				}
 			}
+
 			return i == c ? -1 : i;
 		}
 
@@ -129,6 +139,7 @@ namespace BrightIdeasSoftware
 					i = item;
 				}
 			}
+
 			return i;
 		}
 
@@ -140,6 +151,7 @@ namespace BrightIdeasSoftware
 					r.Add(item);
 				}
 			}
+
 			return r;
 		}
 
@@ -157,6 +169,7 @@ namespace BrightIdeasSoftware
 				x = cr.Right - 1;
 				ob = true;
 			}
+
 			var cb = cr.Top + ic * view.RowHeightEffective;
 			if (y < cr.Top) {
 				y = cr.Top;
@@ -166,10 +179,12 @@ namespace BrightIdeasSoftware
 				y = cb;
 				ob = true;
 			}
+
 			var r = view.GetItemAt(x, y, out c);
 			if (r != null) {
 				return new GridTestResult(c.DisplayIndex, r.Index, ob);
 			}
+
 			// 当列表框滚动时，上述方法失效，使用此替补方法
 			r = view.GetNthItemInDisplayOrder((y - 1 - cr.Top) / view.RowHeightEffective);
 			var w = cr.Left;
@@ -180,14 +195,17 @@ namespace BrightIdeasSoftware
 					break;
 				}
 			}
+
 			if (c == null) {
 				c = cl[cl.Count - 1];
 				ob = true;
 			}
+
 			y = r.Index + view.TopItemIndex;
 			if (y >= view.GetItemCount()) {
 				y = view.GetItemCount() - 1;
 			}
+
 			return new GridTestResult(c.DisplayIndex, y, ob);
 		}
 
@@ -198,9 +216,9 @@ namespace BrightIdeasSoftware
 				var oi = view.GetItem(i);
 				oi.Selected = !oi.Selected;
 			}
+
 			view.Unfreeze();
 		}
-
 	}
 
 	public struct GridTestResult

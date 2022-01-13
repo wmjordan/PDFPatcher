@@ -16,6 +16,7 @@ namespace PDFPatcher.Functions
 		}
 
 		#region ITextInfoFilterEditor 成员
+
 		public UserControl EditorControl => this;
 
 		public AutoBookmarkCondition Filter {
@@ -47,6 +48,7 @@ namespace PDFPatcher.Functions
 				else if (sender == _UseRegexBox) {
 					_filter.Pattern.UseRegularExpression = _UseRegexBox.Checked;
 				}
+
 				EditAdjustmentForm.UpdateFilter(this);
 			}
 		}

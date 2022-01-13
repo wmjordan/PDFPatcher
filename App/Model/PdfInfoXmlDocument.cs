@@ -20,24 +20,29 @@ namespace PDFPatcher.Model
 		}
 
 		/// <summary>返回文档信息节点。</summary>
-		public DocumentInfoElement InfoNode => DocumentElement.GetOrCreateElement(Constants.Info.ThisName) as DocumentInfoElement;
+		public DocumentInfoElement InfoNode =>
+			DocumentElement.GetOrCreateElement(Constants.Info.ThisName) as DocumentInfoElement;
 
 		/// <summary>返回页码标签节点。</summary>
 		public XmlElement PageLabelRoot => DocumentElement.GetOrCreateElement(Constants.PageLabels);
 
-		public XmlNodeList PageLabels => DocumentElement.SelectNodes(Constants.PageLabels + "[1]/" + Constants.PageLabelsAttributes.Style);
+		public XmlNodeList PageLabels =>
+			DocumentElement.SelectNodes(Constants.PageLabels + "[1]/" + Constants.PageLabelsAttributes.Style);
 
 		/// <summary>返回书签根节点。</summary>
-		public BookmarkRootElement BookmarkRoot => DocumentElement.GetOrCreateElement(Constants.DocumentBookmark) as BookmarkRootElement;
+		public BookmarkRootElement BookmarkRoot =>
+			DocumentElement.GetOrCreateElement(Constants.DocumentBookmark) as BookmarkRootElement;
 
 		/// <summary>获取根书签。</summary>
-		public XmlNodeList Bookmarks => DocumentElement.SelectNodes(Constants.DocumentBookmark + "[1]/" + Constants.Bookmark);
+		public XmlNodeList Bookmarks =>
+			DocumentElement.SelectNodes(Constants.DocumentBookmark + "[1]/" + Constants.Bookmark);
 
 		private void Init() {
 			var root = DocumentElement;
 			if (root == null) {
 				root = AppendChild(CreateElement(Constants.PdfInfo)) as XmlElement;
 			}
+
 			root.SetAttribute(Constants.Info.ProductName, System.Windows.Forms.Application.ProductName);
 			root.SetAttribute(Constants.Info.ProductVersion, Constants.InfoDocVersion);
 			root.SetAttribute(Constants.Info.ExportDate, DateTime.Now.ToString("yyyy年MM月dd日 HH:mm:ss"));
@@ -49,18 +54,20 @@ namespace PDFPatcher.Model
 
 		public BookmarkElement CreateBookmark(BookmarkSettings settings) {
 			var b = new BookmarkElement(this) {
-				Title = settings.Title,
-				IsOpen = settings.IsOpened,
-				Action = Constants.ActionType.Goto
+				Title = settings.Title, IsOpen = settings.IsOpened, Action = Constants.ActionType.Goto
 			};
 			if (settings.ForeColor.IsEmptyOrTransparent() == false) {
 				b.ForeColor = settings.ForeColor;
 			}
+
 			if (settings.IsBold || settings.IsItalic) {
-				b.TextStyle = (settings.IsBold ? FontStyle.Bold : FontStyle.Regular) | (settings.IsItalic ? FontStyle.Italic : FontStyle.Regular);
+				b.TextStyle = (settings.IsBold ? FontStyle.Bold : FontStyle.Regular) |
+				              (settings.IsItalic ? FontStyle.Italic : FontStyle.Regular);
 			}
+
 			return b;
 		}
+
 		public PageLabelElement CreatePageLabel(MuPdfSharp.PageLabel label) {
 			var l = new PageLabelElement(this);
 			l.SetAttributes(label);
@@ -80,9 +87,9 @@ namespace PDFPatcher.Model
 						return new DocumentInfoElement(this);
 				}
 			}
+
 			return base.CreateElement(prefix, localName, namespaceURI);
 		}
-
 	}
 
 	/// <summary>文档元数据属性元素。</summary>
@@ -91,31 +98,38 @@ namespace PDFPatcher.Model
 		internal DocumentInfoElement(XmlDocument doc)
 			: base(String.Empty, Constants.Info.ThisName, String.Empty, doc) {
 		}
+
 		public string Title {
 			get => this.GetValue(Constants.Info.Title);
 			set => this.SetValue(Constants.Info.Title, value, null);
 		}
+
 		public string Author {
 			get => this.GetValue(Constants.Info.Author);
 			set => this.SetValue(Constants.Info.Author, value, null);
 		}
+
 		public string Creator {
 			get => this.GetValue(Constants.Info.Creator);
 			set => this.SetValue(Constants.Info.Creator, value, null);
 		}
+
 		public string Keywords {
 			get => this.GetValue(Constants.Info.Keywords);
 			set => this.SetValue(Constants.Info.Keywords, value, null);
 		}
+
 		public string Producer {
 			get => this.GetValue(Constants.Info.Producer);
 			set => this.SetValue(Constants.Info.Producer, value, null);
 		}
+
 		public string Subject {
 			get => this.GetValue(Constants.Info.Subject);
 			set => this.SetValue(Constants.Info.Subject, value, null);
 		}
 	}
+
 	public abstract class BookmarkContainer : XmlElement
 	{
 		protected BookmarkContainer(string name, XmlDocument doc)
@@ -135,6 +149,7 @@ namespace PDFPatcher.Model
 		public BookmarkElement AppendBookmark() {
 			return AppendChild((OwnerDocument as PdfInfoXmlDocument).CreateBookmark()) as BookmarkElement;
 		}
+
 		/// <summary>使用指定的配置创建新的书签。返回新创建的书签。</summary>
 		/// <param name="settings">书签设置。</param>
 		public BookmarkElement AppendBookmark(BookmarkSettings settings) {
@@ -166,7 +181,8 @@ namespace PDFPatcher.Model
 		/// <summary>获取或设置书签的颜色。</summary>
 		public Color ForeColor {
 			get {
-				if (HasAttribute(Constants.Colors.Red) || HasAttribute(Constants.Colors.Green) || HasAttribute(Constants.Colors.Blue)) {
+				if (HasAttribute(Constants.Colors.Red) || HasAttribute(Constants.Colors.Green) ||
+				    HasAttribute(Constants.Colors.Blue)) {
 					float r = this.GetValue(Constants.Colors.Red, 0f),
 						g = this.GetValue(Constants.Colors.Green, 0f),
 						b = this.GetValue(Constants.Colors.Blue, 0f);
@@ -177,6 +193,7 @@ namespace PDFPatcher.Model
 					int c = a.ToInt32(Int32.MaxValue);
 					return c != Int32.MaxValue ? Color.FromArgb(c) : Color.FromName(a);
 				}
+
 				return Color.Transparent;
 			}
 			set {
@@ -184,6 +201,7 @@ namespace PDFPatcher.Model
 				if (value == Color.Transparent) {
 					return;
 				}
+
 				SetAttribute(Constants.Color, value.ToArgb().ToText());
 			}
 		}
@@ -196,9 +214,11 @@ namespace PDFPatcher.Model
 					switch (s) {
 						case Constants.BookmarkAttributes.StyleType.Bold: return FontStyle.Bold;
 						case Constants.BookmarkAttributes.StyleType.Italic: return FontStyle.Italic;
-						case Constants.BookmarkAttributes.StyleType.BoldItalic: return FontStyle.Italic | FontStyle.Bold;
+						case Constants.BookmarkAttributes.StyleType.BoldItalic:
+							return FontStyle.Italic | FontStyle.Bold;
 					}
 				}
+
 				return FontStyle.Regular;
 			}
 			set {
@@ -220,6 +240,7 @@ namespace PDFPatcher.Model
 						RemoveAttribute(Constants.BookmarkAttributes.Style);
 						return;
 				}
+
 				SetAttribute(Constants.BookmarkAttributes.Style, s);
 			}
 		}
@@ -230,6 +251,7 @@ namespace PDFPatcher.Model
 				if (HasChildNodes == false) {
 					return false;
 				}
+
 				return GetAttribute(Constants.BookmarkAttributes.Open) == Constants.Boolean.True;
 			}
 			set {
@@ -305,9 +327,9 @@ namespace PDFPatcher.Model
 			get => this.GetValue("标记颜色", 0);
 			set => this.SetValue("标记颜色", value, 0);
 		}
+
 		internal BookmarkElement(XmlDocument doc)
 			: base(Constants.Bookmark, doc) {
-
 		}
 
 		/// <summary>设置跳转到页面的书签动作。</summary>
@@ -341,6 +363,7 @@ namespace PDFPatcher.Model
 					return;
 				}
 			}
+
 			(this.AppendElement(Constants.PageLabelsAttributes.Style) as PageLabelElement).SetAttributes(label);
 		}
 	}
@@ -353,15 +376,18 @@ namespace PDFPatcher.Model
 			get => GetAttribute(Constants.PageLabelsAttributes.PageNumber).ToInt32();
 			set => this.SetValue(Constants.PageLabelsAttributes.PageNumber, value < 1 ? 0 : value, 0);
 		}
+
 		public string PrefixLabel {
 			get => GetAttribute(Constants.PageLabelsAttributes.Prefix);
 			set => this.SetValue(Constants.PageLabelsAttributes.Prefix, value);
 		}
+
 		/// <summary>获取或指定页码标签样式。</summary>
 		public string Style {
 			get => GetAttribute(Constants.PageLabelsAttributes.Style);
 			set => this.SetValue(Constants.PageLabelsAttributes.Style, value, Constants.PageLabelStyles.Names[0]);
 		}
+
 		/// <summary>获取或指定页码标签的起始编号。</summary>
 		public int StartNumber {
 			get => GetAttribute(Constants.PageLabelsAttributes.StartPage).ToInt32();
@@ -374,7 +400,9 @@ namespace PDFPatcher.Model
 
 		public void SetAttributes(MuPdfSharp.PageLabel label) {
 			this.SetValue(Constants.PageLabelsAttributes.PageNumber, label.FromPageNumber + 1, 0);
-			SetAttribute(Constants.PageLabelsAttributes.Style, ValueHelper.MapValue((char)label.NumericStyle, Constants.PageLabelStyles.PdfValues, Constants.PageLabelStyles.Names));
+			SetAttribute(Constants.PageLabelsAttributes.Style,
+				ValueHelper.MapValue((char)label.NumericStyle, Constants.PageLabelStyles.PdfValues,
+					Constants.PageLabelStyles.Names));
 			this.SetValue(Constants.PageLabelsAttributes.StartPage, label.StartAt, 0);
 			this.SetValue(Constants.PageLabelsAttributes.Prefix, label.Prefix);
 		}
@@ -384,8 +412,8 @@ namespace PDFPatcher.Model
 				PageNumber - 1,
 				StartNumber,
 				PrefixLabel,
-				(MuPdfSharp.PageLabelStyle)ValueHelper.MapValue(Style, Constants.PageLabelStyles.Names, Constants.PageLabelStyles.PdfValues));
+				(MuPdfSharp.PageLabelStyle)ValueHelper.MapValue(Style, Constants.PageLabelStyles.Names,
+					Constants.PageLabelStyles.PdfValues));
 		}
 	}
-
 }

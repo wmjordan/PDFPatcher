@@ -12,6 +12,7 @@ namespace PDFPatcher.Model
 		sealed class HtmlNameTable : XmlNameTable
 		{
 			readonly NameTable _nametable = new NameTable();
+
 			public override string Add(string array) {
 				return _nametable.Add(array);
 			}
@@ -50,6 +51,7 @@ namespace PDFPatcher.Model
 		public PdfObject PdfObject => _currentObject.ExtensiveObject as PdfObject;
 
 		#region XPathNavigator implementation
+
 		public override string BaseURI => String.Empty;
 
 		public override XPathNavigator Clone() {
@@ -63,6 +65,7 @@ namespace PDFPatcher.Model
 			if (o == null) {
 				return false;
 			}
+
 			return _currentObject == o._currentObject;
 		}
 
@@ -73,9 +76,11 @@ namespace PDFPatcher.Model
 			if (o == null) {
 				return false;
 			}
+
 			if (_doc != o._doc) {
 				return false;
 			}
+
 			_currentObject = o._currentObject;
 			return true;
 		}
@@ -89,6 +94,7 @@ namespace PDFPatcher.Model
 			if (_currentObject.HasChildren == false) {
 				return false;
 			}
+
 			_childIndex = 0;
 			_currentObject = (_currentObject.Children as IList<DocumentObject>)[0];
 			return true;
@@ -105,6 +111,7 @@ namespace PDFPatcher.Model
 					return true;
 				}
 			}
+
 			return false;
 		}
 
@@ -112,11 +119,13 @@ namespace PDFPatcher.Model
 			if (_currentObject.Parent == null) {
 				return false;
 			}
+
 			if (_childIndex < _currentObject.Parent.Children.Count - 1) {
 				_childIndex++;
 				_currentObject = (_currentObject.Children as IList<DocumentObject>)[_childIndex];
 				return true;
 			}
+
 			return false;
 		}
 
@@ -132,6 +141,7 @@ namespace PDFPatcher.Model
 			if (_currentObject.Parent == null) {
 				return false;
 			}
+
 			_currentObject = _currentObject.Parent;
 			_childIndex = -1;
 			return true;
@@ -141,11 +151,13 @@ namespace PDFPatcher.Model
 			if (_currentObject.Parent == null) {
 				return false;
 			}
+
 			if (_childIndex > 0) {
 				_childIndex--;
 				_currentObject = (_currentObject.Children as IList<DocumentObject>)[_childIndex];
 				return true;
 			}
+
 			return false;
 		}
 
@@ -189,9 +201,11 @@ namespace PDFPatcher.Model
 		public override string Prefix => String.Empty;
 
 		public override string Value => _currentObject.FriendlyValue;
+
 		#endregion
 
 		#region XPathNavigator overrides
+
 		public override void DeleteSelf() {
 			var p = _currentObject.Parent;
 			p.Children.Remove(_currentObject);
@@ -203,8 +217,6 @@ namespace PDFPatcher.Model
 
 		public override bool ValueAsBoolean => (PdfObject as PdfBoolean)?.BooleanValue == true;
 
-
 		#endregion
-
 	}
 }

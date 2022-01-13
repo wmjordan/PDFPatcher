@@ -1,11 +1,12 @@
-﻿
-namespace PDFPatcher.Processor
+﻿namespace PDFPatcher.Processor
 {
-	sealed class ClearDestinationOffsetProcessor : IPdfInfoXmlProcessor, IPdfInfoXmlProcessor<ClearDestinationOffsetProcessor.PositionType>
+	sealed class ClearDestinationOffsetProcessor : IPdfInfoXmlProcessor,
+		IPdfInfoXmlProcessor<ClearDestinationOffsetProcessor.PositionType>
 	{
 		public enum PositionType { X, Y, XY }
 
 		PositionType _type;
+
 		public PositionType Parameter {
 			get => _type;
 			set {
@@ -28,6 +29,7 @@ namespace PDFPatcher.Processor
 
 		public ClearDestinationOffsetProcessor() {
 		}
+
 		public ClearDestinationOffsetProcessor(PositionType type) {
 			Parameter = type;
 			switch (type) {
@@ -42,14 +44,17 @@ namespace PDFPatcher.Processor
 					break;
 			}
 		}
+
 		#region IInfoDocProcessor 成员
 
 		public string Name => "清除" + _name + "坐标定位偏移值";
 
 		public IUndoAction Process(System.Xml.XmlElement item) {
-			if (item.GetAttribute(Constants.DestinationAttributes.View) == Constants.DestinationAttributes.ViewType.FitR) {
+			if (item.GetAttribute(Constants.DestinationAttributes.View) ==
+			    Constants.DestinationAttributes.ViewType.FitR) {
 				return null;
 			}
+
 			switch (_type) {
 				case PositionType.X:
 					return ClearPositionOffset(item, Constants.Coordinates.Left);
@@ -70,10 +75,12 @@ namespace PDFPatcher.Processor
 					else if (y != null) {
 						return y;
 					}
+
 					break;
 				default:
 					break;
 			}
+
 			return null;
 		}
 
@@ -83,9 +90,11 @@ namespace PDFPatcher.Processor
 				if (l.Trim() == "0") {
 					return null;
 				}
+
 				item.RemoveAttribute(coordinate);
 				return new SetAttributeAction(item, coordinate, l);
 			}
+
 			return null;
 		}
 

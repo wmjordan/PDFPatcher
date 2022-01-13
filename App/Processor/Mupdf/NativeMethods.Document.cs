@@ -22,10 +22,12 @@ namespace MuPdfSharp
 		internal static extern IntPtr NewFloat(ContextHandle ctx, DocumentHandle doc, float value);
 
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_new_string", BestFitMapping = false)]
-		internal static extern IntPtr NewString(ContextHandle ctx, DocumentHandle doc, [MarshalAs(UnmanagedType.LPStr)] string value, int len);
+		internal static extern IntPtr NewString(ContextHandle ctx, DocumentHandle doc,
+			[MarshalAs(UnmanagedType.LPStr)] string value, int len);
 
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_new_name", BestFitMapping = false)]
-		internal static extern IntPtr NewName(ContextHandle ctx, DocumentHandle doc, [MarshalAs(UnmanagedType.LPStr)] string name);
+		internal static extern IntPtr NewName(ContextHandle ctx, DocumentHandle doc,
+			[MarshalAs(UnmanagedType.LPStr)] string name);
 
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_new_array")]
 		internal static extern IntPtr NewArray(ContextHandle ctx, DocumentHandle doc, int initCap);
@@ -41,11 +43,14 @@ namespace MuPdfSharp
 
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_new_matrix")]
 		internal static extern IntPtr NewMatrix(ContextHandle ctx, DocumentHandle doc, Matrix matrix);
+
 		#endregion
 
 		#region Document level object and operation
+
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_authenticate_password", BestFitMapping = false)]
-		internal static extern bool AuthenticatePassword(ContextHandle ctx, DocumentHandle doc, [MarshalAs(UnmanagedType.LPStr)] string password);
+		internal static extern bool AuthenticatePassword(ContextHandle ctx, DocumentHandle doc,
+			[MarshalAs(UnmanagedType.LPStr)] string password);
 
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_trailer")]
 		internal static extern IntPtr GetTrailer(ContextHandle ctx, DocumentHandle doc);
@@ -67,19 +72,24 @@ namespace MuPdfSharp
 
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_set_aa_level")]
 		internal static extern void SetAntiAliasLevel(ContextHandle ctx, int level);
+
 		#endregion
 
 		#region Fonts
+
 		internal static readonly FzLoadSystemFont LoadSystemFont = RequestSystemFont;
 		internal static readonly FzLoadSystemCjkFont LoadSystemCjkFont = RequestSystemCjkFont;
 		internal static readonly FzLoadSystemFallbackFont LoadSystemFallbackFont = RequestSystemFallbackFont;
 
 		[UnmanagedFunctionPointer(CC.Cdecl)]
 		internal delegate IntPtr FzLoadSystemFont(IntPtr ctx, string name, int bold, int italic, int needExactMetrics);
+
 		[UnmanagedFunctionPointer(CC.Cdecl)]
 		internal delegate IntPtr FzLoadSystemCjkFont(IntPtr ctx, string name, int registry, int serifDesired);
+
 		[UnmanagedFunctionPointer(CC.Cdecl)]
-		internal delegate IntPtr FzLoadSystemFallbackFont(IntPtr ctx, int script, int language, int serif, int bold, int italic);
+		internal delegate IntPtr FzLoadSystemFallbackFont(IntPtr ctx, int script, int language, int serif, int bold,
+			int italic);
 
 		/// <summary>打开系统内置汉字库功能，支持老的未正确嵌入汉字库的 PDF。</summary>
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_install_load_system_font_funcs")]
@@ -88,9 +98,13 @@ namespace MuPdfSharp
 			FzLoadSystemCjkFont fz_load_system_cjk_font_fn,
 			FzLoadSystemFallbackFont fz_load_system_fallback_font_fn
 		);
+
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_new_font_from_file", CharSet = CharSet.Ansi)]
-		internal static extern IntPtr LoadFontFromFile(IntPtr ctx, [MarshalAs(UnmanagedType.LPStr)] string name, [MarshalAs(UnmanagedType.LPStr)] string path, int index, int useGlyphBox);
-		static IntPtr RequestSystemFont(IntPtr ctx, [MarshalAs(UnmanagedType.LPWStr)] string name, int bold, int italic, int needExactMetrics) {
+		internal static extern IntPtr LoadFontFromFile(IntPtr ctx, [MarshalAs(UnmanagedType.LPStr)] string name,
+			[MarshalAs(UnmanagedType.LPStr)] string path, int index, int useGlyphBox);
+
+		static IntPtr RequestSystemFont(IntPtr ctx, [MarshalAs(UnmanagedType.LPWStr)] string name, int bold, int italic,
+			int needExactMetrics) {
 			System.Diagnostics.Debug.WriteLine("Requesting system font: " + name);
 			var f = TryLoadCompatibleFont(name);
 			if (f != null) {
@@ -101,9 +115,11 @@ namespace MuPdfSharp
 				//	var f = p.MarshalAs<FzFont>();
 				//}
 			}
+
 			//var p = LoadFontFromFile(ctx, name, @"C:\Windows\Fonts\simsun.ttc", 1, 1);
 			return IntPtr.Zero;
 		}
+
 		static IntPtr RequestSystemCjkFont(IntPtr ctx, string name, int registry, int serifDesired) {
 			System.Diagnostics.Debug.WriteLine("Requesting system CJK font: " + name);
 			var ff = TryLoadCompatibleFont(name);
@@ -113,12 +129,21 @@ namespace MuPdfSharp
 
 		private static string TryLoadCompatibleFont(string name) {
 			var ff = Path.GetDirectoryName(Environment.GetFolderPath(Environment.SpecialFolder.System)) + "\\Fonts\\";
-			ff = name.StartsWith("SimKai", StringComparison.OrdinalIgnoreCase) || name.StartsWith("楷体_GB2312", StringComparison.OrdinalIgnoreCase) || name.StartsWith("Kaiti_GB2312", StringComparison.OrdinalIgnoreCase) ? ff + "simkai.ttf"
-				: name.StartsWith("SimSun", StringComparison.OrdinalIgnoreCase) || name.StartsWith("宋体", StringComparison.OrdinalIgnoreCase) || name.StartsWith("STSong", StringComparison.OrdinalIgnoreCase) ? ff + "simsun.ttc"
-				: name.StartsWith("SimHei", StringComparison.OrdinalIgnoreCase) || name.StartsWith("黑体", StringComparison.OrdinalIgnoreCase) ? ff + "simhei.ttf"
-				: name.StartsWith("SimLi", StringComparison.OrdinalIgnoreCase) || name.StartsWith("隶书", StringComparison.OrdinalIgnoreCase) ? ff + "simli.ttf"
-				: name.StartsWith("SimFang", StringComparison.OrdinalIgnoreCase) || name.StartsWith("仿宋_GB2312", StringComparison.OrdinalIgnoreCase) || name.StartsWith("Fangsong_GB2312", StringComparison.OrdinalIgnoreCase) ? ff + "simfang.ttf"
-				: name.StartsWith("SimYou", StringComparison.OrdinalIgnoreCase) || name.StartsWith("幼圆", StringComparison.OrdinalIgnoreCase) ? ff + "simyou.ttf"
+			ff = name.StartsWith("SimKai", StringComparison.OrdinalIgnoreCase) ||
+			     name.StartsWith("楷体_GB2312", StringComparison.OrdinalIgnoreCase) ||
+			     name.StartsWith("Kaiti_GB2312", StringComparison.OrdinalIgnoreCase) ? ff + "simkai.ttf"
+				: name.StartsWith("SimSun", StringComparison.OrdinalIgnoreCase) ||
+				  name.StartsWith("宋体", StringComparison.OrdinalIgnoreCase) ||
+				  name.StartsWith("STSong", StringComparison.OrdinalIgnoreCase) ? ff + "simsun.ttc"
+				: name.StartsWith("SimHei", StringComparison.OrdinalIgnoreCase) ||
+				  name.StartsWith("黑体", StringComparison.OrdinalIgnoreCase) ? ff + "simhei.ttf"
+				: name.StartsWith("SimLi", StringComparison.OrdinalIgnoreCase) ||
+				  name.StartsWith("隶书", StringComparison.OrdinalIgnoreCase) ? ff + "simli.ttf"
+				: name.StartsWith("SimFang", StringComparison.OrdinalIgnoreCase) ||
+				  name.StartsWith("仿宋_GB2312", StringComparison.OrdinalIgnoreCase) ||
+				  name.StartsWith("Fangsong_GB2312", StringComparison.OrdinalIgnoreCase) ? ff + "simfang.ttf"
+				: name.StartsWith("SimYou", StringComparison.OrdinalIgnoreCase) ||
+				  name.StartsWith("幼圆", StringComparison.OrdinalIgnoreCase) ? ff + "simyou.ttf"
 				: null;
 			return ff;
 		}
@@ -127,22 +152,29 @@ namespace MuPdfSharp
 			System.Diagnostics.Debug.WriteLine("Requesting fallback font: " + script);
 			return IntPtr.Zero;
 		}
+
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_font_ft_face")]
 		internal static extern IntPtr GetFontFace(ContextHandle ctx, IntPtr font);
+
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_font_flags")]
 		internal static extern MuFontFlags GetFontFlags(IntPtr font);
+
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_font_name")]
 		internal static unsafe extern sbyte* GetFontName(ContextHandle ctx, IntPtr font);
+
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_font_bbox")]
 		internal static extern BBox GetFontBBox(ContextHandle ctx, IntPtr font);
+
 		#endregion
 
 		#region Stream and file
+
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_buffer_storage")]
 		internal static extern int BufferStorage(ContextHandle ctx, IntPtr buffer, ref IntPtr data);
 
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_open_faxd")]
-		internal static extern IntPtr DecodeCcittFax(ContextHandle ctx, StreamHandle stmChain, int k, int endOfLine, int encodedByteAlign, int columns, int rows, int endOfBlock, int blackIs1);
+		internal static extern IntPtr DecodeCcittFax(ContextHandle ctx, StreamHandle stmChain, int k, int endOfLine,
+			int encodedByteAlign, int columns, int rows, int endOfBlock, int blackIs1);
 
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_drop_buffer")]
 		internal static extern void DropBuffer(ContextHandle ctx, IntPtr buffer);
@@ -174,6 +206,7 @@ namespace MuPdfSharp
 
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_seek")]
 		internal static extern void Seek(ContextHandle ctx, StreamHandle stm, int offset, int whence);
+
 		#endregion
 	}
 }

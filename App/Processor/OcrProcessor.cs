@@ -19,6 +19,7 @@ namespace PDFPatcher.Processor
 		{
 			public ImageDisposition Image { get; }
 			public List<TextLine> Texts { get; }
+
 			public Result(ImageDisposition image) {
 				Image = image;
 				Texts = new List<TextLine>();
@@ -27,10 +28,18 @@ namespace PDFPatcher.Processor
 
 		const int OpenWorkload = 1;
 		const string __puctuations = @"·．“”，,\.－""～∼。:：\p{P}";
-		static readonly AutoBookmarkOptions __MergeOptions = new AutoBookmarkOptions { MergeAdjacentTitles = true, MergeDifferentSizeTitles = true };
-		static readonly Regex __ContentPunctuationExpression = new Regex(@"[" + __puctuations + @"][" + __puctuations + @"0一\s]+[" + __puctuations + @"]\s*", RegexOptions.Compiled);
+
+		static readonly AutoBookmarkOptions __MergeOptions =
+			new AutoBookmarkOptions {MergeAdjacentTitles = true, MergeDifferentSizeTitles = true};
+
+		static readonly Regex __ContentPunctuationExpression =
+			new Regex(@"[" + __puctuations + @"][" + __puctuations + @"0一\s]+[" + __puctuations + @"]\s*",
+				RegexOptions.Compiled);
+
 		static readonly Regex __ContinuousWhiteSpaceExpression = new Regex(@"[ 　]{3,}", RegexOptions.Compiled);
-		static readonly Regex __WhiteSpaceBetweenChineseCharacters = new Regex(@"([\u4E00-\u9FFF\u3400-\u4DBF])[ 　]+(?=[\u4E00-\u9FFF\u3400-\u4DBF])", RegexOptions.Compiled);
+
+		static readonly Regex __WhiteSpaceBetweenChineseCharacters =
+			new Regex(@"([\u4E00-\u9FFF\u3400-\u4DBF])[ 　]+(?=[\u4E00-\u9FFF\u3400-\u4DBF])", RegexOptions.Compiled);
 
 		private readonly ModiOcr _Ocr;
 		private readonly float _OcrQuatitiveFactor;
@@ -50,9 +59,7 @@ namespace PDFPatcher.Processor
 			};
 			CleanUpTempFiles(expOptions.OutputPath);
 			_reader = reader;
-			_ocrImageExp = new ImageExtractor(expOptions, reader) {
-				PrintImageLocation = false
-			};
+			_ocrImageExp = new ImageExtractor(expOptions, reader) {PrintImageLocation = false};
 		}
 
 		private OcrProcessor(OcrOptions options) {
@@ -89,6 +96,7 @@ namespace PDFPatcher.Processor
 		internal void SetWriter(XmlWriter writer) {
 			_resultWriter = new XmlResultWriter(writer);
 		}
+
 		internal void SetWriter(TextWriter writer) {
 			_resultWriter = new TextResultWriter(writer);
 		}
@@ -102,6 +110,7 @@ namespace PDFPatcher.Processor
 			if (FileHelper.IsPathValid(_options.SaveOcredImagePath)) {
 				File.Delete(_options.SaveOcredImagePath);
 			}
+
 			var el = new List<int>();
 			foreach (PageRange r in ranges) {
 				for (int i = r.StartValue; i <= r.EndValue; i++) {
@@ -122,15 +131,20 @@ namespace PDFPatcher.Processor
 							else {
 								WriteOcrResult(i, result);
 							}
+
 							_resultWriter?.EndWriteImage();
 						}
+
 						_resultWriter?.EndWritePage();
 					}
+
 					Tracker.IncrementProgress(1);
 				}
 			}
+
 			if (el.Count > 0) {
-				Tracker.TraceMessage(Tracker.Category.Alert, String.Concat("有 ", el.Count, " 页在识别过程中出现错误，页码为：", String.Join(", ", el)));
+				Tracker.TraceMessage(Tracker.Category.Alert,
+					String.Concat("有 ", el.Count, " 页在识别过程中出现错误，页码为：", String.Join(", ", el)));
 			}
 		}
 
@@ -138,7 +152,8 @@ namespace PDFPatcher.Processor
 			SortRecognizedText(result.Texts, _options);
 			var pr = _reader.GetPageNRelease(i).GetPageVisibleRectangle();
 			var tl = _options.WritingDirection != WritingDirection.Unknown
-				? AutoBookmarkCreator.MergeTextInfoList(pr, result.Texts.ConvertAll((l) => GetMergedTextInfo(result.Image, l)), __MergeOptions) // 按照书写方向重组识别文本
+				? AutoBookmarkCreator.MergeTextInfoList(pr,
+					result.Texts.ConvertAll((l) => GetMergedTextInfo(result.Image, l)), __MergeOptions) // 按照书写方向重组识别文本
 				: result.Texts;
 			foreach (var item in tl) {
 				var t = item.Text;
@@ -147,7 +162,9 @@ namespace PDFPatcher.Processor
 				t = CleanUpText(t, _options);
 				if (_options.PrintOcrResult) {
 #if DEBUG
-					Tracker.TraceMessage(String.Concat(item.Direction.ToString()[0], ir.Top.ToString(" 0000"), ',', ir.Left.ToString("0000"), "(", ir.Width.ToString("0000"), ',', ir.Height.ToString("0000"), ")\t", t));
+					Tracker.TraceMessage(String.Concat(item.Direction.ToString()[0], ir.Top.ToString(" 0000"), ',',
+						ir.Left.ToString("0000"), "(", ir.Width.ToString("0000"), ',', ir.Height.ToString("0000"),
+						")\t", t));
 #else
 					Tracker.TraceMessage (t);
 #endif
@@ -167,12 +184,15 @@ namespace PDFPatcher.Processor
 			if (options.DetectContentPunctuations) {
 				text = __ContentPunctuationExpression.Replace(text, " .... ");
 			}
+
 			if (options.CompressWhiteSpaces) {
 				text = __ContinuousWhiteSpaceExpression.Replace(text, "  ");
 			}
+
 			if (options.RemoveWhiteSpacesBetweenChineseCharacters) {
 				text = __WhiteSpaceBetweenChineseCharacters.Replace(text, "$1");
 			}
+
 			return text;
 		}
 
@@ -209,6 +229,7 @@ namespace PDFPatcher.Processor
 							Tracker.TraceMessage(ex);
 							errorList.Add(i);
 						}
+
 						break;
 				}
 			}
@@ -222,6 +243,7 @@ namespace PDFPatcher.Processor
 					if (String.IsNullOrEmpty(item.FileName)) {
 						continue;
 					}
+
 					try {
 						File.Delete(item.FileName);
 					}
@@ -231,6 +253,7 @@ namespace PDFPatcher.Processor
 					}
 				}
 			}
+
 			return or;
 		}
 
@@ -248,7 +271,9 @@ namespace PDFPatcher.Processor
 #endif
 			result.Texts.Clear();
 			OcrImageFile(result.Texts, p);
+
 			#region Legacy code
+
 			//            var ll = new List<TextLine> ();
 			//            // 同行合并宽度最小值
 			//            var cw = image.Image.Width / 4;
@@ -388,6 +413,7 @@ namespace PDFPatcher.Processor
 			//    }
 			//    this._TextList.AddRange (rr);
 			//}
+
 			#endregion
 		}
 
@@ -404,10 +430,12 @@ namespace PDFPatcher.Processor
 						fi.Save(t, FreeImageAPI.FREE_IMAGE_FORMAT.FIF_TIFF);
 					}
 					else {
-						using (var ti = fi.GetColorConvertedInstance(FreeImageAPI.FREE_IMAGE_COLOR_DEPTH.FICD_01_BPP_THRESHOLD)) {
+						using (var ti = fi.GetColorConvertedInstance(FreeImageAPI.FREE_IMAGE_COLOR_DEPTH
+							       .FICD_01_BPP_THRESHOLD)) {
 							ti.Save(t, FreeImageAPI.FREE_IMAGE_FORMAT.FIF_TIFF);
 						}
 					}
+
 					_Ocr.Ocr(t, sp, result);
 #if !DEBUG
 					try {
@@ -442,11 +470,15 @@ namespace PDFPatcher.Processor
 			string p = null;
 			using (var fi = new FreeImageAPI.FreeImageBitmap(bmp)) {
 				if (fi.Width < minSize || fi.Height < minSize) {
-					fi.EnlargeCanvas<FreeImageAPI.RGBQUAD>(0, 0, fi.Width < minSize ? minSize : fi.Width, fi.Height < minSize ? minSize : fi.Height, new FreeImageAPI.RGBQUAD(fi.GetPixel(0, 0)));
+					fi.EnlargeCanvas<FreeImageAPI.RGBQUAD>(0, 0, fi.Width < minSize ? minSize : fi.Width,
+						fi.Height < minSize ? minSize : fi.Height, new FreeImageAPI.RGBQUAD(fi.GetPixel(0, 0)));
 				}
-				p = FileHelper.CombinePath(Path.GetTempPath(), new Random().Next(Int32.MaxValue).ToText() + Constants.FileExtensions.Tif);
+
+				p = FileHelper.CombinePath(Path.GetTempPath(),
+					new Random().Next(Int32.MaxValue).ToText() + Constants.FileExtensions.Tif);
 				fi.Save(p, FreeImageAPI.FREE_IMAGE_FORMAT.FIF_TIFF);
 			}
+
 			ocr._Ocr.Ocr(p, null, r);
 			File.Delete(p);
 			return r;
@@ -457,7 +489,9 @@ namespace PDFPatcher.Processor
 				Font = null,
 				Region = item.Region,
 				Text = item.Text,
-				Size = (float)Math.Round(item.Direction == WritingDirection.Vertical ? item.Region.Width/* * image.XScale*/ : item.Region.Height/* * image.YScale*/),
+				Size = (float)Math.Round(item.Direction == WritingDirection.Vertical
+					? item.Region.Width /* * image.XScale*/
+					: item.Region.Height /* * image.YScale*/),
 				LetterWidth = item.GetAverageCharSize()
 			};
 			//if (item.Texts.Count > 0) {
@@ -479,12 +513,15 @@ namespace PDFPatcher.Processor
 					if (ra.Bottom > rb.Top) {
 						return 1;
 					}
+
 					if (ra.Top < rb.Bottom) {
 						return -1;
 					}
+
 					if (ra.IsAlignedWith(rb, WritingDirection.Hortizontal)) {
 						return ra.Center < rb.Center ? -1 : 1;
 					}
+
 					return ra.Middle < rb.Middle ? -1 : 1;
 				});
 			}
@@ -495,12 +532,15 @@ namespace PDFPatcher.Processor
 					if (ra.Left > rb.Right) {
 						return -1;
 					}
+
 					if (ra.Right < rb.Left) {
 						return 1;
 					}
+
 					if (ra.IsAlignedWith(rb, WritingDirection.Vertical)) {
 						return ra.Middle > rb.Middle ? -1 : 1;
 					}
+
 					return ra.Center > rb.Center ? -1 : 1;
 				});
 			}
@@ -518,6 +558,7 @@ namespace PDFPatcher.Processor
 		sealed class XmlResultWriter : IResultWriter
 		{
 			readonly XmlWriter _writer;
+
 			public XmlResultWriter(XmlWriter writer) {
 				_writer = writer;
 			}
@@ -534,6 +575,7 @@ namespace PDFPatcher.Processor
 					WriteTextItem(optimizedText, text.Region, text.Direction);
 					return;
 				}
+
 				_writer.WriteComment(text.Text);
 				foreach (var item in text.Texts) {
 					WriteTextItem(item.Text, item.Region, WritingDirection.Unknown);
@@ -551,6 +593,7 @@ namespace PDFPatcher.Processor
 						_writer.WriteAttributeString(Constants.Coordinates.Direction, Constants.Coordinates.Vertical);
 						break;
 				}
+
 				_writer.WriteAttributeString(Constants.Coordinates.Top, ValueHelper.ToText(Math.Round(ir.Top)));
 				_writer.WriteAttributeString(Constants.Coordinates.Left, ValueHelper.ToText(Math.Round(ir.Left)));
 				_writer.WriteAttributeString(Constants.Coordinates.Bottom, ValueHelper.ToText(Math.Round(ir.Bottom)));
@@ -566,18 +609,21 @@ namespace PDFPatcher.Processor
 				_writer.WriteStartElement(Constants.Ocr.Image);
 				_writer.WriteAttributeString(Constants.Coordinates.Width, ValueHelper.ToText(image.Image.Width));
 				_writer.WriteAttributeString(Constants.Coordinates.Height, ValueHelper.ToText(image.Image.Height));
-				_writer.WriteAttributeString(Constants.Content.OperandNames.Matrix, PdfHelper.MatrixToString(image.Ctm));
+				_writer.WriteAttributeString(Constants.Content.OperandNames.Matrix,
+					PdfHelper.MatrixToString(image.Ctm));
 			}
 
 			public void EndWriteImage() {
 				_writer.WriteEndElement();
 			}
+
 			#endregion
 		}
 
 		sealed class TextResultWriter : IResultWriter
 		{
 			readonly TextWriter _writer;
+
 			public TextResultWriter(TextWriter writer) {
 				_writer = writer;
 			}
@@ -601,6 +647,7 @@ namespace PDFPatcher.Processor
 			}
 
 			public void EndWriteImage() { }
+
 			#endregion
 		}
 	}

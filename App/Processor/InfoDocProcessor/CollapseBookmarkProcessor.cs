@@ -8,8 +8,8 @@ namespace PDFPatcher.Processor
 	sealed class CollapseBookmarkProcessor : IInfoDocProcessor
 	{
 		public BookmarkStatus BookmarkStatus { get; set; }
-		public CollapseBookmarkProcessor() {
 
+		public CollapseBookmarkProcessor() {
 		}
 
 		#region IBookmarkProcessor 成员
@@ -32,6 +32,7 @@ namespace PDFPatcher.Processor
 					else {
 						bookmark.SetAttribute(Constants.BookmarkAttributes.Open, Constants.Boolean.False);
 					}
+
 					return true;
 				default:
 					return false;

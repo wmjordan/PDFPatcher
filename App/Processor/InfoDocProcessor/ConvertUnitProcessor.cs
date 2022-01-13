@@ -31,6 +31,7 @@ namespace PDFPatcher.Processor
 				a.Value = Common.UnitConverter.ToPoint(a.Value, UnitFactor);
 				return true;
 			}
+
 			return false;
 		}
 	}

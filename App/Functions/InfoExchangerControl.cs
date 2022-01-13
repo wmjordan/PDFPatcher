@@ -58,14 +58,13 @@ namespace PDFPatcher.Functions
 				int i;
 				var f = _TargetPdfFile.FileDialog.FileName;
 				if (_ItemList.Items.Count > 1 && (i = f.LastIndexOf(Path.DirectorySeparatorChar)) != -1) {
-					_TargetPdfFile.Text = string.Concat(f.Substring(0, i), Path.DirectorySeparatorChar, Constants.FileNameMacros.FileName, Path.GetExtension(f));
+					_TargetPdfFile.Text = string.Concat(f.Substring(0, i), Path.DirectorySeparatorChar,
+						Constants.FileNameMacros.FileName, Path.GetExtension(f));
 					args.Cancel = true;
 				}
 			};
 			var fi = _FileTypeList.Images;
-			fi.AddRange(new System.Drawing.Image[] {
-				Properties.Resources.OriginalPdfFile
-			});
+			fi.AddRange(new System.Drawing.Image[] {Properties.Resources.OriginalPdfFile});
 			//_ItemList.SelectedIndexChanged += (s, args) => {
 			//	if (_ItemList.SelectedIndex != -1 && _TargetPdfFile.Text.Trim ().Length > 0) {
 			//		var f = _ItemList.GetModelObject (_ItemList.SelectedIndex) as SourceItem;
@@ -78,17 +77,22 @@ namespace PDFPatcher.Functions
 			_ItemList.FixEditControlWidth();
 			_listHelper = new FileListHelper(_ItemList);
 			_listHelper.SetupDragAndDrop(AddFiles);
-			FileListHelper.SetupCommonPdfColumns(_AuthorColumn, _KeywordsColumn, _SubjectColumn, _TitleColumn, _PageCountColumn, _NameColumn, _FolderColumn);
-			_RefreshInfoButton.ButtonClick += (s, args) => _listHelper.RefreshInfo(AppContext.Encodings.DocInfoEncoding);
+			FileListHelper.SetupCommonPdfColumns(_AuthorColumn, _KeywordsColumn, _SubjectColumn, _TitleColumn,
+				_PageCountColumn, _NameColumn, _FolderColumn);
+			_RefreshInfoButton.ButtonClick +=
+				(s, args) => _listHelper.RefreshInfo(AppContext.Encodings.DocInfoEncoding);
 			_RefreshInfoButton.DropDown = _RefreshInfoMenu;
 			foreach (var item in Constants.Encoding.EncodingNames) {
 				_RefreshInfoMenu.Items.Add(item);
 			}
-			_RefreshInfoMenu.ItemClicked += (s, args) => _listHelper.RefreshInfo(ValueHelper.MapValue(args.ClickedItem.Text, Constants.Encoding.EncodingNames, Constants.Encoding.Encodings));
+
+			_RefreshInfoMenu.ItemClicked += (s, args) =>
+				_listHelper.RefreshInfo(ValueHelper.MapValue(args.ClickedItem.Text, Constants.Encoding.EncodingNames,
+					Constants.Encoding.Encodings));
 			_AddFilesButton.DropDownOpening += FileListHelper.OpenPdfButtonDropDownOpeningHandler;
 			_AddFilesButton.DropDownItemClicked += (s, args) => {
 				args.ClickedItem.Owner.Hide();
-				AddFiles(new string[] { args.ClickedItem.ToolTipText }, true);
+				AddFiles(new string[] {args.ClickedItem.ToolTipText}, true);
 			};
 		}
 
@@ -113,8 +117,8 @@ namespace PDFPatcher.Functions
 		public override void SetupCommand(ToolStripItem item) {
 			var n = item.Name;
 			if (Commands.CommonSelectionCommands.Contains(n)
-				|| n == Commands.Delete
-				|| n == Commands.Action) {
+			    || n == Commands.Delete
+			    || n == Commands.Action) {
 				item.Enabled = _ItemList.GetItemCount() > 0;
 			}
 			else if (n == Commands.SaveBookmark) {
@@ -128,6 +132,7 @@ namespace PDFPatcher.Functions
 				EnableCommand(item, true, true);
 				item.Tag = nameof(Function.PatcherOptions);
 			}
+
 			base.SetupCommand(item);
 		}
 
@@ -139,22 +144,27 @@ namespace PDFPatcher.Functions
 			if (files == null || files.Length == 0) {
 				return;
 			}
+
 			if ((ModifierKeys & Keys.Control) != Keys.None || _AutoClearListBox.Checked) {
 				_ItemList.ClearObjects();
 			}
+
 			if (files.Length > 3) {
 				AppContext.MainForm.Enabled = false;
 			}
+
 			if (files.Length == 0) {
 				return;
 			}
+
 			_AddDocumentWorker.RunWorkerAsync(files);
 		}
 
 		void _ImportButton_Click(object sender, EventArgs e) {
 			var infoFile = _BookmarkControl.Text.Trim();
 			var targetPdfFile = _TargetPdfFile.Text.Trim();
-			if (string.IsNullOrEmpty(targetPdfFile) && string.IsNullOrEmpty(targetPdfFile = _TargetPdfFile.BrowseTargetFile())) {
+			if (string.IsNullOrEmpty(targetPdfFile) &&
+			    string.IsNullOrEmpty(targetPdfFile = _TargetPdfFile.BrowseTargetFile())) {
 				FormHelper.ErrorBox(Messages.TargetFileNotSpecified);
 				return;
 			}
@@ -168,6 +178,7 @@ namespace PDFPatcher.Functions
 				FormHelper.InfoBox("请添加需要处理的 PDF 文件。");
 				return;
 			}
+
 			var files = GetSourceItemList();
 			_BookmarkControl.FileList.AddHistoryItem();
 			_TargetPdfFile.FileList.AddHistoryItem();
@@ -190,6 +201,7 @@ namespace PDFPatcher.Functions
 						else {
 							Tracker.TraceMessage("输入文件不是 PDF 文件。");
 						}
+
 						Tracker.IncrementTotalProgress();
 						if (AppContext.Abort) {
 							return;
@@ -201,6 +213,7 @@ namespace PDFPatcher.Functions
 						Tracker.TraceMessage("输入文件不是 PDF 文件。");
 						return;
 					}
+
 					Processor.Worker.PatchDocument(files[0] as SourceItem.Pdf,
 						t,
 						a[1] as string,
@@ -208,7 +221,7 @@ namespace PDFPatcher.Functions
 						AppContext.Patcher);
 				}
 			};
-			worker.RunWorkerAsync(new object[] { targetPdfFile, infoFile });
+			worker.RunWorkerAsync(new object[] {targetPdfFile, infoFile});
 		}
 
 		void _ExportBookmarkButton_Click(object sender, EventArgs e) {
@@ -235,7 +248,8 @@ namespace PDFPatcher.Functions
 					var ext = Path.GetExtension(a[0] as string);
 					Tracker.SetTotalProgressGoal(files.Count);
 					foreach (var file in files) {
-						Processor.Worker.ExportInfo(file.FilePath.ToString(), file.FilePath.Directory.Combine(p).Combine(file.FilePath.ChangeExtension(ext)).ToString());
+						Processor.Worker.ExportInfo(file.FilePath.ToString(),
+							file.FilePath.Directory.Combine(p).Combine(file.FilePath.ChangeExtension(ext)).ToString());
 						Tracker.IncrementTotalProgress();
 						if (AppContext.Abort) {
 							return;
@@ -247,10 +261,11 @@ namespace PDFPatcher.Functions
 						Tracker.TraceMessage("输入文件不是 PDF 文件。");
 						return;
 					}
+
 					Processor.Worker.ExportInfo(files[0].FilePath.ToString(), a[0] as string);
 				}
 			};
-			w.RunWorkerAsync(new object[] { AppContext.BookmarkFile });
+			w.RunWorkerAsync(new object[] {AppContext.BookmarkFile});
 		}
 
 		List<SourceItem> GetSourceItemList() {
@@ -259,11 +274,13 @@ namespace PDFPatcher.Functions
 			for (int i = 0; i < l; i++) {
 				var item = _ItemList.GetModelObject(_ItemList.GetNthItemInDisplayOrder(i).Index) as SourceItem;
 				if (item.Type == SourceItem.ItemType.Pdf
-					&& FileHelper.HasExtension(item.FilePath, Constants.FileExtensions.Pdf)) {
+				    && FileHelper.HasExtension(item.FilePath, Constants.FileExtensions.Pdf)) {
 					AppContext.RecentItems.AddHistoryItem(AppContext.Recent.SourcePdfFiles, item.FilePath.ToString());
 				}
+
 				files.Add(item);
 			}
+
 			return files;
 		}
 
@@ -321,6 +338,7 @@ namespace PDFPatcher.Functions
 							t = "<输出文件名为空>";
 						}
 					}
+
 					source[i] = s.ToString();
 					result[i] = t;
 					i++;
@@ -329,12 +347,14 @@ namespace PDFPatcher.Functions
 					FormHelper.ErrorBox(ex.Message);
 				}
 			}
+
 			using (var f = new RenamePreviewForm(source, result)) {
 				f.ShowDialog();
 			}
 		}
 
 		#region AddDocumentWorker
+
 		void _AddDocumentWorker_DoWork(object sender, DoWorkEventArgs e) {
 			var files = e.Argument as string[];
 			Array.ForEach(files, f => ((BackgroundWorker)sender).ReportProgress(0, f));
@@ -354,7 +374,8 @@ namespace PDFPatcher.Functions
 			if (item == null) {
 				return;
 			}
-			AddItems(new SourceItem[] { item });
+
+			AddItems(new SourceItem[] {item});
 		}
 
 		void AddItems(System.Collections.ICollection items) {
@@ -362,6 +383,7 @@ namespace PDFPatcher.Functions
 			_ItemList.InsertObjects(++i, items);
 			_ItemList.SelectedIndex = --i + items.Count;
 		}
+
 		#endregion
 
 		#region IDefaultButtonControl 成员
@@ -369,6 +391,5 @@ namespace PDFPatcher.Functions
 		public override Button DefaultButton => _ImportButton;
 
 		#endregion
-
 	}
 }

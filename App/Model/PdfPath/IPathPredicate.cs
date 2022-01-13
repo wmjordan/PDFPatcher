@@ -44,6 +44,7 @@ namespace PDFPatcher.Model.PdfPath
 					var exp = value1 as IPathExpression;
 					return exp.SelectObjects(source).Count > 0;
 				}
+
 				return false;
 			}
 		}
@@ -68,11 +69,13 @@ namespace PDFPatcher.Model.PdfPath
 						var o = (value2 as IPathExpression).SelectObject(source);
 						v = o != null ? (o.FriendlyValue ?? o.LiteralValue) : String.Empty;
 					}
+
 					foreach (var item in exp.SelectObjects(source)) {
 						if ((item.FriendlyValue ?? item.LiteralValue) == v) {
 							return true;
 						}
 					}
+
 					return false;
 				}
 				else if (value1.ValueType == PathValueType.Number || value2.ValueType == PathValueType.Number) {
@@ -92,11 +95,12 @@ namespace PDFPatcher.Model.PdfPath
 			public InequalityPredicate(IPathExpression operand1, IPathExpression operand2)
 				: base(operand1, operand2) {
 			}
+
 			public override PredicateOperatorType Operator => PredicateOperatorType.NotEqual;
+
 			public override bool Match(DocumentObject source, IPathValue value1, IPathValue value2) {
 				return !base.Match(source, value1, value2);
 			}
 		}
 	}
-
 }

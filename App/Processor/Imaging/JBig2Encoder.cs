@@ -13,7 +13,9 @@ namespace PDFPatcher.Processor.Imaging
 		internal static byte[] Encode(FreeImageBitmap fi) {
 			bool zeroIsWhite = fi.HasPalette && fi.Palette.Data[0].uintValue == White;
 			using (var bmp = fi.ToBitmap()) {
-				var bits = bmp.LockBits(new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
+				var bits = bmp.LockBits(new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height),
+					System.Drawing.Imaging.ImageLockMode.ReadOnly,
+					System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
 				var bytes = Encode(bmp.Width, bmp.Height, bits.Stride, zeroIsWhite, bits.Scan0);
 				bmp.UnlockBits(bits);
 				return bytes;
@@ -32,7 +34,8 @@ namespace PDFPatcher.Processor.Imaging
 		class NativeMethods
 		{
 			[DllImport(JBig2Decoder.DLL, CallingConvention = CallingConvention.Cdecl, EntryPoint = "jbig2_encode")]
-			internal static extern IntPtr Encode(int width, int height, int stride, bool zeroIsWhite, IntPtr data, ref int length);
+			internal static extern IntPtr Encode(int width, int height, int stride, bool zeroIsWhite, IntPtr data,
+				ref int length);
 
 			[DllImport(JBig2Decoder.DLL, CallingConvention = CallingConvention.Cdecl, EntryPoint = "jbig2_freemem")]
 			internal static extern IntPtr Release(IntPtr data);

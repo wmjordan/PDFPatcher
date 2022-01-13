@@ -7,9 +7,14 @@ namespace PDFPatcher.Common
 {
 	static class FontUtility
 	{
-		static readonly Regex _italic = new Regex(" (?:Italic|Oblique)$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+		static readonly Regex _italic =
+			new Regex(" (?:Italic|Oblique)$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+
 		static readonly Regex _bold = new Regex(" Bold$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
-		static readonly Regex _boldItalic = new Regex(" Bold (?:Italic|Oblique)$", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+
+		static readonly Regex _boldItalic = new Regex(" Bold (?:Italic|Oblique)$",
+			RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+
 		static FriendlyFontName[] _Fonts;
 
 		public static FriendlyFontName[] InstalledFonts {
@@ -17,6 +22,7 @@ namespace PDFPatcher.Common
 				if (_Fonts == null) {
 					ListInstalledFonts();
 				}
+
 				return _Fonts;
 			}
 		}
@@ -38,6 +44,7 @@ namespace PDFPatcher.Common
 					of.Add(new FriendlyFontName(fn, dn));
 				}
 			}
+
 			uf.Sort();
 			of.Sort();
 			_Fonts = new FriendlyFontName[uf.Count + of.Count];
@@ -49,10 +56,12 @@ namespace PDFPatcher.Common
 		{
 			public string OriginalName;
 			public string DisplayName;
+
 			public FriendlyFontName(string originalName, string displayName) {
 				OriginalName = originalName;
 				DisplayName = displayName != originalName ? displayName : null;
 			}
+
 			public override string ToString() {
 				return DisplayName ?? OriginalName;
 			}
@@ -65,6 +74,5 @@ namespace PDFPatcher.Common
 
 			#endregion
 		}
-
 	}
 }

@@ -9,11 +9,13 @@ namespace PDFPatcher.Processor
 		int _processedPageCount;
 
 		#region IPageProcessor 成员
+
 		public string Name => "修复并删除冗余内容";
 
 		public void BeginProcess(DocProcessorContext context) {
 			_processedPageCount = 0;
 		}
+
 		public bool EndProcess(PdfReader pdf) {
 			Tracker.TraceMessage(Tracker.Category.Notice, Name + "功能：");
 			Tracker.TraceMessage("　　删除了 " + _processedPageCount + " 页的冗余内容。");
@@ -31,6 +33,7 @@ namespace PDFPatcher.Processor
 				_processedPageCount++;
 				return true;
 			}
+
 			return false;
 		}
 
@@ -45,6 +48,7 @@ namespace PDFPatcher.Processor
 					r |= ProcessCommands(ec);
 				}
 			}
+
 			return r;
 		}
 	}

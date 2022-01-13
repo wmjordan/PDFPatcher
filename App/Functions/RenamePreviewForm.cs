@@ -18,25 +18,17 @@ namespace PDFPatcher.Functions
 				if (t.IsEmpty) {
 					continue;
 				}
+
 				if (t.ToString().IndexOf('<') == -1) {
-					c.Add(new ListViewItem(new string[]{
-						s.FileName,
-						t.FileName,
-						s.Directory,
-						t.Directory
-					}));
+					c.Add(new ListViewItem(new string[] {s.FileName, t.FileName, s.Directory, t.Directory}));
 				}
 				else {
-					var item = c.Add(new ListViewItem(new string[]{
-						s.FileName,
-						t,
-						s.Directory,
-						String.Empty
-					}));
+					var item = c.Add(new ListViewItem(new string[] {s.FileName, t, s.Directory, String.Empty}));
 					item.UseItemStyleForSubItems = false;
 					item.SubItems[1].BackColor = Color.LightYellow;
 				}
 			}
+
 			foreach (ColumnHeader item in _RenamePreviewBox.Columns) {
 				item.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
 			}

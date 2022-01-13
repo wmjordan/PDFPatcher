@@ -29,6 +29,5 @@ namespace PDFPatcher.Processor
 		}
 
 		#endregion
-
 	}
 }

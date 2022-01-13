@@ -23,7 +23,8 @@ namespace PDFPatcher.Functions
 			AppContext.MainForm.SetTooltip(_ExtractButton, "点击此按钮，提取源 PDF 文件指定范围的页面，生成新的文件");
 			AppContext.MainForm.SetTooltip(_SeparatingModeBox, "选择拆分源 PDF 文档的方式");
 			AppContext.MainForm.SetTooltip(_SeperateByPageNumberBox, "将源 PDF 文档按页数拆分");
-			AppContext.MainForm.SetTooltip(_NumberFileNamesBox, "按书签拆分：在拆分所得的文件名前面添加“1 - ”、“2 - ”等顺序编号；其它拆分：第 1 个文件名也添加编号");
+			AppContext.MainForm.SetTooltip(_NumberFileNamesBox,
+				"按书签拆分：在拆分所得的文件名前面添加“1 - ”、“2 - ”等顺序编号；其它拆分：第 1 个文件名也添加编号");
 			AppContext.MainForm.SetTooltip(_ExcludePageRangeBox, "不提取此范围内的页面");
 
 			_TargetFileControl.FileMacroMenu.LoadStandardInfoMacros();
@@ -43,15 +44,18 @@ namespace PDFPatcher.Functions
 				FormHelper.ErrorBox(Messages.SourceFileNotFound);
 				return;
 			}
+
 			if (_TargetFileControl.Text.IsNullOrWhiteSpace()) {
 				FormHelper.ErrorBox(Messages.TargetFileNotSpecified);
 				return;
 			}
+
 			AppContext.SourceFiles = _SourceFileControl.Files;
 			if (AppContext.SourceFiles.Length == 1) {
 				_SourceFileControl.FileList.AddHistoryItem();
 				_TargetFileControl.FileList.AddHistoryItem();
 			}
+
 			var o = AppContext.ExtractPage;
 			o.KeepBookmarks = _KeepBookmarkBox.Checked;
 			o.KeepDocumentProperties = _KeepDocInfoPropertyBox.Checked;
@@ -77,7 +81,10 @@ namespace PDFPatcher.Functions
 					foreach (var file in files) {
 						Processor.Worker.ExtractPages(options,
 							file,
-							m ? t : FileHelper.CombinePath(p, Path.GetFileNameWithoutExtension(file) + Constants.FileExtensions.Pdf));
+							m
+								? t
+								: FileHelper.CombinePath(p,
+									Path.GetFileNameWithoutExtension(file) + Constants.FileExtensions.Pdf));
 						Tracker.IncrementTotalProgress();
 						if (AppContext.Abort) {
 							return;
@@ -88,11 +95,8 @@ namespace PDFPatcher.Functions
 					Processor.Worker.ExtractPages(options, files[0], t);
 				}
 			};
-			worker.RunWorkerAsync(new object[] {
-				AppContext.SourceFiles,
-				_TargetFileControl.Text,
-				AppContext.ExtractPage
-			});
+			worker.RunWorkerAsync(
+				new object[] {AppContext.SourceFiles, _TargetFileControl.Text, AppContext.ExtractPage});
 		}
 
 		private void _ExtractPageRangeBox_TextChanged(object sender, EventArgs e) {
@@ -125,7 +129,5 @@ namespace PDFPatcher.Functions
 		}
 
 		#endregion
-
-
 	}
 }

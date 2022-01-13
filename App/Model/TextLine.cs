@@ -8,20 +8,24 @@ namespace PDFPatcher.Model
 	sealed class TextLine : IDirectionalBoundObject
 	{
 		readonly List<TextInfo> _Texts;
+
 		/// <summary>获取此行内包含的文本。</summary>
 		internal IEnumerable<TextInfo> Texts => _Texts;
+
 		/// <summary>获取 <see cref="Texts"/> 内的第一个 <see cref="TextInfo"/>。</summary>
 		internal TextInfo FirstText => _Texts[0];
 
 		public WritingDirection Direction { get; private set; }
 		public Bound Region { get; private set; }
 		internal bool SuppressTextInfoArrangement { get; set; }
+
 		/// <summary>
 		/// 默认的书写方向。
 		/// </summary>
 		internal static WritingDirection DefaultDirection { get; set; }
 
 		string _Text;
+
 		/// <summary>
 		/// 获取将 <see cref="Texts"/> 内所有文本串联起来的字符串。
 		/// </summary>
@@ -30,6 +34,7 @@ namespace PDFPatcher.Model
 				if (_Text == null) {
 					_Text = GetConcatinatedText();
 				}
+
 				return _Text;
 			}
 		}
@@ -56,6 +61,7 @@ namespace PDFPatcher.Model
 					Direction = InferWritingDirection(d);
 				}
 			}
+
 			_Text = null;
 			_Texts.Add(text);
 			Region.Merge(text.Region);
@@ -63,8 +69,8 @@ namespace PDFPatcher.Model
 
 		private static WritingDirection InferWritingDirection(DistanceInfo d) {
 			return d.IsVerticallyAligned ? WritingDirection.Vertical
-					: d.IsHorizontallyAligned ? WritingDirection.Hortizontal
-					: WritingDirection.Unknown;
+				: d.IsHorizontallyAligned ? WritingDirection.Hortizontal
+				: WritingDirection.Unknown;
 		}
 
 		internal void Merge(TextLine source) {
@@ -103,6 +109,7 @@ namespace PDFPatcher.Model
 					tl.Sort(TextInfo.CompareRegionX);
 				}
 			}
+
 			var cs = GetAverageCharSize();
 			var sb = new StringBuilder();
 			sb.Append(tl[0].Text);
@@ -121,6 +128,7 @@ namespace PDFPatcher.Model
 								dx -= cs;
 							}
 						}
+
 						t = tl[i].Text;
 						if (t.Length > 0) {
 							c = tl[i].Text[0];
@@ -129,12 +137,15 @@ namespace PDFPatcher.Model
 							}
 						}
 					}
+
 					while ((dx -= cs) > 0) {
 						sb.Append(' ');
 					}
 				}
+
 				sb.Append(tl[i].Text);
 			}
+
 			return sb.ToString();
 		}
 
@@ -144,7 +155,10 @@ namespace PDFPatcher.Model
 			var tl = _Texts;
 			float ts = 0, cc = 0;
 			if (Direction == WritingDirection.Vertical) {
-				tl.ForEach((t) => { ts += t.LetterWidth; cc += t.Text.Length; });
+				tl.ForEach((t) => {
+					ts += t.LetterWidth;
+					cc += t.Text.Length;
+				});
 			}
 			else {
 				foreach (var t in tl) {
@@ -153,10 +167,12 @@ namespace PDFPatcher.Model
 						if (Char.IsLetterOrDigit(c) == false) {
 							continue;
 						}
+
 						cc += (c > 0x36F ? 2 : 1);
 					}
 				}
 			}
+
 			return ts / cc; // 平均字符宽度
 		}
 	}

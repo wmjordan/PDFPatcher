@@ -9,7 +9,6 @@ namespace PDFPatcher.Processor.Imaging
 {
 	static class BitmapHelper
 	{
-
 		public static ImageCodecInfo GetCodec(string codecName) {
 			var ie = ImageCodecInfo.GetImageEncoders();
 
@@ -18,6 +17,7 @@ namespace PDFPatcher.Processor.Imaging
 					return ie[i];
 				}
 			}
+
 			return null;
 		}
 
@@ -31,12 +31,15 @@ namespace PDFPatcher.Processor.Imaging
 			if (bmp == null) {
 				return null;
 			}
+
 			if (bmp.IsIndexed()) {
 				return Array.ConvertAll(bmp.Palette.Entries, c => c); //duplicates the array
 			}
+
 			if (bmp.PixelFormat != PixelFormat.Format24bppRgb && bmp.PixelFormat != PixelFormat.Format32bppArgb) {
 				throw new InvalidOperationException("仅支持 Format24bppRgb 和 Format32bppArgb。");
 			}
+
 			BitmapData bmpData;
 			int bw = bmp.PixelFormat == PixelFormat.Format24bppRgb ? 3 : 4;
 			byte* ps, pl;
@@ -57,14 +60,17 @@ namespace PDFPatcher.Processor.Imaging
 						++ps;
 					}
 				}
+
 				pl += bmpData.Stride;
 			}
+
 			bmp.UnlockBits(bmpData);
 			var r = new Color[hs.Count];
 			var i = 0;
 			foreach (var item in hs.Select(Color.FromArgb)) {
 				r[i++] = item;
 			}
+
 			return r;
 		}
 
@@ -84,7 +90,8 @@ namespace PDFPatcher.Processor.Imaging
 		/// <param name="writable">是否可写入。</param>
 		/// <returns>锁定后的 <see cref="BitmapData"/>。</returns>
 		public static BitmapData LockBits(this Bitmap bmp, bool writable) {
-			return bmp.LockBits(new Rectangle(Point.Empty, bmp.Size), writable ? ImageLockMode.ReadWrite : ImageLockMode.ReadOnly, bmp.PixelFormat);
+			return bmp.LockBits(new Rectangle(Point.Empty, bmp.Size),
+				writable ? ImageLockMode.ReadWrite : ImageLockMode.ReadOnly, bmp.PixelFormat);
 		}
 
 		/// <summary>
@@ -100,10 +107,13 @@ namespace PDFPatcher.Processor.Imaging
 				if (highQuality) {
 					g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
 				}
+
 				g.DrawImage(source, 0, 0, size.Width, size.Height);
 			}
+
 			return b;
 		}
+
 		/// <summary>
 		/// 按文件名的扩展名保存图像文件为对应的格式。
 		/// </summary>
@@ -113,21 +123,27 @@ namespace PDFPatcher.Processor.Imaging
 			var ext = System.IO.Path.GetExtension(fileName);
 			switch (ext.ToUpperInvariant()) {
 				case ".PNG":
-					image.Save(fileName, ImageFormat.Png); return;
+					image.Save(fileName, ImageFormat.Png);
+					return;
 				case ".BMP":
-					image.Save(fileName, ImageFormat.Bmp); return;
+					image.Save(fileName, ImageFormat.Bmp);
+					return;
 				case ".JPG":
 				case ".JPEG":
-					image.Save(fileName, 75); return;
+					image.Save(fileName, 75);
+					return;
 				case ".TIF":
 				case ".TIFF":
-					TiffHelper.SaveBinaryImage(image, fileName); return;
+					TiffHelper.SaveBinaryImage(image, fileName);
+					return;
 				case ".GIF":
-					image.Save(fileName, ImageFormat.Gif); return;
+					image.Save(fileName, ImageFormat.Gif);
+					return;
 				default:
 					goto case ".PNG";
 			}
 		}
+
 		/// <summary>
 		/// 将 <paramref name="tint"/> 颜色染色到 <paramref name="color"/> 上。
 		/// </summary>
@@ -142,13 +158,16 @@ namespace PDFPatcher.Processor.Imaging
 			if (source == null) {
 				return null;
 			}
+
 			if (source.PixelFormat != PixelFormat.Format24bppRgb && source.PixelFormat != PixelFormat.Format32bppArgb) {
 				throw new InvalidOperationException("仅支持 Format24bppRgb 和 Format32bppArgb。");
 			}
+
 			var pi = new Dictionary<int, byte>(pallette.Length);
 			for (int i = pallette.Length - 1; i >= 0; i--) {
 				pi[pallette[i].ToArgb()] = (byte)i;
 			}
+
 			var result = new Bitmap(source.Width, source.Height, PixelFormat.Format8bppIndexed);
 			var sourceData = source.LockBits(false);
 			var targetData = result.LockBits(true);
@@ -160,6 +179,7 @@ namespace PDFPatcher.Processor.Imaging
 			for (int i = 0; i < pallette.Length; i++) {
 				rp.Entries[i] = pallette[i];
 			}
+
 			result.Palette = rp;
 			int w = source.Width, h = source.Height;
 			for (int y = 0; y < h; y++) {
@@ -179,9 +199,11 @@ namespace PDFPatcher.Processor.Imaging
 						++ps;
 					}
 				}
+
 				src += sourceData.Stride;
 				res += targetData.Stride;
 			}
+
 			source.UnlockBits(sourceData);
 			result.UnlockBits(targetData);
 			return result;
@@ -219,7 +241,8 @@ namespace PDFPatcher.Processor.Imaging
 			}
 
 			// Lock source bitmap in memory
-			BitmapData sourceData = source.LockBits(new Rectangle(0, 0, source.Width, source.Height), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
+			BitmapData sourceData = source.LockBits(new Rectangle(0, 0, source.Width, source.Height),
+				ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
 
 			// Copy image data to binary array
 			int imageSize = sourceData.Stride * sourceData.Height;
@@ -239,15 +262,17 @@ namespace PDFPatcher.Processor.Imaging
 			destination.SetResolution(original.HorizontalResolution, original.VerticalResolution);
 
 			// Lock destination bitmap in memory
-			BitmapData destinationData = destination.LockBits(new Rectangle(0, 0, destination.Width, destination.Height), ImageLockMode.WriteOnly, PixelFormat.Format1bppIndexed);
+			BitmapData destinationData =
+				destination.LockBits(new Rectangle(0, 0, destination.Width, destination.Height),
+					ImageLockMode.WriteOnly, PixelFormat.Format1bppIndexed);
 
 			// Create destination buffer
 			byte[] destinationBuffer = SimpleThresholdBW(
-			sourceBuffer,
-			sourceData.Width,
-			sourceData.Height,
-			sourceData.Stride,
-			destinationData.Stride);
+				sourceBuffer,
+				sourceData.Width,
+				sourceData.Height,
+				sourceData.Stride,
+				destinationData.Stride);
 
 			// Copy binary image data to destination bitmap
 			Marshal.Copy(destinationBuffer, 0, destinationData.Scan0, destinationData.Stride * sourceData.Height);
@@ -261,7 +286,8 @@ namespace PDFPatcher.Processor.Imaging
 
 		const int threshold = 255 * 3 / 2;
 
-		public static byte[] SimpleThresholdBW(byte[] sourceBuffer, int width, int height, int srcStride, int dstStride) {
+		public static byte[] SimpleThresholdBW(byte[] sourceBuffer, int width, int height, int srcStride,
+			int dstStride) {
 			byte[] destinationBuffer = new byte[dstStride * height];
 			int srcIx = 0;
 			int dstIx = 0;
@@ -291,9 +317,11 @@ namespace PDFPatcher.Processor.Imaging
 					else
 						bit >>= 1;
 				} // line finished
+
 				if (bit != 128)
 					destinationBuffer[j] = pix8;
 			} // all lines finished
+
 			return destinationBuffer;
 		}
 
@@ -320,17 +348,18 @@ namespace PDFPatcher.Processor.Imaging
 
 			int w = b.Width, h = b.Height;
 			var hbm = b.GetHbitmap(); // this is step (1)
-									  //
-									  // Step (2): create the monochrome bitmap.
-									  // "BITMAPINFO" is an interop-struct which we define below.
-									  // In GDI terms, it's a BITMAPHEADERINFO followed by an array of two RGBQUADs
+			//
+			// Step (2): create the monochrome bitmap.
+			// "BITMAPINFO" is an interop-struct which we define below.
+			// In GDI terms, it's a BITMAPHEADERINFO followed by an array of two RGBQUADs
 			var bmi = new NativeMethods.BITMAPINFO {
-				biSize = 40,  // the size of the BITMAPHEADERINFO struct
+				biSize = 40, // the size of the BITMAPHEADERINFO struct
 				biWidth = w,
 				biHeight = h,
 				biPlanes = 1, // "planes" are confusing. We always use just 1. Read MSDN for more info.
 				biBitCount = (short)bpp, // ie. 1bpp or 8bpp
-				biCompression = NativeMethods.BI_RGB, // ie. the pixels in our RGBQUAD table are stored as RGBs, not palette indexes
+				biCompression =
+					NativeMethods.BI_RGB, // ie. the pixels in our RGBQUAD table are stored as RGBs, not palette indexes
 				biSizeImage = (uint)(((w + 7) & 0xFFFFFFF8) * h / 8),
 				biXPelsPerMeter = 1000000, // not really important
 				biYPelsPerMeter = 1000000 // not really important
@@ -340,8 +369,14 @@ namespace PDFPatcher.Processor.Imaging
 			bmi.biClrUsed = ncols;
 			bmi.biClrImportant = ncols;
 			bmi.cols = new uint[256]; // The structure always has fixed size 256, even if we end up using fewer colours
-			if (bpp == 1) { bmi.cols[0] = MakeRgb(0, 0, 0); bmi.cols[1] = MakeRgb(255, 255, 255); }
-			else { for (int i = 0; i < ncols; i++) bmi.cols[i] = MakeRgb(i, i, i); }
+			if (bpp == 1) {
+				bmi.cols[0] = MakeRgb(0, 0, 0);
+				bmi.cols[1] = MakeRgb(255, 255, 255);
+			}
+			else {
+				for (int i = 0; i < ncols; i++) bmi.cols[i] = MakeRgb(i, i, i);
+			}
+
 			// For 8bpp we've created an palette with just greyscale colours.
 			// You can set up any palette you want here. Here are some possibilities:
 			// greyscale: for (int i=0; i<256; i++) bmi.cols[i]=MAKERGB(i,i,i);
@@ -351,12 +386,13 @@ namespace PDFPatcher.Processor.Imaging
 			// 
 			// Now create the indexed bitmap "hbm0"
 			IntPtr bits0; // not used for our purposes. It returns a pointer to the raw bits that make up the bitmap.
-			IntPtr hbm0 = NativeMethods.CreateDIBSection(IntPtr.Zero, ref bmi, NativeMethods.DIB_RGB_COLORS, out bits0, IntPtr.Zero, 0);
+			IntPtr hbm0 = NativeMethods.CreateDIBSection(IntPtr.Zero, ref bmi, NativeMethods.DIB_RGB_COLORS, out bits0,
+				IntPtr.Zero, 0);
 			//
 			// Step (3): use GDI's BitBlt function to copy from original hbitmap into monocrhome bitmap
 			// GDI programming is kind of confusing... nb. The GDI equivalent of "Graphics" is called a "DC".
-			IntPtr sdc = NativeMethods.GetDC(IntPtr.Zero);       // First we obtain the DC for the screen
-																 // Next, create a DC for the original hbitmap
+			IntPtr sdc = NativeMethods.GetDC(IntPtr.Zero); // First we obtain the DC for the screen
+			// Next, create a DC for the original hbitmap
 			IntPtr hdc = NativeMethods.CreateCompatibleDC(sdc);
 			NativeMethods.SelectObject(hdc, hbm);
 			// and create a DC for the monochrome hbitmap
@@ -376,6 +412,7 @@ namespace PDFPatcher.Processor.Imaging
 			//
 			return b0;
 		}
+
 		static uint MakeRgb(int r, int g, int b) {
 			return ((uint)(b & 255)) | ((uint)((g & 255) << 8)) | ((uint)((r & 255) << 16));
 		}
@@ -395,13 +432,15 @@ namespace PDFPatcher.Processor.Imaging
 			public static int SRCCOPY = 0x00CC0020;
 
 			[DllImport("gdi32.dll")]
-			public static extern int BitBlt(IntPtr hdcDst, int xDst, int yDst, int w, int h, IntPtr hdcSrc, int xSrc, int ySrc, int rop);
+			public static extern int BitBlt(IntPtr hdcDst, int xDst, int yDst, int w, int h, IntPtr hdcSrc, int xSrc,
+				int ySrc, int rop);
 
 			[DllImport("gdi32.dll")]
 			public static extern IntPtr CreateCompatibleDC(IntPtr hdc);
 
 			[DllImport("gdi32.dll")]
-			public static extern IntPtr CreateDIBSection(IntPtr hdc, ref BITMAPINFO bmi, uint Usage, out IntPtr bits, IntPtr hSection, uint dwOffset);
+			public static extern IntPtr CreateDIBSection(IntPtr hdc, ref BITMAPINFO bmi, uint Usage, out IntPtr bits,
+				IntPtr hSection, uint dwOffset);
 
 			[DllImport("gdi32.dll")]
 			public static extern int DeleteDC(IntPtr hdc);
@@ -417,6 +456,7 @@ namespace PDFPatcher.Processor.Imaging
 
 			[DllImport("gdi32.dll")]
 			public static extern IntPtr SelectObject(IntPtr hdc, IntPtr hgdiobj);
+
 			[StructLayout(LayoutKind.Sequential)]
 			public struct BITMAPINFO
 			{
@@ -426,6 +466,7 @@ namespace PDFPatcher.Processor.Imaging
 				public uint biCompression, biSizeImage;
 				public int biXPelsPerMeter, biYPelsPerMeter;
 				public uint biClrUsed, biClrImportant;
+
 				[MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
 				public uint[] cols;
 			}

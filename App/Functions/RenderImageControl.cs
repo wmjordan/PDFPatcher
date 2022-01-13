@@ -21,12 +21,16 @@ namespace PDFPatcher.Functions
 				if (_AutoOutputDirBox.Checked == false) {
 					return;
 				}
+
 				var sourceFile = _SourceFileControl.FirstFile;
 				if (sourceFile.Length > 0) {
-					_TargetBox.Text = FileHelper.CombinePath(Path.GetDirectoryName(sourceFile), Path.GetFileNameWithoutExtension(sourceFile));
+					_TargetBox.Text = FileHelper.CombinePath(Path.GetDirectoryName(sourceFile),
+						Path.GetFileNameWithoutExtension(sourceFile));
 				}
 			};
-			_AutoOutputDirBox.CheckedChanged += (object sender, EventArgs e) => { AppContext.ImageRenderer.AutoOutputFolder = _AutoOutputDirBox.Checked; };
+			_AutoOutputDirBox.CheckedChanged += (object sender, EventArgs e) => {
+				AppContext.ImageRenderer.AutoOutputFolder = _AutoOutputDirBox.Checked;
+			};
 			_ResolutionBox.TextChanged += (s, args) => {
 				var v = _ResolutionBox.Text.ToSingle();
 				if (v <= 0) {
@@ -46,13 +50,15 @@ namespace PDFPatcher.Functions
 			AppContext.MainForm.SetTooltip(_SourceFileControl.FileList, "包含图片的 PDF 文件路径");
 			AppContext.MainForm.SetTooltip(_TargetBox, "放置输出图片的文件夹路径");
 			AppContext.MainForm.SetTooltip(_ExtractPageRangeBox, "需要提取图片的页码范围，不指定页码范围时提取所有页面的图片");
-			AppContext.MainForm.SetTooltip(_FileNameMaskBox, "提取的图片文件名按其所在页码数字命名，可在此修改命名规则\n“0000”：不足四位用0补足四位\n“0”：文件名按实际页码，不用0补位\n可用英文双引号将文本括起来（如“\"相约2000\"0”，前面的“2000”不会被解释为占位符）");
+			AppContext.MainForm.SetTooltip(_FileNameMaskBox,
+				"提取的图片文件名按其所在页码数字命名，可在此修改命名规则\n“0000”：不足四位用0补足四位\n“0”：文件名按实际页码，不用0补位\n可用英文双引号将文本括起来（如“\"相约2000\"0”，前面的“2000”不会被解释为占位符）");
 			AppContext.MainForm.SetTooltip(_VerticalFlipImageBox, "某些 PDF 文件导出的图片上下颠倒，可用此选项将其还原");
 			AppContext.MainForm.SetTooltip(_InvertColorBox, "翻转 PNG 和 TIFF 黑白图片的颜色");
 			AppContext.MainForm.SetTooltip(_QuantizeBox, "尽量减少导出图片所用的颜色，从而减小图片占用的磁盘空间");
 			AppContext.MainForm.SetTooltip(_SpecificWidthBox, "指定输出图片的宽度（单位为像素，图片的高度将按比例缩放）");
 			AppContext.MainForm.SetTooltip(_SpecificRatioBox, "指定输出图片的放大倍数");
-			AppContext.MainForm.SetTooltip(_ExtractPageImageWidthBox, "指定输出图片的宽度（单位为像素，图片的高度将按比例缩放），宽度为 0 时相当于按 1：1 比例输出");
+			AppContext.MainForm.SetTooltip(_ExtractPageImageWidthBox,
+				"指定输出图片的宽度（单位为像素，图片的高度将按比例缩放），宽度为 0 时相当于按 1：1 比例输出");
 			Reload();
 		}
 
@@ -68,7 +74,8 @@ namespace PDFPatcher.Functions
 			_FileNameMaskBox.Text = o.FileMask;
 			_HorizontalFlipImageBox.Checked = o.HorizontalFlipImages;
 			_HideAnnotationsBox.Checked = o.HideAnnotations;
-			_ImageFormatBox.SelectedIndex = ValueHelper.MapValue(o.FileFormat, new ImageFormat[] { ImageFormat.Png, ImageFormat.Jpeg, ImageFormat.Tiff }, new int[] { 0, 1, 2 }, 0);
+			_ImageFormatBox.SelectedIndex = ValueHelper.MapValue(o.FileFormat,
+				new ImageFormat[] {ImageFormat.Png, ImageFormat.Jpeg, ImageFormat.Tiff}, new int[] {0, 1, 2}, 0);
 			_InvertColorBox.Checked = o.InvertColor;
 			if (o.JpegQuality > 0 && o.JpegQuality <= 100) {
 				_JpegQualityBox.Text = ValueHelper.ToText(o.JpegQuality);
@@ -77,9 +84,11 @@ namespace PDFPatcher.Functions
 				o.JpegQuality = 75;
 				_JpegQualityBox.Text = "75";
 			}
+
 			_QuantizeBox.Checked = o.Quantize;
 			_ResolutionBox.Text = o.Dpi.ToText();
-			_RotationBox.SelectedIndex = ValueHelper.MapValue(o.Rotation, new int[] { 0, 90, 180, 270 }, new int[] { 0, 1, 2, 3 }, 0);
+			_RotationBox.SelectedIndex =
+				ValueHelper.MapValue(o.Rotation, new int[] {0, 90, 180, 270}, new int[] {0, 1, 2, 3}, 0);
 			_SpecificRatioBox.Checked = !o.UseSpecificWidth;
 			_SpecificWidthBox.Checked = o.UseSpecificWidth;
 			_VerticalFlipImageBox.Checked = o.VerticalFlipImages;
@@ -95,6 +104,7 @@ namespace PDFPatcher.Functions
 			else if (sourceFile.Length > 0) {
 				_SaveImageBox.SelectedPath = Path.GetDirectoryName(sourceFile);
 			}
+
 			if (_SaveImageBox.ShowDialog() == DialogResult.OK) {
 				_TargetBox.Text =
 					_SaveImageBox.SelectedPath
@@ -109,6 +119,7 @@ namespace PDFPatcher.Functions
 				Common.FormHelper.ErrorBox(Messages.SourceFileNotFound);
 				return;
 			}
+
 			if (_TargetBox.Text.IsNullOrWhiteSpace()) {
 				_BrowseTargetPdfButton_Click(_BrowseTargetPdfButton, e);
 				if (_TargetBox.Text.IsNullOrWhiteSpace()) {
@@ -132,7 +143,8 @@ namespace PDFPatcher.Functions
 				if (files.Length > 1) {
 					var ep = options.ExtractImagePath;
 					foreach (var file in files) {
-						options.ExtractImagePath = new FilePath(ep).Combine(new FilePath(file).FileNameWithoutExtension).Normalize();
+						options.ExtractImagePath = new FilePath(ep).Combine(new FilePath(file).FileNameWithoutExtension)
+							.Normalize();
 						Processor.Worker.RenderPages(file, options);
 						Tracker.IncrementTotalProgress();
 						if (AppContext.Abort) {
@@ -144,7 +156,9 @@ namespace PDFPatcher.Functions
 					Processor.Worker.RenderPages(files[0], options);
 				}
 			};
-			worker.RunWorkerCompleted += (dummy, arg) => { AppContext.ImageExtracter.OutputPath = _ExtractPageRangeBox.Text; };
+			worker.RunWorkerCompleted += (dummy, arg) => {
+				AppContext.ImageExtracter.OutputPath = _ExtractPageRangeBox.Text;
+			};
 			var option = AppContext.ImageRenderer;
 			option.ColorSpace = _ColorSpaceRgbBox.Checked ? ColorSpace.Rgb : ColorSpace.Gray;
 			option.ExtractPageRange = _ExtractPageRangeBox.Text;
@@ -153,7 +167,8 @@ namespace PDFPatcher.Functions
 			option.HideAnnotations = _HideAnnotationsBox.Checked;
 			option.HorizontalFlipImages = _HorizontalFlipImageBox.Checked;
 			option.InvertColor = _InvertColorBox.Checked;
-			option.FileFormat = ValueHelper.MapValue(_ImageFormatBox.SelectedIndex, new int[] { 0, 1, 2 }, new ImageFormat[] { ImageFormat.Png, ImageFormat.Jpeg, ImageFormat.Tiff }, ImageFormat.Png);
+			option.FileFormat = ValueHelper.MapValue(_ImageFormatBox.SelectedIndex, new int[] {0, 1, 2},
+				new ImageFormat[] {ImageFormat.Png, ImageFormat.Jpeg, ImageFormat.Tiff}, ImageFormat.Png);
 			option.ImageWidth = (int)_ExtractPageImageWidthBox.Value;
 			option.JpegQuality = _JpegQualityBox.Text.TryParse(out int j)
 				? j > 0 && j <= 100 ? j : 75
@@ -165,11 +180,8 @@ namespace PDFPatcher.Functions
 			option.UseSpecificWidth = _SpecificWidthBox.Checked;
 			option.VerticalFlipImages = _VerticalFlipImageBox.Checked;
 			worker.RunWorkerAsync(
-				new object[] {
-				AppContext.SourceFiles, option
-			});
+				new object[] {AppContext.SourceFiles, option});
 			option = null;
-
 		}
 
 		#region IDefaultButtonControl 成员
@@ -212,6 +224,5 @@ namespace PDFPatcher.Functions
 			//    this._TargetBox.DataSource = null;
 			//}
 		}
-
 	}
 }

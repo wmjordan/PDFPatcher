@@ -53,6 +53,7 @@ namespace PDFPatcher.Model
 					for (int i = 0; i < s.Length; i++) {
 						s[i] = _Conditions[i].Description;
 					}
+
 					return String.Join(";", s);
 				}
 			}
@@ -66,6 +67,7 @@ namespace PDFPatcher.Model
 							return true;
 						}
 					}
+
 					return false;
 				}
 			}
@@ -75,6 +77,7 @@ namespace PDFPatcher.Model
 				foreach (var item in Conditions) {
 					m.Conditions.Add(item.Clone() as AutoBookmarkCondition);
 				}
+
 				return m;
 			}
 
@@ -82,10 +85,12 @@ namespace PDFPatcher.Model
 				return new MultiConditionFilter(this);
 			}
 		}
+
 		[JsonTypeAlias(ThisName)]
 		public class FontNameCondition : AutoBookmarkCondition
 		{
 			internal const string ThisName = "字体名称";
+
 			/// <summary>
 			/// 需要调整级别的字体名称。
 			/// </summary>
@@ -98,7 +103,8 @@ namespace PDFPatcher.Model
 			[XmlAttribute("匹配字体全名")]
 			public bool MatchFullName { get; set; }
 
-			public override string Description => String.Concat(ThisName, (MatchFullName ? "为" : "包含"), "“", FontName, "”");
+			public override string Description =>
+				String.Concat(ThisName, (MatchFullName ? "为" : "包含"), "“", FontName, "”");
 
 			public override string Name => ThisName;
 
@@ -114,11 +120,12 @@ namespace PDFPatcher.Model
 			internal override AutoBookmarkFilter CreateFilter() {
 				return new FontNameFilter(FontName, MatchFullName);
 			}
+
 			public override object Clone() {
 				return new FontNameCondition(FontName, MatchFullName);
 			}
-
 		}
+
 		[JsonTypeAlias(ThisName)]
 		public class TextSizeCondition : AutoBookmarkCondition
 		{
@@ -135,6 +142,7 @@ namespace PDFPatcher.Model
 					_description = null;
 				}
 			}
+
 			[XmlAttribute("最大尺寸")]
 			[DefaultValue(0)]
 			public float MaxSize {
@@ -150,9 +158,11 @@ namespace PDFPatcher.Model
 					if (_description == null) {
 						UpdateRangeDescription();
 					}
+
 					return _description;
 				}
 			}
+
 			public override string Name => ThisName;
 
 			internal override bool IsTextLineFilter => false;
@@ -168,11 +178,13 @@ namespace PDFPatcher.Model
 			}
 
 			private void UpdateRangeDescription() {
-				_description = ThisName + (_minSize == _maxSize ? "等于" + _minSize.ToText() : "介于" + _minSize.ToText() + "和" + _maxSize.ToText());
+				_description = ThisName + (_minSize == _maxSize
+					? "等于" + _minSize.ToText()
+					: "介于" + _minSize.ToText() + "和" + _maxSize.ToText());
 			}
 
 			public override object Clone() {
-				var f = new TextSizeCondition() { _minSize = _minSize, _maxSize = _maxSize };
+				var f = new TextSizeCondition() {_minSize = _minSize, _maxSize = _maxSize};
 				f.UpdateRangeDescription();
 				return f;
 			}
@@ -186,6 +198,7 @@ namespace PDFPatcher.Model
 					_minSize = a;
 					_maxSize = b;
 				}
+
 				_description = null;
 			}
 
@@ -194,6 +207,7 @@ namespace PDFPatcher.Model
 				return new TextSizeFilter(_minSize, _maxSize);
 			}
 		}
+
 		[JsonTypeAlias(ThisName)]
 		public class TextPositionCondition : AutoBookmarkCondition
 		{
@@ -221,6 +235,7 @@ namespace PDFPatcher.Model
 					_description = null;
 				}
 			}
+
 			[XmlAttribute("坐标最大值")]
 			[DefaultValue(0)]
 			public float MaxValue {
@@ -236,9 +251,11 @@ namespace PDFPatcher.Model
 					if (_description == null) {
 						UpdateRangeDescription();
 					}
+
 					return _description;
 				}
 			}
+
 			public override string Name => ThisName;
 
 			internal override bool IsTextLineFilter => false;
@@ -255,7 +272,10 @@ namespace PDFPatcher.Model
 
 			private void UpdateRangeDescription() {
 				_description = String.Concat(ThisName,
-					_position == 1 ? "上" : _position == 2 ? "下" : _position == 3 ? "左" : _position == 4 ? "右" : String.Empty,
+					_position == 1 ? "上" :
+					_position == 2 ? "下" :
+					_position == 3 ? "左" :
+					_position == 4 ? "右" : String.Empty,
 					"坐标",
 					_minValue == _maxValue
 						? "等于" + ValueHelper.ToText(_minValue)
@@ -265,9 +285,7 @@ namespace PDFPatcher.Model
 
 			public override object Clone() {
 				var f = new TextPositionCondition() {
-					_position = _position,
-					_minValue = _minValue,
-					_maxValue = _maxValue
+					_position = _position, _minValue = _minValue, _maxValue = _maxValue
 				};
 				f.UpdateRangeDescription();
 				return f;
@@ -283,6 +301,7 @@ namespace PDFPatcher.Model
 					_minValue = value1;
 					_maxValue = value2;
 				}
+
 				_description = null;
 			}
 
@@ -291,13 +310,13 @@ namespace PDFPatcher.Model
 				return new TextPositionFilter(_position, _minValue, _maxValue);
 			}
 		}
+
 		[JsonTypeAlias(ThisName)]
 		public class PageRangeCondition : AutoBookmarkCondition
 		{
 			internal const string ThisName = "页码范围";
 
-			[XmlAttribute(ThisName)]
-			public string PageRange { get; set; }
+			[XmlAttribute(ThisName)] public string PageRange { get; set; }
 
 			public override string Description => "页码范围为“" + PageRange + "”";
 
@@ -306,26 +325,26 @@ namespace PDFPatcher.Model
 			internal override bool IsTextLineFilter => false;
 
 			public override object Clone() {
-				return new PageRangeCondition() { PageRange = PageRange };
+				return new PageRangeCondition() {PageRange = PageRange};
 			}
 
 			internal override AutoBookmarkFilter CreateFilter() {
 				return new PageRangeFilter(PageRange);
 			}
 		}
+
 		[JsonTypeAlias(ThisName)]
 		public class TextCondition : AutoBookmarkCondition
 		{
 			internal const string ThisName = "文本内容";
 
-			[XmlElement("文本模式")]
-			public MatchPattern Pattern { get; set; }
+			[XmlElement("文本模式")] public MatchPattern Pattern { get; set; }
 
 			public override string Description => String.Concat(ThisName,
-					Pattern.MatchCase ? "区分大小写" : String.Empty,
-					Pattern.FullMatch ? "完全匹配" : "符合",
-					Pattern.UseRegularExpression ? "正则表达式" : String.Empty,
-					Pattern.Text);
+				Pattern.MatchCase ? "区分大小写" : String.Empty,
+				Pattern.FullMatch ? "完全匹配" : "符合",
+				Pattern.UseRegularExpression ? "正则表达式" : String.Empty,
+				Pattern.Text);
 
 			public override string Name => ThisName;
 
@@ -342,12 +361,10 @@ namespace PDFPatcher.Model
 			public TextCondition() {
 				Pattern = new MatchPattern();
 			}
+
 			private TextCondition(MatchPattern pattern) {
 				Pattern = pattern.Clone() as MatchPattern;
 			}
 		}
-
 	}
-
-
 }

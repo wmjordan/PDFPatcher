@@ -21,8 +21,7 @@ namespace PDFPatcher
 			SubFolderBeforeFiles = true;
 		}
 
-		[XmlElement("页面布局")]
-		public PageBoxSettings PageSettings { get; set; }
+		[XmlElement("页面布局")] public PageBoxSettings PageSettings { get; set; }
 
 		///<summary>获取或指定是否自动缩小图片以适合页面。</summary>
 		[XmlAttribute("自动缩小")]
@@ -44,6 +43,7 @@ namespace PDFPatcher
 				return ps.PaperSize.Height - ps.Margins.Top - ps.Margins.Bottom;
 			}
 		}
+
 		/// <summary>
 		/// 获取页面除去左右留白的宽度。
 		/// </summary>
@@ -55,11 +55,9 @@ namespace PDFPatcher
 			}
 		}
 
-		[XmlAttribute("校正图片旋转角度")]
-		public bool DeskewImages { get; set; }
+		[XmlAttribute("校正图片旋转角度")] public bool DeskewImages { get; set; }
 
-		[XmlAttribute("优化黑白图片压缩算法")]
-		public bool RecompressWithJbig2 { get; set; }
+		[XmlAttribute("优化黑白图片压缩算法")] public bool RecompressWithJbig2 { get; set; }
 
 		//[XmlAttribute ("压缩比")]
 		//[DefaultValue (-1)]
@@ -70,6 +68,7 @@ namespace PDFPatcher
 		public bool AutoMaskBWImages { get; set; }
 
 		#region 文件列表选项
+
 		///<summary>获取或指定排序文件时是否按数值和文本排序。</summary>
 		[XmlAttribute("按数值排序文件")]
 		[DefaultValue(true)]
@@ -84,9 +83,11 @@ namespace PDFPatcher
 		[XmlAttribute("子目录排在文件前")]
 		[DefaultValue(true)]
 		public bool SubFolderBeforeFiles { get; set; }
+
 		#endregion
 
 		#region 自动生成书签选项
+
 		///<summary>获取或指定忽略文件名的前导数值。</summary>
 		[XmlAttribute("自动生成书签文本")]
 		[DefaultValue(true)]
@@ -106,8 +107,7 @@ namespace PDFPatcher
 		[XmlAttribute("删除失效书签")]
 		[DefaultValue(true)]
 		public bool RemoveOrphanBookmarks { get; set; }
+
 		#endregion
-
-
 	}
 }

@@ -29,13 +29,16 @@ namespace PDFPatcher.Functions
 		internal sealed class PageChangedEventArgs : EventArgs
 		{
 			public int PageNumber { get; }
+
 			public PageChangedEventArgs(int pageNumber) {
 				PageNumber = pageNumber;
 			}
 		}
+
 		internal sealed class SelectionChangedEventArgs : EventArgs
 		{
 			public Editor.Selection Selection { get; }
+
 			public SelectionChangedEventArgs(Editor.Selection selection) {
 				Selection = selection;
 			}
@@ -43,7 +46,8 @@ namespace PDFPatcher.Functions
 
 		readonly static IComparer<int> __horizontalComparer = ValueHelper.GetReverseComparer<int>();
 
-		static readonly int __pageMargin = (int)(TextRenderer.MeasureText("国", SystemFonts.MessageBoxFont).Height * 1.2d);
+		static readonly int __pageMargin =
+			(int)(TextRenderer.MeasureText("国", SystemFonts.MessageBoxFont).Height * 1.2d);
 
 		readonly BackgroundWorker _renderWorker;
 		readonly Timer _refreshTimer;
@@ -55,22 +59,28 @@ namespace PDFPatcher.Functions
 		ZoomMode _zoomMode;
 		float _zoomFactor;
 		Editor.ContentDirection _contentFlow;
+
 		/// <summary>
 		/// 页面的尺寸信息。
 		/// </summary>
 		MuRectangle[] _pageBounds;
+
 		SizeF _maxDimension;
+
 		/// <summary>
 		/// 页面的滚动位置。
 		/// </summary>
 		int[] _pageOffsets;
+
 		/// <summary>
 		/// 缓存页面渲染结果的缓冲区。
 		/// </summary>
 		RenderResultCache _cache;
+
 		Dictionary<int, List<Model.TextLine>> _ocrResults;
 
 		Model.PageRange _DisplayRange;
+
 		/// <summary>
 		/// 获取或设置显示的焦点页面。
 		/// </summary>
@@ -81,14 +91,17 @@ namespace PDFPatcher.Functions
 				if (value == CurrentPageNumber) {
 					return;
 				}
+
 				ShowPage(value);
 			}
 		}
+
 		/// <summary>
 		/// 获取当前可见的第一个页面。
 		/// </summary>
 		[Browsable(false)]
 		public int FirstPage => _DisplayRange.StartValue;
+
 		/// <summary>
 		/// 获取当前可见的最后一个页面。
 		/// </summary>
@@ -96,6 +109,7 @@ namespace PDFPatcher.Functions
 		public int LastPage => _DisplayRange.EndValue;
 
 		readonly OcrOptions _OcrOptions = new OcrOptions();
+
 		/// <summary>
 		/// 获取文本识别选项。
 		/// </summary>
@@ -103,6 +117,7 @@ namespace PDFPatcher.Functions
 		public OcrOptions OcrOptions => _OcrOptions;
 
 		string _LiteralZoom;
+
 		/// <summary>
 		/// 获取或设置显示放大比率。
 		/// </summary>
@@ -116,7 +131,9 @@ namespace PDFPatcher.Functions
 				}
 			}
 		}
+
 		public new float ZoomFactor => _zoomFactor * 72f / _renderOptions.Dpi;
+
 		/// <summary>
 		/// 获取或设置阅读器是否使用右到左的水平滚动模式。
 		/// </summary>
@@ -127,10 +144,12 @@ namespace PDFPatcher.Functions
 				if (value == _contentFlow) {
 					return;
 				}
+
 				var pp = Editor.PagePosition.Empty;
 				if (HorizontalScroll.Value != 0 || VerticalScroll.Value != 0) {
 					pp = TransposeVirtualImageToPagePosition(HorizontalScroll.Value, VerticalScroll.Value);
 				}
+
 				var s = GetSelection();
 				_contentFlow = value;
 				UpdateDisplay(true);
@@ -140,6 +159,7 @@ namespace PDFPatcher.Functions
 					r = new RectangleF(p.X + r.Left, p.Y + r.Top, r.Width, r.Height);
 					SelectionRegion = r;
 				}
+
 				if (pp.Page > 0) {
 					if (_zoomMode == ZoomMode.FitPage) {
 						ShowPage(pp.Page);
@@ -150,6 +170,7 @@ namespace PDFPatcher.Functions
 				}
 			}
 		}
+
 		public bool HorizontalFlow => _contentFlow != Editor.ContentDirection.TopToDown;
 
 		/// <summary>
@@ -177,6 +198,7 @@ namespace PDFPatcher.Functions
 				if (_renderOptions.InvertColor == value) {
 					return;
 				}
+
 				_renderOptions.InvertColor = value;
 				UpdateDisplay();
 			}
@@ -188,6 +210,7 @@ namespace PDFPatcher.Functions
 				if (_renderOptions.TintColor == value) {
 					return;
 				}
+
 				_renderOptions.TintColor = value;
 				UpdateDisplay();
 			}
@@ -200,6 +223,7 @@ namespace PDFPatcher.Functions
 				if (_renderOptions.HideAnnotations == value) {
 					return;
 				}
+
 				_renderOptions.HideAnnotations = value;
 				UpdateDisplay();
 			}
@@ -226,10 +250,10 @@ namespace PDFPatcher.Functions
 			}
 		}
 
-		[DefaultValue(false)]
-		public bool FullPageScroll { get; set; }
+		[DefaultValue(false)] public bool FullPageScroll { get; set; }
 
 		DrawingPoint _PinPoint;
+
 		[Description("指定鼠标定位点")]
 		public DrawingPoint PinPoint {
 			get => _PinPoint;
@@ -242,7 +266,9 @@ namespace PDFPatcher.Functions
 				}
 			}
 		}
+
 		bool _ShowPinPoint;
+
 		[DefaultValue(false)]
 		[Description("指定是否显示鼠标定位点")]
 		public bool ShowPinPoint {
@@ -268,11 +294,13 @@ namespace PDFPatcher.Functions
 						return true;
 					}
 				}
+
 				return false;
 			}
 		}
 
 		bool _ShowTextBorders;
+
 		[DefaultValue(false)]
 		[Description("显示文本层的边框")]
 		public bool ShowTextBorders {
@@ -295,6 +323,7 @@ namespace PDFPatcher.Functions
 				if (_OcrOptions.OcrLangID == value) {
 					return;
 				}
+
 				_OcrOptions.OcrLangID = value;
 				_ocrResults.Clear();
 			}
@@ -324,6 +353,7 @@ namespace PDFPatcher.Functions
 					if (_renderWorker.IsBusy == false) {
 						_renderWorker.RunWorkerAsync();
 					}
+
 					DocumentLoaded?.Invoke(this, EventArgs.Empty);
 					Enabled = true;
 				}
@@ -338,15 +368,14 @@ namespace PDFPatcher.Functions
 			_renderOptions = new ImageRendererOptions();
 			//_ViewBox.SelectionMode = ImageBoxSelectionMode.Rectangle;
 
-			_refreshTimer = new Timer {
-				Interval = 200
-			};
+			_refreshTimer = new Timer {Interval = 200};
 			_refreshTimer.Tick += (s, args) => {
 				for (int i = _DisplayRange.StartValue; i <= _DisplayRange.EndValue; i++) {
 					bool v;
 					lock (_cache.SyncObj) {
 						v = _cache.GetBitmap(i) != null;
 					}
+
 					if (v == false && _renderWorker.IsBusy == false) {
 						_renderWorker.RunWorkerAsync();
 						return;
@@ -354,21 +383,23 @@ namespace PDFPatcher.Functions
 				}
 			};
 
-			_renderWorker = new BackgroundWorker {
-				WorkerSupportsCancellation = true
-			};
+			_renderWorker = new BackgroundWorker {WorkerSupportsCancellation = true};
 			_renderWorker.DoWork += (s, args) => {
 				Tracker.DebugMessage("started prerender job: " + _DisplayRange);
 				_refreshTimer.Stop();
-				for (int i = _DisplayRange.StartValue; i >= _DisplayRange.StartValue && i < _DisplayRange.EndValue + 2; i++) {
+				for (int i = _DisplayRange.StartValue;
+				     i >= _DisplayRange.StartValue && i < _DisplayRange.EndValue + 2;
+				     i++) {
 					if (i < 1 || i > _mupdf.PageCount) {
 						continue;
 					}
+
 					if (_cancelRendering || _renderWorker.CancellationPending || _mupdf.IsDocumentOpened == false) {
 						_cancelRendering = false;
 						args.Cancel = true;
 						return;
 					}
+
 					if (_cache.GetBitmap(i) == null) {
 						lock (_cache.SyncObj) {
 							var pb = _pageBounds[i];
@@ -398,7 +429,8 @@ namespace PDFPatcher.Functions
 
 		protected override void OnMouseMove(MouseEventArgs e) {
 			base.OnMouseMove(e);
-			if (SelectionRegion.IsEmpty == false && (IsResizing || IsSelecting || IsMoving) && e.Button == MouseButtons.Left) {
+			if (SelectionRegion.IsEmpty == false && (IsResizing || IsSelecting || IsMoving) &&
+			    e.Button == MouseButtons.Left) {
 				LimitSelectionInPage(e.Location);
 			}
 		}
@@ -424,18 +456,22 @@ namespace PDFPatcher.Functions
 			if (_mupdf == null || MouseMode == Editor.MouseMode.Move || SelectionChanged == null) {
 				return;
 			}
+
 			SelectionChanged(this, new SelectionChangedEventArgs(GetSelection()));
 		}
+
 		protected override void OnClientSizeChanged(EventArgs e) {
 			base.OnClientSizeChanged(e);
 			if (_zoomMode != ZoomMode.Custom && _lockDown == false) {
 				if (ChangeZoom(LiteralZoom) && ZoomChanged != null) {
 					ZoomChanged(this, EventArgs.Empty);
 				}
+
 				//CalculateDocumentVirtualSize ();
 				Invalidate();
 			}
 		}
+
 		void LimitSelectionInPage(DrawingPoint location) {
 			var r = SelectionRegion;
 			var pp = TransposeClientToPagePosition(location.X, location.Y);
@@ -452,31 +488,38 @@ namespace PDFPatcher.Functions
 				x2 -= r.Left;
 				c = true;
 			}
+
 			if (r.Top < 0) {
 				y1 = 0;
 				y2 -= r.Top;
 				c = true;
 			}
+
 			if (r.Right > b.Width * z) {
 				x2 = b.Width * z;
 				x1 -= r.Right - b.Width * z;
 				if (x1 < 0) {
 					x1 = 0;
 				}
+
 				c = true;
 			}
+
 			if (r.Bottom > b.Height * z) {
 				y2 = b.Height * z;
 				y1 -= r.Bottom - b.Height * z;
 				if (y1 < 0) {
 					y1 = 0;
 				}
+
 				c = true;
 			}
+
 			if (c) {
 				SelectionRegion = new MuRectangle(p.X + x1, p.Y + y1, p.X + x2, p.Y + y2);
 			}
 		}
+
 		protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
 			switch (keyData) {
 				case Keys.Space:
@@ -485,24 +528,32 @@ namespace PDFPatcher.Functions
 						ExecuteCommand("_NextPage");
 						return true;
 					}
+
 					if (HorizontalFlow) {
-						ScrollTo(HorizontalScroll.Value - (GetInsideViewPort().Width * 0.95).ToInt32(), VerticalScroll.Value);
+						ScrollTo(HorizontalScroll.Value - (GetInsideViewPort().Width * 0.95).ToInt32(),
+							VerticalScroll.Value);
 					}
 					else {
-						ScrollTo(HorizontalScroll.Value, VerticalScroll.Value + (GetInsideViewPort().Height * 0.95).ToInt32());
+						ScrollTo(HorizontalScroll.Value,
+							VerticalScroll.Value + (GetInsideViewPort().Height * 0.95).ToInt32());
 					}
+
 					return true;
 				case Keys.PageUp:
 					if (FullPageScroll) {
 						ExecuteCommand("_PreviousPage");
 						return true;
 					}
+
 					if (HorizontalFlow) {
-						ScrollTo(HorizontalScroll.Value + (GetInsideViewPort().Width * 0.95).ToInt32(), VerticalScroll.Value);
+						ScrollTo(HorizontalScroll.Value + (GetInsideViewPort().Width * 0.95).ToInt32(),
+							VerticalScroll.Value);
 					}
 					else {
-						ScrollTo(HorizontalScroll.Value, VerticalScroll.Value - (GetInsideViewPort().Height * 0.95).ToInt32());
+						ScrollTo(HorizontalScroll.Value,
+							VerticalScroll.Value - (GetInsideViewPort().Height * 0.95).ToInt32());
 					}
+
 					return true;
 				case Keys.Home:
 					ShowPage(1);
@@ -511,8 +562,10 @@ namespace PDFPatcher.Functions
 					if (_mupdf != null) {
 						ShowPage(_mupdf.PageCount);
 					}
+
 					return true;
 			}
+
 			return base.ProcessCmdKey(ref msg, keyData);
 		}
 
@@ -525,12 +578,14 @@ namespace PDFPatcher.Functions
 				ScrollTo(HorizontalScroll.Value, VerticalScroll.Value - e.Delta);
 			}
 		}
+
 		internal void CloseFile() {
 			if (_mupdf != null) {
 				_cache.Clear();
 				_mupdf.ReleaseFile();
 			}
 		}
+
 		internal void Reopen() {
 			if (_mupdf != null && _mupdf.IsDocumentOpened == false) {
 				_mupdf.Reopen();
@@ -544,6 +599,7 @@ namespace PDFPatcher.Functions
 			if (VirtualSize.IsEmpty || Enabled == false) {
 				return;
 			}
+
 			_DisplayRange = GetDisplayingPageRange();
 			var p = _DisplayRange.StartValue;
 			PageChanged?.Invoke(this, new PageChangedEventArgs(p));
@@ -588,18 +644,21 @@ namespace PDFPatcher.Functions
 				else {
 					g.DrawImage(bmp, r.Location);
 				}
+
 				g.DrawRectangle(Pens.Black, r.Left - 1, r.Top - 1, r.Width + 1, r.Height + 1);
 				if (ShowTextBorders) {
 					DrawTextBorders(g, p, op);
 				}
 			} while ((HorizontalFlow ? (r.Right > 0) : (r.Bottom < vp.Height))
-				&& ++p < _pageOffsets.Length);
+			         && ++p < _pageOffsets.Length);
+
 			if (ShowPinPoint && PinPoint != DrawingPoint.Empty) {
 				var pp = PinPoint.Transpose(op);
 				if (vp.Contains(pp)) {
 					g.DrawImage(Properties.Resources.Pin, pp.X, pp.Y - Properties.Resources.Pin.Height);
 				}
 			}
+
 			if (_cache.GetBitmap(p + 1) == null && _renderWorker.IsBusy == false) {
 				_renderWorker.RunWorkerAsync();
 			}
@@ -609,18 +668,21 @@ namespace PDFPatcher.Functions
 			if (_mupdf.IsDocumentOpened == false) {
 				return String.Empty;
 			}
+
 			return _mupdf.PageLabels.Format(pageNumber);
 		}
 
 		Model.PageRange GetDisplayingPageRange() {
 			var b = GetOffsetRectangle(GetImageViewPort());
-			return new Model.PageRange(GetPageNumberFromOffset(-b.Left + b.Width, -b.Y), GetPageNumberFromOffset(-b.Left, -(b.Y - b.Height)));
+			return new Model.PageRange(GetPageNumberFromOffset(-b.Left + b.Width, -b.Y),
+				GetPageNumberFromOffset(-b.Left, -(b.Y - b.Height)));
 		}
 
 		void DrawTextBorders(Graphics g, int pageNumber, DrawingPoint offset) {
 			if (_mupdf.IsDocumentOpened == false) {
 				return;
 			}
+
 			lock (_mupdf.SyncObj) {
 				var p = _cache.LoadPage(pageNumber);
 				var z = GetZoomFactorForPage(p.VisualBound);
@@ -632,16 +694,19 @@ namespace PDFPatcher.Functions
 					using (var m = new System.Drawing.Drawing2D.Matrix(z, 0, 0, z, offset.X + o.X, offset.Y + o.Y)) {
 						g.MultiplyTransform(m);
 					}
+
 					foreach (var block in p.TextPage.Blocks) {
 						g.DrawRectangle(blockPen, block.BBox);
 						if (block == null) {
 							continue;
 						}
+
 						foreach (var line in block.Lines) {
 							g.DrawRectangle(spanPen, line.BBox);
 						}
 					}
 				}
+
 				g.ResetTransform();
 			}
 		}
@@ -659,7 +724,8 @@ namespace PDFPatcher.Functions
 				lock (_mupdf.SyncObj) {
 					var vb = _pageBounds[s.Page];
 					var sr = s.Region;
-					var pr = new MuRectangle(sr.Left - vb.Left, vb.Bottom - sr.Top, sr.Right - vb.Left, vb.Bottom - sr.Bottom);
+					var pr = new MuRectangle(sr.Left - vb.Left, vb.Bottom - sr.Top, sr.Right - vb.Left,
+						vb.Bottom - sr.Bottom);
 					var o = GetVirtualImageOffset(s.Page);
 					var area = SelectionRegion;
 					area.Offset(-o.X, -o.Y);
@@ -673,6 +739,7 @@ namespace PDFPatcher.Functions
 			if (area.IsEmpty) {
 				return Editor.PageRegion.Empty;
 			}
+
 			var b = GetOffsetRectangle(GetImageViewPort());
 			var p1 = TransposeVirtualImageToPagePosition(area.Left.ToInt32(), area.Top.ToInt32());
 			var p2 = TransposeVirtualImageToPagePosition(area.Right.ToInt32(), area.Bottom.ToInt32());
@@ -690,17 +757,20 @@ namespace PDFPatcher.Functions
 			if (_mupdf.IsDocumentOpened == false) {
 				return ti;
 			}
+
 			lock (_mupdf.SyncObj) {
 				var page = _cache.LoadPage(position.Page);
 				var point = position.Location.ToPageCoordinate(page.VisualBound);
 				if (page.VisualBound.Contains(point) == false
-					|| page.TextPage.BBox.Contains(point) == false) {
+				    || page.TextPage.BBox.Contains(point) == false) {
 					return ti;
 				}
+
 				foreach (var block in page.TextPage.Blocks) {
 					if (block.Type != ContentBlockType.Text || block.BBox.Contains(point) == false) {
 						continue;
 					}
+
 					var tb = block as MuTextBlock;
 					HashSet<IntPtr> s = null;
 					MuTextLine l = null;
@@ -710,11 +780,13 @@ namespace PDFPatcher.Functions
 							if (line.BBox.Contains(point) == false) {
 								continue;
 							}
+
 							s = new HashSet<IntPtr>(); // 获取选中文本行的文本样式集合
 							r = new List<MuTextLine>();
 							foreach (var ch in line.Characters) {
 								s.Add(ch.FontID);
 							}
+
 							rect = line.BBox;
 							l = line;
 							r.Add(l);
@@ -723,6 +795,7 @@ namespace PDFPatcher.Functions
 							if (line.BBox.Top - l.BBox.Bottom > line.BBox.Height) {
 								break;
 							}
+
 							// 获取具有相同样式的邻接文本行
 							foreach (var ch in line.Characters) {
 								if (s.Contains(ch.FontID)) {
@@ -732,17 +805,21 @@ namespace PDFPatcher.Functions
 								}
 							}
 						}
-					NEXT:;
+
+						NEXT: ;
 					}
+
 					if (l != null) {
 						var spans = new List<MuTextSpan>(r.Count * 2);
 						foreach (var item in r) {
 							spans.AddRange(item.Spans);
 						}
+
 						return new Editor.TextInfo(page, rect, r, spans);
 					}
 				}
 			}
+
 			return ti;
 		}
 
@@ -755,19 +832,23 @@ namespace PDFPatcher.Functions
 			if (_mupdf.IsDocumentOpened == false) {
 				return null;
 			}
+
 			lock (_mupdf.SyncObj) {
 				var page = _cache.LoadPage(region.Page);
 				var pr = region.Region.ToPageCoordinate(page.VisualBound);
 				if (pr.Intersect(page.VisualBound).IsEmpty) {
 					return null;
 				}
+
 				if (pr.Intersect(page.TextPage.BBox).IsEmpty) {
 					return null;
 				}
+
 				foreach (var block in page.TextPage.Blocks) {
 					if (block.Type != ContentBlockType.Text || pr.Intersect(block.BBox).IsEmpty) {
 						continue;
 					}
+
 					var s = new HashSet<int>();
 					var r = new List<MuTextLine>();
 					foreach (var line in block.Lines) {
@@ -775,9 +856,11 @@ namespace PDFPatcher.Functions
 							r.Add(line);
 						}
 					}
+
 					return r;
 				}
 			}
+
 			return null;
 		}
 
@@ -789,9 +872,11 @@ namespace PDFPatcher.Functions
 			if (cached && _ocrResults.TryGetValue(pageNumber, out var r)) {
 				return r;
 			}
+
 			r = Ocr(pageNumber);
 			return _ocrResults[pageNumber] = r;
 		}
+
 		public string[] CleanUpOcrResult(List<Model.TextLine> result) {
 			return result.ConvertAll((t) => Processor.OcrProcessor.CleanUpText(t.Text, _OcrOptions)).ToArray();
 		}
@@ -828,6 +913,7 @@ namespace PDFPatcher.Functions
 		public MuPage LoadPage(int pageNumber) {
 			return _cache.LoadPage(pageNumber);
 		}
+
 		public MuRectangle GetPageBound(int pageNumber) {
 			return _pageBounds[pageNumber];
 		}
@@ -837,18 +923,22 @@ namespace PDFPatcher.Functions
 			if (bmp != null) {
 				return bmp;
 			}
+
 			if (_mupdf == null || _mupdf.IsDocumentOpened == false || Enabled == false) {
 				return null;
 			}
+
 			lock (_mupdf.SyncObj) {
 				var p = _cache.LoadPage(pageNumber);
 				if (pageNumber < _DisplayRange.StartValue - 1 || pageNumber > _DisplayRange.EndValue + 1) {
 					return null;
 				}
+
 				Tracker.DebugMessage("render page " + pageNumber);
 				bmp = p.RenderBitmapPage(width, height, _renderOptions);
 				_cache.AddBitmap(pageNumber, bmp);
 			}
+
 			return bmp;
 		}
 
@@ -856,21 +946,24 @@ namespace PDFPatcher.Functions
 			if (_mupdf == null) {
 				return 0;
 			}
-			var p = HorizontalFlow ?
-				Array.BinarySearch(_pageOffsets, 1, _pageOffsets.Length - 1, offsetX, __horizontalComparer) :
-				Array.BinarySearch(_pageOffsets, 1, _pageOffsets.Length - 1, offsetY);
+
+			var p = HorizontalFlow
+				? Array.BinarySearch(_pageOffsets, 1, _pageOffsets.Length - 1, offsetX, __horizontalComparer)
+				: Array.BinarySearch(_pageOffsets, 1, _pageOffsets.Length - 1, offsetY);
 			if (p < 0) {
 				p = ~p;
 				if (HorizontalFlow == false) {
 					--p;
 				}
 			}
+
 			if (p >= _pageOffsets.Length) {
 				return _pageOffsets.Length - 1;
 			}
 			else if (p < 1) {
 				return 1;
 			}
+
 			return p;
 		}
 
@@ -881,15 +974,19 @@ namespace PDFPatcher.Functions
 			if (s.Page > 0) {
 				z = GetZoomFactorForPage(_pageBounds[s.Page]);
 			}
+
 			if (HorizontalScroll.Value != 0 || VerticalScroll.Value != 0) {
 				pp = TransposeVirtualImageToPagePosition(HorizontalScroll.Value, VerticalScroll.Value);
 			}
+
 			if (CalculateZoomFactor(zoomMode) == false) {
 				return false;
 			}
+
 			if (_mupdf == null) {
 				return false;
 			}
+
 			UpdateDisplay(true);
 			// 保持选区尺寸比例
 			if (z > 0) {
@@ -899,6 +996,7 @@ namespace PDFPatcher.Functions
 				r = new RectangleF(p.X + r.Left * z, p.Y + r.Top * z, r.Width * z, r.Height * z);
 				SelectionRegion = r;
 			}
+
 			if (pp.Page > 0) {
 				if (_zoomMode == ZoomMode.FitPage) {
 					ShowPage(pp.Page);
@@ -907,6 +1005,7 @@ namespace PDFPatcher.Functions
 					ScrollToPosition(pp);
 				}
 			}
+
 			return true;
 		}
 
@@ -915,9 +1014,9 @@ namespace PDFPatcher.Functions
 				case Constants.DestinationAttributes.ViewType.Fit:
 					_zoomMode = ZoomMode.FitPage;
 					_zoomFactor = Math.Min(
-							(GetInsideViewPort().Width - __pageMargin - __pageMargin) / _maxDimension.Width,
-							(GetInsideViewPort().Height - __pageMargin - __pageMargin) / _maxDimension.Height
-						);
+						(GetInsideViewPort().Width - __pageMargin - __pageMargin) / _maxDimension.Width,
+						(GetInsideViewPort().Height - __pageMargin - __pageMargin) / _maxDimension.Height
+					);
 					break;
 				case Constants.DestinationAttributes.ViewType.FitH:
 					_zoomMode = ZoomMode.FitHorizontal;
@@ -936,21 +1035,26 @@ namespace PDFPatcher.Functions
 						f = zoomMode.ToInt32();
 					}
 					else { return false; }
+
 					if (f == 0) {
 						return false;
 					}
+
 					_zoomMode = ZoomMode.Custom;
 					_zoomFactor = (float)f / 100f * _renderOptions.Dpi / 72f;
 					break;
 			}
+
 			return true;
 		}
 
 		void UpdateDisplay() { UpdateDisplay(false); }
+
 		void UpdateDisplay(bool resized) {
 			if (DesignMode) {
 				return;
 			}
+
 			_refreshTimer.Stop();
 			_renderWorker.CancelAsync();
 			_cancelRendering = true;
@@ -961,6 +1065,7 @@ namespace PDFPatcher.Functions
 					}
 				}
 			}
+
 			_ocrResults.Clear();
 			_cancelRendering = false;
 			_refreshTimer.Start();
@@ -972,6 +1077,7 @@ namespace PDFPatcher.Functions
 		}
 
 		#region 坐标转换
+
 		internal bool IsClientPointInSelection(DrawingPoint point) {
 			return SelectionRegion.Contains(PointToImage(point));
 		}
@@ -981,12 +1087,15 @@ namespace PDFPatcher.Functions
 			var o = _pageOffsets[pageNumber];
 			var z = _zoomFactor;
 			if (rtl) {
-				return new RectangleF(o + __pageMargin + box.Left * z, box.Top * z + __pageMargin, box.Width * z, box.Height * z);
+				return new RectangleF(o + __pageMargin + box.Left * z, box.Top * z + __pageMargin, box.Width * z,
+					box.Height * z);
 			}
 			else {
-				return new RectangleF(box.Left * z + __pageMargin, box.Top * z + __pageMargin + o, box.Width * z, box.Height * z);
+				return new RectangleF(box.Left * z + __pageMargin, box.Top * z + __pageMargin + o, box.Width * z,
+					box.Height * z);
 			}
 		}
+
 		/// <summary>
 		/// 将屏幕客户区域的位置转换为页面坐标。
 		/// </summary>
@@ -997,6 +1106,7 @@ namespace PDFPatcher.Functions
 			if (_DisplayRange.StartValue <= 0 || _pageBounds == null) {
 				return Editor.PagePosition.Empty;
 			}
+
 			var p = PointToImage(clientX, clientY);
 			return TransposeVirtualImageToPagePosition(p.X, p.Y);
 		}
@@ -1009,7 +1119,8 @@ namespace PDFPatcher.Functions
 		/// <returns>屏幕客户区域的位置。</returns>
 		internal DrawingPoint TransposeVirtualImageToClient(float imageX, float imageY) {
 			var vp = GetImageViewPort();
-			return new DrawingPoint(vp.Left + AutoScrollPosition.X + imageX.ToInt32(), vp.Top + AutoScrollPosition.Y + imageY.ToInt32());
+			return new DrawingPoint(vp.Left + AutoScrollPosition.X + imageX.ToInt32(),
+				vp.Top + AutoScrollPosition.Y + imageY.ToInt32());
 		}
 
 		/// <summary>
@@ -1045,6 +1156,7 @@ namespace PDFPatcher.Functions
 			if (_DisplayRange.StartValue <= 0 || _pageBounds == null || IsPointInImage(clientX, clientY) == false) {
 				return Editor.PagePoint.Empty;
 			}
+
 			var p = PointToImage(clientX, clientY);
 			var n = GetPageNumberFromOffset(p.X, p.Y);
 			var o = GetVirtualImageOffset(n);
@@ -1070,7 +1182,8 @@ namespace PDFPatcher.Functions
 				b.Contains(ox, oy));
 		}
 
-		internal Editor.PagePosition TransposePageImageToPagePosition(int pageNumber, float pageImageX, float pageImageY) {
+		internal Editor.PagePosition TransposePageImageToPagePosition(int pageNumber, float pageImageX,
+			float pageImageY) {
 			var b = _pageBounds[pageNumber];
 			var z = _zoomFactor;
 			var ox = pageImageX / z;
@@ -1080,11 +1193,13 @@ namespace PDFPatcher.Functions
 				pageImageX.ToInt32(), pageImageY.ToInt32(),
 				b.Contains(ox, oy));
 		}
+
 		#endregion
 
 		int GetPageFullWidth(float pageWidth) {
 			return __pageMargin + __pageMargin + (pageWidth * _zoomFactor).ToInt32();
 		}
+
 		int GetPageFullHeight(float pageHeight) {
 			return __pageMargin + __pageMargin + (pageHeight * _zoomFactor).ToInt32();
 		}
@@ -1093,12 +1208,15 @@ namespace PDFPatcher.Functions
 			if (_mupdf == null || _pageOffsets == null) {
 				return false;
 			}
+
 			if (pageNumber < 0) {
 				pageNumber = _mupdf.PageCount + pageNumber + 1;
 			}
+
 			if (pageNumber <= 0 || pageNumber > _mupdf.PageCount) {
 				return false;
 			}
+
 			_DisplayRange.StartValue = pageNumber;
 			try {
 				if (HorizontalFlow) {
@@ -1112,6 +1230,7 @@ namespace PDFPatcher.Functions
 				FormHelper.ErrorBox(ex.Message);
 				return false;
 			}
+
 			//if (PageChanged != null) {
 			//	PageChanged (this, new PageChangedEventArgs (pageNumber));
 			//}
@@ -1125,8 +1244,10 @@ namespace PDFPatcher.Functions
 			var h = HorizontalFlow;
 			ScrollTo(
 				(position.PageX == 0 && h == false) ? HorizontalScroll.Value : (l.X * z).ToInt32() + op.X,
-				(position.PageY == 0 && h) ? VerticalScroll.Value : (position.Location.Y == 0 ? 0 : (l.Y * z).ToInt32()) + op.Y
-				);
+				(position.PageY == 0 && h)
+					? VerticalScroll.Value
+					: (position.Location.Y == 0 ? 0 : (l.Y * z).ToInt32()) + op.Y
+			);
 		}
 
 		bool Next(int deltaPageNumber) {
@@ -1142,11 +1263,13 @@ namespace PDFPatcher.Functions
 					if (b.Width > w) {
 						w = b.Width;
 					}
+
 					if (b.Height > h) {
 						h = b.Height;
 					}
 				}
 			}
+
 			_maxDimension = new SizeF(w, h);
 		}
 
@@ -1154,6 +1277,7 @@ namespace PDFPatcher.Functions
 			if (_pageOffsets == null || _pageBounds == null) {
 				return;
 			}
+
 			int h = 0, w = 0;
 			var l = _mupdf.PageCount + 1;
 			var vs = GetInsideViewPort().Size;
@@ -1168,11 +1292,13 @@ namespace PDFPatcher.Functions
 							h = b.Height.ToInt32();
 						}
 					}
+
 					var w1 = GetPageFullWidth(_pageBounds[1].Width);
 					if (w1 < vs.Width) {
 						w += vs.Width - w1;
 					}
 				}
+
 				VirtualSize = new Size(w, GetPageFullHeight(h));
 			}
 			else {
@@ -1185,28 +1311,51 @@ namespace PDFPatcher.Functions
 							w = b.Width.ToInt32();
 						}
 					}
+
 					var h1 = GetPageFullHeight(_pageBounds[1].Height);
 					if (h1 < vs.Height) {
 						h += vs.Height - h1;
 					}
 				}
+
 				VirtualSize = new Size(GetPageFullWidth(w), h);
 			}
+
 			_lockDown = false;
 		}
 
 		public void ExecuteCommand(string cmd) {
 			switch (cmd) {
-				case "_FirstPage": ShowPage(1); break;
-				case "_PreviousPage": Next(-1); break;
-				case "_NextPage": Next(1); break;
-				case "_LastPage": ShowPage(-1); break;
-				case "_ScrollVertical": ContentDirection = Editor.ContentDirection.TopToDown; break;
-				case "_ScrollHorizontal": ContentDirection = Editor.ContentDirection.RightToLeft; break;
-				case "_TrueColorSpace": GrayScale = false; break;
-				case "_GrayColorSpace": GrayScale = true; break;
-				case "_InvertColor": InvertColor = !InvertColor; break;
-				case "_Refresh": UpdateDisplay(); break;
+				case "_FirstPage":
+					ShowPage(1);
+					break;
+				case "_PreviousPage":
+					Next(-1);
+					break;
+				case "_NextPage":
+					Next(1);
+					break;
+				case "_LastPage":
+					ShowPage(-1);
+					break;
+				case "_ScrollVertical":
+					ContentDirection = Editor.ContentDirection.TopToDown;
+					break;
+				case "_ScrollHorizontal":
+					ContentDirection = Editor.ContentDirection.RightToLeft;
+					break;
+				case "_TrueColorSpace":
+					GrayScale = false;
+					break;
+				case "_GrayColorSpace":
+					GrayScale = true;
+					break;
+				case "_InvertColor":
+					InvertColor = !InvertColor;
+					break;
+				case "_Refresh":
+					UpdateDisplay();
+					break;
 			}
 		}
 
@@ -1221,6 +1370,7 @@ namespace PDFPatcher.Functions
 				_LiteralZoom = Constants.DestinationAttributes.ViewType.FitH;
 				VirtualSize = new Size(1, 1);
 			}
+
 			ShowTextBorders = false;
 			_pageBounds = null;
 			_pageOffsets = null;
@@ -1229,6 +1379,7 @@ namespace PDFPatcher.Functions
 					_cache.Clear();
 				}
 			}
+
 			_contentFlow = Editor.ContentDirection.TopToDown;
 			_OcrOptions.CompressWhiteSpaces = true;
 			_ocrResults = new Dictionary<int, List<Model.TextLine>>();
@@ -1246,6 +1397,7 @@ namespace PDFPatcher.Functions
 					_cache.Dispose();
 				}
 			}
+
 			_renderWorker.Dispose();
 			_refreshTimer.Dispose();
 		}

@@ -14,6 +14,7 @@ namespace Devcorp.Controls.Design
 		public static readonly RGB Empty = new RGB();
 
 		#region Fields
+
 		private int red;
 		private int green;
 		private int blue;
@@ -21,12 +22,13 @@ namespace Devcorp.Controls.Design
 		#endregion
 
 		#region Operators
+
 		public static bool operator ==(RGB item1, RGB item2) {
 			return (
 				item1.Red == item2.Red
 				&& item1.Green == item2.Green
 				&& item1.Blue == item2.Blue
-				);
+			);
 		}
 
 		public static bool operator !=(RGB item1, RGB item2) {
@@ -34,12 +36,13 @@ namespace Devcorp.Controls.Design
 				item1.Red != item2.Red
 				|| item1.Green != item2.Green
 				|| item1.Blue != item2.Blue
-				);
+			);
 		}
 
 		#endregion
 
 		#region Accessors
+
 		[Description("Red component."),]
 		public int Red {
 			get => red;
@@ -57,6 +60,7 @@ namespace Devcorp.Controls.Design
 			get => blue;
 			set => blue = (value > 255) ? 255 : ((value < 0) ? 0 : value);
 		}
+
 		#endregion
 
 		public RGB(int R, int G, int B) {
@@ -66,6 +70,7 @@ namespace Devcorp.Controls.Design
 		}
 
 		#region Methods
+
 		public override bool Equals(Object obj) {
 			if (obj == null || GetType() != obj.GetType()) return false;
 

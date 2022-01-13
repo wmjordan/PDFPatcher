@@ -14,19 +14,21 @@ namespace PDFPatcher.Processor
 	static class OutlineManager
 	{
 		// modifed: added split array for action parameters
-		static readonly char[] __ActionSplitters = new char[] { ' ', '\t', '\r', '\n' };
+		static readonly char[] __ActionSplitters = new char[] {' ', '\t', '\r', '\n'};
 		static readonly char[] __fullWidthNums = "０１２３４５６７８９".ToCharArray();
 		static readonly char[] __halfWidthNums = "0123456789".ToCharArray();
-		static readonly char[] __cmdIdentifiers = new char[] { '=', '﹦', '＝', ':', '：' };
-		static readonly char[] __pageLabelSeparators = new char[] { ';', '；', ',', '，', ' ' };
+		static readonly char[] __cmdIdentifiers = new char[] {'=', '﹦', '＝', ':', '：'};
+		static readonly char[] __pageLabelSeparators = new char[] {';', '；', ',', '，', ' '};
 
-		private static void BookmarkDepth(PdfReader reader, PdfActionExporter exporter, PdfDictionary outline, Dictionary<int, int> pageRefMap, XmlWriter target) {
+		private static void BookmarkDepth(PdfReader reader, PdfActionExporter exporter, PdfDictionary outline,
+			Dictionary<int, int> pageRefMap, XmlWriter target) {
 			while (outline != null) {
 				target.WriteStartElement(Constants.Bookmark);
 
 				target.WriteAttributeString(Constants.BookmarkAttributes.Title,
-					StringHelper.ReplaceControlAndBomCharacters(outline.GetAsString(PdfName.TITLE).Decode(AppContext.Encodings.BookmarkEncoding))
-					);
+					StringHelper.ReplaceControlAndBomCharacters(outline.GetAsString(PdfName.TITLE)
+						.Decode(AppContext.Encodings.BookmarkEncoding))
+				);
 
 				var color = outline.Locate<PdfArray>(PdfName.C);
 				DocInfoExporter.ExportColor(color, target);
@@ -35,13 +37,15 @@ namespace PDFPatcher.Processor
 				if (style != null) {
 					int f = style.IntValue & 0x03;
 					if (f > 0) {
-						target.WriteAttributeString(Constants.BookmarkAttributes.Style, Constants.BookmarkAttributes.StyleType.Names[f]);
+						target.WriteAttributeString(Constants.BookmarkAttributes.Style,
+							Constants.BookmarkAttributes.StyleType.Names[f]);
 					}
 				}
 
 				var count = outline.Get(PdfName.COUNT) as PdfNumber;
 				if (count != null) {
-					target.WriteAttributeString(Constants.BookmarkAttributes.Open, count.IntValue < 0 ? Constants.Boolean.False : Constants.Boolean.True);
+					target.WriteAttributeString(Constants.BookmarkAttributes.Open,
+						count.IntValue < 0 ? Constants.Boolean.False : Constants.Boolean.True);
 				}
 
 				var dest = outline.Locate<PdfObject>(PdfName.DEST);
@@ -51,10 +55,12 @@ namespace PDFPatcher.Processor
 				else {
 					exporter.ExportAction(outline.Locate<PdfDictionary>(PdfName.A), pageRefMap, target);
 				}
+
 				var first = outline.Locate<PdfDictionary>(PdfName.FIRST);
 				if (first != null) {
 					BookmarkDepth(reader, exporter, first, pageRefMap, target);
 				}
+
 				outline = outline.Locate<PdfDictionary>(PdfName.NEXT);
 				target.WriteEndElement();
 			}
@@ -71,6 +77,7 @@ namespace PDFPatcher.Processor
 			if (unitConverter == null) {
 				throw new NullReferenceException("unitConverter");
 			}
+
 			var pages = reader.GetPageRefMapper();
 			var doc = new XmlDocument();
 			doc.AppendElement(Constants.DocumentBookmark);
@@ -83,10 +90,12 @@ namespace PDFPatcher.Processor
 					pages,
 					w);
 			}
+
 			return doc.DocumentElement;
 		}
 
-		private static Object[] CreateOutlines(PdfWriter writer, PdfIndirectReference parent, XmlElement kids, int maxPageNumber, bool namedAsNames) {
+		private static Object[] CreateOutlines(PdfWriter writer, PdfIndirectReference parent, XmlElement kids,
+			int maxPageNumber, bool namedAsNames) {
 			var bookmarks = kids.SelectNodes(Constants.Bookmark);
 			var refs = new PdfIndirectReference[bookmarks.Count];
 			for (int k = 0; k < refs.Length; ++k)
@@ -112,6 +121,7 @@ namespace PDFPatcher.Processor
 						count += n;
 					}
 				}
+
 				outline.Put(PdfName.PARENT, parent);
 				if (ptr > 0)
 					outline.Put(PdfName.PREV, refs[ptr - 1]);
@@ -125,20 +135,24 @@ namespace PDFPatcher.Processor
 					if (bits == -1) {
 						bits = 0;
 					}
+
 					if (bits != 0)
 						outline.Put(PdfName.F, bits);
 				}
+
 				DocInfoImporter.ImportAction(writer, outline, child, maxPageNumber, namedAsNames);
 				writer.AddToBody(outline, refs[ptr]);
 				++ptr;
 			}
-			return new Object[] { refs[0], refs[refs.Length - 1], count };
+
+			return new Object[] {refs[0], refs[refs.Length - 1], count};
 		}
 
 		internal static PdfIndirectReference WriteOutline(PdfWriter writer, XmlElement bookmarks, int maxPageNumber) {
 			if (bookmarks == null || bookmarks.SelectSingleNode(Constants.Bookmark) == null) {
 				return null;
 			}
+
 			var top = new PdfDictionary();
 			var topRef = writer.PdfIndirectReference;
 			var kids = CreateOutlines(writer, topRef, bookmarks, maxPageNumber, false);
@@ -157,11 +171,13 @@ namespace PDFPatcher.Processor
 			if (o == null) {
 				return;
 			}
+
 			if (o != null) {
 				var outlines = o as PRIndirectReference;
 				OutlineTravel(outlines);
 				PdfReader.KillIndirect(outlines);
 			}
+
 			catalog.Remove(PdfName.OUTLINES);
 			PdfReader.KillIndirect(catalog.Get(PdfName.OUTLINES));
 			if (PdfName.USEOUTLINES.Equals(catalog.GetAsName(PdfName.PAGEMODE))) {
@@ -178,6 +194,7 @@ namespace PDFPatcher.Processor
 					if (first != null) {
 						OutlineTravel(first);
 					}
+
 					PdfReader.KillIndirect(outlineR.Get(PdfName.DEST));
 					PdfReader.KillIndirect(outlineR.Get(PdfName.A));
 					outline = (PRIndirectReference)outlineR.Get(PdfName.NEXT);
@@ -203,6 +220,7 @@ namespace PDFPatcher.Processor
 						octal = x.ToText() + octal;
 						v /= 8;
 					} while (v > 0);
+
 					buf.Append(octal.PadLeft(3, '0'));
 				}
 				else if (c == '\\') {
@@ -212,6 +230,7 @@ namespace PDFPatcher.Processor
 					buf.Append(c);
 				}
 			}
+
 			return buf.ToString();
 		}
 
@@ -225,10 +244,12 @@ namespace PDFPatcher.Processor
 					buf.Append(c);
 					continue;
 				}
+
 				if (++k >= len) {
 					buf.Append('\\');
 					break;
 				}
+
 				c = cc[k];
 				if (c >= '0' && c <= '7') {
 					int n = c - '0';
@@ -243,6 +264,7 @@ namespace PDFPatcher.Processor
 							break;
 						}
 					}
+
 					--k;
 					buf.Append((char)n);
 				}
@@ -250,6 +272,7 @@ namespace PDFPatcher.Processor
 					buf.Append(c);
 				}
 			}
+
 			return buf.ToString();
 		}
 
@@ -282,6 +305,7 @@ namespace PDFPatcher.Processor
 								Tracker.TraceMessage("首页页码改为 " + pageOffset);
 								pageOffset--;
 							}
+
 							break;
 						case "缩进标记":
 							indentString = cmdData;
@@ -293,10 +317,12 @@ namespace PDFPatcher.Processor
 								target.DocumentElement.SetAttribute(Constants.Info.ProductVersion, v);
 								Tracker.TraceMessage("导入简易书签文件，版本为：" + v);
 							}
+
 							break;
 						case "打开书签":
 							cmdData = cmdData.ToLowerInvariant();
-							isOpen = (cmdData == "是" || cmdData == "true" || cmdData == "y" || cmdData == "yes" || cmdData == "1");
+							isOpen = (cmdData == "是" || cmdData == "true" || cmdData == "y" || cmdData == "yes" ||
+							          cmdData == "1");
 							break;
 						case Constants.Info.DocumentPath:
 							target.PdfDocumentPath = cmdData.Trim();
@@ -307,11 +333,13 @@ namespace PDFPatcher.Processor
 								Tracker.TraceMessage(Constants.PageLabels + "格式不正确，至少应指定起始页码。");
 								continue;
 							}
+
 							int pn;
 							if (l[0].TryParse(out pn) == false || pn < 1) {
 								Tracker.TraceMessage(Constants.PageLabels + "格式不正确：起始页码应为正整数。");
 								continue;
 							}
+
 							var style = l[1].Length > 0
 								? ValueHelper.MapValue(l[1][0],
 									Constants.PageLabelStyles.SimpleInfoIdentifiers,
@@ -325,6 +353,7 @@ namespace PDFPatcher.Processor
 							if (String.IsNullOrEmpty(prefix) == false) {
 								pl.SetAttribute(Constants.PageLabelsAttributes.Prefix, prefix);
 							}
+
 							pageLabels.AppendChild(pl);
 							continue;
 						case Constants.Info.Title:
@@ -334,17 +363,21 @@ namespace PDFPatcher.Processor
 							docInfo.SetAttribute(cmd, cmdData);
 							break;
 					}
+
 					continue;
 				}
+
 				indent = p = 0;
 				while (s.IndexOf(indentString, p) == p) {
 					p += indentString.Length;
 					indent++;
 				}
+
 				var m = pattern.Match(s, p);
 				if (m.Success == false) {
 					continue;
 				}
+
 				title = m.Groups[1].Value;
 				pnText = m.Groups[2].Value;
 				if (pnText.Length == 0) {
@@ -352,13 +385,16 @@ namespace PDFPatcher.Processor
 				}
 				else {
 					if (pnText.IndexOfAny(__fullWidthNums) != -1) {
-						digits = Array.ConvertAll(m.Groups[2].Value.ToCharArray(), d => ValueHelper.MapValue(d, __fullWidthNums, __halfWidthNums, d));
+						digits = Array.ConvertAll(m.Groups[2].Value.ToCharArray(),
+							d => ValueHelper.MapValue(d, __fullWidthNums, __halfWidthNums, d));
 						pnText = new string(digits, 0, digits.Length);
 					}
+
 					if (pnText.TryParse(out pageNum)) {
 						pageNum += pageOffset;
 					}
 				}
+
 				bookmark = target.CreateBookmark();
 				if (indent == currentIndent) {
 					currentBookmark.ParentNode.AppendChild(bookmark);
@@ -366,8 +402,10 @@ namespace PDFPatcher.Processor
 				else if (indent > currentIndent) {
 					currentBookmark.AppendChild(bookmark);
 					if (indent - currentIndent > 1) {
-						throw new FormatException(String.Concat("在简易书签第 ", lineNum, " 行的缩进格式不正确。\n\n说明：下级书签最多只能比上级书签多一个缩进标记。"));
+						throw new FormatException(String.Concat("在简易书签第 ", lineNum,
+							" 行的缩进格式不正确。\n\n说明：下级书签最多只能比上级书签多一个缩进标记。"));
 					}
+
 					currentIndent++;
 				}
 				else /* indent < currentIndent */ {
@@ -375,15 +413,19 @@ namespace PDFPatcher.Processor
 						currentBookmark = currentBookmark.ParentNode as BookmarkContainer;
 						currentIndent--;
 					}
+
 					currentBookmark.ParentNode.AppendChild(bookmark);
 				}
+
 				bookmark.Title = title;
 				if (isOpen == false) {
 					bookmark.IsOpen = false;
 				}
+
 				if (pageNum > 0) {
 					bookmark.Page = pageNum;
 				}
+
 				currentBookmark = bookmark;
 			}
 		}
@@ -398,6 +440,7 @@ namespace PDFPatcher.Processor
 			if (String.IsNullOrEmpty(value)) {
 				return;
 			}
+
 			writer.Write("#");
 			writer.Write(item);
 			writer.Write("=");
@@ -411,11 +454,13 @@ namespace PDFPatcher.Processor
 		/// <param name="container">书签节点。</param>
 		/// <param name="indent">缩进量。</param>
 		/// <param name="indentChar">缩进字符串。</param>
-		public static void WriteSimpleBookmark(TextWriter writer, BookmarkContainer container, int indent, string indentChar) {
+		public static void WriteSimpleBookmark(TextWriter writer, BookmarkContainer container, int indent,
+			string indentChar) {
 			foreach (BookmarkElement item in container.SubBookmarks) {
 				for (int i = 0; i < indent; i++) {
 					writer.Write(indentChar);
 				}
+
 				writer.Write(item.Title);
 				writer.Write("\t\t");
 				writer.Write(item.Page.ToText());
@@ -433,19 +478,23 @@ namespace PDFPatcher.Processor
 				if (r.Length < b.Length) {
 					throw new FormatException("简易书签文件内容不足。");
 				}
+
 				r.Read(b, 0, b.Length);
 			}
+
 			foreach (var item in Constants.Encoding.Encodings) {
 				if (item == null) {
 					continue;
 				}
+
 				var s = item.GetString(b);
-				if (s.StartsWith(VersionString, StringComparison.Ordinal) || s.StartsWith(VersionString2, StringComparison.Ordinal)) {
+				if (s.StartsWith(VersionString, StringComparison.Ordinal) ||
+				    s.StartsWith(VersionString2, StringComparison.Ordinal)) {
 					return item;
 				}
 			}
+
 			return Encoding.Default;
 		}
-
 	}
 }

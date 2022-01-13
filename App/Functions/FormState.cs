@@ -21,6 +21,7 @@ namespace PDFPatcher.Functions
 				if (targetForm.WindowState == FormWindowState.Maximized) {
 					targetForm.WindowState = FormWindowState.Normal;
 				}
+
 				Save(targetForm);
 				targetForm.FormBorderStyle = FormBorderStyle.None;
 				targetForm.TopMost = true;

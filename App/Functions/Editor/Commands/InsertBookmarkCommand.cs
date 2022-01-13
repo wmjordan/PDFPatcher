@@ -23,11 +23,13 @@ namespace PDFPatcher.Functions.Editor
 			if (pp.Page == 0) {
 				return;
 			}
+
 			if (Control.ModifierKeys == Keys.Control) {
 				v.PinPoint = v.PointToImage(cp);
 				ShowInsertBookmarkDialog(controller, cp, new EditModel.Region(pp, null, EditModel.TextSource.Empty));
 				return;
 			}
+
 			var r = controller.CopyText(cp, pp);
 			ShowInsertBookmarkDialog(controller, cp, r);
 		}
@@ -37,6 +39,7 @@ namespace PDFPatcher.Functions.Editor
 			if (p.Page == 0) {
 				return;
 			}
+
 			var f = GetDialog(controller);
 			var v = controller.View.Viewer;
 			var vp = v.GetImageViewPort();
@@ -54,6 +57,7 @@ namespace PDFPatcher.Functions.Editor
 			else {
 				fp = new Point(mousePoint.X + 20, mousePoint.Y - f.Height);
 			}
+
 			var l = v.PointToScreen(fp);
 			if (l.Y < 0) {
 				l.Y = l.Y + (int)sr.Height + f.Height + 40;
@@ -61,14 +65,17 @@ namespace PDFPatcher.Functions.Editor
 					l.Y = Screen.PrimaryScreen.WorkingArea.Height - f.Height;
 				}
 			}
+
 			if (l.X < v.PointToScreen(Point.Empty).X) {
 				l.X = v.PointToScreen(Point.Empty).X;
 			}
+
 			f.Location = l;
 			f.TargetPosition = p.PageY;
 			if (String.IsNullOrEmpty(region.Text) == false) {
 				f.Title = __RemoveOcrWhiteSpace.Replace(region.Text, " ").Trim();
 			}
+
 			f.Comment = region.LiteralTextSource;
 			f.Show();
 			f.TargetPageNumber = p.Page;
@@ -79,9 +86,8 @@ namespace PDFPatcher.Functions.Editor
 				_dialog.Controller = controller;
 				return _dialog;
 			}
-			_dialog = new InsertBookmarkForm {
-				Controller = controller
-			};
+
+			_dialog = new InsertBookmarkForm {Controller = controller};
 			_dialog.OkClicked += (object sender, EventArgs e) => {
 				var f = (InsertBookmarkForm)sender;
 				var c = f.Controller;
@@ -90,6 +96,7 @@ namespace PDFPatcher.Functions.Editor
 					FormHelper.ErrorBox("书签标题不能为空。");
 					return;
 				}
+
 				c.Model.LockDownViewer = true;
 				c.InsertBookmark(t, f.TargetPageNumber, f.TargetPosition, (InsertBookmarkPositionType)f.InsertMode);
 				c.Model.LockDownViewer = false;
@@ -104,6 +111,5 @@ namespace PDFPatcher.Functions.Editor
 			};
 			return _dialog;
 		}
-
 	}
 }

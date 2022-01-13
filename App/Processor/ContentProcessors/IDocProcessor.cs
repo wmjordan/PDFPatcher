@@ -32,6 +32,5 @@ namespace PDFPatcher.Processor
 		/// </summary>
 		/// <param name="context">包含传入文档的 <see cref="DocProcessorContext"/></param>
 		void EndProcess(DocProcessorContext context);
-
 	}
 }

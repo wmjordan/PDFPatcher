@@ -22,12 +22,14 @@ namespace PDFPatcher.Functions.Editor
 			if (b.FocusedItem == null) {
 				return;
 			}
+
 			switch (_viewType) {
 				case Constants.DestinationAttributes.ViewType.XYZ:
 					using (var form = new ZoomRateEntryForm()) {
 						if (form.ShowDialog() != DialogResult.OK) {
 							return;
 						}
+
 						var z = form.ZoomRate;
 						float r;
 						if (z == Constants.Coordinates.Unchanged) {
@@ -37,6 +39,7 @@ namespace PDFPatcher.Functions.Editor
 							controller.ProcessBookmarks(new ChangeZoomRateProcessor(r));
 						}
 					}
+
 					break;
 				case Constants.Coordinates.Unchanged:
 					controller.ProcessBookmarks(new ChangeZoomRateProcessor(null));
@@ -44,9 +47,11 @@ namespace PDFPatcher.Functions.Editor
 				case "_ChangeCoordinates":
 					using (var f = new NewCoordinateEntryForm()) {
 						if (f.ShowDialog() == DialogResult.OK) {
-							controller.ProcessBookmarks(new ChangeCoordinateProcessor(f.CoordinateName, f.AdjustmentValue, f.IsAbsolute, f.IsProportional));
+							controller.ProcessBookmarks(new ChangeCoordinateProcessor(f.CoordinateName,
+								f.AdjustmentValue, f.IsAbsolute, f.IsProportional));
 						}
 					}
+
 					break;
 				case "_BookmarkAction":
 					b.ShowBookmarkProperties(b.GetFirstSelectedModel<Model.BookmarkElement>());
@@ -56,6 +61,5 @@ namespace PDFPatcher.Functions.Editor
 					break;
 			}
 		}
-
 	}
 }

@@ -10,7 +10,8 @@ namespace MuPdfSharp
 		Rectangle BBox { get; }
 	}
 
-	[DebuggerDisplay("(Abort: {_Abort}, Progress: {_Progress}/{_ProgressMax}, Errors: {_Errors}, Incomplete: {_Incomplete})")]
+	[DebuggerDisplay(
+		"(Abort: {_Abort}, Progress: {_Progress}/{_ProgressMax}, Errors: {_Errors}, Incomplete: {_Incomplete})")]
 	public struct MuCookie
 	{
 		int _Abort;
@@ -120,12 +121,16 @@ namespace MuPdfSharp
 	public readonly struct Point : IEquatable<Point>
 	{
 		public readonly float X, Y;
+
 		public override string ToString() {
 			return String.Concat("(", X, ",", Y, ")");
 		}
+
 		public Point(float x, float y) {
-			X = x; Y = y;
+			X = x;
+			Y = y;
 		}
+
 		/// <summary>
 		/// 将 PDF 页面坐标点转换为渲染页面坐标点。
 		/// </summary>
@@ -134,15 +139,19 @@ namespace MuPdfSharp
 		public Point ToPageCoordinate(Rectangle pageVisualBound) {
 			return new Point((X - pageVisualBound.Left), pageVisualBound.Height - (Y - pageVisualBound.Top));
 		}
+
 		public static explicit operator System.Drawing.Point(Point point) {
 			return new System.Drawing.Point(point.X.ToInt32(), point.Y.ToInt32());
 		}
+
 		public static implicit operator System.Drawing.PointF(Point point) {
 			return new System.Drawing.PointF(point.X, point.Y);
 		}
+
 		public static implicit operator Point(System.Drawing.Point point) {
 			return new Point(point.X, point.Y);
 		}
+
 		public static implicit operator Point(System.Drawing.PointF point) {
 			return new Point(point.X, point.Y);
 		}
@@ -176,12 +185,14 @@ namespace MuPdfSharp
 	public readonly struct BBox : IEquatable<BBox>
 	{
 		public readonly int Left, Top, Right, Bottom;
+
 		public BBox(int left, int top, int right, int bottom) {
 			Left = left;
 			Top = top;
 			Right = right;
 			Bottom = bottom;
 		}
+
 		public System.Drawing.Size Size => new System.Drawing.Size(Width, Height);
 		public bool IsEmpty => Left == Right || Top == Bottom;
 		public bool IsInfinite => Left > Right || Top > Bottom;
@@ -206,9 +217,9 @@ namespace MuPdfSharp
 
 		public bool Equals(BBox other) {
 			return Left == other.Left &&
-				   Top == other.Top &&
-				   Right == other.Right &&
-				   Bottom == other.Bottom;
+			       Top == other.Top &&
+			       Right == other.Right &&
+			       Bottom == other.Bottom;
 		}
 
 		public override int GetHashCode() {
@@ -250,17 +261,20 @@ namespace MuPdfSharp
 		private static int SafeInt(double f) {
 			return (f > int.MaxValue) ? int.MaxValue : ((f < int.MinValue) ? int.MinValue : (int)f);
 		}
+
 		public System.Drawing.SizeF Size => new System.Drawing.SizeF(Width, Height);
 		public bool IsEmpty => Left == Right || Top == Bottom;
 		public bool IsInfinite => Left > Right || Top > Bottom;
 		public float Width => Right - Left;
 		public float Height => Bottom - Top;
+
 		public BBox Round => new BBox(
-					SafeInt(Math.Floor(Left + 0.001)),
-					SafeInt(Math.Floor(Top + 0.001)),
-					SafeInt(Math.Ceiling(Right - 0.001)),
-					SafeInt(Math.Ceiling(Bottom - 0.001))
-				);
+			SafeInt(Math.Floor(Left + 0.001)),
+			SafeInt(Math.Floor(Top + 0.001)),
+			SafeInt(Math.Ceiling(Right - 0.001)),
+			SafeInt(Math.Ceiling(Bottom - 0.001))
+		);
+
 		public override string ToString() {
 			return string.Concat("(", Left, ",", Top, ")-(", Right, ",", Bottom, ")");
 		}
@@ -273,9 +287,11 @@ namespace MuPdfSharp
 		public bool Contains(Point point) {
 			return Right >= point.X && Left <= point.X && Top <= point.Y && Bottom >= point.Y;
 		}
+
 		public bool Contains(float pointX, float pointY) {
 			return Right >= pointX && Left <= pointX && Top <= pointY && Bottom >= pointY;
 		}
+
 		/// <summary>返回当前矩形区域是否与另一个矩形区域存在交集。</summary>
 		/// <param name="other">另一个矩形区域。</param>
 		/// <returns>包含矩形区域时返回 true。</returns>
@@ -286,8 +302,10 @@ namespace MuPdfSharp
 			else if (IsInfinite || other.IsEmpty) {
 				return true;
 			}
+
 			return Contains(other.Left, other.Top) && Contains(other.Right, other.Bottom);
 		}
+
 		/// <summary>返回当前矩形区域与另一个矩形区域的交集。</summary>
 		/// <param name="other">另一个矩形区域。</param>
 		/// <returns>返回两个矩形区域的交集。</returns>
@@ -295,12 +313,15 @@ namespace MuPdfSharp
 			if (IsEmpty || other.IsEmpty) {
 				return Rectangle.Empty;
 			}
+
 			if (other.IsInfinite) {
 				return this;
 			}
+
 			if (IsInfinite) {
 				return other;
 			}
+
 			float x0, y0, x1, y1;
 			x0 = Left < other.Left ? other.Left : Left;
 			y0 = Top < other.Top ? other.Top : Top;
@@ -309,8 +330,10 @@ namespace MuPdfSharp
 			if (x1 < x0 || y1 < y0) {
 				return Rectangle.Empty;
 			}
+
 			return new Rectangle(x0, y0, x1, y1);
 		}
+
 		/// <summary>返回将当前矩形区域乘以指定比例的区域。</summary>
 		/// <param name="multiplier">比例乘数。</param>
 		/// <returns>拉伸后的矩形区域。</returns>
@@ -325,15 +348,17 @@ namespace MuPdfSharp
 			if (IsEmpty || other.IsInfinite) {
 				return other;
 			}
+
 			if (other.IsEmpty || IsInfinite) {
 				return this;
 			}
+
 			return new Rectangle(
 				Left > other.Left ? other.Left : Left,
 				Top > other.Top ? other.Top : Top,
 				Right < other.Right ? other.Right : Right,
 				Bottom < other.Bottom ? other.Bottom : Bottom
-				);
+			);
 		}
 
 		internal static Rectangle FromArray(MuPdfObject array) {
@@ -352,6 +377,7 @@ namespace MuPdfSharp
 				rect.Width,
 				rect.Height);
 		}
+
 		public static implicit operator System.Drawing.Rectangle(Rectangle rect) {
 			return new System.Drawing.Rectangle(
 				rect.Left.ToInt32(),
@@ -359,18 +385,22 @@ namespace MuPdfSharp
 				rect.Width.ToInt32(),
 				rect.Height.ToInt32());
 		}
+
 		public static Rectangle operator &(Rectangle r1, Rectangle r2) {
 			return r1.Intersect(r2);
 		}
+
 		public static Rectangle operator |(Rectangle r1, Rectangle r2) {
 			return r1.Union(r2);
 		}
+
 		/// <summary>返回两个矩形重叠区域与两矩形最小包容区域的占比。</summary>
 		public static float operator /(Rectangle r1, Rectangle r2) {
 			var i = r1.Intersect(r2);
 			if (i.IsEmpty) {
 				return 0f;
 			}
+
 			var u = r1.Union(r1);
 			return (i.Height * i.Width) / (u.Height * u.Width);
 		}
@@ -390,9 +420,9 @@ namespace MuPdfSharp
 
 		public override int GetHashCode() {
 			return Left.GetHashCode()
-				^ (Right.GetHashCode() << 13 | Right.GetHashCode() >> 19)
-				^ (Top.GetHashCode() << 26 | Top.GetHashCode() >> 6)
-				^ (Bottom.GetHashCode() << 7 | Bottom.GetHashCode() >> 25);
+			       ^ (Right.GetHashCode() << 13 | Right.GetHashCode() >> 19)
+			       ^ (Top.GetHashCode() << 26 | Top.GetHashCode() >> 6)
+			       ^ (Bottom.GetHashCode() << 7 | Bottom.GetHashCode() >> 25);
 		}
 
 		public bool Equals(Rectangle other) {
@@ -429,6 +459,7 @@ namespace MuPdfSharp
 			var y2 = Math.Max(Math.Max(UpperLeft.Y, other.UpperLeft.Y), Math.Max(LowerLeft.Y, other.LowerLeft.Y));
 			return new Quad(new Point(x1, y1), new Point(x2, y2), new Point(x1, y2), new Point(x2, y2));
 		}
+
 		public Rectangle ToRectangle() {
 			var x1 = Math.Min(Math.Min(UpperLeft.X, UpperRight.X), Math.Min(LowerLeft.X, LowerRight.X));
 			var x2 = Math.Max(Math.Max(UpperLeft.X, UpperRight.X), Math.Max(LowerLeft.X, LowerRight.X));
@@ -443,9 +474,9 @@ namespace MuPdfSharp
 
 		public bool Equals(Quad other) {
 			return UpperLeft.Equals(other.UpperLeft) &&
-				   UpperRight.Equals(other.UpperRight) &&
-				   LowerLeft.Equals(other.LowerLeft) &&
-				   LowerRight.Equals(other.LowerRight);
+			       UpperRight.Equals(other.UpperRight) &&
+			       LowerLeft.Equals(other.LowerLeft) &&
+			       LowerRight.Equals(other.LowerRight);
 		}
 
 		public override int GetHashCode() {
@@ -473,33 +504,41 @@ namespace MuPdfSharp
 	public readonly struct Matrix : IEquatable<Matrix>
 	{
 		public readonly float A, B, C, D, E, F;
+
 		/// <summary>
 		/// 返回矩阵的放大方向是否对齐坐标轴（没有斜向拉伸或90整数倍以外的旋转）。
 		/// </summary>
 		public bool IsRectilinear => Math.Abs(B) < Single.Epsilon && Math.Abs(C) < Single.Epsilon
-					|| Math.Abs(A) < Single.Epsilon && Math.Abs(D) < Single.Epsilon;
+		                             || Math.Abs(A) < Single.Epsilon && Math.Abs(D) < Single.Epsilon;
+
 		/// <summary>
 		/// 返回矩阵大致的放大比例。
 		/// </summary>
 		public float Expansion => (float)Math.Sqrt(Math.Abs(A * D - B * C));
+
 		private static float Min4(float a, float b, float c, float d) {
 			return Math.Min(Math.Min(a, b), Math.Min(c, d));
 		}
+
 		private static float Max4(float a, float b, float c, float d) {
 			return Math.Max(Math.Max(a, b), Math.Max(c, d));
 		}
+
 		/// <summary>
 		/// 单元矩阵。
 		/// </summary>
 		public static readonly Matrix Identity = new Matrix(1, 0, 0, 1, 0, 0);
+
 		/// <summary>
 		/// 垂直翻转矩阵。
 		/// </summary>
 		public static readonly Matrix VeritcalFlip = new Matrix(1, 0, 0, -1, 0, 0);
+
 		/// <summary>
 		/// 水平翻转矩阵。
 		/// </summary>
 		public static readonly Matrix HorizontalFlip = new Matrix(-1, 0, 0, 1, 0, 0);
+
 		public Matrix(float a, float b, float c, float d, float e, float f) {
 			A = a;
 			B = b;
@@ -508,6 +547,7 @@ namespace MuPdfSharp
 			E = e;
 			F = f;
 		}
+
 		/// <summary>
 		/// 将两个矩阵相乘。
 		/// </summary>
@@ -523,18 +563,23 @@ namespace MuPdfSharp
 				one.E * two.A + one.F * two.C + two.E,
 				one.E * two.B + one.F * two.D + two.F);
 		}
+
 		public static Matrix Scale(float x, float y) {
 			return new Matrix(x, 0, 0, y, 0, 0);
 		}
+
 		public Matrix ScaleTo(float x, float y) {
 			return Concat(this, Scale(x, y));
 		}
+
 		public static Matrix Shear(float h, float v) {
 			return new Matrix(1, v, h, 1, 0, 0);
 		}
+
 		public Matrix ShearTo(float x, float y) {
 			return Concat(this, Shear(x, y));
 		}
+
 		public static Matrix Rotate(float theta) {
 			float s;
 			float c;
@@ -567,21 +612,27 @@ namespace MuPdfSharp
 
 			return new Matrix(c, s, -s, c, 0, 0);
 		}
+
 		public Matrix RotateTo(float theta) {
 			return Concat(this, Rotate(theta));
 		}
+
 		public static Matrix Translate(float tx, float ty) {
 			return new Matrix(1, 0, 0, 1, tx, ty);
 		}
+
 		public Matrix TranslateTo(float tx, float ty) {
 			return Concat(this, Translate(tx, ty));
 		}
+
 		public Point Transform(Point p) {
 			return new Point(p.X * A + p.Y * C + E, p.X * B + p.Y * D + F);
 		}
+
 		public Point Transform(float x, float y) {
 			return new Point(x * A + y * C + E, x * B + y * D + F);
 		}
+
 		public Rectangle Transform(Rectangle rect) {
 			Point s, t, u, v;
 
@@ -596,7 +647,7 @@ namespace MuPdfSharp
 				Min4(s.Y, t.Y, u.Y, v.Y),
 				Max4(s.X, t.X, u.X, v.X),
 				Max4(s.Y, t.Y, u.Y, v.Y)
-				);
+			);
 		}
 
 		public override bool Equals(object obj) {
@@ -626,5 +677,4 @@ namespace MuPdfSharp
 			return !(matrix1 == matrix2);
 		}
 	}
-
 }

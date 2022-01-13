@@ -126,8 +126,7 @@ namespace Cyotek.Windows.Forms.Demo
 
 		#region Properties
 
-		[Browsable(false)]
-		public DragHandleCollection DragHandles => _dragHandles;
+		[Browsable(false)] public DragHandleCollection DragHandles => _dragHandles;
 
 		[Category("Appearance")]
 		[DefaultValue(8)]
@@ -310,9 +309,11 @@ namespace Cyotek.Windows.Forms.Demo
 			imagePoint = PointToImage(e.Location);
 			selectionRegion = SelectionRegion;
 
-			if (e.Button == MouseButtons.Left && (selectionRegion.Contains(imagePoint) || HitTest(e.Location) != DragHandleAnchor.None)) {
+			if (e.Button == MouseButtons.Left &&
+			    (selectionRegion.Contains(imagePoint) || HitTest(e.Location) != DragHandleAnchor.None)) {
 				_dragOrigin = e.Location;
-				_dragOriginOffset = new Point(imagePoint.X - (int)selectionRegion.X, imagePoint.Y - (int)selectionRegion.Y);
+				_dragOriginOffset = new Point(imagePoint.X - (int)selectionRegion.X,
+					imagePoint.Y - (int)selectionRegion.Y);
 			}
 			else {
 				_dragOriginOffset = Point.Empty;
@@ -330,7 +331,8 @@ namespace Cyotek.Windows.Forms.Demo
 		/// </param>
 		protected override void OnMouseMove(MouseEventArgs e) {
 			// start either a move or a resize operation
-			if (!IsSelecting && !_isMoving && !_isResizing && e.Button == MouseButtons.Left && !_dragOrigin.IsEmpty && IsOutsideDragZone(e.Location)) {
+			if (!IsSelecting && !_isMoving && !_isResizing && e.Button == MouseButtons.Left && !_dragOrigin.IsEmpty &&
+			    IsOutsideDragZone(e.Location)) {
 				DragHandleAnchor anchor;
 
 				anchor = HitTest(_dragOrigin);
@@ -339,9 +341,7 @@ namespace Cyotek.Windows.Forms.Demo
 					// move
 					StartMove();
 				}
-				else if (_dragHandles[anchor].
-						   Enabled && _dragHandles[anchor].
-						   Visible) {
+				else if (_dragHandles[anchor].Enabled && _dragHandles[anchor].Visible) {
 					// resize
 					StartResize(anchor);
 				}
@@ -437,7 +437,8 @@ namespace Cyotek.Windows.Forms.Demo
 		///   The <see cref="System.EventArgs" /> instance containing the event data.
 		/// </param>
 		protected override void OnSelecting(ImageBoxCancelEventArgs e) {
-			e.Cancel = _isMoving || _isResizing || SelectionRegion.Contains(PointToImage(e.Location)) || HitTest(e.Location) != DragHandleAnchor.None;
+			e.Cancel = _isMoving || _isResizing || SelectionRegion.Contains(PointToImage(e.Location)) ||
+			           HitTest(e.Location) != DragHandleAnchor.None;
 
 			base.OnSelecting(e);
 		}
@@ -554,8 +555,7 @@ namespace Cyotek.Windows.Forms.Demo
 					DragHandleAnchor handleAnchor;
 
 					handleAnchor = _isResizing ? _resizeAnchor : HitTest(point);
-					if (handleAnchor != DragHandleAnchor.None && _dragHandles[handleAnchor].
-						  Enabled) {
+					if (handleAnchor != DragHandleAnchor.None && _dragHandles[handleAnchor].Enabled) {
 						switch (handleAnchor) {
 							case DragHandleAnchor.TopLeft:
 							case DragHandleAnchor.BottomRight:
@@ -615,7 +615,8 @@ namespace Cyotek.Windows.Forms.Demo
 
 			dragWidth = SystemInformation.DragSize.Width;
 			dragHeight = SystemInformation.DragSize.Height;
-			dragZone = new Rectangle(_dragOrigin.X - (dragWidth / 2), _dragOrigin.Y - (dragHeight / 2), dragWidth, dragHeight);
+			dragZone = new Rectangle(_dragOrigin.X - (dragWidth / 2), _dragOrigin.Y - (dragHeight / 2), dragWidth,
+				dragHeight);
 
 			return !dragZone.Contains(location);
 		}
@@ -654,22 +655,22 @@ namespace Cyotek.Windows.Forms.Demo
 					halfWidth = Convert.ToInt32(selectionRegion.Width * ZoomFactor) / 2;
 					halfHeight = Convert.ToInt32(selectionRegion.Height * ZoomFactor) / 2;
 
-					_dragHandles[DragHandleAnchor.TopLeft].
-					  Bounds = new Rectangle(left - _dragHandleSize, top - _dragHandleSize, _dragHandleSize, _dragHandleSize);
-					_dragHandles[DragHandleAnchor.TopCenter].
-					  Bounds = new Rectangle(left + halfWidth - halfDragHandleSize, top - _dragHandleSize, _dragHandleSize, _dragHandleSize);
-					_dragHandles[DragHandleAnchor.TopRight].
-					  Bounds = new Rectangle(right, top - _dragHandleSize, _dragHandleSize, _dragHandleSize);
-					_dragHandles[DragHandleAnchor.MiddleLeft].
-					  Bounds = new Rectangle(left - _dragHandleSize, top + halfHeight - halfDragHandleSize, _dragHandleSize, _dragHandleSize);
-					_dragHandles[DragHandleAnchor.MiddleRight].
-					  Bounds = new Rectangle(right, top + halfHeight - halfDragHandleSize, _dragHandleSize, _dragHandleSize);
-					_dragHandles[DragHandleAnchor.BottomLeft].
-					  Bounds = new Rectangle(left - _dragHandleSize, bottom, _dragHandleSize, _dragHandleSize);
-					_dragHandles[DragHandleAnchor.BottomCenter].
-					  Bounds = new Rectangle(left + halfWidth - halfDragHandleSize, bottom, _dragHandleSize, _dragHandleSize);
-					_dragHandles[DragHandleAnchor.BottomRight].
-					  Bounds = new Rectangle(right, bottom, _dragHandleSize, _dragHandleSize);
+					_dragHandles[DragHandleAnchor.TopLeft].Bounds = new Rectangle(left - _dragHandleSize,
+						top - _dragHandleSize, _dragHandleSize, _dragHandleSize);
+					_dragHandles[DragHandleAnchor.TopCenter].Bounds = new Rectangle(
+						left + halfWidth - halfDragHandleSize, top - _dragHandleSize, _dragHandleSize, _dragHandleSize);
+					_dragHandles[DragHandleAnchor.TopRight].Bounds = new Rectangle(right, top - _dragHandleSize,
+						_dragHandleSize, _dragHandleSize);
+					_dragHandles[DragHandleAnchor.MiddleLeft].Bounds = new Rectangle(left - _dragHandleSize,
+						top + halfHeight - halfDragHandleSize, _dragHandleSize, _dragHandleSize);
+					_dragHandles[DragHandleAnchor.MiddleRight].Bounds = new Rectangle(right,
+						top + halfHeight - halfDragHandleSize, _dragHandleSize, _dragHandleSize);
+					_dragHandles[DragHandleAnchor.BottomLeft].Bounds = new Rectangle(left - _dragHandleSize, bottom,
+						_dragHandleSize, _dragHandleSize);
+					_dragHandles[DragHandleAnchor.BottomCenter].Bounds =
+						new Rectangle(left + halfWidth - halfDragHandleSize, bottom, _dragHandleSize, _dragHandleSize);
+					_dragHandles[DragHandleAnchor.BottomRight].Bounds =
+						new Rectangle(right, bottom, _dragHandleSize, _dragHandleSize);
 				}
 			}
 		}
@@ -725,10 +726,16 @@ namespace Cyotek.Windows.Forms.Demo
 				bottom = selectionRegion.Bottom;
 
 				// decide which edges we're resizing
-				resizingTopEdge = _resizeAnchor >= DragHandleAnchor.TopLeft && _resizeAnchor <= DragHandleAnchor.TopRight;
-				resizingBottomEdge = _resizeAnchor >= DragHandleAnchor.BottomLeft && _resizeAnchor <= DragHandleAnchor.BottomRight;
-				resizingLeftEdge = _resizeAnchor == DragHandleAnchor.TopLeft || _resizeAnchor == DragHandleAnchor.MiddleLeft || _resizeAnchor == DragHandleAnchor.BottomLeft;
-				resizingRightEdge = _resizeAnchor == DragHandleAnchor.TopRight || _resizeAnchor == DragHandleAnchor.MiddleRight || _resizeAnchor == DragHandleAnchor.BottomRight;
+				resizingTopEdge = _resizeAnchor >= DragHandleAnchor.TopLeft &&
+				                  _resizeAnchor <= DragHandleAnchor.TopRight;
+				resizingBottomEdge = _resizeAnchor >= DragHandleAnchor.BottomLeft &&
+				                     _resizeAnchor <= DragHandleAnchor.BottomRight;
+				resizingLeftEdge = _resizeAnchor == DragHandleAnchor.TopLeft ||
+				                   _resizeAnchor == DragHandleAnchor.MiddleLeft ||
+				                   _resizeAnchor == DragHandleAnchor.BottomLeft;
+				resizingRightEdge = _resizeAnchor == DragHandleAnchor.TopRight ||
+				                    _resizeAnchor == DragHandleAnchor.MiddleRight ||
+				                    _resizeAnchor == DragHandleAnchor.BottomRight;
 
 				// and resize!
 				if (resizingTopEdge) {

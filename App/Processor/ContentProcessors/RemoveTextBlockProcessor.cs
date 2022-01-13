@@ -10,11 +10,13 @@ namespace PDFPatcher.Processor
 		int _processedPageCount;
 
 		#region IPageProcessor 成员
+
 		public string Name => "删除文本区";
 
 		public void BeginProcess(DocProcessorContext context) {
 			_processedPageCount = 0;
 		}
+
 		public bool EndProcess(PdfReader pdf) {
 			Tracker.TraceMessage(Tracker.Category.Notice, Name + "功能：");
 			Tracker.TraceMessage("　　删除了 " + _processedPageCount + " 页的文本。");
@@ -34,6 +36,7 @@ namespace PDFPatcher.Processor
 				context.IsPageContentModified = true;
 				_processedPageCount++;
 			}
+
 			ProcessFormContent(context);
 			return r;
 		}
@@ -43,12 +46,14 @@ namespace PDFPatcher.Processor
 			if (fl == null) {
 				return;
 			}
+
 			foreach (var item in fl) {
 				var f = PdfReader.GetPdfObject(item.Value) as PRStream;
 				if (f == null
-					|| PdfName.FORM.Equals(f.GetAsName(PdfName.SUBTYPE)) == false) {
+				    || PdfName.FORM.Equals(f.GetAsName(PdfName.SUBTYPE)) == false) {
 					continue;
 				}
+
 				var p = new PdfPageCommandProcessor(f);
 				if (ProcessCommands(p.Commands)) {
 					using (var ms = new System.IO.MemoryStream()) {
@@ -70,6 +75,7 @@ namespace PDFPatcher.Processor
 				if (ec == null) {
 					continue;
 				}
+
 				if (ec.Name.ToString() == "BT") {
 					parent.RemoveAt(i);
 					r = true;
@@ -78,8 +84,8 @@ namespace PDFPatcher.Processor
 					r |= ProcessCommands(ec.Commands);
 				}
 			}
+
 			return r;
 		}
-
 	}
 }

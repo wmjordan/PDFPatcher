@@ -10,9 +10,12 @@ namespace PDFPatcher.Processor
 	/// </summary>
 	sealed class DocumentSink
 	{
-		readonly Dictionary<string, PdfReaderReference> _sink = new Dictionary<string, PdfReaderReference>(StringComparer.OrdinalIgnoreCase);
+		readonly Dictionary<string, PdfReaderReference> _sink =
+			new Dictionary<string, PdfReaderReference>(StringComparer.OrdinalIgnoreCase);
+
 		public int Workload { get; private set; }
 		public bool HasDuplicateFiles { get; private set; }
+
 		public DocumentSink(IEnumerable<SourceItem> items, bool useSink) {
 			EvaluateWorkload(items, useSink);
 		}
@@ -22,8 +25,10 @@ namespace PDFPatcher.Processor
 				if (rr.Reader == null) {
 					rr.Reader = PdfHelper.OpenPdfFile(path, AppContext.LoadPartialPdfFile, false);
 				}
+
 				return rr.Reader;
 			}
+
 			return null;
 		}
 
@@ -33,8 +38,10 @@ namespace PDFPatcher.Processor
 				if (c == 0) {
 					_sink.Remove(path);
 				}
+
 				return c;
 			}
+
 			return 0;
 		}
 
@@ -52,8 +59,10 @@ namespace PDFPatcher.Processor
 								HasDuplicateFiles = true;
 								break;
 							}
+
 							_sink.Add(item.FilePath.ToString(), new PdfReaderReference());
 						}
+
 						Workload += item.FileSize;
 						break;
 					case SourceItem.ItemType.Image:
@@ -62,6 +71,7 @@ namespace PDFPatcher.Processor
 					case SourceItem.ItemType.Folder:
 						break;
 				}
+
 				if (item.HasSubItems) {
 					EvaluateWorkload(item.Items, useSink);
 				}

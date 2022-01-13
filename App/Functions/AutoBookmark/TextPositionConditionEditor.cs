@@ -33,6 +33,7 @@ namespace PDFPatcher.Functions
 					_MaxBox.Value = (decimal)_condition.MaxValue;
 					_MinBox.Value = (decimal)_condition.MinValue;
 				}
+
 				ToggleControlState();
 				_lock = false;
 			}
@@ -47,6 +48,7 @@ namespace PDFPatcher.Functions
 			if (_lock) {
 				return;
 			}
+
 			float min, max;
 			if (_SpecificBox.Checked) {
 				min = max = (float)_SpecificValueBox.Value;
@@ -55,6 +57,7 @@ namespace PDFPatcher.Functions
 				min = (float)_MinBox.Value;
 				max = (float)_MaxBox.Value;
 			}
+
 			_condition.SetRange((byte)(_PositionBox.SelectedIndex + 1), min, max);
 			EditAdjustmentForm.UpdateFilter(this);
 		}

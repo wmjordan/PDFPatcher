@@ -11,6 +11,7 @@ namespace MuPdfSharp
 	{
 		readonly ContextHandle _context;
 		readonly PixmapHandle _pixmap;
+
 		public PixmapData(ContextHandle context, PixmapHandle pixmap) {
 			Width = NativeMethods.GetWidth(context, pixmap);
 			Height = NativeMethods.GetHeight(context, pixmap);
@@ -19,17 +20,23 @@ namespace MuPdfSharp
 			_context = context;
 			_pixmap = pixmap;
 		}
+
 		public int Width { get; private set; }
 		public int Height { get; private set; }
 		public int Components { get; private set; }
+
 		/// <summary>获取指向 Pixmap 数据内容的指针。</summary>
 		public IntPtr Samples { get; private set; }
+
 		/// <summary>获取 Pixmap 的边框。</summary>
 		public BBox BBox => NativeMethods.GetBBox(_context, _pixmap);
+
 		/// <summary>number of colorants (components, less any spots and alpha)。</summary>
 		public int Colorants => NativeMethods.GetColorants(_context, _pixmap);
+
 		/// <summary>number of spots (components, less colorants and alpha). Does not throw exceptions.。</summary>
 		public int Spots => NativeMethods.GetColorants(_context, _pixmap);
+
 		/// <summary>获取 Pixmap 一行像素的字节数。</summary>
 		public int Stride => NativeMethods.GetStride(_context, _pixmap);
 
@@ -42,7 +49,8 @@ namespace MuPdfSharp
 			bool grayscale = options.ColorSpace == ColorSpace.Gray;
 			bool invert = options.InvertColor;
 			var bmp = new Bitmap(width, height, grayscale ? PixelFormat.Format8bppIndexed : PixelFormat.Format24bppRgb);
-			var imageData = bmp.LockBits(new System.Drawing.Rectangle(0, 0, width, height), ImageLockMode.ReadWrite, bmp.PixelFormat);
+			var imageData = bmp.LockBits(new System.Drawing.Rectangle(0, 0, width, height), ImageLockMode.ReadWrite,
+				bmp.PixelFormat);
 			var ptrSrc = (byte*)Samples;
 			var ptrDest = (byte*)imageData.Scan0;
 			if (grayscale) {
@@ -58,40 +66,51 @@ namespace MuPdfSharp
 						pl++;
 						sl++;
 					}
+
 					ptrDest += imageData.Stride;
 					ptrSrc = sl;
 				}
 			}
-			else { // DeviceBGR
+			else {
+				// DeviceBGR
 				for (int y = 0; y < height; y++) {
 					var pl = ptrDest;
 					var sl = ptrSrc;
 					if (invert) {
 						for (int x = 0; x < width; x++) {
 							// 在这里进行 RGB 到 DIB BGR 的转换（省去 Mupdf 内部的转换工作）
-							pl[2] = (byte)(*sl ^ 0xFF); sl++; // R
-							pl[1] = (byte)(*sl ^ 0xFF); sl++; // G
-							pl[0] = (byte)(*sl ^ 0xFF); sl++; // B
+							pl[2] = (byte)(*sl ^ 0xFF);
+							sl++; // R
+							pl[1] = (byte)(*sl ^ 0xFF);
+							sl++; // G
+							pl[0] = (byte)(*sl ^ 0xFF);
+							sl++; // B
 							pl += 3;
 						}
 					}
 					else {
 						for (int x = 0; x < width; x++) {
 							// 在这里进行 RGB 到 DIB BGR 的转换（省去 Mupdf 内部的转换工作）
-							pl[2] = *sl; sl++; // R
-							pl[1] = *sl; sl++; // G
-							pl[0] = *sl; sl++; // B
+							pl[2] = *sl;
+							sl++; // R
+							pl[1] = *sl;
+							sl++; // G
+							pl[0] = *sl;
+							sl++; // B
 							pl += 3;
 						}
 					}
+
 					ptrDest += imageData.Stride;
 					ptrSrc = sl;
 				}
 			}
+
 			bmp.UnlockBits(imageData);
 			if (options.Dpi > 0) {
 				bmp.SetResolution(options.Dpi, options.Dpi);
 			}
+
 			return bmp;
 		}
 
@@ -103,7 +122,8 @@ namespace MuPdfSharp
 			int height = Height;
 			bool grayscale = options.ColorSpace == ColorSpace.Gray;
 			bool invert = options.InvertColor;
-			var bmp = new FreeImageBitmap(width, height, grayscale ? PixelFormat.Format8bppIndexed : PixelFormat.Format24bppRgb);
+			var bmp = new FreeImageBitmap(width, height,
+				grayscale ? PixelFormat.Format8bppIndexed : PixelFormat.Format24bppRgb);
 			var ptrSrc = (byte*)Samples;
 			if (grayscale) {
 				bmp.Palette.CreateGrayscalePalette();
@@ -116,10 +136,12 @@ namespace MuPdfSharp
 						pl++;
 						sl++;
 					}
+
 					ptrSrc = sl;
 				}
 			}
-			else { // DeviceBGR
+			else {
+				// DeviceBGR
 				for (int y = height - 1; y >= 0; y--) {
 					var pDest = bmp.GetScanlinePointer(y);
 					var pl = (byte*)pDest.ToPointer();
@@ -127,24 +149,32 @@ namespace MuPdfSharp
 					if (invert) {
 						for (int x = 0; x < width; x++) {
 							// 在这里进行 RGB 到 DIB BGR 的转换（省去 Mupdf 内部的转换工作）
-							pl[2] = (byte)(*sl ^ 0xFF); sl++; // R
-							pl[1] = (byte)(*sl ^ 0xFF); sl++; // G
-							pl[0] = (byte)(*sl ^ 0xFF); sl++; // B
+							pl[2] = (byte)(*sl ^ 0xFF);
+							sl++; // R
+							pl[1] = (byte)(*sl ^ 0xFF);
+							sl++; // G
+							pl[0] = (byte)(*sl ^ 0xFF);
+							sl++; // B
 							pl += 3;
 						}
 					}
 					else {
 						for (int x = 0; x < width; x++) {
 							// 在这里进行 RGB 到 DIB BGR 的转换（省去 Mupdf 内部的转换工作）
-							pl[2] = *sl; sl++; // R
-							pl[1] = *sl; sl++; // G
-							pl[0] = *sl; sl++; // B
+							pl[2] = *sl;
+							sl++; // R
+							pl[1] = *sl;
+							sl++; // G
+							pl[0] = *sl;
+							sl++; // B
 							pl += 3;
 						}
 					}
+
 					ptrSrc = sl;
 				}
 			}
+
 			bmp.SetResolution(options.Dpi, options.Dpi);
 			return bmp;
 		}
@@ -172,6 +202,7 @@ namespace MuPdfSharp
 			if (gamma == 1) {
 				return;
 			}
+
 			NativeMethods.GammaPixmap(_context, _pixmap, gamma);
 		}
 
@@ -183,13 +214,16 @@ namespace MuPdfSharp
 			if (Samples == IntPtr.Zero) {
 				return null;
 			}
+
 			var d = new byte[Width * Height * Components];
 			System.Runtime.InteropServices.Marshal.Copy(Samples, d, 0, d.Length);
 			return d;
 		}
 
 		#region 实现 IDisposable 接口的属性和方法
+
 		private bool disposed = false;
+
 		public void Dispose() {
 			Dispose(true);
 			GC.SuppressFinalize(this); // 抑制析构函数
@@ -201,15 +235,20 @@ namespace MuPdfSharp
 			if (!disposed) {
 				if (disposing) {
 					#region 释放托管资源
+
 					//_components.Dispose ();
+
 					#endregion
 				}
 
 				#region 释放非托管资源
+
 				// 注意这里不是线程安全的
 				_pixmap.DisposeHandle();
+
 				#endregion
 			}
+
 			disposed = true;
 		}
 
@@ -218,8 +257,7 @@ namespace MuPdfSharp
 		~PixmapData() {
 			Dispose(false);
 		}
+
 		#endregion
 	}
-
-
 }

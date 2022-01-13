@@ -17,10 +17,7 @@ namespace PDFPatcher.Processor
 
 		static internal XmlWriterSettings GetWriterSettings() {
 			return new XmlWriterSettings() {
-				Encoding = AppContext.Exporter.GetEncoding(),
-				Indent = true,
-				IndentChars = "\t",
-				CheckCharacters = false
+				Encoding = AppContext.Exporter.GetEncoding(), Indent = true, IndentChars = "\t", CheckCharacters = false
 			};
 		}
 
@@ -29,11 +26,13 @@ namespace PDFPatcher.Processor
 		readonly PdfContentExport _contentExport;
 		readonly PdfActionExporter _actionExport;
 		Dictionary<int, int> _pageReferenceMapper;
+
 		private Dictionary<int, int> PageReferenceMapper {
 			get {
 				if (_pageReferenceMapper == null) {
 					_pageReferenceMapper = _reader.GetPageRefMapper();
 				}
+
 				return _pageReferenceMapper;
 			}
 		}
@@ -51,18 +50,23 @@ namespace PDFPatcher.Processor
 			if (_options.ExportCatalog) {
 				load += n / 100;
 			}
+
 			if (_options.ExportBookmarks) {
 				load += BookmarkWorkload;
 			}
+
 			if (_options.ExtractPageLinks) {
 				load += n;
 			}
+
 			if (_options.ExtractPageContent) {
 				load += PageRangeCollection.Parse(_options.ExtractPageRange, 1, n, true).TotalPages;
 			}
+
 			if (_options.ExtractPageSettings) {
 				load += n;
 			}
+
 			return load;
 		}
 
@@ -81,6 +85,7 @@ namespace PDFPatcher.Processor
 			if (info == null || info.Length == 0) {
 				return r;
 			}
+
 			var dump = new PdfDictionary();
 			string t;
 			PdfName n;
@@ -90,6 +95,7 @@ namespace PDFPatcher.Processor
 				if (s == null) {
 					continue;
 				}
+
 				n = item.Key;
 				t = s.Decode(encoding);
 				if (PdfName.TITLE.Equals(n)) {
@@ -110,11 +116,14 @@ namespace PDFPatcher.Processor
 				else if (PdfName.PRODUCER.Equals(n)) {
 					r.Producer = t;
 				}
+
 				dump.Put(n, t);
 			}
+
 			if (encoding != null) {
 				info.Merge(dump);
 			}
+
 			dump = null;
 			return r;
 		}
@@ -135,19 +144,23 @@ namespace PDFPatcher.Processor
 				w.WriteAttributeString(Constants.Units.Unit, _options.UnitConverter.Unit);
 				w.WriteEndElement();
 			}
+
 			if (_options.ExportDocProperties) {
 				Tracker.TraceMessage("导出文档信息。");
 				RewriteDocInfoWithEncoding(_reader, AppContext.Encodings.DocInfoEncoding);
 				ExportDocumentInfo(w);
 			}
+
 			if (_options.ExportViewerPreferences) {
 				Tracker.TraceMessage("导出阅读器设置。");
 				ExportViewerPreferences(w);
 			}
+
 			if (_options.ExportBookmarks || _options.ExtractPageLinks) {
 				if (_options.ConsolidateNamedDestinations) {
 					_reader.ConsolidateNamedDestinations();
 				}
+
 				if (_options.ExportBookmarks) {
 					Tracker.TraceMessage("导出书签。");
 					w.WriteStartElement(Constants.DocumentBookmark);
@@ -155,27 +168,33 @@ namespace PDFPatcher.Processor
 					w.WriteEndElement();
 					Tracker.IncrementProgress(BookmarkWorkload);
 				}
+
 				if (_options.ExtractPageLinks) {
 					Tracker.TraceMessage("导出页面连接。");
 					ExtractPageLinks(w);
 				}
+
 				if (_options.ConsolidateNamedDestinations == false) {
 					Tracker.TraceMessage("导出命名目标。");
 					ExportNamedDestinations(w);
 				}
 			}
+
 			if (_options.ExtractPageSettings) {
 				Tracker.TraceMessage("导出页面设置。");
 				w.WriteStartElement(Constants.Content.PageSettings.ThisName);
 				ExtractPageSettings(w);
 				w.WriteEndElement();
 			}
+
 			if (_options.ExportCatalog) {
 				_contentExport.ExportTrailer(w, _reader);
 			}
+
 			if (_options.ExtractPageContent) {
 				_contentExport.ExportContents(w, _reader);
 			}
+
 			Tracker.TraceMessage("完成导出任务。");
 		}
 
@@ -191,12 +210,24 @@ namespace PDFPatcher.Processor
 					key = PdfName.DecodeName(item.Key.ToString());
 					val = item.Value.IsString() ? ((PdfString)item.Value).Decode(null) : item.Value.ToString();
 					switch (key) {
-						case "Title": key = Constants.Info.Title; break;
-						case "Author": key = Constants.Info.Author; break;
-						case "Subject": key = Constants.Info.Subject; break;
-						case "Keywords": key = Constants.Info.Keywords; break;
-						case "Creator": key = Constants.Info.Creator; break;
-						case "Producer": key = Constants.Info.Producer; break;
+						case "Title":
+							key = Constants.Info.Title;
+							break;
+						case "Author":
+							key = Constants.Info.Author;
+							break;
+						case "Subject":
+							key = Constants.Info.Subject;
+							break;
+						case "Keywords":
+							key = Constants.Info.Keywords;
+							break;
+						case "Creator":
+							key = Constants.Info.Creator;
+							break;
+						case "Producer":
+							key = Constants.Info.Producer;
+							break;
 						case "CreationDate":
 							key = Constants.Info.CreationDate;
 							goto case "//DecodeDate";
@@ -210,10 +241,13 @@ namespace PDFPatcher.Processor
 							catch (Exception) {
 								continue;
 							}
+
 							break;
 					}
+
 					w.WriteAttributeString(XmlConvert.EncodeLocalName(key), PdfHelper.GetValidXmlString(val));
 				}
+
 				if (_reader.Metadata?.Length > 0) {
 					w.WriteStartElement(Constants.Info.MetaData);
 					using (MemoryStream ms = new MemoryStream(_reader.Metadata)) {
@@ -221,11 +255,12 @@ namespace PDFPatcher.Processor
 						d.Load(ms);
 						d.DocumentElement?.WriteContentTo(w);
 					}
+
 					w.WriteEndElement();
 				}
 			}
-			w.WriteEndElement();
 
+			w.WriteEndElement();
 		}
 
 		internal static void WriteDocumentInfoAttributes(TextWriter w, string sourcePath, int numberOfPages) {
@@ -237,33 +272,44 @@ namespace PDFPatcher.Processor
 
 		internal void ExportDocument(TextWriter w) {
 			var i = RewriteDocInfoWithEncoding(_reader, AppContext.Encodings.DocInfoEncoding);
-			OutlineManager.WriteSimpleBookmarkInstruction(w, Constants.Info.Title, PdfHelper.GetValidXmlString(i.Title));
-			OutlineManager.WriteSimpleBookmarkInstruction(w, Constants.Info.Author, PdfHelper.GetValidXmlString(i.Author));
-			OutlineManager.WriteSimpleBookmarkInstruction(w, Constants.Info.Subject, PdfHelper.GetValidXmlString(i.Subject));
-			OutlineManager.WriteSimpleBookmarkInstruction(w, Constants.Info.Keywords, PdfHelper.GetValidXmlString(i.Keywords));
-			OutlineManager.WriteSimpleBookmarkInstruction(w, Constants.Info.Creator, PdfHelper.GetValidXmlString(i.Creator));
-			OutlineManager.WriteSimpleBookmarkInstruction(w, Constants.Info.Producer, PdfHelper.GetValidXmlString(i.Producer));
+			OutlineManager.WriteSimpleBookmarkInstruction(w, Constants.Info.Title,
+				PdfHelper.GetValidXmlString(i.Title));
+			OutlineManager.WriteSimpleBookmarkInstruction(w, Constants.Info.Author,
+				PdfHelper.GetValidXmlString(i.Author));
+			OutlineManager.WriteSimpleBookmarkInstruction(w, Constants.Info.Subject,
+				PdfHelper.GetValidXmlString(i.Subject));
+			OutlineManager.WriteSimpleBookmarkInstruction(w, Constants.Info.Keywords,
+				PdfHelper.GetValidXmlString(i.Keywords));
+			OutlineManager.WriteSimpleBookmarkInstruction(w, Constants.Info.Creator,
+				PdfHelper.GetValidXmlString(i.Creator));
+			OutlineManager.WriteSimpleBookmarkInstruction(w, Constants.Info.Producer,
+				PdfHelper.GetValidXmlString(i.Producer));
 		}
 
 		internal void ExportViewerPreferences(XmlWriter w) {
 			var catalog = _reader.Catalog;
-			if (catalog.Contains(PdfName.VIEWERPREFERENCES) || catalog.Contains(PdfName.PAGELAYOUT) || catalog.Contains(PdfName.PAGEMODE)) {
+			if (catalog.Contains(PdfName.VIEWERPREFERENCES) || catalog.Contains(PdfName.PAGELAYOUT) ||
+			    catalog.Contains(PdfName.PAGEMODE)) {
 				w.WriteStartElement(Constants.ViewerPreferences);
 				if (catalog.Contains(PdfName.PAGELAYOUT)) {
 					w.WriteAttributeString(Constants.PageLayout,
 						ValueHelper.MapValue(catalog.GetAsName(PdfName.PAGELAYOUT), Constants.PageLayoutType.PdfNames,
-						Constants.PageLayoutType.Names));
+							Constants.PageLayoutType.Names));
 				}
+
 				if (catalog.Contains(PdfName.PAGEMODE)) {
 					w.WriteAttributeString(Constants.PageMode,
 						ValueHelper.MapValue(catalog.GetAsName(PdfName.PAGEMODE), Constants.PageModes.PdfNames,
-						Constants.PageModes.Names));
+							Constants.PageModes.Names));
 				}
+
 				if (catalog.Contains(PdfName.VIEWERPREFERENCES)) {
 					ExportViewerPreferences(catalog.GetAsDict(PdfName.VIEWERPREFERENCES), w);
 				}
+
 				w.WriteEndElement();
 			}
+
 			if (catalog.Contains(PdfName.PAGELABELS)) {
 				var labels = ExtractPageLabels(catalog.GetAsDict(PdfName.PAGELABELS));
 				if (labels.Count > 0) {
@@ -274,9 +320,11 @@ namespace PDFPatcher.Processor
 						if (item.StartPage != 0) {
 							w.WriteAttributeString(Constants.PageLabelsAttributes.StartPage, item.StartPage.ToText());
 						}
+
 						if (String.IsNullOrEmpty(item.Prefix) == false) {
 							w.WriteAttributeString(Constants.PageLabelsAttributes.Prefix, item.Prefix);
 						}
+
 						if (String.IsNullOrEmpty(item.Style) == false) {
 							w.WriteAttributeString(Constants.PageLabelsAttributes.Style,
 								ValueHelper.MapValue(item.Style[0],
@@ -285,8 +333,10 @@ namespace PDFPatcher.Processor
 									item.Style)
 							);
 						}
+
 						w.WriteEndElement();
 					}
+
 					w.WriteEndElement();
 				}
 			}
@@ -298,23 +348,26 @@ namespace PDFPatcher.Processor
 			if (ls == null) {
 				return new List<PageLabel>();
 			}
+
 			for (int i = 0; i < ls.Size; i++) {
-				var l = new PageLabel {
-					PageNumber = ls.GetAsNumber(i++).IntValue + 1
-				};
+				var l = new PageLabel {PageNumber = ls.GetAsNumber(i++).IntValue + 1};
 				var label = ls.GetAsDict(i);
 				if (label.Contains(PdfName.ST)) {
 					l.StartPage = label.GetAsNumber(PdfName.ST).IntValue;
 				}
+
 				if (label.Contains(PdfName.P)) {
 					l.Prefix = label.GetAsString(PdfName.P).ToUnicodeString();
 				}
+
 				if (label.Contains(PdfName.S)) {
 					l.Style = PdfHelper.GetPdfNameString(label.GetAsName(PdfName.S));
 				}
+
 				a.Add(l);
 				l = null;
 			}
+
 			return a;
 		}
 
@@ -328,12 +381,14 @@ namespace PDFPatcher.Processor
 				if (PageSettings.HavingSameDimension(active, current) && i != n) {
 					continue;
 				}
+
 				if (i == 1) {
 					active = current;
 					if (n > i) {
 						continue;
 					}
 				}
+
 				toP = i == n ? n : i - 1;
 				active.PageRange = (fromP != toP) ? String.Concat(fromP.ToText(), '-', toP.ToText()) : toP.ToText();
 				w.WriteStartElement(Constants.Content.Page);
@@ -350,12 +405,14 @@ namespace PDFPatcher.Processor
 				if (item.Key.Equals(PdfName.TYPE)) {
 					continue;
 				}
-				var itemName = ValueHelper.MapValue(item.Key, Constants.ViewerPreferencesType.PdfNames, Constants.ViewerPreferencesType.Names, PdfName.DecodeName(item.Key.ToString()));
+
+				var itemName = ValueHelper.MapValue(item.Key, Constants.ViewerPreferencesType.PdfNames,
+					Constants.ViewerPreferencesType.Names, PdfName.DecodeName(item.Key.ToString()));
 				if (nv != null) {
 					if (PdfName.DIRECTION.Equals(item.Key)) {
 						w.WriteAttributeString(Constants.ViewerPreferencesType.Direction,
 							ValueHelper.MapValue(nv, Constants.ViewerPreferencesType.DirectionType.PdfNames,
-							Constants.ViewerPreferencesType.DirectionType.Names));
+								Constants.ViewerPreferencesType.DirectionType.Names));
 					}
 					else {
 						w.WriteAttributeString(itemName, PdfHelper.GetPdfFriendlyName(nv));
@@ -365,7 +422,7 @@ namespace PDFPatcher.Processor
 					w.WriteAttributeString(
 						itemName,
 						((PdfBoolean)item.Value).BooleanValue ? Constants.Boolean.True : Constants.Boolean.False
-						);
+					);
 				}
 				else {
 					w.WriteAttributeString(itemName, item.Value.ToString());
@@ -379,10 +436,12 @@ namespace PDFPatcher.Processor
 				w.WriteStartElement(Constants.NamedDestination);
 				foreach (var item in nds) {
 					w.WriteStartElement("位置");
-					w.WriteAttributeString(Constants.DestinationAttributes.Name, StringHelper.ReplaceControlAndBomCharacters(item.Key.ToString()));
+					w.WriteAttributeString(Constants.DestinationAttributes.Name,
+						StringHelper.ReplaceControlAndBomCharacters(item.Key.ToString()));
 					_actionExport.ExportGotoAction(item.Value as PdfObject, w, PageReferenceMapper);
 					w.WriteEndElement();
 				}
+
 				w.WriteEndElement();
 			}
 		}
@@ -391,10 +450,12 @@ namespace PDFPatcher.Processor
 			if (bookmarks == null || bookmarks.HasChildNodes == false) {
 				return;
 			}
+
 			var childBookmarks = bookmarks.SelectNodes(Constants.Bookmark);
 			if (childBookmarks == null || childBookmarks.Count == 0) {
 				return;
 			}
+
 			string title, page;
 			bool open;
 			foreach (XmlElement item in childBookmarks) {
@@ -406,10 +467,12 @@ namespace PDFPatcher.Processor
 					OutlineManager.WriteSimpleBookmarkInstruction(w, "打开书签", open ? "是" : "否");
 					isOpen = open;
 				}
+
 				if (String.IsNullOrEmpty(title) == false) {
 					for (int i = 0; i < level; i++) {
 						w.Write('\t');
 					}
+
 					w.Write(title.Replace('\n', ' ').Replace('\r', ' '));
 					w.Write(SimpleBookmarkPageNumLeader);
 					w.WriteLine(page);
@@ -432,10 +495,12 @@ namespace PDFPatcher.Processor
 			if (bookmarks == null) {
 				return;
 			}
+
 			foreach (XmlElement child in bookmarks.ChildNodes) {
 				if (child == null) {
 					continue;
 				}
+
 				w.WriteStartElement(Constants.Bookmark);
 				foreach (XmlAttribute entry in child.Attributes) {
 					var key = entry.Name as string;
@@ -448,11 +513,13 @@ namespace PDFPatcher.Processor
 							if (String.IsNullOrEmpty(value) || value == "null") {
 								continue;
 							}
+
 							goto default;
 						case Constants.Coordinates.ScaleFactor:
 							if (String.IsNullOrEmpty(value)) {
 								continue;
 							}
+
 							goto default;
 						case Constants.BookmarkAttributes.Title:
 							w.WriteAttributeString(key, PdfHelper.GetValidXmlString(value));
@@ -462,9 +529,11 @@ namespace PDFPatcher.Processor
 							break;
 					}
 				}
+
 				if (child.ChildNodes.Count > 0) {
 					ExportBookmarks(child, w);
 				}
+
 				w.WriteEndElement();
 			}
 		}
@@ -485,11 +554,13 @@ namespace PDFPatcher.Processor
 				if (annots == null) {
 					continue;
 				}
+
 				var arr = annots.ArrayList;
 				foreach (PdfObject item in arr) {
 					if (item.IsNull()) {
 						continue;
 					}
+
 					var annot = (PdfDictionary)PdfReader.GetPdfObjectRelease(item);
 					if (PdfName.LINK.Equals(annot.Get(PdfName.SUBTYPE))) {
 						w.WriteStartElement(Constants.PageLinkAttributes.Link);
@@ -503,9 +574,11 @@ namespace PDFPatcher.Processor
 								if (ri == null) {
 									break;
 								}
+
 								p[k] = u.FromPoint(ri.FloatValue);
 								k++;
 							}
+
 							if (k == 4) {
 								w.WriteAttributeString(Constants.Coordinates.Left, p[0].ToText());
 								w.WriteAttributeString(Constants.Coordinates.Bottom, p[1].ToText());
@@ -513,21 +586,26 @@ namespace PDFPatcher.Processor
 								w.WriteAttributeString(Constants.Coordinates.Top, p[3].ToText());
 							}
 						}
+
 						if (annot.Contains(PdfName.BORDER)) {
-							w.WriteAttributeString(Constants.PageLinkAttributes.Border, PdfHelper.GetNumericArrayString(annot.GetAsArray(PdfName.BORDER), 1));
+							w.WriteAttributeString(Constants.PageLinkAttributes.Border,
+								PdfHelper.GetNumericArrayString(annot.GetAsArray(PdfName.BORDER), 1));
 						}
+
 						if (annot.Contains(PdfName.C)) {
 							ExportColor(annot.GetAsArray(PdfName.C), w);
 						}
+
 						if (annot.Contains(PdfName.H)) {
 							var style = PdfHelper.GetPdfNameString(annot.GetAsName(PdfName.H));
 							style = ValueHelper.MapValue(style,
-								new string[] { "N", "I", "O", "P" },
-								new string[] { "无", "取反内容", "取反边框", "按下" },
+								new string[] {"N", "I", "O", "P"},
+								new string[] {"无", "取反内容", "取反边框", "按下"},
 								style
-								);
+							);
 							w.WriteAttributeString(Constants.PageLinkAttributes.Style, style);
 						}
+
 						//if (annot.Contains (PdfName.M)) {
 						//    try {
 						//        w.WriteAttributeString ("日期", PdfDate.Decode (annot.GetAsString (PdfName.M).ToString ()).ToString ());
@@ -537,11 +615,16 @@ namespace PDFPatcher.Processor
 						//    }
 						//}
 						if (annot.Contains(PdfName.QUADPOINTS)) {
-							w.WriteAttributeString(Constants.PageLinkAttributes.QuadPoints, PdfHelper.GetNumericArrayString(annot.GetAsArray(PdfName.QUADPOINTS), _options.UnitConverter.UnitFactor));
+							w.WriteAttributeString(Constants.PageLinkAttributes.QuadPoints,
+								PdfHelper.GetNumericArrayString(annot.GetAsArray(PdfName.QUADPOINTS),
+									_options.UnitConverter.UnitFactor));
 						}
+
 						if (annot.Contains(PdfName.CONTENTS)) {
-							w.WriteAttributeString(Constants.PageLinkAttributes.Contents, annot.GetAsString(PdfName.CONTENTS).ToUnicodeString());
+							w.WriteAttributeString(Constants.PageLinkAttributes.Contents,
+								annot.GetAsString(PdfName.CONTENTS).ToUnicodeString());
 						}
+
 						ExportLinkAction(annot, w);
 						if (annot.Contains(PdfName.BS)) {
 							w.WriteStartElement("边框样式");
@@ -549,24 +632,28 @@ namespace PDFPatcher.Processor
 							if (bs.Contains(PdfName.W)) {
 								w.WriteAttributeString("宽度", bs.GetAsNumber(PdfName.W).FloatValue.ToText());
 							}
+
 							if (bs.Contains(PdfName.S)) {
 								var style = PdfHelper.GetPdfNameString(bs.GetAsName(PdfName.S));
 								style = ValueHelper.MapValue(style,
-									new string[] { "S", "U", "D", "B", "I" },
-									new string[] { "方框", "下划线", "虚线", "凸起", "凹陷" },
+									new string[] {"S", "U", "D", "B", "I"},
+									new string[] {"方框", "下划线", "虚线", "凸起", "凹陷"},
 									style
-									);
+								);
 								w.WriteAttributeString("样式", style);
 								if (PdfName.D.Equals(bs.GetAsName(PdfName.S)) && bs.Contains(PdfName.D)) {
 									w.WriteAttributeString("线型", PdfHelper.GetArrayString(bs.GetAsArray(PdfName.D)));
 								}
 							}
+
 							w.WriteEndElement();
 						}
+
 						w.WriteEndElement();
 					}
 				}
 			}
+
 			w.WriteEndElement();
 		}
 
@@ -574,6 +661,7 @@ namespace PDFPatcher.Processor
 			if (color == null) {
 				return;
 			}
+
 			switch (color.Size) {
 				case 0:
 					target.WriteAttributeString(Constants.Color, Constants.Colors.Transparent);
@@ -609,10 +697,11 @@ namespace PDFPatcher.Processor
 				_actionExport.ExportGotoAction(dest, w, PageReferenceMapper);
 			}
 			else {
-				_actionExport.ExportAction((PdfDictionary)PdfReader.GetPdfObjectRelease(link.Get(PdfName.A)), PageReferenceMapper, w);
+				_actionExport.ExportAction((PdfDictionary)PdfReader.GetPdfObjectRelease(link.Get(PdfName.A)),
+					PageReferenceMapper, w);
 			}
+
 			w.WriteEndElement();
 		}
-
 	}
 }

@@ -11,7 +11,9 @@ namespace PDFPatcher.Functions
 			set => _PageNumberBox.Text = value.ToText();
 		}
 
-		internal MuPdfSharp.PageLabel PageLabel => new MuPdfSharp.PageLabel(PageNumber - 1, (int)_StartAtBox.Value, _PrefixBox.Text, (MuPdfSharp.PageLabelStyle)Constants.PageLabelStyles.PdfValues[_NumericStyleBox.SelectedIndex]);
+		internal MuPdfSharp.PageLabel PageLabel => new MuPdfSharp.PageLabel(PageNumber - 1, (int)_StartAtBox.Value,
+			_PrefixBox.Text,
+			(MuPdfSharp.PageLabelStyle)Constants.PageLabelStyles.PdfValues[_NumericStyleBox.SelectedIndex]);
 
 		public InsertPageLabelForm() {
 			InitializeComponent();
@@ -46,6 +48,5 @@ namespace PDFPatcher.Functions
 			base.OnDeactivate(e);
 			Close();
 		}
-
 	}
 }

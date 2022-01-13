@@ -19,9 +19,11 @@ namespace PDFPatcher.Processor
 			if (item.ParentNode == null) {
 				return false;
 			}
+
 			if (item.Name != Constants.Bookmark && item.Name != Constants.PageLinkAttributes.Link) {
 				return false;
 			}
+
 			var a = item.GetAttribute(Constants.DestinationAttributes.Action);
 			if (String.IsNullOrEmpty(a) == false && a != Constants.ActionType.Goto) {
 				return false;
@@ -31,6 +33,7 @@ namespace PDFPatcher.Processor
 				RemoveGotoAction(item);
 				return true;
 			}
+
 			System.Diagnostics.Debug.WriteLine(item.GetAttribute(Constants.BookmarkAttributes.Title));
 			if (page > 0) {
 				if (TransitionMapper != null) {
@@ -42,6 +45,7 @@ namespace PDFPatcher.Processor
 						TranslateDestinationCoordinates(item, ct);
 					}
 				}
+
 				if (PageRemapper != null) {
 					if (page < PageRemapper.Length && (page = PageRemapper[page]) > 0) {
 						item.SetAttribute(Constants.DestinationAttributes.Page, page.ToText());
@@ -58,6 +62,7 @@ namespace PDFPatcher.Processor
 			else {
 				RemoveGotoAction(item);
 			}
+
 			return true;
 		}
 
@@ -76,14 +81,16 @@ namespace PDFPatcher.Processor
 				while (item.HasChildNodes) {
 					var c = item.LastChild as XmlElement;
 					if (c == null ||
-						(c.HasAttribute(Constants.DestinationAttributes.Action) == false
-							&& c.HasChildNodes == false)) {
+					    (c.HasAttribute(Constants.DestinationAttributes.Action) == false
+					     && c.HasChildNodes == false)) {
 						item.RemoveChild(item.LastChild);
 						continue;
 					}
+
 					item.ParentNode.InsertAfter(item.LastChild, item);
 				}
 			}
+
 			item.ParentNode.RemoveChild(item);
 		}
 
@@ -94,16 +101,18 @@ namespace PDFPatcher.Processor
 			if (item.GetAttribute(Constants.Coordinates.Top).TryParse(out p) && p != 0) {
 				item.SetAttribute(Constants.Coordinates.Top, (p * ct.YScale + ct.YTranslation).ToText());
 			}
+
 			if (item.GetAttribute(Constants.Coordinates.Bottom).TryParse(out p) && p != 0) {
 				item.SetAttribute(Constants.Coordinates.Bottom, (p * ct.YScale + ct.YTranslation).ToText());
 			}
+
 			if (item.GetAttribute(Constants.Coordinates.Left).TryParse(out p) && p != 0) {
 				item.SetAttribute(Constants.Coordinates.Left, (p * ct.XScale + ct.XTranslation).ToText());
 			}
+
 			if (item.GetAttribute(Constants.Coordinates.Right).TryParse(out p) && p != 0) {
 				item.SetAttribute(Constants.Coordinates.Right, (p * ct.XScale + ct.XTranslation).ToText());
 			}
 		}
-
 	}
 }

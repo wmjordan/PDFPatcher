@@ -39,6 +39,7 @@ namespace PDFPatcher.Functions
 			foreach (var item in EditAdjustmentForm.FilterNames) {
 				_AddFilterMenu.Items.Add(item).Name = EditAdjustmentForm.FilterIDs[i++];
 			}
+
 			_LevelAdjustmentBox.CellEditUseWholeCell = true;
 			_LevelAdjustmentBox.BeforeSorting += (object sender, BrightIdeasSoftware.BeforeSortingEventArgs e) => {
 				e.Canceled = true;
@@ -49,6 +50,7 @@ namespace PDFPatcher.Functions
 				if (f == null) {
 					return null;
 				}
+
 				return f.Condition.Description;
 			};
 			_AdjustmentLevelColumn.AspectGetter = (object x) => {
@@ -60,19 +62,23 @@ namespace PDFPatcher.Functions
 				if (f == null) {
 					return;
 				}
+
 				if ((value ?? "0").ToString().TryParse(out float a)) {
 					f.AdjustmentLevel = a;
 				}
 			};
-			_RelativeAdjustmentColumn.AspectGetter = (object x) => (x as AutoBookmarkOptions.LevelAdjustmentOption)?.RelativeAdjustment == true;
+			_RelativeAdjustmentColumn.AspectGetter = (object x) =>
+				(x as AutoBookmarkOptions.LevelAdjustmentOption)?.RelativeAdjustment == true;
 			_RelativeAdjustmentColumn.AspectPutter = (object x, object value) => {
 				var f = x as AutoBookmarkOptions.LevelAdjustmentOption;
 				if (f == null) {
 					return;
 				}
+
 				f.RelativeAdjustment = value is bool b && b;
 			};
-			_FilterBeforeMergeColumn.AspectGetter = (object x) => ((x as AutoBookmarkOptions.LevelAdjustmentOption)?.FilterBeforeMergeTitle) ?? false;
+			_FilterBeforeMergeColumn.AspectGetter = (object x) =>
+				((x as AutoBookmarkOptions.LevelAdjustmentOption)?.FilterBeforeMergeTitle) ?? false;
 			_FilterBeforeMergeColumn.AspectPutter = (object x, object value) => {
 				if (x is AutoBookmarkOptions.LevelAdjustmentOption f) {
 					f.FilterBeforeMergeTitle = value is bool b && b;
@@ -119,12 +125,14 @@ namespace PDFPatcher.Functions
 					_options.LevelAdjustment.RemoveAt(i);
 				}
 			}
+
 			_LevelAdjustmentBox.SetObjects(_options.LevelAdjustment);
 			_IgnorePatternsBox.Rows.Clear();
 			foreach (var item in _options.IgnorePatterns) {
 				if (String.IsNullOrEmpty(item.Text)) {
 					continue;
 				}
+
 				_IgnorePatternsBox.Rows.Add(item.Text, item.MatchCase, item.FullMatch, item.UseRegularExpression);
 			}
 		}
@@ -150,9 +158,7 @@ namespace PDFPatcher.Functions
 			AppContext.MainForm.GetWorker().DoWork += new DoWorkEventHandler(ExportControl_DoWork);
 			SyncOptions();
 			AppContext.MainForm.GetWorker().RunWorkerAsync(new object[] {
-				AppContext.SourceFiles,
-				AppContext.BookmarkFile,
-				_options
+				AppContext.SourceFiles, AppContext.BookmarkFile, _options
 			});
 		}
 
@@ -180,20 +186,24 @@ namespace PDFPatcher.Functions
 				if (item.IsNewRow) {
 					continue;
 				}
+
 				var cells = item.Cells;
 				if (cells[0].Value == null) {
 					continue;
 				}
+
 				_options.IgnorePatterns.Add(new PDFPatcher.Model.MatchPattern(
 					cells[0].Value.ToString(),
 					(bool)(cells[_MatchCaseColumn.Index].Value ?? false),
 					(bool)(cells[_FullMatchColumn.Index].Value ?? false),
 					(bool)(cells[_PatternTypeColumn.Index].Value ?? false)));
 			}
+
 			_options.LevelAdjustment.Clear();
 			if (_LevelAdjustmentBox.Items.Count > 0) {
 				foreach (ListViewItem item in _LevelAdjustmentBox.Items) {
-					_options.LevelAdjustment.Add(_LevelAdjustmentBox.GetModelObject(item.Index) as AutoBookmarkOptions.LevelAdjustmentOption);
+					_options.LevelAdjustment.Add(
+						_LevelAdjustmentBox.GetModelObject(item.Index) as AutoBookmarkOptions.LevelAdjustmentOption);
 				}
 			}
 		}
@@ -207,7 +217,8 @@ namespace PDFPatcher.Functions
 				var p = Path.GetDirectoryName(b);
 				var ext = Path.GetExtension(b);
 				foreach (var file in files) {
-					Processor.Worker.CreateBookmark(file, FileHelper.CombinePath(p, Path.GetFileNameWithoutExtension(file) + ext), options);
+					Processor.Worker.CreateBookmark(file,
+						FileHelper.CombinePath(p, Path.GetFileNameWithoutExtension(file) + ext), options);
 					if (AppContext.Abort) {
 						return;
 					}
@@ -229,10 +240,12 @@ namespace PDFPatcher.Functions
 		}
 
 		private void ControlEvent(object sender, EventArgs e) {
-			if (sender == _DeleteAdjustmentButton && _LevelAdjustmentBox.Items.Count > 0 && FormHelper.YesNoBox("是否删除选中的项？") == DialogResult.Yes) {
+			if (sender == _DeleteAdjustmentButton && _LevelAdjustmentBox.Items.Count > 0 &&
+			    FormHelper.YesNoBox("是否删除选中的项？") == DialogResult.Yes) {
 				_LevelAdjustmentBox.RemoveObjects(_LevelAdjustmentBox.SelectedObjects);
 			}
-			else if (sender == _ClearTextFiltersButton && _IgnorePatternsBox.Rows.Count > 0 && FormHelper.YesNoBox("是否清空文本过滤列表？") == DialogResult.Yes) {
+			else if (sender == _ClearTextFiltersButton && _IgnorePatternsBox.Rows.Count > 0 &&
+			         FormHelper.YesNoBox("是否清空文本过滤列表？") == DialogResult.Yes) {
 				_IgnorePatternsBox.Rows.Clear();
 			}
 			else if (sender == _CopyFilterButton) {
@@ -240,6 +253,7 @@ namespace PDFPatcher.Functions
 				if (si.Count == 0) {
 					return;
 				}
+
 				_copiedLevelAdjustments = new AutoBookmarkOptions.LevelAdjustmentOption[si.Count];
 				for (int i = 0; i < _copiedLevelAdjustments.Length; i++) {
 					var item = si[i] as AutoBookmarkOptions.LevelAdjustmentOption;
@@ -257,6 +271,7 @@ namespace PDFPatcher.Functions
 				if (_copiedLevelAdjustments.HasContent() == false) {
 					return;
 				}
+
 				foreach (var item in _copiedLevelAdjustments) {
 					_LevelAdjustmentBox.AddObject(item.Clone());
 				}
@@ -267,8 +282,10 @@ namespace PDFPatcher.Functions
 						FormHelper.InfoBox("请先指定信息文件的路径。");
 						return;
 					}
+
 					_BookmarkControl.Text = _BookmarkControl.FileDialog.FileName;
 				}
+
 				var doc = new System.Xml.XmlDocument();
 				System.Xml.XmlNode fontInfo;
 				try {
@@ -279,17 +296,17 @@ namespace PDFPatcher.Functions
 					FormHelper.ErrorBox("无法从信息文件加载字体信息。" + ex.Message);
 					return;
 				}
+
 				if (fontInfo == null) {
 					FormHelper.ErrorBox("无法从信息文件加载字体信息。");
 					return;
 				}
+
 				using (var f = new FontFilterForm(fontInfo)) {
 					if (f.ShowDialog() == DialogResult.OK && f.FilterConditions != null) {
 						foreach (var item in f.FilterConditions) {
 							_LevelAdjustmentBox.AddObject(new AutoBookmarkOptions.LevelAdjustmentOption() {
-								Condition = item,
-								AdjustmentLevel = 0,
-								RelativeAdjustment = false
+								Condition = item, AdjustmentLevel = 0, RelativeAdjustment = false
 							});
 						}
 					}
@@ -301,15 +318,18 @@ namespace PDFPatcher.Functions
 			if (_LevelAdjustmentBox.FocusedItem == null) {
 				return;
 			}
+
 			var fi = _LevelAdjustmentBox.FocusedItem;
 			var i = fi.Index;
 			var o = _LevelAdjustmentBox.GetModelObject(i) as AutoBookmarkOptions.LevelAdjustmentOption;
 			using (var dialog = new EditAdjustmentForm(o)) {
 				if (dialog.ShowDialog() == DialogResult.OK) {
 					if (dialog.Filter.Condition != null) {
-						_LevelAdjustmentBox.InsertObjects(i, new AutoBookmarkOptions.LevelAdjustmentOption[] { dialog.Filter });
+						_LevelAdjustmentBox.InsertObjects(i,
+							new AutoBookmarkOptions.LevelAdjustmentOption[] {dialog.Filter});
 						_LevelAdjustmentBox.SelectedIndex = i;
 					}
+
 					_LevelAdjustmentBox.RemoveObject(o);
 				}
 			}
@@ -318,13 +338,13 @@ namespace PDFPatcher.Functions
 		private void _AddFilterMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e) {
 			var c = EditAdjustmentForm.CreateCondition(e.ClickedItem.Name);
 			if (c != null) {
-				using (var dialog = new EditAdjustmentForm(new AutoBookmarkOptions.LevelAdjustmentOption { Condition = c })) {
+				using (var dialog =
+				       new EditAdjustmentForm(new AutoBookmarkOptions.LevelAdjustmentOption {Condition = c})) {
 					if (dialog.ShowDialog() == DialogResult.OK && dialog.Filter.Condition != null) {
 						_LevelAdjustmentBox.AddObject(dialog.Filter);
 					}
 				}
 			}
 		}
-
 	}
 }

@@ -1,5 +1,4 @@
-﻿
-namespace PDFPatcher.Processor
+﻿namespace PDFPatcher.Processor
 {
 	sealed class BookmarkOpenStatusProcessor : IPdfInfoXmlProcessor, IPdfInfoXmlProcessor<bool>
 	{
@@ -7,8 +6,10 @@ namespace PDFPatcher.Processor
 		/// 表示处理器是否应打开书签。
 		/// </summary>
 		public bool Parameter { get; set; }
+
 		public BookmarkOpenStatusProcessor() {
 		}
+
 		public BookmarkOpenStatusProcessor(bool open) {
 			Parameter = open;
 		}
@@ -21,6 +22,7 @@ namespace PDFPatcher.Processor
 			if (item.SelectSingleNode(Constants.Bookmark) == null) {
 				return null;
 			}
+
 			var v = item.HasChildNodes && item.SelectSingleNode(Constants.Bookmark) != null && Parameter
 				? Constants.Boolean.True
 				: null;
@@ -28,6 +30,5 @@ namespace PDFPatcher.Processor
 		}
 
 		#endregion
-
 	}
 }

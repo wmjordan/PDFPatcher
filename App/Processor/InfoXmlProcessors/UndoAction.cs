@@ -31,6 +31,7 @@ namespace PDFPatcher.Processor
 			if (action == null) {
 				return;
 			}
+
 			_names.Add(name);
 			_undoActions.Push(action);
 			OnAddUndo?.Invoke(this, action);
@@ -42,6 +43,7 @@ namespace PDFPatcher.Processor
 			for (int i = n.Length - 1; i >= 0; i--) {
 				n[j++] = _names[i];
 			}
+
 			return n;
 		}
 
@@ -51,14 +53,15 @@ namespace PDFPatcher.Processor
 				if (_names.Count > 100 && _names.Capacity > 200) {
 					_names.TrimExcess();
 				}
+
 				var a = _undoActions.Pop();
 				a.Undo();
 				OnUndo?.Invoke(this, a);
 				return a.AffectedElements;
 			}
+
 			return null;
 		}
-
 	}
 
 	sealed class UndoActionGroup : IUndoAction
@@ -78,6 +81,7 @@ namespace PDFPatcher.Processor
 			if (action == null) {
 				return;
 			}
+
 			if (action is UndoActionGroup g) {
 				_actions.AddRange(g._actions);
 			}
@@ -89,15 +93,19 @@ namespace PDFPatcher.Processor
 		public void RemoveElement(XmlElement target) {
 			Add(new RemoveElementAction(target));
 		}
+
 		public void AddElement(XmlElement target) {
 			Add(new AddElementAction(target));
 		}
+
 		public void SetAttribute(XmlElement targetNode, string name, string newValue) {
 			Add(UndoAttributeAction.GetUndoAction(targetNode, name, newValue));
 		}
+
 		public void RemoveAttribute(XmlElement target, string name) {
 			Add(UndoAttributeAction.GetUndoAction(target, name, null));
 		}
+
 		#region IUndoAction 成员
 
 		public IEnumerable<XmlNode> AffectedElements {
@@ -108,13 +116,16 @@ namespace PDFPatcher.Processor
 						d[e] = 0;
 					}
 				}
+
 				return d.Keys;
 			}
 		}
+
 		public bool Undo() {
 			for (int i = _actions.Count - 1; i >= 0; i--) {
 				_actions[i].Undo();
 			}
+
 			return true;
 		}
 
@@ -133,7 +144,7 @@ namespace PDFPatcher.Processor
 
 		#region IUndoAction 成员
 
-		public IEnumerable<XmlNode> AffectedElements => new XmlNode[] { Parent };
+		public IEnumerable<XmlNode> AffectedElements => new XmlNode[] {Parent};
 		public abstract bool Undo();
 
 		#endregion
@@ -165,6 +176,7 @@ namespace PDFPatcher.Processor
 			else {
 				Parent.InsertBefore(TargetElement, RefNode);
 			}
+
 			return true;
 		}
 	}
@@ -178,6 +190,7 @@ namespace PDFPatcher.Processor
 			if (String.IsNullOrEmpty(name)) {
 				throw new ArgumentNullException("undo/attr/name");
 			}
+
 			TargetElement = targeNode ?? throw new ArgumentNullException("undo/attr/target");
 			Name = name;
 		}
@@ -222,23 +235,28 @@ namespace PDFPatcher.Processor
 				if (v == newValue) {
 					return null;
 				}
+
 				if (newValue != null) {
 					targetNode.SetAttribute(name, newValue);
 				}
 				else {
 					targetNode.RemoveAttribute(name);
 				}
+
 				return new SetAttributeAction(targetNode, name, v);
 			}
 			else if (newValue != null) {
 				targetNode.SetAttribute(name, newValue);
 			}
+
 			return new RemoveAttributeAction(targetNode, name);
 		}
 
 		#region IUndoAction 成员
-		public IEnumerable<XmlNode> AffectedElements => new XmlNode[] { TargetElement };
+
+		public IEnumerable<XmlNode> AffectedElements => new XmlNode[] {TargetElement};
 		public abstract bool Undo();
+
 		#endregion
 	}
 

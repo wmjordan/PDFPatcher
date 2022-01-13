@@ -8,7 +8,8 @@ namespace PDFPatcher.Common
 {
 	static class FontHelper
 	{
-		public static string FontDirectory { get; } = System.IO.Path.GetFullPath(Environment.GetFolderPath(Environment.SpecialFolder.System) + "\\..\\fonts\\");
+		public static string FontDirectory { get; } =
+			System.IO.Path.GetFullPath(Environment.GetFolderPath(Environment.SpecialFolder.System) + "\\..\\fonts\\");
 
 		/// <summary>
 		/// 列出已安装的字体及其路径。
@@ -16,19 +17,22 @@ namespace PDFPatcher.Common
 		/// <param name="includeFamilyName">是否包含字体组名称</param>
 		public static Dictionary<string, string> GetInstalledFonts(bool includeFamilyName) {
 			var d = new Dictionary<string, string>(50);
-			using (var k = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts")) {
+			using (var k = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(
+				       @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts")) {
 				foreach (var name in k.GetValueNames()) {
 					var p = k.GetValue(name) as string;
 					if (String.IsNullOrEmpty(p)) {
 						continue;
 					}
+
 					if (p.IndexOf('\\') == -1) {
 						p = FontDirectory + p;
 					}
+
 					var fp = new FilePath(p);
 					try {
 						if (fp.HasExtension(Constants.FileExtensions.Ttf)
-							|| fp.HasExtension(Constants.FileExtensions.Otf)) {
+						    || fp.HasExtension(Constants.FileExtensions.Otf)) {
 							AddFontNames(d, p, includeFamilyName);
 						}
 						else if (fp.HasExtension(Constants.FileExtensions.Ttc)) {
@@ -49,6 +53,7 @@ namespace PDFPatcher.Common
 					}
 				}
 			}
+
 			return d;
 		}
 
@@ -58,6 +63,7 @@ namespace PDFPatcher.Common
 			if (includeFamilyName) {
 				fontNames[nl[0] as string] = fontPath;
 			}
+
 			var ffn = nl[2] as string[][];
 			string n = null;
 			string nn = null, cn = null;
@@ -68,6 +74,7 @@ namespace PDFPatcher.Common
 					cn = n;
 					break;
 				}
+
 				if ("1033" == enc) {
 					nn = n;
 				}
@@ -75,6 +82,7 @@ namespace PDFPatcher.Common
 					nn = n;
 				}
 			}
+
 			if (n != null) {
 				//Tracker.DebugMessage (cn ?? nn ?? n);
 				fontNames[cn ?? nn ?? n] = fontPath;
@@ -89,17 +97,17 @@ namespace PDFPatcher.Common
 		{
 			[DllImport("Gdi32.dll", CharSet = CharSet.Unicode)]
 			private static extern int AddFontResourceEx(string fontPath, int flag, IntPtr preserved);
+
 			[DllImport("Gdi32.dll", CharSet = CharSet.Unicode)]
 			private static extern int RemoveFontResourceEx(string fontPath, int flag, IntPtr preserved);
 
 			internal static int LoadFont(string path) {
 				return AddFontResourceEx(path, 0x10, IntPtr.Zero);
 			}
+
 			internal static int RemoveFont(string path) {
 				return RemoveFontResourceEx(path, 0x10, IntPtr.Zero);
 			}
 		}
 	}
 }
-
-

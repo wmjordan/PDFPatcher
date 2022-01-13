@@ -25,17 +25,20 @@ namespace PDFPatcher.Processor
 			UndoActionGroup undo;
 			if (ZoomRate >= 0) {
 				undo = new UndoActionGroup();
-				undo.SetAttribute(item, Constants.DestinationAttributes.View, Constants.DestinationAttributes.ViewType.XYZ);
+				undo.SetAttribute(item, Constants.DestinationAttributes.View,
+					Constants.DestinationAttributes.ViewType.XYZ);
 				undo.SetAttribute(item, Constants.Coordinates.ScaleFactor, ZoomRate.ToText());
 			}
 			else if (string.IsNullOrEmpty(ZoomMethod)) {
 				undo = new UndoActionGroup();
-				undo.SetAttribute(item, Constants.DestinationAttributes.View, Constants.DestinationAttributes.ViewType.XYZ);
+				undo.SetAttribute(item, Constants.DestinationAttributes.View,
+					Constants.DestinationAttributes.ViewType.XYZ);
 				undo.RemoveAttribute(item, Constants.Coordinates.ScaleFactor);
 			}
 			else {
 				return UndoAttributeAction.GetUndoAction(item, Constants.DestinationAttributes.View, ZoomMethod);
 			}
+
 			return undo;
 		}
 

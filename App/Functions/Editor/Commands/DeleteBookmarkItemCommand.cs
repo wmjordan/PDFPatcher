@@ -16,6 +16,7 @@ namespace PDFPatcher.Functions.Editor
 			if (si.Count == 0) {
 				return;
 			}
+
 			var b = controller.View.Bookmark;
 			b.RemoveObjects(si);
 			var undo = new UndoActionGroup();
@@ -24,6 +25,7 @@ namespace PDFPatcher.Functions.Editor
 				if (item == null || item.ParentNode == null) {
 					continue;
 				}
+
 				undo.Add(new AddElementAction(item));
 				var p = item.ParentNode;
 				p.RemoveChild(item);
@@ -31,13 +33,14 @@ namespace PDFPatcher.Functions.Editor
 					l.Add(p);
 				}
 			}
+
 			foreach (var item in l) {
 				if (item.ParentNode != null) {
 					b.RefreshObject(item);
 				}
 			}
+
 			controller.Model.Undo.AddUndo("删除书签", undo);
 		}
-
 	}
 }

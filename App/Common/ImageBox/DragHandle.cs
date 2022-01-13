@@ -16,7 +16,7 @@ namespace Cyotek.Windows.Forms.Demo
 		#region Public Constructors
 
 		public DragHandle(DragHandleAnchor anchor)
-		  : this() {
+			: this() {
 			Anchor = anchor;
 		}
 

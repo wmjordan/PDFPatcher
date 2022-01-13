@@ -13,18 +13,21 @@ namespace Devcorp.Controls.Design
 		public static readonly YUV Empty = new YUV();
 
 		#region Fields
+
 		private double y;
 		private double u;
 		private double v;
+
 		#endregion
 
 		#region Operators
+
 		public static bool operator ==(YUV item1, YUV item2) {
 			return (
 				item1.Y == item2.Y
 				&& item1.U == item2.U
 				&& item1.V == item2.V
-				);
+			);
 		}
 
 		public static bool operator !=(YUV item1, YUV item2) {
@@ -32,12 +35,13 @@ namespace Devcorp.Controls.Design
 				item1.Y != item2.Y
 				|| item1.U != item2.U
 				|| item1.V != item2.V
-				);
+			);
 		}
 
 		#endregion
 
 		#region Accessors
+
 		public double Y {
 			get => y;
 			set {
@@ -74,6 +78,7 @@ namespace Devcorp.Controls.Design
 		}
 
 		#region Methods
+
 		public override bool Equals(Object obj) {
 			if (obj == null || GetType() != obj.GetType()) return false;
 

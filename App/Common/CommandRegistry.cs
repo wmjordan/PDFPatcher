@@ -19,7 +19,8 @@ namespace PDFPatcher.Common
 	/// <typeparam name="P">命令模式的处理参数类型。</typeparam>
 	sealed class CommandRegistry<P>
 	{
-		readonly Dictionary<string, ICommand<P>> _container = new Dictionary<string, ICommand<P>>(StringComparer.OrdinalIgnoreCase);
+		readonly Dictionary<string, ICommand<P>> _container =
+			new Dictionary<string, ICommand<P>>(StringComparer.OrdinalIgnoreCase);
 
 		/// <summary>
 		/// 注册执行处理的命令处理器。
@@ -44,6 +45,7 @@ namespace PDFPatcher.Common
 				cmd.Process(context, parameters);
 				return true;
 			}
+
 			return false;
 		}
 	}

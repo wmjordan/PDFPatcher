@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 
 namespace PDFPatcher.Processor
 {
@@ -13,6 +12,7 @@ namespace PDFPatcher.Processor
 			if (item == item.ParentNode.FirstChild) {
 				return null;
 			}
+
 			var undo = new UndoActionGroup();
 			var n = item.SelectSingleNode("preceding-sibling::" + Constants.Bookmark + "[1]");
 			if (n != null) {
@@ -21,6 +21,7 @@ namespace PDFPatcher.Processor
 				undo.Add(new RemoveElementAction(item));
 				return undo;
 			}
+
 			return null;
 		}
 
