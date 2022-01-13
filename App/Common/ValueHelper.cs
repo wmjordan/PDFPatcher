@@ -503,7 +503,6 @@ namespace PDFPatcher.Common
 		{
 			static readonly int[] __HexBins = InitHexBin(true);
 			static readonly int[] __HexBinLowerCase = InitHexBin(false);
-			internal static readonly long QuadupleZero = ((long)__HexBins[0]) << 32 | __HexBins[0];
 
 			unsafe static int[] InitHexBin(bool upperCase) {
 				var v = new int[Byte.MaxValue + 1];
