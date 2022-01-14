@@ -557,7 +557,7 @@
     <Compile Include="Processor\InfoXmlProcessors\UndoAction.cs" />
     <Compile Include="Processor\InfoXmlProcessors\DestinationGotoTopProcessor.cs" />
     <Compile Include="Processor\InfoXmlProcessors\BookmarkOpenStatusProcessor.cs" />
-    <Compile Include="Processor\InfoXmlProcessors\SetTitleCaseProcessor.cs" />
+    <Compile Include="Processor\InfoXmlProcessors\SetCaseProcessor.cs" />
     <Compile Include="Processor\InfoXmlProcessors\ChangeCoordinateProcessor.cs" />
     <Compile Include="Processor\InfoXmlProcessors\ChangePageNumberProcessor.cs" />
     <Compile Include="Processor\InfoXmlProcessors\ChangeZoomRateProcessor.cs" />

@@ -57,9 +57,6 @@
     <ClCompile Include="src\jbig2_text.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\sha1.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\jbig2.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -75,9 +72,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\config_win32.h">
-      <Filter>Decoder Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\getopt.h">
       <Filter>Decoder Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\jbig2.h">
@@ -132,12 +126,6 @@
       <Filter>Decoder Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\os_types.h">
-      <Filter>Decoder Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\sha1.h">
-      <Filter>Decoder Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\unistd.h">
       <Filter>Decoder Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\pix.h">

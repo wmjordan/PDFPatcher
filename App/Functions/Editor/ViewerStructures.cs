@@ -18,7 +18,7 @@ namespace PDFPatcher.Functions.Editor
 		Move, Selection
 	}
 
-	public struct PagePoint
+	public readonly struct PagePoint
 	{
 		public static readonly PagePoint Empty;
 
@@ -64,7 +64,7 @@ namespace PDFPatcher.Functions.Editor
 		}
 	}
 
-	public struct PageRegion
+	public readonly struct PageRegion
 	{
 		public static readonly PageRegion Empty = new PageRegion();
 
@@ -83,7 +83,7 @@ namespace PDFPatcher.Functions.Editor
 		}
 	}
 
-	public struct TextInfo
+	public readonly struct TextInfo
 	{
 		public readonly MuPage Page;
 
@@ -102,7 +102,7 @@ namespace PDFPatcher.Functions.Editor
 
 	}
 
-	public struct Selection
+	public readonly struct Selection
 	{
 		readonly RenderResultCache _cache;
 		public static readonly Selection Empty;
@@ -119,15 +119,7 @@ namespace PDFPatcher.Functions.Editor
 		/// 获取选中区域在显示图片上的矩形区域。
 		/// </summary>
 		public readonly RectangleF ImageRegion;
-		///// <summary>
-		///// 获取选中区域的文本。
-		///// </summary>
-		//public string SelectedText {
-		//	get {
-		//		var p = _cache.LoadPage (Page);
-		//		return p.GetSelection (PageRegion);
-		//	}
-		//}
+
 		public Bitmap GetSelectedBitmap() {
 			_cache.LoadPage(Page);
 			var p = _cache.GetBitmap(Page);

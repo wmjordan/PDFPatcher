@@ -109,13 +109,13 @@ namespace PDFPatcher.Functions
 			_ChangeCase.DropDownItemClicked += (object s, ToolStripItemClickedEventArgs args) => {
 				FormHelper.HidePopupMenu(args.ClickedItem);
 				_EditMenu.Hide();
-				var i = Array.IndexOf(SetTitleCaseProcessor.CaseNames, args.ClickedItem.Text);
+				var i = Array.IndexOf(SetCaseProcessor.CaseNames, args.ClickedItem.Text);
 				if (i != -1) {
-					_controller.ProcessBookmarks(new SetTitleCaseProcessor((SetTitleCaseProcessor.LetterCase)i));
+					_controller.ProcessBookmarks(new SetCaseProcessor((SetCaseProcessor.LetterCase)i));
 				}
 			};
-			foreach (int item in Enum.GetValues(typeof(SetTitleCaseProcessor.LetterCase))) {
-				_ChangeCase.DropDownItems.Add(SetTitleCaseProcessor.CaseNames[item]);
+			foreach (int item in Enum.GetValues(typeof(SetCaseProcessor.LetterCase))) {
+				_ChangeCase.DropDownItems.Add(SetCaseProcessor.CaseNames[item]);
 			}
 			_SetOpenStatus.DropDownItemClicked += _MainToolbar_ItemClicked;
 
