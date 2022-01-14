@@ -13,7 +13,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3243E921-0EC3-44D1-96CC-C3E05BF9C89B}"
 	ProjectSection(SolutionItems) = preProject
 		CopyReleasedFiles.js = CopyReleasedFiles.js
-		readme.md = readme.md
+		README.md = README.md
 	EndProjectSection
 EndProject
 Global
