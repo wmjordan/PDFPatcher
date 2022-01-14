@@ -264,31 +264,34 @@ namespace PDFPatcher.Processor
 				}
 				w.WriteEndElement();
 			}
-			if (catalog.Contains(PdfName.PAGELABELS)) {
-				var labels = ExtractPageLabels(catalog.GetAsDict(PdfName.PAGELABELS));
-				if (labels.Count > 0) {
-					w.WriteStartElement(Constants.PageLabels);
-					foreach (var item in labels) {
-						w.WriteStartElement(Constants.PageLabelsAttributes.Style);
-						w.WriteAttributeString(Constants.PageLabelsAttributes.PageNumber, item.PageNumber.ToText());
-						if (item.StartPage != 0) {
-							w.WriteAttributeString(Constants.PageLabelsAttributes.StartPage, item.StartPage.ToText());
-						}
-						if (String.IsNullOrEmpty(item.Prefix) == false) {
-							w.WriteAttributeString(Constants.PageLabelsAttributes.Prefix, item.Prefix);
-						}
-						if (String.IsNullOrEmpty(item.Style) == false) {
-							w.WriteAttributeString(Constants.PageLabelsAttributes.Style,
-								ValueHelper.MapValue(item.Style[0],
-									Constants.PageLabelStyles.PdfValues,
-									Constants.PageLabelStyles.Names,
-									item.Style)
-							);
-						}
-						w.WriteEndElement();
+
+			if (!catalog.Contains(PdfName.PAGELABELS)) {
+				return;
+			}
+
+			var labels = ExtractPageLabels(catalog.GetAsDict(PdfName.PAGELABELS));
+			if (labels.Count > 0) {
+				w.WriteStartElement(Constants.PageLabels);
+				foreach (var item in labels) {
+					w.WriteStartElement(Constants.PageLabelsAttributes.Style);
+					w.WriteAttributeString(Constants.PageLabelsAttributes.PageNumber, item.PageNumber.ToText());
+					if (item.StartPage != 0) {
+						w.WriteAttributeString(Constants.PageLabelsAttributes.StartPage, item.StartPage.ToText());
+					}
+					if (String.IsNullOrEmpty(item.Prefix) == false) {
+						w.WriteAttributeString(Constants.PageLabelsAttributes.Prefix, item.Prefix);
+					}
+					if (String.IsNullOrEmpty(item.Style) == false) {
+						w.WriteAttributeString(Constants.PageLabelsAttributes.Style,
+							ValueHelper.MapValue(item.Style[0],
+								Constants.PageLabelStyles.PdfValues,
+								Constants.PageLabelStyles.Names,
+								item.Style)
+						);
 					}
 					w.WriteEndElement();
 				}
+				w.WriteEndElement();
 			}
 		}
 

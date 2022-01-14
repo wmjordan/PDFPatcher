@@ -75,38 +75,41 @@ namespace PDFPatcher.Functions
 					if (d.ImageKey != null) {
 						return d.ImageKey;
 					}
-					if (d.Type != PdfObjectType.Normal) {
-						switch (d.Type) {
-							case PdfObjectType.Trailer:
-								return __OpNameIcons["Document"];
-							case PdfObjectType.Root:
-								break;
-							case PdfObjectType.Pages:
-								return __OpNameIcons["Pages"];
-							case PdfObjectType.Page:
-								return __OpNameIcons["Page"];
-							case PdfObjectType.Image:
-								return __OpNameIcons["Image"];
-							case PdfObjectType.Outline:
-								return __OpNameIcons["Outline"];
-							case PdfObjectType.PageCommands:
-								return __OpNameIcons["PageCommands"];
-							case PdfObjectType.PageCommand:
-								if (d.ImageKey == null) {
-									var n = d.ExtensiveObject as string;
-									if ((n != null && __OpNameIcons.TryGetValue(n, out int ic))
-										|| (d.Name.StartsWith(Constants.ContentPrefix + ":") && __OpNameIcons.TryGetValue(d.Name, out ic))
-										) {
-										d.ImageKey = ic;
-									}
-									else {
-										d.ImageKey = __OpNameIcons["Null"];
-									}
+
+					if (d.Type == PdfObjectType.Normal) {
+						return GetImageKey(d);
+					}
+
+					switch (d.Type) {
+						case PdfObjectType.Trailer:
+							return __OpNameIcons["Document"];
+						case PdfObjectType.Root:
+							break;
+						case PdfObjectType.Pages:
+							return __OpNameIcons["Pages"];
+						case PdfObjectType.Page:
+							return __OpNameIcons["Page"];
+						case PdfObjectType.Image:
+							return __OpNameIcons["Image"];
+						case PdfObjectType.Outline:
+							return __OpNameIcons["Outline"];
+						case PdfObjectType.PageCommands:
+							return __OpNameIcons["PageCommands"];
+						case PdfObjectType.PageCommand:
+							if (d.ImageKey == null) {
+								var n = d.ExtensiveObject as string;
+								if ((n != null && __OpNameIcons.TryGetValue(n, out int ic))
+									|| (d.Name.StartsWith(Constants.ContentPrefix + ":") && __OpNameIcons.TryGetValue(d.Name, out ic))
+									) {
+									d.ImageKey = ic;
 								}
-								return d.ImageKey;
-							case PdfObjectType.Hidden:
-								return __OpNameIcons["Hidden"];
-						}
+								else {
+									d.ImageKey = __OpNameIcons["Null"];
+								}
+							}
+							return d.ImageKey;
+						case PdfObjectType.Hidden:
+							return __OpNameIcons["Hidden"];
 					}
 					return GetImageKey(d);
 				}
@@ -501,19 +504,21 @@ namespace PDFPatcher.Functions
 
 		private void ShowDescription(string name, string description, string type) {
 			_DescriptionBox.Text = String.Empty;
-			if (String.IsNullOrEmpty(name) == false) {
-				_DescriptionBox.SetSelectionFontSize(13);
-				_DescriptionBox.SetSelectionBold(true);
-				_DescriptionBox.AppendText(name);
-				_DescriptionBox.SetSelectionFontSize(9);
-				if (type != null) {
-					_DescriptionBox.AppendText(Environment.NewLine);
-					_DescriptionBox.AppendText("类型：" + type);
-				}
-				if (description != null) {
-					_DescriptionBox.AppendText(Environment.NewLine);
-					_DescriptionBox.AppendText(description);
-				}
+			if (String.IsNullOrEmpty(name)) {
+				return;
+			}
+
+			_DescriptionBox.SetSelectionFontSize(13);
+			_DescriptionBox.SetSelectionBold(true);
+			_DescriptionBox.AppendText(name);
+			_DescriptionBox.SetSelectionFontSize(9);
+			if (type != null) {
+				_DescriptionBox.AppendText(Environment.NewLine);
+				_DescriptionBox.AppendText("类型：" + type);
+			}
+			if (description != null) {
+				_DescriptionBox.AppendText(Environment.NewLine);
+				_DescriptionBox.AppendText(description);
 			}
 		}
 

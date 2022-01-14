@@ -34,21 +34,23 @@ namespace PDFPatcher.Functions
 		#endregion
 
 		private void ControlChanged(object sender, EventArgs e) {
-			if (_lock == false) {
-				if (sender == _PatternBox) {
-					_filter.Pattern.Text = _PatternBox.Text;
-				}
-				else if (sender == _FullMatchBox) {
-					_filter.Pattern.FullMatch = _FullMatchBox.Checked;
-				}
-				else if (sender == _MatchCaseBox) {
-					_filter.Pattern.MatchCase = _MatchCaseBox.Checked;
-				}
-				else if (sender == _UseRegexBox) {
-					_filter.Pattern.UseRegularExpression = _UseRegexBox.Checked;
-				}
-				EditAdjustmentForm.UpdateFilter(this);
+			if (_lock) {
+				return;
 			}
+
+			if (sender == _PatternBox) {
+				_filter.Pattern.Text = _PatternBox.Text;
+			}
+			else if (sender == _FullMatchBox) {
+				_filter.Pattern.FullMatch = _FullMatchBox.Checked;
+			}
+			else if (sender == _MatchCaseBox) {
+				_filter.Pattern.MatchCase = _MatchCaseBox.Checked;
+			}
+			else if (sender == _UseRegexBox) {
+				_filter.Pattern.UseRegularExpression = _UseRegexBox.Checked;
+			}
+			EditAdjustmentForm.UpdateFilter(this);
 		}
 	}
 }

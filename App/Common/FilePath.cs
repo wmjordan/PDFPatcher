@@ -190,14 +190,16 @@ namespace PDFPatcher.Common
 		/// <summary>删除路径尾部的 <see cref="Path.DirectorySeparatorChar"/> 或 <see cref="Path.AltDirectorySeparatorChar"/> 字符。</summary>
 		/// <returns>删除了尾部“\”字符的路径。</returns>
 		public FilePath TrimPathSeparator() {
-			if (_value != null) {
-				string p = _value;
-				int i;
-				for (i = p.Length - 1; i >= 0; i--) {
-					char c = p[i];
-					if (!Char.IsWhiteSpace(c) && IsDirectorySeparator(c) == false) {
-						return _value.Substring(0, i + 1);
-					}
+			if (_value == null) {
+				return Empty;
+			}
+
+			string p = _value;
+			int i;
+			for (i = p.Length - 1; i >= 0; i--) {
+				char c = p[i];
+				if (!Char.IsWhiteSpace(c) && IsDirectorySeparator(c) == false) {
+					return _value.Substring(0, i + 1);
 				}
 			}
 			return Empty;

@@ -410,42 +410,44 @@ namespace PDFPatcher.Processor.Imaging
 			if (info.ColorSpace != null) {
 				return;
 			}
-			if (cs.Type == PdfObject.ARRAY) {
-				var colorspace = cs as PdfArray;
-				// todo: 是否需要将所有 ColorSpace 换成 PaletteColorSpace
-				if (PdfName.ICCBASED.Equals(colorspace.GetAsName(0))) {
-					var iccs = colorspace.GetDirectObject(1) as PRStream;
-					info.ColorSpace = iccs.GetAsName(PdfName.ALTERNATE);
-					return;
-				}
-				if (PdfName.INDEXED.Equals(colorspace.GetAsName(0))) {
-					var o = colorspace.GetDirectObject(1);
-					info.PaletteColorSpace = o as PdfName;
-					if (info.PaletteColorSpace == null) {
-						var arr = o as PdfArray;
-						if (arr != null && arr.Size == 2) {
-							if (PdfName.ICCBASED.Equals(arr.GetAsName(0)) && arr.Size == 2) {
-								var iccs = arr.GetDirectObject(1) as PRStream;
-								info.ColorSpace = iccs.GetAsName(PdfName.ALTERNATE) ?? PdfName.DEVICERGB;
-								info.ICCProfile = PdfReader.GetStreamBytes(iccs);
-							}
-							else {
-								info.ColorSpace = arr.GetAsName(0);
-								//Tracker.TraceMessage (String.Concat ("不支持此图片的色域：", info.ColorSpace));
-							}
+
+			if (cs.Type != PdfObject.ARRAY) {
+				return;
+			}
+
+			var colorspace = cs as PdfArray;
+			// todo: 是否需要将所有 ColorSpace 换成 PaletteColorSpace
+			if (PdfName.ICCBASED.Equals(colorspace.GetAsName(0))) {
+				var iccs = colorspace.GetDirectObject(1) as PRStream;
+				info.ColorSpace = iccs.GetAsName(PdfName.ALTERNATE);
+				return;
+			}
+			if (PdfName.INDEXED.Equals(colorspace.GetAsName(0))) {
+				var o = colorspace.GetDirectObject(1);
+				info.PaletteColorSpace = o as PdfName;
+				if (info.PaletteColorSpace == null) {
+					var arr = o as PdfArray;
+					if (arr != null && arr.Size == 2) {
+						if (PdfName.ICCBASED.Equals(arr.GetAsName(0)) && arr.Size == 2) {
+							var iccs = arr.GetDirectObject(1) as PRStream;
+							info.ColorSpace = iccs.GetAsName(PdfName.ALTERNATE) ?? PdfName.DEVICERGB;
+							info.ICCProfile = PdfReader.GetStreamBytes(iccs);
+						}
+						else {
+							info.ColorSpace = arr.GetAsName(0);
+							//Tracker.TraceMessage (String.Concat ("不支持此图片的色域：", info.ColorSpace));
 						}
 					}
-					var csp = colorspace.GetDirectObject(3);
-					if (csp.IsString()) {
-						info.PaletteBytes = ((PdfString)csp).GetOriginalBytes();
-					}
-					else if (csp is PRStream) {
-						info.PaletteBytes = PdfReader.GetStreamBytes((PRStream)csp);
-					}
-					//}
 				}
+				var csp = colorspace.GetDirectObject(3);
+				if (csp.IsString()) {
+					info.PaletteBytes = ((PdfString)csp).GetOriginalBytes();
+				}
+				else if (csp is PRStream) {
+					info.PaletteBytes = PdfReader.GetStreamBytes((PRStream)csp);
+				}
+				//}
 			}
-			return;
 		}
 
 		internal void ConvertDecodedBytes(ref byte[] bytes) {

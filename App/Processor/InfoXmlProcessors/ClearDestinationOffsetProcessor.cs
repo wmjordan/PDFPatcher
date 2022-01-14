@@ -78,15 +78,16 @@ namespace PDFPatcher.Processor
 		}
 
 		private static IUndoAction ClearPositionOffset(System.Xml.XmlElement item, string coordinate) {
-			if (item.HasAttribute(coordinate)) {
-				var l = item.GetAttribute(coordinate);
-				if (l.Trim() == "0") {
-					return null;
-				}
-				item.RemoveAttribute(coordinate);
-				return new SetAttributeAction(item, coordinate, l);
+			if (!item.HasAttribute(coordinate)) {
+				return null;
 			}
-			return null;
+
+			var l = item.GetAttribute(coordinate);
+			if (l.Trim() == "0") {
+				return null;
+			}
+			item.RemoveAttribute(coordinate);
+			return new SetAttributeAction(item, coordinate, l);
 		}
 
 		#endregion

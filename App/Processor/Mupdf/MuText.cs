@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
-using CC = System.Runtime.InteropServices.CallingConvention;
 
 #pragma warning disable 649, 169
 namespace MuPdfSharp
@@ -82,14 +80,16 @@ namespace MuPdfSharp
 		private bool disposedValue = false; // 要检测冗余调用
 
 		void Dispose(bool disposing) {
-			if (!disposedValue) {
-				if (disposing) {
-					_Blocks = null;
-				}
-
-				_handle.DisposeHandle();
-				disposedValue = true;
+			if (disposedValue) {
+				return;
 			}
+
+			if (disposing) {
+				_Blocks = null;
+			}
+
+			_handle.DisposeHandle();
+			disposedValue = true;
 		}
 
 		~MuTextPage() {

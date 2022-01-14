@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
 namespace PDFPatcher.Functions
 {
@@ -49,19 +46,20 @@ namespace PDFPatcher.Functions
 
 		internal void ProcessInsertMacroCommand(object sender, ToolStripItemClickedEventArgs e) {
 			var t = e.ClickedItem.Text;
-			if (t.StartsWith(InsertText)) {
-				t = t.Substring(InsertText.Length);
-				var c = SourceControl as TextBoxBase;
-				if (c != null) {
-					c.SelectedText = t;
-					return;
-				}
-				var cb = SourceControl as ComboBox;
-				if (cb != null) {
-					cb.SelectedText = t;
-				}
+			if (!t.StartsWith(InsertText)) {
+				return;
+			}
+
+			t = t.Substring(InsertText.Length);
+			var c = SourceControl as TextBoxBase;
+			if (c != null) {
+				c.SelectedText = t;
+				return;
+			}
+			var cb = SourceControl as ComboBox;
+			if (cb != null) {
+				cb.SelectedText = t;
 			}
 		}
-
 	}
 }

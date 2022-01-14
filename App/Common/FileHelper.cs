@@ -112,34 +112,37 @@ namespace PDFPatcher.Common
 		}
 
 		internal static bool CheckOverwrite(string targetFile) {
-			if (File.Exists(targetFile)) {
-				switch (__OverwriteMode) {
-					case OverwriteType.Prompt:
-						var r = Common.FormHelper.YesNoCancelBox(String.Join("\n", new string[] {
-							"是否覆盖目标文件？", targetFile, "\n按住 Shift 键重复此对话框的选择，本次操作不再弹出覆盖文件提示。"
-						}));
-						if (r == System.Windows.Forms.DialogResult.No) {
-							if (FormHelper.IsShiftKeyDown) {
-								__OverwriteMode = OverwriteType.Skip;
-							}
-							goto case OverwriteType.Skip;
-						}
-						else if (r == System.Windows.Forms.DialogResult.Cancel) {
-							throw new OperationCanceledException();
-						}
-						if (FormHelper.IsShiftKeyDown) {
-							__OverwriteMode = OverwriteType.Overwrite;
-						}
-						break;
-					case OverwriteType.Overwrite:
-						return true;
-					case OverwriteType.Skip:
-						Tracker.TraceMessage(Tracker.Category.ImportantMessage, "取消覆盖文件：" + targetFile);
-						return false;
-					default:
-						goto case OverwriteType.Prompt;
-				}
+			if (!File.Exists(targetFile)) {
+				return true;
 			}
+
+			switch (__OverwriteMode) {
+				case OverwriteType.Prompt:
+					var r = Common.FormHelper.YesNoCancelBox(String.Join("\n", new string[] {
+						"是否覆盖目标文件？", targetFile, "\n按住 Shift 键重复此对话框的选择，本次操作不再弹出覆盖文件提示。"
+					}));
+					if (r == System.Windows.Forms.DialogResult.No) {
+						if (FormHelper.IsShiftKeyDown) {
+							__OverwriteMode = OverwriteType.Skip;
+						}
+						goto case OverwriteType.Skip;
+					}
+					else if (r == System.Windows.Forms.DialogResult.Cancel) {
+						throw new OperationCanceledException();
+					}
+					if (FormHelper.IsShiftKeyDown) {
+						__OverwriteMode = OverwriteType.Overwrite;
+					}
+					break;
+				case OverwriteType.Overwrite:
+					return true;
+				case OverwriteType.Skip:
+					Tracker.TraceMessage(Tracker.Category.ImportantMessage, "取消覆盖文件：" + targetFile);
+					return false;
+				default:
+					goto case OverwriteType.Prompt;
+			}
+
 			return true;
 		}
 

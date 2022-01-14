@@ -134,24 +134,27 @@ namespace PDFPatcher.Processor
 				default:
 					break;
 			}
-			if (sourceFile.HasSubItems) {
-				var p = false;
-				var pn = _writer.CurrentPageNumber;
-				foreach (var item in sourceFile.Items) {
-					ProcessFile(item, b ?? bookmarkContainer);
-					if (p) {
-						continue;
-					}
-					p = true;
-					var t = b;
-					while (b?.Page == 0) {
-						b.Page = pn;
-						b.DestinationView = Constants.DestinationAttributes.ViewType.XYZ;
-						b.Top = _doc.PageSize.Height;
-						b = b.ParentBookmark;
-					}
-					b = t;
+
+			if (!sourceFile.HasSubItems) {
+				return;
+			}
+
+			var p = false;
+			var pn = _writer.CurrentPageNumber;
+			foreach (var item in sourceFile.Items) {
+				ProcessFile(item, b ?? bookmarkContainer);
+				if (p) {
+					continue;
 				}
+				p = true;
+				var t = b;
+				while (b?.Page == 0) {
+					b.Page = pn;
+					b.DestinationView = Constants.DestinationAttributes.ViewType.XYZ;
+					b.Top = _doc.PageSize.Height;
+					b = b.ParentBookmark;
+				}
+				b = t;
 			}
 		}
 

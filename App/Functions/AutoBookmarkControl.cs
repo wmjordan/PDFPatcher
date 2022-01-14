@@ -317,14 +317,15 @@ namespace PDFPatcher.Functions
 
 		private void _AddFilterMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e) {
 			var c = EditAdjustmentForm.CreateCondition(e.ClickedItem.Name);
-			if (c != null) {
-				using (var dialog = new EditAdjustmentForm(new AutoBookmarkOptions.LevelAdjustmentOption { Condition = c })) {
-					if (dialog.ShowDialog() == DialogResult.OK && dialog.Filter.Condition != null) {
-						_LevelAdjustmentBox.AddObject(dialog.Filter);
-					}
+			if (c == null) {
+				return;
+			}
+
+			using (var dialog = new EditAdjustmentForm(new AutoBookmarkOptions.LevelAdjustmentOption { Condition = c })) {
+				if (dialog.ShowDialog() == DialogResult.OK && dialog.Filter.Condition != null) {
+					_LevelAdjustmentBox.AddObject(dialog.Filter);
 				}
 			}
 		}
-
 	}
 }

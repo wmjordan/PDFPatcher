@@ -1,5 +1,4 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Windows.Forms;
 
 namespace PDFPatcher.Functions
@@ -16,16 +15,18 @@ namespace PDFPatcher.Functions
 		bool IsMaximized;
 
 		public void Maximize(Form targetForm) {
-			if (!IsMaximized) {
-				IsMaximized = true;
-				if (targetForm.WindowState == FormWindowState.Maximized) {
-					targetForm.WindowState = FormWindowState.Normal;
-				}
-				Save(targetForm);
-				targetForm.FormBorderStyle = FormBorderStyle.None;
-				targetForm.TopMost = true;
-				targetForm.Bounds = Screen.FromControl(targetForm).Bounds;
+			if (IsMaximized) {
+				return;
 			}
+
+			IsMaximized = true;
+			if (targetForm.WindowState == FormWindowState.Maximized) {
+				targetForm.WindowState = FormWindowState.Normal;
+			}
+			Save(targetForm);
+			targetForm.FormBorderStyle = FormBorderStyle.None;
+			targetForm.TopMost = true;
+			targetForm.Bounds = Screen.FromControl(targetForm).Bounds;
 		}
 
 		void Save(Form targetForm) {

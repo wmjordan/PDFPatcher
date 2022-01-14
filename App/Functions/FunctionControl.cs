@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text;
 using System.Windows.Forms;
 using PDFPatcher.Common;
 
@@ -26,16 +24,18 @@ namespace PDFPatcher.Functions
 		}
 
 		public virtual void ExecuteCommand(string commandName, params string[] parameters) {
-			if (Commands.OpenFile == commandName) {
-				// 将第一个文本框设置为文件路径
-				if (parameters.Length > 0 && String.IsNullOrEmpty(parameters[0]) == false
-				&& FileHelper.HasExtension(parameters[0], Constants.FileExtensions.Pdf)
-				) {
-					foreach (Control c in Controls) {
-						if (c is SourceFileControl i) {
-							i.Text = parameters[0];
-							return;
-						}
+			if (Commands.OpenFile != commandName) {
+				return;
+			}
+
+			// 将第一个文本框设置为文件路径
+			if (parameters.Length > 0 && String.IsNullOrEmpty(parameters[0]) == false
+			&& FileHelper.HasExtension(parameters[0], Constants.FileExtensions.Pdf)
+			) {
+				foreach (Control c in Controls) {
+					if (c is SourceFileControl i) {
+						i.Text = parameters[0];
+						return;
 					}
 				}
 			}
