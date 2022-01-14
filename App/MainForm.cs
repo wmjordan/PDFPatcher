@@ -201,18 +201,20 @@ namespace PDFPatcher
 		void OnDocumentChanged(object sender, DocumentChangedEventArgs args) {
 			var p = args.Path;
 			_MainStatusLabel.Text = p ?? String.Empty;
-			if (FileHelper.IsPathValid(p)) {
-				p = System.IO.Path.GetFileNameWithoutExtension(p);
-				if (p.Length > 20) {
-					p = p.Substring(0, 17) + "...";
+			if (!FileHelper.IsPathValid(p)) {
+				return;
+			}
+
+			p = System.IO.Path.GetFileNameWithoutExtension(p);
+			if (p.Length > 20) {
+				p = p.Substring(0, 17) + "...";
+			}
+			if (sender is Control f) {
+				f = f.Parent;
+				if (f == null) {
+					return;
 				}
-				if (sender is Control f) {
-					f = f.Parent;
-					if (f == null) {
-						return;
-					}
-					f.Text = p;
-				}
+				f.Text = p;
 			}
 		}
 

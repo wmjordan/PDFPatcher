@@ -303,16 +303,18 @@ namespace PDFPatcher.Model
 
 			public void Reload() {
 				Items.Clear();
-				if (FilePath.ExistsDirectory) {
-					var p = FilePath.ToString();
-					var l = Items;
-					if (AppContext.Merger.SubFolderBeforeFiles) {
-						AddSubDirectories(p, l);
-						AddFiles(p, l);
-					}
-					else {
-						AddSubDirectoriesAndFiles(p, l);
-					}
+				if (!FilePath.ExistsDirectory) {
+					return;
+				}
+
+				var p = FilePath.ToString();
+				var l = Items;
+				if (AppContext.Merger.SubFolderBeforeFiles) {
+					AddSubDirectories(p, l);
+					AddFiles(p, l);
+				}
+				else {
+					AddSubDirectoriesAndFiles(p, l);
 				}
 			}
 
@@ -373,17 +375,19 @@ namespace PDFPatcher.Model
 
 		protected SourceItem(FilePath path, int pageCount) {
 			PageCount = pageCount;
-			if (path.IsValidPath) {
-				FilePath = path;
-				FileName = path.FileName;
-				FolderName = path.Directory;
-				if (AppContext.Merger.AutoBookmarkTitle == false) {
-					return;
-				}
-				var t = path.ExistsDirectory ? FileName : path.FileNameWithoutExtension;
-				if (t.Length > 0) {
-					Bookmark = CreateBookmarkSettings(t);
-				}
+			if (!path.IsValidPath) {
+				return;
+			}
+
+			FilePath = path;
+			FileName = path.FileName;
+			FolderName = path.Directory;
+			if (AppContext.Merger.AutoBookmarkTitle == false) {
+				return;
+			}
+			var t = path.ExistsDirectory ? FileName : path.FileNameWithoutExtension;
+			if (t.Length > 0) {
+				Bookmark = CreateBookmarkSettings(t);
 			}
 		}
 

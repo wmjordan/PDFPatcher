@@ -1,7 +1,4 @@
-﻿
-using System;
-
-namespace PDFPatcher.Processor
+﻿namespace PDFPatcher.Processor
 {
 	sealed class LevelDownProcessor : IPdfInfoXmlProcessor
 	{
@@ -15,13 +12,14 @@ namespace PDFPatcher.Processor
 			}
 			var undo = new UndoActionGroup();
 			var n = item.SelectSingleNode("preceding-sibling::" + Constants.Bookmark + "[1]");
-			if (n != null) {
-				undo.Add(new AddElementAction(item));
-				n.AppendChild(item);
-				undo.Add(new RemoveElementAction(item));
-				return undo;
+			if (n == null) {
+				return null;
 			}
-			return null;
+
+			undo.Add(new AddElementAction(item));
+			n.AppendChild(item);
+			undo.Add(new RemoveElementAction(item));
+			return undo;
 		}
 
 		#endregion

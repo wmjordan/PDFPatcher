@@ -46,19 +46,19 @@ namespace PDFPatcher.Processor
 		}
 
 		public IEnumerable<XmlNode> Undo() {
-			if (CanUndo) {
-				_names.RemoveAt(_names.Count - 1);
-				if (_names.Count > 100 && _names.Capacity > 200) {
-					_names.TrimExcess();
-				}
-				var a = _undoActions.Pop();
-				a.Undo();
-				OnUndo?.Invoke(this, a);
-				return a.AffectedElements;
+			if (!CanUndo) {
+				return null;
 			}
-			return null;
-		}
 
+			_names.RemoveAt(_names.Count - 1);
+			if (_names.Count > 100 && _names.Capacity > 200) {
+				_names.TrimExcess();
+			}
+			var a = _undoActions.Pop();
+			a.Undo();
+			OnUndo?.Invoke(this, a);
+			return a.AffectedElements;
+		}
 	}
 
 	sealed class UndoActionGroup : IUndoAction

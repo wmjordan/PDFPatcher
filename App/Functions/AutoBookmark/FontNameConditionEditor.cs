@@ -32,15 +32,17 @@ namespace PDFPatcher.Functions
 		#endregion
 
 		private void ControlChanged(object sender, EventArgs e) {
-			if (_lock == false) {
-				if (sender == _FontNameBox) {
-					_filter.FontName = _FontNameBox.Text;
-				}
-				else if (sender == _FullMatchBox) {
-					_filter.MatchFullName = _FullMatchBox.Checked;
-				}
-				EditAdjustmentForm.UpdateFilter(this);
+			if (_lock) {
+				return;
 			}
+
+			if (sender == _FontNameBox) {
+				_filter.FontName = _FontNameBox.Text;
+			}
+			else if (sender == _FullMatchBox) {
+				_filter.MatchFullName = _FullMatchBox.Checked;
+			}
+			EditAdjustmentForm.UpdateFilter(this);
 		}
 	}
 }

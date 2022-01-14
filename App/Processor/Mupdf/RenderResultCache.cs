@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
 using PDFPatcher.Common;
 
 namespace MuPdfSharp
@@ -48,19 +47,21 @@ namespace MuPdfSharp
 		}
 
 		private void TrimBitmapBuffer(int pageNumber) {
-			if (_buffer.Count > __bufferSize) {
-				int x = 0;
-				int i = 0;
-				foreach (var item in _buffer.Keys) {
-					if (Math.Abs(item - pageNumber) > x) {
-						x = Math.Abs(item - pageNumber);
-						i = item;
-					}
-				}
-				_buffer[i].Dispose();
-				_buffer.Remove(i);
-				//Tracker.DebugMessage ("removed buffered result " + i);
+			if (__bufferSize >= _buffer.Count) {
+				return;
 			}
+
+			int x = 0;
+			int i = 0;
+			foreach (var item in _buffer.Keys) {
+				if (Math.Abs(item - pageNumber) > x) {
+					x = Math.Abs(item - pageNumber);
+					i = item;
+				}
+			}
+			_buffer[i].Dispose();
+			_buffer.Remove(i);
+			//Tracker.DebugMessage ("removed buffered result " + i);
 		}
 
 		public void Clear() {

@@ -618,17 +618,19 @@ namespace EnhancedGlassButton
 		/// <param name="mevent">A <see cref="T:System.Windows.Forms.MouseEventArgs" /> that contains the event data.</param>
 		protected override void OnMouseMove(MouseEventArgs mevent) {
 			base.OnMouseMove(mevent);
-			if (mevent.Button != MouseButtons.None) {
-				if (!ClientRectangle.Contains(mevent.X, mevent.Y)) {
-					if (isHovered) {
-						isHovered = false;
-						Invalidate();
-					}
-				}
-				else if (!isHovered) {
-					isHovered = true;
+			if (mevent.Button == MouseButtons.None) {
+				return;
+			}
+
+			if (!ClientRectangle.Contains(mevent.X, mevent.Y)) {
+				if (isHovered) {
+					isHovered = false;
 					Invalidate();
 				}
+			}
+			else if (!isHovered) {
+				isHovered = true;
+				Invalidate();
 			}
 		}
 

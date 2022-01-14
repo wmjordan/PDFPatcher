@@ -418,21 +418,23 @@ namespace PDFPatcher.Processor
 		private static void ImportBorder(string border, PdfAnnotation ann) {
 			var bs = ToInt32Array(border);
 			PdfBorderArray a;
-			if (bs != null) {
-				switch (bs.Length) {
-					case 3: a = new PdfBorderArray(bs[0], bs[1], bs[2]); break;
-					case 4:
-						var dp = new int[bs.Length - 3];
-						bs.CopyTo(dp, 3);
-						a = new PdfBorderArray(bs[0], bs[1], bs[2], GetPdfDashPattern(dp));
-						break;
-					default:
-						a = null;
-						break;
-				}
-				if (a != null) {
-					ann.Put(PdfName.BORDER, a);
-				}
+			if (bs == null) {
+				return;
+			}
+
+			switch (bs.Length) {
+				case 3: a = new PdfBorderArray(bs[0], bs[1], bs[2]); break;
+				case 4:
+					var dp = new int[bs.Length - 3];
+					bs.CopyTo(dp, 3);
+					a = new PdfBorderArray(bs[0], bs[1], bs[2], GetPdfDashPattern(dp));
+					break;
+				default:
+					a = null;
+					break;
+			}
+			if (a != null) {
+				ann.Put(PdfName.BORDER, a);
 			}
 		}
 
@@ -664,31 +666,33 @@ namespace PDFPatcher.Processor
 				bs.Put(PdfName.W, new PdfNumber(bw));
 			}
 
-			if (string.IsNullOrEmpty(borderStyle) == false) {
-				PdfName s;
-				switch (borderStyle) {
-					case "方框": s = PdfName.S; break;
-					case "下划线": s = PdfName.U; break;
-					case "凸起": s = PdfName.B; break;
-					case "凹陷": s = PdfName.I; break;
-					case "虚线":
-						s = PdfName.D;
-						if (string.IsNullOrEmpty(borderPattern) == false) {
-							var p = ToInt32Array(borderPattern);
-							if (p != null) {
-								var dp = GetPdfDashPattern(p);
-								if (dp != null) {
-									bs.Put(PdfName.D, dp);
-								}
+			if (string.IsNullOrEmpty(borderStyle)) {
+				return bs;
+			}
+
+			PdfName s;
+			switch (borderStyle) {
+				case "方框": s = PdfName.S; break;
+				case "下划线": s = PdfName.U; break;
+				case "凸起": s = PdfName.B; break;
+				case "凹陷": s = PdfName.I; break;
+				case "虚线":
+					s = PdfName.D;
+					if (string.IsNullOrEmpty(borderPattern) == false) {
+						var p = ToInt32Array(borderPattern);
+						if (p != null) {
+							var dp = GetPdfDashPattern(p);
+							if (dp != null) {
+								bs.Put(PdfName.D, dp);
 							}
 						}
-						break;
-					default:
-						s = new PdfName(borderStyle);
-						break;
-				}
-				bs.Put(PdfName.S, s);
+					}
+					break;
+				default:
+					s = new PdfName(borderStyle);
+					break;
 			}
+			bs.Put(PdfName.S, s);
 			return bs;
 		}
 

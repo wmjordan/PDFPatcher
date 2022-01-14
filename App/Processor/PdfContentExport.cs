@@ -19,11 +19,12 @@ namespace PDFPatcher.Processor
 
 		private bool AddReferenceRecord(PdfIndirectReference r, string type) {
 			var k = String.Concat(r.Number, ' ', r.Generation);
-			if (_resolvedReferences.ContainsKey(k) == false) {
-				_resolvedReferences.Add(k, type);
-				return true;
+			if (_resolvedReferences.ContainsKey(k)) {
+				return false;
 			}
-			return false;
+
+			_resolvedReferences.Add(k, type);
+			return true;
 		}
 
 

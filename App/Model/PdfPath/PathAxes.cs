@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using PDFPatcher.Common;
 
 namespace PDFPatcher.Model.PdfPath
@@ -97,12 +96,14 @@ namespace PDFPatcher.Model.PdfPath
 			public PathAxisType Type => PathAxisType.Children;
 
 			public DocumentObject SelectObject(DocumentObject source, string name, IEnumerable<IPathPredicate> predicates) {
-				if (source != null && source.HasChildren) {
-					var r = new List<DocumentObject>();
-					foreach (var item in source.Children) {
-						if (MatchesPredicate(item, name, predicates)) {
-							return item;
-						}
+				if (source == null || !source.HasChildren) {
+					return null;
+				}
+
+				var r = new List<DocumentObject>();
+				foreach (var item in source.Children) {
+					if (MatchesPredicate(item, name, predicates)) {
+						return item;
 					}
 				}
 				return null;
