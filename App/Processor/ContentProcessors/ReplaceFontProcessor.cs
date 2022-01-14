@@ -13,6 +13,10 @@ namespace PDFPatcher.Processor
 		static readonly string[] __AlternativeFonts = { "宋体", "楷体", "仿宋", "微软雅黑", "宋体", "宋体" };
 		static readonly PdfName __GbkEncoding = new PdfName("GBK-EUC-H");
 		static readonly PdfName __GbEncoding = new PdfName("GB-EUC-H");
+		const string HalfWidthLetters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		const string FullWidthLetters = "ａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺ";
+		const string HalfWidthNumbers = "0123456789";
+		const string FullWidthNumbers = "０１２３４５６７８９";
 
 		readonly bool _embedLegacyFonts;
 		readonly bool _trimTrailingWhiteSpace;
@@ -235,9 +239,6 @@ namespace PDFPatcher.Processor
 						c = ch;
 					}
 					if (newFont.UsedCidMap.TryGetValue(c, out int cid) == false) {
-						//if (ttf == null) {
-						//    ;
-						//}
 						var tt = ttf.GetMetricsTT(c);
 						if (tt == null) {
 							newFont.AbsentChars.Add(c);
@@ -323,6 +324,30 @@ namespace PDFPatcher.Processor
 								}
 								else {
 									Map(nf.CharSubstitutions, ChineseCharMap.Traditional, ChineseCharMap.Simplified);
+								}
+							}
+							if (fs.NumericWidthConversion != 0) {
+								if (fs.NumericWidthConversion > 0) {
+									Map(nf.CharSubstitutions, HalfWidthNumbers, FullWidthNumbers);
+								}
+								else {
+									Map(nf.CharSubstitutions, FullWidthNumbers, HalfWidthNumbers);
+								}
+							}
+							if (fs.AlphabeticWidthConversion != 0) {
+								if (fs.AlphabeticWidthConversion > 0) {
+									Map(nf.CharSubstitutions, HalfWidthLetters, FullWidthLetters);
+								}
+								else {
+									Map(nf.CharSubstitutions, FullWidthLetters, HalfWidthLetters);
+								}
+							}
+							if (fs.PunctuationWidthConversion != 0) {
+								if (fs.PunctuationWidthConversion > 0) {
+									Map(nf.CharSubstitutions, SetCaseProcessor.HalfWidthPunctuations, SetCaseProcessor.FullWidthPunctuations);
+								}
+								else {
+									Map(nf.CharSubstitutions, SetCaseProcessor.FullWidthPunctuations, SetCaseProcessor.HalfWidthPunctuations);
 								}
 							}
 							if (fs?.OriginalCharacters != null && fs.SubstituteCharacters != null) {

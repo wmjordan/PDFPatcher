@@ -76,6 +76,12 @@ namespace PDFPatcher
 		public string SubstituteCharacters { get; set; }
 		[XmlAttribute("简繁替换")]
 		public int TraditionalChineseConversion { get; set; }
+		[XmlAttribute("数字替换")]
+		public int NumericWidthConversion { get; set; }
+		[XmlAttribute("字母替换")]
+		public int AlphabeticWidthConversion { get; set; }
+		[XmlAttribute("符号替换")]
+		public int PunctuationWidthConversion { get; set; }
 	}
 
 }

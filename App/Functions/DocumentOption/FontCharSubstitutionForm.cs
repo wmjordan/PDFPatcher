@@ -18,6 +18,9 @@ namespace PDFPatcher.Functions
 			_OriginalCharactersBox.Text = substitution.OriginalCharacters;
 			_SubstituteCharactersBox.Text = substitution.SubstituteCharacters;
 			_ChineseCaseBox.Select(substitution.TraditionalChineseConversion == -1 ? 2 : substitution.TraditionalChineseConversion);
+			_LetterWidthBox.Select(substitution.AlphabeticWidthConversion == -1 ? 2 : substitution.AlphabeticWidthConversion);
+			_NumericWidthBox.Select(substitution.NumericWidthConversion == -1 ? 2 : substitution.NumericWidthConversion);
+			_PunctuationWidthBox.Select(substitution.PunctuationWidthConversion == -1 ? 2 : substitution.PunctuationWidthConversion);
 		}
 
 		void _OriginalCharactersBox_TextChanged(object sender, EventArgs e) {
@@ -44,6 +47,18 @@ namespace PDFPatcher.Functions
 
 		void _ChineseCaseBox_SelectedIndexChanged(object sender, EventArgs e) {
 			_Substitution.TraditionalChineseConversion = _ChineseCaseBox.SelectedIndex == 2 ? -1 : _ChineseCaseBox.SelectedIndex;
+		}
+
+		void _NumericWidthBox_SelectedIndexChanged(object sender, EventArgs e) {
+			_Substitution.NumericWidthConversion = _NumericWidthBox.SelectedIndex == 2 ? -1 : _NumericWidthBox.SelectedIndex;
+		}
+
+		void _LetterWidthBox_SelectedIndexChanged(object sender, EventArgs e) {
+			_Substitution.AlphabeticWidthConversion = _LetterWidthBox.SelectedIndex == 2 ? -1 : _LetterWidthBox.SelectedIndex;
+		}
+
+		void _PunctuationWidthBox_SelectedIndexChanged(object sender, EventArgs e) {
+			_Substitution.PunctuationWidthConversion = _PunctuationWidthBox.SelectedIndex == 2 ? -1 : _PunctuationWidthBox.SelectedIndex;
 		}
 	}
 }

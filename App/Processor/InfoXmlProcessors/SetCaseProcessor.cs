@@ -11,10 +11,8 @@ namespace PDFPatcher.Processor
 		static readonly char[] ChineseNumbers = "○一二三四五六七八九〇".ToCharArray();
 		static readonly char[] TraditionalChineseNumbers = "零壹贰叁肆伍陆柒捌玖零".ToCharArray();
 
-		static readonly char[] FullWidthAlphabetics = "ａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺ".ToCharArray();
-		static readonly char[] HalfWidthAlphabetics = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
-		const string FullWidthPunctuations = "！＂＃＄％＆＇（）＊＋，－．／：；＜＝＞？＠［＼］＾＿｀｛｜｝～";
-		const string HalfWidthPunctuations = "!\"#$%&'()*+,-./;:<=>?@[\\]^_`{|}~";
+		internal const string FullWidthPunctuations = "！＂＃＄％＆＇（）＊＋，－．／：；＜＝＞？＠［＼］＾＿｀｛｜｝～";
+		internal const string HalfWidthPunctuations = "!\"#$%&'()*+,-./;:<=>?@[\\]^_`{|}~";
 
 		internal static string[] CaseNames = new string[]{
 			"首字母大写", "英文大写", "英文小写",
@@ -68,17 +66,15 @@ namespace PDFPatcher.Processor
 				case LetterCase.Title:
 					return __currentTextInfo.ToTitleCase(source.ToLowerInvariant());
 				case LetterCase.FullWidthAlphabetic:
-					return Translate(source, HalfWidthAlphabetics, FullWidthAlphabetics);
+					return HWL2FWL.Convert(source);
 				case LetterCase.FullWidthNumber:
-					value = Translate(source, HalfWidthNumbers, FullWidthNumbers);
-					return Translate(value, ChineseNumbers, FullWidthNumbers);
+					return HWN2FWN.Convert(source);
 				case LetterCase.FullWidthPunctuation:
 					return HWP2FWP.Convert(source);
 				case LetterCase.HalfWidthAlphabetic:
-					return Translate(source, FullWidthAlphabetics, HalfWidthAlphabetics);
+					return FWL2HWL.Convert(source);
 				case LetterCase.HalfWidthNumber:
-					value = Translate(source, FullWidthNumbers, HalfWidthNumbers);
-					return Translate(value, ChineseNumbers, HalfWidthNumbers);
+					return FWN2HWN.Convert(source);
 				case LetterCase.HalfWidthPunctuation:
 					return FWP2HWP.Convert(source);
 				case LetterCase.ChineseNumber:
@@ -108,6 +104,25 @@ namespace PDFPatcher.Processor
 			return new string(cs);
 		}
 
+		static char FullWidthLetterToHalfWidth(char ch) {
+			return ch >= 'ａ' && ch <= 'ｚ' ? (char)(ch - 'ａ' + 'a')
+				: ch >= 'Ａ' && ch <= 'Ｚ' ? (char)(ch - 'Ａ' + 'A')
+				: ch;
+		}
+
+		static char HalfWidthLetterToFullWidth(char ch) {
+			return ch >= 'a' && ch <= 'z' ? (char)(ch + 'ａ' - 'a')
+				: ch >= 'A' && ch <= 'Z' ? (char)(ch + 'Ａ' - 'A')
+				: ch;
+		}
+		static char FullWidthNumberToHalfWidth(char ch) {
+			return ch >= '０' && ch <= '９' ? (char)(ch - '０' + '0') : ch;
+		}
+
+		static char HalfWidthNumberToFullWidth(char ch) {
+			return ch >= '0' && ch <= '9' ? (char)(ch + '０' - '0') : ch;
+		}
+
 		static class SC2TC
 		{
 			public static readonly Converter<string, string> Convert = new StringMapper(new CharacterMapper(ChineseCharMap.Simplified, ChineseCharMap.Traditional).Map).Convert;
@@ -124,6 +139,22 @@ namespace PDFPatcher.Processor
 		{
 			public static readonly Converter<string, string> Convert = new StringMapper(new CharacterMapper(HalfWidthPunctuations, FullWidthPunctuations).Map).Convert;
 		}
+		static class FWL2HWL
+		{
+			public static readonly Converter<string, string> Convert = new StringMapper(FullWidthLetterToHalfWidth).Convert;
+		}
+		static class HWL2FWL
+		{
+			public static readonly Converter<string, string> Convert = new StringMapper(HalfWidthLetterToFullWidth).Convert;
+		}
+		static class FWN2HWN
+		{
+			public static readonly Converter<string, string> Convert = new StringMapper(FullWidthNumberToHalfWidth).Convert;
+		}
+		static class HWN2FWN
+		{
+			public static readonly Converter<string, string> Convert = new StringMapper(HalfWidthNumberToFullWidth).Convert;
+		}
 
 		sealed class StringMapper
 		{
@@ -136,9 +167,19 @@ namespace PDFPatcher.Processor
 				if (String.IsNullOrEmpty(value)) {
 					return value;
 				}
+				int i = 0;
+				foreach (var ch in value) {
+					if (ch != Converter(ch)) {
+						break;
+					}
+					++i;
+				}
+				if (i == value.Length) {
+					return value;
+				}
 				var r = String.Copy(value);
 				fixed (char* s = r) {
-					char* c = s;
+					char* c = s + i;
 					char* end = c + value.Length;
 					do {
 						*c = Converter(*c);

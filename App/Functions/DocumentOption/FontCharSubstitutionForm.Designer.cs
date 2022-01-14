@@ -31,6 +31,12 @@
 			this._SubstituteCharactersBox = new System.Windows.Forms.RichTextBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this._ChineseCaseBox = new System.Windows.Forms.ComboBox();
+			this.label4 = new System.Windows.Forms.Label();
+			this._NumericWidthBox = new System.Windows.Forms.ComboBox();
+			this._LetterWidthBox = new System.Windows.Forms.ComboBox();
+			this.label5 = new System.Windows.Forms.Label();
+			this._PunctuationWidthBox = new System.Windows.Forms.ComboBox();
+			this.label6 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
 			// label1
@@ -104,12 +110,87 @@
 			this._ChineseCaseBox.TabIndex = 4;
 			this._ChineseCaseBox.SelectedIndexChanged += new System.EventHandler(this._ChineseCaseBox_SelectedIndexChanged);
 			// 
+			// label4
+			// 
+			this.label4.AutoSize = true;
+			this.label4.Location = new System.Drawing.Point(50, 184);
+			this.label4.Name = "label4";
+			this.label4.Size = new System.Drawing.Size(98, 18);
+			this.label4.TabIndex = 3;
+			this.label4.Text = "数字替换：";
+			// 
+			// _NumericWidthBox
+			// 
+			this._NumericWidthBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this._NumericWidthBox.FormattingEnabled = true;
+			this._NumericWidthBox.Items.AddRange(new object[] {
+            "不改变",
+            "半角转全角",
+            "全角转半角"});
+			this._NumericWidthBox.Location = new System.Drawing.Point(154, 181);
+			this._NumericWidthBox.Name = "_NumericWidthBox";
+			this._NumericWidthBox.Size = new System.Drawing.Size(161, 26);
+			this._NumericWidthBox.TabIndex = 4;
+			this._NumericWidthBox.SelectedIndexChanged += new System.EventHandler(this._NumericWidthBox_SelectedIndexChanged);
+			// 
+			// _LetterWidthBox
+			// 
+			this._LetterWidthBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this._LetterWidthBox.FormattingEnabled = true;
+			this._LetterWidthBox.Items.AddRange(new object[] {
+            "不改变",
+            "半角转全角",
+            "全角转半角"});
+			this._LetterWidthBox.Location = new System.Drawing.Point(154, 213);
+			this._LetterWidthBox.Name = "_LetterWidthBox";
+			this._LetterWidthBox.Size = new System.Drawing.Size(161, 26);
+			this._LetterWidthBox.TabIndex = 4;
+			this._LetterWidthBox.SelectedIndexChanged += new System.EventHandler(this._LetterWidthBox_SelectedIndexChanged);
+			// 
+			// label5
+			// 
+			this.label5.AutoSize = true;
+			this.label5.Location = new System.Drawing.Point(50, 216);
+			this.label5.Name = "label5";
+			this.label5.Size = new System.Drawing.Size(98, 18);
+			this.label5.TabIndex = 3;
+			this.label5.Text = "字母替换：";
+			// 
+			// _PunctuationWidthBox
+			// 
+			this._PunctuationWidthBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this._PunctuationWidthBox.FormattingEnabled = true;
+			this._PunctuationWidthBox.Items.AddRange(new object[] {
+            "不改变",
+            "半角转全角",
+            "全角转半角"});
+			this._PunctuationWidthBox.Location = new System.Drawing.Point(154, 245);
+			this._PunctuationWidthBox.Name = "_PunctuationWidthBox";
+			this._PunctuationWidthBox.Size = new System.Drawing.Size(161, 26);
+			this._PunctuationWidthBox.TabIndex = 4;
+			this._PunctuationWidthBox.SelectedIndexChanged += new System.EventHandler(this._PunctuationWidthBox_SelectedIndexChanged);
+			// 
+			// label6
+			// 
+			this.label6.AutoSize = true;
+			this.label6.Location = new System.Drawing.Point(50, 248);
+			this.label6.Name = "label6";
+			this.label6.Size = new System.Drawing.Size(98, 18);
+			this.label6.TabIndex = 3;
+			this.label6.Text = "标点替换：";
+			// 
 			// FontCharSubstitutionForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(480, 198);
+			this.ClientSize = new System.Drawing.Size(480, 288);
+			this.Controls.Add(this._PunctuationWidthBox);
+			this.Controls.Add(this._LetterWidthBox);
+			this.Controls.Add(this._NumericWidthBox);
 			this.Controls.Add(this._ChineseCaseBox);
+			this.Controls.Add(this.label6);
+			this.Controls.Add(this.label5);
+			this.Controls.Add(this.label4);
 			this.Controls.Add(this.label3);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this._SubstituteCharactersBox);
@@ -136,5 +217,11 @@
 		private System.Windows.Forms.RichTextBox _SubstituteCharactersBox;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.ComboBox _ChineseCaseBox;
+		private System.Windows.Forms.Label label4;
+		private System.Windows.Forms.ComboBox _NumericWidthBox;
+		private System.Windows.Forms.ComboBox _LetterWidthBox;
+		private System.Windows.Forms.Label label5;
+		private System.Windows.Forms.ComboBox _PunctuationWidthBox;
+		private System.Windows.Forms.Label label6;
 	}
 }
