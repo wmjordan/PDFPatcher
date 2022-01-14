@@ -317,6 +317,14 @@ namespace PDFPatcher.Processor
 								FontRef = context.Pdf.AddPdfObject(new PdfDictionary()),
 								DescendantFontRef = context.Pdf.AddPdfObject(new PdfArray())
 							};
+							if (fs.TraditionalChineseConversion != 0) {
+								if (fs.TraditionalChineseConversion > 0) {
+									Map(nf.CharSubstitutions, ChineseCharMap.Simplified, ChineseCharMap.Traditional);
+								}
+								else {
+									Map(nf.CharSubstitutions, ChineseCharMap.Traditional, ChineseCharMap.Simplified);
+								}
+							}
 							if (fs?.OriginalCharacters != null && fs.SubstituteCharacters != null) {
 								var sl = fs.SubstituteCharacters.Length;
 								for (int i = 0; i < fs.OriginalCharacters.Length; i++) {
@@ -362,6 +370,13 @@ namespace PDFPatcher.Processor
 			}
 			if (r.Count > 0) {
 				_fontDictMap[fonts] = r;
+			}
+		}
+
+		static void Map(Dictionary<char, char> map, string from, string to) {
+			var i = 0;
+			foreach (var item in from) {
+				map[item] = to[i++];
 			}
 		}
 
