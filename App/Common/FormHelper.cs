@@ -180,16 +180,12 @@ namespace PDFPatcher.Common
 				return;
 			}
 			var oo = item.Owner as ToolStripDropDownMenu;
-			if (oo != null) {
-				oo.Hide();
-			}
+			oo?.Hide();
 			var oi = item.OwnerItem as ToolStripDropDownItem;
 			while (oi != null) {
 				oi.DropDown.Close();
 				oo = oi.Owner as ToolStripDropDownMenu;
-				if (oo != null) {
-					oo.Hide();
-				}
+				oo?.Hide();
 				oi = oi.OwnerItem as ToolStripDropDownItem;
 			}
 		}

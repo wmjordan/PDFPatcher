@@ -20,9 +20,7 @@ namespace PDFPatcher.Functions
 				_CheckUpdateIntervalBox.Select(i == 7 ? 0 : i == 14 ? 1 : i == 30 ? 2 : 3);
 			};
 			FormClosed += (s, args) => {
-				if (_UpdateChecker != null) {
-					_UpdateChecker.Dispose();
-				}
+				_UpdateChecker?.Dispose();
 			};
 			_HomePageButton.Click += (s, args) => {
 				CommonCommands.VisitHomePage();

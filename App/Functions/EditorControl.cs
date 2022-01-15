@@ -271,9 +271,7 @@ namespace PDFPatcher.Functions
 		//}
 		internal override void OnDeselected() {
 			base.OnDeselected();
-			if (_searchForm != null) {
-				_searchForm.Close();
-			}
+			_searchForm?.Close();
 		}
 
 		private void _ViewBox_MouseClick(object sender, MouseEventArgs args) {
@@ -525,8 +523,8 @@ namespace PDFPatcher.Functions
 					if (_BookmarkBox.FocusedItem != null) {
 						_BookmarkBox.FocusedItem.BeginEdit();
 					}
-					else if (_BookmarkBox.SelectedItem != null) {
-						_BookmarkBox.SelectedItem.BeginEdit();
+					else {
+						_BookmarkBox.SelectedItem?.BeginEdit();
 					}
 					return true;
 				case Keys.Space:

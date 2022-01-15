@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using iTextSharp.text.error_messages;
 using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.parser;
@@ -97,8 +96,8 @@ namespace PDFPatcher.Processor
 			if (operators.TryGetValue(oper.ToString(), out op)) {
 				op.Invoke(this, oper, operands);
 			}
-			else if (DefaultOperator != null) {
-				DefaultOperator.Invoke(this, oper, operands);
+			else {
+				DefaultOperator?.Invoke(this, oper, operands);
 			}
 		}
 
