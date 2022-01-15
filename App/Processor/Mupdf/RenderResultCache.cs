@@ -38,9 +38,7 @@ namespace MuPdfSharp
 		public void AddBitmap(int pageNumber, Bitmap bmp) {
 			if (_buffer.ContainsKey(pageNumber)) {
 				var i = _buffer[pageNumber];
-				if (i.Image != null) {
-					i.Image.Dispose();
-				}
+				i.Image?.Dispose();
 			}
 			_buffer[pageNumber].Image = bmp;
 			TrimBitmapBuffer(pageNumber);
@@ -90,12 +88,8 @@ namespace MuPdfSharp
 			}
 
 			public void Dispose() {
-				if (Page != null) {
-					Page.Dispose();
-				}
-				if (Image != null) {
-					Image.Dispose();
-				}
+				Page?.Dispose();
+				Image?.Dispose();
 			}
 		}
 	}

@@ -617,9 +617,7 @@ namespace PDFPatcher.Functions
 					break;
 				case "_RefreshFolder":
 					foreach (SourceItem.Folder item in _ItemList.SelectedObjects) {
-						if (item != null) {
-							item.Reload();
-						}
+						item?.Reload();
 					}
 					_ItemList.RefreshObjects(_ItemList.SelectedObjects);
 					break;

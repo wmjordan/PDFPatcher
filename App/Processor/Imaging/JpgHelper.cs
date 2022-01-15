@@ -785,9 +785,8 @@ namespace PDFPatcher.Processor.Imaging
 						_reader.Dispose();
 
 					if (!_leaveOpen) {
-						// Make sure the file handle is released                
-						if (_stream != null)
-							_stream.Dispose();
+						// Make sure the file handle is released
+						_stream?.Dispose();
 					}
 				}
 				_reader = null;

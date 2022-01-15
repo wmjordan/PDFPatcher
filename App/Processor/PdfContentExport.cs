@@ -509,9 +509,8 @@ namespace PDFPatcher.Processor
 			_exportPath.Add(Constants.Content.Page);
 			writer.WriteAttributeString(Constants.Content.PageNumber, pageNum.ToText());
 			writer.WriteAttributeString(Constants.Content.ResourceID, reader.GetPageOrigRef(pageNum).ToString());
-			if (_imageExporter != null) {
-				_imageExporter.ExtractPageImages(reader, pageNum);
-			}
+			_imageExporter?.ExtractPageImages(reader, pageNum);
+
 			if (_options.ExtractPageDictionary) {
 				ExportPdfDictionary(writer, reader.GetPageNRelease(pageNum));
 			}

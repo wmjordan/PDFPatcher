@@ -307,9 +307,7 @@ namespace MuPdfSharp
 			if (!disposed) {
 				if (disposing) {
 					#region 释放托管资源
-					if (_TextPage != null) {
-						_TextPage.Dispose();
-					}
+					_TextPage?.Dispose();
 					_TextPage = null;
 					#endregion
 				}

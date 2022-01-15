@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using System.Xml;
-using FreeImageAPI;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using MuPdfSharp;
@@ -156,9 +155,7 @@ namespace PDFPatcher.Processor
 				FormHelper.ErrorBox("在转换图片时遇到错误：\n" + ex.Message);
 			}
 			finally {
-				if (mupdf != null) {
-					mupdf.Dispose();
-				}
+				mupdf?.Dispose();
 			}
 		}
 

@@ -143,9 +143,7 @@ namespace EnhancedGlassButton
 
 		private void DisposeAll(params IDisposable[] objects) {
 			foreach (var item in objects) {
-				if (item != null) {
-					item.Dispose();
-				}
+				item?.Dispose();
 			}
 		}
 		#endregion

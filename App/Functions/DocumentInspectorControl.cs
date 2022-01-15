@@ -233,9 +233,7 @@ namespace PDFPatcher.Functions
 				LoadDocument(args.ClickedItem.ToolTipText);
 			};
 			Disposed += (s, args) => {
-				if (_pdf != null) {
-					_pdf.Document.Dispose();
-				}
+				_pdf?.Document.Dispose();
 			};
 		}
 
@@ -329,15 +327,11 @@ namespace PDFPatcher.Functions
 		}
 
 		public void CloseDocument() {
-			if (_pdf.Document != null) {
-				_pdf.Document.SafeFile.Close();
-			}
+			_pdf.Document?.SafeFile.Close();
 		}
 
 		public void Reopen() {
-			if (_pdf.Document != null) {
-				_pdf.Document.SafeFile.ReOpen();
-			}
+			_pdf.Document?.SafeFile.ReOpen();
 		}
 
 		void _ObjectDetailBox_CanDrop(object sender, OlvDropEventArgs e) {
