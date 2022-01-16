@@ -19,16 +19,16 @@ namespace PDFPatcher.Model
 			get => _PaperName;
 			set {
 				_PaperName = value;
-				switch (_PaperName) {
-					case AsPageSize: SpecialSize = SpecialPaperSize.AsPageSize; break;
-					case FixedWidthAutoHeight: SpecialSize = SpecialPaperSize.FixedWidthAutoHeight; break;
-					case AsSpecificPage: SpecialSize = SpecialPaperSize.AsSpecificPage; break;
-					case AsWidestPage: SpecialSize = SpecialPaperSize.AsWidestPage; break;
-					case AsNarrowestPage: SpecialSize = SpecialPaperSize.AsNarrowestPage; break;
-					case AsLargestPage: SpecialSize = SpecialPaperSize.AsLargestPage; break;
-					case AsSmallestPage: SpecialSize = SpecialPaperSize.AsSmallestPage; break;
-					default: SpecialSize = SpecialPaperSize.None; break;
-				}
+				SpecialSize = _PaperName switch {
+					AsPageSize => SpecialPaperSize.AsPageSize,
+					FixedWidthAutoHeight => SpecialPaperSize.FixedWidthAutoHeight,
+					AsSpecificPage => SpecialPaperSize.AsSpecificPage,
+					AsWidestPage => SpecialPaperSize.AsWidestPage,
+					AsNarrowestPage => SpecialPaperSize.AsNarrowestPage,
+					AsLargestPage => SpecialPaperSize.AsLargestPage,
+					AsSmallestPage => SpecialPaperSize.AsSmallestPage,
+					_ => SpecialPaperSize.None,
+				};
 			}
 		}
 
