@@ -826,7 +826,7 @@ namespace PDFPatcher.Processor
 				int cpp = GetComponentsPerPixel(imageDictionary.GetAsName(PdfName.COLORSPACE), colorSpaceDic);
 
 				int w = wObj.IntValue;
-				int bpc = bpcObj != null ? bpcObj.IntValue : 1;
+				int bpc = bpcObj?.IntValue ?? 1;
 
 
 				int bytesPerRow = (w * bpc * cpp + 7) / 8;

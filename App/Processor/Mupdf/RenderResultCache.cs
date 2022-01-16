@@ -32,7 +32,7 @@ namespace MuPdfSharp
 			}
 			RenderResult result;
 			_buffer.TryGetValue(pageNumber, out result);
-			return result != null ? result.Image : null;
+			return result?.Image;
 		}
 
 		public void AddBitmap(int pageNumber, Bitmap bmp) {
