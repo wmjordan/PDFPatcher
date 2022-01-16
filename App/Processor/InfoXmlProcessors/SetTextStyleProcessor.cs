@@ -33,18 +33,13 @@ namespace PDFPatcher.Processor
 
 		public string Name {
 			get {
-				switch (_style) {
-					case Style.SetBold:
-						return "设置书签文本为粗体";
-					case Style.SetItalic:
-						return "设置书签文本为斜体";
-					case Style.RemoveBold:
-						return "清除书签文本粗体样式";
-					case Style.RemoveItalic:
-						return "清除书签文本斜体样式";
-					default:
-						return "";
-				}
+				return _style switch {
+					Style.SetBold => "设置书签文本为粗体",
+					Style.SetItalic => "设置书签文本为斜体",
+					Style.RemoveBold => "清除书签文本粗体样式",
+					Style.RemoveItalic => "清除书签文本斜体样式",
+					_ => "",
+				};
 			}
 		}
 
@@ -85,14 +80,12 @@ namespace PDFPatcher.Processor
 					break;
 				default: throw new System.ArgumentOutOfRangeException("Style");
 			}
-			switch (style) {
-				case 1: value = Constants.BookmarkAttributes.StyleType.Bold; break;
-				case 2: value = Constants.BookmarkAttributes.StyleType.Italic; break;
-				case 3: value = Constants.BookmarkAttributes.StyleType.BoldItalic; break;
-				default:
-					value = null;
-					break;
-			}
+			value = style switch {
+				1 => Constants.BookmarkAttributes.StyleType.Bold,
+				2 => Constants.BookmarkAttributes.StyleType.Italic,
+				3 => Constants.BookmarkAttributes.StyleType.BoldItalic,
+				_ => null,
+			};
 			return UndoAttributeAction.GetUndoAction(item, Constants.BookmarkAttributes.Style, value);
 		}
 
