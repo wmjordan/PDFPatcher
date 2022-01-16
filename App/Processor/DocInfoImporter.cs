@@ -742,15 +742,11 @@ namespace PDFPatcher.Processor
 						break;
 					default:
 						n = ValueHelper.MapValue(item.Name, Constants.ViewerPreferencesType.Names, Constants.ViewerPreferencesType.PdfNames, new PdfName(item.Name));
-						if (item.Value == Constants.Boolean.True) {
-							v = PdfBoolean.PDFTRUE;
-						}
-						else if (item.Value == Constants.Boolean.False) {
-							v = PdfBoolean.PDFFALSE;
-						}
-						else {
-							v = PdfHelper.ResolvePdfName(item.Value);
-						}
+						v = item.Value switch {
+							Constants.Boolean.True => PdfBoolean.PDFTRUE,
+							Constants.Boolean.False => PdfBoolean.PDFFALSE,
+							_ => PdfHelper.ResolvePdfName(item.Value)
+						};
 						break;
 				}
 				if (r.Catalog.Contains(PdfName.VIEWERPREFERENCES) == false) {

@@ -51,15 +51,12 @@ namespace PDFPatcher.Functions
 			foreach (ListViewItem item in _FilterBox.Items) {
 				conditions.Conditions.Add((AutoBookmarkCondition)_FilterBox.GetModelObject(item.Index));
 			}
-			if (conditions.Conditions.Count == 1) {
-				Filter.Condition = conditions.Conditions[0];
-			}
-			else if (conditions.Conditions.Count == 0) {
-				Filter.Condition = null;
-			}
-			else {
-				Filter.Condition = conditions;
-			}
+
+			Filter.Condition = conditions.Conditions.Count switch {
+				1 => conditions.Conditions[0],
+				0 => null,
+				_ => conditions
+			};
 			Close();
 		}
 
