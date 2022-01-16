@@ -29,12 +29,12 @@ namespace PDFPatcher.Functions
 				System.Diagnostics.Process.Start(_DownloadButton.Tag.ToString());
 			};
 			_CheckUpdateIntervalBox.SelectedIndexChanged += (s, args) => {
-				switch (_CheckUpdateIntervalBox.SelectedIndex) {
-					case 0: AppContext.CheckUpdateInterval = 7; break;
-					case 1: AppContext.CheckUpdateInterval = 14; break;
-					case 2: AppContext.CheckUpdateInterval = 30; break;
-					default: AppContext.CheckUpdateInterval = Int32.MaxValue; break;
-				}
+				AppContext.CheckUpdateInterval = _CheckUpdateIntervalBox.SelectedIndex switch {
+					0 => 7,
+					1 => 14,
+					2 => 30,
+					_ => Int32.MaxValue,
+				};
 				if (AppContext.CheckUpdateInterval != Int32.MaxValue) {
 					AppContext.CheckUpdateDate = DateTime.Today + TimeSpan.FromDays(AppContext.CheckUpdateInterval);
 				}

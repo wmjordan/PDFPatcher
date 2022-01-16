@@ -146,26 +146,13 @@ namespace PDFPatcher.Processor.Imaging
 			/// </summary>
 			/// <returns></returns>
 			private static byte GetTIFFFieldLength(ushort tiffDataType) {
-				switch (tiffDataType) {
-					case 1:
-					case 2:
-					case 7:
-					case 6:
-						return 1;
-					case 3:
-					case 8:
-						return 2;
-					case 4:
-					case 9:
-					case 11:
-						return 4;
-					case 5:
-					case 10:
-					case 12:
-						return 8;
-					default:
-						throw new ExifLibException(string.Format("Unknown TIFF datatype: {0}", tiffDataType));
-				}
+				return tiffDataType switch {
+					1 or 2 or 7 or 6 => 1,
+					3 or 8 => 2,
+					4 or 9 or 11 => 4,
+					5 or 10 or 12 => 8,
+					_ => throw new ExifLibException(string.Format("Unknown TIFF datatype: {0}", tiffDataType)),
+				};
 			}
 
 			#endregion
