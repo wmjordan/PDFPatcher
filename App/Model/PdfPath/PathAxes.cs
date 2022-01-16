@@ -28,24 +28,14 @@ namespace PDFPatcher.Model.PdfPath
 		}
 
 		private static string GetLiteralValue(object operand) {
-			if (operand == null) {
-				return String.Empty;
-			}
-			if (operand is string t) {
-				return t;
-			}
-			if (operand is DocumentObject o) {
-				return o.FriendlyValue ?? o.LiteralValue;
-			}
-			if (operand is IList<DocumentObject> l) {
-				if (l.Count > 0) {
-					return l[0].FriendlyValue ?? l[0].LiteralValue;
-				}
-				else {
-					return String.Empty;
-				}
-			}
-			return ((double)operand).ToText();
+			return operand switch {
+				null => String.Empty,
+				string t => t,
+				DocumentObject o => o.FriendlyValue ?? o.LiteralValue,
+				IList<DocumentObject> l when l.Count > 0 => l[0].FriendlyValue ?? l[0].LiteralValue,
+				IList<DocumentObject> l => String.Empty,
+				_ => ((double)operand).ToText()
+			};
 		}
 
 		static readonly SelfAxis __Self = new SelfAxis();
