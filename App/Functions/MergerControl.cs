@@ -88,7 +88,7 @@ namespace PDFPatcher.Functions
 					c.ImageGetter = o => (int)o.Type;
 				})
 				.ConfigColumn(_BookmarkColumn, c => {
-					c.AspectGetter = (o) => o.Bookmark != null ? o.Bookmark.Title : null;
+					c.AspectGetter = (o) => o.Bookmark?.Title;
 					c.AspectPutter = (o, v) => {
 						var s = v as string;
 						if (String.IsNullOrEmpty(s)) {
@@ -895,7 +895,7 @@ namespace PDFPatcher.Functions
 		private void AddItems(ICollection<SourceItem> items) {
 			int i = _ItemList.GetLastSelectedIndex();
 			if (i == -1) {
-				i = _ItemList.FocusedItem != null ? _ItemList.FocusedItem.Index : -1;
+				i = _ItemList.FocusedItem?.Index ?? -1;
 			}
 			if (i == -1) {
 				_itemsContainer.Items.AddRange(items);

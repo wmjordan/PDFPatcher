@@ -74,7 +74,7 @@ namespace PDFPatcher.Functions
 		public override Bitmap IconImage => Properties.Resources.Editor;
 
 		public string DocumentPath {
-			get => _controller != null ? _controller.Model.DocumentPath : null;
+			get => _controller?.Model.DocumentPath;
 			set {
 				_controller.Model.DocumentPath = value;
 				if (DocumentChanged != null) {
