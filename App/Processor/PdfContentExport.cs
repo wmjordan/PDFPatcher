@@ -543,8 +543,8 @@ namespace PDFPatcher.Processor
 		{
 			struct NameValuePair
 			{
-				public string Name;
-				public string Value;
+				public readonly string Name;
+				public readonly string Value;
 				public NameValuePair(string name, string value) {
 					Name = name;
 					Value = value;

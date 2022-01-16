@@ -1173,18 +1173,18 @@ namespace PDFPatcher.Common
 			[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
 			struct WIN32_FIND_DATA
 			{
-				public uint dwFileAttributes;
-				public System.Runtime.InteropServices.ComTypes.FILETIME ftCreationTime;
-				public System.Runtime.InteropServices.ComTypes.FILETIME ftLastAccessTime;
-				public System.Runtime.InteropServices.ComTypes.FILETIME ftLastWriteTime;
-				public uint nFileSizeHigh;
-				public uint nFileSizeLow;
-				public uint dwReserved0;
-				public uint dwReserved1;
+				public readonly uint dwFileAttributes;
+				public readonly System.Runtime.InteropServices.ComTypes.FILETIME ftCreationTime;
+				public readonly System.Runtime.InteropServices.ComTypes.FILETIME ftLastAccessTime;
+				public readonly System.Runtime.InteropServices.ComTypes.FILETIME ftLastWriteTime;
+				public readonly uint nFileSizeHigh;
+				public readonly uint nFileSizeLow;
+				public readonly uint dwReserved0;
+				public readonly uint dwReserved1;
 				[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
-				public string cFileName;
+				public readonly string cFileName;
 				[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 14)]
-				public string cAlternateFileName;
+				public readonly string cAlternateFileName;
 			}
 
 			[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
