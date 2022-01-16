@@ -147,10 +147,10 @@ namespace PDFPatcher.Common
 		}
 
 		public static string CombinePath(string path1, string path2) {
-			if (path2 == null || path2.Length == 0) {
+			if (string.IsNullOrEmpty(path2)) {
 				return path1 ?? string.Empty;
 			}
-			if (path1 == null || path1.Length == 0) {
+			if (string.IsNullOrEmpty(path1)) {
 				return path2;
 			}
 			var l2 = path2.Length;
