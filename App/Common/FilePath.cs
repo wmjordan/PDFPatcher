@@ -40,7 +40,7 @@ namespace PDFPatcher.Common
 		public FilePath(string path) : this(path, true) { }
 
 		internal FilePath(string path, bool trim) {
-			_value = (path == null || path.Length == 0)
+			_value = string.IsNullOrEmpty(path)
 				? string.Empty
 				: trim ? path.Trim() : path;
 		}
@@ -677,7 +677,7 @@ namespace PDFPatcher.Common
 				return false;
 			}
 			foreach (var item in extensions) {
-				if (item == null || item.Length == 0) {
+				if (string.IsNullOrEmpty(item)) {
 					continue;
 				}
 				if (ext.EndsWith(item, StringComparison.OrdinalIgnoreCase)
