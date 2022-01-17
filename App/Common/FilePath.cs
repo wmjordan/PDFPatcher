@@ -350,11 +350,7 @@ namespace PDFPatcher.Common
 			if (String.IsNullOrEmpty(pattern)) {
 				return SysDirectory.Exists(f._value)
 					? GetFiles(f._value, Wildcard, filter)
-#if LIB
-					: CollectionHelper.GetEmptyArray<FilePath>();
-#else
 					: new FilePath[0];
-#endif
 			}
 
 			string fp;
@@ -367,19 +363,11 @@ namespace PDFPatcher.Common
 			}
 			else {
 				if (t.Count == 0) {
-#if LIB
-					return CollectionHelper.GetEmptyArray<FilePath>();
-#else
 					return new FilePath[0];
-#endif
 				}
 				fp = p[pl - 1];
 			}
-#if LIB
-			var r = new ArrayBuilder<FilePath>();
-#else
 			var r = new List<FilePath>();
-#endif
 			foreach (var item in t) {
 				try {
 					r.AddRange(GetFiles(item, fp, filter));
@@ -395,11 +383,7 @@ namespace PDFPatcher.Common
 			return SysDirectory.Exists(directory) ? Array.ConvertAll(
 				filter != null ? Array.FindAll(SysDirectory.GetFiles(directory, filePattern), filter) : SysDirectory.GetFiles(directory, filePattern)
 				, i => (FilePath)i)
-#if LIB
-					: CollectionHelper.GetEmptyArray<FilePath>();
-#else
 					: new FilePath[0];
-#endif
 		}
 
 		/// <summary>获取当前 <see cref="FilePath"/> 下符合匹配模式和筛选条件的目录。在执行匹配前，先将当前实例转换为完整路径。当前用户无权访问的目录将被忽略。</summary>
@@ -411,11 +395,7 @@ namespace PDFPatcher.Common
 			if (String.IsNullOrEmpty(pattern)) {
 				return SysDirectory.Exists(f._value)
 					? GetDirectories(f._value, Wildcard, filter)
-#if LIB
-					: CollectionHelper.GetEmptyArray<FilePath>();
-#else
 					: new FilePath[0];
-#endif
 			}
 
 			string fp;
@@ -428,19 +408,11 @@ namespace PDFPatcher.Common
 			}
 			else {
 				if (t.Count == 0) {
-#if LIB
-					return CollectionHelper.GetEmptyArray<FilePath>();
-#else
 					return new FilePath[0];
-#endif
 				}
 				fp = p[p.Length - 1];
 			}
-#if LIB
-			var r = new ArrayBuilder<FilePath>();
-#else
 			var r = new List<FilePath>();
-#endif
 			foreach (var item in t) {
 				try {
 					r.AddRange(GetDirectories(item, fp, filter));
@@ -455,11 +427,7 @@ namespace PDFPatcher.Common
 		static FilePath[] GetDirectories(string directory, string filePattern, Predicate<string> filter) {
 			return SysDirectory.Exists(directory)
 					? Array.ConvertAll(filter != null ? Array.FindAll(SysDirectory.GetDirectories(directory, filePattern), filter) : SysDirectory.GetDirectories(directory, filePattern), i => (FilePath)i)
-#if LIB
-					: CollectionHelper.GetEmptyArray<FilePath>();
-#else
 					: new FilePath[0];
-#endif
 		}
 
 		static NameList GetDirectories(string path, string[] parts, int partCount) {
@@ -527,11 +495,7 @@ namespace PDFPatcher.Common
 		/// <returns>目录的各个部分。</returns>
 		public string[] GetParts(bool removeInvalidParts) {
 			if (IsEmpty) {
-#if LIB
-				return CollectionHelper.GetEmptyArray<string>();
-#else
 				return new string[0];
-#endif
 			}
 			var p = _value.Split(__PathSeparators);
 			string s;
@@ -595,11 +559,7 @@ namespace PDFPatcher.Common
 				++v;
 			}
 			if (v < 1) {
-#if LIB
-				return CollectionHelper.GetEmptyArray<string>();
-#else
 				return new string[0];
-#endif
 			}
 			if (v < p.Length) {
 				Array.Resize(ref p, v);
@@ -816,19 +776,11 @@ namespace PDFPatcher.Common
 		/// <returns>文件的字节数组。</returns>
 		public byte[] ReadAllBytes(int maxBytes) {
 			if (ExistsFile == false) {
-#if LIB
-				return CollectionHelper.GetEmptyArray<byte>();
-#else
 				return new byte[0];
-#endif
 			}
 			using (var s = new FileStream(ToFullPath()._value, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) {
 				if (s.CanRead == false) {
-#if LIB
-					return CollectionHelper.GetEmptyArray<byte>();
-#else
 					return new byte[0];
-#endif
 				}
 				var l = s.Length;
 				var r = new byte[maxBytes < 1 || maxBytes > l ? l : maxBytes];
@@ -848,29 +800,12 @@ namespace PDFPatcher.Common
 		}
 
 		/// <summary>打开当前路径对应的文件，并以指定编码逐行读取所有内容为字符串集合。如文件不存在，返回 0 长度的字符串数组。</summary>
-		/// <param name="encoding">用于读取文件的编码。编码为 null 时采用 UTF-8 编码。</param>
-		/// <returns>文件中每行对应一个字符串所构成的集合。</returns>
-		[Obsolete("请改用 ReadLines")]
-		public IEnumerable<string> ReadAllText(Encoding encoding) {
-			return ReadLines(encoding);
-		}
-
-		/// <summary>打开当前路径对应的文件，并以指定编码逐行读取所有内容为字符串集合。如文件不存在，返回 0 长度的字符串数组。</summary>
 		/// <param name="encoding">用于读取文件的编码。编码为 <see langword="null"/> 时采用 UTF-8 编码。</param>
 		/// <returns>文件中每行对应一个字符串所构成的集合。</returns>
 		public IEnumerable<string> ReadLines(Encoding encoding) {
-			if (ExistsFile == false) {
-#if LIB
-				return CollectionHelper.GetEmptyArray<string>();
-#else
-				return new string[0];
-#endif
-			}
-#if !NET40
-			return new ReadLinesIterator(ToFullPath()._value, encoding ?? Encoding.UTF8);
-#else
-			return File.ReadLines(ToFullPath()._value, encoding ?? Encoding.UTF8);
-#endif
+			return ExistsFile == false
+				? new string[0]
+				: File.ReadLines(ToFullPath()._value, encoding ?? Encoding.UTF8);
 		}
 
 		/// <summary>将 <paramref name="bytes"/>写入文件。</summary>
@@ -959,11 +894,7 @@ namespace PDFPatcher.Common
 		/// <returns>采用绝对定位路径的实例。</returns>
 		/// <exception cref="ArgumentException">路径无效。</exception>
 		public FilePath ToFullPath() {
-#if LIB
-			return Path.GetFullPath(FileHelper.CombinePath(AppRoot._value, _value));
-#else
 			return Path.GetFullPath(Path.Combine(AppRoot._value, _value));
-#endif
 		}
 
 		/// <summary>
@@ -1117,153 +1048,5 @@ namespace PDFPatcher.Common
 		public override string ToString() {
 			return _value ?? string.Empty;
 		}
-
-		// see: https://www.codeproject.com/Articles/1383832/System-IO-Directory-Alternative-using-WinAPI
-		static class FileSystemEnumerator
-		{
-			const int Dir = 1, File = 2;
-
-			static IEnumerable<string> GetAll(string path, string searchPattern, SearchOption searchOption) {
-				return Enumerate(path, searchPattern, searchOption, 0);
-			}
-			static IEnumerable<string> GetFile(string path, string searchPattern, SearchOption searchOption) {
-				return Enumerate(path, searchPattern, searchOption, File);
-			}
-			static IEnumerable<string> GetDir(string path, string searchPattern, SearchOption searchOption) {
-				return Enumerate(path, searchPattern, searchOption, Dir);
-			}
-			static IEnumerable<string> Enumerate(string path, string searchPattern, SearchOption searchOption, int entryType) {
-				WIN32_FIND_DATA findData;
-				if (path[path.Length - 1] != Path.DirectorySeparatorChar) {
-					path += Path.DirectorySeparatorChar;
-				}
-				var hFile = FindFirstFile(path + searchPattern, out findData);
-				try {
-					if (hFile.ToInt32() == -1) {
-						yield break;
-					}
-					NameList subDirs = new NameList();
-					do {
-						if (findData.cFileName == "." || findData.cFileName == "..") {
-							continue;
-						}
-						if ((findData.dwFileAttributes & (uint)FileAttributes.Directory) == (uint)FileAttributes.Directory) {
-							subDirs.Add(path + findData.cFileName);
-							if (entryType != File) {
-								yield return path + findData.cFileName;
-							}
-						}
-						else if (entryType != Dir) {
-							yield return path + findData.cFileName;
-						}
-					} while (FindNextFile(hFile, out findData));
-					if (subDirs.Count > 0 && searchOption == SearchOption.AllDirectories) {
-						foreach (string subdir in subDirs) {
-							foreach (var file in Enumerate(subdir, searchPattern, searchOption, entryType)) {
-								yield return file;
-							}
-						}
-					}
-				}
-				finally {
-					FindClose(hFile);
-				}
-			}
-
-			[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-			struct WIN32_FIND_DATA
-			{
-				public uint dwFileAttributes;
-				public System.Runtime.InteropServices.ComTypes.FILETIME ftCreationTime;
-				public System.Runtime.InteropServices.ComTypes.FILETIME ftLastAccessTime;
-				public System.Runtime.InteropServices.ComTypes.FILETIME ftLastWriteTime;
-				public uint nFileSizeHigh;
-				public uint nFileSizeLow;
-				public uint dwReserved0;
-				public uint dwReserved1;
-				[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
-				public string cFileName;
-				[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 14)]
-				public string cAlternateFileName;
-			}
-
-			[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-			private static extern bool FindClose(IntPtr hFindFile);
-
-			[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-			private static extern IntPtr FindFirstFile
-			  (string lpFileName, out WIN32_FIND_DATA lpFindFileData);
-
-			[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-			private static extern bool FindNextFile
-			  (IntPtr hFindFile, out WIN32_FIND_DATA lpFindFileData);
-		}
-
-#if NET20
-		sealed class ReadLinesIterator : IEnumerable<string>, IEnumerator<string>
-		{
-			readonly string _path;
-			readonly Encoding _encoding;
-			StreamReader _reader;
-			string _current;
-
-			public ReadLinesIterator(string path, Encoding encoding) {
-				_path = path;
-				_encoding = encoding;
-			}
-
-			public bool MoveNext() {
-				if (_reader == null) {
-					return false;
-				}
-				_current = _reader.ReadLine();
-				if (_current != null) {
-					return true;
-				}
-				Dispose(true);
-				return false;
-			}
-
-			private void Dispose(bool disposing) {
-				try {
-					if (disposing && _reader != null) {
-						_reader.Dispose();
-					}
-				}
-				finally {
-					_reader = null;
-				}
-			}
-
-			public IEnumerator<string> GetEnumerator() {
-				return new ReadLinesIterator(_path, _encoding) { _reader = new StreamReader(_path, _encoding) };
-;
-			}
-
-			System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() {
-				return GetEnumerator();
-			}
-
-			public string Current {
-				get { return _current; }
-			}
-
-			public void Dispose() {
-				Dispose(true);
-			}
-
-			object System.Collections.IEnumerator.Current {
-				get { return _current; }
-			}
-
-			public void Reset() {
-				if (_reader != null) {
-					_reader.Dispose();
-				}
-				_reader = new StreamReader(_path, _encoding);
-				_current = null;
-			}
-		}
-#endif
 	}
 }

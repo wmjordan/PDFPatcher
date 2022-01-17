@@ -392,7 +392,7 @@ namespace PDFPatcher.Processor.Imaging
 		{
 			public const uint BI_RGB = 0;
 			public const uint DIB_RGB_COLORS = 0;
-			public static int SRCCOPY = 0x00CC0020;
+			public const int SRCCOPY = 0x00CC0020;
 
 			[DllImport("gdi32.dll")]
 			public static extern int BitBlt(IntPtr hdcDst, int xDst, int yDst, int w, int h, IntPtr hdcSrc, int xSrc, int ySrc, int rop);
