@@ -7,6 +7,7 @@ using iTextSharp.text.pdf;
 using PDFPatcher.Common;
 using PDFPatcher.Model;
 using Matrix = iTextSharp.text.pdf.parser.Matrix;
+using NameValuePair = System.Collections.Generic.KeyValuePair<string, string>;
 
 namespace PDFPatcher.Processor
 {
@@ -537,16 +538,6 @@ namespace PDFPatcher.Processor
 
 		sealed class ExportProcessor : PdfContentStreamProcessor
 		{
-			readonly struct NameValuePair
-			{
-				public readonly string Name;
-				public readonly string Value;
-				public NameValuePair(string name, string value) {
-					Name = name;
-					Value = value;
-				}
-			}
-
 			readonly PdfContentExport _export;
 			readonly XmlWriter _writer;
 			readonly bool _writeOperators;
@@ -657,7 +648,7 @@ namespace PDFPatcher.Processor
 						_writer.WriteStartElement(fn ?? "未知操作符");
 						_writer.WriteAttributeString("name", o);
 						foreach (var item in _operands) {
-							_writer.WriteAttributeString(item.Name, PdfHelper.GetValidXmlString(item.Value));
+							_writer.WriteAttributeString(item.Key, PdfHelper.GetValidXmlString(item.Value));
 						}
 						break;
 				}
