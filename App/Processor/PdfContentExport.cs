@@ -13,11 +13,11 @@ namespace PDFPatcher.Processor
 	sealed class PdfContentExport
 	{
 		readonly ExporterOptions _options;
-		ImageExtractor _imageExporter;
 		readonly Dictionary<string, string> _resolvedReferences = new Dictionary<string, string>();
 		readonly List<string> _exportPath = new List<string>();
+		ImageExtractor _imageExporter;
 
-		private bool AddReferenceRecord(PdfIndirectReference r, string type) {
+		bool AddReferenceRecord(PdfIndirectReference r, string type) {
 			var k = String.Concat(r.Number, ' ', r.Generation);
 			if (_resolvedReferences.ContainsKey(k)) {
 				return false;
@@ -45,14 +45,13 @@ namespace PDFPatcher.Processor
 			writer.WriteEndElement();
 		}
 
-		private void ExportCatalog(XmlWriter writer, PdfReader reader) {
+		void ExportCatalog(XmlWriter writer, PdfReader reader) {
 			Tracker.TraceMessage("导出文档编录。");
 			writer.WriteStartElement(Constants.Catalog);
 			writer.WriteAttributeString(Constants.ContentPrefix, "http://www.w3.org/2000/xmlns/", Constants.ContentNamespace);
 			foreach (var item in reader.Catalog) {
 				if (PdfName.OUTLINES.Equals(item.Key)) {
-					var o = PdfReader.GetPdfObjectRelease(item.Value) as PdfDictionary;
-					if (o != null) {
+					if (PdfReader.GetPdfObjectRelease(item.Value) is PdfDictionary o) {
 						ExportPdfOutline(o, writer);
 					}
 				}
@@ -75,7 +74,7 @@ namespace PDFPatcher.Processor
 			writer.WriteEndElement();
 		}
 
-		private void ExtractPages(PdfReader reader, PageRangeCollection ranges, XmlWriter writer) {
+		void ExtractPages(PdfReader reader, PageRangeCollection ranges, XmlWriter writer) {
 			var p = new ExportProcessor(this, writer, _options);
 			foreach (PageRange r in ranges) {
 				foreach (var i in r) {
@@ -86,7 +85,7 @@ namespace PDFPatcher.Processor
 			}
 		}
 
-		private void ExportPdfOutline(PdfDictionary outline, XmlWriter writer) {
+		void ExportPdfOutline(PdfDictionary outline, XmlWriter writer) {
 			while (outline != null) {
 				writer.WriteStartElement(Constants.ContentPrefix, "Outline", Constants.ContentNamespace);
 				foreach (var i in outline) {
@@ -102,8 +101,7 @@ namespace PDFPatcher.Processor
 							break;
 					}
 				}
-				var f = PdfReader.GetPdfObjectRelease(outline.Get(PdfName.FIRST)) as PdfDictionary;
-				if (f != null) {
+				if (PdfReader.GetPdfObjectRelease(outline.Get(PdfName.FIRST)) is PdfDictionary f) {
 					writer.WriteStartElement(Constants.ContentPrefix, "Outlines", Constants.ContentNamespace);
 					ExportPdfOutline(f, writer);
 					writer.WriteEndElement();
@@ -118,13 +116,13 @@ namespace PDFPatcher.Processor
 		/// </summary>
 		/// <param name="writer"></param>
 		/// <param name="dict"></param>
-		private void ExportPdfDictionary(XmlWriter writer, PdfDictionary dict) {
+		void ExportPdfDictionary(XmlWriter writer, PdfDictionary dict) {
 			foreach (var item in dict) {
 				ExportPdfDictionaryItem(item, writer);
 			}
 		}
 
-		private void ExportPdfDictionaryItem(KeyValuePair<PdfName, PdfObject> item, XmlWriter writer) {
+		void ExportPdfDictionaryItem(KeyValuePair<PdfName, PdfObject> item, XmlWriter writer) {
 			var key = PdfHelper.DecodeKeyName(item.Key);
 			var val = item.Value.ToString();
 			var value = item.Value as PdfObject;
@@ -177,7 +175,7 @@ namespace PDFPatcher.Processor
 			_exportPath.RemoveAt(_exportPath.Count - 1);
 		}
 
-		private void ExportColorSpaceContent(XmlWriter writer, PdfArray a) {
+		void ExportColorSpaceContent(XmlWriter writer, PdfArray a) {
 			writer.WriteStartElement(Constants.ContentPrefix, "colorSpace", Constants.ContentNamespace);
 			writer.WriteAttributeString("type", a[0].ToString());
 			var b = a.GetAsName(1);
@@ -220,13 +218,13 @@ namespace PDFPatcher.Processor
 			writer.WriteEndElement();
 		}
 
-		private void ExportArray(List<PdfObject> array, XmlWriter writer) {
+		void ExportArray(List<PdfObject> array, XmlWriter writer) {
 			writer.WriteStartElement(Constants.ContentPrefix, "array", Constants.ContentNamespace);
 			ExportArrayContent(array, writer, false);
 			writer.WriteEndElement();
 		}
 
-		private void ExportArrayContent(List<PdfObject> array, XmlWriter writer, bool writeStringBytes) {
+		void ExportArrayContent(List<PdfObject> array, XmlWriter writer, bool writeStringBytes) {
 			int iType = PdfObject.NULL;
 			foreach (PdfObject i in array) {
 				if (iType == PdfObject.NULL) {
@@ -251,8 +249,7 @@ namespace PDFPatcher.Processor
 			}
 			else {
 				foreach (PdfObject i in array) {
-					var subArray = i as PdfArray;
-					if (subArray == null) {
+					if (i is not PdfArray subArray) {
 						if (PdfHelper.GetTypeName(i.Type).Length > 0) {
 							writer.WriteStartElement(Constants.ContentPrefix, PdfHelper.GetTypeName(i.Type), Constants.ContentNamespace);
 						}
@@ -306,8 +303,8 @@ namespace PDFPatcher.Processor
 			}
 		}
 
-		private void ExportIndirectReference(PdfIndirectReference r, XmlWriter writer, string key) {
-			var i = (PdfObject)PdfReader.GetPdfObjectRelease(r);
+		void ExportIndirectReference(PdfIndirectReference r, XmlWriter writer, string key) {
+			var i = PdfReader.GetPdfObjectRelease(r);
 			writer.WriteAttributeString(Constants.Content.ResourceID, Constants.ContentNamespace, r.ToString());
 			if (AddReferenceRecord(r, key) == false || i == null) {
 				return;
@@ -354,9 +351,8 @@ namespace PDFPatcher.Processor
 			}
 		}
 
-		private void ExportStreamContent(XmlWriter writer, PdfStream s) {
-			var prs = s as PRStream;
-			if (prs == null || writer is NullXmlWriter) {
+		void ExportStreamContent(XmlWriter writer, PdfStream s) {
+			if (s is not PRStream prs || writer is NullXmlWriter) {
 				return;
 			}
 			var key = _exportPath[_exportPath.Count - 1];
@@ -431,7 +427,7 @@ namespace PDFPatcher.Processor
 			writer.WriteEndElement();
 		}
 
-		private void ExportRawStreamContent(XmlWriter writer, byte[] bs) {
+		void ExportRawStreamContent(XmlWriter writer, byte[] bs) {
 			writer.WriteAttributeString(Constants.Content.Length, bs.Length.ToText());
 			if (_options.ExportBinaryStream == 0) {
 				writer.WriteBinHex(bs, 0, bs.Length);
@@ -444,7 +440,7 @@ namespace PDFPatcher.Processor
 			}
 		}
 
-		private static void ExportStreamTextContent(byte[] bs, StringBuilder sb, int p1, int p2) {
+		static void ExportStreamTextContent(byte[] bs, StringBuilder sb, int p1, int p2) {
 			bool inText = false;
 			bool escape = false;
 			char ch;
@@ -504,7 +500,7 @@ namespace PDFPatcher.Processor
 			}
 		}
 
-		private void ExtractPage(int pageNum, PdfReader reader, XmlWriter writer, ExportProcessor exportProcessor) {
+		void ExtractPage(int pageNum, PdfReader reader, XmlWriter writer, ExportProcessor exportProcessor) {
 			writer.WriteStartElement(Constants.Content.Page);
 			_exportPath.Add(Constants.Content.Page);
 			writer.WriteAttributeString(Constants.Content.PageNumber, pageNum.ToText());
@@ -539,12 +535,12 @@ namespace PDFPatcher.Processor
 			_exportPath.RemoveAt(_exportPath.Count - 1);
 		}
 
-		private sealed class ExportProcessor : PdfContentStreamProcessor
+		sealed class ExportProcessor : PdfContentStreamProcessor
 		{
-			struct NameValuePair
+			readonly struct NameValuePair
 			{
-				public string Name;
-				public string Value;
+				public readonly string Name;
+				public readonly string Value;
 				public NameValuePair(string name, string value) {
 					Name = name;
 					Value = value;
@@ -622,7 +618,7 @@ namespace PDFPatcher.Processor
 						return;
 					case "TJ":
 						var array = (PdfArray)operands[0];
-						using (var ms = new System.IO.MemoryStream(array.Length)) {
+						using (var ms = new MemoryStream(array.Length)) {
 							foreach (PdfObject item in array.ArrayList) {
 								if (item.Type == PdfObject.STRING) {
 									ms.Write((item as PdfString).GetBytes(), 0, item.Length);
@@ -686,13 +682,12 @@ namespace PDFPatcher.Processor
 				}
 			}
 
-			private static string GetOperandsTextValue(List<PdfObject> operands) {
-				var n = operands.ConvertAll((po) => po.Type == PdfObject.NUMBER ? ((PdfNumber)po).DoubleValue.ToText() : null);
-				n.RemoveAt(n.Count - 1);
-				return String.Join(" ", n.ToArray());
+			static string GetOperandsTextValue(List<PdfObject> operands) {
+				operands.RemoveAt(operands.Count - 1);
+				return String.Join(" ", operands.ConvertAll((po) => po.Type == PdfObject.NUMBER ? ((PdfNumber)po).DoubleValue.ToText() : null).ToArray());
 			}
 
-			private void AddTextInfo(string t) {
+			void AddTextInfo(string t) {
 				if (_textContainer != null && t != null) {
 					_textContainer.Add(new TextInfo() {
 						Text = t,
