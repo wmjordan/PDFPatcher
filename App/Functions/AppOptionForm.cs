@@ -93,5 +93,14 @@ namespace PDFPatcher.Functions
 			CommonCommands.CreateShortcut();
 		}
 
+		private void _RightKeyButton_Click(object sender, EventArgs e) {
+			AppOptionForm appOptionForm = this;
+			CommonCommands.RightKey(appOptionForm);
+		}
+
+		private void AppOptionForm_Load(object sender, EventArgs e) {
+			AppOptionForm appOptionForm = this;
+			CommonCommands.RightKeyButton_Text(appOptionForm);
+		}
 	}
 }

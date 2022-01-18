@@ -91,6 +91,7 @@
     </Compile>
     <Compile Include="Commands.cs" />
     <Compile Include="CommonCommands.cs" />
+    <Compile Include="Common\RightKeyHelper.cs" />
     <Compile Include="Common\CommandRegistry.cs" />
     <Compile Include="Common\FilePath.cs" />
     <Compile Include="Common\FontHelper.cs">
@@ -689,7 +690,10 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ChineseCharMap.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Configuration.resx" />
+    <EmbeddedResource Include="Configuration.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Configuration1.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Functions\DocumentOption\FontCharSubstitutionForm.resx">
       <DependentUpon>FontCharSubstitutionForm.cs</DependentUpon>
     </EmbeddedResource>
