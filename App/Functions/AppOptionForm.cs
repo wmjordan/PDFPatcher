@@ -100,7 +100,7 @@ namespace PDFPatcher.Functions
 
 		private void AppOptionForm_Load(object sender, EventArgs e) {
 			AppOptionForm appOptionForm = this;
-			CommonCommands.regButtonDisplay(appOptionForm);
+			CommonCommands.RightKeyButton_Text(appOptionForm);
 		}
 	}
 }

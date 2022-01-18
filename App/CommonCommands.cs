@@ -46,7 +46,7 @@ namespace PDFPatcher
 
 			}
 		}
-		internal static void regButtonDisplay(Functions.AppOptionForm appOptionForm) {
+		internal static void RightKeyButton_Text(Functions.AppOptionForm appOptionForm) {
 			bool isExist = RightKeyHelper.IsExist(Constants.AppEngName);
 			if(isExist == true) {
 				appOptionForm._RightKeyButton.Text = @"删除右键菜单";

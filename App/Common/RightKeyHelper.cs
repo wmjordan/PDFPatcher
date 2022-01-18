@@ -13,21 +13,20 @@ namespace PDFPatcher.Common
 	{
 		/// <summary>
 		/// 为程序添加鼠标右键菜单
-		/// 添加右键菜单需要在注册表的HKEY_CLASSES_ROO节点下操作
-		/// 原本打算使用System.Security进行提权，但是尝试多种方法均失败，所以采取了修改app.manifest来实现
-		/// <requestedExecutionLevel level="asInvoker" uiAccess="false" /> -> <requestedExecutionLevel level="highestAvailable" uiAccess="false" />
+		/// 首次提交PR后Owner很快就回复，感谢他的建议现在采用向HKEY_CURRENT_USER\SOFTWARE\Classes下添加项，完美避开提权问题。不需要修改app.manifest
 		/// 有关注册表的描述：https://www.c-sharpcorner.com/UploadFile/f9f215/windows-registry/
 		/// 注册表的提权操作见：https://docs.microsoft.com/zh-cn/dotnet/api/system.security.accesscontrol.registrysecurity?view=net-6.0#methods
 		/// </summary>
-		private static RegistryKey root = Registry.ClassesRoot;
 
 		public static bool Add(string appName, string appPath) {
 			try {
-				RegistryKey key = root;
-				RegistryKey shell = key.OpenSubKey(@"*\shell",true);
+				RegistryKey software = Registry.CurrentUser.OpenSubKey(@"SOFTWARE");
+				RegistryKey key = software;
+				RegistryKey shell = key.OpenSubKey(@"Classes\*\shell", true);
 				RegistryKey pdfPather = shell.CreateSubKey(appName);
 				RegistryKey command = shell.CreateSubKey(appName+@"\command");
-				command.SetValue("", appPath);
+				command.SetValue("", appPath+@" %1");
+				pdfPather.SetValue("", "使用PDF补丁丁打开");
 				pdfPather.SetValue("Icon",appPath);
 				return true;
 			}
@@ -40,8 +39,9 @@ namespace PDFPatcher.Common
 		public static bool Delete(string appName) {
 			RightKeyHelper reg = new();
 			try {
-				RegistryKey key = root;
-				RegistryKey shell = key.OpenSubKey(@"*\shell",true);
+				RegistryKey software = Registry.CurrentUser.OpenSubKey(@"SOFTWARE");
+				RegistryKey key = software;
+				RegistryKey shell = key.OpenSubKey(@"Classes\*\shell", true);
 				RegistryKey pdfPather = shell.OpenSubKey(appName, true);
 				pdfPather.DeleteSubKey(@"command");
 				shell.DeleteSubKey(appName);
@@ -58,8 +58,9 @@ namespace PDFPatcher.Common
 			RightKeyHelper reg = new();
 			string[] subkeyNames;
 			try {
-				RegistryKey key = root;
-				RegistryKey shell = key.OpenSubKey(@"*\shell", true);
+				RegistryKey software = Registry.CurrentUser.OpenSubKey(@"SOFTWARE");
+				RegistryKey key = software;
+				RegistryKey shell = key.OpenSubKey(@"Classes\*\shell", true);
 				subkeyNames=shell.GetSubKeyNames();
 				foreach(string keyName in subkeyNames) {
 					if(keyName == appName) {
