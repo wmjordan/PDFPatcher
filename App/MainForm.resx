@@ -112,18 +112,63 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="_Select.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="_Select.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
-  <metadata name="_Copy.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="_Copy.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <metadata name="_Delete.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="toolStripSeparator3.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="_SelectAllPdfFiles.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="_SelectAllImages.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="_SelectAllFolders.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="_ItemTypeSeparator.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="_SelectAll.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="_InvertSelect.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="_SelectNone.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="_Select.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAAAJcEhZcwAAFiUAABYlAUlSJPAAAAH/SURBVDhPnZHfS1NhHMbf29F9QXcWBOJFBPZjYQzToqhB
+        UAssvMhk1WIVi5EeXUtK648I+gOii6AfN5uIttbyOFOHiJmNpdWazcZ29sOd7el9DpxDQjfbCw883xc+
+        D8/7fcXFQMDpCgbdzYisuDA0dA1NHrLinKJcr8uhWwW6pus4/rGGzpgOR3QLxyJldEwVcXRSw5GJPA6N
+        53Aw/AftoU2QISvO+v0evV43Ap5kYQSMZnQ8+lU1AoLrRQS+FYwAJZnDwOqmEUCGrDjt892s1GpWg/64
+        htH5DB5+SmMk/gMP1HXcn17DcCwFJZrE4PuvGIisggxZcdLr9ZZ03WowNr+BLTlTkcVFy0/MzVk+NDMD
+        MmRFl8dzq1Cton9sA5eGU3DeTsBx5R0OnH+DfadeYE/3c+w98RKtZ8LyToX98md0Xv0JMmSFw+2+k6tU
+        jABFvnnw9W+EVM3Qs7dJyz999cXyDCBDVnT09fmy5XLDDciQFYd7e+9mSqVtO8jJmeIOTM8dmJ47IENW
+        tPf0+NPFovULDIgtLyO6tAR1ZQVTiQQmFxbwQc7js7MIx+NGABmyYr/Lde+7pm1rkJUzxQamZwPTM4AM
+        WdHqdCprhcJ/GzDAbMCAfxuQISt22e0jabnRVD7fkMiQFbaWlhs72toeNyOyQh6b1E6p3Q1KMsL2FzoD
+        tHKcosAUAAAAAElFTkSuQmCC
+</value>
+  </data>
+  <metadata name="_Copy.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
   <data name="_Copy.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAABl0RVh0U29m
@@ -138,13 +183,13 @@
         na4AAAAASUVORK5CYII=
 </value>
   </data>
-  <metadata name="_Delete.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="_Delete.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
   <data name="_Delete.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAFsSURBVDhPrVG7SgNBFL2QIoVWWmgXdAkiioIRFINmQsR0
+        YQUAAAAJcEhZcwAAFiUAABYlAUlSJPAAAAFsSURBVDhPrVG7SgNBFL2QIoVWWmgXdAkiioIRFINmQsR0
         plALtYgYfBQ2KaxEWNDCysbC0srGX4kPMNgoaJFCQURsFBG5zpl7s2TZtdIDh5nzWnYT+jfwWsHn9Wnm
         jYJRKwJkrmO7agm+K3nfkvnsgHF+VXKRh8Br7WCjEdFnedIFfLrnTuiPcjZ4CO5xHY1tYXnMvC+NM5/s
         Cm0BGn6QYax5M9O54HUuY97mR5iPt4V2AO08jNWHRldnYTyXBszL7CDz4ZYQQ1A1MnS0Ho/Homeeimnm
@@ -153,10 +198,10 @@
         EpHvhNfawUYjQa2H/PNe4ppH8T+SBTLXsV21/gqiH0YlVZLkitJ3AAAAAElFTkSuQmCC
 </value>
   </data>
-  <metadata name="toolStripSeparator3.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="toolStripSeparator3.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
-  <metadata name="_SelectAllPdfFiles.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="_SelectAllPdfFiles.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
   <data name="_SelectAllPdfFiles.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
@@ -174,7 +219,7 @@
         ohQBKcqBDMqymMWrYqYONDXZ6hobb/wP4t1PEf0B0acbCXs9gqQAAAAASUVORK5CYII=
 </value>
   </data>
-  <metadata name="_SelectAllImages.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="_SelectAllImages.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
   <data name="_SelectAllImages.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
@@ -193,7 +238,7 @@
         FAAAAABJRU5ErkJggg==
 </value>
   </data>
-  <metadata name="_SelectAllFolders.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="_SelectAllFolders.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
   <data name="_SelectAllFolders.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
@@ -214,10 +259,10 @@
         bCuCcYIAAAAASUVORK5CYII=
 </value>
   </data>
-  <metadata name="_ItemTypeSeparator.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="_ItemTypeSeparator.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
-  <metadata name="_SelectAll.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="_SelectAll.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
   <data name="_SelectAll.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
@@ -234,34 +279,79 @@
         ztTXj1YTsmL+E/8RyAkWl85tVYbA9AAAAABJRU5ErkJggg==
 </value>
   </data>
-  <metadata name="_InvertSelect.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="_InvertSelect.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
-  <metadata name="_SelectNone.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="_SelectNone.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
-  <data name="_Select.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+  <metadata name="_ToolBox.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="toolStripMenuItem23.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="_Imaging.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="_Explorer.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="_ExportInfoFile.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="toolStripSeparator5.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="_ShowGeneralToolbar.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="_CustomizeToolbarCommand.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="_LogWindow.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <data name="_ToolBox.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAH/SURBVDhPnZHfS1NhHMbf29F9QXcWBOJFBPZjYQzToqhB
-        UAssvMhk1WIVi5EeXUtK648I+gOii6AfN5uIttbyOFOHiJmNpdWazcZ29sOd7el9DpxDQjfbCw883xc+
-        D8/7fcXFQMDpCgbdzYisuDA0dA1NHrLinKJcr8uhWwW6pus4/rGGzpgOR3QLxyJldEwVcXRSw5GJPA6N
-        53Aw/AftoU2QISvO+v0evV43Ap5kYQSMZnQ8+lU1AoLrRQS+FYwAJZnDwOqmEUCGrDjt892s1GpWg/64
-        htH5DB5+SmMk/gMP1HXcn17DcCwFJZrE4PuvGIisggxZcdLr9ZZ03WowNr+BLTlTkcVFy0/MzVk+NDMD
-        MmRFl8dzq1Cton9sA5eGU3DeTsBx5R0OnH+DfadeYE/3c+w98RKtZ8LyToX98md0Xv0JMmSFw+2+k6tU
-        jABFvnnw9W+EVM3Qs7dJyz999cXyDCBDVnT09fmy5XLDDciQFYd7e+9mSqVtO8jJmeIOTM8dmJ47IENW
-        tPf0+NPFovULDIgtLyO6tAR1ZQVTiQQmFxbwQc7js7MIx+NGABmyYr/Lde+7pm1rkJUzxQamZwPTM4AM
-        WdHqdCprhcJ/GzDAbMCAfxuQISt22e0jabnRVD7fkMiQFbaWlhs72toeNyOyQh6b1E6p3Q1KMsL2FzoD
-        tHKcosAUAAAAAElFTkSuQmCC
+        YQUAAAAJcEhZcwAAFiUAABYlAUlSJPAAAALFSURBVDhPfdNbSFNxHAfwf4jQxfBRsB4E80FFlHrIl0AT
+        pugMb0sNJCxzeekijAxvg0DsRRDbk9mIbd3pMk0pyztulNou3nVetjm3vFB4t7l9+53jyaigH3wezv/8
+        vr/zP2f/sV91vrIyWSKX5/9Phlx+Qmj/t1LLy6Ubu7v4trODxc1NONbXYVtbg3V1laft6QHXk1ZRESJE
+        9uoLY7XjjGGKWMgEGSFG8pkMVlVh2OHAo9ZWcJVSVnb1jyFcs50skmXiJLNklPSTbjKysIB7Gs2+kPj4
+        CiHOmIka5sgCcfn6Al4vrEFBGKbrT6SdTLhc/BBuJ9zriGWyIiHO2CA1TJIZ4oiIwI+hITjz8mCg617y
+        jswuL+8P4QaISkqKhThjOmowE+5VXFIpHLm52NLrMRoTg4+01kRed3Whw2BAi07Hf9i4oqJrQpyxDmrQ
+        k5nUVHimp/FdpcJWXx9ATxyXyfCC7pntdphsNhjm5vhf52xBwQ0hzlgLNbwnsFrhrK+HSSxGZ2Agmnx8
+        8JLW1aTLaERPXy1635ZipU0LReYldd3p6wH8gFfUwNEK3hAuyD35OXlAhmzTMA4UY7EzEx6lEnq5evvx
+        RY2SH/CUzoGGmlTkIaFVNJL7pIFocnLQrmuEwZ6PsRkFKm8WQlvXAdNtk2OguuEMP4SrU1lZt7x0UCwr
+        K7wp+vKTS0vYoJO5suWC6ms1ErNjEZeUApVyHopC9+SFw/NRQpyxyPT0Uu6kfRgYQFt/P/otFnSbzdh2
+        u2F1ORCbEYuTafGQ2624rJ53x2W7FYw9OyTEGQtJSCjnBnDlpcO06/HATVy0i+Tkc0hMEuOJ04hGWouq
+        aW4+Lp04JkT3KiA6+o6Q54t7HQ8NkkgkEIlE/KBt+rNt0o64XiH2u/zCwq4cCQ2t+dtRf/+xg8HBdfx1
+        ePhdUuMXGZlP3/cAY4z9BHEtE6xVzJYRAAAAAElFTkSuQmCC
 </value>
   </data>
-  <metadata name="_ToolBox.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="toolStripMenuItem23.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
-  <metadata name="toolStripMenuItem23.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="_Patcher.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
-  <metadata name="_Patcher.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="_Merger.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="_Rename.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="_OcrImages.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="_GenerateBookmark.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="_InfoExchanger.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="_Patcher.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
   <data name="_Patcher.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
@@ -282,7 +372,7 @@
         HmKMsZ/XiRYLs2lecgAAAABJRU5ErkJggg==
 </value>
   </data>
-  <metadata name="_Merger.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="_Merger.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
   <data name="_Merger.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
@@ -304,7 +394,7 @@
         7BuU0iASw/TUhgAAAABJRU5ErkJggg==
 </value>
   </data>
-  <metadata name="_Rename.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="_Rename.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
   <data name="_Rename.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
@@ -323,7 +413,7 @@
         i4pEnmQFeuZc6NO+gY4bD+FsT49AIpMZz3R3v/ofJDKZ8S9oxY1XC8E7XAAAAABJRU5ErkJggg==
 </value>
   </data>
-  <metadata name="_OcrImages.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="_OcrImages.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
   <data name="_OcrImages.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
@@ -342,10 +432,10 @@
         V5Se1+vV0QYqJL6NcfwD7Csg08GXW4UAAAAASUVORK5CYII=
 </value>
   </data>
-  <metadata name="_GenerateBookmark.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="_GenerateBookmark.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
-  <metadata name="_InfoExchanger.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="_InfoExchanger.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
   <data name="_InfoExchanger.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
@@ -363,10 +453,19 @@
         CbN5+n8k3gaLRWmwWJTfD6TTCWZqcZ4AAAAASUVORK5CYII=
 </value>
   </data>
-  <metadata name="_Imaging.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="_Imaging.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
-  <metadata name="_Extract.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="_Extract.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="_ExtractImages.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="_RenderPages.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="_Extract.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
   <data name="_Extract.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
@@ -383,7 +482,7 @@
         G9Dqp2+0nc4O/lYB2vLybq1ON/5maIZnC+osRwW1X//wGoDmGf2OAjpoA1ceAAAAAElFTkSuQmCC
 </value>
   </data>
-  <metadata name="_ExtractImages.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="_ExtractImages.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
   <data name="_ExtractImages.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
@@ -401,10 +500,10 @@
         VXIve1AaHAvKkg6j/IOSb2MqKI7UBBR55+XbImak38qMwNWohUA+AAAAAElFTkSuQmCC
 </value>
   </data>
-  <metadata name="_RenderPages.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="_RenderPages.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
-  <metadata name="_Explorer.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="_Explorer.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
   <data name="_Explorer.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
@@ -425,7 +524,7 @@
         6LnaAAAAAElFTkSuQmCC
 </value>
   </data>
-  <metadata name="_ExportInfoFile.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="_ExportInfoFile.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
   <data name="_ExportInfoFile.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
@@ -443,13 +542,13 @@
         cyIuJqF3PCvpnWvqNdD39t7p6OmJ/Y9LA7O/OkTn+1YddH8B7KTLCzNS/AAAAAAASUVORK5CYII=
 </value>
   </data>
-  <metadata name="toolStripSeparator5.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="toolStripSeparator5.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
-  <metadata name="_ShowGeneralToolbar.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="_ShowGeneralToolbar.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
-  <metadata name="_CustomizeToolbarCommand.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="_CustomizeToolbarCommand.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
   <data name="_CustomizeToolbarCommand.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
@@ -463,7 +562,7 @@
         RK5CYII=
 </value>
   </data>
-  <metadata name="_LogWindow.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="_LogWindow.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
   <data name="_LogWindow.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
@@ -479,28 +578,22 @@
         74C+Ae2m7hiEPU+bAAAAAElFTkSuQmCC
 </value>
   </data>
-  <data name="_ToolBox.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAALFSURBVDhPfdNbSFNxHAfwf4jQxfBRsB4E80FFlHrIl0AT
-        VHSGt6UGEoq5vHQRRoa3QSD2IojtyWzEXHe6TFPK8o4btdk275d52ebcUkfh3eb27XeOJ6OCfvB5OP/z
-        +/7O/5z9x37VxerqFLFMVvg/mTLZKaH930qrrJRs7u3h2+4ulre2YN/YgHV9HZa1NZ66vx9cT3pVVYgQ
-        2a8vjNVPMoYZYiZTZIwYyWcyVFODUbsdjzo6wFVqRcXVP4ZwzTayTFaJg8yTcaIjfWRsaQn3VKoDIQkJ
-        VUKcMRM1LJAl4vT1BbxeWIKCMErXn0gXmXI6+SHcTrjXEUmlJUKcsSFqmCZzxB4RgR8jI3AUFMBA1wPk
-        HZlfXT0Ywg2ILysrFeKMaahhmHCv4pRIYM/Lw7ZWi/GYGHyktVbyurcX3QYD2jUa/sPGlZRcE+KMdVOD
-        lsylpcEzO4vvSiW2BwcBeuKkVIoXdG/YZoPJaoVhYYH/dc4XFd0Q4oy1U8N7AosFjsZGmEQi9AQGotXH
-        By9pvYX0Go3oH6zHwNtyuDrVkGfltzScvR7AD3hFDRy14A3hgtyTn5MHZMQ6C6O+FMs9WfAoFNDKWnYe
-        X1Yp+AFP6RyoqElJHhJaRTO5T5qIKjcXXZpmGGyFmJiTo/pmMdQN3TDdNtn1tU3n+CFcncnOvuWlg2J2
-        uXgz9OWnV1awSSfTte2E8mstknJiEZecCqViEfJi9/Slo4tRQpyxyIyMcu6kfdDr0anTQWc2o294GDtu
-        NyxOO2IzY3E6PQEymwX5Sps7LsctZ+zZESHOWEhiYiU3gCsvHaY9jwdu4qRdpKRcQFKyCE8cRjTTWlRd
-        W9tJydQJIbpfAdHRd4Q8X9zreGiQWCxGfHw8P2iH/mxbtCOuV4j9Lr+wsCvHQkPr/nbc33/icHBwA38d
-        Hn6X1PlFRhbS9z3EGGM/AW7DE6lHSW6SAAAAAElFTkSuQmCC
-</value>
-  </data>
-  <metadata name="_Help.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="_Help.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
-  <metadata name="_CreateShortcut.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="_CreateShortcut.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="_CheckUpdate.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="_VisitHomePage.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="_About.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="_CreateShortcut.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
   <data name="_CreateShortcut.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
@@ -513,7 +606,7 @@
         sJeAmsEYXS0IYxUkBWMVJAVjFSQFYxUkBWMVJB7/ZwAAMnjTFsqoud8AAAAASUVORK5CYII=
 </value>
   </data>
-  <metadata name="_CheckUpdate.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="_CheckUpdate.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
   <data name="_CheckUpdate.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
@@ -531,7 +624,7 @@
         rkJggg==
 </value>
   </data>
-  <metadata name="_VisitHomePage.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="_VisitHomePage.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
   <data name="_VisitHomePage.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
@@ -550,7 +643,7 @@
         YII=
 </value>
   </data>
-  <metadata name="_About.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="_About.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
   <data name="_About.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
@@ -567,7 +660,7 @@
         AAAAAElFTkSuQmCC
 </value>
   </data>
-  <metadata name="_Open.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="_Open.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
   <data name="_Open.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
@@ -586,10 +679,10 @@
         yJYygk0V1NMFGyQywbpSHcMwqxaHWfEXhcCu4hm3kHoAAAAASUVORK5CYII=
 </value>
   </data>
-  <metadata name="dummyToolStripMenuItem.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="dummyToolStripMenuItem.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
-  <metadata name="_ImportBookmark.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="_ImportBookmark.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
   <data name="_ImportBookmark.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
@@ -607,16 +700,16 @@
         AABJRU5ErkJggg==
 </value>
   </data>
-  <metadata name="toolStripSeparator2.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="toolStripSeparator2.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
-  <metadata name="_Action.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="_Action.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
-  <metadata name="_SaveBookmark.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="_SaveBookmark.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
-  <metadata name="_SaveAsInfoFile.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="_SaveAsInfoFile.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
   <data name="_SaveAsInfoFile.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
@@ -635,10 +728,10 @@
         FwTf/mk2rA8eAAAAAElFTkSuQmCC
 </value>
   </data>
-  <metadata name="_configSeparator.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="_configSeparator.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
-  <metadata name="_AppOptions.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="_AppOptions.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
   <data name="_AppOptions.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
@@ -654,25 +747,25 @@
         uVN/2CJMbc4P2A8Zf+kAI/4jBAAAAABJRU5ErkJggg==
 </value>
   </data>
-  <metadata name="_RestoreOptions.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="_RestoreOptions.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
-  <metadata name="_SaveOptions.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="_SaveOptions.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
-  <metadata name="toolStripSeparator11.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="toolStripSeparator11.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
-  <metadata name="_Exit.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="_Exit.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
-  <metadata name="_Close.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="_Close.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
-  <metadata name="toolStripSeparator1.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="toolStripSeparator1.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
-  <metadata name="_Options.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="_Options.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
   <data name="_Options.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
@@ -692,13 +785,13 @@
         GB6lMoWFna1l5E+BR2DghWMBAQX/ctTbW3fE09MgRpH9PQ+KX6DEi0hG/YRhAAAAAElFTkSuQmCC
 </value>
   </data>
-  <metadata name="_CustomizeToolbar.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="_CustomizeToolbar.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
   <data name="_CustomizeToolbar.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAEPSURBVDhP5VAxaoRQFPQKNgqWW+QS3kBMZ5GkEEyxrpsg
+        YQUAAAAJcEhZcwAAFiUAABYlAUlSJPAAAAEPSURBVDhP5VAxaoRQFPQKNgqWW+QS3kBMZ5GkEEyxrpsg
         NgmooHgEe09g6UFsAnsCCxVBCxFB4cX5GCGLXiAZGN77M/N+MdwfQRiGpyAInpd5vueqn5DzPO/R930T
         xM6OAdd1X6qq+qIdQIePnGma13meCcTOjgHHcS4Qp2n6xSzLWBg+coqi2MuH+JSws2PAsqzrOI40DMPG
         NE0pjmOCDh85SZKeeJ7/BLGzY8AwjLe+7ylJEuq6js0oitgOHf4a3Yemae9t25Jt2xvrumaEDh+5wxJV
@@ -706,21 +799,37 @@
         Fs8FVIExAAAAAElFTkSuQmCC
 </value>
   </data>
-  <metadata name="_Properties.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+  <metadata name="_Properties.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
-  <metadata name="_ToolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  <metadata name="_ToolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <metadata name="_SaveConfigDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  <metadata name="_SaveConfigDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>118, 17</value>
   </metadata>
-  <metadata name="_OpenConfigDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  <metadata name="_OpenConfigDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>275, 17</value>
   </metadata>
-  <metadata name="_MainMenu.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  <metadata name="_MainMenu.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>432, 17</value>
   </metadata>
+  <data name="_File.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAAAJcEhZcwAAFiUAABYlAUlSJPAAAAIsSURBVDhPjZJNSFRxFMUviCvbB65cNAsFaRGERAspSBcT
+        ZFq4cKHgOEkNOfEocEYH2rRqY7vSiGmCKBIVkoIsMmyosDI/0EptijczDIPpfH/fzh3/8x4RDB34wbvv
+        nXPe/Oddquj8yMjpcx7PQDW6PJ5Dyv6vulwue7JQ4N/ZLEdSKdYTCf4Zj3MgFiszPT/P4jnrdltUZF8f
+        iW6uE/E38B1sgFXwGbwHi6OjvKLr/GB2lkVnhocv/FUi5l8gAqIgBLbBGvgAXoPVYJBv+XwGlrY2t4oT
+        LcHwAwRBuLaWuVTiQEMDr2B+B+bARjhcLpFfIsexatpFFSdahOEr2AJ6czPnlpc51N/PnzC/Ac/AdjRq
+        lEjBKafzkooTvYXhC5CjhO121vv6OO3381prK7/AvRkQ2tszSuSPPelwOFSc6CUMfrDV0cHFzU3e9Xo5
+        vbDADPO6pvFjPIvii1RK5OucGBy8rOJET2F4DjgQ4NDYGC9Zrfyqvp5namr4Ce7fBzvJpFESSaf5uM3m
+        VHGiSRiEacUUkKC8+RGYALvYi0qJ7Mmx3t4rKk70EHvgg8kL7oG7YBzcAbfB3NAQx/DWSkksl+OjPT2a
+        ips60t19tYRFKRSLnAdZbGUmn+cUAolMxiiJYxavipk63Nl5TTathD2oVpLELF4VM2Vpb3dJgahaSQrX
+        4lUxUwdbWq6rfFlynKIUASnKgQzKspjFq2KmDjQ12eoaG2/8D+LdTxH9AdGnGwl7PYKkAAAAAElFTkSu
+        QmCC
+</value>
+  </data>
   <data name="_ResetOptions.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAABl0RVh0U29m
@@ -739,33 +848,14 @@
         ObeSULbTjhxy/x1Qsr+c8frHFzb/LgAAAABJRU5ErkJggg==
 </value>
   </data>
-  <data name="_File.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAIsSURBVDhPjZJNSFRxFMUviCvbB65cNAsFaRGERAspSBcT
-        ZFq4cKHgOEkNOfEocEYH2rRqY7vSiGmCKBIVkoIsMmyosDI/0EptijczDIPpfH/fzh3/8x4RDB34wbvv
-        nXPe/Oddquj8yMjpcx7PQDW6PJ5Dyv6vulwue7JQ4N/ZLEdSKdYTCf4Zj3MgFiszPT/P4jnrdltUZF8f
-        iW6uE/E38B1sgFXwGbwHi6OjvKLr/GB2lkVnhocv/FUi5l8gAqIgBLbBGvgAXoPVYJBv+XwGlrY2t4oT
-        LcHwAwRBuLaWuVTiQEMDr2B+B+bARjhcLpFfIsexatpFFSdahOEr2AJ6czPnlpc51N/PnzC/Ac/AdjRq
-        lEjBKafzkooTvYXhC5CjhO121vv6OO3381prK7/AvRkQ2tszSuSPPelwOFSc6CUMfrDV0cHFzU3e9Xo5
-        vbDADPO6pvFjPIvii1RK5OucGBy8rOJET2F4DjgQ4NDYGC9Zrfyqvp5namr4Ce7fBzvJpFESSaf5uM3m
-        VHGiSRiEacUUkKC8+RGYALvYi0qJ7Mmx3t4rKk70EHvgg8kL7oG7YBzcAbfB3NAQx/DWSkksl+OjPT2a
-        ips60t19tYRFKRSLnAdZbGUmn+cUAolMxiiJYxavipk63Nl5TTathD2oVpLELF4VM2Vpb3dJgahaSQrX
-        4lUxUwdbWq6rfFlynKIUASnKgQzKspjFq2KmDjQ12eoaG2/8D+LdTxH9AdGnGwl7PYKkAAAAAElFTkSu
-        QmCC
-</value>
-  </data>
-  <metadata name="_OpenPdfDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  <metadata name="_OpenPdfDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>539, 17</value>
   </metadata>
-  <metadata name="statusStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  <metadata name="statusStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>677, 17</value>
   </metadata>
-  <metadata name="_GeneralToolbar.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+  <metadata name="_GeneralToolbar.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>793, 17</value>
-  </metadata>
-  <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>78</value>
   </metadata>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
