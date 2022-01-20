@@ -53,7 +53,7 @@ namespace PDFPatcher.Functions
 			};
 			_AdjustmentLevelColumn.AspectGetter = (object x) => {
 				var f = x as AutoBookmarkOptions.LevelAdjustmentOption;
-				return f == null ? 0 : f.AdjustmentLevel;
+				return f?.AdjustmentLevel ?? 0;
 			};
 			_AdjustmentLevelColumn.AspectPutter = (object x, object value) => {
 				var f = x as AutoBookmarkOptions.LevelAdjustmentOption;

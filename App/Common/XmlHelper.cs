@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
 using System.Xml;
 
 namespace PDFPatcher.Common
@@ -69,7 +68,7 @@ namespace PDFPatcher.Common
 				return defaultValue;
 			}
 			var a = reader.GetAttribute(name);
-			return a == null ? defaultValue : a.ToBoolean(defaultValue);
+			return a?.ToBoolean(defaultValue) ?? defaultValue;
 		}
 		[DebuggerStepThrough]
 		public static int GetValue(this XmlReader reader, string name, int defaultValue) {
@@ -77,7 +76,7 @@ namespace PDFPatcher.Common
 				return defaultValue;
 			}
 			var a = reader.GetAttribute(name);
-			return a == null ? defaultValue : a.ToInt32(defaultValue);
+			return a?.ToInt32(defaultValue) ?? defaultValue;
 		}
 		[DebuggerStepThrough]
 		public static float GetValue(this XmlReader reader, string name, float defaultValue) {
@@ -85,7 +84,7 @@ namespace PDFPatcher.Common
 				return defaultValue;
 			}
 			var a = reader.GetAttribute(name);
-			return a == null ? defaultValue : a.ToSingle(defaultValue);
+			return a?.ToSingle(defaultValue) ?? defaultValue;
 		}
 
 		[DebuggerStepThrough]

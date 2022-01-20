@@ -177,15 +177,11 @@ namespace PDFPatcher.Model
 			}
 			var v = new DistanceInfo(ov ? DistanceInfo.Placement.Overlapping | vp : vp, hd, vd);
 			var h = new DistanceInfo(ov ? DistanceInfo.Placement.Overlapping | hp : hp, hd, vd);
-			if (writingDirection == WritingDirection.Vertical) {
-				return hp != DistanceInfo.Placement.Unknown ? h : v;
-			}
-			else if (writingDirection == WritingDirection.Hortizontal) {
-				return vp != DistanceInfo.Placement.Unknown ? v : h;
-			}
-			else {
-				return (hd < vd) ? h : v;
-			}
+			return writingDirection switch {
+				WritingDirection.Vertical => hp != DistanceInfo.Placement.Unknown ? h : v,
+				WritingDirection.Hortizontal => vp != DistanceInfo.Placement.Unknown ? v : h,
+				_ => (hd < vd) ? h : v
+			};
 		}
 
 		/// <summary>

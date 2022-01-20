@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using iTextSharp.text.pdf;
@@ -76,11 +75,11 @@ namespace PDFPatcher.Model
 
 		internal static int TryGetInt32(this PdfDictionary source, PdfName key, int defaultValue) {
 			var w = source.GetAsNumber(key);
-			return (w != null ? w.IntValue : defaultValue);
+			return w?.IntValue ?? defaultValue;
 		}
 		internal static bool TryGetBoolean(this PdfDictionary source, PdfName key, bool defaultValue) {
 			var b = source.GetAsBoolean(key);
-			return (b != null ? b.BooleanValue : defaultValue);
+			return b?.BooleanValue ?? defaultValue;
 		}
 
 		internal static string Decode(this PdfString text, Encoding encoding) {

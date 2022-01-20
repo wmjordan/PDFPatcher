@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using System.Xml;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
@@ -124,15 +123,12 @@ namespace PDFPatcher.Processor
 					var pr = reader.GetPageRotation(i);
 					pr = PdfHelper.NormalizeRotationNumber(pr);
 					if (pr != 0) {
-						if (pr == 90) {
-							p.RotationMatrix = new Matrix(0, 1, -1, 0, 0, 0);
-						}
-						else if (pr == 180) {
-							p.RotationMatrix = new Matrix(0, -1, -1, 0, 0, 0);
-						}
-						else if (pr == 270) {
-							p.RotationMatrix = new Matrix(0, -1, 1, 0, 0, 0);
-						}
+						p.RotationMatrix = pr switch {
+							90 => new Matrix(0, 1, -1, 0, 0, 0),
+							180 => new Matrix(0, -1, -1, 0, 0, 0),
+							270 => new Matrix(0, -1, 1, 0, 0, 0),
+							_ => p.RotationMatrix
+						};
 					}
 					p.ProcessContent(reader.GetPageContent(i), reader.GetPageNRelease(i).GetAsDict(PdfName.RESOURCES));
 					//p.SortTextList ();
