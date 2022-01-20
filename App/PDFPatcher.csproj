@@ -89,6 +89,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ChineseCharMap.resx</DependentUpon>
     </Compile>
+    <Compile Include="Configuration.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Configuration.resx</DependentUpon>
+    </Compile>
     <Compile Include="Commands.cs" />
     <Compile Include="CommonCommands.cs" />
     <Compile Include="Common\CommandRegistry.cs" />
@@ -101,7 +106,6 @@
     <Compile Include="Common\StringHelper.cs" />
     <Compile Include="Common\ValueHelper.cs" />
     <Compile Include="Common\XmlHelper.cs" />
-    <Compile Include="Configuration.Designer.cs" />
     <Compile Include="Functions\DocumentOption\FontCharSubstitutionForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -689,7 +693,10 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ChineseCharMap.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Configuration.resx" />
+    <EmbeddedResource Include="Configuration.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Configuration.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
     <EmbeddedResource Include="Functions\DocumentOption\FontCharSubstitutionForm.resx">
       <DependentUpon>FontCharSubstitutionForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -922,6 +929,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Functions\SourcePdfOptionForm.resx">
       <DependentUpon>SourcePdfOptionForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Functions\UpdateForm.resx">
       <DependentUpon>UpdateForm.cs</DependentUpon>
