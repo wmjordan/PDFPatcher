@@ -28,7 +28,7 @@ namespace PDFPatcher.Model
 		public string Text {
 			get {
 				if (_Text == null) {
-					_Text = GetConcatinatedText();
+					_Text = GetConcatenatedText();
 				}
 				return _Text;
 			}
@@ -43,7 +43,7 @@ namespace PDFPatcher.Model
 			_Texts.Add(text);
 			Region = new Bound(text.Region);
 			if (text.Text.Length > 2 && text.Region.Height > 0 && text.Region.Width > text.Region.Height * 2) {
-				Direction = WritingDirection.Hortizontal;
+				Direction = WritingDirection.Horizontal;
 			}
 		}
 
@@ -63,7 +63,7 @@ namespace PDFPatcher.Model
 
 		private static WritingDirection InferWritingDirection(DistanceInfo d) {
 			return d.IsVerticallyAligned ? WritingDirection.Vertical
-					: d.IsHorizontallyAligned ? WritingDirection.Hortizontal
+					: d.IsHorizontallyAligned ? WritingDirection.Horizontal
 					: WritingDirection.Unknown;
 		}
 
@@ -85,7 +85,7 @@ namespace PDFPatcher.Model
 		/// <summary>
 		/// 获取将 <see cref="Texts"/> 内所有文本串联起来的字符串。
 		/// </summary>
-		private string GetConcatinatedText() {
+		private string GetConcatenatedText() {
 			var l = _Texts.Count;
 			if (l == 0) {
 				return String.Empty;

@@ -20,7 +20,7 @@ namespace PDFPatcher.Functions
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		internal UndoManager Undo { get; set; }
 
-		public bool OperationAffectsDecendants { get; set; }
+		public bool OperationAffectsDescendants { get; set; }
 		public OLVColumn BookmarkOpenColumn => _BookmarkOpenColumn;
 		public OLVColumn BookmarkNameColumn => _BookmarkNameColumn;
 		public OLVColumn BookmarkPageColumn => _BookmarkPageColumn;
@@ -31,10 +31,10 @@ namespace PDFPatcher.Functions
 
 		public BookmarkEditorView() {
 			InitializeComponent();
-			InitEditerBox();
+			InitEditorBox();
 		}
 
-		private void InitEditerBox() {
+		private void InitEditorBox() {
 			if (IsDesignMode) {
 				return;
 			}
@@ -192,7 +192,7 @@ namespace PDFPatcher.Functions
 			var child = ml.X > d.Position.X + d.GetBounds(ItemBoundsPortion.ItemOnly).Width / 2;
 			var append = ml.Y > d.Position.Y + d.Bounds.Height / 2;
 			var copy = (Control.ModifierKeys & Keys.Control) != Keys.None || (args.SourceModels[0] as BookmarkElement).OwnerDocument != ti.OwnerDocument;
-			var deepCopy = copy && (OperationAffectsDecendants || (Control.ModifierKeys & Keys.Shift) != Keys.None);
+			var deepCopy = copy && (OperationAffectsDescendants || (Control.ModifierKeys & Keys.Shift) != Keys.None);
 			var tii = TopItemIndex;
 			CopyOrMoveElement(se, ti, child, append, copy, deepCopy);
 			//e.RefreshObjects ();
@@ -447,7 +447,7 @@ namespace PDFPatcher.Functions
 				if (_copiedBookmarks == null || _copiedBookmarks.Count == 0) {
 					return;
 				}
-				CopyOrMoveElement(_copiedBookmarks, target, asChild, true, true, c || OperationAffectsDecendants);
+				CopyOrMoveElement(_copiedBookmarks, target, asChild, true, true, c || OperationAffectsDescendants);
 			}
 			catch (Exception) {
 				// ignore

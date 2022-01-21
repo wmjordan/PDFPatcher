@@ -36,7 +36,7 @@ namespace MuPdfSharp
 		None = 0,
 		IgnoreImage = 1,
 		IgnoreShade = 2,
-		DontInterporateImages = 4,
+		DontInterperateImages = 4,
 		MaintainContainerStack = 8,
 		NoCache = 16
 	}
@@ -495,7 +495,7 @@ namespace MuPdfSharp
 		/// <summary>
 		/// 垂直翻转矩阵。
 		/// </summary>
-		public static readonly Matrix VeritcalFlip = new Matrix(1, 0, 0, -1, 0, 0);
+		public static readonly Matrix VerticalFlip = new Matrix(1, 0, 0, -1, 0, 0);
 		/// <summary>
 		/// 水平翻转矩阵。
 		/// </summary>

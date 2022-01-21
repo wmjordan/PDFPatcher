@@ -1208,7 +1208,7 @@
 			this._BookmarkBox.Location = new System.Drawing.Point(4, 4);
 			this._BookmarkBox.Margin = new System.Windows.Forms.Padding(4);
 			this._BookmarkBox.Name = "_BookmarkBox";
-			this._BookmarkBox.OperationAffectsDecendants = false;
+			this._BookmarkBox.OperationAffectsDescendants = false;
 			this._BookmarkBox.RevealAfterExpand = false;
 			this._BookmarkBox.ShowGroups = false;
 			this._BookmarkBox.Size = new System.Drawing.Size(322, 334);

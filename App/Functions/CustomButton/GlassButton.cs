@@ -65,7 +65,7 @@ namespace EnhancedGlassButton
 		/// <summary>
 		/// Set the trynsperency of the special Symbols.
 		/// </summary>
-		readonly int transperencyFactor = 128;
+		readonly int transparencyFactor = 128;
 
 		#endregion
 
@@ -95,7 +95,7 @@ namespace EnhancedGlassButton
 			specialSymbol = SpecialSymbols.Play;
 			specialSymbolColor = Color.White;
 			toolTipText = "";
-			specialSymbolBrush = new SolidBrush(Color.FromArgb(transperencyFactor, specialSymbolColor));
+			specialSymbolBrush = new SolidBrush(Color.FromArgb(transparencyFactor, specialSymbolColor));
 			alternativeFocusBorderColor = Color.Black;
 			alternativeFormDirection = Direction.Left;
 
@@ -215,7 +215,7 @@ namespace EnhancedGlassButton
 			set {
 				if (specialSymbolColor != value) {
 					specialSymbolColor = value;
-					specialSymbolBrush = new SolidBrush(Color.FromArgb(transperencyFactor, specialSymbolColor));
+					specialSymbolBrush = new SolidBrush(Color.FromArgb(transparencyFactor, specialSymbolColor));
 
 					if (IsHandleCreated) {
 						Invalidate();

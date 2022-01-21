@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
 namespace PDFPatcher
 {
@@ -35,7 +32,7 @@ namespace PDFPatcher
 		public string Name { get; }
 		public string Description { get; }
 		public bool ShowText { get; }
-		public bool DefaultVisisble { get; }
+		public bool DefaultVisible { get; }
 
 		private Toolkit(string name, string id, string icon, string description)
 			: this(name, id, icon, description, false, true) {
@@ -49,7 +46,7 @@ namespace PDFPatcher
 			Icon = icon;
 			Description = description;
 			ShowText = showText;
-			DefaultVisisble = defaultVisible;
+			DefaultVisible = defaultVisible;
 		}
 
 		internal ToolStripButton CreateButton() {

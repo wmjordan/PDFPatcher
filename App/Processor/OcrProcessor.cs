@@ -26,14 +26,14 @@ namespace PDFPatcher.Processor
 		}
 
 		const int OpenWorkload = 1;
-		const string __puctuations = @"·．“”，,\.－""～∼。:：\p{P}";
+		const string __punctuations = @"·．“”，,\.－""～∼。:：\p{P}";
 		static readonly AutoBookmarkOptions __MergeOptions = new AutoBookmarkOptions { MergeAdjacentTitles = true, MergeDifferentSizeTitles = true };
-		static readonly Regex __ContentPunctuationExpression = new Regex(@"[" + __puctuations + @"][" + __puctuations + @"0一\s]+[" + __puctuations + @"]\s*", RegexOptions.Compiled);
+		static readonly Regex __ContentPunctuationExpression = new Regex(@"[" + __punctuations + @"][" + __punctuations + @"0一\s]+[" + __punctuations + @"]\s*", RegexOptions.Compiled);
 		static readonly Regex __ContinuousWhiteSpaceExpression = new Regex(@"[ 　]{3,}", RegexOptions.Compiled);
 		static readonly Regex __WhiteSpaceBetweenChineseCharacters = new Regex(@"([\u4E00-\u9FFF\u3400-\u4DBF])[ 　]+(?=[\u4E00-\u9FFF\u3400-\u4DBF])", RegexOptions.Compiled);
 
 		private readonly ModiOcr _Ocr;
-		private readonly float _OcrQuatitiveFactor;
+		private readonly float _OcrQuantitativeFactor;
 		private readonly PdfReader _reader;
 		private readonly ImageExtractor _ocrImageExp;
 		private readonly OcrOptions _options;
@@ -62,7 +62,7 @@ namespace PDFPatcher.Processor
 				OrientPage = options.OrientPage,
 				WritingDirection = options.WritingDirection
 			};
-			_OcrQuatitiveFactor = options.QuantitativeFactor;
+			_OcrQuantitativeFactor = options.QuantitativeFactor;
 			_options = options;
 		}
 
@@ -279,7 +279,7 @@ namespace PDFPatcher.Processor
 			//                                    && li.Direction != TextLine.WritingDirection.Vertical // 文本行方向不为纵向
 			//                                    )
 			//                                || ((cd.Location == DistanceInfo.Placement.Up || cd.Location == DistanceInfo.Placement.Down) // 相对位置为垂直
-			//                                    && li.Direction != TextLine.WritingDirection.Hortizontal // 文本行方向不为横向
+			//                                    && li.Direction != TextLine.WritingDirection.Horizontal // 文本行方向不为横向
 			//                                    )
 			//                                )
 			//                            && cd.Distance < cw
@@ -472,7 +472,7 @@ namespace PDFPatcher.Processor
 		}
 
 		private static void SortRecognizedText(List<TextLine> list, OcrOptions ocrOptions) {
-			if (ocrOptions.WritingDirection == WritingDirection.Hortizontal) {
+			if (ocrOptions.WritingDirection == WritingDirection.Horizontal) {
 				list.Sort((a, b) => {
 					var ra = a.Region;
 					var rb = b.Region;
@@ -482,7 +482,7 @@ namespace PDFPatcher.Processor
 					if (ra.Top < rb.Bottom) {
 						return -1;
 					}
-					if (ra.IsAlignedWith(rb, WritingDirection.Hortizontal)) {
+					if (ra.IsAlignedWith(rb, WritingDirection.Horizontal)) {
 						return ra.Center < rb.Center ? -1 : 1;
 					}
 					return ra.Middle < rb.Middle ? -1 : 1;
@@ -544,7 +544,7 @@ namespace PDFPatcher.Processor
 				_writer.WriteStartElement(Constants.Ocr.Content);
 				_writer.WriteAttributeString(Constants.Ocr.Text, text);
 				switch (direction) {
-					case WritingDirection.Hortizontal:
+					case WritingDirection.Horizontal:
 						_writer.WriteAttributeString(Constants.Coordinates.Direction, Constants.Coordinates.Horizontal);
 						break;
 					case WritingDirection.Vertical:
