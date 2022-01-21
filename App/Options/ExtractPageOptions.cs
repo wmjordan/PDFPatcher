@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml.Serialization;
+﻿using System.Xml.Serialization;
 
 namespace PDFPatcher
 {
@@ -20,7 +17,7 @@ namespace PDFPatcher
 		[XmlAttribute("拆分方式")]
 		public int SeparatingMode { get; set; }
 		[XmlAttribute("按页数拆分")]
-		public int SeperateByPage { get; set; }
+		public int SeparateByPage { get; set; }
 
 		[XmlIgnore]
 		public string PageRanges { get; set; }
@@ -33,7 +30,7 @@ namespace PDFPatcher
 			RemoveDocumentRestrictions = true;
 			RemoveOrphanBookmarks = true;
 			NumberFileNames = true;
-			SeperateByPage = 1;
+			SeparateByPage = 1;
 		}
 	}
 }

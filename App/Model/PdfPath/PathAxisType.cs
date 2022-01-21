@@ -6,7 +6,7 @@
 		Children,
 		Parent,
 		Ancestors,
-		Decendants,
+		Descendants,
 		Root,
 		Previous,
 		Next

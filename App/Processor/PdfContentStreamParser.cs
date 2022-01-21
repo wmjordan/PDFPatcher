@@ -144,8 +144,8 @@ namespace PDFPatcher.Processor
 
 		public void ProcessContent(byte[] contentBytes, PdfDictionary resources) {
 			_Resources.Push(resources);
-			var tokeniser = new PRTokeniser(new RandomAccessFileOrArray(contentBytes));
-			var ps = new PdfContentParser(tokeniser);
+			var tokenizer = new PRTokeniser(new RandomAccessFileOrArray(contentBytes));
+			var ps = new PdfContentParser(tokenizer);
 			var operands = new List<PdfObject>();
 			while (ps.Parse(operands).Count > 0) {
 				var oper = (PdfLiteral)operands[operands.Count - 1];

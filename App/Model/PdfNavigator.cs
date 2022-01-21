@@ -11,21 +11,21 @@ namespace PDFPatcher.Model
 	{
 		sealed class HtmlNameTable : XmlNameTable
 		{
-			readonly NameTable _nametable = new NameTable();
+			readonly NameTable _nameTable = new NameTable();
 			public override string Add(string array) {
-				return _nametable.Add(array);
+				return _nameTable.Add(array);
 			}
 
 			public override string Add(char[] array, int offset, int length) {
-				return _nametable.Add(array, offset, length);
+				return _nameTable.Add(array, offset, length);
 			}
 
 			public override string Get(string array) {
-				return _nametable.Get(array);
+				return _nameTable.Get(array);
 			}
 
 			public override string Get(char[] array, int offset, int length) {
-				return _nametable.Get(array, offset, length);
+				return _nameTable.Get(array, offset, length);
 			}
 
 			internal string GetOrAdd(string array) {

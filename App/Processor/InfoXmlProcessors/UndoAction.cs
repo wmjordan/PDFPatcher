@@ -174,11 +174,11 @@ namespace PDFPatcher.Processor
 		public XmlElement TargetElement { get; private set; }
 		public string Name { get; private set; }
 
-		protected UndoAttributeAction(XmlElement targeNode, string name) {
+		protected UndoAttributeAction(XmlElement targetNode, string name) {
 			if (String.IsNullOrEmpty(name)) {
 				throw new ArgumentNullException("undo/attr/name");
 			}
-			TargetElement = targeNode ?? throw new ArgumentNullException("undo/attr/target");
+			TargetElement = targetNode ?? throw new ArgumentNullException("undo/attr/target");
 			Name = name;
 		}
 

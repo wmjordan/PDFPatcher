@@ -26,7 +26,7 @@ namespace PDFPatcher.Processor.Imaging
 		/// </summary>
 		/// <param name="bmp">需要获取颜色集合的 <see cref="Bitmap"/>。</param>
 		/// <returns>包含不重复颜色集合的列表。</returns>
-		unsafe public static Color[] GetPallete(this Bitmap bmp) {
+		unsafe public static Color[] GetPalette(this Bitmap bmp) {
 			var hs = new HashSet<int>();
 			if (bmp == null) {
 				return null;
@@ -268,7 +268,7 @@ namespace PDFPatcher.Processor.Imaging
 			byte bit;
 			byte pix8;
 
-			int newpixel, i, j;
+			int newPixel, i, j;
 
 			// Iterate lines
 			for (int y = 0; y < height; y++, srcIx += srcStride, dstIx += dstStride) {
@@ -279,9 +279,9 @@ namespace PDFPatcher.Processor.Imaging
 				// Iterate pixels
 				for (int x = 0; x < width; x++, i += 3) {
 					// Compute pixel brightness (i.e. total of Red, Green, and Blue values)
-					newpixel = sourceBuffer[i] + sourceBuffer[i + 1] + sourceBuffer[i + 2];
+					newPixel = sourceBuffer[i] + sourceBuffer[i + 1] + sourceBuffer[i + 2];
 
-					if (newpixel > threshold)
+					if (newPixel > threshold)
 						pix8 |= bit;
 					if (bit == 1) {
 						destinationBuffer[j++] = pix8;

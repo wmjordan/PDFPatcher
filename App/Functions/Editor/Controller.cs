@@ -123,7 +123,7 @@ namespace PDFPatcher.Functions.Editor
 			}
 		}
 
-		internal void Distroy() {
+		internal void Destroy() {
 			//if (_view.InsertBookmarkForm != null) {
 			//	_view.InsertBookmarkForm.Dispose ();
 			//	_view.InsertBookmarkForm = null;
