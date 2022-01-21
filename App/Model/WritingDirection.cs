@@ -1,5 +1,4 @@
-﻿using System;
-using System.Xml.Serialization;
+﻿using System.Xml.Serialization;
 
 namespace PDFPatcher.Model
 {
@@ -8,7 +7,7 @@ namespace PDFPatcher.Model
 		[XmlEnum("混合")]
 		Unknown,
 		[XmlEnum("横排")]
-		Hortizontal,
+		Horizontal,
 		[XmlEnum("竖排")]
 		Vertical
 	}

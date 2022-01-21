@@ -43,7 +43,7 @@ namespace PDFPatcher.Model.PdfPath
 		static readonly ChildrenAxis __Children = new ChildrenAxis();
 		static readonly RootAxis __Root = new RootAxis();
 		static readonly AncestorsAxis __Ancestors = new AncestorsAxis();
-		static readonly DecendantsAxis __Decendants = new DecendantsAxis();
+		static readonly DescendantsAxis __Descendants = new DescendantsAxis();
 
 		sealed class SelfAxis : IPathAxis
 		{
@@ -180,7 +180,7 @@ namespace PDFPatcher.Model.PdfPath
 			#endregion
 		}
 
-		sealed class DecendantsAxis : IPathAxis
+		sealed class DescendantsAxis : IPathAxis
 		{
 			void SelectObjects(DocumentObject source, string name, IEnumerable<IPathPredicate> predicates, List<DocumentObject> list) {
 				if (source == null || source.HasChildren == false) {
@@ -196,7 +196,7 @@ namespace PDFPatcher.Model.PdfPath
 
 			#region IPathAxis 成员
 
-			public PathAxisType Type => PathAxisType.Decendants;
+			public PathAxisType Type => PathAxisType.Descendants;
 
 			public DocumentObject SelectObject(DocumentObject source, string name, IEnumerable<IPathPredicate> predicates) {
 				if (source == null || source.HasChildren == false) {
@@ -237,7 +237,7 @@ namespace PDFPatcher.Model.PdfPath
 				case PathAxisType.Children: return __Children;
 				case PathAxisType.Parent: return __Parent;
 				case PathAxisType.Ancestors: return __Ancestors;
-				case PathAxisType.Decendants: return __Decendants;
+				case PathAxisType.Descendants: return __Descendants;
 				case PathAxisType.Root: return __Root;
 				case PathAxisType.Previous:
 				case PathAxisType.Next:

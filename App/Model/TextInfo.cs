@@ -21,7 +21,7 @@ namespace PDFPatcher.Model
 			return CompareRegionX(a, b, true);
 		}
 		static int CompareRegionX(ITextRegion a, ITextRegion b, bool checkAlignment) {
-			if (checkAlignment && a.Region.IsAlignedWith(b.Region, WritingDirection.Hortizontal) == false) {
+			if (checkAlignment && a.Region.IsAlignedWith(b.Region, WritingDirection.Horizontal) == false) {
 				return CompareRegionY(a, b, false);
 			}
 			var x1 = a.Region.Center;

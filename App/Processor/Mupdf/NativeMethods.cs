@@ -91,7 +91,7 @@ namespace MuPdfSharp
 		public static extern Rectangle BoundPage(ContextHandle context, PageHandle page);
 
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_flatten_inheritable_page_items")]
-		public static extern void FlatternInheritablePageItems(ContextHandle doc, IntPtr pageNode);
+		public static extern void FlattenInheritablePageItems(ContextHandle doc, IntPtr pageNode);
 		#endregion
 
 		#region Pixmap and display list

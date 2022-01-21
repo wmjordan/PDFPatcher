@@ -233,7 +233,7 @@ namespace PDFPatcher.Processor
 			var ranges = PageRangeCollection.Parse(sourceFile.PageRanges, 1, pdf.NumberOfPages, true);
 			var pageRemapper = new int[pdf.NumberOfPages + 1];
 			// 统一页面旋转角度
-			if (_option.UnifyPageOrtientation) {
+			if (_option.UnifyPageOrientation) {
 				var rv = _option.RotateVerticalPages;
 				var a = _option.RotateAntiClockwise ? -90 : 90;
 				for (int i = pdf.NumberOfPages; i > 0; i--) {

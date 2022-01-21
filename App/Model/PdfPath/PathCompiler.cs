@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace PDFPatcher.Model.PdfPath
 {
@@ -52,7 +51,7 @@ namespace PDFPatcher.Model.PdfPath
 			if (c == PathSeparator) {
 				if (MatchNextChar(path, length, index, PathSeparator)) {
 					++index;
-					return PathAxisType.Decendants;
+					return PathAxisType.Descendants;
 				}
 				else if (canBeRoot) {
 					return PathAxisType.Root;

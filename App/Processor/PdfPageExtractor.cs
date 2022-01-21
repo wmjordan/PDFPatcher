@@ -35,16 +35,16 @@ namespace PDFPatcher.Processor
 		private static void SeparateByPageNumber(ExtractPageOptions options, string sourceFile, string targetFile, ref PdfReader pdf) {
 			var c = 1;
 			var pn = pdf.NumberOfPages;
-			if (pn <= options.SeperateByPage) {
+			if (pn <= options.SeparateByPage) {
 				Tracker.TraceMessage("拆分的页数超过文档页数，无法拆分。");
 				return;
 			}
-			for (int i = 1; i <= pn; i += options.SeperateByPage) {
+			for (int i = 1; i <= pn; i += options.SeparateByPage) {
 				if (pdf == null) {
 					pdf = PdfHelper.OpenPdfFile(sourceFile, AppContext.LoadPartialPdfFile, false);
 				}
 				var tf = RewriteTargetFileName(sourceFile, targetFile, pdf);
-				var e = i + options.SeperateByPage - 1;
+				var e = i + options.SeparateByPage - 1;
 				if (e > pn) {
 					e = pn;
 				}

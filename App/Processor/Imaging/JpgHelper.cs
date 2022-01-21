@@ -644,9 +644,9 @@ namespace PDFPatcher.Processor.Imaging
 				_stream.Position = tagOffset;
 
 				// Read the tag number from the file
-				var currenttagId = ReadUShort();
+				var currentTagId = ReadUShort();
 
-				if (currenttagId != tagId)
+				if (currentTagId != tagId)
 					throw new ExifLibException("Tag number not at expected offset");
 
 				// Read the offset to the Exif IFD

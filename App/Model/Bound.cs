@@ -179,7 +179,7 @@ namespace PDFPatcher.Model
 			var h = new DistanceInfo(ov ? DistanceInfo.Placement.Overlapping | hp : hp, hd, vd);
 			return writingDirection switch {
 				WritingDirection.Vertical => hp != DistanceInfo.Placement.Unknown ? h : v,
-				WritingDirection.Hortizontal => vp != DistanceInfo.Placement.Unknown ? v : h,
+				WritingDirection.Horizontal => vp != DistanceInfo.Placement.Unknown ? v : h,
 				_ => (hd < vd) ? h : v
 			};
 		}
@@ -192,7 +192,7 @@ namespace PDFPatcher.Model
 		/// <returns>在同一行上时返回 true。</returns>
 		internal bool IsAlignedWith(Bound other, WritingDirection direction) {
 			switch (direction) {
-				case WritingDirection.Hortizontal:
+				case WritingDirection.Horizontal:
 					return IsTopDown ? (other.Top < Middle && Middle < other.Bottom || Top < other.Middle && other.Middle < Bottom) : (other.Bottom < Middle && Middle < other.Top || Bottom < other.Middle && other.Middle < Top);
 				case WritingDirection.Vertical:
 					return other.Left < Center && Center < other.Right

@@ -120,7 +120,7 @@ namespace PDFPatcher.Functions
 			_SetOpenStatus.DropDownItemClicked += _MainToolbar_ItemClicked;
 
 			AppContext.MainForm.SetTooltip(_IncludeDecendantBox, "选中此选项后，加粗、斜体等其它修改书签的操作将应用到选中书签的子书签");
-			_IncludeDecendantBox.CheckedChanged += (s, args) => { _BookmarkBox.OperationAffectsDecendants = _IncludeDecendantBox.Checked; };
+			_IncludeDecendantBox.CheckedChanged += (s, args) => { _BookmarkBox.OperationAffectsDescendants = _IncludeDecendantBox.Checked; };
 
 			_UndoButton.DropDownOpening += (object s, EventArgs args) => {
 				var i = _UndoMenu.Items;
@@ -239,7 +239,7 @@ namespace PDFPatcher.Functions
 			_ViewerBox.MouseClick += _ViewBox_MouseClick;
 			_ViewerToolbar.Enabled = false;
 
-			Disposed += (s, args) => { _controller.Distroy(); };
+			Disposed += (s, args) => { _controller.Destroy(); };
 		}
 
 		private void ScrollToSelectedBookmarkLocation() {
