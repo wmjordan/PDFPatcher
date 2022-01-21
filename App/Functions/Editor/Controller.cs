@@ -222,8 +222,7 @@ namespace PDFPatcher.Functions.Editor
 			((BackgroundWorker)sender).Dispose();
 			Model.IsLoadingDocument = false;
 			View.MainPanel.Enabled = View.BookmarkToolbar.Enabled = true;
-			var r = e.Result as object[];
-			if (r == null) {
+			if (e.Result is not object[] r) {
 				// 异常终止
 				ClearBookmarks();
 				InitBookmarkEditor();
@@ -671,8 +670,7 @@ namespace PDFPatcher.Functions.Editor
 					}
 				}
 				while (es[i].HasChildNodes) {
-					var c = es[i].FirstChild as XmlElement;
-					if (c == null) {
+					if (es[i].FirstChild is not XmlElement c) {
 						continue;
 					}
 					undo.Add(new AddElementAction(c));

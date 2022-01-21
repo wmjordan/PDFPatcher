@@ -143,8 +143,7 @@ namespace PDFPatcher.Functions
 
 		#region 拖放操作
 		private void ItemList_CanDropFile(object sender, OlvDropEventArgs e) {
-			var o = e.DataObject as DataObject;
-			if (o == null) {
+			if (e.DataObject is not DataObject o) {
 				return;
 			}
 			var f = o.GetFileDropList();
@@ -169,8 +168,7 @@ namespace PDFPatcher.Functions
 		}
 
 		private void ItemList_FileDropped(object sender, OlvDropEventArgs e) {
-			var o = e.DataObject as DataObject;
-			if (o == null) {
+			if (e.DataObject is not DataObject o) {
 				return;
 			}
 			var f = o.GetFileDropList();
@@ -661,8 +659,7 @@ namespace PDFPatcher.Functions
 							i = 0;
 						}
 						while (i <= li && sr.Peek() != -1) {
-							var b = _ItemList.GetModelObject(i) as SourceItem;
-							if (b != null) {
+							if (_ItemList.GetModelObject(i) is SourceItem b) {
 								if (b.Bookmark == null) {
 									b.Bookmark = new BookmarkSettings(sr.ReadLine());
 								}

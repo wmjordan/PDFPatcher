@@ -74,10 +74,9 @@ namespace PDFPatcher.Processor
 		private void RemoveOrphan(XmlElement item) {
 			if (item.HasChildNodes && item.LocalName == Constants.Bookmark) {
 				while (item.HasChildNodes) {
-					var c = item.LastChild as XmlElement;
-					if (c == null ||
+					if (item.LastChild is not XmlElement c ||
 						(c.HasAttribute(Constants.DestinationAttributes.Action) == false
-							&& c.HasChildNodes == false)) {
+						 && c.HasChildNodes == false)) {
 						item.RemoveChild(item.LastChild);
 						continue;
 					}

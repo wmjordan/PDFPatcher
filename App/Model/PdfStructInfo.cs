@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Xml;
 namespace PDFPatcher.Model
 {
@@ -56,8 +55,7 @@ namespace PDFPatcher.Model
 			}
 			var currentToken = element.GetAttribute("Token");
 			foreach (XmlNode item in element.ChildNodes) {
-				var e = item as XmlElement;
-				if (e == null) {
+				if (item is not XmlElement e) {
 					continue;
 				}
 				var t = e.GetAttribute("Token");

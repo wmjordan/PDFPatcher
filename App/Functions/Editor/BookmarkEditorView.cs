@@ -101,8 +101,7 @@ namespace PDFPatcher.Functions
 				}
 			};
 			_ActionColumn.AspectGetter = (object x) => {
-				var e = x as XmlElement;
-				if (e == null) {
+				if (x is not XmlElement e) {
 					return String.Empty;
 				}
 				var a = e.GetAttribute(Constants.DestinationAttributes.Action);
@@ -122,8 +121,7 @@ namespace PDFPatcher.Functions
 		}
 		#region 拖放操作
 		protected override void OnCanDrop(OlvDropEventArgs args) {
-			var o = args.DataObject as DataObject;
-			if (o == null) {
+			if (args.DataObject is not DataObject o) {
 				return;
 			}
 			var f = o.GetFileDropList();
@@ -486,8 +484,7 @@ namespace PDFPatcher.Functions
 
 		private void _BookmarkBox_AfterLabelEdit(object sender, LabelEditEventArgs e) {
 			IsLabelEditing = false;
-			var o = GetModelObject(e.Item) as XmlElement;
-			if (o == null || String.IsNullOrEmpty(e.Label)) {
+			if (GetModelObject(e.Item) is not XmlElement o || String.IsNullOrEmpty(e.Label)) {
 				e.CancelEdit = true;
 				return;
 			}
@@ -534,8 +531,7 @@ namespace PDFPatcher.Functions
 		}
 
 		private void _BookmarkBox_FormatRow(object sender, FormatRowEventArgs e) {
-			var b = e.Model as BookmarkElement;
-			if (b == null) {
+			if (e.Model is not BookmarkElement b) {
 				return;
 			}
 			e.Item.UseItemStyleForSubItems = false;

@@ -449,8 +449,7 @@ namespace PDFPatcher.Processor
 				float size = ((PdfNumber)operands[1]).FloatValue;
 				var f = processor._Resources.GetAsDict(PdfName.FONT).Get(fontResourceName);
 				var g = processor.CurrentGraphicState;
-				var fref = f as PRIndirectReference;
-				if (fref == null) {
+				if (f is not PRIndirectReference fref) {
 					Tracker.DebugMessage("字体（" + fontResourceName + "）不为引用。");
 					var fd = f as PdfDictionary;
 					g.FontID = 0;

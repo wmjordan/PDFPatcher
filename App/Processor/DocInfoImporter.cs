@@ -712,8 +712,7 @@ namespace PDFPatcher.Processor
 				return;
 
 			Tracker.TraceMessage("导入阅读器设置。");
-			var ps = _infoDoc.DocumentElement.SelectSingleNode(Constants.ViewerPreferences) as XmlElement;
-			if (ps == null) {
+			if (_infoDoc.DocumentElement.SelectSingleNode(Constants.ViewerPreferences) is not XmlElement ps) {
 				return;
 			}
 			PdfName n;

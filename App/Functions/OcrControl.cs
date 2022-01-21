@@ -56,8 +56,7 @@ namespace PDFPatcher.Functions
 			d.CheckFileExists = false;
 			d.CheckPathExists = false;
 
-			var sd = d as SaveFileDialog;
-			if (sd != null) {
+			if (d is SaveFileDialog sd) {
 				sd.OverwritePrompt = false;
 			}
 		}

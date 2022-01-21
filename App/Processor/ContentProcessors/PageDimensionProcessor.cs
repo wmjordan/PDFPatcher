@@ -190,8 +190,7 @@ namespace PDFPatcher.Processor
 				return;
 			}
 			foreach (var item in ann.ArrayList) {
-				var an = PdfReader.GetPdfObject(item) as PdfDictionary;
-				if (an != null) {
+				if (PdfReader.GetPdfObject(item) is PdfDictionary an) {
 					var rect = an.GetAsArray(PdfName.RECT);
 					if (rect != null && rect.Size == 4) {
 						rect[0] = new PdfNumber((rect[0] as PdfNumber).FloatValue * ct.XScale + ct.XTranslation);

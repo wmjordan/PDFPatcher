@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using iTextSharp.text.pdf;
 using PDFPatcher.Common;
 using PDFPatcher.Model;
@@ -49,8 +48,7 @@ namespace PDFPatcher.Processor
 			}
 			var r = new HashSet<PdfName>();
 			foreach (var item in fl) {
-				var f = PdfReader.GetPdfObject(item.Value) as PRStream;
-				if (f == null
+				if (PdfReader.GetPdfObject(item.Value) is not PRStream f
 					|| PdfName.FORM.Equals(f.GetAsName(PdfName.SUBTYPE)) == false) {
 					continue;
 				}
@@ -71,8 +69,7 @@ namespace PDFPatcher.Processor
 			var r = false;
 			for (int i = parent.Count - 1; i >= 0; i--) {
 				var cmd = parent[i];
-				var ec = cmd as Model.EnclosingCommand;
-				if (ec != null) {
+				if (cmd is EnclosingCommand ec) {
 					r |= ProcessCommands(ec.Commands, formNames);
 				}
 				if (cmd.Name.ToString() == "Do" && cmd.HasOperand && formNames.Contains(cmd.Operands[0] as PdfName)) {

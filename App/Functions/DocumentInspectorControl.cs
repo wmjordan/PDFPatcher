@@ -97,10 +97,9 @@ namespace PDFPatcher.Functions
 							return __OpNameIcons["PageCommands"];
 						case PdfObjectType.PageCommand:
 							if (d.ImageKey == null) {
-								var n = d.ExtensiveObject as string;
-								if ((n != null && __OpNameIcons.TryGetValue(n, out int ic))
+								if ((d.ExtensiveObject is string n && __OpNameIcons.TryGetValue(n, out int ic))
 									|| (d.Name.StartsWith(Constants.ContentPrefix + ":") && __OpNameIcons.TryGetValue(d.Name, out ic))
-									) {
+								   ) {
 									d.ImageKey = ic;
 								}
 								else {
@@ -138,8 +137,7 @@ namespace PDFPatcher.Functions
 			_ObjectDetailBox.CopySelectionOnControlC = true;
 			_ObjectDetailBox.CellEditStarting += (s, args) => {
 				var d = args.RowObject as DocumentObject;
-				var po = d.Value as PdfObject;
-				if (po == null) {
+				if (d.Value is not PdfObject po) {
 					args.Cancel = true;
 					return;
 				}
@@ -154,8 +152,7 @@ namespace PDFPatcher.Functions
 				}
 			};
 			_ObjectDetailBox.CanExpandGetter = (object o) => {
-				var d = o as DocumentObject;
-				if (d == null) {
+				if (o is not DocumentObject d) {
 					return false;
 				}
 				if (d.Type == PdfObjectType.GoToPage) {
@@ -164,15 +161,13 @@ namespace PDFPatcher.Functions
 				return d.HasChildren;
 			};
 			_ObjectDetailBox.ChildrenGetter = delegate (object o) {
-				var d = o as DocumentObject;
-				if (d == null) {
+				if (o is not DocumentObject d) {
 					return null;
 				}
 				return d.Children;
 			};
 			_ObjectDetailBox.RowFormatter = (OLVListItem olvItem) => {
-				var o = olvItem.RowObject as DocumentObject;
-				if (o == null) {
+				if (olvItem.RowObject is not DocumentObject o) {
 					return;
 				}
 				if (o.Type == PdfObjectType.Normal) {
@@ -335,8 +330,7 @@ namespace PDFPatcher.Functions
 		}
 
 		void _ObjectDetailBox_CanDrop(object sender, OlvDropEventArgs e) {
-			var o = e.DataObject as DataObject;
-			if (o == null) {
+			if (e.DataObject is not DataObject o) {
 				return;
 			}
 			var f = o.GetFileDropList();
@@ -355,8 +349,7 @@ namespace PDFPatcher.Functions
 		}
 
 		void _ObjectDetailBox_Dropped(object sender, OlvDropEventArgs e) {
-			var o = e.DataObject as DataObject;
-			if (o == null) {
+			if (e.DataObject is not DataObject o) {
 				return;
 			}
 			var f = o.GetFileDropList();
@@ -531,8 +524,8 @@ namespace PDFPatcher.Functions
 				if (n == null || n.Parent == null) {
 					return;
 				}
-				var po = n.Parent.Value as PdfObject;
-				if (po == null) {
+
+				if (n.Parent.Value is not PdfObject po) {
 					return;
 				}
 				if (po.Type == PdfObject.INDIRECT) {
@@ -549,8 +542,8 @@ namespace PDFPatcher.Functions
 				if (n == null) {
 					return;
 				}
-				var s = n.ExtensiveObject as PRStream;
-				if (s == null) {
+
+				if (n.ExtensiveObject is not PRStream s) {
 					return;
 				}
 				if (PdfName.IMAGE.Equals(s.GetAsName(PdfName.SUBTYPE))
@@ -609,8 +602,7 @@ namespace PDFPatcher.Functions
 					exportTrailer = true;
 				}
 				foreach (var item in so) {
-					var d = item as DocumentObject;
-					if (d == null) {
+					if (item is not DocumentObject d) {
 						continue;
 					}
 					if (d.Type == PdfObjectType.Page) {

@@ -105,8 +105,7 @@ namespace PDFPatcher.Functions
 				return;
 			}
 			foreach (var item in fl) {
-				var fr = item.Value as PdfIndirectReference;
-				if (fr == null) {
+				if (item.Value is not PdfIndirectReference fr) {
 					continue;
 				}
 				if (_fontIdNames.TryGetValue(fr.Number, out string fn)) {

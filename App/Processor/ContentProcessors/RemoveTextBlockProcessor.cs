@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using iTextSharp.text.pdf;
 using PDFPatcher.Model;
 
@@ -44,8 +43,7 @@ namespace PDFPatcher.Processor
 				return;
 			}
 			foreach (var item in fl) {
-				var f = PdfReader.GetPdfObject(item.Value) as PRStream;
-				if (f == null
+				if (PdfReader.GetPdfObject(item.Value) is not PRStream f
 					|| PdfName.FORM.Equals(f.GetAsName(PdfName.SUBTYPE)) == false) {
 					continue;
 				}

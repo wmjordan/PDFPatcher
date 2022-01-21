@@ -50,8 +50,7 @@ namespace PDFPatcher.Functions.Editor
 		}
 
 		private void _PageDimensionBox_SelectedIndexChanged(object sender, EventArgs args) {
-			var v = _PageDimensionBox.SelectedItem as Box;
-			if (v == null) {
+			if (_PageDimensionBox.SelectedItem is not Box v) {
 				return;
 			}
 			var r = v.Rect;

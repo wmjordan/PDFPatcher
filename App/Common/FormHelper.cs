@@ -175,8 +175,7 @@ namespace PDFPatcher.Common
 		}
 
 		public static void HidePopupMenu(this ToolStripItem item) {
-			var mi = item as ToolStripDropDownItem;
-			if (mi != null && mi.HasDropDownItems) {
+			if (item is ToolStripDropDownItem mi && mi.HasDropDownItems) {
 				return;
 			}
 			var oo = item.Owner as ToolStripDropDownMenu;

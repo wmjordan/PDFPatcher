@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace PDFPatcher.Model.PdfPath
 {
@@ -59,9 +57,8 @@ namespace PDFPatcher.Model.PdfPath
 			public override bool Match(DocumentObject source, IPathValue value1, IPathValue value2) {
 				if (value1.ValueType == PathValueType.Expression) {
 					var exp = value1 as IPathExpression;
-					var cv = value2 as IConstantPathValue;
 					string v;
-					if (cv != null) {
+					if (value2 is IConstantPathValue cv) {
 						v = cv.LiteralValue;
 					}
 					else {

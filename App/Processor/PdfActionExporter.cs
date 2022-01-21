@@ -110,8 +110,8 @@ namespace PDFPatcher.Processor
 			if (dest.Size < 2) {
 				return;
 			}
-			var pn = dest[1] as PdfName;
-			if (pn == null) {
+
+			if (dest[1] is not PdfName pn) {
 				return;
 			}
 			var m = PdfHelper.GetPdfFriendlyName(pn);

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using iTextSharp.text.pdf;
 using PDFPatcher.Model;
 using PDFPatcher.Processor.Imaging;
@@ -45,8 +42,7 @@ namespace PDFPatcher.Processor
 				return false;
 			}
 			foreach (var item in images) {
-				var im = PdfReader.GetPdfObject(item.Value) as PRStream;
-				if (im == null
+				if (PdfReader.GetPdfObject(item.Value) is not PRStream im
 					|| PdfName.IMAGE.Equals(im.GetAsName(PdfName.SUBTYPE)) == false) {
 					continue;
 				}

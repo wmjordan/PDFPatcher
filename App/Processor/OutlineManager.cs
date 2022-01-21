@@ -39,8 +39,7 @@ namespace PDFPatcher.Processor
 					}
 				}
 
-				var count = outline.Get(PdfName.COUNT) as PdfNumber;
-				if (count != null) {
+				if (outline.Get(PdfName.COUNT) is PdfNumber count) {
 					target.WriteAttributeString(Constants.BookmarkAttributes.Open, count.IntValue < 0 ? Constants.Boolean.False : Constants.Boolean.True);
 				}
 

@@ -59,8 +59,7 @@ namespace PDFPatcher.Model
 		public override bool IsEmptyElement => !_currentObject.HasChildren;
 
 		public override bool IsSamePosition(XPathNavigator other) {
-			var o = other as PdfNavigator;
-			if (o == null) {
+			if (other is not PdfNavigator o) {
 				return false;
 			}
 			return _currentObject == o._currentObject;
@@ -69,8 +68,7 @@ namespace PDFPatcher.Model
 		public override string LocalName => _nameTable.GetOrAdd(_currentObject.FriendlyName ?? _currentObject.Name);
 
 		public override bool MoveTo(XPathNavigator other) {
-			var o = other as PdfNavigator;
-			if (o == null) {
+			if (other is not PdfNavigator o) {
 				return false;
 			}
 			if (_doc != o._doc) {

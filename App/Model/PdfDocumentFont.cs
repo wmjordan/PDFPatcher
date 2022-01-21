@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using iTextSharp.text.pdf;
 using PDFPatcher.Processor;
 
@@ -27,8 +25,7 @@ namespace PDFPatcher.Model
 				return;
 			}
 			foreach (var item in fl) {
-				var fr = item.Value as PdfIndirectReference;
-				if (fr == null) {
+				if (item.Value is not PdfIndirectReference fr) {
 					continue;
 				}
 				var f = PdfReader.GetPdfObject(fr) as PdfDictionary;

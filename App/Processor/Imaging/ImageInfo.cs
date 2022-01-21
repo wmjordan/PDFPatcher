@@ -106,8 +106,7 @@ namespace PDFPatcher.Processor.Imaging
 						if (decParam != null) {
 							var gRef = decParam.GetAsIndirectObject(PdfName.JBIG2GLOBALS);
 							if (gRef != null) {
-								var gs = PdfReader.GetPdfObjectRelease(gRef) as PRStream;
-								if (gs != null) {
+								if (PdfReader.GetPdfObjectRelease(gRef) is PRStream gs) {
 									globals = PdfReader.GetStreamBytes(gs);
 								}
 							}
@@ -426,8 +425,7 @@ namespace PDFPatcher.Processor.Imaging
 				var o = colorspace.GetDirectObject(1);
 				info.PaletteColorSpace = o as PdfName;
 				if (info.PaletteColorSpace == null) {
-					var arr = o as PdfArray;
-					if (arr != null && arr.Size == 2) {
+					if (o is PdfArray arr && arr.Size == 2) {
 						if (PdfName.ICCBASED.Equals(arr.GetAsName(0)) && arr.Size == 2) {
 							var iccs = arr.GetDirectObject(1) as PRStream;
 							info.ColorSpace = iccs.GetAsName(PdfName.ALTERNATE) ?? PdfName.DEVICERGB;

@@ -270,8 +270,7 @@ namespace PDFPatcher.Processor
 			foreach (var item in fonts) {
 				string sn; // 替换字体名称
 				string n; // 字体名称
-				var fr = item.Value as PdfIndirectReference;
-				if (fr == null
+				if (item.Value is not PdfIndirectReference fr
 					|| _bypassFonts.Contains(fr.Number)) {
 					continue;
 				}

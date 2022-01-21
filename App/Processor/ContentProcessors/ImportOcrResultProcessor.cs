@@ -35,8 +35,7 @@ namespace PDFPatcher.Processor
 		}
 
 		public void BeginProcess(DocProcessorContext context) {
-			var x = context.ExtraData[DocProcessorContext.OcrData] as XmlReader;
-			if (x == null) {
+			if (context.ExtraData[DocProcessorContext.OcrData] is not XmlReader x) {
 				return;
 			}
 			if (x.Name == Constants.PdfInfo) {
@@ -47,8 +46,7 @@ namespace PDFPatcher.Processor
 		}
 
 		public bool Process(DocProcessorContext context) {
-			var x = context.ExtraData[DocProcessorContext.OcrData] as XmlReader;
-			if (x == null || x.Name != Constants.Ocr.Result) {
+			if (context.ExtraData[DocProcessorContext.OcrData] is not XmlReader x || x.Name != Constants.Ocr.Result) {
 				return false;
 			}
 			ImportOcrResult(context, x);
@@ -123,8 +121,7 @@ namespace PDFPatcher.Processor
 
 		private static void ClearPreviousOcrResult(IList<PdfPageCommand> commands) {
 			for (int i = commands.Count - 1; i >= 0; i--) {
-				var c = commands[i] as EnclosingCommand;
-				if (c == null
+				if (commands[i] is not EnclosingCommand c
 					|| c.HasOperand == false
 					|| c.Name.ToString() != "BMC"
 					|| OcrResultBmcName.Equals(c.Operands[0]) == false) {

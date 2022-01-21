@@ -50,8 +50,8 @@ namespace PDFPatcher.Model
 					if (Type == PdfObjectType.GoToPage) {
 						return false;
 					}
-					var r = ExtensiveObject as PdfObject;
-					if (r == null) {
+
+					if (ExtensiveObject is not PdfObject r) {
 						return false;
 					}
 					if (r.Type == PdfObject.DICTIONARY && Parent.Type == PdfObjectType.Outline && Name == "Next") {
@@ -142,8 +142,7 @@ namespace PDFPatcher.Model
 		}
 
 		internal bool UpdateDocumentObject(object value) {
-			var po = Value as PdfObject;
-			if (po == null) {
+			if (Value is not PdfObject po) {
 				return false;
 			}
 			switch (po.Type) {
@@ -167,14 +166,13 @@ namespace PDFPatcher.Model
 					Value = new PdfBoolean((bool)value); break;
 			}
 			if (Parent != null) {
-				var pd = ((Parent.ExtensiveObject ?? Parent.Value) as PdfDictionary);
-				if (pd != null) {
+				if ((Parent.ExtensiveObject ?? Parent.Value) is PdfDictionary pd) {
 					pd.Put(new PdfName(Name), Value);
 					_Children = null;
 					return true;
 				}
-				var pa = ((Parent.ExtensiveObject ?? Parent.Value) as PdfArray);
-				if (pa != null) {
+
+				if ((Parent.ExtensiveObject ?? Parent.Value) is PdfArray pa) {
 					pa.ArrayList[Int32.Parse(Name) - 1] = Value;
 					_Children = null;
 					return true;
