@@ -11,37 +11,37 @@ namespace PDFPatcher.Processor
 {
 	sealed class AutoBookmarkCreator
 	{
-		sealed class SizeOccurance
+		sealed class SizeOccurrence
 		{
 			public float Size { get; set; }
 			public int FirstPage { get; set; }
 			public string FirstInstance { get; set; }
-			public int Occurance { get; set; }
-			public SizeOccurance(float size, int page, string instance) {
+			public int Occurrence { get; set; }
+			public SizeOccurrence(float size, int page, string instance) {
 				Size = size;
-				Occurance = 1;
+				Occurrence = 1;
 				FirstPage = page;
 				FirstInstance = instance.Length > 50 ? instance.Substring(0, 50) : instance;
 			}
 		}
 		sealed class FontOccurance
 		{
-			readonly Dictionary<string, List<SizeOccurance>> oc = new Dictionary<string, List<SizeOccurance>>();
-			internal List<SizeOccurance> GetOccurance(string fontName) {
-				return oc.TryGetValue(fontName, out List<SizeOccurance> s) ? s : null;
+			readonly Dictionary<string, List<SizeOccurrence>> oc = new Dictionary<string, List<SizeOccurrence>>();
+			internal List<SizeOccurrence> GetOccurance(string fontName) {
+				return oc.TryGetValue(fontName, out List<SizeOccurrence> s) ? s : null;
 			}
 
 			internal void AddOccurance(string fontName, float size, int page, string instance) {
 				if (oc.ContainsKey(fontName) == false) {
-					oc.Add(fontName, new List<SizeOccurance>() { new SizeOccurance(size, page, instance) });
+					oc.Add(fontName, new List<SizeOccurrence>() { new SizeOccurrence(size, page, instance) });
 				}
 				else {
 					var o = oc[fontName].Find((s) => { return s.Size == size; });
 					if (o != null) {
-						o.Occurance++;
+						o.Occurrence++;
 					}
 					else {
-						oc[fontName].Add(new SizeOccurance(size, page, instance));
+						oc[fontName].Add(new SizeOccurrence(size, page, instance));
 					}
 				}
 			}
@@ -285,7 +285,7 @@ namespace PDFPatcher.Processor
 					if (dl.Contains(item.Value) == false) {
 						int o = 0;
 						foreach (var s in sl) {
-							o += s.Occurance;
+							o += s.Occurrence;
 						}
 						fo = o.ToText();
 						dl.Add(item.Value);
@@ -305,11 +305,11 @@ namespace PDFPatcher.Processor
 					foreach (var s in sl) {
 						writer.WriteStartElement(Constants.Font.Size);
 						writer.WriteAttributeString(Constants.Font.Size, s.Size.ToText());
-						writer.WriteAttributeString(Constants.FontOccurance.Count, s.Occurance.ToText());
+						writer.WriteAttributeString(Constants.FontOccurance.Count, s.Occurrence.ToText());
 						writer.WriteAttributeString(Constants.FontOccurance.FirstText, s.FirstInstance);
 						writer.WriteAttributeString(Constants.FontOccurance.FirstPage, s.FirstPage.ToText());
-						if (options.DisplayFontStatistics && (s.Occurance > 0 || options.DisplayAllFonts)) {
-							Tracker.TraceMessage(String.Concat("\t尺寸：", s.Size.ToText(), "\t出现次数：", s.Occurance.ToText(), "\t首次出现于第", s.FirstPage.ToText(), "页（", s.FirstInstance, "）"));
+						if (options.DisplayFontStatistics && (s.Occurrence > 0 || options.DisplayAllFonts)) {
+							Tracker.TraceMessage(String.Concat("\t尺寸：", s.Size.ToText(), "\t出现次数：", s.Occurrence.ToText(), "\t首次出现于第", s.FirstPage.ToText(), "页（", s.FirstInstance, "）"));
 						}
 						writer.WriteEndElement();
 					}
@@ -416,10 +416,10 @@ namespace PDFPatcher.Processor
 							)
 							&& (((cd.IsHorizontallyAligned) // 相对位置为水平
 									&& li.Direction != WritingDirection.Vertical // 文本行方向不为纵向
-									&& item.Region.IsAlignedWith(li.Region, WritingDirection.Hortizontal) // 两者处于同一横行
+									&& item.Region.IsAlignedWith(li.Region, WritingDirection.Horizontal) // 两者处于同一横行
 									)
 								|| ((cd.IsVerticallyAligned) // 相对位置为垂直
-									&& li.Direction != WritingDirection.Hortizontal // 文本行方向不为横向
+									&& li.Direction != WritingDirection.Horizontal // 文本行方向不为横向
 									&& item.Region.IsAlignedWith(li.Region, WritingDirection.Vertical) // 两者处于同一纵行
 																									   // && Math.Abs (item.Region.Middle - li.Region.Middle) < li.Region.Height // 行间距离小于行高
 									)
@@ -510,13 +510,13 @@ namespace PDFPatcher.Processor
 							)
 							&& (((cd.IsHorizontallyAligned) // 相对位置为水平
 									&& li.Direction != WritingDirection.Vertical // 文本行方向不为纵向
-									&& item.Region.IsAlignedWith(li.Region, WritingDirection.Hortizontal) // 两者处于同一横行
+									&& item.Region.IsAlignedWith(li.Region, WritingDirection.Horizontal) // 两者处于同一横行
 									&& cd.MinDistance < item.Region.Width * _options.MaxDistanceBetweenLines // 行间距离小于指定行宽
 									&& _options.MergeAdjacentTitles
 									&& (_options.MergeDifferentSizeTitles || li.Lines[0].Region.Width == item.Region.Width) // 合并相同尺寸的标题
 									)
 								|| ((cd.IsVerticallyAligned) // 相对位置为垂直
-									&& li.Direction != WritingDirection.Hortizontal // 文本行方向不为横向
+									&& li.Direction != WritingDirection.Horizontal // 文本行方向不为横向
 									&& item.Region.IsAlignedWith(li.Region, WritingDirection.Vertical) // 两者处于同一纵行
 									&& cd.MinDistance < item.Region.Height * _options.MaxDistanceBetweenLines // 行间距离小于指定行高
 									&& _options.MergeAdjacentTitles

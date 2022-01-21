@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Text;
 using NameList = System.Collections.Generic.List<string>;
 using SysDirectory = System.IO.Directory;
@@ -20,7 +19,7 @@ namespace PDFPatcher.Common
 		/// <summary>表示匹配任何文件的通配符。</summary>
 		public const string Wildcard = "*";
 		/// <summary>表示匹配当前目录、递归子目录和任何文件的通配符。</summary>
-		public const string RecursiveWildchard = "**";
+		public const string RecursiveWildcard = "**";
 
 		/// <summary>表示没有任何内容的路径。</summary>
 		public static readonly FilePath Empty = new FilePath(string.Empty, false);
@@ -354,7 +353,7 @@ namespace PDFPatcher.Common
 			}
 
 			string fp;
-			bool rp = pattern == RecursiveWildchard;
+			bool rp = pattern == RecursiveWildcard;
 			var p = new FilePath(pattern).GetParts(false);
 			var pl = p.Length;
 			var t = GetDirectories(f._value, p, rp ? 1 : pl - 1);
@@ -399,7 +398,7 @@ namespace PDFPatcher.Common
 			}
 
 			string fp;
-			bool rp = pattern == RecursiveWildchard;
+			bool rp = pattern == RecursiveWildcard;
 			var p = new FilePath(pattern).GetParts(false);
 			var pl = p.Length;
 			var t = GetDirectories(f._value, p, rp ? 1 : pl - 1);
@@ -450,7 +449,7 @@ namespace PDFPatcher.Common
 						}
 					}
 				}
-				else if (pi == RecursiveWildchard) {
+				else if (pi == RecursiveWildcard) {
 					foreach (var item in t) {
 						r.Add(item);
 						GetDirectoriesRecursively(item, ref r);

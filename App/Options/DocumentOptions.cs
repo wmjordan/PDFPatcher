@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Xml.Serialization;
 using PDFPatcher.Model;
 
@@ -21,7 +19,7 @@ namespace PDFPatcher
 		public bool FullCompression { get; set; }
 
 		[XmlAttribute("统一页面方向")]
-		public bool UnifyPageOrtientation { get; set; }
+		public bool UnifyPageOrientation { get; set; }
 
 		/// <summary>
 		/// 设置统一页面方向要旋转的页面。默认旋转横向的页面。

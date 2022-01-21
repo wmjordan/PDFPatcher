@@ -43,7 +43,7 @@ namespace MuPdfSharp
 		private unsafe Rectangle LookupPageBox(string name) {
 			if (_flattened == false) {
 				var d = _page.PageDictionary;
-				NativeMethods.FlatternInheritablePageItems(_context, d);
+				NativeMethods.FlattenInheritablePageItems(_context, d);
 				_flattened = true;
 			}
 			var a = new MuPdfDictionary(_context, _page.PageDictionary);
@@ -190,7 +190,7 @@ namespace MuPdfSharp
 				NativeMethods.ClearPixmap(_context, pix, 0xFF);
 				using (var dev = new DeviceHandle(_context, pix, Matrix.Identity)) {
 					if (options.LowQuality) {
-						NativeMethods.EnableDeviceHints(_context, dev, DeviceHints.IgnoreShade | DeviceHints.DontInterporateImages | DeviceHints.NoCache);
+						NativeMethods.EnableDeviceHints(_context, dev, DeviceHints.IgnoreShade | DeviceHints.DontInterperateImages | DeviceHints.NoCache);
 					}
 					if (_cookie.IsCancellationPending) {
 						return null;
@@ -263,7 +263,7 @@ namespace MuPdfSharp
 
 			var ctm = Matrix.Scale(w / b.Width, h / b.Height).RotateTo(options.Rotation);
 			if (options.VerticalFlipImages) {
-				ctm = Matrix.Concat(ctm, Matrix.VeritcalFlip);
+				ctm = Matrix.Concat(ctm, Matrix.VerticalFlip);
 			}
 			if (options.HorizontalFlipImages) {
 				ctm = Matrix.Concat(ctm, Matrix.HorizontalFlip);

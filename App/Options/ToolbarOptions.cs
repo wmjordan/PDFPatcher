@@ -23,7 +23,7 @@ namespace PDFPatcher
 		public void Reset() {
 			Buttons.Clear();
 			foreach (var item in Toolkit.Toolkits) {
-				Buttons.Add(new ButtonOption(item.Identifier, item.Name, item.ShowText, item.DefaultVisisble));
+				Buttons.Add(new ButtonOption(item.Identifier, item.Name, item.ShowText, item.DefaultVisible));
 			}
 		}
 

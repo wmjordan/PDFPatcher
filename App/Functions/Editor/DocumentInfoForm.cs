@@ -7,7 +7,7 @@ namespace PDFPatcher.Functions.Editor
 	public partial class DocumentInfoForm : Form
 	{
 		internal MuDocument Document { get; set; }
-		internal Model.PdfInfoXmlDocument InfoDucument { get; set; }
+		internal Model.PdfInfoXmlDocument InfoDocument { get; set; }
 
 		public DocumentInfoForm() {
 			InitializeComponent();
@@ -28,8 +28,8 @@ namespace PDFPatcher.Functions.Editor
 				_SubjectBox.Text = info.Subject;
 				_TitleBox.Text = info.Title;
 			}
-			if (InfoDucument != null) {
-				var info = InfoDucument.InfoNode;
+			if (InfoDocument != null) {
+				var info = InfoDocument.InfoNode;
 				SetText(_AuthorBox, info.Author);
 				SetText(_CreatorBox, info.Creator);
 				SetText(_KeywordsBox, info.Keywords);
@@ -42,7 +42,7 @@ namespace PDFPatcher.Functions.Editor
 			}
 			_OkButton.Click += (s, args) => {
 				DialogResult = DialogResult.OK;
-				var info = InfoDucument.InfoNode;
+				var info = InfoDocument.InfoNode;
 				info.Author = _AuthorBox.Text;
 				info.Creator = _CreatorBox.Text;
 				info.Keywords = _KeywordsBox.Text;

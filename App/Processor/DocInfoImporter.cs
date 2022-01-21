@@ -173,7 +173,7 @@ namespace PDFPatcher.Processor
 			}
 		}
 
-		internal GeneralInfo ImportDocumentInfomation() {
+		internal GeneralInfo ImportDocumentInformation() {
 			if (_options.ImportDocProperties == false || _infoDoc == null) {
 				return null;
 			}
@@ -189,7 +189,7 @@ namespace PDFPatcher.Processor
 			};
 		}
 
-		internal static void ImportDocumentInfomation(GeneralInfo info, PdfReader pdf, string pdfFileName) {
+		internal static void ImportDocumentInformation(GeneralInfo info, PdfReader pdf, string pdfFileName) {
 			if (info == null) {
 				return;
 			}
@@ -245,7 +245,7 @@ namespace PDFPatcher.Processor
 			info.Put(name, string.IsNullOrEmpty(value) ? null : value.ToPdfString());
 		}
 
-		internal static void ImportDocumentInfomation(GeneralInfo info, iTextSharp.text.Document doc) {
+		internal static void ImportDocumentInformation(GeneralInfo info, iTextSharp.text.Document doc) {
 			if (info == null) {
 				return;
 			}

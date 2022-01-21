@@ -405,13 +405,13 @@ namespace PDFPatcher.Processor
 			}
 		}
 
-		static void ReadSingleByteFontWidths(PdfDictionary font, FontInfo fontInfo, NewFont newfont) {
+		static void ReadSingleByteFontWidths(PdfDictionary font, FontInfo fontInfo, NewFont newFont) {
 			var wl = font.GetAsArray(PdfName.WIDTHS);
 			if (wl == null) {
 				return;
 			}
 			var fc = font.TryGetInt32(PdfName.FIRSTCHAR, 0);
-			var widths = newfont.GlyphWidths;
+			var widths = newFont.GlyphWidths;
 			foreach (PdfNumber item in wl) {
 				if (item == null) {
 					continue;

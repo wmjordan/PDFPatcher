@@ -121,7 +121,7 @@ namespace PDFPatcher.Processor
 								}
 							}
 							else {
-								var uc = Imaging.BitmapHelper.GetPallete(bmp);
+								var uc = Imaging.BitmapHelper.GetPalette(bmp);
 								if (uc.Length > 256 && options.Quantize) {
 									using (var b = Imaging.WuQuantizer.QuantizeImage(bmp)) {
 										Imaging.BitmapHelper.SaveAs(b, fn);
@@ -297,9 +297,9 @@ namespace PDFPatcher.Processor
 					? pdfSettings.MetaData
 					//: sourceFile.DocInfo;
 					// 不再使用书签文件的文件属性
-					: import.ImportDocumentInfomation()
+					: import.ImportDocumentInformation()
 					?? sourceFile.DocInfo;
-				DocInfoImporter.ImportDocumentInfomation(info, pdf, sourcePath);
+				DocInfoImporter.ImportDocumentInformation(info, pdf, sourcePath);
 				Tracker.TrackProgress(20);
 
 				if (FileHelper.HasFileNameMacro(targetFile)) {
@@ -570,7 +570,7 @@ namespace PDFPatcher.Processor
 				if (String.IsNullOrEmpty(infoFile) == false) {
 					Tracker.TraceMessage(Tracker.Category.ImportantMessage, String.Concat("加载信息文件：<<", infoFile, ">>。"));
 					var import = new DocInfoImporter(impOptions, infoFile);
-					info = import.ImportDocumentInfomation();
+					info = import.ImportDocumentInformation();
 					labels = import.ImportPageLabels();
 					bookmarks = import.GetBookmarks();
 				}
@@ -609,7 +609,7 @@ namespace PDFPatcher.Processor
 						creator.ProcessFile(item, creator.PdfBookmarks.BookmarkRoot);
 					}
 					Tracker.TraceMessage("设置文档选项。");
-					DocInfoImporter.ImportDocumentInfomation(option.MetaData.SpecifyMetaData
+					DocInfoImporter.ImportDocumentInformation(option.MetaData.SpecifyMetaData
 							? option.MetaData
 							: info, doc);
 					DocInfoImporter.OverrideViewerPreferences(option.ViewerPreferences, null, w);

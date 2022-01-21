@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using PDFPatcher.Common;
 using PDFPatcher.Model;
@@ -81,9 +77,8 @@ namespace PDFPatcher.Functions
 
 			_SourceOrientationBox.SelectedIndex = options.RotateVerticalPages ? 1 : 0;
 			_RotationBox.SelectedIndex = options.RotateAntiClockwise ? 1 : 0;
-			_UnifyOrientationBox.Checked = options.UnifyPageOrtientation;
+			_UnifyOrientationBox.Checked = options.UnifyPageOrientation;
 			_DeduplicateBox.Checked = options.Deduplicate;
-
 			_RecompressImageBox.Checked = options.RecompressWithJbig2;
 			_FullCompressionBox.Checked = options.FullCompression;
 			_DocumentInfoEditor.Options = options.MetaData;
@@ -121,7 +116,7 @@ namespace PDFPatcher.Functions
 			ps.ScaleContent = _ScalePdfPagesBox.Checked;
 			option.SubFolderBeforeFiles = _SubFoldersBeforeFilesBox.Checked;
 
-			option.UnifyPageOrtientation = _UnifyOrientationBox.Checked;
+			option.UnifyPageOrientation = _UnifyOrientationBox.Checked;
 			option.RotateVerticalPages = _SourceOrientationBox.SelectedIndex == 1;
 			option.RotateAntiClockwise = _RotationBox.SelectedIndex == 1;
 			option.IgnoreLeadingNumbers = _IgnoreLeadingNumbersBox.Checked;

@@ -60,7 +60,7 @@ namespace PDFPatcher.Functions
 			o.RemoveDocumentRestrictions = _RemoveRestrictionBox.Checked;
 			o.ExcludePageRanges = _ExcludePageRangeBox.Text;
 			o.SeparatingMode = _SeparatingModeBox.SelectedIndex;
-			o.SeperateByPage = (int)_SeperateByPageNumberBox.Value;
+			o.SeparateByPage = (int)_SeperateByPageNumberBox.Value;
 			o.NumberFileNames = _NumberFileNamesBox.Checked;
 
 			AppContext.MainForm.ResetWorker();
@@ -121,7 +121,7 @@ namespace PDFPatcher.Functions
 			_RemoveOrphanBoomarksBox.Checked = options.RemoveOrphanBookmarks;
 			_SeparatingModeBox.Select(options.SeparatingMode);
 			_NumberFileNamesBox.Checked = options.NumberFileNames;
-			_SeperateByPageNumberBox.SetValue(options.SeperateByPage);
+			_SeperateByPageNumberBox.SetValue(options.SeparateByPage);
 		}
 
 		#endregion
