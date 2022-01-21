@@ -68,7 +68,7 @@ PDF 文档格式中涉及印刷领域的多项技术，并有其独特的文档�
   - Model：编辑文档时所用的高级模型（基础数据模型由 iText 和 MuPDF 的类实现）
   - Options：程序的选项
   - Processor：处理 PDF 文档的算法（其中 Mupdf 目录里放置了 P/Invoke 调用 MuPDF 的类）
-- doc 目录：放置程序的使用文档（暂缺）
+- doc 目录：放置程序的使用文档
 - JBig2 目录：放置 JBIG2 图像的编码和解码库代码
 
 ## 运行环境
