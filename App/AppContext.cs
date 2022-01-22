@@ -13,8 +13,8 @@ namespace PDFPatcher
 	{
 		static readonly string AppConfigFilePath = FileHelper.CombinePath(
 				Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath),
-				//"config.json");
 				"AppConfig.json");
+
 		static readonly SerializationManager JsonSm = new SerializationManager(new JsonReflectionController(true)) {
 			UseExtensions = false,
 			SerializeEmptyCollections = false,
@@ -155,26 +155,12 @@ namespace PDFPatcher
 
 		}
 
-		internal static void CleanUpInexistentFiles(IList<string> list) {
-			var s = new List<string>(list.Count);
-			foreach (var item in list) {
-				if (FileHelper.HasFileNameMacro(item) || File.Exists(item)) {
-					s.Add(item);
-				}
-			}
-			list.Clear();
-			list.AddRange(s);
+		internal static void CleanUpInexistentFiles(List<string> list) {
+			list.RemoveAll(item => FileHelper.HasFileNameMacro(item) == false && File.Exists(item) == false);
 		}
 
-		internal static void CleanUpInexistentFolders(IList<string> list) {
-			var s = new List<string>(list.Count);
-			foreach (var item in list) {
-				if (FileHelper.HasFileNameMacro(item) || Directory.Exists(item)) {
-					s.Add(item);
-				}
-			}
-			list.Clear();
-			list.AddRange(s);
+		internal static void CleanUpInexistentFolders(List<string> list) {
+			list.RemoveAll(item => FileHelper.HasFileNameMacro(item) == false && Directory.Exists(item) == false);
 		}
 
 		internal static bool Load(string path) {

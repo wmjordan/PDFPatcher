@@ -12,20 +12,14 @@ namespace PDFPatcher.Processor
 		public SetTextStyleProcessor(System.Xml.XmlElement element, Style style) {
 			var s = element.GetAttribute(Constants.BookmarkAttributes.Style);
 			if (style == Style.SetBold) {
-				if (s != Constants.BookmarkAttributes.StyleType.Bold && s != Constants.BookmarkAttributes.StyleType.BoldItalic) {
-					_style = Style.SetBold;
-				}
-				else {
-					_style = Style.RemoveBold;
-				}
+				_style = s != Constants.BookmarkAttributes.StyleType.Bold && s != Constants.BookmarkAttributes.StyleType.BoldItalic
+					? Style.SetBold
+					: Style.RemoveBold;
 			}
 			else if (style == Style.SetItalic) {
-				if (s != Constants.BookmarkAttributes.StyleType.Italic && s != Constants.BookmarkAttributes.StyleType.BoldItalic) {
-					_style = Style.SetItalic;
-				}
-				else {
-					_style = Style.RemoveItalic;
-				}
+				_style = s != Constants.BookmarkAttributes.StyleType.Italic && s != Constants.BookmarkAttributes.StyleType.BoldItalic
+					? Style.SetItalic
+					: Style.RemoveItalic;
 			}
 		}
 

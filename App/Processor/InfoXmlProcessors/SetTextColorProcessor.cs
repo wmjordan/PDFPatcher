@@ -1,4 +1,4 @@
-﻿
+﻿using System;
 using System.Drawing;
 using PDFPatcher.Common;
 
@@ -7,7 +7,7 @@ namespace PDFPatcher.Processor
 	sealed class SetTextColorProcessor : IPdfInfoXmlProcessor
 	{
 		readonly string r, g, b;
-		public Color Color { get; private set; }
+
 		public SetTextColorProcessor(Color color) {
 			if (color != Color.Transparent && color != Color.White) {
 				r = ValueHelper.ToText(color.R / 255f);
@@ -22,15 +22,15 @@ namespace PDFPatcher.Processor
 
 		public IUndoAction Process(System.Xml.XmlElement item) {
 			var undo = new UndoActionGroup();
-			if (string.IsNullOrEmpty(r) == false) {
-				undo.SetAttribute(item, Constants.Colors.Red, r);
-				undo.SetAttribute(item, Constants.Colors.Green, g);
-				undo.SetAttribute(item, Constants.Colors.Blue, b);
-			}
-			else {
+			if (String.IsNullOrEmpty(r)) {
 				undo.RemoveAttribute(item, Constants.Colors.Red);
 				undo.RemoveAttribute(item, Constants.Colors.Green);
 				undo.RemoveAttribute(item, Constants.Colors.Blue);
+			}
+			else {
+				undo.SetAttribute(item, Constants.Colors.Red, r);
+				undo.SetAttribute(item, Constants.Colors.Green, g);
+				undo.SetAttribute(item, Constants.Colors.Blue, b);
 			}
 			undo.RemoveAttribute(item, Constants.Color);
 			return undo;

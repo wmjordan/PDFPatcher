@@ -4,16 +4,16 @@ namespace PDFPatcher.Processor
 {
 	sealed class ChangeZoomRateProcessor : IPdfInfoXmlProcessor
 	{
-		public string ZoomMethod { get; private set; }
-		public float ZoomRate { get; private set; }
+		public string ZoomMethod { get; }
+		public float ZoomRate { get; }
 
 		public ChangeZoomRateProcessor(object zoomRate) {
 			if (zoomRate is string || zoomRate == null) {
 				ZoomMethod = zoomRate as string;
 				ZoomRate = -1;
 			}
-			else if (zoomRate is float) {
-				ZoomRate = (float)zoomRate;
+			else if (zoomRate is float f) {
+				ZoomRate = f;
 			}
 		}
 

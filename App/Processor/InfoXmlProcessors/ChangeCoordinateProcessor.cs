@@ -4,10 +4,10 @@ namespace PDFPatcher.Processor
 {
 	sealed class ChangeCoordinateProcessor : IPdfInfoXmlProcessor
 	{
-		public string CoordinateName { get; private set; }
-		public float Value { get; private set; }
-		public bool IsAbsolute { get; private set; }
-		public bool IsProportional { get; private set; }
+		public string CoordinateName { get; }
+		public float Value { get; }
+		public bool IsAbsolute { get; }
+		public bool IsProportional { get; }
 
 		public ChangeCoordinateProcessor(string coordinateName, float value, bool absolute, bool proportional) {
 			CoordinateName = coordinateName;
