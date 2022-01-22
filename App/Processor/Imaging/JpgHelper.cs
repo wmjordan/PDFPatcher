@@ -244,7 +244,7 @@ internal static class JpgHelper
 
 		private ExifReader(Stream stream, bool leaveOpen) {
 			if (stream == null) {
-				throw new ArgumentNullException("stream");
+				throw new ArgumentNullException(nameof(stream));
 			}
 
 			if (!stream.CanSeek) {

@@ -17,7 +17,7 @@ internal sealed class ReplaceTitleTextProcessor : IPdfInfoXmlProcessor
 
 	public ReplaceTitleTextProcessor(BookmarkMatcher matcher, string replacement) {
 		if (matcher == null) {
-			throw new ArgumentNullException("matcher");
+			throw new ArgumentNullException(nameof(matcher));
 		}
 
 		_matcher = matcher;

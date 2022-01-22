@@ -34,7 +34,7 @@ public class RichTextBoxEx : RichTextBox
 	/// <param name="position">Insert position</param>
 	public void InsertLink(string text, int position) {
 		if (position < 0 || position > Text.Length) {
-			throw new ArgumentOutOfRangeException("position");
+			throw new ArgumentOutOfRangeException(nameof(position));
 		}
 
 		SelectionStart = position;
@@ -68,7 +68,7 @@ public class RichTextBoxEx : RichTextBox
 	/// <param name="position">Insert position</param>
 	public void InsertLink(string text, string hyperlink, int position) {
 		if (position < 0 || position > Text.Length) {
-			throw new ArgumentOutOfRangeException("position");
+			throw new ArgumentOutOfRangeException(nameof(position));
 		}
 
 		SelectionStart = position;
