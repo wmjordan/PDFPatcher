@@ -485,7 +485,7 @@ internal static class PdfHelper
 			case 270:
 				return rotation;
 			default:
-				rotation = rotation % 90;
+				rotation %= 90;
 				if (rotation < 0) {
 					rotation += 360;
 				}
