@@ -21,7 +21,7 @@ internal sealed class PdfPathDocument : IHierarchicalObject<DocumentObject>
 			Description = "文档根节点",
 			FriendlyValue = Path.GetFileNameWithoutExtension(pdfPath)
 		};
-		DocumentObject hiddenObjects = new DocumentObject(this, null, "隐藏对象", null, PdfObjectType.Hidden);
+		DocumentObject hiddenObjects = new(this, null, "隐藏对象", null, PdfObjectType.Hidden);
 		int l = Document.NumberOfPages;
 		if (l > 301) {
 			DocumentObject[] c = new DocumentObject[1 + ((l + pageGroupNumber - 1) / pageGroupNumber) + 1];
