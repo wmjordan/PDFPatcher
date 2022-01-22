@@ -41,8 +41,8 @@ public partial class MainForm : Form
 		MinimumSize = Size;
 		StartPosition = FormStartPosition.CenterScreen;
 		AllowDrop = true;
-		DragEnter += (s, args) => args.FeedbackDragFileOver(Constants.FileExtensions.Pdf);
-		DragDrop += (s, args) => OpenFiles(args.DropFileOver(Constants.FileExtensions.Pdf));
+		DragEnter += (_, args) => args.FeedbackDragFileOver(Constants.FileExtensions.Pdf);
+		DragDrop += (_, args) => OpenFiles(args.DropFileOver(Constants.FileExtensions.Pdf));
 
 		SetupCustomizeToolbar();
 		_GeneralToolbar.Visible = AppContext.Toolbar.ShowGeneralToolbar;
@@ -57,17 +57,17 @@ public partial class MainForm : Form
 		};
 		Controls.Add(_LogControl);
 		HideLogControl();
-		_LogControl.VisibleChanged += (s, args) => _FunctionContainer.Visible = !_LogControl.Visible;
+		_LogControl.VisibleChanged += (_, _) => _FunctionContainer.Visible = !_LogControl.Visible;
 		_OpenConfigDialog.FileName =
 			_SaveConfigDialog.FileName = Constants.AppName + "配置文件" + Constants.FileExtensions.Json;
 		_OpenConfigDialog.Filter = _SaveConfigDialog.Filter = Constants.FileExtensions.JsonFilter;
 		_FunctionContainer.ImageList = new ImageList();
 		_FunctionContainer.AllowDrop = true;
-		_FunctionContainer.MouseClick += (s, args) => {
+		_FunctionContainer.MouseClick += (_, args) => {
 			if (args.Button == MouseButtons.Middle) { ClickCloseTab(args); }
 		};
-		_FunctionContainer.MouseDoubleClick += (s, args) => { ClickCloseTab(args); };
-		_FunctionContainer.TabClosing += (s, args) => {
+		_FunctionContainer.MouseDoubleClick += (_, args) => { ClickCloseTab(args); };
+		_FunctionContainer.TabClosing += (_, args) => {
 			TabPage t = _FunctionContainer.SelectedTab;
 			Tracker.DebugMessage(args.Action.ToString());
 			if (t.Tag.CastOrDefault<Function>() == Function.FrontPage) {
@@ -127,7 +127,7 @@ public partial class MainForm : Form
 
 	private void CheckUpdate() {
 		WebClient client = new();
-		client.DownloadDataCompleted += (s, args) => {
+		client.DownloadDataCompleted += (_, args) => {
 			if (args.Error != null) {
 				goto Exit;
 			}
@@ -266,10 +266,10 @@ public partial class MainForm : Form
 		}
 	}
 
-	private DialogResult ShowDialogWindow(Form window) {
+	private void ShowDialogWindow(Form window) {
 		using Form f = window;
 		f.StartPosition = FormStartPosition.CenterParent;
-		return f.ShowDialog(this);
+		f.ShowDialog(this);
 	}
 
 	private Control GetActiveFunctionControl() {

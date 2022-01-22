@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Xml;
 
@@ -169,11 +168,6 @@ internal static class XmlHelper
 	}
 
 	[DebuggerStepThrough]
-	public static void WriteValue(this XmlWriter writer, string name, bool value) {
-		writer?.WriteAttributeString(name, value ? BooleanYes : BooleanNo);
-	}
-
-	[DebuggerStepThrough]
 	public static void WriteValue(this XmlWriter writer, string name, bool value, bool defaultValue) {
 		if (writer != null && value != defaultValue) {
 			writer.WriteAttributeString(name, value ? BooleanYes : BooleanNo);
@@ -195,13 +189,6 @@ internal static class XmlHelper
 	[DebuggerStepThrough]
 	public static void WriteValue(this XmlWriter writer, string name, float value) {
 		writer?.WriteAttributeString(name, value.ToText());
-	}
-
-	[DebuggerStepThrough]
-	public static void WriteValue(this XmlWriter writer, string name, string value, string defaultValue) {
-		if (writer != null && string.Equals(value, defaultValue, StringComparison.OrdinalIgnoreCase) == false) {
-			writer.WriteAttributeString(name, value);
-		}
 	}
 
 	public static XmlElement GetOrCreateElement(this XmlNode parent, string name) {

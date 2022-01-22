@@ -168,19 +168,18 @@ internal sealed class ImportOcrResultProcessor : IDocProcessor
 		return context.Pdf.AddPdfObject(f);
 	}
 
-	private PdfName CreatePageOcrFontReference(DocProcessorContext context, PdfDictionary page,
+	private void CreatePageOcrFontReference(DocProcessorContext context, PdfDictionary page,
 		PdfIndirectReference fontRef) {
 		PdfDictionary f = page.CreateDictionaryPath(PdfName.RESOURCES, PdfName.FONT);
 		foreach (KeyValuePair<PdfName, PdfObject> item in f) {
 			if (PdfHelper.PdfReferencesAreEqual(fontRef, item.Value as PdfIndirectReference)) {
-				return item.Key;
+				return;
 			}
 		}
 
 		context.IsModified = true;
 		PdfName n = PdfHelper.PdfReferencesAreEqual(fontRef, font) ? OcrFont : OcrFontV;
 		f.Put(n, fontRef);
-		return n;
 	}
 
 	private static int ImportImageOcrResult(IPdfPageCommandContainer container, XmlElement result) {
@@ -215,7 +214,7 @@ internal sealed class ImportOcrResultProcessor : IDocProcessor
 			return 0;
 		}
 
-		OcrContentInfo info = new(w, h, matrix);
+		OcrContentInfo info = new(w, h);
 		sc.Add(PdfPageCommand.Create("Tm",
 			new PdfNumber(matrix[OcrContentInfo.A1] / w), new PdfNumber(matrix[OcrContentInfo.A2] / w),
 			new PdfNumber(matrix[OcrContentInfo.B1] / h), new PdfNumber(matrix[OcrContentInfo.B2] / h),
@@ -265,7 +264,7 @@ internal sealed class ImportOcrResultProcessor : IDocProcessor
 		private int _top, _bottom, _left, _right, _size;
 
 		//float _m11, _m12, _m21, _m22, _mx, _my;
-		internal OcrContentInfo(int imageWidth, int imageHeight, float[] matrix) {
+		internal OcrContentInfo(int imageWidth, int imageHeight) {
 			ImageHeight = imageHeight;
 			ImageWidth = imageWidth;
 			//_m11 = matrix[A1];

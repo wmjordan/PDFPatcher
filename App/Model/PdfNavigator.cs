@@ -14,10 +14,6 @@ internal sealed class PdfNavigator : XPathNavigator
 	private int _childIndex = -1;
 	private DocumentObject _currentObject;
 
-	public PdfNavigator(PdfPathDocument document) {
-		_doc = document;
-	}
-
 	public PdfNavigator(PdfNavigator source) {
 		_doc = source._doc;
 		_currentObject = source._currentObject;

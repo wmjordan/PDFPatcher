@@ -41,7 +41,7 @@ public sealed partial class AutoBookmarkForm : DraggableForm
 			c.AspectPutter = (o, v) => o.Style.IsItalic = (bool)v;
 		});
 		_ColorColumn.AsTyped<EditModel.AutoBookmarkStyle>(c => {
-			c.AspectGetter = o => "点击设置颜色";
+			c.AspectGetter = _ => "点击设置颜色";
 		});
 		_OpenColumn.AsTyped<EditModel.AutoBookmarkStyle>(c => {
 			c.AspectGetter = o => o.Style.IsOpened;
@@ -49,7 +49,7 @@ public sealed partial class AutoBookmarkForm : DraggableForm
 		});
 		_BookmarkConditionBox.IsSimpleDragSource = true;
 		_BookmarkConditionBox.IsSimpleDropSink = true;
-		_BookmarkConditionBox.CellClick += (s, args) => {
+		_BookmarkConditionBox.CellClick += (_, args) => {
 			EditModel.AutoBookmarkStyle ts = args.Model as EditModel.AutoBookmarkStyle;
 			if (args.ColumnIndex == _ColorColumn.Index) {
 				this.ShowCommonDialog<ColorDialog>(

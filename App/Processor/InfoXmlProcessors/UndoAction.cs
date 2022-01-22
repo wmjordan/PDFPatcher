@@ -69,13 +69,6 @@ internal sealed class UndoActionGroup : IUndoAction
 {
 	private readonly List<IUndoAction> _actions = new();
 
-	public UndoActionGroup() {
-	}
-
-	public UndoActionGroup(IEnumerable<IUndoAction> actions) {
-		_actions.AddRange(actions);
-	}
-
 	public int Count => _actions.Count;
 
 	public void Add(IUndoAction action) {
@@ -89,10 +82,6 @@ internal sealed class UndoActionGroup : IUndoAction
 				_actions.Add(action);
 				break;
 		}
-	}
-
-	public void RemoveElement(XmlElement target) {
-		Add(new RemoveElementAction(target));
 	}
 
 	public void AddElement(XmlElement target) {

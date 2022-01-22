@@ -200,23 +200,6 @@ internal sealed class SetCaseProcessor : IPdfInfoXmlProcessor
 		}
 	}
 
-	private sealed class SequentialCharacterMapper
-	{
-		private readonly int _Count;
-		private readonly char _From, _To;
-
-		public SequentialCharacterMapper(char from, char to, int count) {
-			_From = from;
-			_To = to;
-			_Count = count;
-		}
-
-		public char Map(char value) {
-			int d = value - _From;
-			return d >= 0 && d < _Count ? (char)(_To + d) : value;
-		}
-	}
-
 	#region IInfoDocProcessor 成员
 
 	public string Name => "设置书签文本为" + CaseNames[(int)Case];

@@ -44,7 +44,7 @@ public partial class DocumentInfoForm : Form
 			_OkButton.Enabled = false;
 		}
 
-		_OkButton.Click += (s, args) => {
+		_OkButton.Click += (_, _) => {
 			DialogResult = DialogResult.OK;
 			DocumentInfoElement info = InfoDocument.InfoNode;
 			info.Author = _AuthorBox.Text;
@@ -55,11 +55,11 @@ public partial class DocumentInfoForm : Form
 			info.Title = _TitleBox.Text;
 			Close();
 		};
-		_CancelButton.Click += (s, args) => {
+		_CancelButton.Click += (_, _) => {
 			DialogResult = DialogResult.Cancel;
 			Close();
 		};
-		_ConfigButton.Click += (s, args) => {
+		_ConfigButton.Click += (_, _) => {
 			AppContext.MainForm.SelectFunctionList(Function.EditorOptions);
 		};
 	}

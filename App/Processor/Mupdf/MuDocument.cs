@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Drawing;
 using System.IO;
-using System.Runtime.InteropServices;
-using System.Text;
-using FreeImageAPI;
 using iTextSharp.text.exceptions;
 
 namespace MuPdfSharp;
@@ -27,7 +23,7 @@ public sealed class MuDocument : IDisposable
 		PageCount = -1;
 	}
 
-	private int LoadPdf(string fileName, string password) {
+	private void LoadPdf(string fileName, string password) {
 		if (File.Exists(fileName) == false) {
 			throw new FileNotFoundException("找不到 PDF 文件：" + fileName);
 		}
@@ -36,7 +32,8 @@ public sealed class MuDocument : IDisposable
 			_sourceStream = new StreamHandle(Context, fileName);
 			_document = new DocumentHandle(Context, _sourceStream);
 			FilePath = fileName;
-			return InitPdf(password);
+			InitPdf(password);
+			return;
 		}
 		catch (AccessViolationException) {
 			_sourceStream.DisposeHandle();
@@ -69,49 +66,11 @@ public sealed class MuDocument : IDisposable
 		_cookie.CancelAsync();
 	}
 
-	/// <summary>
-	///     使用指定的尺寸渲染页面。
-	/// </summary>
-	/// <param name="pageNumber">需要渲染的页码。</param>
-	/// <param name="size">图片尺寸。</param>
-	/// <returns>渲染的图片。</returns>
-	public FreeImageBitmap RenderPage(int pageNumber, Size size) {
-		return RenderPage(pageNumber, size.Width, size.Height, null);
-	}
-
-	/// <summary>
-	///     使用指定的尺寸渲染页面。
-	/// </summary>
-	/// <param name="pageNumber">需要渲染的页码。</param>
-	/// <param name="width">页面宽度。</param>
-	/// <param name="height">页面高度。</param>
-	/// <returns>渲染的图片。</returns>
-	public FreeImageBitmap RenderPage(int pageNumber, int width, int height) {
-		return RenderPage(pageNumber, width, height, null);
-	}
-
-	/// <summary>
-	///     使用渲染配置渲染指定的页面。
-	/// </summary>
-	/// <param name="pageNumber">要渲染的页码。</param>
-	/// <param name="width">页面宽度。</param>
-	/// <param name="height">页面高度。</param>
-	/// <param name="options">渲染选项。</param>
-	/// <returns>成功渲染后的 <see cref="FreeImageAPI.FreeImageBitmap" /> 实例。如传入的页码在有效页码范围内，则返回空引用。</returns>
-	public FreeImageBitmap RenderPage(int pageNumber, int width, int height, ImageRendererOptions options) {
-		if (pageNumber < 1 || pageNumber > PageCount) {
-			return null;
-		}
-
-		using MuPage p = LoadPage(pageNumber);
-		return options != null ? p.RenderPage(width, height, options) : p.RenderPage(width, height);
-	}
-
 	public MuPage LoadPage(int pageNumber) {
 		return new MuPage(Context, _document, pageNumber, ref _cookie);
 	}
 
-	private int InitPdf(string password) {
+	private void InitPdf(string password) {
 		if (NativeMethods.NeedsPdfPassword(Context, _document)) {
 			if (string.IsNullOrEmpty(password) == false) {
 				if (NativeMethods.AuthenticatePassword(Context, _document, password) == false) {
@@ -124,50 +83,6 @@ public sealed class MuDocument : IDisposable
 		}
 
 		PageCount = NativeMethods.CountPages(Context, _document);
-		return PageCount;
-	}
-
-	private unsafe struct FzFont
-	{
-#pragma warning disable 649, 169
-		private readonly int refs;
-
-		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-		private readonly byte[] name;
-
-		internal FzBuffer* Buffer;
-		internal FzFontFlags Flags;
-#pragma warning restore 649, 169
-		public string Name => Encoding.Default.GetString(name, 0, Array.IndexOf(name, 0));
-	}
-
-	private struct FzFontFlags
-	{
-#pragma warning disable 649
-		private uint flag;
-#pragma warning restore 649
-		private bool IsMono => (flag & 1) > 0;
-		private bool IsSerif => (flag & 2) > 0;
-		private bool IsBold => (flag & 4) > 0;
-		private bool IsItalic => (flag & 8) > 0;
-		private bool IsSubstitute => (flag & 16) > 0; /* use substitute metrics */
-		private bool IsStretch => (flag & 32) > 0; /* stretch to match PDF metrics */
-		private bool IsFakeBold => (flag & 64) > 0; /* synthesize bold */
-		private bool IsFakeItalic => (flag & 128) > 0; /* synthesize italic */
-		private bool IsForcedHinting => (flag & 256) > 0; /* force hinting for DynaLab fonts */
-		private bool HasOpenType => (flag & 512) > 0; /* has opentype shaping tables */
-		private bool InvalidBBox => (flag & 1024) > 0;
-	}
-
-	private struct FzBuffer
-	{
-#pragma warning disable 649, 169
-		private readonly int refs;
-		private readonly IntPtr data;
-		internal uint cap, len;
-		private readonly int unused_bits;
-		private readonly int shared;
-#pragma warning restore 649, 169
 	}
 
 	#region 非托管资源成员
@@ -185,19 +100,12 @@ public sealed class MuDocument : IDisposable
 	/// <summary>获取文档的页数。</summary>
 	public int PageCount { get; private set; }
 
-	/// <summary>获取或设置抗锯齿显示级别。</summary>
-	public int AntiAlias {
-		get => NativeMethods.GetAntiAliasLevel(Context);
-		set => NativeMethods.SetAntiAliasLevel(Context, value);
-	}
-
 	/// <summary>获取文件句柄是否打开。</summary>
 	public bool IsDocumentOpened => _document.IsValid() && _sourceStream.IsValid();
 
 	/// <summary>获取文档是否设置了打开密码。</summary>
 	public bool NeedsPassword => NativeMethods.NeedsPdfPassword(Context, _document);
 
-	public bool IsCancellationPending => _cookie.IsCancellationPending;
 	public object SyncObj { get; private set; } = new();
 
 	internal ContextHandle Context { get; }
@@ -303,10 +211,6 @@ public sealed class MuDocument : IDisposable
 
 	public MuPdfArray CreateArray() {
 		return new MuPdfArray(Context, NativeMethods.NewArray(Context, _document, 4));
-	}
-
-	public MuPdfDictionary CreateDictionary() {
-		return new MuPdfDictionary(Context, NativeMethods.NewDictionary(Context, _document, 4));
 	}
 
 	#endregion

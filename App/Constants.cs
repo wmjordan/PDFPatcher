@@ -7,7 +7,7 @@ internal enum Function
 {
 	FrontPage, InfoFileOptions, InfoExchanger, ExtractPages, ExtractImages, RenderPages, EditorOptions, Patcher,
 	PatcherOptions, Merger, MergerOptions, About, BookmarkEditor, Options, BookmarkGenerator, Ocr, Inspector, Rename,
-	Log, Default, CustomizeToolbar
+	Log, Default
 }
 
 internal static class Constants
@@ -37,7 +37,6 @@ internal static class Constants
 		internal const string TxtFilter = "简易文本书签文件 (*.txt)|*.txt";
 		internal const string Xml = ".xml";
 		internal const string XmlFilter = "PDF 信息文件 (*.xml)|*.xml";
-		internal const string PdfOrXmlFilter = "PDF 文件或信息文件 (*.pdf, *.xml)|*.pdf;*.xml";
 		internal const string XmlOrTxtFilter = "书签文件 (*.xml, *.txt)|*.xml;*.txt";
 
 		internal const string AllEditableFilter = "所有包含 PDF 信息的文件(*.pdf,*.xml,*.txt)|*.pdf;*.xml;*.txt|" + PdfFilter +
@@ -67,22 +66,6 @@ internal static class Constants
 	}
 
 	#region 功能名称
-
-	private static class Functions
-	{
-		internal const string FrontPage = "FrontPage";
-		internal const string Patcher = "Patcher";
-		internal const string Merger = "Merger";
-		internal const string ImageExtractor = "ImageExtractor";
-		internal const string PageExtractor = "PageExtractor";
-		internal const string PageRenderer = "PageRenderer";
-		internal const string BookmarkEditor = "BookmarkEditor";
-		internal const string BookmarkGenerator = "BookmarkGenerator";
-		internal const string Ocr = "Ocr";
-		internal const string Inspector = "Inspector";
-		internal const string Log = "Log";
-		internal const string About = "About";
-	}
 
 	#endregion
 
@@ -138,8 +121,6 @@ internal static class Constants
 
 	internal static class Alignments
 	{
-		internal static readonly string[] HorizontalAlignments = { "左对齐", "水平居中", "右对齐" };
-		internal static readonly string[] VerticalAlignments = { "置顶", "垂直居中", "置底" };
 	}
 
 	#endregion
@@ -221,7 +202,6 @@ internal static class Constants
 
 		internal static class RotationDirections
 		{
-			internal const string ThisName = PageSettings.Rotation;
 			internal const string Zero = "保持不变";
 			internal const string Right = "顺时针90度";
 			internal const string HalfClock = "180度";
@@ -290,8 +270,6 @@ internal static class Constants
 	internal static class ColorSpaces
 	{
 		internal const string Rgb = "DeviceRGB";
-		internal const string Bgr = "DeviceBGR";
-		internal const string Cmyk = "DeviceCMYK";
 		internal const string Gray = "DeviceGray";
 		internal static string[] Names = { Rgb, Gray };
 	}
@@ -313,7 +291,6 @@ internal static class Constants
 
 	internal static class AutoBookmark
 	{
-		internal const string ThisName = "自动书签";
 		internal const string Group = "条件集合";
 		internal const string Name = "名称";
 		internal const string Description = "说明";
@@ -329,7 +306,6 @@ internal static class Constants
 		internal const string ProductName = "程序名称";
 		internal const string ProductVersion = "程序版本";
 		internal const string ExportDate = "导出时间";
-		internal const string DocumentName = "PDF文件名";
 		internal const string DocumentPath = "PDF文件位置";
 		internal const string PageNumber = "页数";
 		internal const string Title = "标题";
@@ -482,10 +458,6 @@ internal static class Constants
 		internal const string Uri = "打开网址";
 		internal const string Javascript = "执行脚本";
 		internal static readonly string[] Names = { Goto, GotoR, Launch, Uri, Javascript };
-
-		internal static readonly PdfName[] PdfNames = {
-			PdfName.GOTO, PdfName.GOTOR, PdfName.LAUNCH, PdfName.URI, PdfName.JAVASCRIPT
-		};
 	}
 
 	#endregion
@@ -575,10 +547,8 @@ internal static class Messages
 {
 	internal const string Welcome = "PDF 补丁丁——解除 PDF 文档的烦恼";
 	internal const string SourceFileNotFound = "源 PDF 文件不存在，请先指定有效的源 PDF 文件。";
-	internal const string InfoDocNotFound = "信息文件不存在，请先指定有效的信息文件。";
 	internal const string TargetFileNotSpecified = "请指定输出 PDF 文件的路径。";
 	internal const string InfoDocNotSpecified = "请指定输出信息文件的路径。";
-	internal const string SourceFileNameInvalid = "源 PDF 文件名无效。";
 	internal const string TargetFileNameInvalid = "输出 PDF 文件名无效。";
 	internal const string InfoFileNameInvalid = "信息文件的文件名无效。";
 	internal const string SourceFileEqualsTargetFile = "输入 PDF 文件和输出 PDF 文件的文件名不能相同。";
@@ -590,6 +560,5 @@ internal static class Messages
 	internal const string PageRanges =
 		"在此输入需要处理的页码范围。\n如：“1-100”表示处理第1～100页。\n如有多个页码范围，可用空格、分号或逗号分开。\n如：“1-10;12;14-20”表示处理1～10、12和14～20页。";
 
-	internal const string ReversePageRanges = "此外还可以输入逆序页码，如“100-1”表示从第100页开始倒序处理至第1页。";
 	internal const string ModiNotAvailable = "本机尚未安装微软文本识别组件（MODI），无法使用识别文本功能。";
 }

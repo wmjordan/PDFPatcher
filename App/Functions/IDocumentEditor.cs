@@ -5,8 +5,6 @@ namespace PDFPatcher.Functions;
 internal interface IDocumentEditor
 {
 	string DocumentPath { get; }
-	event EventHandler<DocumentChangedEventArgs> DocumentChanged;
-	void CloseDocument();
 	void Reopen();
 }
 

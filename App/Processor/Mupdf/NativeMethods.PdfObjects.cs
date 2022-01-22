@@ -19,9 +19,6 @@ internal partial class NativeMethods
 	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_dict_finds")]
 	public static extern int FindIndex(ContextHandle ctx, IntPtr dict, [MarshalAs(UnmanagedType.LPStr)] string key);
 
-	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_dict_len")]
-	public static extern int GetDictLength(ContextHandle context, IntPtr dict);
-
 	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_dict_get_key")]
 	public static extern IntPtr GetKey(ContextHandle context, IntPtr dict, int index);
 
@@ -33,10 +30,6 @@ internal partial class NativeMethods
 
 	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_dict_gets", BestFitMapping = false)]
 	public static extern IntPtr Get(ContextHandle context, IntPtr dict, [MarshalAs(UnmanagedType.LPStr)] string key);
-
-	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_dict_getsa", BestFitMapping = false)]
-	public static extern IntPtr GetOrAbbrev(ContextHandle context, IntPtr dict,
-		[MarshalAs(UnmanagedType.LPStr)] string key, [MarshalAs(UnmanagedType.LPStr)] string abbrev);
 
 	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_dict_getp", BestFitMapping = false)]
 	public static extern IntPtr Locate(ContextHandle context, IntPtr dict,
@@ -55,30 +48,9 @@ internal partial class NativeMethods
 	public static extern void Put(ContextHandle context, IntPtr dict, [MarshalAs(UnmanagedType.LPStr)] string key,
 		IntPtr value);
 
-	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_dict_puts_drop", BestFitMapping = false)]
-	public static extern void PutAndDrop(ContextHandle context, IntPtr dict,
-		[MarshalAs(UnmanagedType.LPStr)] string key, IntPtr value);
-
-	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_dict_putp", BestFitMapping = false)]
-	public static extern void LocatePut(ContextHandle context, IntPtr dict,
-		[MarshalAs(UnmanagedType.LPStr)] string path, IntPtr value);
-
-	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_dict_putp_drop", BestFitMapping = false)]
-	public static extern void LocatePutAndDrop(ContextHandle context, IntPtr dict,
-		[MarshalAs(UnmanagedType.LPStr)] string path, IntPtr value);
-
-	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_dict_get_rect")]
-	public static extern Rectangle DictGetRect(ContextHandle context, IntPtr dict, IntPtr key);
-
-	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_dict_get_matrix")]
-	public static extern Matrix DictGetMatrix(ContextHandle context, IntPtr dict, IntPtr key);
-
 	#endregion
 
 	#region Array
-
-	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_array_len")]
-	public static extern int GetArrayLength(ContextHandle context, IntPtr pdfArray);
 
 	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_array_get")]
 	public static extern IntPtr GetArrayItem(ContextHandle context, IntPtr pdfArray, int index);
@@ -92,15 +64,6 @@ internal partial class NativeMethods
 	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_array_push")]
 	public static extern void Push(ContextHandle context, IntPtr pdfArray, IntPtr obj);
 
-	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_array_push_drop")]
-	public static extern void PushAndDrop(ContextHandle context, IntPtr pdfArray, IntPtr obj);
-
-	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_array_get_rect")]
-	public static extern Rectangle ArrayGetRect(ContextHandle context, IntPtr pdfArray, int index);
-
-	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_array_get_matrix")]
-	public static extern Matrix ArrayGetMatrix(ContextHandle context, IntPtr pdfArray, int index);
-
 	#endregion
 
 	#region Object type
@@ -108,42 +71,9 @@ internal partial class NativeMethods
 	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_is_null")]
 	public static extern int IsNull(ContextHandle context, IntPtr obj);
 
-	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_is_bool")]
-	public static extern int IsBoolean(ContextHandle context, IntPtr obj);
-
-	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_is_int")]
-	public static extern int IsInteger(ContextHandle context, IntPtr obj);
-
-	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_is_real")]
-	public static extern int IsFloat(ContextHandle context, IntPtr obj);
-
-	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_is_number")]
-	public static extern int IsNumber(ContextHandle context, IntPtr obj);
-
-	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_is_string")]
-	public static extern int IsString(ContextHandle context, IntPtr obj);
-
-	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_is_name")]
-	public static extern int IsName(ContextHandle context, IntPtr obj);
-
-	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_is_array")]
-	public static extern int IsArray(ContextHandle context, IntPtr obj);
-
-	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_is_dict")]
-	public static extern int IsDictionary(ContextHandle context, IntPtr obj);
-
-	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_is_indirect")]
-	public static extern int IsIndirectReference(ContextHandle context, IntPtr obj);
-
-	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_is_stream")]
-	public static extern int IsStream(ContextHandle context, IntPtr document, int number, int generation);
-
 	#endregion
 
 	#region Object conversion
-
-	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_to_bool")]
-	public static extern int ToBoolean(ContextHandle context, IntPtr obj);
 
 	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_to_real")]
 	public static extern float ToSingle(ContextHandle context, IntPtr obj);

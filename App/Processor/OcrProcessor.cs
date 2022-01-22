@@ -53,7 +53,7 @@ internal sealed class OcrProcessor
 		};
 		CleanUpTempFiles(expOptions.OutputPath);
 		_reader = reader;
-		_ocrImageExp = new ImageExtractor(expOptions, reader) { PrintImageLocation = false };
+		_ocrImageExp = new ImageExtractor(expOptions) { PrintImageLocation = false };
 	}
 
 	private OcrProcessor(OcrOptions options) {
@@ -147,7 +147,7 @@ internal sealed class OcrProcessor
 		Rectangle pr = _reader.GetPageNRelease(i).GetPageVisibleRectangle();
 		List<TextLine> tl = _options.WritingDirection != WritingDirection.Unknown
 			? AutoBookmarkCreator.MergeTextInfoList(pr,
-				result.Texts.ConvertAll(l => GetMergedTextInfo(result.Image, l)), __MergeOptions) // 按照书写方向重组识别文本
+				result.Texts.ConvertAll(l => GetMergedTextInfo(l)), __MergeOptions) // 按照书写方向重组识别文本
 			: result.Texts;
 		foreach (TextLine item in tl) {
 			string t = item.Text;
@@ -470,7 +470,7 @@ internal sealed class OcrProcessor
 		return r;
 	}
 
-	private static TextInfo GetMergedTextInfo(ImageDisposition image, TextLine item) {
+	private static TextInfo GetMergedTextInfo(TextLine item) {
 		TextInfo ti = new() {
 			Font = null,
 			Region = item.Region,

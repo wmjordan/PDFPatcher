@@ -65,10 +65,6 @@ public sealed partial class DocumentInspectorControl : FunctionControl, IDocumen
 		}
 	}
 
-	public void CloseDocument() {
-		_pdf.Document?.SafeFile.Close();
-	}
-
 	public void Reopen() {
 		_pdf.Document?.SafeFile.ReOpen();
 	}
@@ -155,7 +151,7 @@ public sealed partial class DocumentInspectorControl : FunctionControl, IDocumen
 		_DescriptionColumn.AspectGetter = o => ((DocumentObject)o).Description;
 		_ObjectDetailBox.PrimarySortColumn = null;
 		_ObjectDetailBox.CopySelectionOnControlC = true;
-		_ObjectDetailBox.CellEditStarting += (s, args) => {
+		_ObjectDetailBox.CellEditStarting += (_, args) => {
 			DocumentObject d = args.RowObject as DocumentObject;
 			if (d.Value is not PdfObject po) {
 				args.Cancel = true;
@@ -264,11 +260,11 @@ public sealed partial class DocumentInspectorControl : FunctionControl, IDocumen
 		};
 
 		_OpenButton.DropDownOpening += FileListHelper.OpenPdfButtonDropDownOpeningHandler;
-		_OpenButton.DropDownItemClicked += (s, args) => {
+		_OpenButton.DropDownItemClicked += (_, args) => {
 			args.ClickedItem.Owner.Hide();
 			LoadDocument(args.ClickedItem.ToolTipText);
 		};
-		Disposed += (s, args) => {
+		Disposed += (_, _) => {
 			_pdf?.Document.Dispose();
 		};
 	}
@@ -530,14 +526,6 @@ public sealed partial class DocumentInspectorControl : FunctionControl, IDocumen
 
 		return __PdfObjectIcons.GetOrDefault(po.Type);
 
-	}
-
-	private void _GotoImportLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-		AppContext.MainForm.SelectFunctionList(Function.Patcher);
-	}
-
-	private void bookmarkEditor1_DragEnter(object sender, DragEventArgs e) {
-		e.FeedbackDragFileOver(Constants.FileExtensions.PdfAndAllBookmarkExtension);
 	}
 
 	private void ControlEvent(object sender, EventArgs e) {
@@ -933,7 +921,7 @@ public sealed partial class DocumentInspectorControl : FunctionControl, IDocumen
 	}
 
 	private void ReloadPdf() {
-		_imgExp = new ImageExtractor(_imgExpOption, _pdf.Document);
+		_imgExp = new ImageExtractor(_imgExpOption);
 
 		_ObjectDetailBox.ClearObjects();
 		_ObjectDetailBox.Objects = ((IHierarchicalObject<DocumentObject>)_pdf).Children;

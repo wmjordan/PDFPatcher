@@ -72,7 +72,7 @@ internal sealed class PdfContentExport
 
 	internal void ExportContents(XmlWriter writer, PdfReader reader) {
 		if (_options.ExtractImages) {
-			_imageExporter = new ImageExtractor(_options.Images, reader);
+			_imageExporter = new ImageExtractor(_options.Images);
 		}
 
 		writer.WriteStartElement(Constants.Body);

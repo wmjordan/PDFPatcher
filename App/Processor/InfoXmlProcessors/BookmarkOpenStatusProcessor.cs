@@ -2,7 +2,7 @@
 
 namespace PDFPatcher.Processor;
 
-internal sealed class BookmarkOpenStatusProcessor : IPdfInfoXmlProcessor, IPdfInfoXmlProcessor<bool>
+internal sealed class BookmarkOpenStatusProcessor : IPdfInfoXmlProcessor<bool>
 {
 	public BookmarkOpenStatusProcessor() {
 	}

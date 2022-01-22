@@ -9,7 +9,6 @@ namespace PDFPatcher.Model;
 internal sealed class PdfPathDocument : IHierarchicalObject<DocumentObject>
 {
 	private const int pageGroupNumber = 100;
-	private static readonly DocumentObject[] __Leaf = new DocumentObject[0];
 	private readonly Dictionary<int, int> _pageMapper;
 	private readonly DocumentObject[] _rootObjects;
 
@@ -66,8 +65,6 @@ internal sealed class PdfPathDocument : IHierarchicalObject<DocumentObject>
 	}
 
 	#region IHierarchicalObject<DocumentObject> 成员
-
-	bool IHierarchicalObject<DocumentObject>.HasChildren => true;
 
 	ICollection<DocumentObject> IHierarchicalObject<DocumentObject>.Children {
 		get {

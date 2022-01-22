@@ -11,11 +11,8 @@ namespace PDFPatcher.Processor;
 
 internal class PdfContentStreamProcessor
 {
-	public static readonly IContentOperator NopOperator = new IgnoreOperatorContentOperator();
 	private readonly Dictionary<int, WeakReference> _FontCache = new();
 	private readonly Dictionary<int, string> _FontNameCache = new();
-
-	private readonly Dictionary<PdfName, IXObjectDoHandler> _XObjectDoHandlers = new();
 
 	// Fields
 	private readonly Stack<GraphicsState> gsStack = new();
@@ -140,12 +137,6 @@ internal class PdfContentStreamProcessor
 		RegisterContentOperator("Do", new Do());
 	}
 
-	protected void PopulateXObjectDoHandlers() {
-		RegisterXObjectDoHandler(PdfName.DEFAULT, new IgnoreXObjectDoHandler());
-		RegisterXObjectDoHandler(PdfName.FORM, new FormXObjectDoHandler());
-		RegisterXObjectDoHandler(PdfName.IMAGE, new ImageXObjectDoHandler());
-	}
-
 	public void ProcessContent(byte[] contentBytes, PdfDictionary resources) {
 		Resource.Push(resources);
 		PRTokeniser tokenizer = new(new RandomAccessFileOrArray(contentBytes));
@@ -174,12 +165,6 @@ internal class PdfContentStreamProcessor
 		operators.Remove(operatorString);
 		return null;
 
-	}
-
-	internal IXObjectDoHandler RegisterXObjectDoHandler(PdfName xobjectSubType, IXObjectDoHandler handler) {
-		_XObjectDoHandlers.TryGetValue(xobjectSubType, out IXObjectDoHandler old);
-		_XObjectDoHandlers[xobjectSubType] = handler;
-		return old;
 	}
 
 	internal virtual void Reset() {
@@ -544,11 +529,6 @@ internal class PdfContentStreamProcessor
 		void Invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands);
 	}
 
-	internal interface IXObjectDoHandler
-	{
-		void HandleXObject(PdfContentStreamProcessor processor, PdfStream stream, PdfIndirectReference refi);
-	}
-
 	protected sealed class BeginMarkedContentC : IContentOperator
 	{
 		// Methods
@@ -609,55 +589,6 @@ internal class PdfContentStreamProcessor
 			processor.TextMatrix = null;
 			processor._TextLineMatrix = null;
 			EndText();
-		}
-	}
-
-	protected sealed class FormXObjectDoHandler : IXObjectDoHandler
-	{
-		// Methods
-		public void HandleXObject(PdfContentStreamProcessor processor, PdfStream stream, PdfIndirectReference refi) {
-			PdfDictionary resources = stream.GetAsDict(PdfName.RESOURCES);
-			byte[] contentBytes = ContentByteUtils.GetContentBytesFromContentObject(stream);
-			PdfArray matrix = stream.GetAsArray(PdfName.MATRIX);
-			new PushGraphicsState().Invoke(processor, null, null);
-			if (matrix != null) {
-				float a = matrix.GetAsNumber(0).FloatValue;
-				float b = matrix.GetAsNumber(1).FloatValue;
-				float c = matrix.GetAsNumber(2).FloatValue;
-				float d = matrix.GetAsNumber(3).FloatValue;
-				float e = matrix.GetAsNumber(4).FloatValue;
-				float f = matrix.GetAsNumber(5).FloatValue;
-				processor.CurrentGraphicState.TransMatrix =
-					new Matrix(a, b, c, d, e, f).Multiply(processor.CurrentGraphicState.TransMatrix);
-			}
-
-			processor.ProcessContent(contentBytes, resources);
-			new PopGraphicsState().Invoke(processor, null, null);
-		}
-	}
-
-	protected sealed class IgnoreOperatorContentOperator : IContentOperator
-	{
-		// Methods
-		public void Invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
-		}
-	}
-
-	protected sealed class IgnoreXObjectDoHandler : IXObjectDoHandler
-	{
-		// Methods
-		public void HandleXObject(PdfContentStreamProcessor processor, PdfStream xobjectStream,
-			PdfIndirectReference refi) {
-		}
-	}
-
-	protected sealed class ImageXObjectDoHandler : IXObjectDoHandler
-	{
-		// Methods
-		public void HandleXObject(PdfContentStreamProcessor processor, PdfStream xobjectStream,
-			PdfIndirectReference refi) {
-			//ImageRenderInfo renderInfo = ImageRenderInfo.CreateForXObject (processor.CurrentGraphicState.TransMatrix, refi);
-			//processor.renderListener.RenderImage (renderInfo);
 		}
 	}
 

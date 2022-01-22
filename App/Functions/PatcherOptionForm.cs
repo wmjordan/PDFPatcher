@@ -12,7 +12,6 @@ namespace PDFPatcher.Functions;
 [ToolboxItem(false)]
 public partial class PatcherOptionForm : Form, IResettableControl
 {
-	private const float cm2point = 72f / 2.54f;
 	private readonly bool _editorOptions;
 	private bool _uiLockDown;
 	private string paperName;
@@ -28,7 +27,7 @@ public partial class PatcherOptionForm : Form, IResettableControl
 		_ImageVAlignBox.Items.Add("置顶");
 		_ImageVAlignBox.Items.Add("置底");
 		_editorOptions = editorOptions;
-		_ResetButton.Click += (s, args) => {
+		_ResetButton.Click += (_, _) => {
 			if (this.ConfirmYesBox("是否将选项配置还原为默认值？")) {
 				Reset();
 			}

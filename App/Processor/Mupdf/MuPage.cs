@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
-using FreeImageAPI;
 
 namespace MuPdfSharp;
 
@@ -40,28 +39,6 @@ public sealed class MuPage : IDisposable
 	//	var l = 
 	//	return Interop.DecodeUtf8String (NativeMethods.HighlightSelection (_context, _page, selection));
 	//}
-
-	/// <summary>
-	///     使用默认的配置渲染页面。
-	/// </summary>
-	/// <param name="width">页面的宽度。</param>
-	/// <param name="height">页面的高度。</param>
-	/// <returns>渲染后生成的 <see cref="Bitmap" />。</returns>
-	public FreeImageBitmap RenderPage(int width, int height) {
-		return RenderPage(width, height, __defaultOptions);
-	}
-
-	/// <summary>
-	///     使用指定的配置渲染页面。
-	/// </summary>
-	/// <param name="width">页面的宽度。</param>
-	/// <param name="height">页面的高度。</param>
-	/// <param name="options">渲染选项。</param>
-	/// <returns>渲染后生成的 <see cref="FreeImageAPI.FreeImageBitmap" />。</returns>
-	public FreeImageBitmap RenderPage(int width, int height, ImageRendererOptions options) {
-		using PixmapData pix = InternalRenderPage(width, height, options);
-		return pix?.ToFreeImageBitmap(options);
-	}
 
 	/// <summary>
 	///     使用指定的配置渲染页面。
@@ -233,27 +210,6 @@ public sealed class MuPage : IDisposable
 		return ctm;
 	}
 
-	/// <summary>
-	///     获取页面内容的实际覆盖范围。
-	/// </summary>
-	/// <returns>包含页面内容的最小 <see cref="BBox" />。</returns>
-	public Rectangle GetContentBoundary() {
-		Rectangle b = Bound;
-		Rectangle o = b;
-		using DeviceHandle dev = new(_context, ref o);
-		try {
-			Matrix im = Matrix.Identity;
-			//NativeMethods.BeginPage (dev, ref b, ref im);
-			NativeMethods.RunDisplayList(_context, GetDisplayList(), dev, Matrix.Identity, b, ref _cookie);
-			dev.EndOperations();
-			//NativeMethods.EndPage (dev);
-			return o;
-		}
-		catch (AccessViolationException) {
-			throw new MuPdfException("无法获取页面内容边框：" + PageNumber);
-		}
-	}
-
 	#region 非托管资源成员
 
 	private readonly ContextHandle _context;
@@ -265,7 +221,6 @@ public sealed class MuPage : IDisposable
 
 	#region 托管资源成员
 
-	private static readonly ImageRendererOptions __defaultOptions = new();
 	private MuCookie _cookie;
 	private MuTextPage _TextPage;
 	private bool _flattened;

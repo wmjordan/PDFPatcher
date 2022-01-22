@@ -28,16 +28,6 @@ public enum MuFontFlags : uint
 {
 	None = 0,
 	IsMono = 1,
-	IsSerif = 1 << 1,
-	IsBold = 1 << 2,
-	IsItalic = 1 << 3,
-	IsSubstitute = 1 << 4, /* use substitute metrics */
-	IsStretch = 1 << 5, /* stretch to match PDF metrics */
-	IsFakeBold = 1 << 6, /* synthesize bold */
-	IsFakeItalic = 1 << 7, /* synthesize italic */
-	IsForcedHinting = 1 << 8, /* force hinting for DynaLab fonts */
-	HasOpenType = 1 << 9, /* has opentype shaping tables */
-	InvalidBBox = 1 << 10
 }
 
 [DebuggerDisplay("BBox={BBox}")]
@@ -174,7 +164,7 @@ public abstract class MuContentBlock : IMuBoundedElement
 	}
 }
 
-public sealed class MuImageBlock : MuContentBlock, IMuBoundedElement
+public sealed class MuImageBlock : MuContentBlock
 {
 	private readonly IntPtr _Image;
 	private readonly Matrix _Matrix;
@@ -190,7 +180,7 @@ public sealed class MuImageBlock : MuContentBlock, IMuBoundedElement
 	public override Rectangle BBox { get; }
 }
 
-public sealed class MuTextBlock : MuContentBlock, IMuBoundedElement
+public sealed class MuTextBlock : MuContentBlock
 {
 	private readonly IntPtr _FirstLine, _LastLine;
 

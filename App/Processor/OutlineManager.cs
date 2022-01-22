@@ -14,13 +14,12 @@ namespace PDFPatcher.Processor;
 internal static class OutlineManager
 {
 	// modifed: added split array for action parameters
-	private static readonly char[] __ActionSplitters = { ' ', '\t', '\r', '\n' };
 	private static readonly char[] __fullWidthNums = "０１２３４５６７８９".ToCharArray();
 	private static readonly char[] __halfWidthNums = "0123456789".ToCharArray();
 	private static readonly char[] __cmdIdentifiers = { '=', '﹦', '＝', ':', '：' };
 	private static readonly char[] __pageLabelSeparators = { ';', '；', ',', '，', ' ' };
 
-	private static void BookmarkDepth(PdfReader reader, PdfActionExporter exporter, PdfDictionary outline,
+	private static void BookmarkDepth(PdfActionExporter exporter, PdfDictionary outline,
 		Dictionary<int, int> pageRefMap, XmlWriter target) {
 		while (outline != null) {
 			target.WriteStartElement(Constants.Bookmark);
@@ -57,7 +56,7 @@ internal static class OutlineManager
 
 			PdfDictionary first = outline.Locate<PdfDictionary>(PdfName.FIRST);
 			if (first != null) {
-				BookmarkDepth(reader, exporter, first, pageRefMap, target);
+				BookmarkDepth(exporter, first, pageRefMap, target);
 			}
 
 			outline = outline.Locate<PdfDictionary>(PdfName.NEXT);
@@ -84,9 +83,7 @@ internal static class OutlineManager
 		doc.AppendElement(Constants.DocumentBookmark);
 		using (XmlWriter w = doc.DocumentElement.CreateNavigator().AppendChild()) {
 			PdfActionExporter a = new(unitConverter);
-			BookmarkDepth(
-				reader,
-				a,
+			BookmarkDepth(a,
 				(PdfDictionary)PdfReader.GetPdfObjectRelease(outlines.Get(PdfName.FIRST)),
 				pages,
 				w);
@@ -213,80 +210,6 @@ internal static class OutlineManager
 				outline = null;
 			}
 		}
-	}
-
-	public static string EscapeBinaryString(string s) {
-		StringBuilder buf = new();
-		char[] cc = s.ToCharArray();
-		int len = cc.Length;
-		for (int k = 0; k < len; ++k) {
-			char c = cc[k];
-			switch (c) {
-				case < ' ': {
-						buf.Append('\\');
-						int v = c;
-						string octal = "";
-						do {
-							int x = v % 8;
-							octal = x.ToText() + octal;
-							v /= 8;
-						} while (v > 0);
-
-						buf.Append(octal.PadLeft(3, '0'));
-						break;
-					}
-				case '\\':
-					buf.Append("\\\\");
-					break;
-				default:
-					buf.Append(c);
-					break;
-			}
-		}
-
-		return buf.ToString();
-	}
-
-	public static string UnEscapeBinaryString(string s) {
-		StringBuilder buf = new();
-		char[] cc = s.ToCharArray();
-		int len = cc.Length;
-		for (int k = 0; k < len; ++k) {
-			char c = cc[k];
-			if (c != '\\') {
-				buf.Append(c);
-				continue;
-			}
-
-			if (++k >= len) {
-				buf.Append('\\');
-				break;
-			}
-
-			c = cc[k];
-			if (c is >= '0' and <= '7') {
-				int n = c - '0';
-				++k;
-				for (int j = 0; j < 2 && k < len; ++j) {
-					c = cc[k];
-					if (c is >= '0' and <= '7') {
-						++k;
-						n = (n * 8) + c - '0';
-					}
-					else {
-						break;
-					}
-				}
-
-				--k;
-				buf.Append((char)n);
-			}
-			else {
-				buf.Append(c);
-			}
-		}
-
-		return buf.ToString();
 	}
 
 	internal static void ImportSimpleBookmarks(TextReader source, PdfInfoXmlDocument target) {

@@ -85,12 +85,6 @@ public partial class AppOptionForm : Form, IResettableControl
 		}
 	}
 
-	private void _BrowsePdfReaderPathButton_Click(object sender, EventArgs e) {
-		//if (_BrowsePdfReaderDialog.ShowDialog () == DialogResult.OK) {
-		//    ContextData.PdfReaderPath = _PdfReaderPathBox.Text = _BrowsePdfReaderDialog.FileName;
-		//}
-	}
-
 	private void _CreateShortcutButton_Click(object sender, EventArgs e) {
 		CommonCommands.CreateShortcut();
 	}

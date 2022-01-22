@@ -42,10 +42,6 @@ public sealed partial class EditorControl : FunctionControl, IDocumentEditor, IE
 		}
 	}
 
-	public void CloseDocument() {
-		_ViewerBox.CloseFile();
-	}
-
 	public void Reopen() {
 		_ViewerBox.Reopen();
 	}
@@ -129,7 +125,7 @@ public sealed partial class EditorControl : FunctionControl, IDocumentEditor, IE
 		di.Insert(0,
 			new ToolStripMenuItem { Name = Constants.Coordinates.Unchanged, Text = Constants.Coordinates.Unchanged });
 		_ChangeZoomRate.DropDownItemClicked += _MainToolbar_ItemClicked;
-		_ChangeCase.DropDownItemClicked += (s, args) => {
+		_ChangeCase.DropDownItemClicked += (_, args) => {
 			args.ClickedItem.HidePopupMenu();
 			_EditMenu.Hide();
 			int i = Array.IndexOf(SetCaseProcessor.CaseNames, args.ClickedItem.Text);
@@ -144,23 +140,23 @@ public sealed partial class EditorControl : FunctionControl, IDocumentEditor, IE
 		_SetOpenStatus.DropDownItemClicked += _MainToolbar_ItemClicked;
 
 		AppContext.MainForm.SetTooltip(_IncludeDecendantBox, "选中此选项后，加粗、斜体等其它修改书签的操作将应用到选中书签的子书签");
-		_IncludeDecendantBox.CheckedChanged += (s, args) => {
+		_IncludeDecendantBox.CheckedChanged += (_, _) => {
 			_BookmarkBox.OperationAffectsDescendants = _IncludeDecendantBox.Checked;
 		};
 
-		_UndoButton.DropDownOpening += (s, args) => {
+		_UndoButton.DropDownOpening += (_, _) => {
 			ToolStripItemCollection i = _UndoMenu.Items;
 			i.Clear();
 			foreach (string item in _controller.Model.Undo.GetActionNames(16)) {
 				i.Add(item);
 			}
 		};
-		_UndoButton.DropDownItemClicked += (s, args) => {
+		_UndoButton.DropDownItemClicked += (_, args) => {
 			int i = args.ClickedItem.Owner.Items.IndexOf(args.ClickedItem) + 1;
 			_controller.Undo(i);
 		};
 		QuickSelectCommand.RegisterMenuItems(_QuickSelect.DropDownItems);
-		_BookmarkBox.CellClick += (s, args) => {
+		_BookmarkBox.CellClick += (_, args) => {
 			if (args.ColumnIndex != 0 || args.ClickCount > 1 || ModifierKeys != Keys.None) {
 				return;
 			}
@@ -186,7 +182,7 @@ public sealed partial class EditorControl : FunctionControl, IDocumentEditor, IE
 			//        break;
 			//}
 		};
-		_BookmarkBox.CellEditStarting += (s, args) => {
+		_BookmarkBox.CellEditStarting += (_, args) => {
 			if (args.Column.Index == 0) {
 				ScrollToSelectedBookmarkLocation();
 			}
@@ -195,7 +191,7 @@ public sealed partial class EditorControl : FunctionControl, IDocumentEditor, IE
 			((TreeListView)s).SelectedIndex = args.Item;
 			ScrollToSelectedBookmarkLocation();
 		};
-		_CurrentPageBox.KeyUp += (s, args) => {
+		_CurrentPageBox.KeyUp += (_, args) => {
 			if (args.KeyCode != Keys.Enter) {
 				return;
 			}
@@ -207,13 +203,13 @@ public sealed partial class EditorControl : FunctionControl, IDocumentEditor, IE
 			_ViewerBox.CurrentPageNumber = p;
 			_CurrentPageBox.Text = p.ToText();
 		};
-		_ViewerButton.DropDownOpening += (s, args) => {
+		_ViewerButton.DropDownOpening += (_, _) => {
 			SetupMenu(_ViewerButton.DropDownItems);
 		};
-		_OcrMenu.DropDownItemClicked += (s, args) => {
+		_OcrMenu.DropDownItemClicked += (_, args) => {
 			_ViewerBox.OcrLanguage = (int)(args.ClickedItem.Tag ?? 0);
 		};
-		_OcrMenu.DropDownOpening += (s, args) => {
+		_OcrMenu.DropDownOpening += (_, _) => {
 			ToolStripItemCollection m = _OcrMenu.DropDownItems;
 			if (m.Count == 1) {
 				for (int i = 0; i < Constants.Ocr.LangIDs.Length; i++) {
@@ -229,17 +225,17 @@ public sealed partial class EditorControl : FunctionControl, IDocumentEditor, IE
 			}
 		};
 		_ZoomBox.Text = Constants.DestinationAttributes.ViewType.FitH;
-		_ZoomBox.TextChanged += (s, args) => {
+		_ZoomBox.TextChanged += (_, _) => {
 			_ViewerBox.LiteralZoom = _ZoomBox.Text;
 		};
 		_ViewerBox.Enabled = false;
-		_ViewerBox.DocumentLoaded += (s, args) => {
+		_ViewerBox.DocumentLoaded += (_, _) => {
 			_CurrentPageBox.ToolTipText = "文档共" + _ViewerBox.Document.PageCount + "页";
 		};
-		_ViewerBox.ZoomChanged += (s, args) => {
+		_ViewerBox.ZoomChanged += (_, _) => {
 			_ZoomBox.ToolTipText = "当前显示比例：" + (_ViewerBox.ZoomFactor * 100).ToInt32() + "%";
 		};
-		_ViewerBox.PageChanged += (s, args) => {
+		_ViewerBox.PageChanged += (_, _) => {
 			_CurrentPageBox.Text = _ViewerBox.CurrentPageNumber.ToText();
 			//var b = _ViewerBox.PageBound;
 			//_PageInfoBox.Text = string.Concat ("尺寸：", Math.Round (b.Width, 1).ToText (), " * ", Math.Round (b.Height, 1).ToText ());
@@ -253,7 +249,7 @@ public sealed partial class EditorControl : FunctionControl, IDocumentEditor, IE
 		//	}
 		//};
 		//_ViewerBox.MouseMode = Editor.MouseMode.Selection;
-		_ViewerBox.MouseMove += (s, args) => {
+		_ViewerBox.MouseMove += (_, args) => {
 			if (_ViewerBox.FirstPage == 0) {
 				return;
 			}
@@ -275,7 +271,7 @@ public sealed partial class EditorControl : FunctionControl, IDocumentEditor, IE
 		_ViewerBox.MouseClick += _ViewBox_MouseClick;
 		_ViewerToolbar.Enabled = false;
 
-		Disposed += (s, args) => { _controller.Destroy(); };
+		Disposed += (_, _) => { _controller.Destroy(); };
 	}
 
 	private void ScrollToSelectedBookmarkLocation() {

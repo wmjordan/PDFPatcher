@@ -182,7 +182,7 @@ internal sealed class AutoBookmarkCreator
 
 						if (ig != null) {
 							bool ignore = false;
-							foreach (MatchPattern.IMatcher rg in ig.Where(rg => rg.Matches(t))) {
+							foreach (MatchPattern.IMatcher unused in ig.Where(rg => rg.Matches(t))) {
 								ignore = true;
 							}
 
@@ -395,7 +395,6 @@ internal sealed class AutoBookmarkCreator
 		List<TextLine> ll = new();
 		// 同行合并宽度最小值
 		float cw = pageBox.Width / 6;
-		float ch = pageBox.Height / 6;
 
 		int[] dirCount = new int[4];
 		// 遍历识别所得的各 TextInfo，使用最小距离聚类方法将其聚类为行
@@ -484,7 +483,6 @@ internal sealed class AutoBookmarkCreator
 		List<TextRegion> ll = new();
 		// 同行合并宽度最小值
 		float cw = pageBox.Width / 6;
-		float ch = pageBox.Height / 6;
 
 		// 遍历识别所得的各 TextInfo，使用最小距离聚类方法将其聚类为行
 		foreach (TextLine item in textLines) {
@@ -584,8 +582,6 @@ internal sealed class AutoBookmarkCreator
 
 	private sealed class TextToBookmarkProcessor : PdfContentStreamProcessor
 	{
-		private const string __AddSpaceAfterCharacters = ":.,\"'?!)]};";
-		private const string __InsertSpaceBeforeCharacters = "\"'([{";
 		private readonly AutoBookmarkContext _context;
 		private readonly float _fontSizeThreshold;
 		private readonly LevelProcessor _levelProcessor;

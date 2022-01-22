@@ -95,38 +95,6 @@ internal static class ValueHelper
 		return toValues[i];
 	}
 
-	public static TMapped MapValue<TValue, TMapped>(TValue input, IEnumerable<TValue> fromValues,
-		IEnumerable<TMapped> toValues, TMapped defaultValue) {
-		if (fromValues == null) {
-			return defaultValue;
-		}
-
-		if (toValues == null) {
-			return defaultValue;
-		}
-
-		int i = 0;
-		int j = 0;
-		EqualityComparer<TValue> c = EqualityComparer<TValue>.Default;
-		foreach (TValue x in fromValues) {
-			if (c.Equals(input, x)) {
-				foreach (TMapped y in toValues) {
-					if (i == j) {
-						return y;
-					}
-
-					j++;
-				}
-
-				return defaultValue;
-			}
-
-			i++;
-		}
-
-		return defaultValue;
-	}
-
 	public static IEnumerable ForEach<TItem>(this IEnumerable collection, Action<TItem> itemHandler) {
 		if (collection == null || itemHandler == null) {
 			return collection;
@@ -336,11 +304,6 @@ internal static class ValueHelper
 	}
 
 	[DebuggerStepThrough]
-	public static long ToInt64(this float value) {
-		return (long)(value > 0 ? value + 0.5f : value - 0.5f);
-	}
-
-	[DebuggerStepThrough]
 	public static long ToInt64(this double value) {
 		return (long)(value > 0 ? value + 0.5d : value - 0.5d);
 	}
@@ -354,12 +317,6 @@ internal static class ValueHelper
 	[DebuggerStepThrough]
 	public static int ToInt32(this string value, int defaultValue) {
 		return value.TryParse(out int i) ? i : defaultValue;
-	}
-
-	[DebuggerStepThrough]
-	public static long ToInt64(this string value) {
-		value.TryParse(out long i);
-		return i;
 	}
 
 	[DebuggerStepThrough]
@@ -484,10 +441,6 @@ internal static class ValueHelper
 
 	public static string ToHexBinString(this byte[] source) {
 		return InternalToHexBinString(source, true, '\0', 0, int.MaxValue);
-	}
-
-	public static string ToHexBinString(this byte[] source, bool upperCaseHex, char separator, int offset, int count) {
-		return InternalToHexBinString(source, upperCaseHex, separator, offset, count);
 	}
 
 	private static unsafe string InternalToHexBinString(byte[] source, bool upperCaseHex, char separator, int offset,

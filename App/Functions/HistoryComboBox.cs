@@ -8,7 +8,7 @@ public class HistoryComboBox : ComboBox
 {
 	public HistoryComboBox() {
 		MaxItemCount = 16;
-		DropDown += (s, args) => {
+		DropDown += (_, _) => {
 			Items.Clear();
 			if (Contents == null) {
 				return;

@@ -26,7 +26,7 @@ internal sealed class PagePropertiesCommand : IEditorCommand
 		}
 
 		_dialog = new PagePropertyForm();
-		_dialog.Deactivate += (s, args) => ((Form)s).Visible = false;
+		_dialog.Deactivate += (s, _) => ((Form)s).Visible = false;
 		return _dialog;
 	}
 }

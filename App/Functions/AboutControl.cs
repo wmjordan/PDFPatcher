@@ -63,22 +63,6 @@ internal sealed partial class AboutControl : HtmlPageControl
 
 	public string AssemblyVersion => Application.ProductVersion;
 
-	public string AssemblyDescription {
-		get {
-			object[] attributes = Assembly.GetExecutingAssembly()
-				.GetCustomAttributes(typeof(AssemblyDescriptionAttribute), false);
-			return attributes.Length == 0 ? string.Empty : ((AssemblyDescriptionAttribute)attributes[0]).Description;
-		}
-	}
-
-	public string AssemblyProduct {
-		get {
-			object[] attributes = Assembly.GetExecutingAssembly()
-				.GetCustomAttributes(typeof(AssemblyProductAttribute), false);
-			return attributes.Length == 0 ? string.Empty : ((AssemblyProductAttribute)attributes[0]).Product;
-		}
-	}
-
 	public string AssemblyCopyright {
 		get {
 			object[] attributes = Assembly.GetExecutingAssembly()

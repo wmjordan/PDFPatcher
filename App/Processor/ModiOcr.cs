@@ -251,9 +251,10 @@ public class ModiOcr
 		return t == null ? null : Activator.CreateInstance(t);
 	}
 
-	private static object Call(object instance, string method, params object[] parameters) {
+	private static void Call(object instance, string method, params object[] parameters) {
 		try {
-			return instance.GetType().InvokeMember(method, BindingFlags.InvokeMethod, null, instance, parameters);
+			instance.GetType().InvokeMember(method, BindingFlags.InvokeMethod, null, instance, parameters);
+			return;
 		}
 		catch (Exception ex) {
 			if (ex.InnerException != null) {

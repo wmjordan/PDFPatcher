@@ -43,7 +43,6 @@ internal sealed class ImageRecompressor : IPageProcessor
 
 	public bool Process(PageProcessorContext context) {
 		Tracker.IncrementProgress(10);
-		ImageExtractor _imgExp = new(_imgExpOption, context.Pdf);
 		PdfDictionary images = context.Page.Locate<PdfDictionary>(PdfName.RESOURCES, PdfName.XOBJECT);
 		if (images == null) {
 			return false;

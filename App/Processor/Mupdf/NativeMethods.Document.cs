@@ -10,9 +10,6 @@ internal static partial class NativeMethods
 {
 	#region Object creation
 
-	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_new_null")]
-	internal static extern IntPtr NewNull(ContextHandle ctx, DocumentHandle doc);
-
 	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_new_bool")]
 	internal static extern IntPtr NewBoolean(ContextHandle ctx, DocumentHandle doc, int boolean);
 
@@ -32,9 +29,6 @@ internal static partial class NativeMethods
 
 	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_new_array")]
 	internal static extern IntPtr NewArray(ContextHandle ctx, DocumentHandle doc, int initCap);
-
-	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_new_dict")]
-	internal static extern IntPtr NewDictionary(ContextHandle ctx, DocumentHandle doc, int initCap);
 
 	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_new_indirect")]
 	internal static extern IntPtr NewIndirectReference(ContextHandle ctx, DocumentHandle doc, int num, int gen);
@@ -59,20 +53,8 @@ internal static partial class NativeMethods
 	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_count_pages")]
 	internal static extern int CountPages(ContextHandle ctx, DocumentHandle doc);
 
-	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_flush_warnings")]
-	internal static extern void FlushWarnings(ContextHandle ctx);
-
-	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_open_document", CharSet = CharSet.Unicode)]
-	internal static extern DocumentHandle OpenPdfDocument(ContextHandle ctx, string fileName);
-
 	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_needs_password")]
 	internal static extern bool NeedsPdfPassword(ContextHandle ctx, DocumentHandle doc);
-
-	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_aa_level")]
-	internal static extern int GetAntiAliasLevel(ContextHandle ctx);
-
-	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_set_aa_level")]
-	internal static extern void SetAntiAliasLevel(ContextHandle ctx, int level);
 
 	#endregion
 
@@ -147,9 +129,6 @@ internal static partial class NativeMethods
 		return IntPtr.Zero;
 	}
 
-	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_font_ft_face")]
-	internal static extern IntPtr GetFontFace(ContextHandle ctx, IntPtr font);
-
 	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_font_flags")]
 	internal static extern MuFontFlags GetFontFlags(IntPtr font);
 
@@ -163,15 +142,9 @@ internal static partial class NativeMethods
 
 	#region Stream and file
 
-	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_buffer_storage")]
-	internal static extern int BufferStorage(ContextHandle ctx, IntPtr buffer, ref IntPtr data);
-
 	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_open_faxd")]
 	internal static extern IntPtr DecodeCcittFax(ContextHandle ctx, StreamHandle stmChain, int k, int endOfLine,
 		int encodedByteAlign, int columns, int rows, int endOfBlock, int blackIs1);
-
-	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_drop_buffer")]
-	internal static extern void DropBuffer(ContextHandle ctx, IntPtr buffer);
 
 	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_tell")]
 	internal static extern int GetPosition(ContextHandle ctx, StreamHandle stm);
@@ -187,16 +160,10 @@ internal static partial class NativeMethods
 	internal static extern IntPtr OpenFile(ContextHandle ctx, string fileName);
 
 	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_open_memory")]
-	internal static extern IntPtr OpenMemory(ContextHandle ctx, byte[] data, int len);
-
-	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_open_memory")]
 	internal static extern IntPtr OpenMemory(ContextHandle ctx, IntPtr data, int len);
 
 	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_read")]
 	internal static extern int Read(ContextHandle ctx, StreamHandle stm, byte[] buffer, int len);
-
-	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_read_all")]
-	internal static extern IntPtr ReadAll(ContextHandle ctx, StreamHandle stm, int initial);
 
 	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_seek")]
 	internal static extern void Seek(ContextHandle ctx, StreamHandle stm, int offset, int whence);

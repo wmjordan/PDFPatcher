@@ -46,7 +46,7 @@ public partial class RenameControl : FunctionControl
 		_TargetPdfFile.FileMacroMenu.LoadStandardInfoMacros();
 		_TargetPdfFile.FileMacroMenu.LoadStandardSourceFileMacros();
 		_TargetPdfFile.BrowseForFile += FileControl_BrowseForFile;
-		_TargetPdfFile.TargetFileChangedByBrowseButton += (s, args) => {
+		_TargetPdfFile.TargetFileChangedByBrowseButton += (_, args) => {
 			int i;
 			string f = _TargetPdfFile.FileDialog.FileName;
 			if (_ItemList.Items.Count <= 1 || (i = f.LastIndexOf(Path.DirectorySeparatorChar)) == -1) {
@@ -65,20 +65,20 @@ public partial class RenameControl : FunctionControl
 		_listHelper.SetupHotkeys();
 		FileListHelper.SetupCommonPdfColumns(_AuthorColumn, _KeywordsColumn, _SubjectColumn, _TitleColumn,
 			_PageCountColumn, _NameColumn, _FolderColumn);
-		_RefreshInfoButton.ButtonClick += (s, args) => _listHelper.RefreshInfo(AppContext.Encodings.DocInfoEncoding);
+		_RefreshInfoButton.ButtonClick += (_, _) => _listHelper.RefreshInfo(AppContext.Encodings.DocInfoEncoding);
 		_RefreshInfoButton.DropDown = _RefreshInfoMenu;
 		foreach (string item in Constants.Encoding.EncodingNames) {
 			_RefreshInfoMenu.Items.Add(item);
 		}
 
-		_RefreshInfoMenu.ItemClicked += (s, args) => _listHelper.RefreshInfo(ValueHelper.MapValue(args.ClickedItem.Text,
+		_RefreshInfoMenu.ItemClicked += (_, args) => _listHelper.RefreshInfo(ValueHelper.MapValue(args.ClickedItem.Text,
 			Constants.Encoding.EncodingNames, Constants.Encoding.Encodings));
 		_AddFilesButton.DropDownOpening += FileListHelper.OpenPdfButtonDropDownOpeningHandler;
-		_AddFilesButton.DropDownItemClicked += (s, args) => {
+		_AddFilesButton.DropDownItemClicked += (_, args) => {
 			args.ClickedItem.Owner.Hide();
 			ExecuteCommand(Commands.OpenFile, args.ClickedItem.ToolTipText);
 		};
-		RecentFileItemClicked += (s, args) => ExecuteCommand(Commands.OpenFile, args.ClickedItem.ToolTipText);
+		RecentFileItemClicked += (_, args) => ExecuteCommand(Commands.OpenFile, args.ClickedItem.ToolTipText);
 	}
 
 	public override void SetupCommand(ToolStripItem item) {
@@ -130,12 +130,12 @@ public partial class RenameControl : FunctionControl
 			return;
 		}
 
-		IEnumerable<SourceItem> files = GetSourceItemList();
+		GetSourceItemList();
 		_TargetPdfFile.FileList.AddHistoryItem();
 
 		AppContext.MainForm.ResetWorker();
 		BackgroundWorker worker = AppContext.MainForm.GetWorker();
-		worker.DoWork += (dummy, arg) => {
+		worker.DoWork += (_, _) => {
 			List<SourceItem.Pdf> items = _listHelper.GetSourceItems<SourceItem.Pdf>(false);
 			Worker.RenameFiles(items, targetPdfFile, _KeepSourceFileBox.Checked);
 		};
@@ -162,7 +162,7 @@ public partial class RenameControl : FunctionControl
 		_AddDocumentWorker.RunWorkerAsync(files);
 	}
 
-	private IEnumerable<SourceItem> GetSourceItemList() {
+	private void GetSourceItemList() {
 		int l = _ItemList.GetItemCount();
 		List<SourceItem> files = new(l);
 		for (int i = 0; i < l; i++) {
@@ -174,8 +174,6 @@ public partial class RenameControl : FunctionControl
 
 			files.Add(item);
 		}
-
-		return files;
 	}
 
 	private void _SortMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e) {

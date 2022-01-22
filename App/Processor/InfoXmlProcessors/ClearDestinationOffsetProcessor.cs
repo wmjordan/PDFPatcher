@@ -2,26 +2,13 @@
 
 namespace PDFPatcher.Processor;
 
-internal sealed class ClearDestinationOffsetProcessor : IPdfInfoXmlProcessor,
-	IPdfInfoXmlProcessor<ClearDestinationOffsetProcessor.PositionType>
+internal sealed class ClearDestinationOffsetProcessor : IPdfInfoXmlProcessor<ClearDestinationOffsetProcessor.PositionType>
 {
 	public enum PositionType { X, Y, XY }
 
 	private string _name;
 
 	private PositionType _type;
-
-	public ClearDestinationOffsetProcessor() {
-	}
-
-	public ClearDestinationOffsetProcessor(PositionType type) {
-		Parameter = type;
-		_name = type switch {
-			PositionType.X => "横",
-			PositionType.Y => "纵",
-			_ => string.Empty
-		};
-	}
 
 	public PositionType Parameter {
 		get => _type;

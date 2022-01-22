@@ -78,18 +78,6 @@ internal static class PdfModelHelper
 		return PdfReader.GetPdfObject(pdfRef) as T;
 	}
 
-	internal static bool ValueIs(this PdfNumber obj, double value) {
-		return obj != null && obj.DoubleValue == value;
-	}
-
-	internal static bool ValueIs(this PdfBoolean obj, bool value) {
-		return obj != null && obj.BooleanValue == value;
-	}
-
-	internal static bool ValueIs(this PdfObject obj, PdfName value) {
-		return value.Equals(obj);
-	}
-
 	internal static int TryGetInt32(this PdfDictionary source, PdfName key, int defaultValue) {
 		PdfNumber w = source.GetAsNumber(key);
 		return w?.IntValue ?? defaultValue;

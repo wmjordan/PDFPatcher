@@ -39,7 +39,7 @@ public partial class ExtractPageControl : FunctionControl, IResettableControl
 	#endregion
 
 	private void ExtractPageControl_Load(object sender, EventArgs e) {
-		_SeparatingModeBox.SelectedIndexChanged += (s, args) => {
+		_SeparatingModeBox.SelectedIndexChanged += (_, _) => {
 			_NumberFileNamesBox.Text = _SeparatingModeBox.SelectedIndex == 1 ? "在文件名前面添加编号" : "第一个文件名也添加编号";
 			_SeperateByPageNumberBox.Enabled = _SeparatingModeBox.SelectedIndex == 2;
 		};
@@ -76,7 +76,7 @@ public partial class ExtractPageControl : FunctionControl, IResettableControl
 
 		AppContext.MainForm.ResetWorker();
 		BackgroundWorker worker = AppContext.MainForm.GetWorker();
-		worker.DoWork += (dummy, arg) => {
+		worker.DoWork += (_, arg) => {
 			object[] a = arg.Argument as object[];
 			string[] files = a[0] as string[];
 			string t = a[1] as string;

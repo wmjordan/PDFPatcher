@@ -11,7 +11,6 @@ internal static class Commands
 	internal const string Selection = "_Select";
 
 	internal const string Help = "_Help";
-	internal static readonly string[] TopMenuItems = { File, Tools, Selection };
 	internal static readonly string[] CommonSelectionCommands = { SelectAllItems, SelectNone, InvertSelectItem };
 
 	internal static readonly HashSet<string> DefaultDisabledItems = new(
@@ -72,8 +71,6 @@ internal static class Commands
 	#region Options menu
 
 	internal const string PatcherOptions = "_PatcherOptions";
-	internal const string MergerOptions = "_MergerOptions";
-	internal const string InfoFileOptions = "_InfoFileOptions";
 
 	#endregion
 

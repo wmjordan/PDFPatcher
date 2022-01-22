@@ -16,7 +16,7 @@ internal static class FileHelper
 
 	public static bool HasFileNameMacro(string fileName) {
 		char c = '<';
-		foreach (char item in fileName.Where(item => item == c)) {
+		foreach (char unused in fileName.Where(item => item == c)) {
 			if (c == '>') {
 				return true;
 			}

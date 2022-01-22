@@ -16,7 +16,7 @@ public partial class RenderImageControl : FunctionControl, IResettableControl
 	public RenderImageControl() {
 		InitializeComponent();
 		//this.Icon = Common.FormHelper.ToIcon (Properties.Resources.RenderImage);
-		_SourceFileControl.BrowseSelectedFiles += (sender, e) => {
+		_SourceFileControl.BrowseSelectedFiles += (_, _) => {
 			if (_AutoOutputDirBox.Checked == false) {
 				return;
 			}
@@ -27,10 +27,10 @@ public partial class RenderImageControl : FunctionControl, IResettableControl
 					Path.GetFileNameWithoutExtension(sourceFile));
 			}
 		};
-		_AutoOutputDirBox.CheckedChanged += (sender, e) => {
+		_AutoOutputDirBox.CheckedChanged += (_, _) => {
 			AppContext.ImageRenderer.AutoOutputFolder = _AutoOutputDirBox.Checked;
 		};
-		_ResolutionBox.TextChanged += (s, args) => {
+		_ResolutionBox.TextChanged += (_, _) => {
 			float v = _ResolutionBox.Text.ToSingle();
 			_ResolutionBox.Text = v switch {
 				<= 0 => "72",
@@ -38,8 +38,8 @@ public partial class RenderImageControl : FunctionControl, IResettableControl
 				_ => _ResolutionBox.Text
 			};
 		};
-		_ExtractPageImageWidthBox.GotFocus += (s, args) => { _SpecificWidthBox.Checked = true; };
-		_ExtractPageRatioBox.GotFocus += (s, args) => { _SpecificRatioBox.Checked = true; };
+		_ExtractPageImageWidthBox.GotFocus += (_, _) => { _SpecificWidthBox.Checked = true; };
+		_ExtractPageRatioBox.GotFocus += (_, _) => { _SpecificRatioBox.Checked = true; };
 	}
 
 	public override string FunctionName => "转换页面为图片";
@@ -143,7 +143,7 @@ public partial class RenderImageControl : FunctionControl, IResettableControl
 
 		AppContext.MainForm.ResetWorker();
 		BackgroundWorker worker = AppContext.MainForm.GetWorker();
-		worker.DoWork += (dummy, arg) => {
+		worker.DoWork += (_, arg) => {
 			object[] a = arg.Argument as object[];
 			string[] files = a[0] as string[];
 			ImageRendererOptions options = a[1] as ImageRendererOptions;
@@ -164,7 +164,7 @@ public partial class RenderImageControl : FunctionControl, IResettableControl
 				Worker.RenderPages(files[0], options);
 			}
 		};
-		worker.RunWorkerCompleted += (dummy, arg) => {
+		worker.RunWorkerCompleted += (_, _) => {
 			AppContext.ImageExtracter.OutputPath = _ExtractPageRangeBox.Text;
 		};
 		ImageRendererOptions option = AppContext.ImageRenderer;
@@ -189,10 +189,6 @@ public partial class RenderImageControl : FunctionControl, IResettableControl
 		option.VerticalFlipImages = _VerticalFlipImageBox.Checked;
 		worker.RunWorkerAsync(
 			new object[] { AppContext.SourceFiles, option });
-	}
-
-	private void _GoToImportImageLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-		AppContext.MainForm.SelectFunctionList(Function.Patcher);
 	}
 
 	private void _FileNameMaskBox_TextChanged(object sender, EventArgs e) {

@@ -20,9 +20,6 @@ internal readonly struct PdfStructInfo
 
 	public string ImageKey { get; }
 
-	public PdfStructInfo(string name, bool isKeyObject) : this(name, isKeyObject, false, null, null) {
-	}
-
 	public PdfStructInfo(string name, bool isKeyObject, bool isRequired, string description, string imageKey) {
 		Name = name;
 		IsKeyObject = isKeyObject;

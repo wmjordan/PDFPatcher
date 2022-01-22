@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
@@ -104,25 +103,6 @@ internal static class BitmapHelper
 	}
 
 	/// <summary>
-	///     调整 <paramref name="source" /> 的尺寸。
-	/// </summary>
-	/// <param name="source">需要调整尺寸的 <see cref="Image" />。</param>
-	/// <param name="size">新尺寸。</param>
-	/// <param name="highQuality">是否采用插值方式调整尺寸。</param>
-	/// <returns>调整后的新 <see cref="Bitmap" />。</returns>
-	public static Bitmap ResizeImage(this Image source, Size size, bool highQuality) {
-		Bitmap b = new(size.Width, size.Height);
-		using Graphics g = Graphics.FromImage(b);
-		if (highQuality) {
-			g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-		}
-
-		g.DrawImage(source, 0, 0, size.Width, size.Height);
-
-		return b;
-	}
-
-	/// <summary>
 	///     按文件名的扩展名保存图像文件为对应的格式。
 	/// </summary>
 	/// <param name="image">需要保存的 <see cref="Image" />。</param>
@@ -220,10 +200,6 @@ internal static class BitmapHelper
 		source.UnlockBits(sourceData);
 		result.UnlockBits(targetData);
 		return result;
-	}
-
-	public static Bitmap ToMonochrome(this Bitmap bitmap) {
-		return CopyToBpp(bitmap, 1);
 	}
 
 	/// <summary>将图像转换为黑白图像。</summary>
@@ -334,153 +310,11 @@ internal static class BitmapHelper
 		return destinationBuffer;
 	}
 
-	/// <summary>
-	///     Copies a bitmap into a 1bpp/8bpp bitmap of the same dimensions, fast
-	/// </summary>
-	/// <param name="b">original bitmap</param>
-	/// <param name="bpp">1 or 8, target bpp</param>
-	/// <returns>a 1bpp copy of the bitmap</returns>
-	/// <remarks>http://www.wischik.com/lu/programmer/1bpp.html</remarks>
-	private static Bitmap CopyToBpp(Bitmap b, int bpp) {
-		if (bpp != 1 && bpp != 8) {
-			throw new ArgumentException("1 or 8", nameof(bpp));
-		}
-
-		// Plan: built into Windows GDI is the ability to convert
-		// bitmaps from one format to another. Most of the time, this
-		// job is actually done by the graphics hardware accelerator card
-		// and so is extremely fast. The rest of the time, the job is done by
-		// very fast native code.
-		// We will call into this GDI functionality from C#. Our plan:
-		// (1) Convert our Bitmap into a GDI hbitmap (ie. copy unmanaged->managed)
-		// (2) Create a GDI monochrome hbitmap
-		// (3) Use GDI "BitBlt" function to copy from hbitmap into monochrome (as above)
-		// (4) Convert the monochrone hbitmap into a Bitmap (ie. copy unmanaged->managed)
-
-		int w = b.Width, h = b.Height;
-		IntPtr hbm = b.GetHbitmap(); // this is step (1)
-									 //
-									 // Step (2): create the monochrome bitmap.
-									 // "BITMAPINFO" is an interop-struct which we define below.
-									 // In GDI terms, it's a BITMAPHEADERINFO followed by an array of two RGBQUADs
-		NativeMethods.BITMAPINFO bmi = new() {
-			biSize = 40, // the size of the BITMAPHEADERINFO struct
-			biWidth = w,
-			biHeight = h,
-			biPlanes = 1, // "planes" are confusing. We always use just 1. Read MSDN for more info.
-			biBitCount = (short)bpp, // ie. 1bpp or 8bpp
-			biCompression =
-				NativeMethods.BI_RGB, // ie. the pixels in our RGBQUAD table are stored as RGBs, not palette indexes
-			biSizeImage = (uint)(((w + 7) & 0xFFFFFFF8) * h / 8),
-			biXPelsPerMeter = 1000000, // not really important
-			biYPelsPerMeter = 1000000 // not really important
-		};
-		// Now for the colour table.
-		uint ncols = (uint)1 << bpp; // 2 colours for 1bpp; 256 colours for 8bpp
-		bmi.biClrUsed = ncols;
-		bmi.biClrImportant = ncols;
-		bmi.cols = new uint[256]; // The structure always has fixed size 256, even if we end up using fewer colours
-		if (bpp == 1) {
-			bmi.cols[0] = MakeRgb(0, 0, 0);
-			bmi.cols[1] = MakeRgb(255, 255, 255);
-		}
-		else {
-			for (int i = 0; i < ncols; i++) {
-				bmi.cols[i] = MakeRgb(i, i, i);
-			}
-		}
-
-		// For 8bpp we've created an palette with just greyscale colours.
-		// You can set up any palette you want here. Here are some possibilities:
-		// greyscale: for (int i=0; i<256; i++) bmi.cols[i]=MAKERGB(i,i,i);
-		// rainbow: bmi.biClrUsed=216; bmi.biClrImportant=216; int[] colv=new int[6]{0,51,102,153,204,255};
-		//          for (int i=0; i<216; i++) bmi.cols[i]=MAKERGB(colv[i/36],colv[(i/6)%6],colv[i%6]);
-		// optimal: a difficult topic: http://en.wikipedia.org/wiki/Color_quantization
-		// 
-		// Now create the indexed bitmap "hbm0"
-		IntPtr hbm0 = NativeMethods.CreateDIBSection(IntPtr.Zero, ref bmi, NativeMethods.DIB_RGB_COLORS, out IntPtr bits0,
-			IntPtr.Zero, 0);
-		//
-		// Step (3): use GDI's BitBlt function to copy from original hbitmap into monocrhome bitmap
-		// GDI programming is kind of confusing... nb. The GDI equivalent of "Graphics" is called a "DC".
-		IntPtr sdc = NativeMethods.GetDC(IntPtr.Zero); // First we obtain the DC for the screen
-													   // Next, create a DC for the original hbitmap
-		IntPtr hdc = NativeMethods.CreateCompatibleDC(sdc);
-		NativeMethods.SelectObject(hdc, hbm);
-		// and create a DC for the monochrome hbitmap
-		IntPtr hdc0 = NativeMethods.CreateCompatibleDC(sdc);
-		NativeMethods.SelectObject(hdc0, hbm0);
-		// Now we can do the BitBlt:
-		NativeMethods.BitBlt(hdc0, 0, 0, w, h, hdc, 0, 0, NativeMethods.SRCCOPY);
-		// Step (4): convert this monochrome hbitmap back into a Bitmap:
-		Bitmap b0 = Image.FromHbitmap(hbm0);
-		//
-		// Finally some cleanup.
-		NativeMethods.DeleteDC(hdc);
-		NativeMethods.DeleteDC(hdc0);
-		NativeMethods.ReleaseDC(IntPtr.Zero, sdc);
-		NativeMethods.DeleteObject(hbm);
-		NativeMethods.DeleteObject(hbm0);
-		//
-		return b0;
-	}
-
-	private static uint MakeRgb(int r, int g, int b) {
-		return (uint)(b & 255) | (uint)((g & 255) << 8) | (uint)((r & 255) << 16);
-	}
-
 	// MuPDF: pixmap.c
 	private static int mul255(int a, int b) {
 		/* see Jim Blinn's book "Dirty Pixels" for how this works */
 		int x = (a * b) + 128;
 		x += x >> 8;
 		return x >> 8;
-	}
-
-	private static class NativeMethods
-	{
-		public const uint BI_RGB = 0;
-		public const uint DIB_RGB_COLORS = 0;
-		public const int SRCCOPY = 0x00CC0020;
-
-		[DllImport("gdi32.dll")]
-		public static extern int BitBlt(IntPtr hdcDst, int xDst, int yDst, int w, int h, IntPtr hdcSrc, int xSrc,
-			int ySrc, int rop);
-
-		[DllImport("gdi32.dll")]
-		public static extern IntPtr CreateCompatibleDC(IntPtr hdc);
-
-		[DllImport("gdi32.dll")]
-		public static extern IntPtr CreateDIBSection(IntPtr hdc, ref BITMAPINFO bmi, uint Usage, out IntPtr bits,
-			IntPtr hSection, uint dwOffset);
-
-		[DllImport("gdi32.dll")]
-		public static extern int DeleteDC(IntPtr hdc);
-
-		[DllImport("gdi32.dll")]
-		public static extern bool DeleteObject(IntPtr hObject);
-
-		[DllImport("user32.dll")]
-		public static extern IntPtr GetDC(IntPtr hwnd);
-
-		[DllImport("user32.dll")]
-		public static extern int ReleaseDC(IntPtr hwnd, IntPtr hdc);
-
-		[DllImport("gdi32.dll")]
-		public static extern IntPtr SelectObject(IntPtr hdc, IntPtr hgdiobj);
-
-		[StructLayout(LayoutKind.Sequential)]
-		public struct BITMAPINFO
-		{
-			public uint biSize;
-			public int biWidth, biHeight;
-			public short biPlanes, biBitCount;
-			public uint biCompression, biSizeImage;
-			public int biXPelsPerMeter, biYPelsPerMeter;
-			public uint biClrUsed, biClrImportant;
-
-			[MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
-			public uint[] cols;
-		}
 	}
 }

@@ -28,8 +28,6 @@ internal class ImageBoxEx : ImageBox
 
 	#region Constants
 
-	private static readonly object _eventDragHandleSizeChanged = new();
-
 	private static readonly object _eventMaximumSelectionSizeChanged = new();
 
 	private static readonly object _eventMinimumSelectionSizeChanged = new();
@@ -59,15 +57,6 @@ internal class ImageBoxEx : ImageBox
 	#endregion
 
 	#region Events
-
-	/// <summary>
-	///     Occurs when the DragHandleSize property value changes
-	/// </summary>
-	[Category("Property Changed")]
-	public event EventHandler DragHandleSizeChanged {
-		add => Events.AddHandler(_eventDragHandleSizeChanged, value);
-		remove => Events.RemoveHandler(_eventDragHandleSizeChanged, value);
-	}
 
 	/// <summary>
 	///     Occurs when the MaximumSelectionSize property value changes
@@ -117,21 +106,6 @@ internal class ImageBoxEx : ImageBox
 
 	[Browsable(false)] public DragHandleCollection DragHandles { get; }
 
-	[Category("Appearance")]
-	[DefaultValue(8)]
-	public virtual int DragHandleSize {
-		get => _dragHandleSize;
-		set {
-			if (_dragHandleSize == value) {
-				return;
-			}
-
-			_dragHandleSize = value;
-
-			OnDragHandleSizeChanged(EventArgs.Empty);
-		}
-	}
-
 	[Browsable(false)]
 	[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 	public bool IsMoving { get; protected set; }
@@ -171,16 +145,6 @@ internal class ImageBoxEx : ImageBox
 	}
 
 	[Browsable(false)] public RectangleF PreviousSelectionRegion { get; protected set; }
-
-	protected Point DragOrigin {
-		get => _dragOrigin;
-		set => _dragOrigin = value;
-	}
-
-	protected Point DragOriginOffset {
-		get => _dragOriginOffset;
-		set => _dragOriginOffset = value;
-	}
 
 	protected DragHandleAnchor ResizeAnchor { get; set; }
 
@@ -233,19 +197,6 @@ internal class ImageBoxEx : ImageBox
 		graphics.DrawLine(outerPen, left, top + 1, left, top + height - 2);
 		graphics.DrawLine(outerPen, left + 1, top + height - 1, left + width - 2, top + height - 1);
 		graphics.DrawLine(outerPen, left + width - 1, top + 1, left + width - 1, top + height - 2);
-	}
-
-	/// <summary>
-	///     Raises the <see cref="DragHandleSizeChanged" /> event.
-	/// </summary>
-	/// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
-	protected virtual void OnDragHandleSizeChanged(EventArgs e) {
-		PositionDragHandles();
-		Invalidate();
-
-		EventHandler handler = (EventHandler)Events[_eventDragHandleSizeChanged];
-
-		handler?.Invoke(this, e);
 	}
 
 	/// <summary>

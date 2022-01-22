@@ -73,7 +73,7 @@ internal static class Worker
 				options.FileMask = ReplaceTargetFileNameMacros(sourceFile, om, pdf);
 			}
 
-			ImageExtractor exp = new(options, pdf);
+			ImageExtractor exp = new(options);
 			foreach (int i in ranges.SelectMany(range => range)) {
 				exp.ExtractPageImages(pdf, i);
 				if (exp.InfoList.Count > 0) {
@@ -242,27 +242,6 @@ internal static class Worker
 		}
 		finally {
 			r.Close();
-		}
-	}
-
-	internal static void ConvertBookmark(string sourceFile, string targetFile) {
-		Tracker.TraceMessage(Tracker.Category.InputFile, sourceFile);
-		Tracker.TraceMessage(Tracker.Category.OutputFile, targetFile);
-		try {
-			PdfInfoXmlDocument infoDoc = new();
-			OutlineManager.ImportSimpleBookmarks(sourceFile, infoDoc);
-			using (XmlWriter w = XmlWriter.Create(targetFile, DocInfoExporter.GetWriterSettings())) {
-				infoDoc.Save(w);
-			}
-
-			Tracker.TraceMessage(Tracker.Category.Alert, "成功转换信息文件到 <<" + targetFile + ">>。");
-		}
-		catch (OperationCanceledException) {
-			Tracker.TraceMessage(Tracker.Category.ImportantMessage, OperationCanceled);
-		}
-		catch (Exception ex) {
-			Tracker.TraceMessage(ex);
-			FormHelper.ErrorBox("在转换书签文件时发生错误：\n" + ex.Message);
 		}
 	}
 

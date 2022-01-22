@@ -45,16 +45,6 @@ public static class PathValue
 		}
 	}
 
-	public static bool ToBoolean(DocumentObject source, IPathValue value) {
-		return value.ValueType switch {
-			PathValueType.Expression => (value as IPathExpression).SelectObject(source) != null,
-			PathValueType.String => (value as PathStringValue).Value.Length > 0,
-			PathValueType.Number => (value as PathNumberValue).Value != 0,
-			PathValueType.Boolean => (value as PathBooleanValue).Value,
-			_ => false
-		};
-	}
-
 
 	private sealed class PathStringValue : IConstantPathValue
 	{
@@ -64,8 +54,6 @@ public static class PathValue
 
 		public string Value { get; }
 		public PathValueType ValueType => PathValueType.String;
-
-		public string LiteralValue => Value;
 	}
 
 	private sealed class PathNumberValue : IConstantPathValue
@@ -76,8 +64,6 @@ public static class PathValue
 
 		public double Value { get; }
 		public PathValueType ValueType => PathValueType.Number;
-
-		public string LiteralValue => Value.ToText();
 	}
 
 	private sealed class PathBooleanValue : IConstantPathValue
@@ -88,7 +74,5 @@ public static class PathValue
 
 		public bool Value { get; }
 		public PathValueType ValueType => PathValueType.Boolean;
-
-		public string LiteralValue => Value.ToString();
 	}
 }

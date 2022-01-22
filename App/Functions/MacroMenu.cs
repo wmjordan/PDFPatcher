@@ -7,7 +7,6 @@ internal sealed class MacroMenu : ContextMenuStrip
 {
 	internal const string InsertText = "插入";
 
-	private readonly TextBox __editOperationWrapper = new();
 	//internal const string Copy = "复制";
 	//internal const string Paste = "粘贴";
 	//internal const string Cut = "剪切";

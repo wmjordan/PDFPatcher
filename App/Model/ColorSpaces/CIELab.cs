@@ -49,12 +49,6 @@ public struct CIELab
 
 	#endregion
 
-	public CIELab(double l, double a, double b) {
-		L = l;
-		A = a;
-		B = b;
-	}
-
 	#region Methods
 
 	public override bool Equals(object obj) {

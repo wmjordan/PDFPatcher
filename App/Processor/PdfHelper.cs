@@ -103,8 +103,6 @@ internal static class PdfHelper
 				throw new BadPasswordException("密码错误，没有权限打开 PDF 文件。");
 			}
 
-			byte[] bytes = Encoding.Default.GetBytes(f.Password);
-
 			return r;
 		}
 	}

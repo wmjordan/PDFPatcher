@@ -23,17 +23,6 @@ internal sealed class DocInfoImporter
 	private readonly ImporterOptions _options;
 	private readonly float _unitFactor;
 
-	/// <summary>
-	///     从 <see cref="XmlDocument" /> 实例创建导入器（支持无信息文件的补丁操作）。
-	/// </summary>
-	/// <param name="options">导入器的选项。</param>
-	/// <param name="infoDoc">包含信息文件的 <see cref="XmlDocument" />。</param>
-	internal DocInfoImporter(ImporterOptions options, PdfInfoXmlDocument infoDoc) {
-		_options = options;
-		_unitFactor = 1;
-		InfoDoc = infoDoc;
-	}
-
 	internal DocInfoImporter(ImporterOptions options, string infoDocFile) {
 		if (string.IsNullOrEmpty(infoDocFile)) {
 			throw new FileNotFoundException("找不到信息文件。");
@@ -992,27 +981,23 @@ internal sealed class DocInfoImporter
 		}
 	}
 
-	private bool ImportPageBox(float[] array, PdfDictionary pdfDict, PdfName pdfName) {
+	private void ImportPageBox(float[] array, PdfDictionary pdfDict, PdfName pdfName) {
 		if (array == null) {
-			return false;
+			return;
 		}
 
 		if (array.Length == 0) {
 			pdfDict.Remove(pdfName);
-			return true;
+			return;
 		}
 
 		if (array.Length != 4) {
-			return false;
+			return;
 		}
 
 		array = Array.ConvertAll(array, a => UnitConverter.ToPoint(a, _unitFactor));
 		pdfDict.Put(pdfName, new PdfArray(array));
-		return true;
-
 	}
-
-	public static float[] ToSingleArray(string value) { return ToSingleArray(value, false); }
 
 	public static float[] ToSingleArray(string value, bool allowNegativeNumber) {
 		if (value == null) {
@@ -1040,10 +1025,6 @@ internal sealed class DocInfoImporter
 
 	public static int[] ToInt32Array(string value) {
 		return ToInt32Array(value, __ValueArraySplitChars, false);
-	}
-
-	public static int[] ToInt32Array(string value, bool allowNegativeNumber) {
-		return ToInt32Array(value, __ValueArraySplitChars, allowNegativeNumber);
 	}
 
 	public static int[] ToInt32Array(string value, char[] separators, bool allowNegativeNumber) {

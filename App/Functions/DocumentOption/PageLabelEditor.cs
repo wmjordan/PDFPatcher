@@ -41,11 +41,11 @@ public partial class PageLabelEditor : UserControl
 			AspectGetter = o => o.Prefix,
 			AspectPutter = (o, v) => o.Prefix = v as string
 		};
-		_PageLabelBox.FormatRow += (s, args) => args.Item.SubItems[0].Text = (args.RowIndex + 1).ToText();
+		_PageLabelBox.FormatRow += (_, args) => args.Item.SubItems[0].Text = (args.RowIndex + 1).ToText();
 		_PageLabelBox.FixEditControlWidth();
 		_PageLabelBox.FullRowSelect = true;
 		_PageLabelBox.LabelEdit = false;
-		_PageLabelBox.CellClick += (s, args) => {
+		_PageLabelBox.CellClick += (_, args) => {
 			if (args.Column != _LabelStyleColumn) {
 				return;
 			}
@@ -54,7 +54,7 @@ public partial class PageLabelEditor : UserControl
 			_LabelStyleMenu.Show(_PageLabelBox, b.Left, b.Bottom);
 		};
 		_LabelBox = new TypedObjectListView<PageLabel>(_PageLabelBox);
-		_LabelStyleMenu.ItemClicked += (s, args) => {
+		_LabelStyleMenu.ItemClicked += (_, args) => {
 			_LabelBox.SelectedObject.Style = args.ClickedItem.Text;
 			_PageLabelBox.RefreshObject(_PageLabelBox.SelectedObject);
 		};

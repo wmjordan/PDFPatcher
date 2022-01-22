@@ -19,13 +19,13 @@ public partial class DocumentFontListForm : Form
 	public DocumentFontListForm() {
 		InitializeComponent();
 		this.SetIcon(Resources.Fonts);
-		Load += (s, args) => {
+		Load += (_, _) => {
 			MinimumSize = Size;
 			if (AppContext.Recent.SourcePdfFiles.HasContent()) {
 				_SourceFileBox.FileList.Text = AppContext.Recent.SourcePdfFiles[0];
 			}
 		};
-		_Worker.ProgressChanged += (s, args) => {
+		_Worker.ProgressChanged += (_, args) => {
 			switch (args.ProgressPercentage) {
 				case < 0:
 					_ProgressBar.Maximum = -args.ProgressPercentage;
@@ -42,7 +42,7 @@ public partial class DocumentFontListForm : Form
 					}
 			}
 		};
-		_Worker.RunWorkerCompleted += (s, args) => {
+		_Worker.RunWorkerCompleted += (_, _) => {
 			_ProgressBar.Value = _ProgressBar.Maximum;
 			if (_pageFonts.HasContent()) {
 				_FontListBox.AddObjects(_pageFonts.Values);
@@ -50,7 +50,7 @@ public partial class DocumentFontListForm : Form
 
 			_ListFontsButton.Enabled = true;
 		};
-		_Worker.DoWork += (s, args) => {
+		_Worker.DoWork += (_, _) => {
 			try {
 				_fontIdNames = new Dictionary<int, string>();
 				_pageFonts = new Dictionary<string, PageFont>();
@@ -126,8 +126,6 @@ public partial class DocumentFontListForm : Form
 			_pageFonts.Add(fn, new PageFont(fn, pageNumber, PdfDocumentFont.HasEmbeddedFont(f)));
 		}
 	}
-
-	private void SetGoal(int goal) { _ProgressBar.Maximum = goal; }
 
 	private void _ListFontsButton_Click(object sender, EventArgs e) {
 		_ProgressBar.Value = 0;

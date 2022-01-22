@@ -41,7 +41,7 @@ public partial class AutoBookmarkControl : FunctionControl, IResettableControl
 		}
 
 		_LevelAdjustmentBox.CellEditUseWholeCell = true;
-		_LevelAdjustmentBox.BeforeSorting += (sender, e) => {
+		_LevelAdjustmentBox.BeforeSorting += (_, e) => {
 			e.Canceled = true;
 		};
 		_LevelAdjustmentBox.DropSink = new RearrangingDropSink(false);
@@ -234,10 +234,6 @@ public partial class AutoBookmarkControl : FunctionControl, IResettableControl
 		if (e.ColumnIndex == _RemovePatternColumn.Index) {
 			_IgnorePatternsBox.Rows.RemoveAt(e.RowIndex);
 		}
-	}
-
-	private void _ImportLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-		AppContext.MainForm.SelectFunctionList(Function.Patcher);
 	}
 
 	private void ControlEvent(object sender, EventArgs e) {

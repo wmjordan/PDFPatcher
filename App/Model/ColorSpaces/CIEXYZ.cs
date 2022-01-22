@@ -10,11 +10,6 @@ public struct CIEXYZ
 	/// </summary>
 	public static readonly CIEXYZ Empty = new();
 
-	/// <summary>
-	///     Gets the CIE D65 (white) structure.
-	/// </summary>
-	public static readonly CIEXYZ D65 = new(0.9505, 1.0, 1.0890);
-
 	#region Fields
 
 	private double x;
@@ -66,12 +61,6 @@ public struct CIEXYZ
 	}
 
 	#endregion
-
-	public CIEXYZ(double x, double y, double z) {
-		this.x = x > 0.9505 ? 0.9505 : x < 0 ? 0 : x;
-		this.y = y > 1.0 ? 1.0 : y < 0 ? 0 : y;
-		this.z = z > 1.089 ? 1.089 : z < 0 ? 0 : z;
-	}
 
 	#region Methods
 

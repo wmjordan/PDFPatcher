@@ -37,21 +37,12 @@ internal sealed class ContextHandle : MuHandle
 		return true;
 	}
 
-	internal PixmapHandle CreatePixmap(ColorSpace colorspace, int width, int height) {
-		return new PixmapHandle(this, FindDeviceColorSpace(colorspace), width, height);
-	}
-
 	internal PixmapHandle CreatePixmap(ColorSpace colorspace, BBox box) {
 		return new PixmapHandle(this, FindDeviceColorSpace(colorspace), box);
 	}
 
 	internal DisplayListHandle CreateDisplayList(Rectangle mediaBox) {
 		return new DisplayListHandle(this, mediaBox);
-	}
-
-	internal PixmapHandle LoadJpeg2000(byte[] data) {
-		IntPtr p = NativeMethods.LoadJpeg2000(this, data, data.Length, IntPtr.Zero);
-		return new PixmapHandle(this, p);
 	}
 
 	private IntPtr FindDeviceColorSpace(ColorSpace colorspace) {
@@ -123,10 +114,6 @@ internal sealed class StreamHandle : MuHandle
 
 		return true;
 	}
-
-	internal void CloseStream() {
-		NativeMethods.DropStream(Context, handle);
-	}
 }
 
 internal sealed class DeviceHandle : MuHandle
@@ -141,18 +128,8 @@ internal sealed class DeviceHandle : MuHandle
 	}
 
 	[ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
-	internal DeviceHandle(ContextHandle context, ref Rectangle rectangle)
-		: this(context, NativeMethods.NewBBoxDevice(context, ref rectangle)) {
-	}
-
-	[ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
 	internal DeviceHandle(ContextHandle context, PixmapHandle pixmap, Matrix matrix)
 		: this(context, NativeMethods.NewDrawDevice(context, matrix, pixmap)) {
-	}
-
-	[ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
-	internal DeviceHandle(ContextHandle context, PixmapHandle pixmap, Matrix matrix, ref BBox box)
-		: this(context, NativeMethods.NewDrawDevice(context, matrix, pixmap, ref box)) {
 	}
 
 	[ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
@@ -294,20 +271,6 @@ internal sealed class PixmapHandle : MuHandle
 {
 	private readonly ContextHandle _context;
 	private readonly bool _releaseContext;
-
-	[ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
-	internal PixmapHandle(ContextHandle context, IntPtr pixmap) {
-		handle = pixmap;
-		_context = context;
-		context.DangerousAddRef(ref _releaseContext);
-	}
-
-	[ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
-	internal PixmapHandle(ContextHandle context, IntPtr colorspace, int width, int height) {
-		handle = NativeMethods.NewPixmap(context, colorspace, width, height, IntPtr.Zero, 0);
-		_context = context;
-		context.DangerousAddRef(ref _releaseContext);
-	}
 
 	[ReliabilityContract(Consistency.WillNotCorruptState, Cer.None)]
 	internal PixmapHandle(ContextHandle context, IntPtr colorspace, BBox box) {

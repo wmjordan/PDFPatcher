@@ -178,19 +178,6 @@ internal sealed class ReplaceFontProcessor : IPageProcessor
 		}
 	}
 
-	private static void AddCustomDefaultWidth(NewFont newFont, FontInfo fontInfo, string text) {
-		if (fontInfo.DefaultWidth == FontInfo.DefaultDefaultWidth) {
-			return;
-		}
-
-		int dw = fontInfo.DefaultWidth;
-		Dictionary<int, int> w = newFont.GlyphWidths;
-		//newFont.DefaultWidth = dw;
-		foreach (char ch in text.Where(ch => w.ContainsKey(ch) == false)) {
-			w.Add(ch, dw);
-		}
-	}
-
 	private static PdfString RewriteText(NewFont newFont, TrueTypeFont ttf, string text) {
 		bool cs = newFont.CharSubstitutions.Count > 0;
 		using ByteBuffer bb = new();
@@ -376,86 +363,6 @@ internal sealed class ReplaceFontProcessor : IPageProcessor
 		int i = 0;
 		foreach (char item in from) {
 			map[item] = to[i++];
-		}
-	}
-
-	private static void ReadSingleByteFontWidths(PdfDictionary font, CMapAwareDocumentFont fontInfo, NewFont newFont) {
-		PdfArray wl = font.GetAsArray(PdfName.WIDTHS);
-		if (wl == null) {
-			return;
-		}
-
-		int fc = font.TryGetInt32(PdfName.FIRSTCHAR, 0);
-		Dictionary<int, int> widths = newFont.GlyphWidths;
-		foreach (PdfNumber item in wl) {
-			if (item == null) {
-				continue;
-			}
-
-			string s = fontInfo.Decode(new[] { (byte)fc }, 0, 1);
-			if (s.Length == 0) {
-				continue;
-			}
-
-			if (widths.TryGetValue(s[0], out int w) == false || w == 0) {
-				widths[s[0]] = item.IntValue;
-			}
-
-			++fc;
-		}
-	}
-
-	private static void ReadCidFontWidths(PdfDictionary font, FontInfo fontInfo, NewFont newfont) {
-		PdfArray w = font.GetAsArray(PdfName.W);
-		if (w == null) {
-			w = font.Locate<PdfArray>(PdfName.DESCENDANTFONTS, 0, PdfName.W);
-			if (w == null) {
-				return;
-			}
-		}
-
-		int l = w.Size;
-		Dictionary<int, int> widths = newfont.GlyphWidths;
-		for (int i = 0; i < l; i++) {
-			int cid = (w[i] as PdfNumber).IntValue;
-			if (++i >= l) {
-				break;
-			}
-
-			PdfObject cw = w[i];
-			switch (cw.Type) {
-				case PdfObject.ARRAY: {
-						foreach (PdfObject width in cw as PdfArray) {
-							int u = fontInfo.DecodeCidToUnicode(cid);
-							if (u == 0 && cid != 0) {
-								Console.WriteLine(cid + "－无法解码CID");
-								continue;
-							}
-
-							++cid;
-							widths[u] = (width as PdfNumber).IntValue;
-							Console.WriteLine(string.Join(" ", cid.ToString(), ((char)u).ToString(), widths[u].ToString()));
-						}
-
-						break;
-					}
-				case PdfObject.NUMBER: {
-						int cid2 = (cw as PdfNumber).IntValue + 1;
-						int width = (w[++i] as PdfNumber).IntValue;
-						do {
-							int u = fontInfo.DecodeCidToUnicode(cid);
-							if (u == 0 && cid != 0) {
-								Console.WriteLine(cid + "－无法解码CID");
-								continue;
-							}
-
-							widths[u] = width;
-							Console.WriteLine(string.Join(" ", cid.ToString(), ((char)u).ToString(), width.ToString()));
-						} while (++cid < cid2);
-
-						break;
-					}
-			}
 		}
 	}
 

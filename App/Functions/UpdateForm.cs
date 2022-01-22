@@ -17,7 +17,7 @@ public partial class UpdateForm : Form
 	public UpdateForm() {
 		InitializeComponent();
 		this.SetIcon(Resources.CheckUpdate);
-		Load += (s, args) => {
+		Load += (_, _) => {
 			CheckNewVersion();
 			int i = AppContext.CheckUpdateInterval;
 			_CheckUpdateIntervalBox.Select(i switch {
@@ -27,16 +27,16 @@ public partial class UpdateForm : Form
 				_ => 3
 			});
 		};
-		FormClosed += (s, args) => {
+		FormClosed += (_, _) => {
 			_UpdateChecker?.Dispose();
 		};
-		_HomePageButton.Click += (s, args) => {
+		_HomePageButton.Click += (_, _) => {
 			CommonCommands.VisitHomePage();
 		};
-		_DownloadButton.Click += (s, args) => {
+		_DownloadButton.Click += (_, _) => {
 			Process.Start(_DownloadButton.Tag.ToString());
 		};
-		_CheckUpdateIntervalBox.SelectedIndexChanged += (s, args) => {
+		_CheckUpdateIntervalBox.SelectedIndexChanged += (_, _) => {
 			AppContext.CheckUpdateInterval = _CheckUpdateIntervalBox.SelectedIndex switch {
 				0 => 7,
 				1 => 14,
@@ -52,7 +52,7 @@ public partial class UpdateForm : Form
 	private void CheckNewVersion() {
 		_UpdateChecker = new WebClient();
 		_InfoBox.AppendLine("正在检查新版本，请稍候……");
-		_UpdateChecker.DownloadDataCompleted += (s, args) => {
+		_UpdateChecker.DownloadDataCompleted += (_, args) => {
 			_InfoBox.Clear();
 			if (args.Error != null) {
 				_InfoBox.AppendText("检查新版本失败：" + args.Error.Message);

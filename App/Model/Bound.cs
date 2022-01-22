@@ -7,11 +7,6 @@ namespace PDFPatcher.Model;
 [DebuggerDisplay("T={Top},L={Left},B={Bottom},R={Right}; H={Height},W={Width}")]
 public class Bound
 {
-	private Bound() {
-		IsTopDown = true;
-		IsTopUp = true;
-	}
-
 	public Bound(float left, float bottom, float right, float top) {
 		if (right < left) {
 			Debug.WriteLine("右端坐标不能小于左端坐标。");

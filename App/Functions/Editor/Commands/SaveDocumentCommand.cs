@@ -92,8 +92,8 @@ internal sealed class SaveDocumentCommand : IEditorCommand
 		}
 
 		using SavePdfForm f = new(m.GetPdfFilePath(), m.LastSavedPdfPath, m.Document);
-		f.DoWork = (s, args) => vv.CloseFile();
-		f.Finished = (s, args) => {
+		f.DoWork = (_, _) => vv.CloseFile();
+		f.Finished = (_, _) => {
 			vv.Reopen();
 			vv.Enabled = true;
 		};

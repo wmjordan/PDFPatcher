@@ -5,8 +5,6 @@ namespace PDFPatcher.Processor;
 
 internal sealed class ChangePageNumberProcessor : IPdfInfoXmlProcessor
 {
-	public ChangePageNumberProcessor(int amount) : this(amount, false, false) { }
-
 	public ChangePageNumberProcessor(int amount, bool isAbsolute, bool skipZero) {
 		IsAbsolute = isAbsolute;
 		Amount = amount;

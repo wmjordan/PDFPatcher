@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Runtime.InteropServices;
-using FreeImageAPI;
 
 namespace MuPdfSharp;
 
@@ -29,12 +27,6 @@ internal sealed class PixmapData : IDisposable
 
 	/// <summary>获取 Pixmap 的边框。</summary>
 	public BBox BBox => NativeMethods.GetBBox(_context, _pixmap);
-
-	/// <summary>number of colorants (components, less any spots and alpha)。</summary>
-	public int Colorants => NativeMethods.GetColorants(_context, _pixmap);
-
-	/// <summary>number of spots (components, less colorants and alpha). Does not throw exceptions.。</summary>
-	public int Spots => NativeMethods.GetColorants(_context, _pixmap);
 
 	/// <summary>获取 Pixmap 一行像素的字节数。</summary>
 	public int Stride => NativeMethods.GetStride(_context, _pixmap);
@@ -114,69 +106,6 @@ internal sealed class PixmapData : IDisposable
 	}
 
 	/// <summary>
-	///     将 Pixmap 的数据转换为 <see cref="FreeImageBitmap" />。
-	/// </summary>
-	public unsafe FreeImageBitmap ToFreeImageBitmap(ImageRendererOptions options) {
-		bool grayscale = options.ColorSpace == ColorSpace.Gray;
-		bool invert = options.InvertColor;
-		FreeImageBitmap bmp = new(Width, Height,
-			grayscale ? PixelFormat.Format8bppIndexed : PixelFormat.Format24bppRgb);
-		byte* ptrSrc = (byte*)Samples;
-		if (grayscale) {
-			bmp.Palette.CreateGrayscalePalette();
-			for (int y = Height - 1; y >= 0; y--) {
-				IntPtr pDest = bmp.GetScanlinePointer(y);
-				byte* pl = (byte*)pDest.ToPointer();
-				byte* sl = ptrSrc;
-				for (int x = 0; x < Width; x++) {
-					*pl = invert ? (byte)(*sl ^ 0xFF) : *sl;
-					pl++;
-					sl++;
-				}
-
-				ptrSrc = sl;
-			}
-		}
-		else {
-			// DeviceBGR
-			for (int y = Height - 1; y >= 0; y--) {
-				IntPtr pDest = bmp.GetScanlinePointer(y);
-				byte* pl = (byte*)pDest.ToPointer();
-				byte* sl = ptrSrc;
-				if (invert) {
-					for (int x = 0; x < Width; x++) {
-						// 在这里进行 RGB 到 DIB BGR 的转换（省去 Mupdf 内部的转换工作）
-						pl[2] = (byte)(*sl ^ 0xFF);
-						sl++; // R
-						pl[1] = (byte)(*sl ^ 0xFF);
-						sl++; // G
-						pl[0] = (byte)(*sl ^ 0xFF);
-						sl++; // B
-						pl += 3;
-					}
-				}
-				else {
-					for (int x = 0; x < Width; x++) {
-						// 在这里进行 RGB 到 DIB BGR 的转换（省去 Mupdf 内部的转换工作）
-						pl[2] = *sl;
-						sl++; // R
-						pl[1] = *sl;
-						sl++; // G
-						pl[0] = *sl;
-						sl++; // B
-						pl += 3;
-					}
-				}
-
-				ptrSrc = sl;
-			}
-		}
-
-		bmp.SetResolution(options.Dpi, options.Dpi);
-		return bmp;
-	}
-
-	/// <summary>
 	///     反转 Pixmap 的颜色。
 	/// </summary>
 	public void Invert() {
@@ -201,20 +130,6 @@ internal sealed class PixmapData : IDisposable
 		}
 
 		NativeMethods.GammaPixmap(_context, _pixmap, gamma);
-	}
-
-	/// <summary>
-	///     获取 Pixmap 内的数据。
-	/// </summary>
-	/// <returns>字节数组。</returns>
-	public byte[] GetSampleBytes() {
-		if (Samples == IntPtr.Zero) {
-			return null;
-		}
-
-		byte[] d = new byte[Width * Height * Components];
-		Marshal.Copy(Samples, d, 0, d.Length);
-		return d;
 	}
 
 	#region 实现 IDisposable 接口的属性和方法

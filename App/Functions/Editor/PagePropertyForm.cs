@@ -14,7 +14,7 @@ public partial class PagePropertyForm : DraggableForm
 	public PagePropertyForm() {
 		InitializeComponent();
 		_PageDimensionBox.SelectedIndexChanged += _PageDimensionBox_SelectedIndexChanged;
-		_CloseButton.Click += (s, args) => Hide();
+		_CloseButton.Click += (_, _) => Hide();
 		_FontNameColumn.AsTyped<MuFontAndSize>(f => f.AspectGetter = o => o.FontName);
 		_SizeColumn.AsTyped<MuFontAndSize>(f => f.AspectGetter = o => o.Size);
 	}
@@ -23,11 +23,11 @@ public partial class PagePropertyForm : DraggableForm
 
 	public void LoadPage(MuPage page) {
 		_PageDimensionBox.Items.Clear();
-		AddBox(page, page.CropBox, Constants.Content.PageSettings.CropBox);
-		AddBox(page, page.MediaBox, Constants.Content.PageSettings.MediaBox);
-		AddBox(page, page.TrimBox, Constants.Content.PageSettings.TrimBox);
-		AddBox(page, page.ArtBox, Constants.Content.PageSettings.ArtBox);
-		AddBox(page, page.BleedBox, Constants.Content.PageSettings.BleedBox);
+		AddBox(page.CropBox, Constants.Content.PageSettings.CropBox);
+		AddBox(page.MediaBox, Constants.Content.PageSettings.MediaBox);
+		AddBox(page.TrimBox, Constants.Content.PageSettings.TrimBox);
+		AddBox(page.ArtBox, Constants.Content.PageSettings.ArtBox);
+		AddBox(page.BleedBox, Constants.Content.PageSettings.BleedBox);
 		_RotationBox.Text = page.Rotation.ToString();
 		if (_PageDimensionBox.Items.Count > 0) {
 			_PageDimensionBox.SelectedIndex = 0;
@@ -46,7 +46,7 @@ public partial class PagePropertyForm : DraggableForm
 		PageNumber = page.PageNumber;
 	}
 
-	private void AddBox(MuPage page, MuRectangle rect, string title) {
+	private void AddBox(MuRectangle rect, string title) {
 		if (rect.IsEmpty == false) {
 			_PageDimensionBox.Items.Add(new Box(rect, title));
 		}

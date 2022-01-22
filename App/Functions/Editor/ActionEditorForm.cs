@@ -90,7 +90,7 @@ public partial class ActionEditorForm : Form
 				return null;
 			}
 
-			if (attr.Name != Constants.Font.ThisName || !attr.Value.TryParse(out int fid)) {
+			if (attr.Name != Constants.Font.ThisName || !attr.Value.TryParse(out int _)) {
 				return attr.Value;
 			}
 

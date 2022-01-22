@@ -42,7 +42,7 @@ public partial class MergerControl : FunctionControl
 	private void MergerControl_Load(object sender, EventArgs args) {
 		//this.Icon = Common.FormHelper.ToIcon (Properties.Resources.CreateDocument);
 		//_MainToolbar.ToggleEnabled (false, _bookmarkStyleButtonNames);
-		_BookmarkColorButton.SelectedColorChanged += (s, e) => { RefreshBookmarkColor(); };
+		_BookmarkColorButton.SelectedColorChanged += (_, _) => { RefreshBookmarkColor(); };
 
 		AppContext.MainForm.SetTooltip(_BookmarkControl.FileList, "为目标 PDF 文件添加书签的信息文件（可选）");
 		AppContext.MainForm.SetTooltip(_ItemList, "在此添加需要合并的 PDF 文件、图片文件或包含上述类型文件的文件夹");
@@ -57,15 +57,15 @@ public partial class MergerControl : FunctionControl
 		_BookmarkControl.FileDialog.CheckFileExists = false;
 		_BookmarkControl.BrowseForFile += FileControl_BrowseForFile;
 		_TargetPdfFile.BrowseForFile += FileControl_BrowseForFile;
-		_IndividualMergerModeBox.CheckedChanged += (s, e) => {
+		_IndividualMergerModeBox.CheckedChanged += (_, _) => {
 			_BookmarkControl.Enabled = !_IndividualMergerModeBox.Checked;
 		};
 		_listHelper = new FileListHelper(_ItemList);
 		_ItemList.FixEditControlWidth();
-		_ItemList.BeforeSorting += (s, e) => e.Canceled = true;
+		_ItemList.BeforeSorting += (_, e) => e.Canceled = true;
 		_ItemList.CanExpandGetter = x => ((SourceItem)x).HasSubItems;
 		_ItemList.ChildrenGetter = x => ((SourceItem)x).Items;
-		_ItemList.SelectedIndexChanged += (s, e) => {
+		_ItemList.SelectedIndexChanged += (_, _) => {
 			int i = _ItemList.GetFirstSelectedIndex();
 			bool en = false;
 			if (i != -1) {
@@ -79,13 +79,13 @@ public partial class MergerControl : FunctionControl
 
 			_MainToolbar.ToggleEnabled(en, _bookmarkStyleButtonNames);
 		};
-		_ItemList.CellEditStarting += (s, e) => _MainToolbar.Enabled = false;
-		_ItemList.CellEditFinishing += (s, e) => _MainToolbar.Enabled = true;
+		_ItemList.CellEditStarting += (_, _) => _MainToolbar.Enabled = false;
+		_ItemList.CellEditFinishing += (_, _) => _MainToolbar.Enabled = true;
 		_ItemList.CanDrop += ItemList_CanDropFile;
 		_ItemList.Dropped += ItemList_FileDropped;
 		_ItemList.ModelCanDrop += ItemList_CanDropModel;
 		_ItemList.ModelDropped += ItemList_Dropped;
-		_ItemListMenu.Opening += (s, e) => {
+		_ItemListMenu.Opening += (_, _) => {
 			foreach (ToolStripItem item in _ItemListMenu.Items) {
 				SetupCommand(item);
 			}
@@ -125,7 +125,7 @@ public partial class MergerControl : FunctionControl
 			})
 			.ConfigColumn(_FolderColumn, c => c.AspectGetter = o => o.FolderName);
 		_AddFilesButton.DropDownOpening += FileListHelper.OpenPdfButtonDropDownOpeningHandler;
-		_AddFilesButton.DropDownItemClicked += (s, e) => {
+		_AddFilesButton.DropDownItemClicked += (_, e) => {
 			_RecentFileMenu.Hide();
 			ExecuteCommand(Commands.OpenFile, e.ClickedItem.ToolTipText);
 		};
@@ -328,7 +328,7 @@ public partial class MergerControl : FunctionControl
 		AppContext.MainForm.ResetWorker();
 		BackgroundWorker worker = AppContext.MainForm.GetWorker();
 
-		worker.DoWork += (dummy, arg) => {
+		worker.DoWork += (_, arg) => {
 			object[] args = arg.Argument as object[];
 			ICollection<SourceItem> items = args[0] as ICollection<SourceItem>;
 			string target = args[1] as string;
@@ -896,7 +896,6 @@ public partial class MergerControl : FunctionControl
 	}
 
 	private void ItemList_Dropped(object sender, ModelDropEventArgs e) {
-		SourceItem t = e.TargetModel as SourceItem;
 		List<SourceItem> si = (e.SourceListView as TreeListView).GetSelectedModels<SourceItem>();
 		if (si == null) {
 			return;

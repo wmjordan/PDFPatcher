@@ -15,7 +15,7 @@ public partial class ExtractImageControl : FunctionControl, IResettableControl
 	public ExtractImageControl() {
 		InitializeComponent();
 		//this.Icon = Common.FormHelper.ToIcon (Properties.Resources.ExtractImage);
-		_SourceFileControl.BrowseSelectedFiles += (sender, e) => {
+		_SourceFileControl.BrowseSelectedFiles += (_, _) => {
 			if (_AutoOutputDirBox.Checked == false) {
 				return;
 			}
@@ -26,7 +26,7 @@ public partial class ExtractImageControl : FunctionControl, IResettableControl
 					Path.GetFileNameWithoutExtension(sourceFile));
 			}
 		};
-		_AutoOutputDirBox.CheckedChanged += (sender, e) => {
+		_AutoOutputDirBox.CheckedChanged += (_, _) => {
 			AppContext.ImageExtracter.AutoOutputFolder = _AutoOutputDirBox.Checked;
 		};
 	}
@@ -123,7 +123,7 @@ public partial class ExtractImageControl : FunctionControl, IResettableControl
 
 		AppContext.MainForm.ResetWorker();
 		BackgroundWorker worker = AppContext.MainForm.GetWorker();
-		worker.DoWork += (dummy, arg) => {
+		worker.DoWork += (_, arg) => {
 			object[] a = arg.Argument as object[];
 			string[] files = a[0] as string[];
 			ImageExtracterOptions options = a[1] as ImageExtracterOptions;
@@ -145,7 +145,7 @@ public partial class ExtractImageControl : FunctionControl, IResettableControl
 				Worker.ExtractImages(files[0], options);
 			}
 		};
-		worker.RunWorkerCompleted += (dummy, arg) => {
+		worker.RunWorkerCompleted += (_, _) => {
 			AppContext.ImageExtracter.OutputPath = _ExtractPageRangeBox.Text;
 		};
 		ImageExtracterOptions option = AppContext.ImageExtracter;

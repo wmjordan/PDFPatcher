@@ -110,8 +110,4 @@ public class UnitConverter
 			? value
 			: value * unitFactor;
 	}
-
-	internal static float[] ConvertUnit(float[] source, float factor) {
-		return Array.ConvertAll(source, i => ToPoint(i, factor));
-	}
 }

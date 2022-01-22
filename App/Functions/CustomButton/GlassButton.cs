@@ -221,29 +221,6 @@ public class GlassButton : Button
 		}
 	}
 
-	/// <summary>
-	///     Gets or sets the color of the special symbol.
-	/// </summary>
-	/// <value>The color of the special symbol.</value>
-	[DefaultValue(typeof(Color), "White")]
-	[Category("Appearance")]
-	[Description("The inner border color of the control.")]
-	public Color SpecialSymbolColor {
-		get => specialSymbolColor;
-		set {
-			if (specialSymbolColor == value) {
-				return;
-			}
-
-			specialSymbolColor = value;
-			specialSymbolBrush = new SolidBrush(Color.FromArgb(transparencyFactor, specialSymbolColor));
-
-			if (IsHandleCreated) {
-				Invalidate();
-			}
-		}
-	}
-
 	private int roundCorner;
 
 	/// <summary>
@@ -272,57 +249,7 @@ public class GlassButton : Button
 
 	private string toolTipText;
 
-	/// <summary>
-	///     Gets or sets the tool tip text.
-	/// </summary>
-	/// <value>The tool tip text.</value>
-	[DefaultValue("")]
-	[Category("Appearance")]
-	[Description("The ToolTip-Text of the button. Leave blank to not show a ToolTip.")]
-	public string ToolTipText {
-		get => toolTipText;
-		set {
-			if (toolTipText == value) {
-				return;
-			}
-
-			toolTipText = value;
-
-			if (toolTipText.Length > 0) {
-				toolTip.SetToolTip(this, toolTipText);
-			}
-
-			if (IsHandleCreated) {
-				Invalidate();
-			}
-		}
-	}
-
 	private bool alternativeForm;
-
-	/// <summary>
-	///     Gets or sets the alternative form.
-	/// </summary>
-	/// <value>The alternative form.</value>
-	[DefaultValue(false)]
-	[Category("Appearance")]
-	[Description("Draws the Button in an alternative Form.")]
-	public bool AlternativeForm {
-		get => alternativeForm;
-		set {
-			if (alternativeForm == value) {
-				return;
-			}
-
-			alternativeForm = value;
-
-			RecalcRect(currentFrame / (framesCount - 1f));
-
-			if (IsHandleCreated) {
-				Invalidate();
-			}
-		}
-	}
 
 	private bool animateGlow;
 
@@ -350,28 +277,6 @@ public class GlassButton : Button
 	private bool showSpecialSymbol;
 
 	/// <summary>
-	///     Gets or sets a value indicating whether a special symbol is drawn.
-	/// </summary>
-	/// <value><c>true</c> if special symbol is drawn; otherwise, <c>false</c>.</value>
-	[DefaultValue(false)]
-	[Category("Appearance")]
-	[Description("If true, the selectet special symbol will be drawn on the button.")]
-	public bool ShowSpecialSymbol {
-		get => showSpecialSymbol;
-		set {
-			if (showSpecialSymbol == value) {
-				return;
-			}
-
-			showSpecialSymbol = value;
-
-			if (IsHandleCreated) {
-				Invalidate();
-			}
-		}
-	}
-
-	/// <summary>
 	///     List of all aviable special symbols.
 	/// </summary>
 	public enum SpecialSymbols
@@ -396,28 +301,6 @@ public class GlassButton : Button
 
 	private SpecialSymbols specialSymbol;
 
-	/// <summary>
-	///     Gets or sets the special symbol.
-	/// </summary>
-	/// <value>The special symbol.</value>
-	[DefaultValue(typeof(SpecialSymbols), "Play")]
-	[Category("Appearance")]
-	[Description("Sets the type of the special symbol on the button.")]
-	public SpecialSymbols SpecialSymbol {
-		get => specialSymbol;
-		set {
-			if (specialSymbol == value) {
-				return;
-			}
-
-			specialSymbol = value;
-
-			if (IsHandleCreated) {
-				Invalidate();
-			}
-		}
-	}
-
 	public enum Direction
 	{
 		Left,
@@ -425,30 +308,6 @@ public class GlassButton : Button
 	}
 
 	private Direction alternativeFormDirection;
-
-	/// <summary>
-	///     Gets or sets the alternative form direction.
-	/// </summary>
-	/// <value>The alternative form direction.</value>
-	[DefaultValue(typeof(Direction), "Left")]
-	[Category("Appearance")]
-	[Description("Sets the Direction of the alternative Form.")]
-	public Direction AlternativeFormDirection {
-		get => alternativeFormDirection;
-		set {
-			if (alternativeFormDirection == value) {
-				return;
-			}
-
-			alternativeFormDirection = value;
-
-			RecalcRect(currentFrame / (framesCount - 1f));
-
-			if (IsHandleCreated) {
-				Invalidate();
-			}
-		}
-	}
 
 	private bool showFocusBorder;
 
@@ -1428,23 +1287,6 @@ public class GlassButton : Button
 	#endregion
 
 	#region " Unused Properties & Events "
-
-	/// <summary>This property is not relevant for this class.</summary>
-	/// <returns>This property is not relevant for this class.</returns>
-	[Browsable(false)]
-	[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-	[EditorBrowsable(EditorBrowsableState.Never)]
-	public new FlatButtonAppearance FlatAppearance => base.FlatAppearance;
-
-	/// <summary>This property is not relevant for this class.</summary>
-	/// <returns>This property is not relevant for this class.</returns>
-	[Browsable(false)]
-	[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-	[EditorBrowsable(EditorBrowsableState.Never)]
-	public new FlatStyle FlatStyle {
-		get => base.FlatStyle;
-		set => base.FlatStyle = value;
-	}
 
 	/// <summary>This property is not relevant for this class.</summary>
 	/// <returns>This property is not relevant for this class.</returns>

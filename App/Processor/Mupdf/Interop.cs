@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Runtime.InteropServices;
-using System.Text;
 
 namespace MuPdfSharp;
 
@@ -43,29 +41,6 @@ internal static class Interop
 	/// <returns><see cref="IEnumerable{T}" /> 实例。</returns>
 	internal static IEnumerable<NativeObject<T>> EnumerateLinkedList<T>(this IntPtr ptr) where T : struct, ILinkedList {
 		return NativeLinkedList<T>.EnumerateLinkedList(ptr);
-	}
-
-	/// <summary>
-	///     将链表指针转换为 <see cref="IEnumerable{T}" />
-	/// </summary>
-	/// <typeparam name="T">链表的类型。</typeparam>
-	/// <param name="ptr">需要转换的指针。</param>
-	/// <returns><see cref="IEnumerable{T}" /> 实例。</returns>
-	internal static IEnumerable<NativeObject<T>> EnumerateLinkedList<T>(this SafeHandle ptr)
-		where T : struct, ILinkedList {
-		return NativeLinkedList<T>.EnumerateLinkedList(ptr.DangerousGetHandle());
-	}
-
-	internal static unsafe string DecodeUtf8String(IntPtr chars) {
-		byte* b = (byte*)chars.ToPointer();
-		using MemoryStream buffer = new();
-		while (*b != 0) {
-			buffer.WriteByte(*b);
-			++b;
-		}
-
-		buffer.Position = 0;
-		return Encoding.UTF8.GetString(buffer.GetBuffer(), (int)buffer.Position, (int)buffer.Length);
 	}
 
 	internal interface ILinkedList

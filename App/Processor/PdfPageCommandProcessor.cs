@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.parser;
-using PDFPatcher.Common;
 using PDFPatcher.Model;
 using GraphicsState = PDFPatcher.Model.GraphicsState;
 
@@ -27,8 +26,6 @@ internal sealed class PdfPageCommandProcessor : PdfContentStreamProcessor, IPdfP
 		PdfDictionary resources = form.Locate<PdfDictionary>(PdfName.RESOURCES);
 		ProcessContent(PdfReader.GetStreamBytes(form), resources);
 	}
-
-	public bool HasCommand => Commands.Count > 0;
 
 	/// <summary>
 	///     分析内容后得到的 PDF 命令操作符及操作数列表。
@@ -118,17 +115,6 @@ internal sealed class PdfPageCommandProcessor : PdfContentStreamProcessor, IPdfP
 		WritePdfCommands(ms);
 		ms.Flush();
 		pdf.SafeSetPageContent(pageNumber, ms.ToArray());
-	}
-
-	internal void WritePdfCommands(PageProcessorContext context) {
-		WritePdfCommands(context.Pdf, context.PageNumber);
-	}
-
-	private static string GetOperandsTextValue(List<PdfObject> operands) {
-		List<string> n =
-			operands.ConvertAll(po => po.Type == PdfObject.NUMBER ? ((PdfNumber)po).DoubleValue.ToText() : null);
-		n.RemoveAt(n.Count - 1);
-		return string.Join(" ", n.ToArray());
 	}
 
 	private TextInfo GetTextInfo(PdfString text) {

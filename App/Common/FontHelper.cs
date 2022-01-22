@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.InteropServices;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using Microsoft.Win32;
@@ -92,22 +91,5 @@ internal static class FontHelper
 		//    fontNames[item] = fontPath;
 		//    Tracker.DebugMessage (item);
 		//}
-	}
-
-	private static class NativeMethods
-	{
-		[DllImport("Gdi32.dll", CharSet = CharSet.Unicode)]
-		private static extern int AddFontResourceEx(string fontPath, int flag, IntPtr preserved);
-
-		[DllImport("Gdi32.dll", CharSet = CharSet.Unicode)]
-		private static extern int RemoveFontResourceEx(string fontPath, int flag, IntPtr preserved);
-
-		internal static int LoadFont(string path) {
-			return AddFontResourceEx(path, 0x10, IntPtr.Zero);
-		}
-
-		internal static int RemoveFont(string path) {
-			return RemoveFontResourceEx(path, 0x10, IntPtr.Zero);
-		}
 	}
 }

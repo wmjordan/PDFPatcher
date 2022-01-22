@@ -673,7 +673,6 @@ public partial class BookmarkEditorView : TreeListView
 
 	protected override void OnModelDropped(ModelDropEventArgs args) {
 		base.OnModelDropped(args);
-		BookmarkElement t = args.TargetModel as BookmarkElement;
 		List<BookmarkElement> se = GetSelectedElements(args.SourceListView as TreeListView, false);
 		if (se == null) {
 			return;

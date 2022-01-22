@@ -7,5 +7,4 @@ public interface IPathValue
 
 public interface IConstantPathValue : IPathValue
 {
-	string LiteralValue { get; }
 }

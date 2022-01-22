@@ -78,7 +78,6 @@ public static class WuQuantizer
 			}
 
 			int byteLength = data.Stride < 0 ? -data.Stride : data.Stride;
-			int byteCount = Math.Max(1, bitDepth >> 3);
 			int offset = 0;
 			byte[] buffer = new byte[byteLength * sourceImage.Height];
 

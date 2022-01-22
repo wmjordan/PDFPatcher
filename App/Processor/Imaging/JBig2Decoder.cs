@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 using PDFPatcher.Common;
 
@@ -73,10 +72,5 @@ internal static class JBig2Decoder
 
 		[DllImport(DLL, EntryPoint = "jbig2_release_page", CallingConvention = CallingConvention.Cdecl)]
 		internal static extern void ReleasePage(IntPtr ctx, IntPtr image);
-
-		private static int ErrorCallback(IntPtr data, [InAttribute] string msg, Jbig2Severity severity, int seg_idx) {
-			Debug.WriteLine(msg);
-			return 0;
-		}
 	}
 }

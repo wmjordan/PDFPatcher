@@ -80,7 +80,7 @@ internal sealed class PdfViewerControl : ImageBoxEx
 		//_ViewBox.SelectionMode = ImageBoxSelectionMode.Rectangle;
 
 		_refreshTimer = new Timer { Interval = 200 };
-		_refreshTimer.Tick += (s, args) => {
+		_refreshTimer.Tick += (_, _) => {
 			for (int i = _DisplayRange.StartValue; i <= _DisplayRange.EndValue; i++) {
 				bool v;
 				lock (_cache.SyncObj) {
@@ -97,7 +97,7 @@ internal sealed class PdfViewerControl : ImageBoxEx
 		};
 
 		_renderWorker = new BackgroundWorker { WorkerSupportsCancellation = true };
-		_renderWorker.DoWork += (s, args) => {
+		_renderWorker.DoWork += (_, args) => {
 			Tracker.DebugMessage("started prerender job: " + _DisplayRange);
 			_refreshTimer.Stop();
 			for (int i = _DisplayRange.StartValue;
@@ -120,7 +120,7 @@ internal sealed class PdfViewerControl : ImageBoxEx
 				lock (_cache.SyncObj) {
 					MuRectangle pb = _pageBounds[i];
 					Tracker.DebugMessage("load page " + i);
-					float z = GetZoomFactorForPage(pb);
+					float z = GetZoomFactorForPage();
 					RenderPage(i, (pb.Width * z).ToInt32(), (pb.Height * z).ToInt32());
 					if (_DisplayRange.Contains(i)) {
 						Invalidate();
@@ -128,7 +128,7 @@ internal sealed class PdfViewerControl : ImageBoxEx
 				}
 			}
 		};
-		_renderWorker.RunWorkerCompleted += (s, args) => {
+		_renderWorker.RunWorkerCompleted += (_, _) => {
 			if (_cancelRendering == false) {
 				_refreshTimer.Start();
 			}
@@ -155,12 +155,6 @@ internal sealed class PdfViewerControl : ImageBoxEx
 	/// </summary>
 	[Browsable(false)]
 	public int FirstPage => _DisplayRange.StartValue;
-
-	/// <summary>
-	///     获取当前可见的最后一个页面。
-	/// </summary>
-	[Browsable(false)]
-	public int LastPage => _DisplayRange.EndValue;
 
 	/// <summary>
 	///     获取文本识别选项。
@@ -481,7 +475,7 @@ internal sealed class PdfViewerControl : ImageBoxEx
 		Tracker.DebugMessage(pp.Location.ToString());
 		r.Offset(-p.X, -p.Y);
 		MuRectangle b = _pageBounds[pp.Page];
-		float z = GetZoomFactorForPage(b);
+		float z = GetZoomFactorForPage();
 
 		float x1 = r.Left, y1 = r.Top, x2 = r.Right, y2 = r.Bottom;
 		bool c = false;
@@ -624,7 +618,7 @@ internal sealed class PdfViewerControl : ImageBoxEx
 		do {
 			Debug.Assert(p > 0 && p < _mupdf.PageCount + 1, p.ToString());
 			MuRectangle pb = _pageBounds[p];
-			float z = GetZoomFactorForPage(pb);
+			float z = GetZoomFactorForPage();
 			int ox = HorizontalFlow ? _pageOffsets[p] : 0;
 			int oy = HorizontalFlow ? 0 : _pageOffsets[p];
 			r = new DrawingRectangle(
@@ -686,7 +680,7 @@ internal sealed class PdfViewerControl : ImageBoxEx
 
 		lock (_mupdf.SyncObj) {
 			MuPage p = _cache.LoadPage(pageNumber);
-			float z = GetZoomFactorForPage(p.VisualBound);
+			float z = GetZoomFactorForPage();
 			DrawingPoint o = GetVirtualImageOffset(pageNumber);
 			using (Pen spanPen = new(Color.LightGray, 1))
 			using (Pen blockPen = new(Color.Gray, 1)) {
@@ -736,7 +730,7 @@ internal sealed class PdfViewerControl : ImageBoxEx
 			return PageRegion.Empty;
 		}
 
-		DrawingRectangle b = GetOffsetRectangle(GetImageViewPort());
+		GetOffsetRectangle(GetImageViewPort());
 		PagePosition p1 = TransposeVirtualImageToPagePosition(area.Left.ToInt32(), area.Top.ToInt32());
 		PagePosition p2 = TransposeVirtualImageToPagePosition(area.Right.ToInt32(), area.Bottom.ToInt32());
 		return new PageRegion(p1, p2);
@@ -848,8 +842,6 @@ internal sealed class PdfViewerControl : ImageBoxEx
 					continue;
 				}
 
-				HashSet<int> s = new();
-
 				return block.Lines.Where(line => pr.Intersect(line.BBox).IsEmpty == false).ToList();
 			}
 		}
@@ -857,7 +849,7 @@ internal sealed class PdfViewerControl : ImageBoxEx
 		return null;
 	}
 
-	private float GetZoomFactorForPage(MuRectangle bound) {
+	private float GetZoomFactorForPage() {
 		return _zoomFactor;
 	}
 
@@ -899,12 +891,8 @@ internal sealed class PdfViewerControl : ImageBoxEx
 
 	public Bitmap GetPageImage(int pageNumber) {
 		MuRectangle b = _pageBounds[pageNumber];
-		float z = GetZoomFactorForPage(b);
+		float z = GetZoomFactorForPage();
 		return RenderPage(pageNumber, (z * b.Width).ToInt32(), (z * b.Height).ToInt32());
-	}
-
-	public MuPage LoadPage(int pageNumber) {
-		return _cache.LoadPage(pageNumber);
 	}
 
 	public MuRectangle GetPageBound(int pageNumber) {
@@ -962,7 +950,7 @@ internal sealed class PdfViewerControl : ImageBoxEx
 		PagePosition pp = PagePosition.Empty;
 		float z = 0;
 		if (s.Page > 0) {
-			z = GetZoomFactorForPage(_pageBounds[s.Page]);
+			z = GetZoomFactorForPage();
 		}
 
 		if (HorizontalScroll.Value != 0 || VerticalScroll.Value != 0) {
@@ -1074,9 +1062,9 @@ internal sealed class PdfViewerControl : ImageBoxEx
 		return __pageMargin + __pageMargin + (pageHeight * _zoomFactor).ToInt32();
 	}
 
-	private bool ShowPage(int pageNumber) {
+	private void ShowPage(int pageNumber) {
 		if (_mupdf == null || _pageOffsets == null) {
-			return false;
+			return;
 		}
 
 		if (pageNumber < 0) {
@@ -1084,7 +1072,7 @@ internal sealed class PdfViewerControl : ImageBoxEx
 		}
 
 		if (pageNumber <= 0 || pageNumber > _mupdf.PageCount) {
-			return false;
+			return;
 		}
 
 		_DisplayRange.StartValue = pageNumber;
@@ -1098,19 +1086,18 @@ internal sealed class PdfViewerControl : ImageBoxEx
 		}
 		catch (Exception ex) {
 			FormHelper.ErrorBox(ex.Message);
-			return false;
+			return;
 		}
 
 		//if (PageChanged != null) {
 		//	PageChanged (this, new PageChangedEventArgs (pageNumber));
 		//}
-		return true;
 	}
 
 	internal void ScrollToPosition(PagePosition position) {
 		DrawingPoint op = GetVirtualImageOffset(position.Page);
 		MuPoint l = position.Location.ToPageCoordinate(_pageBounds[position.Page]);
-		float z = GetZoomFactorForPage(_pageBounds[position.Page]);
+		float z = GetZoomFactorForPage();
 		bool h = HorizontalFlow;
 		ScrollTo(
 			position.PageX == 0 && h == false ? HorizontalScroll.Value : (l.X * z).ToInt32() + op.X,
@@ -1120,8 +1107,8 @@ internal sealed class PdfViewerControl : ImageBoxEx
 		);
 	}
 
-	private bool Next(int deltaPageNumber) {
-		return ShowPage(CurrentPageNumber + deltaPageNumber);
+	private void Next(int deltaPageNumber) {
+		ShowPage(CurrentPageNumber + deltaPageNumber);
 	}
 
 	private void LoadPageBounds() {
@@ -1390,23 +1377,12 @@ internal sealed class PdfViewerControl : ImageBoxEx
 	internal PagePosition TransposeVirtualImageToPagePosition(int pageNumber, int imageX, int imageY) {
 		DrawingPoint o = GetVirtualImageOffset(pageNumber);
 		MuRectangle b = _pageBounds[pageNumber];
-		float z = GetZoomFactorForPage(b);
+		float z = GetZoomFactorForPage();
 		float ox = (imageX - o.X) / z;
 		float oy = (imageY - o.Y) / z;
 		return new PagePosition(pageNumber,
 			b.Left + ox, b.Top + b.Height - oy,
 			imageX - o.X, imageY - o.Y,
-			b.Contains(ox, oy));
-	}
-
-	internal PagePosition TransposePageImageToPagePosition(int pageNumber, float pageImageX, float pageImageY) {
-		MuRectangle b = _pageBounds[pageNumber];
-		float z = _zoomFactor;
-		float ox = pageImageX / z;
-		float oy = pageImageY / z;
-		return new PagePosition(pageNumber,
-			b.Left + ox, b.Top + b.Height - oy,
-			pageImageX.ToInt32(), pageImageY.ToInt32(),
 			b.Contains(ox, oy));
 	}
 

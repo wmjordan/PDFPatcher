@@ -29,7 +29,7 @@ internal sealed class FileListHelper
 		RearrangingDropSink ds = new(false);
 		_fileList.DropSink = ds;
 
-		ds.CanDrop += (s, args) => {
+		ds.CanDrop += (_, args) => {
 			string[] files = args.DragEventArgs.DropFileOver(Constants.FileExtensions.Pdf);
 			if (files.Length <= 0) {
 				return;
@@ -39,7 +39,7 @@ internal sealed class FileListHelper
 			args.InfoMessage = "添加 " + files.Length + " 个文件";
 			args.Handled = true;
 		};
-		ds.Dropped += (s, args) => {
+		ds.Dropped += (_, args) => {
 			string[] files = args.DragEventArgs.DropFileOver(Constants.FileExtensions.Pdf);
 			if (files.Length <= 0) {
 				return;
@@ -159,7 +159,7 @@ internal sealed class FileListHelper
 	private static void SetupFileNameColumn(OLVColumn column) {
 		column.AsTyped<SourceItem.Pdf>(c => {
 			c.AspectGetter = o => o.Type == SourceItem.ItemType.Empty ? "<空白页面>" : o.FileName;
-			c.ImageGetter = o => 0;
+			c.ImageGetter = _ => 0;
 		});
 	}
 
@@ -170,7 +170,7 @@ internal sealed class FileListHelper
 	}
 
 	public void SetupHotkeys() {
-		_fileList.KeyUp += (s, args) => {
+		_fileList.KeyUp += (_, args) => {
 			switch (args.KeyCode) {
 				case Keys.Delete:
 					if (_fileList.IsCellEditing || _fileList.Focused == false) {

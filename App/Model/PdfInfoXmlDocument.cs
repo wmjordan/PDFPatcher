@@ -147,12 +147,6 @@ public abstract class BookmarkContainer : XmlElement
 	public BookmarkElement AppendBookmark() {
 		return AppendChild((OwnerDocument as PdfInfoXmlDocument).CreateBookmark()) as BookmarkElement;
 	}
-
-	/// <summary>使用指定的配置创建新的书签。返回新创建的书签。</summary>
-	/// <param name="settings">书签设置。</param>
-	public BookmarkElement AppendBookmark(BookmarkSettings settings) {
-		return AppendChild((OwnerDocument as PdfInfoXmlDocument).CreateBookmark(settings)) as BookmarkElement;
-	}
 }
 
 /// <summary>书签的根元素。</summary>
@@ -167,9 +161,6 @@ public sealed class BookmarkRootElement : BookmarkContainer
 [DebuggerDisplay(Constants.Bookmark + "：{Title}")]
 public sealed class BookmarkElement : BookmarkContainer
 {
-	/// <summary>在自动生成书签时标记级别的属性。</summary>
-	internal int AutoLevel = 0;
-
 	internal BookmarkElement(XmlDocument doc)
 		: base(Constants.Bookmark, doc) {
 	}
@@ -294,15 +285,6 @@ public sealed class BookmarkElement : BookmarkContainer
 		set => this.SetValue(Constants.DestinationAttributes.View, value);
 	}
 
-	/// <summary>获取或设置 XYZ 目标视图下的缩放比例。</summary>
-	public float ScaleFactor {
-		get => this.GetValue(Constants.Coordinates.ScaleFactor, 1f);
-		set {
-			SetAttribute(Constants.Coordinates.ScaleFactor, value.ToText());
-			SetAttribute(Constants.DestinationAttributes.View, Constants.DestinationAttributes.ViewType.XYZ);
-		}
-	}
-
 	/// <summary>获取或设置跳转目标的上坐标。</summary>
 	public float Top {
 		get => this.GetValue(Constants.Coordinates.Top, 0f);
@@ -346,29 +328,6 @@ public sealed class BookmarkElement : BookmarkContainer
 
 		SetAttribute(Constants.DestinationAttributes.View, Constants.DestinationAttributes.ViewType.XYZ);
 		this.SetValue(Constants.Coordinates.Top, position, 0);
-	}
-}
-
-/// <summary>页码标签设置集合的根元素。</summary>
-public sealed class PageLabelRootElement : XmlElement
-{
-	internal PageLabelRootElement(XmlDocument doc)
-		: base(string.Empty, Constants.DocumentBookmark, string.Empty, doc) {
-	}
-
-	public XmlNodeList Labels => SelectNodes(Constants.PageLabelsAttributes.Style);
-
-	public void Add(MuPdfSharp.PageLabel label) {
-		foreach (PageLabelElement item in Labels) {
-			if (item.PageNumber != label.FromPageNumber) {
-				continue;
-			}
-
-			item.SetAttributes(label);
-			return;
-		}
-
-		(this.AppendElement(Constants.PageLabelsAttributes.Style) as PageLabelElement).SetAttributes(label);
 	}
 }
 

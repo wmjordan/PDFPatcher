@@ -18,127 +18,23 @@ internal static class JpgHelper
 	public enum ExifTags : ushort
 	{
 		// IFD0 items
-		ImageWidth = 0x100,
 		ImageLength = 0x101,
-		BitsPerSample = 0x102,
 		Compression = 0x103,
-		PhotometricInterpretation = 0x106,
-		ImageDescription = 0x10E,
 		Make = 0x10F,
 		Model = 0x110,
-		StripOffsets = 0x111,
 		Orientation = 0x112,
-		SamplesPerPixel = 0x115,
-		RowsPerStrip = 0x116,
-		StripByteCounts = 0x117,
-		XResolution = 0x11A,
-		YResolution = 0x11B,
-		PlanarConfiguration = 0x11C,
-		ResolutionUnit = 0x128,
-		TransferFunction = 0x12D,
 		Software = 0x131,
 		DateTime = 0x132,
 		Artist = 0x13B,
-		WhitePoint = 0x13E,
-		PrimaryChromaticities = 0x13F,
-		JPEGInterchangeFormat = 0x201,
-		JPEGInterchangeFormatLength = 0x202,
-		YCbCrCoefficients = 0x211,
-		YCbCrSubSampling = 0x212,
-		YCbCrPositioning = 0x213,
-		ReferenceBlackWhite = 0x214,
 		Copyright = 0x8298,
 
 		// SubIFD items
-		ExposureTime = 0x829A,
 		FNumber = 0x829D,
-		ExposureProgram = 0x8822,
-		SpectralSensitivity = 0x8824,
-		ISOSpeedRatings = 0x8827,
-		OECF = 0x8828,
-		ExifVersion = 0x9000,
-		DateTimeOriginal = 0x9003,
-		DateTimeDigitized = 0x9004,
-		ComponentsConfiguration = 0x9101,
-		CompressedBitsPerPixel = 0x9102,
-		ShutterSpeedValue = 0x9201,
-		ApertureValue = 0x9202,
-		BrightnessValue = 0x9203,
-		ExposureBiasValue = 0x9204,
-		MaxApertureValue = 0x9205,
-		SubjectDistance = 0x9206,
-		MeteringMode = 0x9207,
-		LightSource = 0x9208,
 		Flash = 0x9209,
-		FocalLength = 0x920A,
-		SubjectArea = 0x9214,
-		MakerNote = 0x927C,
 		UserComment = 0x9286,
 		SubsecTime = 0x9290,
-		SubsecTimeOriginal = 0x9291,
-		SubsecTimeDigitized = 0x9292,
-		FlashpixVersion = 0xA000,
-		ColorSpace = 0xA001,
-		PixelXDimension = 0xA002,
-		PixelYDimension = 0xA003,
-		RelatedSoundFile = 0xA004,
-		FlashEnergy = 0xA20B,
-		SpatialFrequencyResponse = 0xA20C,
-		FocalPlaneXResolution = 0xA20E,
-		FocalPlaneYResolution = 0xA20F,
-		FocalPlaneResolutionUnit = 0xA210,
-		SubjectLocation = 0xA214,
-		ExposureIndex = 0xA215,
-		SensingMethod = 0xA217,
 		FileSource = 0xA300,
-		SceneType = 0xA301,
-		CFAPattern = 0xA302,
-		CustomRendered = 0xA401,
-		ExposureMode = 0xA402,
-		WhiteBalance = 0xA403,
-		DigitalZoomRatio = 0xA404,
-		FocalLengthIn35mmFilm = 0xA405,
-		SceneCaptureType = 0xA406,
-		GainControl = 0xA407,
-		Contrast = 0xA408,
-		Saturation = 0xA409,
-		Sharpness = 0xA40A,
-		DeviceSettingDescription = 0xA40B,
-		SubjectDistanceRange = 0xA40C,
-		ImageUniqueID = 0xA420,
-
-		// GPS subifd items
-		GPSVersionID = 0x0,
-		GPSLatitudeRef = 0x1,
-		GPSLatitude = 0x2,
-		GPSLongitudeRef = 0x3,
-		GPSLongitude = 0x4,
-		GPSAltitudeRef = 0x5,
-		GPSAltitude = 0x6,
-		GPSTimestamp = 0x7,
-		GPSSatellites = 0x8,
-		GPSStatus = 0x9,
-		GPSMeasureMode = 0xA,
-		GPSDOP = 0xB,
-		GPSSpeedRef = 0xC,
-		GPSSpeed = 0xD,
-		GPSTrackRef = 0xE,
-		GPSTrack = 0xF,
-		GPSImgDirectionRef = 0x10,
-		GPSImgDirection = 0x11,
-		GPSMapDatum = 0x12,
-		GPSDestLatitudeRef = 0x13,
-		GPSDestLatitude = 0x14,
-		GPSDestLongitudeRef = 0x15,
-		GPSDestLongitude = 0x16,
-		GPSDestBearingRef = 0x17,
-		GPSDestBearing = 0x18,
-		GPSDestDistanceRef = 0x19,
-		GPSDestDistance = 0x1A,
-		GPSProcessingMethod = 0x1B,
-		GPSAreaInformation = 0x1C,
-		GPSDateStamp = 0x1D,
-		GPSDifferential = 0x1E
+		Contrast = 0xA408
 	}
 
 	private static readonly ImageCodecInfo _jpgCodec = BitmapHelper.GetCodec("image/jpeg");
@@ -153,14 +49,6 @@ internal static class JpgHelper
 	}
 
 	// JPEG 编码器不支持 8 位图像输出
-	private static EncoderParameters GetEncoderParameters(int quality, int colorDepth) {
-		return new EncoderParameters(3) {
-			Param = new[] {
-				new(Encoder.Compression, (long)EncoderValue.RenderProgressive),
-				new EncoderParameter(Encoder.Quality, quality), new EncoderParameter(Encoder.ColorDepth, colorDepth)
-			}
-		};
-	}
 
 	internal static void Save(this Image bmp, string fileName, int quality) {
 		//if (bmp.IsIndexed ()) {
@@ -191,7 +79,7 @@ internal static class JpgHelper
 	///     A class for reading Exif data from a JPEG file. The file will be open for reading for as long as the class exists.
 	///     <seealso cref="http://gvsoft.homedns.org/exif/Exif-explanation.html" />
 	/// </summary>
-	private class ExifReader : IDisposable
+	private sealed class ExifReader : IDisposable
 	{
 		private static readonly Regex _nullDateTimeMatcher =
 			new(@"^[\s0]{4}[:\s][\s0]{2}[:\s][\s0]{5}[:\s][\s0]{2}[:\s][\s0]{2}$");
@@ -298,79 +186,6 @@ internal static class JpgHelper
 		#endregion
 
 		#region Thumbnail retrieval
-
-		/// <summary>
-		///     Retrieves a JPEG thumbnail from the image if one is present. Note that this method cannot retrieve thumbnails
-		///     encoded in other formats,
-		///     but since the DCF specification specifies that thumbnails must be JPEG, this method will be sufficient for most
-		///     purposes
-		///     See http://gvsoft.homedns.org/exif/exif-explanation.html#TIFFThumbs or
-		///     http://partners.adobe.com/public/developer/en/tiff/TIFF6.pdf for
-		///     details on the encoding of TIFF thumbnails
-		/// </summary>
-		/// <returns></returns>
-		public byte[] GetJpegThumbnailBytes() {
-			Initialize();
-
-			if (_ifd1Catalogue == null) {
-				return null;
-			}
-
-			// Get the thumbnail encoding
-			if (!GetTagValue(_ifd1Catalogue, (ushort)ExifTags.Compression, out ushort compression)) {
-				return null;
-			}
-
-			// This method only handles JPEG thumbnails (compression type 6)
-			if (compression != 6) {
-				return null;
-			}
-
-			// Get the location of the thumbnail
-			if (!GetTagValue(_ifd1Catalogue, (ushort)ExifTags.JPEGInterchangeFormat, out uint offset)) {
-				return null;
-			}
-
-			// Get the length of the thumbnail data
-			if (!GetTagValue(_ifd1Catalogue, (ushort)ExifTags.JPEGInterchangeFormatLength, out uint length)) {
-				return null;
-			}
-
-			_stream.Position = offset;
-
-			// The thumbnail may be padded, so we scan forward until we reach the JPEG header (0xFFD8) or the end of the file
-			int currentByte;
-			int previousByte = -1;
-			while ((currentByte = _stream.ReadByte()) != -1) {
-				if (previousByte == 0xFF && currentByte == 0xD8) {
-					break;
-				}
-
-				previousByte = currentByte;
-			}
-
-			if (currentByte != 0xD8) {
-				return null;
-			}
-
-			// Step back to the start of the JPEG header
-			_stream.Position -= 2;
-
-			byte[] imageBytes = new byte[length];
-			_stream.Read(imageBytes, 0, (int)length);
-
-			// A valid JPEG stream ends with 0xFFD9. The stream may be padded at the end with multiple 0xFF bytes.
-			int jpegStreamEnd = (int)length - 1;
-			while (jpegStreamEnd > 0 && imageBytes[jpegStreamEnd] == 0xFF) {
-				jpegStreamEnd--;
-			}
-
-			if (jpegStreamEnd <= 0 || imageBytes[jpegStreamEnd] != 0xD9 || imageBytes[jpegStreamEnd - 1] != 0xFF) {
-				return null;
-			}
-
-			return imageBytes;
-		}
 
 		#endregion
 
@@ -965,7 +780,7 @@ internal static class JpgHelper
 			Dispose(false);
 		}
 
-		protected virtual void Dispose(bool disposing) {
+		private void Dispose(bool disposing) {
 			if (disposing) {
 				_reader?.Dispose();
 
@@ -989,15 +804,8 @@ internal static class JpgHelper
 
 	private sealed class ExifLibException : Exception
 	{
-		public ExifLibException() {
-		}
-
 		public ExifLibException(string message)
 			: base(message) {
-		}
-
-		public ExifLibException(string message, Exception innerException)
-			: base(message, innerException) {
 		}
 	}
 }

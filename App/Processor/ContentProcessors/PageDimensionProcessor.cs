@@ -135,16 +135,16 @@ internal sealed class PageDimensionProcessor : IPageProcessor
 			}));
 	}
 
-	private static bool RotatePage(PdfDictionary page, int pageNumber, PageBoxSettings settings) {
+	private static void RotatePage(PdfDictionary page, PageBoxSettings settings) {
 		if (settings.Rotation == 0) {
-			return false;
+			return;
 		}
 
 		Rectangle mb = GetPageBox(page);
 		bool ls = mb.Width > mb.Height; // Landscape
 		if ((ls && (settings.Filter & PageFilterFlag.Portrait) == PageFilterFlag.Portrait)
 			|| (ls == false && (settings.Filter & PageFilterFlag.Landscape) == PageFilterFlag.Landscape)) {
-			return false;
+			return;
 		}
 
 		int n = (PdfHelper.GetPageRotation(page) + settings.Rotation) % 360;
@@ -154,8 +154,6 @@ internal sealed class PageDimensionProcessor : IPageProcessor
 		else {
 			page.Remove(PdfName.ROTATE);
 		}
-
-		return true;
 	}
 
 	private static Rectangle GetPageBox(PdfDictionary page) {
@@ -364,7 +362,7 @@ internal sealed class PageDimensionProcessor : IPageProcessor
 		}
 
 		if (Settings.Rotation != 0) {
-			RotatePage(context.Page, context.PageNumber, Settings);
+			RotatePage(context.Page, Settings);
 		}
 
 		context.Pdf.ResetReleasePage();

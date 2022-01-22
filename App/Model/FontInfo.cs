@@ -92,19 +92,6 @@ internal sealed class FontInfo : CMapAwareDocumentFont
 		}
 	}
 
-	public int DefaultWidth {
-		get {
-			if (_DefaultWidth != -1) {
-				return _DefaultWidth;
-			}
-
-			PdfNumber w = _Font.Locate<PdfNumber>(PdfName.DESCENDANTFONTS, 0, PdfName.DW);
-			_DefaultWidth = w?.IntValue ?? DefaultDefaultWidth;
-
-			return _DefaultWidth;
-		}
-	}
-
 	internal int FontID { get; } = -1;
 
 	private void InitCjkFontType() {
@@ -130,21 +117,6 @@ internal sealed class FontInfo : CMapAwareDocumentFont
 		//_CjkFontType = c ? CjkFontType.Big5Chinese : CjkFontType.None;
 	}
 
-	internal int DecodeCidToUnicode(int cid) {
-		string s;
-		if (AppContext.Encodings.TextEncoding != null) {
-			AppContext.Encodings.TextEncoding.GetString(new[] { (byte)(cid >> 8), (byte)cid });
-		}
-
-		//if (CjkType == CjkFontType.Chinese) {
-		//	s = __GbkEncoding.GetString (cid < 256 ? new byte[] { (byte)cid } : new byte[] { (byte)cid, (byte)(cid >> 8) });
-		//}
-		//else {
-		s = Decode(new[] { (byte)(cid >> 8), (byte)cid }, 0, 2);
-		//}
-		return s.Length == 0 ? 0 : s[0];
-	}
-
 	internal string DecodeTextBytes(byte[] bytes) {
 		if (AppContext.Encodings.TextEncoding != null) {
 			return AppContext.Encodings.TextEncoding.GetString(bytes);
@@ -167,9 +139,6 @@ internal sealed class FontInfo : CMapAwareDocumentFont
 		Unknown,
 		CJK = 0x01,
 		Chinese = 0x02 + CJK,
-		Gb18030Chinese = 0x0100 + Chinese,
-		Big5Chinese = 0x0200 + Chinese,
-		Japanese = 0x04 + CJK,
 		Korean = 0x08 + CJK,
 		Unicode = 0x4000,
 		None = 0x8000

@@ -314,14 +314,6 @@ public abstract class SourceItem
 
 	}
 
-	private static BookmarkSettings CreateCajBookmark(string text, string pattern, string title) {
-		if (!MatchCajPattern(text, pattern) || !text.EndsWith("001")) {
-			return new BookmarkSettings(text);
-		}
-
-		return text.EndsWith("001") ? new BookmarkSettings(title) : null;
-	}
-
 	private static bool MatchCajPattern(string text, string pattern) {
 		if (text.StartsWith(pattern, StringComparison.OrdinalIgnoreCase) == false) {
 			return false;
@@ -338,10 +330,6 @@ public abstract class SourceItem
 		public override ItemType Type => ItemType.Empty;
 
 		public override int FileSize => 0;
-
-		public void SetPageCount(int pageCount) {
-			PageCount = pageCount;
-		}
 
 		public override string ToString() {
 			return "<空白页>";

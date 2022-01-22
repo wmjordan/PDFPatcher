@@ -28,7 +28,7 @@ internal sealed class Controller
 	public Controller(IEditView view) {
 		Model = new EditModel();
 		View = view;
-		Model.Undo.OnAddUndo += (u, a) => View.UndoButton.Enabled = true;
+		Model.Undo.OnAddUndo += (_, _) => View.UndoButton.Enabled = true;
 		View.Bookmark.Undo = Model.Undo;
 	}
 
@@ -383,10 +383,9 @@ internal sealed class Controller
 		if (Model.InsertBookmarkWithOcrOnly == false && lines.HasContent()) {
 			StringBuilder sb = new();
 			Rectangle r = lines[0].BBox;
-			foreach (MuTextLine line in lines.TakeWhile(line => sb.Length <= 100)) {
+			foreach (MuTextLine line in lines.TakeWhile(_ => sb.Length <= 100)) {
 				t = line.Text.TrimEnd();
 				if (sb.Length > 0 && t.Length > 0) {
-					char c = t[0];
 					sb.Append(' ');
 					r = r.Union(line.BBox);
 				}
@@ -418,7 +417,6 @@ internal sealed class Controller
 						foreach (TextLine line in mr) {
 							t = OcrProcessor.CleanUpText(line.Text, v.OcrOptions);
 							if (sb.Length > 0 && t.Length > 0) {
-								char c = t[0];
 								sb.Append(' ');
 								b = b.Union(line.Region);
 							}
@@ -521,7 +519,6 @@ internal sealed class Controller
 			return;
 		}
 
-		PdfViewerControl v = View.Viewer;
 		InsertPageLabelForm f = new() {
 			Location = Cursor.Position.Transpose(-16, -16),
 			PageNumber = position.Page
@@ -770,7 +767,7 @@ internal sealed class Controller
 			MuFont s = textInfo.Page.GetFont(span);
 			if (s != null) {
 				int fs = span.Size.ToInt32();
-				foreach (EditModel.AutoBookmarkStyle item in Model.TitleStyles.Where(item => item.InternalFontName == s.Name && item.FontSize == fs)) {
+				foreach (EditModel.AutoBookmarkStyle unused in Model.TitleStyles.Where(item => item.InternalFontName == s.Name && item.FontSize == fs)) {
 					goto NEXT;
 				}
 

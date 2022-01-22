@@ -16,13 +16,13 @@ public partial class PageSettingsEditor : UserControl
 
 	public PageSettingsEditor() {
 		InitializeComponent();
-		_PageSettingsBox.FormatRow += (s, args) => {
+		_PageSettingsBox.FormatRow += (_, args) => {
 			args.Item.SubItems[0].Text = (args.RowIndex + 1).ToText();
 		};
 		_PageSettingsBox.FixEditControlWidth();
 		_PageSettingsBox.FullRowSelect = true;
 		_PageSettingsBox.LabelEdit = false;
-		_PageSettingsBox.CellClick += (s, args) => {
+		_PageSettingsBox.CellClick += (_, args) => {
 			if (args.Column == _PageFilterColumn) {
 				ShowMenuForClickedCell(args, _PageRangeFilterTypeMenu);
 			}
@@ -31,7 +31,7 @@ public partial class PageSettingsEditor : UserControl
 			}
 		};
 		_SettingsBox = new TypedObjectListView<PageBoxSettings>(_PageSettingsBox);
-		_PageRangeFilterTypeMenu.Opening += (s, args) => {
+		_PageRangeFilterTypeMenu.Opening += (_, _) => {
 			PageFilterFlag f = _SettingsBox.SelectedObject.Filter;
 			_AllPagesMenu.Checked = f is PageFilterFlag.All or PageFilterFlag.NotSpecified;
 			_OddPagesMenu.Checked = (f & PageFilterFlag.Odd) == PageFilterFlag.Odd;
@@ -39,7 +39,7 @@ public partial class PageSettingsEditor : UserControl
 			_PortraitPagesMenu.Checked = (f & PageFilterFlag.Portrait) == PageFilterFlag.Portrait;
 			_LandscapePagesMenu.Checked = (f & PageFilterFlag.Landscape) == PageFilterFlag.Landscape;
 		};
-		_PageRangeFilterTypeMenu.ItemClicked += (s, args) => {
+		_PageRangeFilterTypeMenu.ItemClicked += (_, args) => {
 			PageBoxSettings o = _SettingsBox.SelectedObject;
 			ToolStripItem i = args.ClickedItem;
 			if (_AllPagesMenu == i) {
@@ -89,7 +89,7 @@ public partial class PageSettingsEditor : UserControl
 						"页");
 			}
 		};
-		_RotateMenu.DropDownOpening += (s, args) => {
+		_RotateMenu.DropDownOpening += (_, _) => {
 			int r = _SettingsBox.SelectedObject.Rotation;
 			foreach (ToolStripMenuItem item in _RotateMenu.DropDownItems) {
 				item.Checked = false;
@@ -113,7 +113,7 @@ public partial class PageSettingsEditor : UserControl
 					break;
 			}
 		};
-		_RotateMenu.DropDownItemClicked += (s, args) => {
+		_RotateMenu.DropDownItemClicked += (_, args) => {
 			PageBoxSettings o = _SettingsBox.SelectedObject;
 			ToolStripItem i = args.ClickedItem;
 			if (_RotateZeroMenuItem == i) {

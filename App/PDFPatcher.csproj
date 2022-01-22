@@ -153,7 +153,6 @@
     </Compile>
     <Compile Include="Options\ImageExtracterOptions.cs" />
     <Compile Include="Processor\ContentProcessors\RemoveFormProcessor.cs" />
-    <Compile Include="Processor\ContentProcessors\RemoveEmptyCommandProcessor.cs" />
     <Compile Include="Processor\ContentProcessors\RemoveWrappedCommandProcessor.cs" />
     <Compile Include="Processor\ImageExtractor.cs" />
     <Compile Include="Processor\Imaging\WuColorQuantizer.cs" />
@@ -383,7 +382,6 @@
     <Compile Include="Processor\InfoXmlProcessors\LevelUpProcessor.cs" />
     <Compile Include="Processor\ContentProcessors\ReplaceFontProcessor.cs" />
     <Compile Include="Processor\ContentProcessors\RemoveBookmarkProcessor.cs" />
-    <Compile Include="Processor\ContentProcessors\ColorizeBinaryImageProcessor.cs" />
     <Compile Include="Processor\ContentProcessors\FixContentProcessor.cs" />
     <Compile Include="Processor\ContentProcessors\PageDimensionProcessor.cs" />
     <Compile Include="Processor\DocProcessorContext.cs" />
@@ -401,7 +399,6 @@
     <Compile Include="Model\PdfPathDocument.cs" />
     <Compile Include="Model\PdfPath\Context.cs" />
     <Compile Include="Model\PdfPath\IPathAxis.cs" />
-    <Compile Include="Model\PdfPath\IPathFunction.cs" />
     <Compile Include="Model\PdfPath\IPathPredicate.cs" />
     <Compile Include="Model\PdfPath\IPathValue.cs" />
     <Compile Include="Model\PdfPath\PathAxes.cs" />
@@ -524,7 +521,6 @@
     <Compile Include="Model\ColorSpaces\CIELab.cs" />
     <Compile Include="Model\ColorSpaces\CIEXYZ.cs" />
     <Compile Include="Model\ColorSpaces\CMYK.cs" />
-    <Compile Include="Model\ColorSpaces\ColorSpaceHelper.cs" />
     <Compile Include="Model\ColorSpaces\HSB.cs" />
     <Compile Include="Model\ColorSpaces\HSL.cs" />
     <Compile Include="Model\ColorSpaces\RGB.cs" />
@@ -573,7 +569,6 @@
     <Compile Include="Processor\ContentProcessors\ImageRecompressor.cs" />
     <Compile Include="Processor\ContentProcessors\IPageProcessor.cs" />
     <Compile Include="Processor\ContentProcessors\RemoveAnnotationProcessor.cs" />
-    <Compile Include="Processor\ContentProcessors\RemoveDictionaryItemProcessor.cs" />
     <Compile Include="Processor\ContentProcessors\IDocProcessor.cs" />
     <Compile Include="Processor\ContentProcessors\CommonProcessor.cs" />
     <Compile Include="Processor\ContentProcessors\ImportOcrResultProcessor.cs" />
@@ -584,7 +579,6 @@
     <Compile Include="Processor\Imaging\TiffHelper.cs" />
     <Compile Include="Processor\Imaging\JpgHelper.cs" />
     <Compile Include="Processor\InfoDocProcessor\CollapseBookmarkProcessor.cs" />
-    <Compile Include="Processor\InfoDocProcessor\ConvertUnitProcessor.cs" />
     <Compile Include="Processor\InfoDocProcessor\GotoDestinationProcessor.cs" />
     <Compile Include="Processor\IInfoDocProcessor.cs" />
     <Compile Include="Processor\InfoDocProcessor\ForceInternalDestinationProcessor.cs" />
@@ -604,9 +598,7 @@
     <Compile Include="Processor\MuPdf\PixmapData.cs" />
     <Compile Include="Processor\MuPdf\Structures.cs" />
     <Compile Include="Processor\OcrProcessor.cs" />
-    <Compile Include="Processor\OperatorGroup.cs" />
     <Compile Include="Model\PdfPath\IPathExpression.cs" />
-    <Compile Include="Model\PdfPath\PathCompiler.cs" />
     <Compile Include="Processor\PdfActionExporter.cs" />
     <Compile Include="Processor\PdfContentStreamParser.cs" />
     <Compile Include="Model\GeneralInfo.cs">
@@ -655,7 +647,6 @@
     <Compile Include="Options\MergerOptions.cs" />
     <Compile Include="Processor\PdfContentExport.cs" />
     <Compile Include="Processor\PdfDocumentCreator.cs" />
-    <Compile Include="Processor\InfoDocProcessor\ShiftPageProcessor.cs" />
     <Compile Include="Model\TextLine.cs" />
     <Compile Include="Processor\SourceItemSerializer.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -696,7 +687,7 @@
     <EmbeddedResource Include="Configuration.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Configuration.Designer.cs</LastGenOutput>
-		</EmbeddedResource>
+    </EmbeddedResource>
     <EmbeddedResource Include="Functions\DocumentOption\FontCharSubstitutionForm.resx">
       <DependentUpon>FontCharSubstitutionForm.cs</DependentUpon>
     </EmbeddedResource>

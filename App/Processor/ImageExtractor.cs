@@ -26,7 +26,7 @@ internal sealed class ImageExtractor
 	private int _pageRotation;
 	private int _totalImageCount;
 
-	public ImageExtractor(ImageExtracterOptions options, PdfReader reader) {
+	public ImageExtractor(ImageExtracterOptions options) {
 		_fileMask = string.IsNullOrEmpty(options.FileMask) ? "0" : options.FileMask;
 		_options = options;
 		_parser = new PdfPageImageProcessor(PosList, InfoList);

@@ -226,10 +226,6 @@ public partial class OcrControl : FunctionControl, IResettableControl
 		}
 	}
 
-	private void _ImportLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
-		AppContext.MainForm.SelectFunctionList(Function.Patcher);
-	}
-
 	private void ControlEvent(object sender, EventArgs e) {
 		if (sender == _WritingDirectionBox) {
 			_DetectColumnsBox.Enabled = _WritingDirectionBox.SelectedIndex != 0;

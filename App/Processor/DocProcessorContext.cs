@@ -16,10 +16,6 @@ internal sealed class DocProcessorContext
 		ExtraData = engine.ExtraData;
 	}
 
-	public DocProcessorContext(PdfProcessingEngine engine, PdfWriter writer)
-		: this(engine, writer, null) {
-	}
-
 	public PdfReader Pdf { get; }
 	public PdfWriter Writer { get; }
 	public Document OutputDocument { get; }

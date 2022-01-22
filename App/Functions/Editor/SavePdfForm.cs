@@ -30,7 +30,7 @@ public partial class SavePdfForm : Form
 			_bookmarkDocument.Load(r);
 		}
 
-		_OverwriteBox.CheckedChanged += (s, args) => _TargetFileBox.Enabled = !_OverwriteBox.Checked;
+		_OverwriteBox.CheckedChanged += (_, _) => _TargetFileBox.Enabled = !_OverwriteBox.Checked;
 	}
 
 	public string SourceFilePath => _SourceFileBox.Text;
@@ -38,14 +38,13 @@ public partial class SavePdfForm : Form
 
 	private void ImportBookmarkForm_Load(object sender, EventArgs e) {
 		_TargetFileBox.FileMacroMenu.LoadStandardSourceFileMacros();
-		_ConfigButton.Click += (s, args) => {
+		_ConfigButton.Click += (_, _) => {
 			AppContext.MainForm.SelectFunctionList(Function.EditorOptions);
 		};
 	}
 
 	protected void _OkButton_Click(object source, EventArgs args) {
 		AppContext.MainForm.ResetWorker();
-		PdfInfoXmlDocument doc = _bookmarkDocument;
 		string s = _SourceFileBox.Text;
 		string t = _OverwriteBox.Checked ? _SourceFileBox.Text : _TargetFileBox.Text;
 		if (string.IsNullOrEmpty(s)) {
@@ -62,11 +61,11 @@ public partial class SavePdfForm : Form
 		_TargetFileBox.FileList.AddHistoryItem();
 
 		BackgroundWorker worker = AppContext.MainForm.GetWorker();
-		worker.DoWork += (dummy, arg) => {
+		worker.DoWork += (_, _) => {
 			DoWork?.Invoke(this, null);
 			Worker.PatchDocument(new SourceItem.Pdf(s), t, _bookmarkDocument, AppContext.Importer, AppContext.Editor);
 		};
-		worker.RunWorkerCompleted += (dummy, arg) => {
+		worker.RunWorkerCompleted += (_, arg) => {
 			Finished?.Invoke(this, arg);
 		};
 		worker.RunWorkerAsync();

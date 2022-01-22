@@ -17,13 +17,13 @@ public partial class FontSubstitutionsEditor : UserControl
 
 	public FontSubstitutionsEditor() {
 		InitializeComponent();
-		_FontSubstitutionsBox.FormatRow += (s, args) => args.Item.SubItems[0].Text = (args.RowIndex + 1).ToText();
+		_FontSubstitutionsBox.FormatRow += (_, args) => args.Item.SubItems[0].Text = (args.RowIndex + 1).ToText();
 
 		_FontSubstitutionsBox.FullRowSelect = true;
 		_FontSubstitutionsBox.HideSelection = false;
 		_FontSubstitutionsBox.LabelEdit = false;
 		_SubstitutionsBox = new TypedObjectListView<FontSubstitution>(_FontSubstitutionsBox);
-		_FontSubstitutionsBox.CellEditStarting += (s, args) => {
+		_FontSubstitutionsBox.CellEditStarting += (_, args) => {
 			if (args.Column == _SubstitutionColumn) {
 				EditSubstitutionItem(args);
 			}
@@ -35,7 +35,7 @@ public partial class FontSubstitutionsEditor : UserControl
 				args.Cancel = true;
 			}
 		};
-		_FontSubstitutionsBox.CellEditFinishing += (s, args) => {
+		_FontSubstitutionsBox.CellEditFinishing += (_, args) => {
 			if (args.Column != _SubstitutionColumn) {
 				return;
 			}
@@ -101,7 +101,7 @@ public partial class FontSubstitutionsEditor : UserControl
 		}
 
 		args.Control = cb;
-		cb.ParentChanged += (s1, a) => {
+		cb.ParentChanged += (s1, _) => {
 			ComboBox box = (ComboBox)s1;
 			if (box.Parent != null) {
 				box.DroppedDown = true;
@@ -115,11 +115,11 @@ public partial class FontSubstitutionsEditor : UserControl
 		}
 
 		_EmbedLegacyCjkFontsBox.Checked = Options.EmbedFonts;
-		_EmbedLegacyCjkFontsBox.CheckedChanged += (s, args) => Options.EmbedFonts = _EmbedLegacyCjkFontsBox.Checked;
+		_EmbedLegacyCjkFontsBox.CheckedChanged += (_, _) => Options.EmbedFonts = _EmbedLegacyCjkFontsBox.Checked;
 		_TrimTrailingWhiteSpaceBox.Checked = Options.TrimTrailingWhiteSpace;
 		_TrimTrailingWhiteSpaceBox.CheckedChanged +=
-			(s, args) => Options.TrimTrailingWhiteSpace = _TrimTrailingWhiteSpaceBox.Checked;
-		_EnableFontSubstitutionsBox.CheckedChanged += (s, args) => {
+			(_, _) => Options.TrimTrailingWhiteSpace = _TrimTrailingWhiteSpaceBox.Checked;
+		_EnableFontSubstitutionsBox.CheckedChanged += (_, _) => {
 			_ListDocumentFontButton.Enabled
 				= _AddPageLabelButton.Enabled
 					= _RemovePageLabelButton.Enabled

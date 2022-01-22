@@ -19,7 +19,7 @@ internal sealed partial class FrontPageControl : HtmlPageControl
 		InitializeComponent();
 		Text = "主页";
 		RefreshContent();
-		RecentFileItemClicked = (s, args) => { AppContext.MainForm.OpenFileWithEditor(args.ClickedItem.ToolTipText); };
+		RecentFileItemClicked = (_, args) => { AppContext.MainForm.OpenFileWithEditor(args.ClickedItem.ToolTipText); };
 		AllowDrop = true;
 	}
 

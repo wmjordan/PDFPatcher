@@ -3,8 +3,5 @@
 public enum PredicateOperatorType
 {
 	Contains,
-	Equal,
-	NotEqual,
-	LessThan,
-	LargerThan
+	Equal
 }

@@ -20,7 +20,6 @@ internal enum PdfPageCommandType
 
 internal interface IPdfPageCommandContainer
 {
-	bool HasCommand { get; }
 	IList<PdfPageCommand> Commands { get; }
 }
 

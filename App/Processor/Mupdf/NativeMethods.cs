@@ -31,9 +31,6 @@ internal static partial class NativeMethods
 
 	#region 文本函数
 
-	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_new_stext_page")]
-	public static extern TextPageHandle GetTextPage(ContextHandle ctx, Rectangle mediaBox);
-
 	//[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_highlight_selection")]
 	//public static extern int HighlightSelection (ContextHandle ctx, IntPtr page, Rectangle rect, Rectangle hitBBox, fz_quad* quads, int maxHit);
 
@@ -56,9 +53,6 @@ internal static partial class NativeMethods
 	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_device_cmyk")]
 	internal static extern IntPtr GetCmykColorSpace(ContextHandle ctx);
 
-	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_device_lab")]
-	internal static extern IntPtr GetLabColorSpace(ContextHandle ctx);
-
 	#endregion
 
 	#region Document and file stream
@@ -72,24 +66,12 @@ internal static partial class NativeMethods
 	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_drop_stream")]
 	internal static extern IntPtr DropStream(ContextHandle context, IntPtr stm);
 
-	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_load_jpx")]
-	internal static extern IntPtr LoadJpeg2000(ContextHandle ctx, byte[] data, int size, IntPtr colorspace);
-
 	#endregion
 
 	#region Device
 
-	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_new_bbox_device")]
-	internal static extern IntPtr NewBBoxDevice(ContextHandle ctx, ref Rectangle bbox);
-
 	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_new_draw_device")]
 	internal static extern IntPtr NewDrawDevice(ContextHandle ctx, Matrix matrix, PixmapHandle pix);
-
-	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_new_draw_device_with_bbox")]
-	internal static extern IntPtr NewDrawDevice(ContextHandle ctx, Matrix matrix, PixmapHandle pix, ref BBox bbox);
-
-	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_new_gdiplus_device")]
-	internal static extern IntPtr NewGdiPlusDevice(ContextHandle ctx, IntPtr dc, BBox base_clip);
 
 	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_new_list_device")]
 	internal static extern IntPtr NewListDevice(ContextHandle ctx, DisplayListHandle list);
@@ -123,10 +105,6 @@ internal static partial class NativeMethods
 
 	#region Pixmap and display list
 
-	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_new_pixmap")]
-	internal static extern IntPtr NewPixmap(ContextHandle ctx, IntPtr colorspace, int width, int height,
-		IntPtr separations, int alpha);
-
 	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_new_pixmap_with_bbox")]
 	internal static extern IntPtr NewPixmap(ContextHandle ctx, IntPtr colorspace, BBox bbox, IntPtr separations,
 		int alpha);
@@ -140,23 +118,11 @@ internal static partial class NativeMethods
 	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_invert_pixmap")]
 	public static extern void InvertPixmap(ContextHandle ctx, PixmapHandle pix);
 
-	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_invert_pixmap_rect")]
-	public static extern void InvertPixmap(ContextHandle ctx, PixmapHandle pix, BBox rect);
-
 	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_tint_pixmap")]
 	public static extern void TintPixmap(ContextHandle ctx, PixmapHandle pix, int black, int white);
 
 	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_pixmap_bbox")]
 	public static extern BBox GetBBox(ContextHandle ctx, PixmapHandle pix);
-
-	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_pixmap_colorspace")]
-	public static extern IntPtr GetColorSpace(ContextHandle ctx, PixmapHandle pix);
-
-	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_pixmap_colorants")]
-	public static extern int GetColorants(ContextHandle ctx, PixmapHandle pix);
-
-	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_pixmap_spots")]
-	public static extern int GetSpots(ContextHandle ctx, PixmapHandle pix);
 
 	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_pixmap_components")]
 	public static extern int GetComponents(ContextHandle ctx, PixmapHandle pix);
@@ -166,12 +132,6 @@ internal static partial class NativeMethods
 
 	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_pixmap_width")]
 	public static extern int GetWidth(ContextHandle ctx, PixmapHandle pix);
-
-	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_pixmap_x")]
-	public static extern int GetPixmapX(ContextHandle ctx, PixmapHandle pix);
-
-	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_pixmap_y")]
-	public static extern int GetPixmapY(ContextHandle ctx, PixmapHandle pix);
 
 	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_pixmap_samples")]
 	public static extern IntPtr GetSamples(ContextHandle ctx, PixmapHandle pix);
@@ -201,9 +161,6 @@ internal static partial class NativeMethods
 
 	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_clear_pixmap_with_value")]
 	public static extern void ClearPixmap(ContextHandle ctx, PixmapHandle pix, int byteValue);
-
-	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_disable_device_hints")]
-	public static extern void DisableDeviceHints(ContextHandle ctx, DeviceHandle dev, DeviceHints hints);
 
 	[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_enable_device_hints")]
 	public static extern void EnableDeviceHints(ContextHandle ctx, DeviceHandle dev, DeviceHints hints);

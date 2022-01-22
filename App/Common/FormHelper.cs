@@ -13,8 +13,6 @@ internal static class FormHelper
 
 	public static bool IsShiftKeyDown => (Control.ModifierKeys & Keys.Shift) != 0;
 
-	public static bool IsAltKeyDown => (Control.ModifierKeys & Keys.Alt) != 0;
-
 	public static bool IsEmptyOrTransparent(this Color color) {
 		return color.IsEmpty || color.A == 0;
 	}
@@ -245,33 +243,9 @@ internal static class FormHelper
 		}
 	}
 
-	public static DialogResult ShowDialog<TForm>() where TForm : Form, new() {
-		using TForm f = new();
-		return f.ShowDialog();
-	}
-
 	public static DialogResult ShowDialog<TForm>(this IWin32Window form) where TForm : Form, new() {
 		using TForm f = new();
 		return f.ShowDialog(form);
-	}
-
-	public static DialogResult ShowDialog<TForm>(this IWin32Window form, object formParameter)
-		where TForm : Form, new() {
-		using TForm f = new();
-		f.Tag = formParameter;
-		return f.ShowDialog(form);
-	}
-
-	public static DialogResult ShowDialog<TForm>(this IWin32Window form, Action<TForm> formConfigurator,
-		Action<TForm> formConfirmationHandler) where TForm : Form, new() {
-		using TForm f = new();
-		formConfigurator?.Invoke(f);
-		DialogResult r = f.ShowDialog(form);
-		if (formConfirmationHandler != null && r is DialogResult.OK or DialogResult.Yes) {
-			formConfirmationHandler(f);
-		}
-
-		return r;
 	}
 
 	public static DialogResult ShowCommonDialog<TDialog>(this IWin32Window form, Action<TDialog> formConfigurator,
@@ -288,10 +262,6 @@ internal static class FormHelper
 
 	internal static void ErrorBox(string text) {
 		MessageBox.Show(text, Constants.AppName, MessageBoxButtons.OK, MessageBoxIcon.Error);
-	}
-
-	public static void ErrorBox(this Control control, string text) {
-		MessageBox.Show(text, control.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
 	}
 
 	public static void ErrorBox(this Control control, string title, Exception exception) {

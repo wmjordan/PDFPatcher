@@ -73,16 +73,6 @@ public struct CMYK
 
 	#endregion
 
-	/// <summary>
-	///     Creates an instance of a CMYK structure.
-	/// </summary>
-	public CMYK(double c, double m, double y, double k) {
-		this.c = c;
-		this.m = m;
-		this.y = y;
-		this.k = k;
-	}
-
 	#region Methods
 
 	public override bool Equals(object obj) {

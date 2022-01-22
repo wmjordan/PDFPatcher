@@ -39,11 +39,11 @@ public partial class PatcherControl : FunctionControl
 		AppContext.MainForm.SetTooltip(_TargetPdfFile.FileList, "生成的目标 PDF 文件路径（鼠标右键点击列表可插入文件名替代符）");
 		_ItemList.EmptyListMsg = "请使用“添加文件”按钮添加需要处理的 PDF 文件，或从资源管理器拖放文件到本列表框";
 
-		_ConfigButton.Click += (s, args) => AppContext.MainForm.SelectFunctionList(Function.PatcherOptions);
+		_ConfigButton.Click += (_, _) => AppContext.MainForm.SelectFunctionList(Function.PatcherOptions);
 
-		_AddFilesButton.ButtonClick += (s, args) => { ExecuteCommand(Commands.Open); };
+		_AddFilesButton.ButtonClick += (_, _) => { ExecuteCommand(Commands.Open); };
 		_AddFilesButton.DropDownOpening += FileListHelper.OpenPdfButtonDropDownOpeningHandler;
-		_AddFilesButton.DropDownItemClicked += (s, args) => {
+		_AddFilesButton.DropDownItemClicked += (_, args) => {
 			_RecentFileMenu.Hide();
 			ExecuteCommand(Commands.OpenFile, args.ClickedItem.ToolTipText);
 		};
@@ -51,7 +51,7 @@ public partial class PatcherControl : FunctionControl
 		_TargetPdfFile.FileMacroMenu.LoadStandardInfoMacros();
 		_TargetPdfFile.FileMacroMenu.LoadStandardSourceFileMacros();
 		_TargetPdfFile.BrowseForFile += FileControl_BrowseForFile;
-		_TargetPdfFile.TargetFileChangedByBrowseButton += (s, args) => {
+		_TargetPdfFile.TargetFileChangedByBrowseButton += (_, args) => {
 			int i;
 			string f = _TargetPdfFile.FileDialog.FileName;
 			if (_ItemList.Items.Count <= 1 || (i = f.LastIndexOf(Path.DirectorySeparatorChar)) == -1) {
@@ -72,18 +72,18 @@ public partial class PatcherControl : FunctionControl
 		_listHelper.SetupDragAndDrop(AddFiles);
 		FileListHelper.SetupCommonPdfColumns(_AuthorColumn, _KeywordsColumn, _SubjectColumn, _TitleColumn,
 			_PageCountColumn, _NameColumn, _FolderColumn);
-		_RefreshInfoButton.ButtonClick += (s, args) => _listHelper.RefreshInfo(AppContext.Encodings.DocInfoEncoding);
+		_RefreshInfoButton.ButtonClick += (_, _) => _listHelper.RefreshInfo(AppContext.Encodings.DocInfoEncoding);
 		_RefreshInfoButton.DropDown = _RefreshInfoMenu;
 		foreach (string item in Constants.Encoding.EncodingNames) {
 			_RefreshInfoMenu.Items.Add(item);
 		}
 
-		_RefreshInfoMenu.ItemClicked += (s, args) => {
+		_RefreshInfoMenu.ItemClicked += (_, args) => {
 			_listHelper.RefreshInfo(ValueHelper.MapValue(args.ClickedItem.Text, Constants.Encoding.EncodingNames,
 				Constants.Encoding.Encodings));
 		};
 
-		RecentFileItemClicked = (s, args) => {
+		RecentFileItemClicked = (_, args) => {
 			args.ClickedItem.Owner.Hide();
 			AddFiles(new[] { args.ClickedItem.ToolTipText }, true);
 		};
@@ -174,7 +174,7 @@ public partial class PatcherControl : FunctionControl
 
 		AppContext.MainForm.ResetWorker();
 		BackgroundWorker worker = AppContext.MainForm.GetWorker();
-		worker.DoWork += (dummy, arg) => {
+		worker.DoWork += (_, arg) => {
 			object[] a = arg.Argument as object[];
 			string t = a[0] as string;
 			if (files.Count > 1) {

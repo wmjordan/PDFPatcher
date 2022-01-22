@@ -93,33 +93,6 @@ internal static class ObjectListViewHelper
 		}
 	}
 
-	public static void MoveUpSelection(this ObjectListView view) {
-		int si = view.GetFirstSelectedIndex();
-		if (si < 1) {
-			return;
-		}
-
-		IList so = view.SelectedObjects;
-		view.MoveObjects(--si, so);
-		view.SelectedObjects = so;
-	}
-
-	public static void MoveDownSelection(this ObjectListView view) {
-		OLVListItem ls = view.GetLastItemInDisplayOrder();
-		if (ls == null || ls.Selected) {
-			return;
-		}
-
-		int si = view.GetFirstSelectedIndex();
-		if (si < 0) {
-			return;
-		}
-
-		IList so = view.SelectedObjects;
-		view.MoveObjects(si + 2, so);
-		view.SelectedObjects = so;
-	}
-
 	public static T GetFirstSelectedModel<T>(this ObjectListView view) where T : class {
 		return view.GetModelObject(view.GetFirstSelectedIndex()) as T;
 	}
@@ -144,58 +117,6 @@ internal static class ObjectListViewHelper
 		return r;
 	}
 
-	/// <summary>测试坐标点属于哪个单元格。</summary>
-	public static GridTestResult GetGridAt(this ObjectListView view, int x, int y) {
-		OLVColumn c;
-		Rectangle cr = view.ContentRectangle;
-		int ic = view.GetItemCount();
-		bool ob = false;
-		if (x < cr.Left) {
-			x = cr.Left;
-			ob = true;
-		}
-		else if (x >= cr.Right) {
-			x = cr.Right - 1;
-			ob = true;
-		}
-
-		int cb = cr.Top + (ic * view.RowHeightEffective);
-		if (y < cr.Top) {
-			y = cr.Top;
-			ob = true;
-		}
-		else if (y >= cb) {
-			y = cb;
-			ob = true;
-		}
-
-		OLVListItem r = view.GetItemAt(x, y, out c);
-		if (r != null) {
-			return new GridTestResult(c.DisplayIndex, r.Index, ob);
-		}
-
-		// 当列表框滚动时，上述方法失效，使用此替补方法
-		r = view.GetNthItemInDisplayOrder((y - 1 - cr.Top) / view.RowHeightEffective);
-		int w = cr.Left;
-		List<OLVColumn> cl = view.ColumnsInDisplayOrder;
-		foreach (OLVColumn t in cl.Where(t => x >= w && x <= (w += t.Width))) {
-			c = t;
-			break;
-		}
-
-		if (c == null) {
-			c = cl[cl.Count - 1];
-			ob = true;
-		}
-
-		y = r.Index + view.TopItemIndex;
-		if (y >= view.GetItemCount()) {
-			y = view.GetItemCount() - 1;
-		}
-
-		return new GridTestResult(c.DisplayIndex, y, ob);
-	}
-
 	public static void InvertSelect(this ObjectListView view) {
 		view.Freeze();
 		int l = view.GetItemCount();
@@ -205,18 +126,5 @@ internal static class ObjectListViewHelper
 		}
 
 		view.Unfreeze();
-	}
-}
-
-public struct GridTestResult
-{
-	public int ColumnIndex { get; }
-	public int RowIndex { get; }
-	public bool IsOutOfRange { get; }
-
-	public GridTestResult(int columnIndex, int rowIndex, bool isOutOfRange) {
-		ColumnIndex = columnIndex;
-		RowIndex = rowIndex;
-		IsOutOfRange = isOutOfRange;
 	}
 }

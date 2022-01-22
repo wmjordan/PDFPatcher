@@ -25,7 +25,7 @@ public partial class EditAdjustmentForm : Form
 			_AddFilterMenuItem.DropDownItems.Add(item).Name = FilterIDs[i++];
 		}
 
-		_FilterBox.BeforeSorting += (sender, e) => e.Canceled = true;
+		_FilterBox.BeforeSorting += (_, e) => e.Canceled = true;
 		_ConditionColumn.AspectGetter = x => x is AutoBookmarkCondition f ? f.Description : (object)null;
 		_IsInclusiveColumn.AspectGetter = x => {
 			if (x is AutoBookmarkCondition f) {

@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 using MuPdfSharp;
-using DrawingPoint = System.Drawing.Point;
 using Point = MuPdfSharp.Point;
 using Rectangle = MuPdfSharp.Rectangle;
 
@@ -57,10 +56,6 @@ public readonly struct PagePosition
 	public readonly bool IsInPage;
 
 	public Point Location => new(PageX, PageY);
-
-	internal PagePosition(int page, PointF position, DrawingPoint imagePosition, bool isInPage)
-		: this(page, position.X, position.Y, imagePosition.X, imagePosition.Y, isInPage) {
-	}
 
 	internal PagePosition(int page, float x, float y, int imageX, int imageY, bool isInPage) {
 		Page = page;

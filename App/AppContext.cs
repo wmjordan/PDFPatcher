@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using System.Xml;
 using MuPdfSharp;
 using PDFPatcher.Common;
 using PowerJson;
@@ -253,14 +252,6 @@ internal static class AppContext
 			}
 			: new ConfigurationSerialization { SaveAppSettings = false };
 		File.WriteAllText(path, Json.ToJson(s, JsonSm), Encoding.UTF8);
-	}
-
-	private static void WriteRecentFiles(XmlWriter writer, IEnumerable<string> list, string name) {
-		foreach (string item in list) {
-			writer.WriteStartElement(name);
-			writer.WriteAttributeString(Configuration.Path, item);
-			writer.WriteEndElement();
-		}
 	}
 
 	[JsonSerializable]

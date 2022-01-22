@@ -1,7 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using iTextSharp.text.pdf;
-using PDFPatcher.Processor;
 
 namespace PDFPatcher.Model;
 
@@ -13,32 +11,6 @@ internal class PdfDocumentFont
 	/// <param name="name">字体名称。</param>
 	internal static string RemoveSubsetPrefix(string name) {
 		return name.Length > 7 && name[6] == '+' ? name.Substring(7) : name;
-	}
-
-	/// <summary>
-	///     列举指定页面所用的字体。
-	/// </summary>
-	/// <param name="page">页面对应的 <see cref="PdfDictionary" />。</param>
-	/// <param name="fonts">用于放置字体名称的集合。</param>
-	internal static void EnumerateFonts(PdfDictionary page, ICollection<string> fonts) {
-		PdfDictionary fl = page.Locate<PdfDictionary>(true, PdfName.RESOURCES, PdfName.FONT);
-		if (fl == null) {
-			return;
-		}
-
-		foreach (KeyValuePair<PdfName, PdfObject> item in fl) {
-			if (item.Value is not PdfIndirectReference fr) {
-				continue;
-			}
-
-			PdfDictionary f = PdfReader.GetPdfObject(fr) as PdfDictionary;
-			PdfName fn = f.GetAsName(PdfName.BASEFONT);
-			if (fn == null) {
-				continue;
-			}
-
-			fonts.Add(RemoveSubsetPrefix(PdfHelper.GetPdfNameString(fn)));
-		}
 	}
 
 	internal static bool HasEmbeddedFont(PdfDictionary font) {

@@ -13,13 +13,13 @@ public class FunctionControl : UserControl
 	public EventHandler<ToolStripItemClickedEventArgs> RecentFileItemClicked;
 
 	protected FunctionControl() {
-		ListRecentFiles = (s, args) => {
+		ListRecentFiles = (s, _) => {
 			ToolStripDropDownItem m = (ToolStripDropDownItem)s;
 			ToolStripItemCollection l = m.DropDown.Items;
 			l.ClearDropDownItems();
 			l.AddSourcePdfFiles();
 		};
-		RecentFileItemClicked = (s, args) => ExecuteCommand(Commands.OpenFile, args.ClickedItem.ToolTipText);
+		RecentFileItemClicked = (_, args) => ExecuteCommand(Commands.OpenFile, args.ClickedItem.ToolTipText);
 	}
 
 	[Browsable(false)] public virtual string FunctionName => null;

@@ -22,15 +22,15 @@ public partial class InsertPageLabelForm : DraggableForm
 		(PageLabelStyle)Constants.PageLabelStyles.PdfValues[_NumericStyleBox.SelectedIndex]);
 
 	private void InsertPageLabelForm_Load(object sender, EventArgs e) {
-		_CancelButton.Click += (s, args) => {
+		_CancelButton.Click += (_, _) => {
 			DialogResult = DialogResult.Cancel;
 			Close();
 		};
-		_OkButton.Click += (s, args) => {
+		_OkButton.Click += (_, _) => {
 			DialogResult = DialogResult.OK;
 			Close();
 		};
-		_RemoveLabelButton.Click += (s, args) => {
+		_RemoveLabelButton.Click += (_, _) => {
 			DialogResult = DialogResult.Abort;
 			Close();
 		};

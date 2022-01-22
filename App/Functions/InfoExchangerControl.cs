@@ -44,8 +44,8 @@ public partial class InfoExchangerControl : FunctionControl
 		AppContext.MainForm.SetTooltip(_TargetPdfFile.FileList, "在此指定导入信息文件后生成的目标 PDF 文件路径（鼠标右键点击列表可插入文件名替代符）");
 		_ItemList.EmptyListMsg = "请使用“添加文件”按钮添加需要处理的 PDF 文件，或从资源管理器拖放文件到本列表框";
 
-		_ConfigButton.Click += (s, args) => AppContext.MainForm.SelectFunctionList(Function.PatcherOptions);
-		_InfoConfigButton.Click += (s, args) => AppContext.MainForm.SelectFunctionList(Function.InfoFileOptions);
+		_ConfigButton.Click += (_, _) => AppContext.MainForm.SelectFunctionList(Function.PatcherOptions);
+		_InfoConfigButton.Click += (_, _) => AppContext.MainForm.SelectFunctionList(Function.InfoFileOptions);
 
 		new TypedColumn<IProcessor>(_ActionNameColumn) {
 			AspectGetter = o => o.Name,
@@ -56,7 +56,7 @@ public partial class InfoExchangerControl : FunctionControl
 		_BookmarkControl.FileDialog.CheckFileExists = false;
 		_BookmarkControl.BrowseForFile += FileControl_BrowseForFile;
 		_TargetPdfFile.BrowseForFile += FileControl_BrowseForFile;
-		_TargetPdfFile.TargetFileChangedByBrowseButton += (s, args) => {
+		_TargetPdfFile.TargetFileChangedByBrowseButton += (_, args) => {
 			int i;
 			string f = _TargetPdfFile.FileDialog.FileName;
 			if (_ItemList.Items.Count <= 1 || (i = f.LastIndexOf(Path.DirectorySeparatorChar)) == -1) {
@@ -83,16 +83,16 @@ public partial class InfoExchangerControl : FunctionControl
 		_listHelper.SetupDragAndDrop(AddFiles);
 		FileListHelper.SetupCommonPdfColumns(_AuthorColumn, _KeywordsColumn, _SubjectColumn, _TitleColumn,
 			_PageCountColumn, _NameColumn, _FolderColumn);
-		_RefreshInfoButton.ButtonClick += (s, args) => _listHelper.RefreshInfo(AppContext.Encodings.DocInfoEncoding);
+		_RefreshInfoButton.ButtonClick += (_, _) => _listHelper.RefreshInfo(AppContext.Encodings.DocInfoEncoding);
 		_RefreshInfoButton.DropDown = _RefreshInfoMenu;
 		foreach (string item in Constants.Encoding.EncodingNames) {
 			_RefreshInfoMenu.Items.Add(item);
 		}
 
-		_RefreshInfoMenu.ItemClicked += (s, args) => _listHelper.RefreshInfo(ValueHelper.MapValue(args.ClickedItem.Text,
+		_RefreshInfoMenu.ItemClicked += (_, args) => _listHelper.RefreshInfo(ValueHelper.MapValue(args.ClickedItem.Text,
 			Constants.Encoding.EncodingNames, Constants.Encoding.Encodings));
 		_AddFilesButton.DropDownOpening += FileListHelper.OpenPdfButtonDropDownOpeningHandler;
-		_AddFilesButton.DropDownItemClicked += (s, args) => {
+		_AddFilesButton.DropDownItemClicked += (_, args) => {
 			args.ClickedItem.Owner.Hide();
 			AddFiles(new[] { args.ClickedItem.ToolTipText }, true);
 		};
@@ -196,7 +196,7 @@ public partial class InfoExchangerControl : FunctionControl
 
 		AppContext.MainForm.ResetWorker();
 		BackgroundWorker worker = AppContext.MainForm.GetWorker();
-		worker.DoWork += (dummy, arg) => {
+		worker.DoWork += (_, arg) => {
 			object[] a = arg.Argument as object[];
 			string t = a[0] as string;
 			if (files.Count > 1) {
@@ -252,7 +252,7 @@ public partial class InfoExchangerControl : FunctionControl
 
 		AppContext.MainForm.ResetWorker();
 		BackgroundWorker w = AppContext.MainForm.GetWorker();
-		w.DoWork += (dummy, arg) => {
+		w.DoWork += (_, arg) => {
 			object[] a = arg.Argument as object[];
 			if (files.Count > 1) {
 				string p = Path.GetDirectoryName(a[0] as string);
@@ -324,40 +324,6 @@ public partial class InfoExchangerControl : FunctionControl
 
 	private void _MainToolbar_ItemClicked(object sender, ToolStripItemClickedEventArgs e) {
 		_listHelper.ProcessCommonMenuCommand(e.ClickedItem.Name);
-	}
-
-	private void PreviewRename(List<SourceItem.Pdf> items, string template) {
-		int i = 0;
-		string[] result = new string[items.Count];
-		string[] source = new string[items.Count];
-		foreach (SourceItem.Pdf item in items) {
-			try {
-				FilePath s = item.FilePath;
-				string t;
-				if (s.ExistsFile == false) {
-					string.Concat("(找不到 PDF 文件：", s, ")");
-					continue;
-				}
-
-				t = Worker.RenameFile(template, item);
-				if (t.Length == 0) {
-					t = "<输出文件名无效>";
-				}
-				else if (Path.GetFileName(t).Length == 0) {
-					t = "<输出文件名为空>";
-				}
-
-				source[i] = s.ToString();
-				result[i] = t;
-				i++;
-			}
-			catch (Exception ex) {
-				FormHelper.ErrorBox(ex.Message);
-			}
-		}
-
-		using RenamePreviewForm f = new(source, result);
-		f.ShowDialog();
 	}
 
 	#region AddDocumentWorker

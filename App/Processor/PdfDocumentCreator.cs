@@ -16,10 +16,6 @@ namespace PDFPatcher.Processor;
 
 internal sealed class PdfDocumentCreator
 {
-	internal static readonly string[] SupportedFileTypes = {
-		".pdf", ".tif", ".jpg", ".gif", ".png", ".tiff", ".bmp", ".jpeg", ".jp2", ".j2k"
-	};
-
 	private static readonly string[] __BuiltInImageTypes = { ".png", ".jpg", ".jpeg", ".bmp", ".jp2", ".j2k" };
 	private static readonly string[] __ExtImageTypes = { ".tif", ".tiff", ".gif" };
 
@@ -77,7 +73,6 @@ internal sealed class PdfDocumentCreator
 						  && ps.Margins.Top == ps.Margins.Bottom;
 		if (impOptions.ImportBookmarks) {
 			PdfBookmarks = new PdfInfoXmlDocument();
-			BookmarkRootElement root = PdfBookmarks.BookmarkRoot;
 		}
 
 		if (_content.SpecialSize == SpecialPaperSize.None) {
@@ -263,7 +258,7 @@ internal sealed class PdfDocumentCreator
 		int pn = pdf.NumberOfPages;
 		ImageExtractor imgExp = null;
 		if (importImagesOnly) {
-			imgExp = new ImageExtractor(sourceFile.ExtractImageOptions, pdf);
+			imgExp = new ImageExtractor(sourceFile.ExtractImageOptions);
 		}
 
 		if (_option.KeepBookmarks) {
@@ -346,7 +341,7 @@ internal sealed class PdfDocumentCreator
 		pdf.Close();
 	}
 
-	private BookmarkContainer KeepBookmarks(BookmarkContainer bookmark, PdfReader pdf, int[] pageRemapper,
+	private void KeepBookmarks(BookmarkContainer bookmark, PdfReader pdf, int[] pageRemapper,
 		CoordinateTranslationSettings[] cts) {
 		XmlElement bm = OutlineManager.GetBookmark(pdf, new UnitConverter { Unit = Constants.Units.Point });
 		List<IInfoDocProcessor> processors = new();
@@ -378,11 +373,11 @@ internal sealed class PdfDocumentCreator
 			bookmark = PdfBookmarks.BookmarkRoot;
 		}
 		else {
-			return null;
+			return;
 		}
 
 		if (bm == null) {
-			return bookmark;
+			return;
 		}
 
 		while (bm.FirstChild != null) {
@@ -392,8 +387,6 @@ internal sealed class PdfDocumentCreator
 
 			bm.RemoveChild(bm.FirstChild);
 		}
-
-		return bookmark;
 	}
 
 	internal static void ProcessInfoItem(XmlElement item, ICollection<IInfoDocProcessor> processors) {

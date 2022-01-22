@@ -25,7 +25,6 @@ public struct MuCookie
 	private readonly int _Incomplete;
 
 	public bool IsCancellationPending => _Abort != 0;
-	public bool IsRunning => _ProgressMax == -1 || (_Progress > 0 && _Progress < _ProgressMax - 1);
 	public int ErrorCount { get; }
 
 	public void CancelAsync() { _Abort = 1; }
@@ -38,10 +37,8 @@ public struct MuCookie
 public enum DeviceHints
 {
 	None = 0,
-	IgnoreImage = 1,
 	IgnoreShade = 2,
 	DontInterperateImages = 4,
-	MaintainContainerStack = 8,
 	NoCache = 16
 }
 
@@ -197,7 +194,6 @@ public readonly struct BBox : IEquatable<BBox>
 	}
 
 	public Size Size => new(Width, Height);
-	public bool IsEmpty => Left == Right || Top == Bottom;
 	public bool IsInfinite => Left > Right || Top > Bottom;
 	public int Width => Right - Left;
 	public int Height => Bottom - Top;
@@ -335,13 +331,6 @@ public readonly struct Rectangle : IEquatable<Rectangle>
 		}
 
 		return new Rectangle(x0, y0, x1, y1);
-	}
-
-	/// <summary>返回将当前矩形区域乘以指定比例的区域。</summary>
-	/// <param name="multiplier">比例乘数。</param>
-	/// <returns>拉伸后的矩形区域。</returns>
-	public Rectangle Multiply(float multiplier) {
-		return new Rectangle(Left * multiplier, Top * multiplier, Right * multiplier, Bottom * multiplier);
 	}
 
 	/// <summary>返回包含两个矩形区域的新矩形区域。</summary>
@@ -508,17 +497,6 @@ public readonly struct Matrix : IEquatable<Matrix>
 {
 	public readonly float A, B, C, D, E, F;
 
-	/// <summary>
-	///     返回矩阵的放大方向是否对齐坐标轴（没有斜向拉伸或90整数倍以外的旋转）。
-	/// </summary>
-	public bool IsRectilinear => (Math.Abs(B) < float.Epsilon && Math.Abs(C) < float.Epsilon)
-								 || (Math.Abs(A) < float.Epsilon && Math.Abs(D) < float.Epsilon);
-
-	/// <summary>
-	///     返回矩阵大致的放大比例。
-	/// </summary>
-	public float Expansion => (float)Math.Sqrt(Math.Abs((A * D) - (B * C)));
-
 	private static float Min4(float a, float b, float c, float d) {
 		return Math.Min(Math.Min(a, b), Math.Min(c, d));
 	}
@@ -579,10 +557,6 @@ public readonly struct Matrix : IEquatable<Matrix>
 		return new Matrix(1, v, h, 1, 0, 0);
 	}
 
-	public Matrix ShearTo(float x, float y) {
-		return Concat(this, Shear(x, y));
-	}
-
 	public static Matrix Rotate(float theta) {
 		float s;
 		float c;
@@ -625,14 +599,6 @@ public readonly struct Matrix : IEquatable<Matrix>
 
 	public static Matrix Translate(float tx, float ty) {
 		return new Matrix(1, 0, 0, 1, tx, ty);
-	}
-
-	public Matrix TranslateTo(float tx, float ty) {
-		return Concat(this, Translate(tx, ty));
-	}
-
-	public Point Transform(Point p) {
-		return new Point((p.X * A) + (p.Y * C) + E, (p.X * B) + (p.Y * D) + F);
 	}
 
 	public Point Transform(float x, float y) {

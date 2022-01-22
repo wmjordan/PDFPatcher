@@ -11,7 +11,7 @@ public partial class InsertBookmarkForm : DraggableForm
 	public InsertBookmarkForm() {
 		InitializeComponent();
 
-		VisibleChanged += (s, args) => {
+		VisibleChanged += (_, _) => {
 			if (!Visible) {
 				return;
 			}
@@ -24,7 +24,7 @@ public partial class InsertBookmarkForm : DraggableForm
 		_AsChildBox.DoubleClick += InsertModeBox_DoubleClick;
 		_BeforeCurrentBox.DoubleClick += InsertModeBox_DoubleClick;
 		_ReplaceBookmarkBox.DoubleClick += InsertModeBox_DoubleClick;
-		_OkButton.Click += (s, args) => {
+		_OkButton.Click += (_, args) => {
 			OkClicked?.Invoke(this, args);
 			if (_AsChildBox.Checked || _AfterParentBox.Checked) {
 				_AfterCurrentBox.Checked = true;
@@ -32,7 +32,7 @@ public partial class InsertBookmarkForm : DraggableForm
 
 			Hide();
 		};
-		_CancelButton.Click += (s, args) => Hide();
+		_CancelButton.Click += (_, _) => Hide();
 	}
 
 	/// <summary>

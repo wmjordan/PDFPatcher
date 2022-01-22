@@ -41,7 +41,7 @@ internal sealed class InsertBookmarkCommand : IEditorCommand
 
 		InsertBookmarkForm f = GetDialog(controller);
 		PdfViewerControl v = controller.View.Viewer;
-		Rectangle vp = v.GetImageViewPort();
+		v.GetImageViewPort();
 		Point fp;
 		RectangleF sr = v.SelectionRegion;
 		if (sr != RectangleF.Empty) {
@@ -87,7 +87,7 @@ internal sealed class InsertBookmarkCommand : IEditorCommand
 		}
 
 		_dialog = new InsertBookmarkForm { Controller = controller };
-		_dialog.OkClicked += (sender, e) => {
+		_dialog.OkClicked += (sender, _) => {
 			InsertBookmarkForm f = (InsertBookmarkForm)sender;
 			Controller c = f.Controller;
 			string t = f.Title;
@@ -100,10 +100,10 @@ internal sealed class InsertBookmarkCommand : IEditorCommand
 			c.InsertBookmark(t, f.TargetPageNumber, f.TargetPosition, (InsertBookmarkPositionType)f.InsertMode);
 			c.Model.LockDownViewer = false;
 		};
-		_dialog.Deactivate += (s, args) => {
+		_dialog.Deactivate += (s, _) => {
 			(s as Form).Visible = false;
 		};
-		_dialog.VisibleChanged += (s, args) => {
+		_dialog.VisibleChanged += (s, _) => {
 			InsertBookmarkForm f = (InsertBookmarkForm)s;
 			Controller c = f.Controller;
 			c.View.Viewer.ShowPinPoint = f.Visible;
