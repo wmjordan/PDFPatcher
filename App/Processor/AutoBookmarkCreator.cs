@@ -130,7 +130,7 @@ internal sealed class AutoBookmarkCreator
 				}
 
 				List<TextRegion> tr = MergeTextLines(box, tl);
-				if (tr != null && tr.Count > 0) {
+				if (tr is { Count: > 0 }) {
 					if (options.WritingDirection != WritingDirection.Unknown) {
 						tr.Sort((a, b) => {
 							Bound ra = a.Region;

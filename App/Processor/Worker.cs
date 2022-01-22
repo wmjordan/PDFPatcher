@@ -693,7 +693,7 @@ internal static class Worker
 				bookmarks = creator.PdfBookmarks.BookmarkRoot;
 			}
 
-			if (bookmarks != null && bookmarks.HasChildNodes) {
+			if (bookmarks is { HasChildNodes: true }) {
 				Tracker.TraceMessage("写入文档书签。");
 				OutlineManager.WriteOutline(w, bookmarks,
 					w.PageEmpty ? w.CurrentPageNumber - 1 : w.CurrentPageNumber);

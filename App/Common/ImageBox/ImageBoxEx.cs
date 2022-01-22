@@ -659,9 +659,8 @@ internal class ImageBoxEx : ImageBox
 
 		// decide which edges we're resizing
 		bool resizingTopEdge =
-			ResizeAnchor >= DragHandleAnchor.TopLeft && ResizeAnchor <= DragHandleAnchor.TopRight;
-		bool resizingBottomEdge = ResizeAnchor >= DragHandleAnchor.BottomLeft &&
-								  ResizeAnchor <= DragHandleAnchor.BottomRight;
+			ResizeAnchor is >= DragHandleAnchor.TopLeft and <= DragHandleAnchor.TopRight;
+		bool resizingBottomEdge = ResizeAnchor is >= DragHandleAnchor.BottomLeft and <= DragHandleAnchor.BottomRight;
 		bool resizingLeftEdge = ResizeAnchor is DragHandleAnchor.TopLeft or DragHandleAnchor.MiddleLeft or DragHandleAnchor.BottomLeft;
 		bool resizingRightEdge = ResizeAnchor is DragHandleAnchor.TopRight or DragHandleAnchor.MiddleRight or DragHandleAnchor.BottomRight;
 

@@ -154,7 +154,7 @@ public partial class MergerControl : FunctionControl
 
 	public override void SetupCommand(ToolStripItem item) {
 		string n = item.Name;
-		if (item.OwnerItem != null && item.OwnerItem.Name == Commands.Selection) {
+		if (item.OwnerItem is { Name: Commands.Selection }) {
 			EnableCommand(item, _ItemList.GetItemCount() > 0 && _ItemList.Focused, true);
 		}
 		else if (n.StartsWith(Commands.Copy, StringComparison.Ordinal) ||
@@ -551,7 +551,7 @@ public partial class MergerControl : FunctionControl
 			case "_BoldStyleButton":
 				bool cb = !_BoldStyleButton.Checked;
 				foreach (SourceItem item in _ItemList.SelectedObjects) {
-					if (item != null && item.Bookmark != null) {
+					if (item is { Bookmark: { } }) {
 						item.Bookmark.IsBold = cb;
 					}
 				}
@@ -560,7 +560,7 @@ public partial class MergerControl : FunctionControl
 			case "_ItalicStyleButton":
 				bool ci = !_ItalicStyleButton.Checked;
 				foreach (SourceItem item in _ItemList.SelectedObjects) {
-					if (item != null && item.Bookmark != null) {
+					if (item is { Bookmark: { } }) {
 						item.Bookmark.IsItalic = ci;
 					}
 				}
@@ -573,7 +573,7 @@ public partial class MergerControl : FunctionControl
 				CopySelectedItems(item => item.FilePath.FileNameWithoutExtension);
 				break;
 			case "_CopyBookmarkText":
-				CopySelectedItems(item => item != null && item.Bookmark != null ? item.Bookmark.Title : string.Empty);
+				CopySelectedItems(item => item is { Bookmark: { } } ? item.Bookmark.Title : string.Empty);
 				break;
 			case "_PasteBookmarkText":
 				string ct = Clipboard.GetText(TextDataFormat.UnicodeText);
@@ -612,7 +612,7 @@ public partial class MergerControl : FunctionControl
 				break;
 			case "_ClearBookmarkTitle":
 				foreach (SourceItem item in _ItemList.SelectedObjects) {
-					if (item != null && item.Bookmark != null) {
+					if (item is { Bookmark: { } }) {
 						item.Bookmark = null;
 					}
 				}
@@ -657,7 +657,7 @@ public partial class MergerControl : FunctionControl
 			? Color.Transparent
 			: _BookmarkColorButton.Color;
 		foreach (SourceItem item in _ItemList.SelectedObjects) {
-			if (item != null && item.Bookmark != null) {
+			if (item is { Bookmark: { } }) {
 				item.Bookmark.ForeColor = sc;
 			}
 		}

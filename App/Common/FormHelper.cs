@@ -213,7 +213,7 @@ internal static class FormHelper
 	}
 
 	public static void HidePopupMenu(this ToolStripItem item) {
-		if (item is ToolStripDropDownItem mi && mi.HasDropDownItems) {
+		if (item is ToolStripDropDownItem { HasDropDownItems: true }) {
 			return;
 		}
 

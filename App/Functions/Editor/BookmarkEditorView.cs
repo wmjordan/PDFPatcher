@@ -57,7 +57,7 @@ public partial class BookmarkEditorView : TreeListView
 
 		this.SetTreeViewLine();
 		this.FixEditControlWidth();
-		CanExpandGetter = x => x is BookmarkElement e && e.HasSubBookmarks;
+		CanExpandGetter = x => x is BookmarkElement { HasSubBookmarks: true };
 		ChildrenGetter = x => ((BookmarkElement)x).SubBookmarks;
 		BookmarkNameColumn.AutoCompleteEditorMode = AutoCompleteMode.Suggest;
 		//this.SelectedRowDecoration = new RowBorderDecoration ()

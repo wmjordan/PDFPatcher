@@ -318,7 +318,7 @@ internal sealed class ImageInfo
 
 	private static bool IsDecodeParamInverted(PdfDictionary data, bool blackIs1) {
 		PdfArray a = data.GetAsArray(PdfName.DECODE);
-		if (a != null && a.Size == 2 && a[0].Type == PdfObject.NUMBER) {
+		if (a is { Size: 2 } && a[0].Type == PdfObject.NUMBER) {
 			blackIs1 = ((PdfNumber)a[0]).IntValue == (blackIs1 ? 0 : 1);
 		}
 
@@ -490,7 +490,7 @@ internal sealed class ImageInfo
 			PdfObject o = colorspace.GetDirectObject(1);
 			info.PaletteColorSpace = o as PdfName;
 			if (info.PaletteColorSpace == null) {
-				if (o is PdfArray arr && arr.Size == 2) {
+				if (o is PdfArray { Size: 2 } arr) {
 					if (PdfName.ICCBASED.Equals(arr.GetAsName(0)) && arr.Size == 2) {
 						PRStream iccs = arr.GetDirectObject(1) as PRStream;
 						info.ColorSpace = iccs.GetAsName(PdfName.ALTERNATE) ?? PdfName.DEVICERGB;

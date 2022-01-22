@@ -63,7 +63,7 @@ internal static class PdfHelper
 					r = new PdfReader(sourceFile, password);
 				}
 
-				if (password != null && password.Length > 0) {
+				if (password is { Length: > 0 }) {
 					__PdfPasswordBox[sourceFile] = password;
 				}
 
@@ -97,7 +97,7 @@ internal static class PdfHelper
 		__PdfPasswordBox.TryGetValue(sourceFile, out password);
 		while (true) {
 			MuDocument r = new(sourceFile, password != null ? Encoding.Default.GetString(password) : string.Empty);
-			if (password != null && password.Length > 0) {
+			if (password is { Length: > 0 }) {
 				__PdfPasswordBox[sourceFile] = password;
 			}
 

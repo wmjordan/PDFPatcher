@@ -24,7 +24,7 @@ public sealed class DocumentObject : IHierarchicalObject<DocumentObject>
 		PdfObjectType type) {
 		OwnerDocument = ownerDocument;
 		Parent = parent;
-		if (value != null && value.Type == PdfObject.INDIRECT) {
+		if (value is { Type: PdfObject.INDIRECT }) {
 			PdfObject r = PdfReader.GetPdfObjectRelease(value);
 			if (r != null) {
 				ExtensiveObject = r;
@@ -162,7 +162,7 @@ public sealed class DocumentObject : IHierarchicalObject<DocumentObject>
 	internal DocumentObject FindReferenceAncestor() {
 		DocumentObject d = this;
 		do {
-			if (d.Value != null && d.Value.Type == PdfObject.INDIRECT) {
+			if (d.Value is { Type: PdfObject.INDIRECT }) {
 				return d;
 			}
 		} while ((d = d.Parent) != null);

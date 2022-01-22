@@ -290,7 +290,7 @@ internal static class ValueHelper
 						return -1;
 					}
 
-					bool notZero = c > '0' && c <= '9';
+					bool notZero = c is > '0' and <= '9';
 					bool hasDot = false;
 					while (++i < l) {
 						c = value[i];
@@ -312,7 +312,7 @@ internal static class ValueHelper
 						}
 
 						if (notZero == false) {
-							notZero = c > '0' && c <= '9';
+							notZero = c is > '0' and <= '9';
 						}
 					}
 

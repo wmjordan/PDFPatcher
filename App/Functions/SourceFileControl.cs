@@ -28,7 +28,7 @@ public partial class SourceFileControl : UserControl
 	/// <summary>
 	///     获取选定的 PDF 文件列表的第一项。
 	/// </summary>
-	internal string FirstFile => Files != null && Files.Length > 0 ? Files[0] : string.Empty;
+	internal string FirstFile => Files is { Length: > 0 } ? Files[0] : string.Empty;
 
 	[DefaultValue(null)]
 	public override string Text {

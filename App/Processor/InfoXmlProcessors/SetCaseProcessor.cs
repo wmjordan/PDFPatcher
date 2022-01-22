@@ -83,23 +83,23 @@ internal sealed class SetCaseProcessor : IPdfInfoXmlProcessor
 	}
 
 	private static char FullWidthLetterToHalfWidth(char ch) {
-		return ch >= 'ａ' && ch <= 'ｚ' ? (char)(ch - 'ａ' + 'a')
-			: ch >= 'Ａ' && ch <= 'Ｚ' ? (char)(ch - 'Ａ' + 'A')
+		return ch is >= 'ａ' and <= 'ｚ' ? (char)(ch - 'ａ' + 'a')
+			: ch is >= 'Ａ' and <= 'Ｚ' ? (char)(ch - 'Ａ' + 'A')
 			: ch;
 	}
 
 	private static char HalfWidthLetterToFullWidth(char ch) {
-		return ch >= 'a' && ch <= 'z' ? (char)(ch + 'ａ' - 'a')
-			: ch >= 'A' && ch <= 'Z' ? (char)(ch + 'Ａ' - 'A')
+		return ch is >= 'a' and <= 'z' ? (char)(ch + 'ａ' - 'a')
+			: ch is >= 'A' and <= 'Z' ? (char)(ch + 'Ａ' - 'A')
 			: ch;
 	}
 
 	private static char FullWidthNumberToHalfWidth(char ch) {
-		return ch >= '０' && ch <= '９' ? (char)(ch - '０' + '0') : ch;
+		return ch is >= '０' and <= '９' ? (char)(ch - '０' + '0') : ch;
 	}
 
 	private static char HalfWidthNumberToFullWidth(char ch) {
-		return ch >= '0' && ch <= '9' ? (char)(ch + '０' - '0') : ch;
+		return ch is >= '0' and <= '9' ? (char)(ch + '０' - '0') : ch;
 	}
 
 	private static class SC2TC

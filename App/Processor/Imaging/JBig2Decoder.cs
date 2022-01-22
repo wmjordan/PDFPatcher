@@ -17,7 +17,7 @@ internal static class JBig2Decoder
 
 		try {
 			ctxptr = NativeMethods.New(IntPtr.Zero);
-			if (globals != null && globals.Length > 0) {
+			if (globals is { Length: > 0 }) {
 				c = NativeMethods.ReadData(ctxptr, globals, (uint)globals.Length);
 				globalptr = NativeMethods.MakeGlobal(ctxptr);
 				ctxptr = NativeMethods.New(globalptr);

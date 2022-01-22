@@ -202,7 +202,7 @@ internal class PdfPageExtractor
 			Tracker.TraceMessage("导出原文档书签。");
 			pdf.ConsolidateNamedDestinations();
 			bm = OutlineManager.GetBookmark(pdf, new UnitConverter { Unit = Constants.Units.Point });
-			if (bm != null && bm.HasChildNodes) {
+			if (bm is { HasChildNodes: true }) {
 				IInfoDocProcessor[] processors = {
 					new GotoDestinationProcessor {
 						RemoveOrphanDestination = options.RemoveOrphanBookmarks,

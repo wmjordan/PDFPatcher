@@ -735,7 +735,7 @@ namespace PDFPatcher.Functions.Editor
 				ts[i] = es[i].GetAttribute(Constants.BookmarkAttributes.Title);
 				if (ts[i].Length > 0) {
 					char c = ts[i][0];
-					if (c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z') {
+					if (c is >= 'a' and <= 'z' || c is >= 'A' and <= 'Z') {
 						ts[i] = " " + ts[i];
 					}
 				}

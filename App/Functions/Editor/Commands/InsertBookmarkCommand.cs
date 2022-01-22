@@ -82,7 +82,7 @@ namespace PDFPatcher.Functions.Editor
 		}
 
 		private static InsertBookmarkForm GetDialog(Controller controller) {
-			if (_dialog != null && _dialog.IsDisposed == false) {
+			if (_dialog is { IsDisposed: false }) {
 				_dialog.Controller = controller;
 				return _dialog;
 			}

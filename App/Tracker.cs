@@ -42,7 +42,7 @@ internal static class Tracker
 		Trace.Write(DateTime.Now.ToString("HH:mm:ss.fff "));
 		Trace.WriteLine(message);
 		BackgroundWorker worker = __Worker;
-		if (worker != null && worker.IsBusy) {
+		if (worker is { IsBusy: true }) {
 			worker.ReportProgress((int)level, message);
 		}
 	}

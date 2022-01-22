@@ -21,7 +21,7 @@ internal sealed class PagePropertiesCommand : IEditorCommand
 	}
 
 	private static PagePropertyForm GetDialog() {
-		if (_dialog != null && _dialog.IsDisposed == false) {
+		if (_dialog is { IsDisposed: false }) {
 			return _dialog;
 		}
 

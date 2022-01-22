@@ -22,7 +22,7 @@ public partial class FontFilterForm : Form
 		tcr.LinePen = new Pen(SystemColors.ControlDark) { DashCap = DashCap.Round, DashStyle = DashStyle.Dash };
 
 		_FontInfoBox.CanExpandGetter = o => {
-			return o is XmlElement f && f.Name == Constants.Font.ThisName && f.HasChildNodes;
+			return o is XmlElement { Name: Constants.Font.ThisName, HasChildNodes: true };
 		};
 		_FontInfoBox.ChildrenGetter = o => {
 			if (o is not XmlElement f) {

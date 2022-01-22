@@ -38,7 +38,7 @@ internal static class PathAxes
 			null => string.Empty,
 			string t => t,
 			DocumentObject o => o.FriendlyValue ?? o.LiteralValue,
-			IList<DocumentObject> l when l.Count > 0 => l[0].FriendlyValue ?? l[0].LiteralValue,
+			IList<DocumentObject> { Count: > 0 } l => l[0].FriendlyValue ?? l[0].LiteralValue,
 			IList<DocumentObject> l => string.Empty,
 			_ => ((double)operand).ToText()
 		};
@@ -113,7 +113,7 @@ internal static class PathAxes
 
 		public IList<DocumentObject> SelectObjects(DocumentObject source, string name,
 			IEnumerable<IPathPredicate> predicates) {
-			if (source != null && source.HasChildren) {
+			if (source is { HasChildren: true }) {
 				return source.Children.Where(item => MatchesPredicate(item, name, predicates)).ToArray();
 			}
 

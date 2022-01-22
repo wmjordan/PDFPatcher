@@ -68,7 +68,7 @@ namespace PDFPatcher.Functions
 			_ImageFormatBox.SelectedIndex = ValueHelper.MapValue(o.FileFormat,
 				new ImageFormat[] { ImageFormat.Png, ImageFormat.Jpeg, ImageFormat.Tiff }, new int[] { 0, 1, 2 }, 0);
 			_InvertColorBox.Checked = o.InvertColor;
-			if (o.JpegQuality > 0 && o.JpegQuality <= 100) {
+			if (o.JpegQuality is > 0 and <= 100) {
 				_JpegQualityBox.Text = ValueHelper.ToText(o.JpegQuality);
 			}
 			else {
@@ -180,7 +180,7 @@ namespace PDFPatcher.Functions
 				new ImageFormat[] { ImageFormat.Png, ImageFormat.Jpeg, ImageFormat.Tiff }, ImageFormat.Png);
 			option.ImageWidth = (int)_ExtractPageImageWidthBox.Value;
 			option.JpegQuality = _JpegQualityBox.Text.TryParse(out int j)
-				? j > 0 && j <= 100 ? j : 75
+				? j is > 0 and <= 100 ? j : 75
 				: 75;
 			option.Quantize = _QuantizeBox.Checked;
 			option.Dpi = _ResolutionBox.Text.ToSingle();

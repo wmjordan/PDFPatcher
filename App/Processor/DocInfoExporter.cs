@@ -574,7 +574,7 @@ internal sealed class DocInfoExporter
 				w.WriteStartElement(Constants.PageLinkAttributes.Link);
 				w.WriteAttributeString(Constants.PageLinkAttributes.PageNumber, i.ToText());
 				PdfArray rect = annot.GetAsArray(PdfName.RECT);
-				if (rect != null && rect.Size == 4) {
+				if (rect is { Size: 4 }) {
 					UnitConverter u = _options.UnitConverter;
 					float[] p = new float[4];
 					int k = 0;

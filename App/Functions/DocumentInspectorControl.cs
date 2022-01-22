@@ -152,7 +152,7 @@ namespace PDFPatcher.Functions
 							RefreshReferences(r);
 						}
 					}
-					else if (d.Parent != null && d.Parent.Type == PdfObjectType.Outline && d.Name == "Title") {
+					else if (d.Parent is { Type: PdfObjectType.Outline } && d.Name == "Title") {
 						d.Parent.Description = (string)value;
 						_ObjectDetailBox.RefreshObject(d.Parent);
 					}
@@ -432,7 +432,7 @@ namespace PDFPatcher.Functions
 				return;
 			}
 
-			if (d.Value != null && d.Value.Type is PdfObject.INDIRECT or PdfObject.STREAM) {
+			if (d.Value is { Type: PdfObject.INDIRECT or PdfObject.STREAM }) {
 				PRStream s = d.Value as PRStream ?? d.ExtensiveObject as PRStream;
 				if (s != null) {
 					_ViewButton.Enabled = d.Name.StartsWith("Font") == false;
@@ -444,7 +444,7 @@ namespace PDFPatcher.Functions
 				}
 			}
 
-			if (d.Value != null && d.Value is PdfDictionary || d.ExtensiveObject is PdfDictionary) {
+			if (d.Value is PdfDictionary || d.ExtensiveObject is PdfDictionary) {
 				_AddObjectMenu.Enabled = true;
 			}
 

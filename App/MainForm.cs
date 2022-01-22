@@ -401,7 +401,7 @@ public partial class MainForm : Form
 	}
 
 	private void RecentFileMenuOpening(object sender, EventArgs e) {
-		if (GetActiveFunctionControl() is FunctionControl f && f.ListRecentFiles != null) {
+		if (GetActiveFunctionControl() is FunctionControl { ListRecentFiles: { } } f) {
 			f.ListRecentFiles(sender, e);
 		}
 	}

@@ -261,12 +261,12 @@ internal static class OutlineManager
 			}
 
 			c = cc[k];
-			if (c >= '0' && c <= '7') {
+			if (c is >= '0' and <= '7') {
 				int n = c - '0';
 				++k;
 				for (int j = 0; j < 2 && k < len; ++j) {
 					c = cc[k];
-					if (c >= '0' && c <= '7') {
+					if (c is >= '0' and <= '7') {
 						++k;
 						n = (n * 8) + c - '0';
 					}

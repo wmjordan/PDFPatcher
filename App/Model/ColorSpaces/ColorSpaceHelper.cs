@@ -508,7 +508,7 @@ public static class ColorSpaceHelper
 		if (l == 0 || max == min) {
 			s = 0;
 		}
-		else if (0 < l && l <= 0.5) {
+		else if (l is > 0 and <= 0.5) {
 			s = (max - min) / (max + min);
 		}
 		else if (l > 0.5) {

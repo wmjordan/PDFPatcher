@@ -386,7 +386,7 @@ namespace PDFPatcher.Functions
 					// keep disabled
 					break;
 				case Commands.DocumentProperties:
-					item.Enabled = _ViewerBox.Document != null && _ViewerBox.Document.IsDocumentOpened;
+					item.Enabled = _ViewerBox.Document is { IsDocumentOpened: true };
 					item.Visible = true;
 					break;
 				case "_ScrollVertical":

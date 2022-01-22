@@ -75,7 +75,7 @@ internal static class FileHelper
 			}
 			else {
 				// 数字比较
-				if (y >= '0' && y <= '9') {
+				if (y is >= '0' and <= '9') {
 					// 两组均为数字
 					do {
 						if (x > '0' || n1 > 0) {
@@ -127,7 +127,7 @@ internal static class FileHelper
 	}
 
 	private static char ToLowerAscii(char c) {
-		return c >= 'A' && c <= 'Z' ? (char)(c + ('a' - 'A')) : c;
+		return c is >= 'A' and <= 'Z' ? (char)(c + ('a' - 'A')) : c;
 	}
 
 	internal static bool CheckOverwrite(string targetFile) {

@@ -42,7 +42,7 @@ public partial class BookmarkControl : UserControl
 
 	private void _BrowseSourcePdfButton_Click(object sender, EventArgs e) {
 		BrowseForFile?.Invoke(sender, e);
-		string sourceFile = AppContext.SourceFiles != null && AppContext.SourceFiles.Length > 0
+		string sourceFile = AppContext.SourceFiles is { Length: > 0 }
 			? AppContext.SourceFiles[0]
 			: string.Empty;
 		if (FileHelper.IsPathValid(FileList.Text) && Path.GetFileName(FileList.Text).Length > 0) {

@@ -51,7 +51,7 @@ public partial class TargetFileControl : UserControl
 			BrowseForFile(sender, e);
 		}
 
-		FilePath sourceFile = AppContext.SourceFiles != null && AppContext.SourceFiles.Length > 0
+		FilePath sourceFile = AppContext.SourceFiles is { Length: > 0 }
 			? AppContext.SourceFiles[0]
 			: string.Empty;
 		string t = FileList.Text;
