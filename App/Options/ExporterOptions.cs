@@ -75,9 +75,7 @@ public class ExporterOptions
 	///<summary>获取或指定导出文件时所用的编码。</summary>
 	[XmlAttribute("文本编码")]
 	public string Encoding {
-		get {
-			return _Encoding.EncodingName == E.Default.EncodingName ? Constants.Encoding.SystemDefault : _EncodingName;
-		}
+		get => _Encoding.EncodingName == E.Default.EncodingName ? Constants.Encoding.SystemDefault : _EncodingName;
 		set {
 			if (string.IsNullOrEmpty(value) || value == Constants.Encoding.SystemDefault) {
 				_Encoding = E.Default;

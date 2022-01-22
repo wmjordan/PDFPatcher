@@ -58,17 +58,14 @@ internal sealed class EditModel
 		internal string Text { get; }
 		internal TextSource TextSource { get; }
 
-		internal string LiteralTextSource {
-			get {
-				return TextSource switch {
-					TextSource.Empty => "当前位置不包含文本",
-					TextSource.Text => "已自动匹配文本层文本",
-					TextSource.OcrText => "已自动识别图像文本",
-					TextSource.OcrError => "当前页面不包含可识别文本，或识别过程出错",
-					_ => throw new IndexOutOfRangeException("TextSource")
-				};
-			}
-		}
+		internal string LiteralTextSource =>
+			TextSource switch {
+				TextSource.Empty => "当前位置不包含文本",
+				TextSource.Text => "已自动匹配文本层文本",
+				TextSource.OcrText => "已自动识别图像文本",
+				TextSource.OcrError => "当前页面不包含可识别文本，或识别过程出错",
+				_ => throw new IndexOutOfRangeException("TextSource")
+			};
 	}
 
 	internal enum TextSource

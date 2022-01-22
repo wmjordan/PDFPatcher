@@ -59,9 +59,7 @@ public abstract class AutoBookmarkCondition : ICloneable
 
 		public override string Name => "多条件组合";
 
-		internal override bool IsTextLineFilter {
-			get { return Conditions.Any(item => item.IsTextLineFilter); }
-		}
+		internal override bool IsTextLineFilter => Conditions.Any(item => item.IsTextLineFilter);
 
 		public override object Clone() {
 			MultiCondition m = new();

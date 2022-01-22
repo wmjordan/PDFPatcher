@@ -44,9 +44,7 @@ public abstract class SourceItem
 	public int PageCount { get; private set; }
 	public abstract int FileSize { get; }
 
-	public List<SourceItem> Items {
-		get { return _Items ??= new List<SourceItem>(); }
-	}
+	public List<SourceItem> Items => _Items ??= new List<SourceItem>();
 
 	public bool HasSubItems => _Items.HasContent();
 

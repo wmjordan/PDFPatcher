@@ -44,9 +44,7 @@ internal sealed class TextLine : IDirectionalBoundObject
 	/// <summary>
 	///     获取将 <see cref="Texts" /> 内所有文本串联起来的字符串。
 	/// </summary>
-	public string Text {
-		get { return _Text ??= GetConcatenatedText(); }
-	}
+	public string Text => _Text ??= GetConcatenatedText();
 
 	internal void AddText(TextInfo text) {
 		if (Direction == WritingDirection.Unknown) {

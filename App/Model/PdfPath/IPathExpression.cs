@@ -35,9 +35,7 @@ public class PathExpression : IPathExpression
 	private IList<IPathPredicate> _Predicates;
 
 	///<summary>获取匹配条件列表。</summary>
-	public IList<IPathPredicate> Predicates {
-		get { return _Predicates ??= new List<IPathPredicate>(); }
-	}
+	public IList<IPathPredicate> Predicates => _Predicates ??= new List<IPathPredicate>();
 
 	public DocumentObject SelectObject(DocumentObject source) {
 		return Axis.SelectObject(source, Name, Predicates);

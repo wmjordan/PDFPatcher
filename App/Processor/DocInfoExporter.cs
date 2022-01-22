@@ -30,9 +30,7 @@ internal sealed class DocInfoExporter
 		_actionExport = new PdfActionExporter(options.UnitConverter);
 	}
 
-	private Dictionary<int, int> PageReferenceMapper {
-		get { return _pageReferenceMapper ??= _reader.GetPageRefMapper(); }
-	}
+	private Dictionary<int, int> PageReferenceMapper => _pageReferenceMapper ??= _reader.GetPageRefMapper();
 
 	internal static XmlWriterSettings GetWriterSettings() {
 		return new XmlWriterSettings {

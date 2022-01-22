@@ -87,11 +87,7 @@ public partial class DocumentFontListForm : Form
 
 	internal FontSubstitutionsEditor SubstitutionsEditor { get; set; }
 
-	public IList<string> SelectedFonts {
-		get {
-			return (from PageFont item in _FontListBox.CheckedObjects select item.Name).ToList();
-		}
-	}
+	public IList<string> SelectedFonts => (from PageFont item in _FontListBox.CheckedObjects select item.Name).ToList();
 
 	private void GetPageFonts(PdfReader pdf, int pageNumber) {
 		PdfDictionary page = pdf.GetPageNRelease(pageNumber);

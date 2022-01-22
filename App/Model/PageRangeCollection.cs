@@ -9,11 +9,7 @@ internal sealed class PageRangeCollection : List<PageRange>
 {
 	private PageRangeCollection() { }
 
-	public int TotalPages {
-		get {
-			return this.Sum(item => item.Count);
-		}
-	}
+	public int TotalPages => this.Sum(item => item.Count);
 
 	public bool IsInRange(int value) {
 		return this.Any(item => (item.StartValue < item.EndValue && value >= item.StartValue && value <= item.EndValue) || (value >= item.EndValue && value <= item.StartValue));
