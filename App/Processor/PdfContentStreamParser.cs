@@ -784,11 +784,8 @@ internal class PdfContentStreamProcessor
 		public override PdfObject GetDirectObject(PdfName key) {
 			for (int i = resourcesStack.Count - 1; i >= 0; i--) {
 				PdfDictionary subResource = resourcesStack[i];
-				if (subResource == null) {
-					continue;
-				}
 
-				PdfObject obj = subResource.GetDirectObject(key);
+				PdfObject obj = subResource?.GetDirectObject(key);
 				if (obj != null) {
 					return obj;
 				}

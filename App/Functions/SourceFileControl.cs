@@ -66,9 +66,7 @@ public partial class SourceFileControl : UserControl
 		}
 
 		SelectFiles(_OpenPdfBox.FileNames);
-		if (BrowseSelectedFiles != null) {
-			BrowseSelectedFiles(sender, e);
-		}
+		BrowseSelectedFiles?.Invoke(sender, e);
 	}
 
 	private void SelectFiles(string[] files) {

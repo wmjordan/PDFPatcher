@@ -38,9 +38,7 @@ namespace PDFPatcher.Functions
 			get => _controller?.Model.DocumentPath;
 			set {
 				_controller.Model.DocumentPath = value;
-				if (DocumentChanged != null) {
-					DocumentChanged(this, new DocumentChangedEventArgs(value));
-				}
+				DocumentChanged?.Invoke(this, new DocumentChangedEventArgs(value));
 			}
 		}
 

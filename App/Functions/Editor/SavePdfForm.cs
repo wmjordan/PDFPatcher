@@ -67,9 +67,7 @@ public partial class SavePdfForm : Form
 			Worker.PatchDocument(new SourceItem.Pdf(s), t, _bookmarkDocument, AppContext.Importer, AppContext.Editor);
 		};
 		worker.RunWorkerCompleted += (dummy, arg) => {
-			if (Finished != null) {
-				Finished(this, arg);
-			}
+			Finished?.Invoke(this, arg);
 		};
 		worker.RunWorkerAsync();
 

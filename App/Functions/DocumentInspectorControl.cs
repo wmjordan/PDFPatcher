@@ -61,9 +61,7 @@ namespace PDFPatcher.Functions
 				}
 
 				_fileName = value;
-				if (DocumentChanged != null) {
-					DocumentChanged(this, new DocumentChangedEventArgs(value));
-				}
+				DocumentChanged?.Invoke(this, new DocumentChangedEventArgs(value));
 			}
 		}
 
@@ -614,11 +612,7 @@ namespace PDFPatcher.Functions
 				//}
 			}
 			else if (ci == _ViewButton) {
-				if (n == null) {
-					return;
-				}
-
-				if (n.ExtensiveObject is not PRStream s) {
+				if (n?.ExtensiveObject is not PRStream s) {
 					return;
 				}
 

@@ -239,11 +239,8 @@ internal sealed class ReplaceFontProcessor : IPageProcessor
 
 			if (_fontRefIDMap.TryGetValue(fr.Number, out NewFont nf) == false) {
 				PdfDictionary f = fr.CastAs<PdfDictionary>();
-				if (f == null) {
-					goto BYPASSFONT;
-				}
 
-				PdfName fn = f.GetAsName(PdfName.BASEFONT);
+				PdfName fn = f?.GetAsName(PdfName.BASEFONT);
 				if (fn == null) {
 					goto BYPASSFONT;
 				}

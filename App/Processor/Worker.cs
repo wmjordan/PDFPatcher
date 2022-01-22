@@ -784,9 +784,7 @@ internal static class Worker
 			FormHelper.ErrorBox("在导出信息文件时遇到错误：\n" + ex.Message);
 		}
 		finally {
-			if (r != null) {
-				r.Close();
-			}
+			r?.Close();
 		}
 	}
 
@@ -876,9 +874,7 @@ internal static class Worker
 			FormHelper.ErrorBox("在导出信息文件时遇到错误：\n" + ex.Message);
 		}
 		finally {
-			if (r != null) {
-				r.Close();
-			}
+			r?.Close();
 		}
 	}
 

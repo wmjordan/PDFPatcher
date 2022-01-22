@@ -47,9 +47,7 @@ public partial class TargetFileControl : UserControl
 	}
 
 	private void _BrowseTargetPdfButton_Click(object sender, EventArgs e) {
-		if (BrowseForFile != null) {
-			BrowseForFile(sender, e);
-		}
+		BrowseForFile?.Invoke(sender, e);
 
 		FilePath sourceFile = AppContext.SourceFiles is { Length: > 0 }
 			? AppContext.SourceFiles[0]

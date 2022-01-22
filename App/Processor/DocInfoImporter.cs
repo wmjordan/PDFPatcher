@@ -269,9 +269,7 @@ internal sealed class DocInfoImporter
 			}
 		}
 
-		if (value != null) {
-			value = value.Trim();
-		}
+		value = value?.Trim();
 
 		info.Put(name, string.IsNullOrEmpty(value) ? null : value.ToPdfString());
 	}
@@ -353,13 +351,9 @@ internal sealed class DocInfoImporter
 	}
 
 	internal void ImportPageLinks(PdfReader r, PdfStamper w) {
-		if (InfoDoc == null) {
-			return;
-		}
-
-		XmlNodeList ls = InfoDoc.DocumentElement.SelectNodes(Constants.PageLink + "/" +
-															 Constants.PageLinkAttributes.Link + "[@" +
-															 Constants.PageLinkAttributes.PageNumber + "]");
+		XmlNodeList ls = InfoDoc?.DocumentElement.SelectNodes(Constants.PageLink + "/" +
+															  Constants.PageLinkAttributes.Link + "[@" +
+															  Constants.PageLinkAttributes.PageNumber + "]");
 		if (ls == null || ls.Count == 0) {
 			return;
 		}

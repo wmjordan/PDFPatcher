@@ -971,9 +971,7 @@ internal static class JpgHelper
 
 		protected virtual void Dispose(bool disposing) {
 			if (disposing) {
-				if (_reader != null) {
-					_reader.Dispose();
-				}
+				_reader?.Dispose();
 
 				if (!_leaveOpen) {
 					// Make sure the file handle is released

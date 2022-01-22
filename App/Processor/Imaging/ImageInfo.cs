@@ -114,12 +114,10 @@ internal sealed class ImageInfo
 				byte[] outBuf;
 				if (filter == "/JBIG2Decode") {
 					byte[] globals = new byte[0];
-					if (decParam != null) {
-						PdfIndirectReference gRef = decParam.GetAsIndirectObject(PdfName.JBIG2GLOBALS);
-						if (gRef != null) {
-							if (PdfReader.GetPdfObjectRelease(gRef) is PRStream gs) {
-								globals = PdfReader.GetStreamBytes(gs);
-							}
+					PdfIndirectReference gRef = decParam?.GetAsIndirectObject(PdfName.JBIG2GLOBALS);
+					if (gRef != null) {
+						if (PdfReader.GetPdfObjectRelease(gRef) is PRStream gs) {
+							globals = PdfReader.GetStreamBytes(gs);
 						}
 					}
 
