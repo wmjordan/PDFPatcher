@@ -1,6 +1,4 @@
-﻿
-
-namespace PDFPatcher.Processor
+﻿namespace PDFPatcher.Processor
 {
 	sealed class ReplaceTitleTextProcessor : IPdfInfoXmlProcessor
 	{
@@ -8,6 +6,7 @@ namespace PDFPatcher.Processor
 
 		readonly BookmarkMatcher _matcher;
 		readonly string _replacement;
+
 		public ReplaceTitleTextProcessor(string replacement) {
 			_matcher = __replacer;
 			_replacement = replacement;

@@ -606,10 +606,7 @@ namespace PDFPatcher.Functions
 		}
 
 		string GetPageLabel(int pageNumber) {
-			if (_mupdf.IsDocumentOpened == false) {
-				return String.Empty;
-			}
-			return _mupdf.PageLabels.Format(pageNumber);
+			return _mupdf.IsDocumentOpened ? _mupdf.PageLabels.Format(pageNumber) : String.Empty;
 		}
 
 		Model.PageRange GetDisplayingPageRange() {
@@ -627,8 +624,9 @@ namespace PDFPatcher.Functions
 				var o = GetVirtualImageOffset(pageNumber);
 				using (var spanPen = new Pen(Color.LightGray, 1))
 				using (var blockPen = new Pen(Color.Gray, 1)) {
-					blockPen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
-					spanPen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
+					blockPen.DashStyle
+						= spanPen.DashStyle
+						= System.Drawing.Drawing2D.DashStyle.Dash;
 					using (var m = new System.Drawing.Drawing2D.Matrix(z, 0, 0, z, offset.X + o.X, offset.Y + o.Y)) {
 						g.MultiplyTransform(m);
 					}

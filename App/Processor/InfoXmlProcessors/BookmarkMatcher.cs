@@ -12,12 +12,9 @@ namespace PDFPatcher.Processor
 		internal abstract bool Match(XmlElement item);
 		internal abstract IUndoAction Replace(XmlElement item, string replacement);
 		internal static BookmarkMatcher Create(string pattern, MatcherType type, bool matchCase, bool fullMatch) {
-			if (type == MatcherType.XPath) {
-				return new XPathMatcher(pattern);
-			}
-			else {
-				return new RegexMatcher(pattern, matchCase, type == MatcherType.Regex, fullMatch);
-			}
+			return type == MatcherType.XPath
+				? new XPathMatcher(pattern)
+				: new RegexMatcher(pattern, matchCase, type == MatcherType.Regex, fullMatch);
 		}
 		sealed class RegexMatcher : BookmarkMatcher
 		{
@@ -26,8 +23,7 @@ namespace PDFPatcher.Processor
 				_matcher = new Model.MatchPattern(pattern, matchCase, fullMatch, regexSearch).CreateMatcher();
 			}
 			internal override bool Match(XmlElement item) {
-				var t = item.GetAttribute(Constants.BookmarkAttributes.Title);
-				return _matcher.Matches(t);
+				return _matcher.Matches(item.GetAttribute(Constants.BookmarkAttributes.Title));
 			}
 			internal override IUndoAction Replace(XmlElement item, string replacement) {
 				var a = item.GetAttributeNode(Constants.BookmarkAttributes.Title);
@@ -35,20 +31,10 @@ namespace PDFPatcher.Processor
 					return null;
 				}
 				var t = a.Value;
-				//if (_regexSearch) {
 				if (_matcher.Matches(t)) {
 					var r = _matcher.Replace(t, replacement);
-					if (r == t) {
-						return null;
-					}
-					return UndoAttributeAction.GetUndoAction(item, Constants.BookmarkAttributes.Title, r);
+					return r == t ? null : (IUndoAction)UndoAttributeAction.GetUndoAction(item, Constants.BookmarkAttributes.Title, r);
 				}
-				//}
-				//else if (t != replacement) {
-				//    var undo = UndoAttributeAction.GetUndoAction (item, Constants.BookmarkAttributes.Title);
-				//    item.SetAttribute (Constants.BookmarkAttributes.Title, replacement);
-				//    return undo;
-				//}
 				return null;
 			}
 		}
@@ -67,10 +53,9 @@ namespace PDFPatcher.Processor
 					return null;
 				}
 				var n = item.CreateNavigator().SelectSingleNode(_xpath);
-				if (n == null || a.Value == replacement) {
-					return null;
-				}
-				return UndoAttributeAction.GetUndoAction(item, Constants.BookmarkAttributes.Title, replacement);
+				return n == null || a.Value == replacement
+					? null
+					: (IUndoAction)UndoAttributeAction.GetUndoAction(item, Constants.BookmarkAttributes.Title, replacement);
 			}
 		}
 		internal sealed class SimpleReplacer : BookmarkMatcher
@@ -83,10 +68,9 @@ namespace PDFPatcher.Processor
 				if (a == null) {
 					return null;
 				}
-				if (a.Value != replacement) {
-					return UndoAttributeAction.GetUndoAction(item, Constants.BookmarkAttributes.Title, replacement);
-				}
-				return null;
+				return a.Value != replacement
+					? UndoAttributeAction.GetUndoAction(item, Constants.BookmarkAttributes.Title, replacement)
+					: (IUndoAction)null;
 			}
 		}
 	}
