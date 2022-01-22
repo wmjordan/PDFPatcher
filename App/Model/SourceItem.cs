@@ -334,13 +334,7 @@ public abstract class SourceItem
 			return false;
 		}
 
-		foreach (char ch in text.Substring(l)) {
-			if (ch is < '0' or > '9') {
-				return false;
-			}
-		}
-
-		return true;
+		return text.Substring(l).All(ch => ch is >= '0' and <= '9');
 	}
 
 	internal sealed class Empty : SourceItem

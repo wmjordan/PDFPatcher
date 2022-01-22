@@ -285,10 +285,7 @@ internal sealed class AutoBookmarkCreator
 			List<SizeOccurrence> sl = fontOccurances.GetOccurance(item.Value);
 			if (sl != null) {
 				if (dl.Contains(item.Value) == false) {
-					int o = 0;
-					foreach (SizeOccurrence s in sl) {
-						o += s.Occurrence;
-					}
+					int o = sl.Sum(s => s.Occurrence);
 
 					fo = o.ToText();
 					dl.Add(item.Value);

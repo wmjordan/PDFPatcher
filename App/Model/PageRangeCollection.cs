@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using PDFPatcher.Common;
 
 namespace PDFPatcher.Model;
@@ -10,24 +11,12 @@ internal sealed class PageRangeCollection : List<PageRange>
 
 	public int TotalPages {
 		get {
-			int c = 0;
-			foreach (PageRange item in this) {
-				c += item.Count;
-			}
-
-			return c;
+			return this.Sum(item => item.Count);
 		}
 	}
 
 	public bool IsInRange(int value) {
-		foreach (PageRange item in this) {
-			if ((item.StartValue < item.EndValue && value >= item.StartValue && value <= item.EndValue)
-				|| (value >= item.EndValue && value <= item.StartValue)) {
-				return true;
-			}
-		}
-
-		return false;
+		return this.Any(item => (item.StartValue < item.EndValue && value >= item.StartValue && value <= item.EndValue) || (value >= item.EndValue && value <= item.StartValue));
 	}
 
 	internal void Collapse(int minValue, int maxValue) {

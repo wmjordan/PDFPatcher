@@ -188,9 +188,7 @@ public partial class MergerControl : FunctionControl
 		bool deepCopy) {
 		if (copy) {
 			List<SourceItem> clones = new(source.Count);
-			foreach (SourceItem item in source) {
-				clones.Add(item.Clone());
-			}
+			clones.AddRange(source.Select(item => item.Clone()));
 
 			source = clones;
 		}
@@ -320,11 +318,7 @@ public partial class MergerControl : FunctionControl
 		bool fm = _IndividualMergerModeBox.Checked;
 		List<SourceItem> fl = fm ? new List<SourceItem>(_itemsContainer.Items.Count) : _itemsContainer.Items;
 		if (fm) {
-			foreach (SourceItem item in _itemsContainer.Items) {
-				if (item.HasSubItems) {
-					fl.Add(item);
-				}
-			}
+			fl.AddRange(_itemsContainer.Items.Where(item => item.HasSubItems));
 
 			if (fl.Count == 0) {
 				Tracker.TraceMessage(Tracker.Category.Error, "合并文件列表没有包含子项的首层项目。");

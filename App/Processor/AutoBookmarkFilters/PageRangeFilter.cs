@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Linq;
 using PDFPatcher.Model;
 
 namespace PDFPatcher.Processor;
@@ -18,13 +19,7 @@ public class PageRangeFilter : AutoBookmarkFilter
 		int p = context.CurrentPageNumber;
 		_range ??= PageRangeCollection.Parse(_rangeText, 1, context.TotalPageNumber, false);
 
-		foreach (PageRange item in _range) {
-			if (p <= item.EndValue && p >= item.StartValue) {
-				return true;
-			}
-		}
-
-		return false;
+		return _range.Any(item => p <= item.EndValue && p >= item.StartValue);
 	}
 
 	internal override void Reset() {

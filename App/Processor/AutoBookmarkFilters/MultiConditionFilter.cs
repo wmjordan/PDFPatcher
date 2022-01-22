@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using PDFPatcher.Model;
 
 namespace PDFPatcher.Processor;
@@ -14,13 +15,7 @@ internal sealed class MultiConditionFilter : AutoBookmarkFilter
 	}
 
 	internal override bool Matches(AutoBookmarkContext context) {
-		foreach (AutoBookmarkFilter item in _filters) {
-			if (item.Matches(context) == false) {
-				return false;
-			}
-		}
-
-		return true;
+		return _filters.All(item => item.Matches(context) != false);
 	}
 
 	internal override void Reset() {

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.parser;
 using PDFPatcher.Common;
@@ -41,12 +42,7 @@ internal sealed class PdfPageCommandProcessor : PdfContentStreamProcessor, IPdfP
 			return;
 		}
 
-		float totalWidth = 0;
-		foreach (char c in font.DecodeText(str)) {
-			float w = font.GetWidth(c) / 1000.0f;
-			float wordSpacing = c == ' ' ? gs.WordSpacing : 0f;
-			totalWidth += ((w * gs.FontSize) + gs.CharacterSpacing + wordSpacing) * gs.HorizontalScaling;
-		}
+		float totalWidth = (from c in font.DecodeText(str) let w = font.GetWidth(c) / 1000.0f let wordSpacing = c == ' ' ? gs.WordSpacing : 0f select ((w * gs.FontSize) + gs.CharacterSpacing + wordSpacing) * gs.HorizontalScaling).Sum();
 
 		_textWidth = totalWidth;
 	}

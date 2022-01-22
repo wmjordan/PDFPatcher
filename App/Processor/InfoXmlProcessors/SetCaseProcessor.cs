@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Xml;
 
 namespace PDFPatcher.Processor;
@@ -163,14 +164,7 @@ internal sealed class SetCaseProcessor : IPdfInfoXmlProcessor
 				return value;
 			}
 
-			int i = 0;
-			foreach (char ch in value) {
-				if (ch != Converter(ch)) {
-					break;
-				}
-
-				++i;
-			}
+			int i = value.TakeWhile(ch => ch == Converter(ch)).Count();
 
 			if (i == value.Length) {
 				return value;

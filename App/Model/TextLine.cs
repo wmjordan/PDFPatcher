@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 
 namespace PDFPatcher.Model;
@@ -156,13 +157,7 @@ internal sealed class TextLine : IDirectionalBoundObject
 		else {
 			foreach (TextInfo t in _Texts) {
 				ts += t.LetterWidth;
-				foreach (char c in t.Text) {
-					if (char.IsLetterOrDigit(c) == false) {
-						continue;
-					}
-
-					cc += c > 0x36F ? 2 : 1;
-				}
+				cc = t.Text.Where(c => char.IsLetterOrDigit(c) != false).Aggregate(cc, (current, c) => current + (c > 0x36F ? 2 : 1));
 			}
 		}
 

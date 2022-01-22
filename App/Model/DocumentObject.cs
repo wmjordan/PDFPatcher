@@ -428,13 +428,7 @@ public sealed class DocumentObject : IHierarchicalObject<DocumentObject>
 			case PdfObjectType.Hidden: {
 					List<int> ul = PdfHelper.ListUnusedObjects(pdf, AppContext.LoadPartialPdfFile);
 					ExtensiveObject = ul;
-					List<DocumentObject> uo = new();
-					foreach (int item in ul) {
-						PdfObject u = pdf.GetPdfObjectRelease(item);
-						if (u != null) {
-							uo.Add(new DocumentObject(OwnerDocument, this, item.ToText(), u));
-						}
-					}
+					List<DocumentObject> uo = (from item in ul let u = pdf.GetPdfObjectRelease(item) where u != null select new DocumentObject(OwnerDocument, this, item.ToText(), u)).ToList();
 
 					_Children = uo;
 					break;

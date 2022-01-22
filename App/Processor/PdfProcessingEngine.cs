@@ -91,16 +91,7 @@ internal sealed class PdfProcessingEngine
 	}
 
 	internal int EstimateWorkload() {
-		int workload = 0;
-		foreach (IDocProcessor p in DocumentProcessors) {
-			workload += p.EstimateWorkload(Pdf);
-		}
-
-		foreach (IPageProcessor p in PageProcessors) {
-			workload += p.EstimateWorkload(Pdf);
-		}
-
-		return workload;
+		return DocumentProcessors.Sum(p => p.EstimateWorkload(Pdf)) + PageProcessors.Sum(p => p.EstimateWorkload(Pdf));
 	}
 
 	internal void ProcessDocument(PdfWriter writer) {

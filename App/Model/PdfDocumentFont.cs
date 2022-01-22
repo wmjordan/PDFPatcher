@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using iTextSharp.text.pdf;
 using PDFPatcher.Processor;
 
@@ -47,13 +48,7 @@ internal class PdfDocumentFont
 		}
 
 		if (df.Type == PdfObject.ARRAY) {
-			foreach (PdfObject item in (df as PdfArray).ArrayList) {
-				if (IsEmbeddedFont(PdfReader.GetPdfObjectRelease(item) as PdfDictionary) == false) {
-					return false;
-				}
-			}
-
-			return true;
+			return (df as PdfArray).ArrayList.All(item => IsEmbeddedFont(PdfReader.GetPdfObjectRelease(item) as PdfDictionary) != false);
 		}
 
 		df = PdfReader.GetPdfObjectRelease(df);

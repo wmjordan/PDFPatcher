@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 using iTextSharp.text.pdf;
 
@@ -139,15 +140,7 @@ internal static class PdfModelHelper
 			return new PdfString();
 		}
 
-		bool u = false;
-		foreach (char c in text) {
-			if (c <= 127) {
-				continue;
-			}
-
-			u = true;
-			break;
-		}
+		bool u = text.Any(c => c > 127);
 
 		return u ? new PdfString(text, PdfObject.TEXT_UNICODE) : new PdfString(text);
 	}
