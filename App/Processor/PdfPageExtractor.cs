@@ -173,11 +173,11 @@ internal class PdfPageExtractor
 		int[] pages = new int[ranges.TotalPages];
 		int[] remapper = new int[pdf.NumberOfPages + 1];
 		int i = 0;
-		foreach (var item in excludeRanges.SelectMany(range => range)) {
+		foreach (int item in excludeRanges.SelectMany(range => range)) {
 			remapper[item] = -1;
 		}
 
-		foreach (var item in from range in ranges from item in range where remapper[item] >= 0 select item) {
+		foreach (int item in from range in ranges from item in range where remapper[item] >= 0 select item) {
 			pages[i++] = item;
 			if (remapper[item] == 0) {
 				remapper[item] = i;

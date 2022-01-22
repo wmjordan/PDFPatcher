@@ -296,7 +296,7 @@ internal sealed class PageDimensionProcessor : IPageProcessor
 	private PaperSize GetRefPaperSize(DocProcessorContext context) {
 		Rectangle refRectangle = null;
 		SpecialPaperSize specialSize = Settings.PaperSize.SpecialSize;
-		foreach (var r in from range in _pageRanges ?? PageRangeCollection.CreateSingle(1, context.Pdf.NumberOfPages) from page in range select context.Pdf.GetPageSizeWithRotation(page)) {
+		foreach (Rectangle r in from range in _pageRanges ?? PageRangeCollection.CreateSingle(1, context.Pdf.NumberOfPages) from page in range select context.Pdf.GetPageSizeWithRotation(page)) {
 			if (refRectangle == null) {
 				refRectangle = r;
 				continue;

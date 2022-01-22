@@ -34,7 +34,7 @@ internal sealed class DeleteBookmarkItemCommand : IEditorCommand
 			}
 		}
 
-		foreach (var item in l.Where(item => item.ParentNode != null)) {
+		foreach (XmlNode item in l.Where(item => item.ParentNode != null)) {
 			b.RefreshObject(item);
 		}
 

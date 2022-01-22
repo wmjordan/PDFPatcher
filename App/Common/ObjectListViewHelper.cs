@@ -178,7 +178,7 @@ internal static class ObjectListViewHelper
 		r = view.GetNthItemInDisplayOrder((y - 1 - cr.Top) / view.RowHeightEffective);
 		int w = cr.Left;
 		List<OLVColumn> cl = view.ColumnsInDisplayOrder;
-		foreach (var t in cl.Where(t => x >= w && x <= (w += t.Width))) {
+		foreach (OLVColumn t in cl.Where(t => x >= w && x <= (w += t.Width))) {
 			c = t;
 			break;
 		}

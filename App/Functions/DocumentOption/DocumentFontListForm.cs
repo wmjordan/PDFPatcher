@@ -60,7 +60,7 @@ public partial class DocumentFontListForm : Form
 				int[] pp = new int[p.NumberOfPages + 1];
 				_Worker.ReportProgress(-r.TotalPages);
 				int i = 0;
-				foreach (var page in r.SelectMany(range => range)) {
+				foreach (int page in r.SelectMany(range => range)) {
 					if (_Worker.CancellationPending) {
 						return;
 					}

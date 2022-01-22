@@ -278,7 +278,7 @@ public class ModiOcr
 	}
 
 	private static void FinalReleaseComObjects(params object[] objs) {
-		foreach (var t in objs) {
+		foreach (object t in objs) {
 			if (t == null) {
 				continue;
 			}

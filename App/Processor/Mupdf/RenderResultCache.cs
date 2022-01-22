@@ -59,7 +59,7 @@ public sealed class RenderResultCache : IDisposable
 
 		int x = 0;
 		int i = 0;
-		foreach (var item in _buffer.Keys.Where(item => Math.Abs(item - pageNumber) > x)) {
+		foreach (int item in _buffer.Keys.Where(item => Math.Abs(item - pageNumber) > x)) {
 			x = Math.Abs(item - pageNumber);
 			i = item;
 		}

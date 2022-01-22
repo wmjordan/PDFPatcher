@@ -337,7 +337,7 @@ internal sealed class DocInfoImporter
 
 		PdfPageLabels pls = new();
 		int i = 0;
-		foreach (var item in labels.Where(item => item.PageNumber > 0 && item.StartPage > 0)) {
+		foreach (PageLabel item in labels.Where(item => item.PageNumber > 0 && item.StartPage > 0)) {
 			pls.AddPageLabel(item.PageNumber,
 				ValueHelper.MapValue(item.Style, Constants.PageLabelStyles.Names, Constants.PageLabelStyles.Values,
 					PdfPageLabels.DECIMAL_ARABIC_NUMERALS),
@@ -979,7 +979,7 @@ internal sealed class DocInfoImporter
 				rotate = -1;
 			}
 
-			foreach (var p in from r in ranges from i in r where pageFilter == -1 || i % 2 == pageFilter select pdf.GetPageN(i)) {
+			foreach (PdfDictionary p in from r in ranges from i in r where pageFilter == -1 || i % 2 == pageFilter select pdf.GetPageN(i)) {
 				ImportPageBox(mb, p, PdfName.MEDIABOX);
 				ImportPageBox(cb, p, PdfName.CROPBOX);
 				ImportPageBox(tb, p, PdfName.TRIMBOX);

@@ -87,7 +87,7 @@ internal sealed class PdfContentExport
 
 	private void ExtractPages(PdfReader reader, PageRangeCollection ranges, XmlWriter writer) {
 		ExportProcessor p = new(this, writer, _options);
-		foreach (var i in ranges.SelectMany(r => r)) {
+		foreach (int i in ranges.SelectMany(r => r)) {
 			Tracker.TraceMessage(string.Concat("导出第 ", i, " 页。"));
 			ExtractPage(i, reader, writer, p);
 			Tracker.IncrementProgress(1);
@@ -660,7 +660,7 @@ internal sealed class PdfContentExport
 				case "TJ":
 					PdfArray array = (PdfArray)operands[0];
 					using (MemoryStream ms = new(array.Length)) {
-						foreach (var item in array.ArrayList.Where(item => item.Type == PdfObject.STRING)) {
+						foreach (PdfObject item in array.ArrayList.Where(item => item.Type == PdfObject.STRING)) {
 							ms.Write((item as PdfString).GetBytes(), 0, item.Length);
 						}
 

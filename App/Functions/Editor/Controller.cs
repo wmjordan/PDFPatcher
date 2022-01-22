@@ -54,7 +54,7 @@ namespace PDFPatcher.Functions.Editor
 			HashSet<XmlElement> pi = new();
 			HashSet<XmlNode> r = ProcessBookmarks(si, pi, includeDescendant, processor);
 			if (r != null) {
-				foreach (var i in r.Select(item => item as XmlElement).Where(i => i.ParentNode.Name == Constants.DocumentBookmark)) {
+				foreach (XmlElement i in r.Select(item => item as XmlElement).Where(i => i.ParentNode.Name == Constants.DocumentBookmark)) {
 					b.Roots = i.ParentNode.SelectNodes(Constants.Bookmark).ToXmlNodeArray();
 					break;
 				}
@@ -383,7 +383,7 @@ namespace PDFPatcher.Functions.Editor
 			if (Model.InsertBookmarkWithOcrOnly == false && lines.HasContent()) {
 				StringBuilder sb = new();
 				Rectangle r = lines[0].BBox;
-				foreach (var line in lines.TakeWhile(line => sb.Length <= 100)) {
+				foreach (MuTextLine line in lines.TakeWhile(line => sb.Length <= 100)) {
 					t = line.Text.TrimEnd();
 					if (sb.Length > 0 && t.Length > 0) {
 						char c = t[0];
@@ -770,7 +770,7 @@ namespace PDFPatcher.Functions.Editor
 				MuFont s = textInfo.Page.GetFont(span);
 				if (s != null) {
 					int fs = span.Size.ToInt32();
-					foreach (var item in Model.TitleStyles.Where(item => item.InternalFontName == s.Name && item.FontSize == fs)) {
+					foreach (EditModel.AutoBookmarkStyle item in Model.TitleStyles.Where(item => item.InternalFontName == s.Name && item.FontSize == fs)) {
 						goto NEXT;
 					}
 

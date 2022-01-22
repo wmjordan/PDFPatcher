@@ -38,7 +38,7 @@ internal sealed class PdfProcessingEngine
 			Dictionary<string, FontSubstitution> d = new(settings.FontSubstitutions.Count,
 				StringComparer.CurrentCultureIgnoreCase);
 			if (settings.EnableFontSubstitutions) {
-				foreach (var item in settings.FontSubstitutions.Where(item => !string.IsNullOrEmpty(item.OriginalFont) && !string.IsNullOrEmpty(item.Substitution))) {
+				foreach (FontSubstitution item in settings.FontSubstitutions.Where(item => !string.IsNullOrEmpty(item.OriginalFont) && !string.IsNullOrEmpty(item.Substitution))) {
 					d[item.OriginalFont] = item;
 				}
 			}

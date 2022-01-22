@@ -31,7 +31,7 @@ internal sealed class BookmarkSelectionCommand : IEditorCommand
 				b.ExpandAll();
 				break;
 			case "_CollapseChildren":
-				foreach (var ci in b.GetSelectedElements(false).SelectMany(item => item.SubBookmarks.Cast<XmlNode>())) {
+				foreach (XmlNode ci in b.GetSelectedElements(false).SelectMany(item => item.SubBookmarks.Cast<XmlNode>())) {
 					b.Collapse(ci);
 				}
 

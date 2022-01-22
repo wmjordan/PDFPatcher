@@ -182,7 +182,7 @@ internal sealed class AutoBookmarkCreator
 
 						if (ig != null) {
 							bool ignore = false;
-							foreach (var rg in ig.Where(rg => rg.Matches(t))) {
+							foreach (MatchPattern.IMatcher rg in ig.Where(rg => rg.Matches(t))) {
 								ignore = true;
 							}
 

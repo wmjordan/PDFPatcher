@@ -485,7 +485,7 @@ public readonly struct FilePath : IEquatable<FilePath>
 
 			switch (pi) {
 				case "..": {
-						foreach (var n in t.Select(item => IsDirectorySeparator(item[item.Length - 1])
+						foreach (string n in t.Select(item => IsDirectorySeparator(item[item.Length - 1])
 									 ? Path.GetDirectoryName(item.Substring(0, item.Length - 1))
 									 : Path.GetDirectoryName(item)).Where(n => n != null && r.Contains(n) == false)) {
 							r.Add(n);

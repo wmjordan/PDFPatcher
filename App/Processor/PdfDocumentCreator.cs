@@ -274,7 +274,7 @@ internal sealed class PdfDocumentCreator
 		CoordinateTranslationSettings[] cts = _pageSettings.PaperSize.SpecialSize != SpecialPaperSize.AsPageSize
 			? new CoordinateTranslationSettings[pdf.NumberOfPages + 1]
 			: null; // 页面的位置偏移量
-		foreach (var i in ranges.SelectMany(r => r)) {
+		foreach (int i in ranges.SelectMany(r => r)) {
 			if (i < 1 || i > pn) {
 				goto Exit;
 			}
@@ -284,7 +284,7 @@ internal sealed class PdfDocumentCreator
 			_doc.NewPage();
 			if (imgExp != null) {
 				imgExp.ExtractPageImages(pdf, i);
-				foreach (var item in imgExp.InfoList.Where(item => item.FileName != null)) {
+				foreach (ImageInfo item in imgExp.InfoList.Where(item => item.FileName != null)) {
 					ProcessFile(new SourceItem.Image(item.FileName), bookmark);
 					File.Delete(item.FileName);
 				}

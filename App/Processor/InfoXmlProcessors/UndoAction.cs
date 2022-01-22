@@ -112,7 +112,7 @@ internal sealed class UndoActionGroup : IUndoAction
 	public IEnumerable<XmlNode> AffectedElements {
 		get {
 			Dictionary<XmlNode, byte> d = new();
-			foreach (var e in _actions.SelectMany(item => item.AffectedElements)) {
+			foreach (XmlNode e in _actions.SelectMany(item => item.AffectedElements)) {
 				d[e] = 0;
 			}
 

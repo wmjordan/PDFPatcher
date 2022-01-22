@@ -232,7 +232,7 @@ internal sealed class OcrProcessor
 			errorList.Add(i);
 		}
 		finally {
-			foreach (var item in _ocrImageExp.InfoList.Where(item => !string.IsNullOrEmpty(item.FileName))) {
+			foreach (ImageInfo item in _ocrImageExp.InfoList.Where(item => !string.IsNullOrEmpty(item.FileName))) {
 				try {
 					File.Delete(item.FileName);
 				}

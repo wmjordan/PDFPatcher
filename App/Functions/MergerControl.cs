@@ -262,7 +262,7 @@ public partial class MergerControl : FunctionControl
 	private void _AddFolder_DropDownOpening(object sender, EventArgs e) {
 		ToolStripItemCollection l = _AddFolderButton.DropDown.Items;
 		l.ClearDropDownItems();
-		foreach (var item in AppContext.Recent.Folders.Where(item => FileHelper.IsPathValid(item) && string.IsNullOrEmpty(Path.GetFileName(item)) == false)) {
+		foreach (string item in AppContext.Recent.Folders.Where(item => FileHelper.IsPathValid(item) && string.IsNullOrEmpty(Path.GetFileName(item)) == false)) {
 			l.Add(FileHelper.GetEllipticPath(item, 50)).ToolTipText = item;
 		}
 	}
@@ -470,7 +470,7 @@ public partial class MergerControl : FunctionControl
 					}
 				}
 
-				foreach (var item in sl.Where(item => item.Type != SourceItem.ItemType.Empty)) {
+				foreach (SourceItem item in sl.Where(item => item.Type != SourceItem.ItemType.Empty)) {
 					switch (item.Type) {
 						case SourceItem.ItemType.Pdf: {
 								SourceItem.Pdf pi = item as SourceItem.Pdf;

@@ -74,7 +74,7 @@ internal static class Worker
 			}
 
 			ImageExtractor exp = new(options, pdf);
-			foreach (var i in ranges.SelectMany(range => range)) {
+			foreach (int i in ranges.SelectMany(range => range)) {
 				exp.ExtractPageImages(pdf, i);
 				if (exp.InfoList.Count > 0) {
 					Tracker.TraceMessage(Tracker.Category.OutputFile,

@@ -665,7 +665,7 @@ namespace PDFPatcher.Processor
 				PosList.Add(new ImageDisposition(PosList[i].Ctm, mii));
 			}
 
-			foreach (var item in InfoList.Where(item => item.ReferenceCount < 1)) {
+			foreach (ImageInfo item in InfoList.Where(item => item.ReferenceCount < 1)) {
 				File.Delete(item.FileName);
 				item.FileName = null;
 			}
@@ -675,7 +675,7 @@ namespace PDFPatcher.Processor
 			_totalImageCount -= _imageCount;
 			_imageCount = 0;
 			List<string> newFileNames = new();
-			foreach (var item in InfoList.Where(item => item.FileName != null && item.InlineImage == null)) {
+			foreach (ImageInfo item in InfoList.Where(item => item.FileName != null && item.InlineImage == null)) {
 				string n;
 				do {
 					n = GetNewImageFileName() + Path.GetExtension(item.FileName);

@@ -40,7 +40,7 @@ public class ToolbarOptions
 
 	internal void AddMissedButtons() {
 		foreach (Toolkit item in Toolkit.Toolkits) {
-			foreach (var b in Buttons.Where(b => b.ID == item.Identifier)) {
+			foreach (ButtonOption b in Buttons.Where(b => b.ID == item.Identifier)) {
 				goto Next;
 			}
 
