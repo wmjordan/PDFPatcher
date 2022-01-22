@@ -590,11 +590,8 @@ namespace PDFPatcher.Functions
 			}
 			else if (ci == _DeleteButton) {
 				//if (this.ActiveControl == _DocumentTree) {
-				if (n == null || n.Parent == null) {
-					return;
-				}
 
-				if (n.Parent.Value is not PdfObject po) {
+				if (n?.Parent?.Value is not { } po) {
 					return;
 				}
 

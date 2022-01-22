@@ -10,7 +10,7 @@ internal sealed class CurrentPosition : IPathFunction
 	#region IPathFunction 成员
 
 	public object Evaluate(DocumentObject source) {
-		if (source == null || source.Parent == null) {
+		if (source?.Parent == null) {
 			return 0;
 		}
 

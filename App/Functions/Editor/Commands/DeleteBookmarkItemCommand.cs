@@ -22,7 +22,7 @@ internal sealed class DeleteBookmarkItemCommand : IEditorCommand
 		UndoActionGroup undo = new();
 		List<XmlNode> l = new();
 		foreach (XmlElement item in si) {
-			if (item == null || item.ParentNode == null) {
+			if (item?.ParentNode == null) {
 				continue;
 			}
 

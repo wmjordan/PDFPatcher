@@ -30,7 +30,7 @@ internal sealed class SaveDocumentCommand : IEditorCommand
 		PdfInfoXmlDocument idoc = controller.Model.Document;
 		MuDocument mudoc = controller.Model.PdfDocument;
 		FilePath t = new(controller.Model.DocumentPath);
-		if (idoc == null || idoc.DocumentElement == null || t == null) {
+		if (idoc?.DocumentElement == null || t == null) {
 			return;
 		}
 

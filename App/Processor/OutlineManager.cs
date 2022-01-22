@@ -159,7 +159,7 @@ internal static class OutlineManager
 	}
 
 	internal static PdfIndirectReference WriteOutline(PdfWriter writer, XmlElement bookmarks, int maxPageNumber) {
-		if (bookmarks == null || bookmarks.SelectSingleNode(Constants.Bookmark) == null) {
+		if (bookmarks?.SelectSingleNode(Constants.Bookmark) == null) {
 			return null;
 		}
 
