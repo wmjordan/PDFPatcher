@@ -17,7 +17,9 @@ namespace MuPdfSharp
 		readonly int _Progress;
 		readonly int _ProgressMax;
 		readonly int _Errors;
-		readonly int _IncompleteOk;
+		/*
+				readonly int _IncompleteOk;
+		*/
 		readonly int _Incomplete;
 
 		public bool IsCancellationPending => _Abort != 0;
