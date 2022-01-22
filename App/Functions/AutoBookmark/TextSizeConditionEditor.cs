@@ -6,57 +6,57 @@ namespace PDFPatcher.Functions;
 
 public partial class TextSizeConditionEditor : UserControl, IFilterConditionEditor
 {
-    private AutoBookmarkCondition.TextSizeCondition _condition;
-    private bool _lock;
+	private AutoBookmarkCondition.TextSizeCondition _condition;
+	private bool _lock;
 
-    public TextSizeConditionEditor() {
-        InitializeComponent();
-    }
+	public TextSizeConditionEditor() {
+		InitializeComponent();
+	}
 
-    private void ControlChanged(object sender, EventArgs e) {
-        ToggleControlState();
-        if (_lock) {
-            return;
-        }
+	private void ControlChanged(object sender, EventArgs e) {
+		ToggleControlState();
+		if (_lock) {
+			return;
+		}
 
-        if (_SizeBox.Checked) {
-            _condition.SetRange((float)_SpecificSizeBox.Value, (float)_SpecificSizeBox.Value);
-        }
-        else if (_SizeRangeBox.Checked) {
-            _condition.SetRange((float)_MinSizeBox.Value, (float)_MaxSizeBox.Value);
-        }
+		if (_SizeBox.Checked) {
+			_condition.SetRange((float)_SpecificSizeBox.Value, (float)_SpecificSizeBox.Value);
+		}
+		else if (_SizeRangeBox.Checked) {
+			_condition.SetRange((float)_MinSizeBox.Value, (float)_MaxSizeBox.Value);
+		}
 
-        EditAdjustmentForm.UpdateFilter(this);
-    }
+		EditAdjustmentForm.UpdateFilter(this);
+	}
 
-    private void ToggleControlState() {
-        _MinSizeBox.Enabled = _MaxSizeBox.Enabled = _SizeRangeBox.Checked;
-        _SpecificSizeBox.Enabled = _SizeBox.Checked;
-    }
+	private void ToggleControlState() {
+		_MinSizeBox.Enabled = _MaxSizeBox.Enabled = _SizeRangeBox.Checked;
+		_SpecificSizeBox.Enabled = _SizeBox.Checked;
+	}
 
-    #region ITextInfoFilterEditor 成员
+	#region ITextInfoFilterEditor 成员
 
-    public AutoBookmarkCondition Filter {
-        get => _condition;
-        set {
-            _condition = (AutoBookmarkCondition.TextSizeCondition)value;
-            _lock = true;
-            if (_condition.MinSize == _condition.MaxSize) {
-                _SizeBox.Checked = true;
-                _SpecificSizeBox.Value = (decimal)_condition.MaxSize;
-            }
-            else {
-                _SizeRangeBox.Checked = true;
-                _MaxSizeBox.Value = (decimal)_condition.MaxSize;
-                _MinSizeBox.Value = (decimal)_condition.MinSize;
-            }
+	public AutoBookmarkCondition Filter {
+		get => _condition;
+		set {
+			_condition = (AutoBookmarkCondition.TextSizeCondition)value;
+			_lock = true;
+			if (_condition.MinSize == _condition.MaxSize) {
+				_SizeBox.Checked = true;
+				_SpecificSizeBox.Value = (decimal)_condition.MaxSize;
+			}
+			else {
+				_SizeRangeBox.Checked = true;
+				_MaxSizeBox.Value = (decimal)_condition.MaxSize;
+				_MinSizeBox.Value = (decimal)_condition.MinSize;
+			}
 
-            ToggleControlState();
-            _lock = false;
-        }
-    }
+			ToggleControlState();
+			_lock = false;
+		}
+	}
 
-    public UserControl EditorControl => this;
+	public UserControl EditorControl => this;
 
-    #endregion
+	#endregion
 }

@@ -2,12 +2,12 @@
 
 public enum PathAxisType
 {
-    None,
-    Children,
-    Parent,
-    Ancestors,
-    Descendants,
-    Root,
-    Previous,
-    Next
+	None,
+	Children,
+	Parent,
+	Ancestors,
+	Descendants,
+	Root,
+	Previous,
+	Next
 }

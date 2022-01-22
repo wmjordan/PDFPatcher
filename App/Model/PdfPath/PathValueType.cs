@@ -2,8 +2,8 @@
 
 public enum PathValueType
 {
-    Expression,
-    String,
-    Number,
-    Boolean
+	Expression,
+	String,
+	Number,
+	Boolean
 }

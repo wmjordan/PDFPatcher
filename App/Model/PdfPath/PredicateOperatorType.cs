@@ -2,9 +2,9 @@
 
 public enum PredicateOperatorType
 {
-    Contains,
-    Equal,
-    NotEqual,
-    LessThan,
-    LargerThan
+	Contains,
+	Equal,
+	NotEqual,
+	LessThan,
+	LargerThan
 }

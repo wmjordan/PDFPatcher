@@ -4,6 +4,6 @@ namespace PDFPatcher.Model;
 
 internal interface IHierarchicalObject<T>
 {
-    bool HasChildren { get; }
-    ICollection<T> Children { get; }
+	bool HasChildren { get; }
+	ICollection<T> Children { get; }
 }

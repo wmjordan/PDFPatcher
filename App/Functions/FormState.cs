@@ -8,38 +8,38 @@ namespace PDFPatcher.Functions;
 /// </summary>
 public sealed class FormState
 {
-    private Rectangle bounds;
-    private FormBorderStyle brdStyle;
+	private Rectangle bounds;
+	private FormBorderStyle brdStyle;
 
-    private bool IsMaximized;
-    private bool topMost;
+	private bool IsMaximized;
+	private bool topMost;
 
-    public void Maximize(Form targetForm) {
-        if (IsMaximized) {
-            return;
-        }
+	public void Maximize(Form targetForm) {
+		if (IsMaximized) {
+			return;
+		}
 
-        IsMaximized = true;
-        if (targetForm.WindowState == FormWindowState.Maximized) {
-            targetForm.WindowState = FormWindowState.Normal;
-        }
+		IsMaximized = true;
+		if (targetForm.WindowState == FormWindowState.Maximized) {
+			targetForm.WindowState = FormWindowState.Normal;
+		}
 
-        Save(targetForm);
-        targetForm.FormBorderStyle = FormBorderStyle.None;
-        targetForm.TopMost = true;
-        targetForm.Bounds = Screen.FromControl(targetForm).Bounds;
-    }
+		Save(targetForm);
+		targetForm.FormBorderStyle = FormBorderStyle.None;
+		targetForm.TopMost = true;
+		targetForm.Bounds = Screen.FromControl(targetForm).Bounds;
+	}
 
-    private void Save(Form targetForm) {
-        brdStyle = targetForm.FormBorderStyle;
-        topMost = targetForm.TopMost;
-        bounds = targetForm.Bounds;
-    }
+	private void Save(Form targetForm) {
+		brdStyle = targetForm.FormBorderStyle;
+		topMost = targetForm.TopMost;
+		bounds = targetForm.Bounds;
+	}
 
-    public void Restore(Form targetForm) {
-        targetForm.FormBorderStyle = brdStyle;
-        targetForm.TopMost = topMost;
-        targetForm.Bounds = bounds;
-        IsMaximized = false;
-    }
+	public void Restore(Form targetForm) {
+		targetForm.FormBorderStyle = brdStyle;
+		targetForm.TopMost = topMost;
+		targetForm.Bounds = bounds;
+		IsMaximized = false;
+	}
 }

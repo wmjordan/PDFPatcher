@@ -12,33 +12,33 @@ namespace Cyotek.Windows.Forms.Demo;
 
 internal sealed class DragHandle
 {
-    #region Public Constructors
+	#region Public Constructors
 
-    public DragHandle(DragHandleAnchor anchor)
-        : this() {
-        Anchor = anchor;
-    }
+	public DragHandle(DragHandleAnchor anchor)
+		: this() {
+		Anchor = anchor;
+	}
 
-    #endregion
+	#endregion
 
-    #region Protected Constructors
+	#region Protected Constructors
 
-    private DragHandle() {
-        Enabled = true;
-        Visible = true;
-    }
+	private DragHandle() {
+		Enabled = true;
+		Visible = true;
+	}
 
-    #endregion
+	#endregion
 
-    #region Public Properties
+	#region Public Properties
 
-    public DragHandleAnchor Anchor { get; set; }
+	public DragHandleAnchor Anchor { get; set; }
 
-    public Rectangle Bounds { get; set; }
+	public Rectangle Bounds { get; set; }
 
-    public bool Enabled { get; set; }
+	public bool Enabled { get; set; }
 
-    public bool Visible { get; set; }
+	public bool Visible { get; set; }
 
-    #endregion
+	#endregion
 }

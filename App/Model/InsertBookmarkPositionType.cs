@@ -2,9 +2,9 @@
 
 public enum InsertBookmarkPositionType
 {
-    NoDefined,
-    AfterCurrent,
-    AsChild,
-    AfterParent,
-    BeforeCurrent
+	NoDefined,
+	AfterCurrent,
+	AsChild,
+	AfterParent,
+	BeforeCurrent
 }

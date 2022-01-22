@@ -10,21 +10,21 @@
 
 internal enum DragHandleAnchor
 {
-    None,
+	None,
 
-    TopLeft,
+	TopLeft,
 
-    TopCenter,
+	TopCenter,
 
-    TopRight,
+	TopRight,
 
-    MiddleLeft,
+	MiddleLeft,
 
-    MiddleRight,
+	MiddleRight,
 
-    BottomLeft,
+	BottomLeft,
 
-    BottomCenter,
+	BottomCenter,
 
-    BottomRight
+	BottomRight
 }

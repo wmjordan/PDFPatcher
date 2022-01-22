@@ -5,6 +5,6 @@ namespace PDFPatcher.Functions;
 
 internal interface IFilterConditionEditor
 {
-    AutoBookmarkCondition Filter { get; set; }
-    UserControl EditorControl { get; }
+	AutoBookmarkCondition Filter { get; set; }
+	UserControl EditorControl { get; }
 }

@@ -5,22 +5,22 @@ namespace PDFPatcher.Functions;
 
 public partial class ZoomRateEntryForm : Form
 {
-    public ZoomRateEntryForm() {
-        InitializeComponent();
-    }
+	public ZoomRateEntryForm() {
+		InitializeComponent();
+	}
 
-    internal string ZoomRate => _ZoomRateBox.Text;
+	internal string ZoomRate => _ZoomRateBox.Text;
 
-    private void ZoomRateEntryForm_Load(object sender, EventArgs e) {
-    }
+	private void ZoomRateEntryForm_Load(object sender, EventArgs e) {
+	}
 
-    protected void _OkButton_Click(object source, EventArgs args) {
-        DialogResult = DialogResult.OK;
-        Close();
-    }
+	protected void _OkButton_Click(object source, EventArgs args) {
+		DialogResult = DialogResult.OK;
+		Close();
+	}
 
-    protected void _CancelButton_Click(object source, EventArgs args) {
-        DialogResult = DialogResult.Cancel;
-        Close();
-    }
+	protected void _CancelButton_Click(object source, EventArgs args) {
+		DialogResult = DialogResult.Cancel;
+		Close();
+	}
 }
