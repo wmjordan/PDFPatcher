@@ -45,9 +45,7 @@ namespace PDFPatcher.Functions
 				e.Canceled = true;
 			};
 			_LevelAdjustmentBox.DropSink = new RearrangingDropSink(false);
-			_AdvancedFilterColumn.AspectGetter = (object x) => {
-				return x is not AutoBookmarkOptions.LevelAdjustmentOption f ? null : f.Condition.Description;
-			};
+			_AdvancedFilterColumn.AspectGetter = (object x) => x is not AutoBookmarkOptions.LevelAdjustmentOption f ? null : f.Condition.Description;
 			_AdjustmentLevelColumn.AspectGetter = (object x) => {
 				AutoBookmarkOptions.LevelAdjustmentOption f = x as AutoBookmarkOptions.LevelAdjustmentOption;
 				return f?.AdjustmentLevel ?? 0;

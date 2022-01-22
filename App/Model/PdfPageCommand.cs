@@ -269,7 +269,7 @@ internal sealed class MatrixCommand : PdfPageCommand
 	public override PdfPageCommandType Type => PdfPageCommandType.Matrix;
 
 	public void Multiply(double[] matrix) {
-		double[] m1 = Array.ConvertAll(Operands, i => { return (i as PdfNumber).DoubleValue; });
+		double[] m1 = Array.ConvertAll(Operands, i => (i as PdfNumber).DoubleValue);
 		Operands[0] = new PdfNumber((m1[0] * matrix[0]) + (m1[1] * matrix[2]));
 		Operands[1] = new PdfNumber((m1[0] * matrix[1]) + (m1[1] * matrix[3]));
 		Operands[2] = new PdfNumber((m1[2] * matrix[0]) + (m1[3] * matrix[2]));

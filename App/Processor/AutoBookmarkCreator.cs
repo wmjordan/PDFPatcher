@@ -574,7 +574,7 @@ internal sealed class AutoBookmarkCreator
 				oc.Add(fontName, new List<SizeOccurrence> { new(size, page, instance) });
 			}
 			else {
-				SizeOccurrence o = oc[fontName].Find(s => { return s.Size == size; });
+				SizeOccurrence o = oc[fontName].Find(s => s.Size == size);
 				if (o != null) {
 					o.Occurrence++;
 				}

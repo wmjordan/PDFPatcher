@@ -140,9 +140,7 @@ public partial class PageSettingsEditor : UserControl
 			}
 		};
 		new TypedColumn<PageBoxSettings>(_PageRangeColumn) {
-			AspectGetter = o => {
-				return string.IsNullOrEmpty(o.PageRanges) ? Constants.PageFilterTypes.AllPages : o.PageRanges;
-			},
+			AspectGetter = o => string.IsNullOrEmpty(o.PageRanges) ? Constants.PageFilterTypes.AllPages : o.PageRanges,
 			AspectPutter = (o, v) => {
 				string s = v as string;
 				o.PageRanges = s != Constants.PageFilterTypes.AllPages ? s : null;

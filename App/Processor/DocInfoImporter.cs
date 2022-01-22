@@ -1018,7 +1018,7 @@ internal sealed class DocInfoImporter
 			return false;
 		}
 
-		array = Array.ConvertAll(array, a => { return UnitConverter.ToPoint(a, _unitFactor); });
+		array = Array.ConvertAll(array, a => UnitConverter.ToPoint(a, _unitFactor));
 		pdfDict.Put(pdfName, new PdfArray(array));
 		return true;
 

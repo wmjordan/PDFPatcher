@@ -49,9 +49,7 @@ public partial class InfoExchangerControl : FunctionControl
 
 		new TypedColumn<IProcessor>(_ActionNameColumn) {
 			AspectGetter = o => o.Name,
-			ImageGetter = o => {
-				return o is IPageProcessor ? Resources.PageProcessor : Resources.DocumentProcessor;
-			}
+			ImageGetter = o => o is IPageProcessor ? Resources.PageProcessor : Resources.DocumentProcessor
 		};
 		_TargetPdfFile.FileMacroMenu.LoadStandardInfoMacros();
 		_TargetPdfFile.FileMacroMenu.LoadStandardSourceFileMacros();

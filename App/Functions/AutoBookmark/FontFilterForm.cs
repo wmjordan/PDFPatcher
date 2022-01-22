@@ -21,12 +21,8 @@ public partial class FontFilterForm : Form
 		TreeListView.TreeRenderer tcr = _FontInfoBox.TreeColumnRenderer;
 		tcr.LinePen = new Pen(SystemColors.ControlDark) { DashCap = DashCap.Round, DashStyle = DashStyle.Dash };
 
-		_FontInfoBox.CanExpandGetter = o => {
-			return o is XmlElement { Name: Constants.Font.ThisName, HasChildNodes: true };
-		};
-		_FontInfoBox.ChildrenGetter = o => {
-			return o is not XmlElement f ? null : f.SelectNodes(Constants.Font.Size);
-		};
+		_FontInfoBox.CanExpandGetter = o => o is XmlElement { Name: Constants.Font.ThisName, HasChildNodes: true };
+		_FontInfoBox.ChildrenGetter = o => o is not XmlElement f ? null : f.SelectNodes(Constants.Font.Size);
 		_FontInfoBox.RowFormatter = o => {
 			if (_FontInfoBox.GetParent(o.RowObject) != null) {
 				return;

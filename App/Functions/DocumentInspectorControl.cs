@@ -91,9 +91,7 @@ namespace PDFPatcher.Functions
 			_ObjectDetailBox.SetTreeViewLine();
 			_ObjectDetailBox.FixEditControlWidth();
 			new TypedColumn<DocumentObject>(_NameColumn) {
-				AspectGetter = (DocumentObject d) => {
-					return d.FriendlyName ?? d.Name;
-				},
+				AspectGetter = (DocumentObject d) => d.FriendlyName ?? d.Name,
 				ImageGetter = (DocumentObject d) => {
 					if (d.ImageKey != null) {
 						return d.ImageKey;
@@ -142,9 +140,7 @@ namespace PDFPatcher.Functions
 				}
 			};
 			new TypedColumn<DocumentObject>(_ValueColumn) {
-				AspectGetter = (DocumentObject d) => {
-					return d.FriendlyValue ?? d.LiteralValue;
-				},
+				AspectGetter = (DocumentObject d) => d.FriendlyValue ?? d.LiteralValue,
 				AspectPutter = (DocumentObject d, object value) => {
 					if (d.UpdateDocumentObject(value)) {
 						DocumentObject r = d.FindReferenceAncestor();
@@ -158,9 +154,7 @@ namespace PDFPatcher.Functions
 					}
 				}
 			};
-			_DescriptionColumn.AspectGetter = (object o) => {
-				return ((DocumentObject)o).Description;
-			};
+			_DescriptionColumn.AspectGetter = (object o) => ((DocumentObject)o).Description;
 			_ObjectDetailBox.PrimarySortColumn = null;
 			_ObjectDetailBox.CopySelectionOnControlC = true;
 			_ObjectDetailBox.CellEditStarting += (s, args) => {
@@ -200,9 +194,7 @@ namespace PDFPatcher.Functions
 
 				return d.HasChildren;
 			};
-			_ObjectDetailBox.ChildrenGetter = delegate (object o) {
-				return o is not DocumentObject d ? null : d.Children;
-			};
+			_ObjectDetailBox.ChildrenGetter = o => o is not DocumentObject d ? null : d.Children;
 			_ObjectDetailBox.RowFormatter = (OLVListItem olvItem) => {
 				if (olvItem.RowObject is not DocumentObject o) {
 					return;

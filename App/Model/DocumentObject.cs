@@ -330,7 +330,7 @@ public sealed class DocumentObject : IHierarchicalObject<DocumentObject>
 									PdfObjectType.PageCommands) { IsKeyObject = true };
 								break;
 							case PdfObjectType.Trailer: {
-									DocumentObject d = Array.Find(r, o => { return o.Name == "Root"; });
+									DocumentObject d = Array.Find(r, o => o.Name == "Root");
 									if (d != null) {
 										d.Type = PdfObjectType.Root;
 									}
@@ -338,7 +338,7 @@ public sealed class DocumentObject : IHierarchicalObject<DocumentObject>
 									break;
 								}
 							case PdfObjectType.Root: {
-									DocumentObject d = Array.Find(r, o => { return o.Name == "Outlines"; });
+									DocumentObject d = Array.Find(r, o => o.Name == "Outlines");
 									if (d != null) {
 										d.Type = PdfObjectType.Outline;
 									}
