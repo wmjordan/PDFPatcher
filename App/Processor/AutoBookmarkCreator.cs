@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Xml;
 using iTextSharp.text;
@@ -181,10 +182,8 @@ internal sealed class AutoBookmarkCreator
 
 						if (ig != null) {
 							bool ignore = false;
-							foreach (MatchPattern.IMatcher rg in ig) {
-								if (rg.Matches(t)) {
-									ignore = true;
-								}
+							foreach (var rg in ig.Where(rg => rg.Matches(t))) {
+								ignore = true;
 							}
 
 							if (ignore) {

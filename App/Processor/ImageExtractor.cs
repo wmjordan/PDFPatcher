@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using FreeImageAPI;
 using iTextSharp.text.pdf;
@@ -667,11 +668,7 @@ namespace PDFPatcher.Processor
 				_imagePosList.Add(new ImageDisposition(_imagePosList[i].Ctm, mii));
 			}
 
-			foreach (ImageInfo item in _imageInfoList) {
-				if (item.ReferenceCount >= 1) {
-					continue;
-				}
-
+			foreach (var item in _imageInfoList.Where(item => item.ReferenceCount < 1)) {
 				File.Delete(item.FileName);
 				item.FileName = null;
 			}
@@ -681,11 +678,7 @@ namespace PDFPatcher.Processor
 			_totalImageCount -= _imageCount;
 			_imageCount = 0;
 			List<string> newFileNames = new List<string>();
-			foreach (ImageInfo item in _imageInfoList) {
-				if (item.FileName == null || item.InlineImage != null) {
-					continue;
-				}
-
+			foreach (var item in _imageInfoList.Where(item => item.FileName != null && item.InlineImage == null)) {
 				string n;
 				do {
 					n = GetNewImageFileName() + Path.GetExtension(item.FileName);

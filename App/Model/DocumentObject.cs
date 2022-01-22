@@ -193,7 +193,6 @@ public sealed class DocumentObject : IHierarchicalObject<DocumentObject>
 				Value = new PdfNumber(n);
 				break;
 
-				return false;
 			case PdfObject.NAME:
 				Value = new PdfName((string)value);
 				break;
@@ -369,8 +368,7 @@ public sealed class DocumentObject : IHierarchicalObject<DocumentObject>
 			PdfArray pd = po as PdfArray;
 			DocumentObject[] r = new DocumentObject[pd.Size];
 			int n = 0;
-			foreach (PdfObject item in pd.ArrayList) {
-				DocumentObject d = new(OwnerDocument, this, (++n).ToText(), item);
+			foreach (var d in pd.ArrayList.Select(item => new DocumentObject(OwnerDocument, this, (++n).ToText(), item))) {
 				r[n - 1] = d;
 				PdfStructInfo i = PdfStructInfo.GetInfo(GetContextName(), d.Name);
 				if (i.Name != null && i.IsKeyObject) {
@@ -396,12 +394,10 @@ public sealed class DocumentObject : IHierarchicalObject<DocumentObject>
 			PageRangeCollection r = PageRangeCollection.Parse(ExtensiveObject as string, 1, pdf.NumberOfPages, true);
 			DocumentObject[] pn = new DocumentObject[r.TotalPages];
 			int i = 0;
-			foreach (PageRange item in r) {
-				foreach (int p in item) {
-					pn[i++] = new DocumentObject(OwnerDocument, this, "第" + p + "页", null, PdfObjectType.Page) {
-						ExtensiveObject = p
-					};
-				}
+			foreach (var p in r.SelectMany(item => item)) {
+				pn[i++] = new DocumentObject(OwnerDocument, this, "第" + p + "页", null, PdfObjectType.Page) {
+					ExtensiveObject = p
+				};
 			}
 
 			_Children = pn;

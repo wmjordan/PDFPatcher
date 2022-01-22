@@ -201,8 +201,7 @@ public partial class BookmarkEditorView : TreeListView
 			source = clones;
 		}
 		else {
-			foreach (BookmarkElement item in source) {
-				XmlElement e = item.ParentNode as XmlElement;
+			foreach (var e in source.Select(item => item.ParentNode as XmlElement)) {
 				if (e.Name == Constants.DocumentBookmark) {
 					spr = true;
 					pn = null;
@@ -311,12 +310,7 @@ public partial class BookmarkEditorView : TreeListView
 		List<BookmarkElement> items = new();
 		int c = color.ToArgb();
 		List<BookmarkElement> r = new();
-		foreach (KeyValuePair<BookmarkElement, Color> item in _markers) {
-			if (item.Value.ToArgb() != c) {
-				continue;
-			}
-
-			BookmarkElement k = item.Key;
+		foreach (var k in from item in _markers where item.Value.ToArgb() == c select item.Key) {
 			Debug.Assert((k.ParentNode == null || k.OwnerDocument == null) == false);
 			if (k.ParentNode == null || k.OwnerDocument == null) {
 				r.Add(k);

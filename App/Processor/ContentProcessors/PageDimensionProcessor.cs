@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
@@ -295,40 +296,37 @@ internal sealed class PageDimensionProcessor : IPageProcessor
 	private PaperSize GetRefPaperSize(DocProcessorContext context) {
 		Rectangle refRectangle = null;
 		SpecialPaperSize specialSize = Settings.PaperSize.SpecialSize;
-		foreach (PageRange range in _pageRanges ?? PageRangeCollection.CreateSingle(1, context.Pdf.NumberOfPages)) {
-			foreach (int page in range) {
-				Rectangle r = context.Pdf.GetPageSizeWithRotation(page);
-				if (refRectangle == null) {
-					refRectangle = r;
-					continue;
-				}
+		foreach (var r in from range in _pageRanges ?? PageRangeCollection.CreateSingle(1, context.Pdf.NumberOfPages) from page in range select context.Pdf.GetPageSizeWithRotation(page)) {
+			if (refRectangle == null) {
+				refRectangle = r;
+				continue;
+			}
 
-				switch (specialSize) {
-					case SpecialPaperSize.AsWidestPage:
-						if (r.Width > refRectangle.Width) {
-							refRectangle = r;
-						}
+			switch (specialSize) {
+				case SpecialPaperSize.AsWidestPage:
+					if (r.Width > refRectangle.Width) {
+						refRectangle = r;
+					}
 
-						break;
-					case SpecialPaperSize.AsNarrowestPage:
-						if (r.Width < refRectangle.Width) {
-							refRectangle = r;
-						}
+					break;
+				case SpecialPaperSize.AsNarrowestPage:
+					if (r.Width < refRectangle.Width) {
+						refRectangle = r;
+					}
 
-						break;
-					case SpecialPaperSize.AsLargestPage:
-						if (r.Width * r.Height > refRectangle.Width * refRectangle.Height) {
-							refRectangle = r;
-						}
+					break;
+				case SpecialPaperSize.AsLargestPage:
+					if (r.Width * r.Height > refRectangle.Width * refRectangle.Height) {
+						refRectangle = r;
+					}
 
-						break;
-					case SpecialPaperSize.AsSmallestPage:
-						if (r.Width * r.Height < refRectangle.Width * refRectangle.Height) {
-							refRectangle = r;
-						}
+					break;
+				case SpecialPaperSize.AsSmallestPage:
+					if (r.Width * r.Height < refRectangle.Width * refRectangle.Height) {
+						refRectangle = r;
+					}
 
-						break;
-				}
+					break;
 			}
 		}
 

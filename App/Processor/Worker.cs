@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
@@ -74,16 +75,14 @@ internal static class Worker
 			}
 
 			ImageExtractor exp = new(options, pdf);
-			foreach (PageRange range in ranges) {
-				foreach (int i in range) {
-					exp.ExtractPageImages(pdf, i);
-					if (exp.InfoList.Count > 0) {
-						Tracker.TraceMessage(Tracker.Category.OutputFile,
-							exp.InfoList[exp.InfoList.Count - 1].FileName);
-					}
-
-					Tracker.IncrementProgress(1);
+			foreach (var i in ranges.SelectMany(range => range)) {
+				exp.ExtractPageImages(pdf, i);
+				if (exp.InfoList.Count > 0) {
+					Tracker.TraceMessage(Tracker.Category.OutputFile,
+						exp.InfoList[exp.InfoList.Count - 1].FileName);
 				}
+
+				Tracker.IncrementProgress(1);
 			}
 
 			Tracker.TrackProgress(loadCount);

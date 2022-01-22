@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.XPath;
@@ -338,11 +339,7 @@ internal sealed class DocInfoImporter
 
 		PdfPageLabels pls = new();
 		int i = 0;
-		foreach (PageLabel item in labels) {
-			if (item.PageNumber <= 0 || item.StartPage <= 0) {
-				continue;
-			}
-
+		foreach (var item in labels.Where(item => item.PageNumber > 0 && item.StartPage > 0)) {
 			pls.AddPageLabel(item.PageNumber,
 				ValueHelper.MapValue(item.Style, Constants.PageLabelStyles.Names, Constants.PageLabelStyles.Values,
 					PdfPageLabels.DECIMAL_ARABIC_NUMERALS),
@@ -1013,21 +1010,14 @@ internal sealed class DocInfoImporter
 				rotate = -1;
 			}
 
-			foreach (PageRange r in ranges) {
-				foreach (int i in r) {
-					if (pageFilter != -1 && i % 2 != pageFilter) {
-						continue;
-					}
-
-					PdfDictionary p = pdf.GetPageN(i);
-					ImportPageBox(mb, p, PdfName.MEDIABOX);
-					ImportPageBox(cb, p, PdfName.CROPBOX);
-					ImportPageBox(tb, p, PdfName.TRIMBOX);
-					ImportPageBox(ab, p, PdfName.ARTBOX);
-					ImportPageBox(bb, p, PdfName.BLEEDBOX);
-					if (rotate != -1) {
-						p.Put(PdfName.ROTATE, new PdfNumber(rotate));
-					}
+			foreach (var p in from r in ranges from i in r where pageFilter == -1 || i % 2 == pageFilter select pdf.GetPageN(i)) {
+				ImportPageBox(mb, p, PdfName.MEDIABOX);
+				ImportPageBox(cb, p, PdfName.CROPBOX);
+				ImportPageBox(tb, p, PdfName.TRIMBOX);
+				ImportPageBox(ab, p, PdfName.ARTBOX);
+				ImportPageBox(bb, p, PdfName.BLEEDBOX);
+				if (rotate != -1) {
+					p.Put(PdfName.ROTATE, new PdfNumber(rotate));
 				}
 			}
 		}

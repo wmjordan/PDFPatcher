@@ -56,20 +56,18 @@ public partial class DocumentFontListForm : Form
 				int[] pp = new int[p.NumberOfPages + 1];
 				_Worker.ReportProgress(-r.TotalPages);
 				int i = 0;
-				foreach (PageRange range in r) {
-					foreach (int page in range) {
-						if (_Worker.CancellationPending) {
-							return;
-						}
-
-						_Worker.ReportProgress(++i);
-						if (pp[page] != 0) {
-							continue;
-						}
-
-						pp[page] = 1;
-						GetPageFonts(p, page);
+				foreach (var page in r.SelectMany(range => range)) {
+					if (_Worker.CancellationPending) {
+						return;
 					}
+
+					_Worker.ReportProgress(++i);
+					if (pp[page] != 0) {
+						continue;
+					}
+
+					pp[page] = 1;
+					GetPageFonts(p, page);
 				}
 			}
 			catch (Exception ex) {

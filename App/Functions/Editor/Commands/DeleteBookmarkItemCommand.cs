@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml;
 using PDFPatcher.Processor;
 
@@ -33,10 +34,8 @@ internal sealed class DeleteBookmarkItemCommand : IEditorCommand
 			}
 		}
 
-		foreach (XmlNode item in l) {
-			if (item.ParentNode != null) {
-				b.RefreshObject(item);
-			}
+		foreach (var item in l.Where(item => item.ParentNode != null)) {
+			b.RefreshObject(item);
 		}
 
 		controller.Model.Undo.AddUndo("删除书签", undo);

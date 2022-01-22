@@ -283,72 +283,66 @@ internal sealed class PdfDocumentCreator
 		CoordinateTranslationSettings[] cts = _pageSettings.PaperSize.SpecialSize != SpecialPaperSize.AsPageSize
 			? new CoordinateTranslationSettings[pdf.NumberOfPages + 1]
 			: null; // 页面的位置偏移量
-		foreach (PageRange r in ranges) {
-			foreach (int i in r) {
-				if (i < 1 || i > pn) {
-					goto Exit;
-				}
-
-				if (pageRemapper != null) {
-					pageRemapper[i] = _writer.CurrentPageNumber;
-				}
-
-				_doc.NewPage();
-				if (imgExp != null) {
-					imgExp.ExtractPageImages(pdf, i);
-					foreach (ImageInfo item in imgExp.InfoList) {
-						if (item.FileName == null) {
-							continue;
-						}
-
-						ProcessFile(new SourceItem.Image(item.FileName), bookmark);
-						File.Delete(item.FileName);
-					}
-				}
-				else {
-					if (pp[i] == 0) {
-						PdfDictionary page = pdf.GetPageN(i);
-						//if (DocInfoImporter.RemovePageAdditionalInfo (_docSettings, page)) {
-						//    pdf.ResetReleasePage ();
-						//}
-						//if (_docSettings.AutoMaskBWImages) {
-						//    SetBWImageMask (page);
-						//    pdf.ResetReleasePage ();
-						//}
-						//PdfHelper.ClearPageLinks (pdf, i);
-						if (_pageSettings.PaperSize.SpecialSize != SpecialPaperSize.AsPageSize) {
-							pdf.ResetReleasePage();
-							CoordinateTranslationSettings ct =
-								PageDimensionProcessor.ResizePage(page, _pageSettings, null);
-							if (_pageSettings.ScaleContent) {
-								PageDimensionProcessor.ScaleContent(pdf, i, ct);
-							}
-
-							if (cts != null) {
-								cts[i] = ct;
-							}
-
-							pdf.ResetReleasePage();
-						}
-						//var og = new OperatorGroup (null);
-						//if (_docSettings.FixContents) {
-						//    og.Operators.Add (PdfContentStreamProcessor.NopOperator);
-						//}
-						//if (og.Operators.Count > 0) {
-						//    var cp = new PdfPageCommandProcessor ();
-						//    cp.ProcessContent (cb ?? pdf.GetPageContent (i), pdf.GetPageN (i).GetAsDict (PdfName.RESOURCES));
-						//    cp.WritePdfCommands (pdf, i);
-						//}
-
-						pp[i] = 1;
-					}
-
-					_writer.AddPage(_writer.GetImportedPage(pdf, i));
-				}
-
-			Exit:
-				Tracker.IncrementProgress(1);
+		foreach (var i in ranges.SelectMany(r => r)) {
+			if (i < 1 || i > pn) {
+				goto Exit;
 			}
+
+			if (pageRemapper != null) {
+				pageRemapper[i] = _writer.CurrentPageNumber;
+			}
+
+			_doc.NewPage();
+			if (imgExp != null) {
+				imgExp.ExtractPageImages(pdf, i);
+				foreach (var item in imgExp.InfoList.Where(item => item.FileName != null)) {
+					ProcessFile(new SourceItem.Image(item.FileName), bookmark);
+					File.Delete(item.FileName);
+				}
+			}
+			else {
+				if (pp[i] == 0) {
+					PdfDictionary page = pdf.GetPageN(i);
+					//if (DocInfoImporter.RemovePageAdditionalInfo (_docSettings, page)) {
+					//    pdf.ResetReleasePage ();
+					//}
+					//if (_docSettings.AutoMaskBWImages) {
+					//    SetBWImageMask (page);
+					//    pdf.ResetReleasePage ();
+					//}
+					//PdfHelper.ClearPageLinks (pdf, i);
+					if (_pageSettings.PaperSize.SpecialSize != SpecialPaperSize.AsPageSize) {
+						pdf.ResetReleasePage();
+						CoordinateTranslationSettings ct =
+							PageDimensionProcessor.ResizePage(page, _pageSettings, null);
+						if (_pageSettings.ScaleContent) {
+							PageDimensionProcessor.ScaleContent(pdf, i, ct);
+						}
+
+						if (cts != null) {
+							cts[i] = ct;
+						}
+
+						pdf.ResetReleasePage();
+					}
+					//var og = new OperatorGroup (null);
+					//if (_docSettings.FixContents) {
+					//    og.Operators.Add (PdfContentStreamProcessor.NopOperator);
+					//}
+					//if (og.Operators.Count > 0) {
+					//    var cp = new PdfPageCommandProcessor ();
+					//    cp.ProcessContent (cb ?? pdf.GetPageContent (i), pdf.GetPageN (i).GetAsDict (PdfName.RESOURCES));
+					//    cp.WritePdfCommands (pdf, i);
+					//}
+
+					pp[i] = 1;
+				}
+
+				_writer.AddPage(_writer.GetImportedPage(pdf, i));
+			}
+
+		Exit:
+			Tracker.IncrementProgress(1);
 		}
 
 		if (_option.KeepBookmarks) {

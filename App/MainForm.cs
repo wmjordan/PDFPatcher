@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Windows.Forms;
@@ -253,11 +254,7 @@ public partial class MainForm : Form
 			_GeneralToolbar.Items[i].Dispose();
 		}
 
-		foreach (ToolbarOptions.ButtonOption item in AppContext.Toolbar.Buttons) {
-			if (item.Visible == false) {
-				continue;
-			}
-
+		foreach (var item in AppContext.Toolbar.Buttons.Where(item => item.Visible != false)) {
 			_GeneralToolbar.Items.Add(item.CreateButton());
 		}
 	}

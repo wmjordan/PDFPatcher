@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
@@ -561,16 +562,7 @@ internal sealed class DocInfoExporter
 			}
 
 			List<PdfObject> arr = annots.ArrayList;
-			foreach (PdfObject item in arr) {
-				if (item.IsNull()) {
-					continue;
-				}
-
-				PdfDictionary annot = (PdfDictionary)PdfReader.GetPdfObjectRelease(item);
-				if (!PdfName.LINK.Equals(annot.Get(PdfName.SUBTYPE))) {
-					continue;
-				}
-
+			foreach (var annot in from item in arr where !item.IsNull() select (PdfDictionary)PdfReader.GetPdfObjectRelease(item) into annot where PdfName.LINK.Equals(annot.Get(PdfName.SUBTYPE)) select annot) {
 				w.WriteStartElement(Constants.PageLinkAttributes.Link);
 				w.WriteAttributeString(Constants.PageLinkAttributes.PageNumber, i.ToText());
 				PdfArray rect = annot.GetAsArray(PdfName.RECT);
@@ -578,11 +570,7 @@ internal sealed class DocInfoExporter
 					UnitConverter u = _options.UnitConverter;
 					float[] p = new float[4];
 					int k = 0;
-					foreach (PdfNumber ri in rect.ArrayList) {
-						if (ri == null) {
-							break;
-						}
-
+					foreach (var ri in rect.ArrayList.Cast<PdfNumber>().TakeWhile(ri => ri != null)) {
 						p[k] = u.FromPoint(ri.FloatValue);
 						k++;
 					}

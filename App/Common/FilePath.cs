@@ -484,13 +484,10 @@ public readonly struct FilePath : IEquatable<FilePath>
 			}
 
 			if (pi == "..") {
-				foreach (string item in t) {
-					string n = IsDirectorySeparator(item[item.Length - 1])
-						? Path.GetDirectoryName(item.Substring(0, item.Length - 1))
-						: Path.GetDirectoryName(item);
-					if (n != null && r.Contains(n) == false) {
-						r.Add(n);
-					}
+				foreach (var n in t.Select(item => IsDirectorySeparator(item[item.Length - 1])
+							 ? Path.GetDirectoryName(item.Substring(0, item.Length - 1))
+							 : Path.GetDirectoryName(item)).Where(n => n != null && r.Contains(n) == false)) {
+					r.Add(n);
 				}
 			}
 			else if (pi == RecursiveWildcard) {

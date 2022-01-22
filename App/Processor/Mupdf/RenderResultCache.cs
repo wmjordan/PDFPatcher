@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using PDFPatcher.Common;
 
 namespace MuPdfSharp;
@@ -59,11 +60,7 @@ public sealed class RenderResultCache : IDisposable
 
 		int x = 0;
 		int i = 0;
-		foreach (int item in _buffer.Keys) {
-			if (Math.Abs(item - pageNumber) <= x) {
-				continue;
-			}
-
+		foreach (var item in _buffer.Keys.Where(item => Math.Abs(item - pageNumber) > x)) {
 			x = Math.Abs(item - pageNumber);
 			i = item;
 		}

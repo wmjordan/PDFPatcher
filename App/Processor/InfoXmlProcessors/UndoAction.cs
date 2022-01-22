@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml;
 
 namespace PDFPatcher.Processor;
@@ -111,10 +112,8 @@ internal sealed class UndoActionGroup : IUndoAction
 	public IEnumerable<XmlNode> AffectedElements {
 		get {
 			Dictionary<XmlNode, byte> d = new();
-			foreach (IUndoAction item in _actions) {
-				foreach (XmlNode e in item.AffectedElements) {
-					d[e] = 0;
-				}
+			foreach (var e in _actions.SelectMany(item => item.AffectedElements)) {
+				d[e] = 0;
 			}
 
 			return d.Keys;

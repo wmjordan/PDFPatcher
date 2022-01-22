@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace PDFPatcher.Common;
@@ -15,11 +16,7 @@ internal static class FileHelper
 
 	public static bool HasFileNameMacro(string fileName) {
 		char c = '<';
-		foreach (char item in fileName) {
-			if (item != c) {
-				continue;
-			}
-
+		foreach (var item in fileName.Where(item => item == c)) {
 			if (c == '>') {
 				return true;
 			}

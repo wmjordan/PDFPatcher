@@ -305,10 +305,6 @@ internal static class ValueHelper
 
 							hasDot = true;
 							continue;
-
-							return Invalid;
-
-							return Invalid;
 						}
 
 						if (notZero == false) {

@@ -177,10 +177,8 @@ internal sealed class ReplaceFontProcessor : IPageProcessor
 		int dw = fontInfo.DefaultWidth;
 		Dictionary<int, int> w = newFont.GlyphWidths;
 		//newFont.DefaultWidth = dw;
-		foreach (char ch in text) {
-			if (w.ContainsKey(ch) == false) {
-				w.Add(ch, dw);
-			}
+		foreach (var ch in text.Where(ch => w.ContainsKey(ch) == false)) {
+			w.Add(ch, dw);
 		}
 	}
 
@@ -478,11 +476,7 @@ internal sealed class ReplaceFontProcessor : IPageProcessor
 
 		CharacterWidth[] widths = new CharacterWidth[l];
 		int i = -1;
-		foreach (KeyValuePair<int, int> item in font.GlyphWidths) {
-			if (item.Value == FontInfo.DefaultDefaultWidth) {
-				continue;
-			}
-
+		foreach (var item in font.GlyphWidths.Where(item => item.Value != FontInfo.DefaultDefaultWidth)) {
 			widths[++i] = new CharacterWidth(item.Key, item.Value);
 		}
 
@@ -536,8 +530,7 @@ internal sealed class ReplaceFontProcessor : IPageProcessor
 	}
 
 	private void SubSetFontData(PdfReader pdf) {
-		foreach (KeyValuePair<string, NewFont> font in _newFonts) {
-			NewFont newFont = font.Value;
+		foreach (var newFont in _newFonts.Select(font => font.Value)) {
 			Tracker.TraceMessage("嵌入字体：" + newFont.Font.Familyname + "(" + newFont.UsedCidMap.Count + "字)");
 			if (newFont.AbsentChars.Count > 0) {
 				Tracker.TraceMessage(Tracker.Category.ImportantMessage,

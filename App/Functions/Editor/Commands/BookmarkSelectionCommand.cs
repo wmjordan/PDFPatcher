@@ -1,6 +1,6 @@
-﻿using System.Xml;
+﻿using System.Linq;
+using System.Xml;
 using BrightIdeasSoftware;
-using PDFPatcher.Model;
 
 namespace PDFPatcher.Functions.Editor;
 
@@ -31,10 +31,8 @@ internal sealed class BookmarkSelectionCommand : IEditorCommand
 				b.ExpandAll();
 				break;
 			case "_CollapseChildren":
-				foreach (BookmarkElement item in b.GetSelectedElements(false)) {
-					foreach (XmlNode ci in item.SubBookmarks) {
-						b.Collapse(ci);
-					}
+				foreach (var ci in b.GetSelectedElements(false).SelectMany(item => item.SubBookmarks.Cast<XmlNode>())) {
+					b.Collapse(ci);
 				}
 
 				break;

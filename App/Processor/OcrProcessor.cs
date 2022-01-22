@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -232,11 +233,7 @@ internal sealed class OcrProcessor
 			errorList.Add(i);
 		}
 		finally {
-			foreach (ImageInfo item in _ocrImageExp.InfoList) {
-				if (string.IsNullOrEmpty(item.FileName)) {
-					continue;
-				}
-
+			foreach (var item in _ocrImageExp.InfoList.Where(item => !string.IsNullOrEmpty(item.FileName))) {
 				try {
 					File.Delete(item.FileName);
 				}

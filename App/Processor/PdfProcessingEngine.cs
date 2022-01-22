@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using PDFPatcher.Model;
@@ -37,11 +38,7 @@ internal sealed class PdfProcessingEngine
 			Dictionary<string, FontSubstitution> d = new(settings.FontSubstitutions.Count,
 				StringComparer.CurrentCultureIgnoreCase);
 			if (settings.EnableFontSubstitutions) {
-				foreach (FontSubstitution item in settings.FontSubstitutions) {
-					if (string.IsNullOrEmpty(item.OriginalFont) || string.IsNullOrEmpty(item.Substitution)) {
-						continue;
-					}
-
+				foreach (var item in settings.FontSubstitutions.Where(item => !string.IsNullOrEmpty(item.OriginalFont) && !string.IsNullOrEmpty(item.Substitution))) {
 					d[item.OriginalFont] = item;
 				}
 			}

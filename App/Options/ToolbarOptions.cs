@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 
@@ -39,10 +40,8 @@ public class ToolbarOptions
 
 	internal void AddMissedButtons() {
 		foreach (Toolkit item in Toolkit.Toolkits) {
-			foreach (ButtonOption b in Buttons) {
-				if (b.ID == item.Identifier) {
-					goto Next;
-				}
+			foreach (var b in Buttons.Where(b => b.ID == item.Identifier)) {
+				goto Next;
 			}
 
 			Buttons.Add(new ButtonOption(item.Identifier, item.Name, item.ShowText, false));
