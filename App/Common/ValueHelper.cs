@@ -32,7 +32,7 @@ internal static class ValueHelper
 	public static TDisposable TryDispose<TDisposable>(this TDisposable disposable)
 		where TDisposable : IDisposable {
 		if (disposable == null) {
-			return default(TDisposable);
+			return default;
 		}
 
 		try {
