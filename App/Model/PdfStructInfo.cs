@@ -69,14 +69,16 @@ internal readonly struct PdfStructInfo
 				continue;
 			}
 
-			if (e.Name == "Info") {
-				AddItem(d, string.IsNullOrEmpty(currentToken) ? t : string.Concat(currentToken, "/", t),
-					new PdfStructInfo(e.GetAttribute("Name"), e.HasChildNodes, e.GetAttribute("Required") == "true",
-						e.GetAttribute("Description"), e.GetAttribute("ImageKey")));
-				AddSubItems(d, e);
-			}
-			else if (e.Name == "RefInfo" && d.ContainsKey(t)) {
-				AddItem(d, string.IsNullOrEmpty(currentToken) ? t : string.Concat(currentToken, "/", t), d[t]);
+			switch (e.Name) {
+				case "Info":
+					AddItem(d, string.IsNullOrEmpty(currentToken) ? t : string.Concat(currentToken, "/", t),
+						new PdfStructInfo(e.GetAttribute("Name"), e.HasChildNodes, e.GetAttribute("Required") == "true",
+							e.GetAttribute("Description"), e.GetAttribute("ImageKey")));
+					AddSubItems(d, e);
+					break;
+				case "RefInfo" when d.ContainsKey(t):
+					AddItem(d, string.IsNullOrEmpty(currentToken) ? t : string.Concat(currentToken, "/", t), d[t]);
+					break;
 			}
 		}
 	}

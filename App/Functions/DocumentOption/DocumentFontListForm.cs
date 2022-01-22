@@ -26,16 +26,20 @@ public partial class DocumentFontListForm : Form
 			}
 		};
 		_Worker.ProgressChanged += (s, args) => {
-			if (args.ProgressPercentage < 0) {
-				_ProgressBar.Maximum = -args.ProgressPercentage;
-			}
-			else if (args.ProgressPercentage > 0) {
-				_ProgressBar.SetValue(args.ProgressPercentage);
-			}
-			else {
-				if (args.UserState is PageFont pf) {
-					_FontListBox.AddObject(pf);
-				}
+			switch (args.ProgressPercentage) {
+				case < 0:
+					_ProgressBar.Maximum = -args.ProgressPercentage;
+					break;
+				case > 0:
+					_ProgressBar.SetValue(args.ProgressPercentage);
+					break;
+				default: {
+						if (args.UserState is PageFont pf) {
+							_FontListBox.AddObject(pf);
+						}
+
+						break;
+					}
 			}
 		};
 		_Worker.RunWorkerCompleted += (s, args) => {

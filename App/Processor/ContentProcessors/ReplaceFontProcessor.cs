@@ -59,36 +59,40 @@ internal sealed class ReplaceFontProcessor : IPageProcessor
 			}
 
 			string n = ec.Name.ToString();
-			if (n == "BT") {
-				foreach (PdfPageCommand item in ec.Commands) {
-					if (item.Type == PdfPageCommandType.Enclosure) {
-						foreach (PdfPageCommand sc in (item as EnclosingCommand).Commands) {
-							ProcessTextCommand(sc);
+			switch (n) {
+				case "BT": {
+						foreach (PdfPageCommand item in ec.Commands) {
+							if (item.Type == PdfPageCommandType.Enclosure) {
+								foreach (PdfPageCommand sc in (item as EnclosingCommand).Commands) {
+									ProcessTextCommand(sc);
+								}
+							}
+							else {
+								if (ProcessTextCommand(item) == false) {
+								}
+							}
 						}
-					}
-					else {
-						if (ProcessTextCommand(item) == false) {
-						}
-					}
-				}
 
-				//if (_usedStyle) {
-				//	_usedStyle = false;
-				//}
-				r = true;
-			}
-			else if (n == "BDC") {
-				r |= ProcessCommands(ec.Commands);
-				//if ((ec.Operands[0] as PdfName)?.ToString() == "/StyleSpan" && (ec.Commands[0] as EnclosingCommand).Commands[1] is MatrixCommand m && (m.Operands[0] as PdfNumber).FloatValue == 6.041f) {
-				//	_usedStyle = true;
-				//}
-			}
-			else {
-				NewFont cnf = _currentNewFont;
-				FontInfo cf = _currentFont;
-				r |= ProcessCommands(ec.Commands);
-				_currentNewFont = cnf;
-				_currentFont = cf;
+						//if (_usedStyle) {
+						//	_usedStyle = false;
+						//}
+						r = true;
+						break;
+					}
+				case "BDC":
+					r |= ProcessCommands(ec.Commands);
+					//if ((ec.Operands[0] as PdfName)?.ToString() == "/StyleSpan" && (ec.Commands[0] as EnclosingCommand).Commands[1] is MatrixCommand m && (m.Operands[0] as PdfNumber).FloatValue == 6.041f) {
+					//	_usedStyle = true;
+					//}
+					break;
+				default: {
+						NewFont cnf = _currentNewFont;
+						FontInfo cf = _currentFont;
+						r |= ProcessCommands(ec.Commands);
+						_currentNewFont = cnf;
+						_currentFont = cf;
+						break;
+					}
 			}
 		}
 
@@ -140,32 +144,37 @@ internal sealed class ReplaceFontProcessor : IPageProcessor
 
 		PdfObject op = ops[0];
 		string t;
-		if (op.Type == PdfObject.STRING) {
-			t = fontInfo.DecodeText(op as PdfString); //.TrimEnd ();
-			if (_trimTrailingWhiteSpace) {
-				t = t.TrimEnd();
-			}
+		switch (op.Type) {
+			case PdfObject.STRING: {
+					t = fontInfo.DecodeText(op as PdfString); //.TrimEnd ();
+					if (_trimTrailingWhiteSpace) {
+						t = t.TrimEnd();
+					}
 
-			ops[0] = RewriteText(ef, f, t);
-			//AddCustomDefaultWidth (ef, fontInfo, t);
-		}
-		else if (op.Type == PdfObject.ARRAY) {
-			PdfArray a = op as PdfArray;
-			int l = a.Size;
-			for (int i = 0; i < l; i++) {
-				op = a[i];
-				if (op.Type != PdfObject.STRING) {
-					continue;
+					ops[0] = RewriteText(ef, f, t);
+					//AddCustomDefaultWidth (ef, fontInfo, t);
+					break;
 				}
+			case PdfObject.ARRAY: {
+					PdfArray a = op as PdfArray;
+					int l = a.Size;
+					for (int i = 0; i < l; i++) {
+						op = a[i];
+						if (op.Type != PdfObject.STRING) {
+							continue;
+						}
 
-				t = fontInfo.DecodeText(op as PdfString);
-				if (_trimTrailingWhiteSpace /* && i == l - 1*/) {
-					t = t.TrimEnd();
+						t = fontInfo.DecodeText(op as PdfString);
+						if (_trimTrailingWhiteSpace /* && i == l - 1*/) {
+							t = t.TrimEnd();
+						}
+
+						a[i] = RewriteText(ef, f, t);
+						//AddCustomDefaultWidth (ef, fontInfo, t);
+					}
+
+					break;
 				}
-
-				a[i] = RewriteText(ef, f, t);
-				//AddCustomDefaultWidth (ef, fontInfo, t);
-			}
 		}
 	}
 
@@ -419,32 +428,38 @@ internal sealed class ReplaceFontProcessor : IPageProcessor
 			}
 
 			PdfObject cw = w[i];
-			if (cw.Type == PdfObject.ARRAY) {
-				foreach (PdfObject width in cw as PdfArray) {
-					int u = fontInfo.DecodeCidToUnicode(cid);
-					if (u == 0 && cid != 0) {
-						Console.WriteLine(cid + "－无法解码CID");
-						continue;
-					}
+			switch (cw.Type) {
+				case PdfObject.ARRAY: {
+						foreach (PdfObject width in cw as PdfArray) {
+							int u = fontInfo.DecodeCidToUnicode(cid);
+							if (u == 0 && cid != 0) {
+								Console.WriteLine(cid + "－无法解码CID");
+								continue;
+							}
 
-					++cid;
-					widths[u] = (width as PdfNumber).IntValue;
-					Console.WriteLine(string.Join(" ", cid.ToString(), ((char)u).ToString(), widths[u].ToString()));
-				}
-			}
-			else if (cw.Type == PdfObject.NUMBER) {
-				int cid2 = (cw as PdfNumber).IntValue + 1;
-				int width = (w[++i] as PdfNumber).IntValue;
-				do {
-					int u = fontInfo.DecodeCidToUnicode(cid);
-					if (u == 0 && cid != 0) {
-						Console.WriteLine(cid + "－无法解码CID");
-						continue;
-					}
+							++cid;
+							widths[u] = (width as PdfNumber).IntValue;
+							Console.WriteLine(string.Join(" ", cid.ToString(), ((char)u).ToString(), widths[u].ToString()));
+						}
 
-					widths[u] = width;
-					Console.WriteLine(string.Join(" ", cid.ToString(), ((char)u).ToString(), width.ToString()));
-				} while (++cid < cid2);
+						break;
+					}
+				case PdfObject.NUMBER: {
+						int cid2 = (cw as PdfNumber).IntValue + 1;
+						int width = (w[++i] as PdfNumber).IntValue;
+						do {
+							int u = fontInfo.DecodeCidToUnicode(cid);
+							if (u == 0 && cid != 0) {
+								Console.WriteLine(cid + "－无法解码CID");
+								continue;
+							}
+
+							widths[u] = width;
+							Console.WriteLine(string.Join(" ", cid.ToString(), ((char)u).ToString(), width.ToString()));
+						} while (++cid < cid2);
+
+						break;
+					}
 			}
 		}
 	}

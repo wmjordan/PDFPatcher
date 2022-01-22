@@ -137,28 +137,28 @@ public class Bound
 		if (IntersectWith(other)) {
 			ov = true;
 			hd = other.Center - Center;
-			if (hd > 0) {
-				hp = DistanceInfo.Placement.Right;
-			}
-			else if (hd < 0) {
-				hp = DistanceInfo.Placement.Left;
-				hd = -hd;
+			switch (hd) {
+				case > 0:
+					hp = DistanceInfo.Placement.Right;
+					break;
+				case < 0:
+					hp = DistanceInfo.Placement.Left;
+					hd = -hd;
+					break;
 			}
 
 			vd = other.Middle - Middle;
-			if (vd > 0) {
-				vp = IsTopUp ? DistanceInfo.Placement.Up : DistanceInfo.Placement.Down;
-			}
-			else if (vd < 0) {
-				vp = IsTopUp ? DistanceInfo.Placement.Down : DistanceInfo.Placement.Up;
-			}
-
-			if (vd == 0 && hd == 0) {
-				return new DistanceInfo(DistanceInfo.Placement.Overlapping, 0, 0);
-			}
-
-			if (vd == 0) {
-				return new DistanceInfo(DistanceInfo.Placement.Overlapping | hp, hd, vd);
+			switch (vd) {
+				case > 0:
+					vp = IsTopUp ? DistanceInfo.Placement.Up : DistanceInfo.Placement.Down;
+					break;
+				case < 0:
+					vp = IsTopUp ? DistanceInfo.Placement.Down : DistanceInfo.Placement.Up;
+					break;
+				case 0 when hd == 0:
+					return new DistanceInfo(DistanceInfo.Placement.Overlapping, 0, 0);
+				case 0:
+					return new DistanceInfo(DistanceInfo.Placement.Overlapping | hp, hd, vd);
 			}
 
 			if (hp == 0) {

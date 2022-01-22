@@ -63,12 +63,15 @@ internal sealed class ImageRecompressor : IPageProcessor
 
 			PdfObject f = im.Get(PdfName.FILTER);
 			PdfName fn = null;
-			if (f.Type == PdfObject.ARRAY) {
-				PdfArray fl = f as PdfArray;
-				fn = fl.GetAsName(fl.Size - 1);
-			}
-			else if (f.Type == PdfObject.NAME) {
-				fn = f as PdfName;
+			switch (f.Type) {
+				case PdfObject.ARRAY: {
+						PdfArray fl = f as PdfArray;
+						fn = fl.GetAsName(fl.Size - 1);
+						break;
+					}
+				case PdfObject.NAME:
+					fn = f as PdfName;
+					break;
 			}
 
 			if (fn != null && __IgnoreFilters.Contains(fn)) {

@@ -133,19 +133,27 @@ internal static class Worker
 						}
 						else {
 							Color[] uc = BitmapHelper.GetPalette(bmp);
-							if (uc.Length > 256 && options.Quantize) {
-								using Bitmap b = WuQuantizer.QuantizeImage(bmp);
-								BitmapHelper.SaveAs(b, fn);
-							}
-							else if (uc.Length <= 256 && BitmapHelper.IsIndexed(bmp) == false) {
-								using Bitmap b = BitmapHelper.ToIndexImage(bmp, uc);
-								BitmapHelper.SaveAs(b, fn);
-							}
-							else if (options.FileFormat == ImageFormat.Jpeg) {
-								JpgHelper.Save(bmp, fn, options.JpegQuality);
-							}
-							else {
-								BitmapHelper.SaveAs(bmp, fn);
+							switch (uc.Length) {
+								case > 256 when options.Quantize: {
+										using Bitmap b = WuQuantizer.QuantizeImage(bmp);
+										BitmapHelper.SaveAs(b, fn);
+										break;
+									}
+								case <= 256 when BitmapHelper.IsIndexed(bmp) == false: {
+										using Bitmap b = BitmapHelper.ToIndexImage(bmp, uc);
+										BitmapHelper.SaveAs(b, fn);
+										break;
+									}
+								default: {
+										if (options.FileFormat == ImageFormat.Jpeg) {
+											JpgHelper.Save(bmp, fn, options.JpegQuality);
+										}
+										else {
+											BitmapHelper.SaveAs(bmp, fn);
+										}
+
+										break;
+									}
 							}
 						}
 					}
@@ -927,12 +935,11 @@ internal static class Worker
 
 				if (File.Exists(t)) {
 					DialogResult r = FormHelper.YesNoCancelBox("是否覆盖已存在的 PDF 文件：" + t);
-					if (r == DialogResult.No) {
-						goto Exit;
-					}
-
-					if (r == DialogResult.Cancel) {
-						throw new OperationCanceledException();
+					switch (r) {
+						case DialogResult.No:
+							goto Exit;
+						case DialogResult.Cancel:
+							throw new OperationCanceledException();
 					}
 
 					// r == DialogResult.Yes

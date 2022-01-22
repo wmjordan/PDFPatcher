@@ -14,23 +14,21 @@ internal sealed class SetTextStyleProcessor : IPdfInfoXmlProcessor
 
 	public SetTextStyleProcessor(XmlElement element, Style style) {
 		string s = element.GetAttribute(Constants.BookmarkAttributes.Style);
-		if (style == Style.SetBold) {
-			if (s != Constants.BookmarkAttributes.StyleType.Bold &&
-				s != Constants.BookmarkAttributes.StyleType.BoldItalic) {
+		switch (style) {
+			case Style.SetBold when s != Constants.BookmarkAttributes.StyleType.Bold &&
+									s != Constants.BookmarkAttributes.StyleType.BoldItalic:
 				_style = Style.SetBold;
-			}
-			else {
+				break;
+			case Style.SetBold:
 				_style = Style.RemoveBold;
-			}
-		}
-		else if (style == Style.SetItalic) {
-			if (s != Constants.BookmarkAttributes.StyleType.Italic &&
-				s != Constants.BookmarkAttributes.StyleType.BoldItalic) {
+				break;
+			case Style.SetItalic when s != Constants.BookmarkAttributes.StyleType.Italic &&
+									  s != Constants.BookmarkAttributes.StyleType.BoldItalic:
 				_style = Style.SetItalic;
-			}
-			else {
+				break;
+			case Style.SetItalic:
 				_style = Style.RemoveItalic;
-			}
+				break;
 		}
 	}
 

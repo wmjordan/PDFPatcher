@@ -28,16 +28,19 @@ public sealed class DocumentObject : IHierarchicalObject<DocumentObject>
 			PdfObject r = PdfReader.GetPdfObjectRelease(value);
 			if (r != null) {
 				ExtensiveObject = r;
-				if (r.Type == PdfObject.DICTIONARY) {
-					int page = ownerDocument.GetPageNumber(value as PdfIndirectReference);
-					if (page > 0) {
-						Description = string.Concat("指向第 ", page, " 页");
-						type = PdfObjectType.GoToPage;
-					}
-				}
-				else if (r.Type == PdfObject.STREAM &&
-						 PdfName.IMAGE.Equals(((PdfDictionary)r).GetAsName(PdfName.SUBTYPE))) {
-					type = PdfObjectType.Image;
+				switch (r.Type) {
+					case PdfObject.DICTIONARY: {
+							int page = ownerDocument.GetPageNumber(value as PdfIndirectReference);
+							if (page > 0) {
+								Description = string.Concat("指向第 ", page, " 页");
+								type = PdfObjectType.GoToPage;
+							}
+
+							break;
+						}
+					case PdfObject.STREAM when PdfName.IMAGE.Equals(((PdfDictionary)r).GetAsName(PdfName.SUBTYPE)):
+						type = PdfObjectType.Image;
+						break;
 				}
 			}
 		}
@@ -146,11 +149,13 @@ public sealed class DocumentObject : IHierarchicalObject<DocumentObject>
 				po = PdfReader.GetPdfObject(po);
 			}
 
-			if (po.Type == PdfObject.ARRAY) {
-				((PdfArray)po).Remove(i);
-			}
-			else if (po.Type is PdfObject.DICTIONARY or PdfObject.STREAM) {
-				((PdfDictionary)po).Remove(new PdfName(name));
+			switch (po.Type) {
+				case PdfObject.ARRAY:
+					((PdfArray)po).Remove(i);
+					break;
+				case PdfObject.DICTIONARY or PdfObject.STREAM:
+					((PdfDictionary)po).Remove(new PdfName(name));
+					break;
 			}
 
 			return true;
@@ -257,12 +262,11 @@ public sealed class DocumentObject : IHierarchicalObject<DocumentObject>
 		DocumentObject d = this;
 		string contextName = null;
 		if (d.Type != PdfObjectType.Normal) {
-			if (d.Type == PdfObjectType.Page) {
-				return "Page";
-			}
-
-			if (d.Type == PdfObjectType.Image) {
-				return "Image";
+			switch (d.Type) {
+				case PdfObjectType.Page:
+					return "Page";
+				case PdfObjectType.Image:
+					return "Image";
 			}
 		}
 
@@ -302,130 +306,144 @@ public sealed class DocumentObject : IHierarchicalObject<DocumentObject>
 			return;
 		}
 
-		if (po.Type is PdfObject.DICTIONARY or PdfObject.STREAM) {
-			PdfDictionary pd = po as PdfDictionary;
-			DocumentObject[] r = new DocumentObject[pd.Size + (Type == PdfObjectType.Page ? 1 : 0)];
-			int n = 0;
-			foreach (KeyValuePair<PdfName, PdfObject> item in pd) {
-				DocumentObject d = new(OwnerDocument, this, PdfHelper.DecodeKeyName(item.Key), item.Value);
-				r[n++] = d;
-				PdfStructInfo i = PdfStructInfo.GetInfo(GetContextName(), d.Name);
-				if (i.Name != null && i.IsKeyObject) {
-					d.IsKeyObject = true;
-				}
+		switch (po.Type) {
+			case PdfObject.DICTIONARY or PdfObject.STREAM: {
+					PdfDictionary pd = po as PdfDictionary;
+					DocumentObject[] r = new DocumentObject[pd.Size + (Type == PdfObjectType.Page ? 1 : 0)];
+					int n = 0;
+					foreach (KeyValuePair<PdfName, PdfObject> item in pd) {
+						DocumentObject d = new(OwnerDocument, this, PdfHelper.DecodeKeyName(item.Key), item.Value);
+						r[n++] = d;
+						PdfStructInfo i = PdfStructInfo.GetInfo(GetContextName(), d.Name);
+						if (i.Name != null && i.IsKeyObject) {
+							d.IsKeyObject = true;
+						}
 
-				if (string.IsNullOrEmpty(i.ImageKey) == false) {
-					d.ImageKey = i.ImageKey;
-				}
-			}
-
-			if (Type != PdfObjectType.Normal) {
-				if (Type == PdfObjectType.Page) {
-					r[n++] = new DocumentObject(OwnerDocument, this, Constants.Content.Operators, null,
-						PdfObjectType.PageCommands) { IsKeyObject = true };
-				}
-				else if (Type == PdfObjectType.Trailer) {
-					DocumentObject d = Array.Find(r, o => { return o.Name == "Root"; });
-					if (d != null) {
-						d.Type = PdfObjectType.Root;
-					}
-				}
-				else if (Type == PdfObjectType.Root) {
-					DocumentObject d = Array.Find(r, o => { return o.Name == "Outlines"; });
-					if (d != null) {
-						d.Type = PdfObjectType.Outline;
-					}
-				}
-				else if (Type == PdfObjectType.Outline) {
-					List<DocumentObject> o = new(r);
-					PdfObject or = pd.Get(PdfName.FIRST);
-					pd = PdfReader.GetPdfObject(or) as PdfDictionary;
-					if (pd != null) {
-						o.Add(new DocumentObject(OwnerDocument, this, Constants.Bookmark, or, PdfObjectType.Outline) {
-							Description = pd.Contains(PdfName.TITLE)
-								? pd.GetAsString(PdfName.TITLE).ToUnicodeString()
-								: null
-						});
-						while ((or = pd.Get(PdfName.NEXT)) != null &&
-							   (pd = PdfReader.GetPdfObject(or) as PdfDictionary) != null) {
-							o.Add(
-								new DocumentObject(OwnerDocument, this, Constants.Bookmark, or, PdfObjectType.Outline) {
-									Description = pd.Contains(PdfName.TITLE)
-										? pd.GetAsString(PdfName.TITLE).ToUnicodeString()
-										: null
-								});
+						if (string.IsNullOrEmpty(i.ImageKey) == false) {
+							d.ImageKey = i.ImageKey;
 						}
 					}
 
-					_Children = o;
-					return;
-				}
-			}
+					if (Type != PdfObjectType.Normal) {
+						switch (Type) {
+							case PdfObjectType.Page:
+								r[n++] = new DocumentObject(OwnerDocument, this, Constants.Content.Operators, null,
+									PdfObjectType.PageCommands) { IsKeyObject = true };
+								break;
+							case PdfObjectType.Trailer: {
+									DocumentObject d = Array.Find(r, o => { return o.Name == "Root"; });
+									if (d != null) {
+										d.Type = PdfObjectType.Root;
+									}
 
-			_Children = r;
-		}
-		else if (po.Type == PdfObject.ARRAY) {
-			PdfArray pd = po as PdfArray;
-			DocumentObject[] r = new DocumentObject[pd.Size];
-			int n = 0;
-			foreach (var d in pd.ArrayList.Select(item => new DocumentObject(OwnerDocument, this, (++n).ToText(), item))) {
-				r[n - 1] = d;
-				PdfStructInfo i = PdfStructInfo.GetInfo(GetContextName(), d.Name);
-				if (i.Name != null && i.IsKeyObject) {
-					d.IsKeyObject = true;
-				}
+									break;
+								}
+							case PdfObjectType.Root: {
+									DocumentObject d = Array.Find(r, o => { return o.Name == "Outlines"; });
+									if (d != null) {
+										d.Type = PdfObjectType.Outline;
+									}
 
-				if (string.IsNullOrEmpty(i.ImageKey) == false) {
-					d.ImageKey = i.ImageKey;
-				}
-			}
+									break;
+								}
+							case PdfObjectType.Outline: {
+									List<DocumentObject> o = new(r);
+									PdfObject or = pd.Get(PdfName.FIRST);
+									pd = PdfReader.GetPdfObject(or) as PdfDictionary;
+									if (pd != null) {
+										o.Add(new DocumentObject(OwnerDocument, this, Constants.Bookmark, or, PdfObjectType.Outline) {
+											Description = pd.Contains(PdfName.TITLE)
+												? pd.GetAsString(PdfName.TITLE).ToUnicodeString()
+												: null
+										});
+										while ((or = pd.Get(PdfName.NEXT)) != null &&
+											   (pd = PdfReader.GetPdfObject(or) as PdfDictionary) != null) {
+											o.Add(
+												new DocumentObject(OwnerDocument, this, Constants.Bookmark, or, PdfObjectType.Outline) {
+													Description = pd.Contains(PdfName.TITLE)
+														? pd.GetAsString(PdfName.TITLE).ToUnicodeString()
+														: null
+												});
+										}
+									}
 
-			_Children = r;
+									_Children = o;
+									return;
+								}
+						}
+					}
+
+					_Children = r;
+					break;
+				}
+			case PdfObject.ARRAY: {
+					PdfArray pd = po as PdfArray;
+					DocumentObject[] r = new DocumentObject[pd.Size];
+					int n = 0;
+					foreach (var d in pd.ArrayList.Select(item => new DocumentObject(OwnerDocument, this, (++n).ToText(), item))) {
+						r[n - 1] = d;
+						PdfStructInfo i = PdfStructInfo.GetInfo(GetContextName(), d.Name);
+						if (i.Name != null && i.IsKeyObject) {
+							d.IsKeyObject = true;
+						}
+
+						if (string.IsNullOrEmpty(i.ImageKey) == false) {
+							d.ImageKey = i.ImageKey;
+						}
+					}
+
+					_Children = r;
+					break;
+				}
 		}
 	}
 
 	private void PopulateChildrenForSpecialObject() {
 		PdfReader pdf = OwnerDocument.Document;
-		if (Type == PdfObjectType.Pages) {
-			if (pdf.NumberOfPages == 0) {
+		switch (Type) {
+			case PdfObjectType.Pages when pdf.NumberOfPages == 0:
 				return;
-			}
+			case PdfObjectType.Pages: {
+					PageRangeCollection r = PageRangeCollection.Parse(ExtensiveObject as string, 1, pdf.NumberOfPages, true);
+					DocumentObject[] pn = new DocumentObject[r.TotalPages];
+					int i = 0;
+					foreach (var p in r.SelectMany(item => item)) {
+						pn[i++] = new DocumentObject(OwnerDocument, this, "第" + p + "页", null, PdfObjectType.Page) {
+							ExtensiveObject = p
+						};
+					}
 
-			PageRangeCollection r = PageRangeCollection.Parse(ExtensiveObject as string, 1, pdf.NumberOfPages, true);
-			DocumentObject[] pn = new DocumentObject[r.TotalPages];
-			int i = 0;
-			foreach (var p in r.SelectMany(item => item)) {
-				pn[i++] = new DocumentObject(OwnerDocument, this, "第" + p + "页", null, PdfObjectType.Page) {
-					ExtensiveObject = p
-				};
-			}
-
-			_Children = pn;
-		}
-		else if (Type == PdfObjectType.PageCommands) {
-			// 解释页面指令
-			int pn = (int)Parent.ExtensiveObject;
-			PdfPageCommandProcessor cp = new();
-			cp.ProcessContent(pdf.GetPageContent(pn), pdf.GetPageN(pn).GetAsDict(PdfName.RESOURCES));
-			foreach (PdfPageCommand item in cp.Commands) {
-				PopulatePageCommand(item);
-			}
-		}
-		else if (Type == PdfObjectType.PageCommand) {
-			_Children = __Leaf;
-		}
-		else if (Type == PdfObjectType.Hidden) {
-			List<int> ul = PdfHelper.ListUnusedObjects(pdf, AppContext.LoadPartialPdfFile);
-			ExtensiveObject = ul;
-			List<DocumentObject> uo = new();
-			foreach (int item in ul) {
-				PdfObject u = pdf.GetPdfObjectRelease(item);
-				if (u != null) {
-					uo.Add(new DocumentObject(OwnerDocument, this, item.ToText(), u));
+					_Children = pn;
+					break;
 				}
-			}
+			case PdfObjectType.PageCommands: {
+					// 解释页面指令
+					int pn = (int)Parent.ExtensiveObject;
+					PdfPageCommandProcessor cp = new();
+					cp.ProcessContent(pdf.GetPageContent(pn), pdf.GetPageN(pn).GetAsDict(PdfName.RESOURCES));
+					foreach (PdfPageCommand item in cp.Commands) {
+						PopulatePageCommand(item);
+					}
 
-			_Children = uo;
+					break;
+				}
+			case PdfObjectType.PageCommand:
+				_Children = __Leaf;
+				break;
+			case PdfObjectType.Hidden: {
+					List<int> ul = PdfHelper.ListUnusedObjects(pdf, AppContext.LoadPartialPdfFile);
+					ExtensiveObject = ul;
+					List<DocumentObject> uo = new();
+					foreach (int item in ul) {
+						PdfObject u = pdf.GetPdfObjectRelease(item);
+						if (u != null) {
+							uo.Add(new DocumentObject(OwnerDocument, this, item.ToText(), u));
+						}
+					}
+
+					_Children = uo;
+					break;
+				}
 		}
 	}
 
@@ -440,63 +458,72 @@ public sealed class DocumentObject : IHierarchicalObject<DocumentObject>
 			FriendlyName = string.Concat(fn, "(", op, ")"),
 			ExtensiveObject = op
 		};
-		if (item.Type == PdfPageCommandType.Text) {
-			TextCommand t = item as TextCommand;
-			o.FriendlyValue = t.TextInfo.PdfString.GetOriginalBytes().ToHexBinString();
-			o.Description = t.TextInfo.Text;
-			if (item.Name.ToString() == "TJ") {
-				PdfArray a = item.Operands[0] as PdfArray;
-				if (a.Size > 0) {
-					PaceAndTextCommand pt = item as PaceAndTextCommand;
-					int i = 0;
-					CreateChildrenList(ref o._Children);
-					foreach (PdfObject ti in a.ArrayList) {
-						DocumentObject d = new(OwnerDocument, o, (++i).ToText(), ti);
-						if (ti.Type == PdfObject.STRING) {
-							d.FriendlyValue = (ti as PdfString).GetOriginalBytes().ToHexBinString();
-							d.Description = pt.DecodedTexts[i - 1];
+		switch (item.Type) {
+			case PdfPageCommandType.Text: {
+					TextCommand t = item as TextCommand;
+					o.FriendlyValue = t.TextInfo.PdfString.GetOriginalBytes().ToHexBinString();
+					o.Description = t.TextInfo.Text;
+					if (item.Name.ToString() == "TJ") {
+						PdfArray a = item.Operands[0] as PdfArray;
+						if (a.Size > 0) {
+							PaceAndTextCommand pt = item as PaceAndTextCommand;
+							int i = 0;
+							CreateChildrenList(ref o._Children);
+							foreach (PdfObject ti in a.ArrayList) {
+								DocumentObject d = new(OwnerDocument, o, (++i).ToText(), ti);
+								if (ti.Type == PdfObject.STRING) {
+									d.FriendlyValue = (ti as PdfString).GetOriginalBytes().ToHexBinString();
+									d.Description = pt.DecodedTexts[i - 1];
+								}
+
+								o._Children.Add(d);
+							}
 						}
-
-						o._Children.Add(d);
 					}
-				}
-			}
-		}
-		else if (item.Type == PdfPageCommandType.Font) {
-			FontCommand f = item as FontCommand;
-			o.FriendlyValue = string.Concat(
-				f.FontName,
-				" (", Constants.Content.OperandNames.ResourceName, "：", f.ResourceName.ToString(), "); ",
-				Constants.Content.OperandNames.Size, "：", f.FontSize.DoubleValue.ToText()
-			);
-		}
-		else if (item.Type == PdfPageCommandType.Enclosure) {
-			if (item.Operands.HasContent()) {
-				int i = 0;
-				CreateChildrenList(ref o._Children);
-				foreach (PdfObject t in item.Operands) {
-					o._Children.Add(new DocumentObject(OwnerDocument, o, (++i).ToText(), t));
-				}
-			}
 
-			EnclosingCommand e = item as EnclosingCommand;
-			if (e.HasCommand == false) {
-				return;
-			}
+					break;
+				}
+			case PdfPageCommandType.Font: {
+					FontCommand f = item as FontCommand;
+					o.FriendlyValue = string.Concat(
+						f.FontName,
+						" (", Constants.Content.OperandNames.ResourceName, "：", f.ResourceName.ToString(), "); ",
+						Constants.Content.OperandNames.Size, "：", f.FontSize.DoubleValue.ToText()
+					);
+					break;
+				}
+			case PdfPageCommandType.Enclosure: {
+					if (item.Operands.HasContent()) {
+						int i = 0;
+						CreateChildrenList(ref o._Children);
+						foreach (PdfObject t in item.Operands) {
+							o._Children.Add(new DocumentObject(OwnerDocument, o, (++i).ToText(), t));
+						}
+					}
 
-			foreach (PdfPageCommand cmd in e.Commands) {
-				o.PopulatePageCommand(cmd);
-			}
-		}
-		else if (item.Type == PdfPageCommandType.InlineImage) {
-			PdfImageData s = item.Operands[0] as PdfImageData;
-			CreateChildrenList(ref o._Children);
-			foreach (KeyValuePair<PdfName, PdfObject> ii in s) {
-				o._Children.Add(new DocumentObject(OwnerDocument, o, PdfHelper.DecodeKeyName(ii.Key), ii.Value));
-			}
-		}
-		else {
-			o.FriendlyValue = item.GetOperandsText();
+					EnclosingCommand e = item as EnclosingCommand;
+					if (e.HasCommand == false) {
+						return;
+					}
+
+					foreach (PdfPageCommand cmd in e.Commands) {
+						o.PopulatePageCommand(cmd);
+					}
+
+					break;
+				}
+			case PdfPageCommandType.InlineImage: {
+					PdfImageData s = item.Operands[0] as PdfImageData;
+					CreateChildrenList(ref o._Children);
+					foreach (KeyValuePair<PdfName, PdfObject> ii in s) {
+						o._Children.Add(new DocumentObject(OwnerDocument, o, PdfHelper.DecodeKeyName(ii.Key), ii.Value));
+					}
+
+					break;
+				}
+			default:
+				o.FriendlyValue = item.GetOperandsText();
+				break;
 		}
 
 		CreateChildrenList(ref _Children);

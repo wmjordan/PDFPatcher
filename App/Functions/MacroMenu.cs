@@ -52,13 +52,13 @@ internal sealed class MacroMenu : ContextMenuStrip
 		}
 
 		t = t.Substring(InsertText.Length);
-		if (SourceControl is TextBoxBase c) {
-			c.SelectedText = t;
-			return;
-		}
-
-		if (SourceControl is ComboBox cb) {
-			cb.SelectedText = t;
+		switch (SourceControl) {
+			case TextBoxBase c:
+				c.SelectedText = t;
+				return;
+			case ComboBox cb:
+				cb.SelectedText = t;
+				break;
 		}
 	}
 }

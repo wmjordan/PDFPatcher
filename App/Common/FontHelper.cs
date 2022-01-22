@@ -76,11 +76,11 @@ internal static class FontHelper
 				break;
 			}
 
-			if ("1033" == enc) {
-				nn = n;
-			}
-			else if ("0" == enc && nn == null) {
-				nn = n;
+			switch (enc) {
+				case "1033":
+				case "0" when nn == null:
+					nn = n;
+					break;
 			}
 		}
 

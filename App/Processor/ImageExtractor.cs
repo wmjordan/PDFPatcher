@@ -514,14 +514,13 @@ namespace PDFPatcher.Processor
 					i2++;
 				}
 
-				if (i2 == 0) {
-					// 没有符合合并条件的图片
-					continue;
-				}
-
-				if (i2 == 1) {
-					_imagePosList[i].Image.ReferenceCount++;
-					continue;
+				switch (i2) {
+					case 0:
+						// 没有符合合并条件的图片
+						continue;
+					case 1:
+						_imagePosList[i].Image.ReferenceCount++;
+						continue;
 				}
 
 				if (i2 < imageParts.Length) {
@@ -546,51 +545,54 @@ namespace PDFPatcher.Processor
 				foreach (ImageInfo part in imageParts) {
 					using FreeImageBitmap bmp2 = FreeImageBitmap.FromFile(part.FileName);
 					int pl = part.PaletteEntryCount;
-					if (pl > 0 && bmp.HasPalette && bmp2.HasPalette) {
-						//var palMapSrc = new byte[pl];
-						//var palMapDest = new byte[pl];
-						//uint mi = 0;
-						for (int pi = 0; pi < pl; pi++) {
-							int p = Array.IndexOf(bmpPal, part.PaletteArray[pi], 0, palEntryCount);
-							if (p != -1) {
-								continue;
-							}
+					switch (pl) {
+						case > 0 when bmp.HasPalette && bmp2.HasPalette: {
+								//var palMapSrc = new byte[pl];
+								//var palMapDest = new byte[pl];
+								//uint mi = 0;
+								for (int pi = 0; pi < pl; pi++) {
+									int p = Array.IndexOf(bmpPal, part.PaletteArray[pi], 0, palEntryCount);
+									if (p != -1) {
+										continue;
+									}
 
-							if (palEntryCount == 255) {
-								if (bmpPal != null) {
-									bmp.Palette.AsArray = bmpPal;
+									if (palEntryCount == 255) {
+										if (bmpPal != null) {
+											bmp.Palette.AsArray = bmpPal;
+										}
+
+										// 调色板不足以存放合并后的图片颜色
+										if (bmp.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_24_BPP)
+											&& bmp2.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_24_BPP)) {
+											ext = Constants.FileExtensions.Png;
+											bmpPal = null;
+											goto Paste;
+										}
+										else {
+											throw new OverflowException("调色板溢出，无法合并图片。");
+										}
+									}
+
+									if (palEntryCount >= bmpPal.Length && palEntryCount < 129) {
+										bmp.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_08_BPP);
+										Array.Resize(ref bmpPal, 256);
+									}
+
+									bmpPal[palEntryCount] = part.PaletteArray[pi];
+									p = palEntryCount;
+									++palEntryCount;
+									//if (p != pi) {
+									//	palMapSrc[mi] = (byte)pi;
+									//	palMapDest[mi] = (byte)(p);
+									//	mi++;
+									//}
 								}
-
-								// 调色板不足以存放合并后的图片颜色
-								if (bmp.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_24_BPP)
-									&& bmp2.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_24_BPP)) {
-									ext = Constants.FileExtensions.Png;
-									bmpPal = null;
-									goto Paste;
-								}
-								else {
-									throw new OverflowException("调色板溢出，无法合并图片。");
-								}
+								//bmp2.ApplyPaletteIndexMapping (palMapSrc, palMapDest, mi, false);
+								break;
 							}
-
-							if (palEntryCount >= bmpPal.Length && palEntryCount < 129) {
-								bmp.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_08_BPP);
-								Array.Resize(ref bmpPal, 256);
-							}
-
-							bmpPal[palEntryCount] = part.PaletteArray[pi];
-							p = palEntryCount;
-							++palEntryCount;
-							//if (p != pi) {
-							//	palMapSrc[mi] = (byte)pi;
-							//	palMapDest[mi] = (byte)(p);
-							//	mi++;
-							//}
-						}
-						//bmp2.ApplyPaletteIndexMapping (palMapSrc, palMapDest, mi, false);
-					}
-					else if (pl > 0 && bmp2.HasPalette) {
-						bmp2.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_24_BPP);
+						case > 0 when bmp2.HasPalette:
+							bmp2.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_24_BPP);
+							break;
 					}
 
 				Paste:

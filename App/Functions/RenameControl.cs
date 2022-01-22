@@ -151,12 +151,12 @@ public partial class RenameControl : FunctionControl
 			_ItemList.ClearObjects();
 		}
 
-		if (files.Length > 3) {
-			AppContext.MainForm.Enabled = false;
-		}
-
-		if (files.Length == 0) {
-			return;
+		switch (files.Length) {
+			case > 3:
+				AppContext.MainForm.Enabled = false;
+				break;
+			case 0:
+				return;
 		}
 
 		_AddDocumentWorker.RunWorkerAsync(files);

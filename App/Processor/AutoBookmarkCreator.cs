@@ -344,12 +344,11 @@ internal sealed class AutoBookmarkCreator
 
 	private static string ConcatRegionText(TextRegion region) {
 		List<TextLine> ls = region.Lines;
-		if (ls.Count == 0) {
-			return string.Empty;
-		}
-
-		if (ls.Count == 1) {
-			return ls[0].Text;
+		switch (ls.Count) {
+			case 0:
+				return string.Empty;
+			case 1:
+				return ls[0].Text;
 		}
 
 		ls = new List<TextLine>(ls);
@@ -738,13 +737,17 @@ internal sealed class AutoBookmarkCreator
 			string[] t = new string[array.Size];
 			int i = 0;
 			foreach (PdfObject item in array.ArrayList) {
-				if (item.Type == PdfObject.STRING) {
-					t[i++] = CurrentGraphicState.Font.DecodeText(item as PdfString);
-				}
-				else if (item.Type == PdfObject.NUMBER) {
-					if (-(item as PdfNumber).FloatValue * d > size) {
-						t[i++] = " ";
-					}
+				switch (item.Type) {
+					case PdfObject.STRING:
+						t[i++] = CurrentGraphicState.Font.DecodeText(item as PdfString);
+						break;
+					case PdfObject.NUMBER: {
+							if (-(item as PdfNumber).FloatValue * d > size) {
+								t[i++] = " ";
+							}
+
+							break;
+						}
 				}
 			}
 

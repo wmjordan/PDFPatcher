@@ -483,19 +483,23 @@ public partial class MergerControl : FunctionControl
 				}
 
 				foreach (var item in sl.Where(item => item.Type != SourceItem.ItemType.Empty)) {
-					if (item.Type == SourceItem.ItemType.Pdf) {
-						SourceItem.Pdf pi = item as SourceItem.Pdf;
-						sb.AppendLine(string.Join("\t", pi.FilePath.ToString(),
-							item.Bookmark != null ? item.Bookmark.Title : string.Empty, pi.PageRanges,
-							pi.PageCount.ToText()));
-					}
-					else if (item.Type == SourceItem.ItemType.Image) {
-						SourceItem.Image im = item as SourceItem.Image;
-						sb.AppendLine(string.Join("\t", im.FilePath.ToString(),
-							item.Bookmark != null ? item.Bookmark.Title : string.Empty, "-", im.PageCount.ToText()));
-					}
-					else if (item.Type == SourceItem.ItemType.Folder) {
-						sb.AppendLine(item.FilePath.ToString());
+					switch (item.Type) {
+						case SourceItem.ItemType.Pdf: {
+								SourceItem.Pdf pi = item as SourceItem.Pdf;
+								sb.AppendLine(string.Join("\t", pi.FilePath.ToString(),
+									item.Bookmark != null ? item.Bookmark.Title : string.Empty, pi.PageRanges,
+									pi.PageCount.ToText()));
+								break;
+							}
+						case SourceItem.ItemType.Image: {
+								SourceItem.Image im = item as SourceItem.Image;
+								sb.AppendLine(string.Join("\t", im.FilePath.ToString(),
+									item.Bookmark != null ? item.Bookmark.Title : string.Empty, "-", im.PageCount.ToText()));
+								break;
+							}
+						case SourceItem.ItemType.Folder:
+							sb.AppendLine(item.FilePath.ToString());
+							break;
 					}
 				}
 

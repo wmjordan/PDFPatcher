@@ -170,17 +170,23 @@ namespace PDFPatcher.Functions
 					return;
 				}
 
-				if (po.Type == PdfObject.BOOLEAN) {
-					args.Control = new CheckBox() { Checked = (po as PdfBoolean).BooleanValue, Bounds = args.CellBounds };
-				}
-				else if (po.Type == PdfObject.NUMBER) {
-					args.Control = new TextBox() {
-						Text = (po as PdfNumber).DoubleValue.ToText(),
-						Bounds = args.CellBounds
-					};
-				}
-				else if (po.Type == PdfObject.INDIRECT || PdfHelper.CompoundTypes.Contains(po.Type)) {
-					args.Cancel = true;
+				switch (po.Type) {
+					case PdfObject.BOOLEAN:
+						args.Control = new CheckBox() { Checked = (po as PdfBoolean).BooleanValue, Bounds = args.CellBounds };
+						break;
+					case PdfObject.NUMBER:
+						args.Control = new TextBox() {
+							Text = (po as PdfNumber).DoubleValue.ToText(),
+							Bounds = args.CellBounds
+						};
+						break;
+					default: {
+							if (po.Type == PdfObject.INDIRECT || PdfHelper.CompoundTypes.Contains(po.Type)) {
+								args.Cancel = true;
+							}
+
+							break;
+						}
 				}
 			};
 			_ObjectDetailBox.CanExpandGetter = (object o) => {
@@ -206,42 +212,47 @@ namespace PDFPatcher.Functions
 					return;
 				}
 
-				if (o.Type == PdfObjectType.Normal) {
-					PdfObject po = o.Value;
-					if (po == null) {
-						return;
-					}
+				switch (o.Type) {
+					case PdfObjectType.Normal: {
+							PdfObject po = o.Value;
+							if (po == null) {
+								return;
+							}
 
-					if (po.Type == PdfObject.INDIRECT) {
+							if (po.Type == PdfObject.INDIRECT) {
+								olvItem.UseItemStyleForSubItems = false;
+								olvItem.SubItems[_ValueColumn.Index].ForeColor = SystemColors.HotTrack;
+							}
+							else if (PdfHelper.CompoundTypes.Contains(po.Type)) {
+								olvItem.UseItemStyleForSubItems = false;
+								olvItem.SubItems[_ValueColumn.Index].ForeColor = SystemColors.GrayText;
+							}
+
+							break;
+						}
+					case PdfObjectType.Page:
+						olvItem.ForeColor = Color.DarkRed;
+						break;
+					case PdfObjectType.Pages:
+						olvItem.Font = new Font(olvItem.Font, FontStyle.Bold);
+						olvItem.ForeColor = Color.DarkRed;
+						olvItem.BackColor = Color.LightYellow;
+						break;
+					case PdfObjectType.Trailer:
+						olvItem.Font = new Font(olvItem.Font, FontStyle.Bold);
+						olvItem.BackColor = Color.LightYellow;
+						break;
+					case PdfObjectType.Outline:
 						olvItem.UseItemStyleForSubItems = false;
+						olvItem.SubItems[0].ForeColor = SystemColors.HotTrack;
 						olvItem.SubItems[_ValueColumn.Index].ForeColor = SystemColors.HotTrack;
-					}
-					else if (PdfHelper.CompoundTypes.Contains(po.Type)) {
-						olvItem.UseItemStyleForSubItems = false;
-						olvItem.SubItems[_ValueColumn.Index].ForeColor = SystemColors.GrayText;
-					}
-				}
-				else if (o.Type == PdfObjectType.Page) {
-					olvItem.ForeColor = Color.DarkRed;
-				}
-				else if (o.Type == PdfObjectType.Pages) {
-					olvItem.Font = new Font(olvItem.Font, FontStyle.Bold);
-					olvItem.ForeColor = Color.DarkRed;
-					olvItem.BackColor = Color.LightYellow;
-				}
-				else if (o.Type == PdfObjectType.Trailer) {
-					olvItem.Font = new Font(olvItem.Font, FontStyle.Bold);
-					olvItem.BackColor = Color.LightYellow;
-				}
-				else if (o.Type == PdfObjectType.Outline) {
-					olvItem.UseItemStyleForSubItems = false;
-					olvItem.SubItems[0].ForeColor = SystemColors.HotTrack;
-					olvItem.SubItems[_ValueColumn.Index].ForeColor = SystemColors.HotTrack;
-				}
-				else if (o.Type == PdfObjectType.PageCommand && o.Name is "字符串" or "换行字符串") {
-					olvItem.UseItemStyleForSubItems = false;
-					ListViewItem.ListViewSubItem s = olvItem.SubItems[_DescriptionColumn.Index];
-					s.Font = new Font(olvItem.Font, FontStyle.Underline);
+						break;
+					case PdfObjectType.PageCommand when o.Name is "字符串" or "换行字符串": {
+							olvItem.UseItemStyleForSubItems = false;
+							ListViewItem.ListViewSubItem s = olvItem.SubItems[_DescriptionColumn.Index];
+							s.Font = new Font(olvItem.Font, FontStyle.Underline);
+							break;
+						}
 				}
 			};
 			_ObjectDetailBox.SelectionChanged += _ObjectDetailBox_SelectionChanged;
@@ -453,11 +464,13 @@ namespace PDFPatcher.Functions
 			}
 
 			if (d.Parent == null) {
-				if (d.Type == PdfObjectType.Trailer) {
-					ShowDescription("文档根节点", _fileName, null);
-				}
-				else if (d.Type == PdfObjectType.Pages) {
-					ShowDescription("文档页面", "页数：" + _pdf.PageCount, null);
+				switch (d.Type) {
+					case PdfObjectType.Trailer:
+						ShowDescription("文档根节点", _fileName, null);
+						break;
+					case PdfObjectType.Pages:
+						ShowDescription("文档页面", "页数：" + _pdf.PageCount, null);
+						break;
 				}
 
 				return;
@@ -649,60 +662,68 @@ namespace PDFPatcher.Functions
 					//}
 				}
 			}
-			else if (cn == "_ExportBinary") {
-				ci.HidePopupMenu();
-				ExportBinaryStream(n, true);
-			}
-			else if (cn == "_ExportHexText") {
-				ci.HidePopupMenu();
-				ExportBinHexStream(n, true);
-			}
-			else if (cn == "_ExportUncompressedBinary") {
-				ci.HidePopupMenu();
-				ExportBinaryStream(n, false);
-			}
-			else if (cn == "_ExportUncompressedHexText") {
-				ci.HidePopupMenu();
-				ExportBinHexStream(n, false);
-			}
-			else if (cn == "_ExportToUnicode") {
-				ci.HidePopupMenu();
-				ExportToUnicode(n);
-			}
-			else if (cn == "_ExportXml") {
-				ci.HidePopupMenu();
-				IList so = _ObjectDetailBox.SelectedObjects;
-				List<int> ep = new List<int>(so.Count);
-				bool exportTrailer = _ObjectDetailBox.Items[0].Selected || n.Type == PdfObjectType.Trailer;
-				foreach (object item in so) {
-					if (item is not DocumentObject d) {
-						continue;
-					}
+			else switch (cn) {
+					case "_ExportBinary":
+						ci.HidePopupMenu();
+						ExportBinaryStream(n, true);
+						break;
+					case "_ExportHexText":
+						ci.HidePopupMenu();
+						ExportBinHexStream(n, true);
+						break;
+					case "_ExportUncompressedBinary":
+						ci.HidePopupMenu();
+						ExportBinaryStream(n, false);
+						break;
+					case "_ExportUncompressedHexText":
+						ci.HidePopupMenu();
+						ExportBinHexStream(n, false);
+						break;
+					case "_ExportToUnicode":
+						ci.HidePopupMenu();
+						ExportToUnicode(n);
+						break;
+					case "_ExportXml": {
+							ci.HidePopupMenu();
+							IList so = _ObjectDetailBox.SelectedObjects;
+							List<int> ep = new List<int>(so.Count);
+							bool exportTrailer = _ObjectDetailBox.Items[0].Selected || n.Type == PdfObjectType.Trailer;
+							foreach (object item in so) {
+								if (item is not DocumentObject d) {
+									continue;
+								}
 
-					if (d.Type == PdfObjectType.Page) {
-						ep.Add((int)d.ExtensiveObject);
-					}
-					else if (d.Type == PdfObjectType.Pages) {
-						foreach (PageRange r in PageRangeCollection.Parse((string)d.ExtensiveObject, 1, _pdf.PageCount,
-									 true)) {
-							ep.AddRange(r);
+								switch (d.Type) {
+									case PdfObjectType.Page:
+										ep.Add((int)d.ExtensiveObject);
+										break;
+									case PdfObjectType.Pages: {
+											foreach (PageRange r in PageRangeCollection.Parse((string)d.ExtensiveObject, 1, _pdf.PageCount,
+														 true)) {
+												ep.AddRange(r);
+											}
+
+											break;
+										}
+								}
+							}
+
+							if (ep.Count == 1) {
+								ExportXmlInfo((n.FriendlyName ?? n.Name), exportTrailer, new int[] { (int)n.ExtensiveObject });
+							}
+							else {
+								ExportXmlInfo(Path.GetFileNameWithoutExtension(_fileName), exportTrailer, ep.ToArray());
+							}
+
+							break;
 						}
-					}
+					case "_ExpandButton":
+						_ObjectDetailBox.ExpandSelected();
+						break;
+					case "_CollapseButton":
+						_ObjectDetailBox.CollapseSelected();
+						break;
 				}
-
-				if (ep.Count == 1) {
-					ExportXmlInfo((n.FriendlyName ?? n.Name), exportTrailer, new int[] { (int)n.ExtensiveObject });
-				}
-				else {
-					ExportXmlInfo(Path.GetFileNameWithoutExtension(_fileName), exportTrailer, ep.ToArray());
-				}
-			}
-			else if (cn == "_ExpandButton") {
-				_ObjectDetailBox.ExpandSelected();
-			}
-			else if (cn == "_CollapseButton") {
-				_ObjectDetailBox.CollapseSelected();
-			}
 		}
 
 		private void AddChildNode(DocumentObject documentObject, int objectType) {

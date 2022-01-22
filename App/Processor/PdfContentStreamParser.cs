@@ -310,22 +310,26 @@ internal class PdfContentStreamProcessor
 		 */
 		private static PdfObject GetAlternateValue(PdfName key, PdfObject value) {
 			if (key == PdfName.FILTER) {
-				if (value is PdfName) {
-					PdfName altValue;
-					inlineImageFilterAbbreviationMap.TryGetValue((PdfName)value, out altValue);
-					if (altValue != null) {
-						return altValue;
-					}
-				}
-				else if (value is PdfArray) {
-					PdfArray array = (PdfArray)value;
-					PdfArray altArray = new();
-					int count = array.Size;
-					for (int i = 0; i < count; i++) {
-						altArray.Add(GetAlternateValue(key, array[i]));
-					}
+				switch (value) {
+					case PdfName name: {
+							PdfName altValue;
+							inlineImageFilterAbbreviationMap.TryGetValue(name, out altValue);
+							if (altValue != null) {
+								return altValue;
+							}
 
-					return altArray;
+							break;
+						}
+					case PdfArray pdfArray: {
+							PdfArray array = pdfArray;
+							PdfArray altArray = new();
+							int count = array.Size;
+							for (int i = 0; i < count; i++) {
+								altArray.Add(GetAlternateValue(key, array[i]));
+							}
+
+							return altArray;
+						}
 				}
 			}
 			else if (key == PdfName.COLORSPACE) {
@@ -485,39 +489,44 @@ internal class PdfContentStreamProcessor
 			PRTokeniser tokeniser = ps.GetTokeniser();
 
 			while ((ch = tokeniser.Read()) != -1) {
-				if (found == 0 && PRTokeniser.IsWhitespace(ch)) {
-					found++;
-					accumulated.WriteByte((byte)ch);
-				}
-				else if (found == 1 && ch == 'E') {
-					found++;
-					accumulated.WriteByte((byte)ch);
-				}
-				else {
-					byte[] ff = null;
-					if (found == 1 && PRTokeniser.IsWhitespace(ch)) {
-						// this clause is needed if we have a white space character that is part of the image data
-						// followed by a whitespace character that precedes the EI operator.  In this case, we need
-						// to flush the first whitespace, then treat the current whitespace as the first potential
-						// character for the end of stream check.  Note that we don't increment 'found' here.
-						baos.Write(ff = accumulated.ToArray(), 0, ff.Length);
-						accumulated.SetLength(0);
-						accumulated.WriteByte((byte)ch);
-					}
-					else if (found == 2 && ch == 'I') {
+				switch (found) {
+					case 0 when PRTokeniser.IsWhitespace(ch):
 						found++;
 						accumulated.WriteByte((byte)ch);
-					}
-					else if (found == 3 && PRTokeniser.IsWhitespace(ch)) {
-						return baos.ToArray();
-					}
-					else {
-						baos.Write(ff = accumulated.ToArray(), 0, ff.Length);
-						accumulated.SetLength(0);
+						break;
+					case 1 when ch == 'E':
+						found++;
+						accumulated.WriteByte((byte)ch);
+						break;
+					default: {
+							byte[] ff = null;
+							switch (found) {
+								case 1 when PRTokeniser.IsWhitespace(ch):
+									// this clause is needed if we have a white space character that is part of the image data
+									// followed by a whitespace character that precedes the EI operator.  In this case, we need
+									// to flush the first whitespace, then treat the current whitespace as the first potential
+									// character for the end of stream check.  Note that we don't increment 'found' here.
+									baos.Write(ff = accumulated.ToArray(), 0, ff.Length);
+									accumulated.SetLength(0);
+									accumulated.WriteByte((byte)ch);
+									break;
+								case 2 when ch == 'I':
+									found++;
+									accumulated.WriteByte((byte)ch);
+									break;
+								case 3 when PRTokeniser.IsWhitespace(ch):
+									return baos.ToArray();
+								default:
+									baos.Write(ff = accumulated.ToArray(), 0, ff.Length);
+									accumulated.SetLength(0);
 
-						baos.WriteByte((byte)ch);
-						found = 0;
-					}
+									baos.WriteByte((byte)ch);
+									found = 0;
+									break;
+							}
+
+							break;
+						}
 				}
 			}
 

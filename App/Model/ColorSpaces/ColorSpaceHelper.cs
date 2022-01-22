@@ -508,12 +508,14 @@ public static class ColorSpaceHelper
 		if (l == 0 || max == min) {
 			s = 0;
 		}
-		else if (l is > 0 and <= 0.5) {
-			s = (max - min) / (max + min);
-		}
-		else if (l > 0.5) {
-			s = (max - min) / (2 - (max + min)); //(max-min > 0)?
-		}
+		else switch (l) {
+				case > 0 and <= 0.5:
+					s = (max - min) / (max + min);
+					break;
+				case > 0.5:
+					s = (max - min) / (2 - (max + min)); //(max-min > 0)?
+					break;
+			}
 
 		return new HSL(
 			double.Parse(string.Format("{0:0.##}", h)),

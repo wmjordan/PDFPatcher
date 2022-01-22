@@ -186,65 +186,72 @@ public partial class MainForm : Form
 	}
 
 	internal void ExecuteCommand(string commandName) {
-		if (commandName == Commands.ResetOptions) {
-			if (GetActiveFunctionControl() is IResettableControl f
-				&& FormHelper.YesNoBox("是否将当前功能恢复为默认设置？") == DialogResult.Yes) {
-				f.Reset();
-			}
-		}
-		else if (commandName == Commands.RestoreOptions && _OpenConfigDialog.ShowDialog() == DialogResult.OK) {
-			if (AppContext.Load(_OpenConfigDialog.FileName) == false) {
-				FormHelper.ErrorBox("无法加载指定的配置文件。");
+		switch (commandName) {
+			case Commands.ResetOptions: {
+					if (GetActiveFunctionControl() is IResettableControl f
+						&& FormHelper.YesNoBox("是否将当前功能恢复为默认设置？") == DialogResult.Yes) {
+						f.Reset();
+					}
+
+					break;
+				}
+			case Commands.RestoreOptions when _OpenConfigDialog.ShowDialog() == DialogResult.OK: {
+					if (AppContext.Load(_OpenConfigDialog.FileName) == false) {
+						FormHelper.ErrorBox("无法加载指定的配置文件。");
+						return;
+					}
+
+					foreach (FunctionControl item in __FunctionControls.Values) {
+						(item as IResettableControl)?.Reload();
+					}
+
+					SetupCustomizeToolbar();
+					break;
+				}
+			case Commands.SaveOptions when _SaveConfigDialog.ShowDialog() == DialogResult.OK:
+				AppContext.Save(_SaveConfigDialog.FileName, false);
+				break;
+			case Commands.LogWindow:
+				ShowLogControl();
+				break;
+			case Commands.CreateShortcut:
+				CommonCommands.CreateShortcut();
+				break;
+			case Commands.VisitHomePage:
+				CommonCommands.VisitHomePage();
+				break;
+			case Commands.CheckUpdate:
+				ShowDialogWindow(new UpdateForm());
+				break;
+			case Commands.Close when _FunctionContainer.SelectedTab.Tag.CastOrDefault<Function>() == Function.FrontPage:
 				return;
-			}
+			case Commands.Close:
+				_FunctionContainer.SelectedTab.Dispose();
+				break;
+			case Commands.CustomizeToolbar or "_CustomizeToolbarCommand":
+				ShowDialogWindow(new CustomizeToolbarForm());
+				SetupCustomizeToolbar();
+				break;
+			case Commands.ShowGeneralToolbar:
+				_FunctionContainer.SuspendLayout();
+				_GeneralToolbar.Visible = AppContext.Toolbar.ShowGeneralToolbar = !AppContext.Toolbar.ShowGeneralToolbar;
+				_FunctionContainer.PerformLayout();
+				break;
+			case Commands.Exit:
+				Close();
+				break;
+			default: {
+					if (GetActiveFunctionControl() is FunctionControl f) {
+						if (commandName == Commands.Action && f.DefaultButton != null) {
+							f.DefaultButton.PerformClick();
+						}
+						else {
+							f.ExecuteCommand(commandName);
+						}
+					}
 
-			foreach (FunctionControl item in __FunctionControls.Values) {
-				(item as IResettableControl)?.Reload();
-			}
-
-			SetupCustomizeToolbar();
-		}
-		else if (commandName == Commands.SaveOptions && _SaveConfigDialog.ShowDialog() == DialogResult.OK) {
-			AppContext.Save(_SaveConfigDialog.FileName, false);
-		}
-		else if (commandName == Commands.LogWindow) {
-			ShowLogControl();
-		}
-		else if (commandName == Commands.CreateShortcut) {
-			CommonCommands.CreateShortcut();
-		}
-		else if (commandName == Commands.VisitHomePage) {
-			CommonCommands.VisitHomePage();
-		}
-		else if (commandName == Commands.CheckUpdate) {
-			ShowDialogWindow(new UpdateForm());
-		}
-		else if (commandName == Commands.Close) {
-			if (_FunctionContainer.SelectedTab.Tag.CastOrDefault<Function>() == Function.FrontPage) {
-				return;
-			}
-
-			_FunctionContainer.SelectedTab.Dispose();
-		}
-		else if (commandName is Commands.CustomizeToolbar or "_CustomizeToolbarCommand") {
-			ShowDialogWindow(new CustomizeToolbarForm());
-			SetupCustomizeToolbar();
-		}
-		else if (commandName == Commands.ShowGeneralToolbar) {
-			_FunctionContainer.SuspendLayout();
-			_GeneralToolbar.Visible = AppContext.Toolbar.ShowGeneralToolbar = !AppContext.Toolbar.ShowGeneralToolbar;
-			_FunctionContainer.PerformLayout();
-		}
-		else if (commandName == Commands.Exit) {
-			Close();
-		}
-		else if (GetActiveFunctionControl() is FunctionControl f) {
-			if (commandName == Commands.Action && f.DefaultButton != null) {
-				f.DefaultButton.PerformClick();
-			}
-			else {
-				f.ExecuteCommand(commandName);
-			}
+					break;
+				}
 		}
 	}
 
@@ -286,68 +293,71 @@ public partial class MainForm : Form
 	}
 
 	internal void SelectFunctionList(Function func) {
-		if (func == Function.PatcherOptions) {
-			ShowDialogWindow(new PatcherOptionForm(false) { Options = AppContext.Patcher });
-		}
-		else if (func == Function.MergerOptions) {
-			ShowDialogWindow(new MergerOptionForm());
-		}
-		else if (func == Function.InfoFileOptions) {
-			ShowDialogWindow(new InfoFileOptionControl());
-		}
-		else if (func == Function.EditorOptions) {
-			ShowDialogWindow(new PatcherOptionForm(true) { Options = AppContext.Editor });
-		}
-		else if (func == Function.Options) {
-			ShowDialogWindow(new AppOptionForm());
-		}
-		else {
-			HideLogControl();
-			string p = (GetActiveFunctionControl() as IDocumentEditor)?.DocumentPath;
-			FunctionControl c = GetFunctionControl(func);
-			foreach (TabPage item in _FunctionContainer.TabPages) {
-				if (item.Controls.Count <= 0 || item.Controls[0] != c) {
-					continue;
-				}
-
-				_FunctionContainer.SelectedTab = item;
-				if (string.IsNullOrEmpty(p) == false) {
-					c.ExecuteCommand(Commands.OpenFile, p);
-				}
-
-				return;
-			}
-
-			TabPage t = new(c.FunctionName) { Font = SystemFonts.SmallCaptionFont };
-			ImageList.ImageCollection im = _FunctionContainer.ImageList.Images;
-			for (int i = im.Count - 1; i >= 0; i--) {
-				if (im[i] != c.IconImage) {
-					continue;
-				}
-
-				t.ImageIndex = i;
+		switch (func) {
+			case Function.PatcherOptions:
+				ShowDialogWindow(new PatcherOptionForm(false) { Options = AppContext.Patcher });
 				break;
-			}
+			case Function.MergerOptions:
+				ShowDialogWindow(new MergerOptionForm());
+				break;
+			case Function.InfoFileOptions:
+				ShowDialogWindow(new InfoFileOptionControl());
+				break;
+			case Function.EditorOptions:
+				ShowDialogWindow(new PatcherOptionForm(true) { Options = AppContext.Editor });
+				break;
+			case Function.Options:
+				ShowDialogWindow(new AppOptionForm());
+				break;
+			default: {
+					HideLogControl();
+					string p = (GetActiveFunctionControl() as IDocumentEditor)?.DocumentPath;
+					FunctionControl c = GetFunctionControl(func);
+					foreach (TabPage item in _FunctionContainer.TabPages) {
+						if (item.Controls.Count <= 0 || item.Controls[0] != c) {
+							continue;
+						}
 
-			if (t.ImageIndex < 0) {
-				im.Add(c.IconImage);
-				t.ImageIndex = im.Count - 1;
-			}
+						_FunctionContainer.SelectedTab = item;
+						if (string.IsNullOrEmpty(p) == false) {
+							c.ExecuteCommand(Commands.OpenFile, p);
+						}
 
-			t.Tag = func;
-			_FunctionContainer.TabPages.Add(t);
-			c.Size = t.ClientSize;
-			c.Dock = DockStyle.Fill;
-			t.Controls.Add(c);
-			_FunctionContainer.SelectedTab = t;
-			AcceptButton = c.DefaultButton;
+						return;
+					}
 
-			if (string.IsNullOrEmpty(p) == false) {
-				c.ExecuteCommand(Commands.OpenFile, p);
-			}
+					TabPage t = new(c.FunctionName) { Font = SystemFonts.SmallCaptionFont };
+					ImageList.ImageCollection im = _FunctionContainer.ImageList.Images;
+					for (int i = im.Count - 1; i >= 0; i--) {
+						if (im[i] != c.IconImage) {
+							continue;
+						}
 
-			//c.HideOnClose = true;
-			//c.Show (this._DockPanel);
+						t.ImageIndex = i;
+						break;
+					}
+
+					if (t.ImageIndex < 0) {
+						im.Add(c.IconImage);
+						t.ImageIndex = im.Count - 1;
+					}
+
+					t.Tag = func;
+					_FunctionContainer.TabPages.Add(t);
+					c.Size = t.ClientSize;
+					c.Dock = DockStyle.Fill;
+					t.Controls.Add(c);
+					_FunctionContainer.SelectedTab = t;
+					AcceptButton = c.DefaultButton;
+
+					if (string.IsNullOrEmpty(p) == false) {
+						c.ExecuteCommand(Commands.OpenFile, p);
+					}
+
+					//c.HideOnClose = true;
+					//c.Show (this._DockPanel);
+					break;
+				}
 		}
 	}
 
@@ -496,37 +506,42 @@ public partial class MainForm : Form
 
 	private void Worker_ProgressChanged(object sender, ProgressChangedEventArgs e) {
 		string s = e.UserState as string;
-		if (s == "INC") {
-			_LogControl.IncrementProgress(e.ProgressPercentage);
-			return;
+		switch (s) {
+			case "INC":
+				_LogControl.IncrementProgress(e.ProgressPercentage);
+				return;
+			case "GOAL":
+				_LogControl.SetGoal(e.ProgressPercentage);
+				return;
+			case "TINC":
+				_LogControl.IncrementTotalProgress();
+				break;
+			case "TGOAL":
+				_LogControl.SetTotalGoal(e.ProgressPercentage);
+				break;
 		}
 
-		if (s == "GOAL") {
-			_LogControl.SetGoal(e.ProgressPercentage);
-			return;
-		}
+		switch (e.ProgressPercentage) {
+			case > 0:
+				_LogControl.SetProgress(e.ProgressPercentage);
+				break;
+			case 0: {
+					_MainMenu.Enabled = _GeneralToolbar.Enabled = _FunctionContainer.Enabled = false;
+					foreach (TabPage item in _FunctionContainer.TabPages) {
+						item.Enabled = false;
+					}
 
-		if (s == "TINC") {
-			_LogControl.IncrementTotalProgress();
-		}
-		else if (s == "TGOAL") {
-			_LogControl.SetTotalGoal(e.ProgressPercentage);
-		}
+					_LogControl.Reset();
+					ShowLogControl();
+					break;
+				}
+			default: {
+					if (s != null) {
+						_LogControl.PrintMessage(s, (Tracker.Category)e.ProgressPercentage);
+					}
 
-		if (e.ProgressPercentage > 0) {
-			_LogControl.SetProgress(e.ProgressPercentage);
-		}
-		else if (e.ProgressPercentage == 0) {
-			_MainMenu.Enabled = _GeneralToolbar.Enabled = _FunctionContainer.Enabled = false;
-			foreach (TabPage item in _FunctionContainer.TabPages) {
-				item.Enabled = false;
-			}
-
-			_LogControl.Reset();
-			ShowLogControl();
-		}
-		else if (s != null) {
-			_LogControl.PrintMessage(s, (Tracker.Category)e.ProgressPercentage);
+					break;
+				}
 		}
 	}
 

@@ -146,20 +146,23 @@ internal sealed class ImageInfo
 			case "/LZWDecode":
 				info.ExtName = Constants.FileExtensions.Png;
 				info.PixelFormat = GetPixelFormat(decodedBytes.Length, info);
-				if (info.PixelFormat == PixelFormat.Undefined) {
-					info.LastDecodeError = "无法判定图像的颜色格式。";
-					info.ExtName = Constants.FileExtensions.Dat;
-					return null;
-				}
-				else if (info.PixelFormat == PixelFormat.Format1bppIndexed) {
-					blackIs1 = IsDecodeParamInverted(data, false);
-					if (options.InvertBlackAndWhiteImages) {
-						blackIs1 = !blackIs1;
-					}
+				switch (info.PixelFormat) {
+					case PixelFormat.Undefined:
+						info.LastDecodeError = "无法判定图像的颜色格式。";
+						info.ExtName = Constants.FileExtensions.Dat;
+						return null;
+					case PixelFormat.Format1bppIndexed: {
+							blackIs1 = IsDecodeParamInverted(data, false);
+							if (options.InvertBlackAndWhiteImages) {
+								blackIs1 = !blackIs1;
+							}
 
-					if (blackIs1) {
-						InvertBits(decodedBytes);
-					}
+							if (blackIs1) {
+								InvertBits(decodedBytes);
+							}
+
+							break;
+						}
 				}
 
 				break;
@@ -244,13 +247,15 @@ internal sealed class ImageInfo
 
 		CreatePalette(bmp);
 		if (PaletteEntryCount > 0) {
-			if (PaletteEntryCount < 3) {
-				PixelFormat = PixelFormat.Format1bppIndexed;
-				bmp.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_01_BPP);
-			}
-			else if (PaletteEntryCount < 17) {
-				PixelFormat = PixelFormat.Format4bppIndexed;
-				bmp.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_04_BPP);
+			switch (PaletteEntryCount) {
+				case < 3:
+					PixelFormat = PixelFormat.Format1bppIndexed;
+					bmp.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_01_BPP);
+					break;
+				case < 17:
+					PixelFormat = PixelFormat.Format4bppIndexed;
+					bmp.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_04_BPP);
+					break;
 			}
 		}
 
@@ -515,34 +520,39 @@ internal sealed class ImageInfo
 	}
 
 	internal void ConvertDecodedBytes(ref byte[] bytes) {
-		if (PixelFormat == PixelFormat.Format24bppRgb) {
-			// from RGB array to BGR GDI+ data
-			for (int i = 0; i < bytes.Length; i += 3) {
-				byte b = bytes[i];
-				bytes[i] = bytes[i + 2];
-				bytes[i + 2] = b;
-			}
-		}
-		else if (PixelFormat == PixelFormat.Format1bppIndexed && BitsPerComponent == 2) {
-			// 支持四级灰度的图像
-			int l = bytes.Length;
-			byte[] newBytes = new byte[l << 1];
-			int i = 0;
-			foreach (byte b in bytes) {
-				newBytes[i++] = (byte)(((b & 0xC0) >> 0x02) + ((b & 0x30) >> 0x04));
-				newBytes[i++] = (byte)(((b & 0x0C) << 0x02) + (b & 0x03));
-			}
+		switch (PixelFormat) {
+			case PixelFormat.Format24bppRgb: {
+					// from RGB array to BGR GDI+ data
+					for (int i = 0; i < bytes.Length; i += 3) {
+						byte b = bytes[i];
+						bytes[i] = bytes[i + 2];
+						bytes[i + 2] = b;
+					}
 
-			if (PaletteBytes != null) {
-				byte[] pattern = PaletteBytes;
-				Array.Resize(ref pattern, 16 * 3);
-				PaletteBytes = pattern;
-			}
+					break;
+				}
+			case PixelFormat.Format1bppIndexed when BitsPerComponent == 2: {
+					// 支持四级灰度的图像
+					int l = bytes.Length;
+					byte[] newBytes = new byte[l << 1];
+					int i = 0;
+					foreach (byte b in bytes) {
+						newBytes[i++] = (byte)(((b & 0xC0) >> 0x02) + ((b & 0x30) >> 0x04));
+						newBytes[i++] = (byte)(((b & 0x0C) << 0x02) + (b & 0x03));
+					}
 
-			PixelFormat = PixelFormat.Format4bppIndexed;
-			BitsPerComponent = 4;
-			ColorSpace = PdfName.DEVICEGRAY;
-			bytes = newBytes;
+					if (PaletteBytes != null) {
+						byte[] pattern = PaletteBytes;
+						Array.Resize(ref pattern, 16 * 3);
+						PaletteBytes = pattern;
+					}
+
+					PixelFormat = PixelFormat.Format4bppIndexed;
+					BitsPerComponent = 4;
+					ColorSpace = PdfName.DEVICEGRAY;
+					bytes = newBytes;
+					break;
+				}
 		}
 	}
 }

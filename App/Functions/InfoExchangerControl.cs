@@ -105,20 +105,28 @@ public partial class InfoExchangerControl : FunctionControl
 	}
 
 	public override void ExecuteCommand(string commandName, params string[] parameters) {
-		if (commandName == Commands.Open) {
-			OpenFileDialog b = _OpenPdfBox;
-			if (b.ShowDialog() == DialogResult.OK) {
-				AddFiles(b.FileNames, true);
-			}
-		}
-		else if (commandName == Commands.OpenFile) {
-			AddFiles(parameters, true);
-		}
-		else if (commandName == Commands.SaveBookmark) {
-			_ExportBookmarkButton.PerformClick();
-		}
-		else if (_listHelper.ProcessCommonMenuCommand(commandName) == false) {
-			base.ExecuteCommand(commandName, parameters);
+		switch (commandName) {
+			case Commands.Open: {
+					OpenFileDialog b = _OpenPdfBox;
+					if (b.ShowDialog() == DialogResult.OK) {
+						AddFiles(b.FileNames, true);
+					}
+
+					break;
+				}
+			case Commands.OpenFile:
+				AddFiles(parameters, true);
+				break;
+			case Commands.SaveBookmark:
+				_ExportBookmarkButton.PerformClick();
+				break;
+			default: {
+					if (_listHelper.ProcessCommonMenuCommand(commandName) == false) {
+						base.ExecuteCommand(commandName, parameters);
+					}
+
+					break;
+				}
 		}
 	}
 
@@ -128,17 +136,19 @@ public partial class InfoExchangerControl : FunctionControl
 			|| n is Commands.Delete or Commands.Action) {
 			item.Enabled = _ItemList.GetItemCount() > 0;
 		}
-		else if (n == Commands.SaveBookmark) {
-			item.Enabled = _ItemList.GetItemCount() > 0;
-			item.Text = "导出书签文件(&Q)";
-			item.Visible = true;
-		}
-		else if (n == Commands.Options) {
-			item.Text = "修改文档设置(&S)...";
-			item.ToolTipText = "设置修改后的 PDF 文档";
-			EnableCommand(item, true, true);
-			item.Tag = nameof(Function.PatcherOptions);
-		}
+		else switch (n) {
+				case Commands.SaveBookmark:
+					item.Enabled = _ItemList.GetItemCount() > 0;
+					item.Text = "导出书签文件(&Q)";
+					item.Visible = true;
+					break;
+				case Commands.Options:
+					item.Text = "修改文档设置(&S)...";
+					item.ToolTipText = "设置修改后的 PDF 文档";
+					EnableCommand(item, true, true);
+					item.Tag = nameof(Function.PatcherOptions);
+					break;
+			}
 
 		base.SetupCommand(item);
 	}
@@ -156,12 +166,12 @@ public partial class InfoExchangerControl : FunctionControl
 			_ItemList.ClearObjects();
 		}
 
-		if (files.Length > 3) {
-			AppContext.MainForm.Enabled = false;
-		}
-
-		if (files.Length == 0) {
-			return;
+		switch (files.Length) {
+			case > 3:
+				AppContext.MainForm.Enabled = false;
+				break;
+			case 0:
+				return;
 		}
 
 		_AddDocumentWorker.RunWorkerAsync(files);

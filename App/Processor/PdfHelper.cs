@@ -393,16 +393,18 @@ internal static class PdfHelper
 				sb.Append(' ');
 			}
 
-			if (item.Type == PdfObject.ARRAY) {
-				sb.Append('[');
-				sb.Append(GetArrayString(item as PdfArray));
-				sb.Append(']');
-			}
-			else if (item.Type is PdfObject.DICTIONARY or PdfObject.STREAM) {
-				sb.Append("<<...>>");
-			}
-			else {
-				sb.Append(item);
+			switch (item.Type) {
+				case PdfObject.ARRAY:
+					sb.Append('[');
+					sb.Append(GetArrayString(item as PdfArray));
+					sb.Append(']');
+					break;
+				case PdfObject.DICTIONARY or PdfObject.STREAM:
+					sb.Append("<<...>>");
+					break;
+				default:
+					sb.Append(item);
+					break;
 			}
 		}
 

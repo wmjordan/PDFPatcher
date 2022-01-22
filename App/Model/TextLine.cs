@@ -94,12 +94,11 @@ internal sealed class TextLine : IDirectionalBoundObject
 	/// </summary>
 	private string GetConcatenatedText() {
 		int l = _Texts.Count;
-		if (l == 0) {
-			return string.Empty;
-		}
-
-		if (l == 1) {
-			return _Texts[0].Text;
+		switch (l) {
+			case 0:
+				return string.Empty;
+			case 1:
+				return _Texts[0].Text;
 		}
 
 		List<TextInfo> tl = _Texts;

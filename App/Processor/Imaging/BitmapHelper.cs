@@ -51,17 +51,23 @@ internal static class BitmapHelper
 		int w = bmp.Width, h = bmp.Height;
 		for (int y = 0; y < h; y++) {
 			byte* ps = pl;
-			if (bw == 3) {
-				for (int x = 0; x < w; x++) {
-					hs.Add(*ps + (*++ps << 8) + (*++ps << 16) + (0xFF << 24));
-					++ps;
-				}
-			}
-			else if (bw == 4) {
-				for (int x = 0; x < w; x++) {
-					hs.Add(*ps + (*++ps << 8) + (*++ps << 16) + (*++ps << 24));
-					++ps;
-				}
+			switch (bw) {
+				case 3: {
+						for (int x = 0; x < w; x++) {
+							hs.Add(*ps + (*++ps << 8) + (*++ps << 16) + (0xFF << 24));
+							++ps;
+						}
+
+						break;
+					}
+				case 4: {
+						for (int x = 0; x < w; x++) {
+							hs.Add(*ps + (*++ps << 8) + (*++ps << 16) + (*++ps << 24));
+							++ps;
+						}
+
+						break;
+					}
 			}
 
 			pl += bmpData.Stride;
@@ -186,19 +192,25 @@ internal static class BitmapHelper
 		for (int y = 0; y < h; y++) {
 			byte* ps = src;
 			byte* pr = res;
-			if (bw == 3) {
-				for (int x = 0; x < w; x++) {
-					*pr = pi[*ps + (*++ps << 8) + (*++ps << 16) + (0xFF << 24)];
-					++pr;
-					++ps;
-				}
-			}
-			else if (bw == 4) {
-				for (int x = 0; x < w; x++) {
-					*pr = pi[*ps + (*++ps << 8) + (*++ps << 16) + (*++ps << 24)];
-					++pr;
-					++ps;
-				}
+			switch (bw) {
+				case 3: {
+						for (int x = 0; x < w; x++) {
+							*pr = pi[*ps + (*++ps << 8) + (*++ps << 16) + (0xFF << 24)];
+							++pr;
+							++ps;
+						}
+
+						break;
+					}
+				case 4: {
+						for (int x = 0; x < w; x++) {
+							*pr = pi[*ps + (*++ps << 8) + (*++ps << 16) + (*++ps << 24)];
+							++pr;
+							++ps;
+						}
+
+						break;
+					}
 			}
 
 			src += sourceData.Stride;

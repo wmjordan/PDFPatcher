@@ -28,24 +28,25 @@ internal sealed partial class FrontPageControl : HtmlPageControl
 	public override Bitmap IconImage => Resources.HomePage;
 
 	public override void ExecuteCommand(string commandName, params string[] parameters) {
-		if (commandName == Commands.Open) {
-			string n = AppContext.MainForm.ShowPdfFileDialog();
-			if (n != null) {
-				AppContext.MainForm.OpenFileWithEditor(n);
-			}
+		switch (commandName) {
+			case Commands.Open: {
+					string n = AppContext.MainForm.ShowPdfFileDialog();
+					if (n != null) {
+						AppContext.MainForm.OpenFileWithEditor(n);
+					}
 
-			return;
+					return;
+				}
+			case Commands.CleanUpInexistentFiles:
+				AppContext.CleanUpInexistentFiles(AppContext.Recent.SourcePdfFiles);
+				AppContext.CleanUpInexistentFiles(AppContext.Recent.InfoDocuments);
+				AppContext.CleanUpInexistentFolders(AppContext.Recent.Folders);
+				RefreshContent();
+				return;
+			default:
+				base.ExecuteCommand(commandName, parameters);
+				break;
 		}
-
-		if (commandName == Commands.CleanUpInexistentFiles) {
-			AppContext.CleanUpInexistentFiles(AppContext.Recent.SourcePdfFiles);
-			AppContext.CleanUpInexistentFiles(AppContext.Recent.InfoDocuments);
-			AppContext.CleanUpInexistentFolders(AppContext.Recent.Folders);
-			RefreshContent();
-			return;
-		}
-
-		base.ExecuteCommand(commandName, parameters);
 	}
 
 	protected override void OnDragEnter(DragEventArgs drgevent) {

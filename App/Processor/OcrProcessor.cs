@@ -493,43 +493,45 @@ internal sealed class OcrProcessor
 	}
 
 	private static void SortRecognizedText(List<TextLine> list, OcrOptions ocrOptions) {
-		if (ocrOptions.WritingDirection == WritingDirection.Horizontal) {
-			list.Sort((a, b) => {
-				Bound ra = a.Region;
-				Bound rb = b.Region;
-				if (ra.Bottom > rb.Top) {
-					return 1;
-				}
+		switch (ocrOptions.WritingDirection) {
+			case WritingDirection.Horizontal:
+				list.Sort((a, b) => {
+					Bound ra = a.Region;
+					Bound rb = b.Region;
+					if (ra.Bottom > rb.Top) {
+						return 1;
+					}
 
-				if (ra.Top < rb.Bottom) {
-					return -1;
-				}
+					if (ra.Top < rb.Bottom) {
+						return -1;
+					}
 
-				if (ra.IsAlignedWith(rb, WritingDirection.Horizontal)) {
-					return ra.Center < rb.Center ? -1 : 1;
-				}
+					if (ra.IsAlignedWith(rb, WritingDirection.Horizontal)) {
+						return ra.Center < rb.Center ? -1 : 1;
+					}
 
-				return ra.Middle < rb.Middle ? -1 : 1;
-			});
-		}
-		else if (ocrOptions.WritingDirection == WritingDirection.Vertical) {
-			list.Sort((a, b) => {
-				Bound ra = a.Region;
-				Bound rb = b.Region;
-				if (ra.Left > rb.Right) {
-					return -1;
-				}
+					return ra.Middle < rb.Middle ? -1 : 1;
+				});
+				break;
+			case WritingDirection.Vertical:
+				list.Sort((a, b) => {
+					Bound ra = a.Region;
+					Bound rb = b.Region;
+					if (ra.Left > rb.Right) {
+						return -1;
+					}
 
-				if (ra.Right < rb.Left) {
-					return 1;
-				}
+					if (ra.Right < rb.Left) {
+						return 1;
+					}
 
-				if (ra.IsAlignedWith(rb, WritingDirection.Vertical)) {
-					return ra.Middle > rb.Middle ? -1 : 1;
-				}
+					if (ra.IsAlignedWith(rb, WritingDirection.Vertical)) {
+						return ra.Middle > rb.Middle ? -1 : 1;
+					}
 
-				return ra.Center > rb.Center ? -1 : 1;
-			});
+					return ra.Center > rb.Center ? -1 : 1;
+				});
+				break;
 		}
 	}
 

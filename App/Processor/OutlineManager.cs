@@ -221,23 +221,26 @@ internal static class OutlineManager
 		int len = cc.Length;
 		for (int k = 0; k < len; ++k) {
 			char c = cc[k];
-			if (c < ' ') {
-				buf.Append('\\');
-				int v = c;
-				string octal = "";
-				do {
-					int x = v % 8;
-					octal = x.ToText() + octal;
-					v /= 8;
-				} while (v > 0);
+			switch (c) {
+				case < ' ': {
+						buf.Append('\\');
+						int v = c;
+						string octal = "";
+						do {
+							int x = v % 8;
+							octal = x.ToText() + octal;
+							v /= 8;
+						} while (v > 0);
 
-				buf.Append(octal.PadLeft(3, '0'));
-			}
-			else if (c == '\\') {
-				buf.Append("\\\\");
-			}
-			else {
-				buf.Append(c);
+						buf.Append(octal.PadLeft(3, '0'));
+						break;
+					}
+				case '\\':
+					buf.Append("\\\\");
+					break;
+				default:
+					buf.Append(c);
+					break;
 			}
 		}
 

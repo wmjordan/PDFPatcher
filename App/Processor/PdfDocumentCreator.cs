@@ -538,68 +538,76 @@ internal sealed class PdfDocumentCreator
 
 		image.ScalePercent(72f / image.DpiX.SubstituteDefault(72) * 100f,
 			72f / image.DpiY.SubstituteDefault(72) * 100f);
-		if (_content.SpecialSize == SpecialPaperSize.AsPageSize) {
-			_doc.SetPageSize(new Rectangle(image.ScaledWidth + _doc.LeftMargin + _doc.RightMargin,
-				image.ScaledHeight + _doc.TopMargin + _doc.BottomMargin));
-		}
-		else if (_content.SpecialSize == SpecialPaperSize.FixedWidthAutoHeight) {
-			if ((scaleDown && image.ScaledWidth > _content.Width) ||
-				(scaleUp && image.ScaledWidth < _content.Width)) {
-				image.ScaleToFit(_content.Width, 999999);
-			}
+		switch (_content.SpecialSize) {
+			case SpecialPaperSize.AsPageSize:
+				_doc.SetPageSize(new Rectangle(image.ScaledWidth + _doc.LeftMargin + _doc.RightMargin,
+					image.ScaledHeight + _doc.TopMargin + _doc.BottomMargin));
+				break;
+			case SpecialPaperSize.FixedWidthAutoHeight: {
+					if ((scaleDown && image.ScaledWidth > _content.Width) ||
+						(scaleUp && image.ScaledWidth < _content.Width)) {
+						image.ScaleToFit(_content.Width, 999999);
+					}
 
-			_doc.SetPageSize(new Rectangle(_content.Width, image.ScaledHeight + _doc.TopMargin + _doc.BottomMargin));
-		}
-		else {
-			if (_autoRotate
-				&& ( // 页面不足以放下当前尺寸的图片
-					((image.ScaledHeight > _content.Height || image.ScaledWidth > _content.Width)
-					 && ((image.ScaledWidth > image.ScaledHeight && _portrait)
-						 || (image.ScaledHeight > image.ScaledWidth && _portrait == false)))
-					||
-					// 图片较小，可以还原为原始的页面方向
-					(_portrait != (_option.ContentHeight > _option.ContentWidth)
-					 && image.ScaledHeight <= _content.Height && image.ScaledWidth <= _content.Width
-					 && image.ScaledHeight <= _content.Width && image.ScaledWidth <= _content.Height)
-				)
-			   ) {
-				float t = _content.Height;
-				_content.Height = _content.Width;
-				_content.Width = t;
-				_doc.SetPageSize(new Rectangle(_doc.PageSize.Height, _doc.PageSize.Width));
-				if (areMarginsEqual == false) {
-					if (_portrait) {
-						_doc.SetMargins(_doc.BottomMargin, _doc.TopMargin, _doc.LeftMargin, _doc.RightMargin);
-					}
-					else {
-						_doc.SetMargins(_doc.TopMargin, _doc.BottomMargin, _doc.RightMargin, _doc.LeftMargin);
-					}
+					_doc.SetPageSize(new Rectangle(_content.Width, image.ScaledHeight + _doc.TopMargin + _doc.BottomMargin));
+					break;
 				}
+			default: {
+					if (_autoRotate
+						&& ( // 页面不足以放下当前尺寸的图片
+							((image.ScaledHeight > _content.Height || image.ScaledWidth > _content.Width)
+							 && ((image.ScaledWidth > image.ScaledHeight && _portrait)
+								 || (image.ScaledHeight > image.ScaledWidth && _portrait == false)))
+							||
+							// 图片较小，可以还原为原始的页面方向
+							(_portrait != (_option.ContentHeight > _option.ContentWidth)
+							 && image.ScaledHeight <= _content.Height && image.ScaledWidth <= _content.Width
+							 && image.ScaledHeight <= _content.Width && image.ScaledWidth <= _content.Height)
+						)
+					   ) {
+						float t = _content.Height;
+						_content.Height = _content.Width;
+						_content.Width = t;
+						_doc.SetPageSize(new Rectangle(_doc.PageSize.Height, _doc.PageSize.Width));
+						if (areMarginsEqual == false) {
+							if (_portrait) {
+								_doc.SetMargins(_doc.BottomMargin, _doc.TopMargin, _doc.LeftMargin, _doc.RightMargin);
+							}
+							else {
+								_doc.SetMargins(_doc.TopMargin, _doc.BottomMargin, _doc.RightMargin, _doc.LeftMargin);
+							}
+						}
 
-				_portrait = !_portrait;
-			}
+						_portrait = !_portrait;
+					}
 
-			if ((scaleDown && (image.ScaledHeight > _content.Height || image.ScaledWidth > _content.Width))
-				|| (scaleUp && image.ScaledHeight < _content.Height && image.ScaledWidth < _content.Width)) {
-				image.ScaleToFit(_content.Width, _content.Height);
-			}
+					if ((scaleDown && (image.ScaledHeight > _content.Height || image.ScaledWidth > _content.Width))
+						|| (scaleUp && image.ScaledHeight < _content.Height && image.ScaledWidth < _content.Width)) {
+						image.ScaleToFit(_content.Width, _content.Height);
+					}
 
-			float px = 0, py = 0;
-			if (hAlign == HorizontalAlignment.Center) {
-				px = (_content.Width - image.ScaledWidth) / 2f;
-			}
-			else if (hAlign == HorizontalAlignment.Right) {
-				px = _content.Width - image.ScaledWidth;
-			}
+					float px = 0, py = 0;
+					switch (hAlign) {
+						case HorizontalAlignment.Center:
+							px = (_content.Width - image.ScaledWidth) / 2f;
+							break;
+						case HorizontalAlignment.Right:
+							px = _content.Width - image.ScaledWidth;
+							break;
+					}
 
-			if (vAlign == VerticalAlignment.Middle) {
-				py = (_content.Height - image.ScaledHeight) / 2f;
-			}
-			else if (vAlign == VerticalAlignment.Top) {
-				py = _content.Height - image.ScaledHeight;
-			}
+					switch (vAlign) {
+						case VerticalAlignment.Middle:
+							py = (_content.Height - image.ScaledHeight) / 2f;
+							break;
+						case VerticalAlignment.Top:
+							py = _content.Height - image.ScaledHeight;
+							break;
+					}
 
-			image.SetAbsolutePosition(_doc.LeftMargin + px, _doc.BottomMargin + py);
+					image.SetAbsolutePosition(_doc.LeftMargin + px, _doc.BottomMargin + py);
+					break;
+				}
 		}
 
 		_doc.NewPage();

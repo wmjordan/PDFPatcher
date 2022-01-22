@@ -92,11 +92,13 @@ public partial class TargetFileControl : UserControl
 
 	private void TargetFileControl_Show(object sender, EventArgs e) {
 		string t = Text;
-		if (Visible && AppContext.MainForm != null) {
-			FileList.Contents = AppContext.Recent.TargetPdfFiles;
-		}
-		else if (Visible == false) {
-			FileList.Contents = null;
+		switch (Visible) {
+			case true when AppContext.MainForm != null:
+				FileList.Contents = AppContext.Recent.TargetPdfFiles;
+				break;
+			case false:
+				FileList.Contents = null;
+				break;
 		}
 
 		Text = t;

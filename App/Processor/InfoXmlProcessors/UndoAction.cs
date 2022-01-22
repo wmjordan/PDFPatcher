@@ -79,15 +79,15 @@ internal sealed class UndoActionGroup : IUndoAction
 	public int Count => _actions.Count;
 
 	public void Add(IUndoAction action) {
-		if (action == null) {
-			return;
-		}
-
-		if (action is UndoActionGroup g) {
-			_actions.AddRange(g._actions);
-		}
-		else {
-			_actions.Add(action);
+		switch (action) {
+			case null:
+				return;
+			case UndoActionGroup g:
+				_actions.AddRange(g._actions);
+				break;
+			default:
+				_actions.Add(action);
+				break;
 		}
 	}
 

@@ -17,19 +17,23 @@ internal sealed class PdfActionExporter
 	}
 
 	internal void ExportFileLocation(XmlWriter w, PdfObject file) {
-		if (file.Type == PdfObject.DICTIONARY) {
-			PdfDictionary fs = file as PdfDictionary;
-			if (fs.Contains(PdfName.UF)) {
+		switch (file.Type) {
+			case PdfObject.DICTIONARY: {
+					PdfDictionary fs = file as PdfDictionary;
+					if (fs.Contains(PdfName.UF)) {
+						w.WriteAttributeString(Constants.DestinationAttributes.Path,
+							PdfHelper.GetValidXmlString(fs.GetAsString(PdfName.UF).ToUnicodeString()));
+					}
+					else if (fs.Contains(PdfName.F)) {
+						file = fs.Get(PdfName.F);
+					}
+
+					break;
+				}
+			case PdfObject.STRING:
 				w.WriteAttributeString(Constants.DestinationAttributes.Path,
-					PdfHelper.GetValidXmlString(fs.GetAsString(PdfName.UF).ToUnicodeString()));
-			}
-			else if (fs.Contains(PdfName.F)) {
-				file = fs.Get(PdfName.F);
-			}
-		}
-		else if (file.Type == PdfObject.STRING) {
-			w.WriteAttributeString(Constants.DestinationAttributes.Path,
-				PdfHelper.GetValidXmlString(((PdfString)file).Decode(Encoding.Default)));
+					PdfHelper.GetValidXmlString(((PdfString)file).Decode(Encoding.Default)));
+				break;
 		}
 	}
 
@@ -101,31 +105,36 @@ internal sealed class PdfActionExporter
 
 	internal void ExportGotoAction(PdfObject dest, XmlWriter target, Dictionary<int, int> pages) {
 		target.WriteAttributeString(Constants.DestinationAttributes.Action, Constants.ActionType.Goto);
-		if (dest.Type == PdfObject.STRING) {
-			target.WriteAttributeString(Constants.DestinationAttributes.Named,
-				StringHelper.ReplaceControlAndBomCharacters((dest as PdfString).ToUnicodeString()));
-		}
-		else if (dest.Type == PdfObject.NAME) {
-			target.WriteAttributeString(Constants.DestinationAttributes.Named, PdfName.DecodeName(dest.ToString()));
-		}
-		else if (dest.Type == PdfObject.ARRAY) {
-			PdfArray a = dest as PdfArray;
-			if (a.Size > 0) {
-				PdfObject p = a[0];
-				int pn = 0;
-				if (p.Type == PdfObject.INDIRECT && pages.TryGetValue(GetNumber((PdfIndirectReference)a[0]), out pn)) {
-					// use pn
-				}
-				else if (p.Type == PdfObject.NUMBER) {
-					pn = (p as PdfNumber).IntValue + 1;
-				}
+		switch (dest.Type) {
+			case PdfObject.STRING:
+				target.WriteAttributeString(Constants.DestinationAttributes.Named,
+					StringHelper.ReplaceControlAndBomCharacters((dest as PdfString).ToUnicodeString()));
+				break;
+			case PdfObject.NAME:
+				target.WriteAttributeString(Constants.DestinationAttributes.Named, PdfName.DecodeName(dest.ToString()));
+				break;
+			case PdfObject.ARRAY: {
+					PdfArray a = dest as PdfArray;
+					if (a.Size > 0) {
+						PdfObject p = a[0];
+						int pn = 0;
+						switch (p.Type) {
+							case PdfObject.INDIRECT when pages.TryGetValue(GetNumber((PdfIndirectReference)a[0]), out pn):
+								// use pn
+								break;
+							case PdfObject.NUMBER:
+								pn = (p as PdfNumber).IntValue + 1;
+								break;
+						}
 
-				if (pn > 0) {
-					target.WriteAttributeString(Constants.DestinationAttributes.Page, pn.ToText());
-				}
-			}
+						if (pn > 0) {
+							target.WriteAttributeString(Constants.DestinationAttributes.Page, pn.ToText());
+						}
+					}
 
-			ExportDestinationView(target, a);
+					ExportDestinationView(target, a);
+					break;
+				}
 		}
 	}
 

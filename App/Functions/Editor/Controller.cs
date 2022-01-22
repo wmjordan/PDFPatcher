@@ -546,15 +546,15 @@ namespace PDFPatcher.Functions.Editor
 			}
 
 			PageLabelCollection l = Model.PdfDocument.PageLabels;
-			if (form.DialogResult == DialogResult.OK) {
-				if (l == null) {
+			switch (form.DialogResult) {
+				case DialogResult.OK when l == null:
 					return;
-				}
-
-				l.Add(form.PageLabel);
-			}
-			else if (form.DialogResult == DialogResult.Abort) {
-				Model.PdfDocument.PageLabels.Remove(form.PageLabel);
+				case DialogResult.OK:
+					l.Add(form.PageLabel);
+					break;
+				case DialogResult.Abort:
+					Model.PdfDocument.PageLabels.Remove(form.PageLabel);
+					break;
 			}
 
 			XmlElement pl = Model.Document.PageLabelRoot;

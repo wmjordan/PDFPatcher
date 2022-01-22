@@ -86,12 +86,14 @@ public partial class BookmarkControl : UserControl
 
 	private void BookmarkControl_Show(object sender, EventArgs e) {
 		string t = FileList.Text;
-		if (Visible && AppContext.MainForm != null) {
-			// _BookmarkBox.DataSource = new BindingList<string> (_UseForBookmarkExport ? ContextData.Recent.SavedInfoDocuments : ContextData.Recent.InfoDocuments);
-			FileList.Contents = AppContext.Recent.InfoDocuments;
-		}
-		else if (Visible == false) {
-			FileList.Contents = null;
+		switch (Visible) {
+			case true when AppContext.MainForm != null:
+				// _BookmarkBox.DataSource = new BindingList<string> (_UseForBookmarkExport ? ContextData.Recent.SavedInfoDocuments : ContextData.Recent.InfoDocuments);
+				FileList.Contents = AppContext.Recent.InfoDocuments;
+				break;
+			case false:
+				FileList.Contents = null;
+				break;
 		}
 
 		FileList.Text = t;

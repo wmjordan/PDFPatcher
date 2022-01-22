@@ -90,17 +90,25 @@ public partial class PatcherControl : FunctionControl
 	}
 
 	public override void ExecuteCommand(string commandName, params string[] parameters) {
-		if (commandName == Commands.Open) {
-			OpenFileDialog b = _OpenPdfBox;
-			if (b.ShowDialog() == DialogResult.OK) {
-				AddFiles(b.FileNames, true);
-			}
-		}
-		else if (commandName == Commands.OpenFile) {
-			AddFiles(parameters, true);
-		}
-		else if (_listHelper.ProcessCommonMenuCommand(commandName) == false) {
-			base.ExecuteCommand(commandName, parameters);
+		switch (commandName) {
+			case Commands.Open: {
+					OpenFileDialog b = _OpenPdfBox;
+					if (b.ShowDialog() == DialogResult.OK) {
+						AddFiles(b.FileNames, true);
+					}
+
+					break;
+				}
+			case Commands.OpenFile:
+				AddFiles(parameters, true);
+				break;
+			default: {
+					if (_listHelper.ProcessCommonMenuCommand(commandName) == false) {
+						base.ExecuteCommand(commandName, parameters);
+					}
+
+					break;
+				}
 		}
 	}
 
@@ -132,12 +140,12 @@ public partial class PatcherControl : FunctionControl
 			_ItemList.ClearObjects();
 		}
 
-		if (files.Length > 3) {
-			AppContext.MainForm.Enabled = false;
-		}
-
-		if (files.Length == 0) {
-			return;
+		switch (files.Length) {
+			case > 3:
+				AppContext.MainForm.Enabled = false;
+				break;
+			case 0:
+				return;
 		}
 
 		_AddDocumentWorker.RunWorkerAsync(files);

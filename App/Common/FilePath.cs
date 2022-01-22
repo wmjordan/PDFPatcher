@@ -483,27 +483,35 @@ public readonly struct FilePath : IEquatable<FilePath>
 				continue;
 			}
 
-			if (pi == "..") {
-				foreach (var n in t.Select(item => IsDirectorySeparator(item[item.Length - 1])
-							 ? Path.GetDirectoryName(item.Substring(0, item.Length - 1))
-							 : Path.GetDirectoryName(item)).Where(n => n != null && r.Contains(n) == false)) {
-					r.Add(n);
-				}
-			}
-			else if (pi == RecursiveWildcard) {
-				foreach (string item in t) {
-					r.Add(item);
-					GetDirectoriesRecursively(item, ref r);
-				}
-			}
-			else {
-				foreach (string item in t) {
-					try {
-						r.AddRange(SysDirectory.GetDirectories(item, pi));
+			switch (pi) {
+				case "..": {
+						foreach (var n in t.Select(item => IsDirectorySeparator(item[item.Length - 1])
+									 ? Path.GetDirectoryName(item.Substring(0, item.Length - 1))
+									 : Path.GetDirectoryName(item)).Where(n => n != null && r.Contains(n) == false)) {
+							r.Add(n);
+						}
+
+						break;
 					}
-					catch (UnauthorizedAccessException) {
+				case RecursiveWildcard: {
+						foreach (string item in t) {
+							r.Add(item);
+							GetDirectoriesRecursively(item, ref r);
+						}
+
+						break;
 					}
-				}
+				default: {
+						foreach (string item in t) {
+							try {
+								r.AddRange(SysDirectory.GetDirectories(item, pi));
+							}
+							catch (UnauthorizedAccessException) {
+							}
+						}
+
+						break;
+					}
 			}
 
 			t = r;
@@ -543,18 +551,18 @@ public readonly struct FilePath : IEquatable<FilePath>
 		int v = 0;
 		for (int i = 0; i < p.Length; i++) {
 			string s = p[i].Trim();
-			if (s.Length == 0) {
-				// 保留第一个根目录引用
-				if (i == 0) {
-					r = true;
-					++v;
-				}
+			switch (s.Length) {
+				case 0: {
+						// 保留第一个根目录引用
+						if (i == 0) {
+							r = true;
+							++v;
+						}
 
-				continue;
-			}
-
-			if (s.Length == 1 && s[0] == '.') {
-				continue;
+						continue;
+					}
+				case 1 when s[0] == '.':
+					continue;
 			}
 
 			if (s == ".." || (s.StartsWith("..", StringComparison.Ordinal) && s.TrimEnd('.').Length == 0)) {
