@@ -73,9 +73,8 @@ public static class WuQuantizer
 		try {
 			int bitDepth = Image.GetPixelFormatSize(sourceImage.PixelFormat);
 			if (bitDepth != 32 && bitDepth != 24) {
-				throw new QuantizationException(string.Format(
-					"The image you are attempting to quantize does not contain a 32 bit ARGB palette. This image has a bit depth of {0} with {1} colors.",
-					bitDepth, sourceImage.Palette.Entries.Length));
+				throw new QuantizationException(
+					$"The image you are attempting to quantize does not contain a 32 bit ARGB palette. This image has a bit depth of {bitDepth} with {sourceImage.Palette.Entries.Length} colors.");
 			}
 
 			int byteLength = data.Stride < 0 ? -data.Stride : data.Stride;

@@ -295,7 +295,7 @@ internal static class JpgHelper
 				3 or 8 => 2,
 				4 or 9 or 11 => 4,
 				5 or 10 or 12 => 8,
-				_ => throw new ExifLibException(string.Format("Unknown TIFF datatype: {0}", tiffDataType))
+				_ => throw new ExifLibException($"Unknown TIFF datatype: {tiffDataType}")
 			};
 		}
 
@@ -863,7 +863,7 @@ internal static class JpgHelper
 
 					return true;
 				default:
-					throw new ExifLibException(string.Format("Unknown TIFF datatype: {0}", tiffDataType));
+					throw new ExifLibException($"Unknown TIFF datatype: {tiffDataType}");
 			}
 		}
 
