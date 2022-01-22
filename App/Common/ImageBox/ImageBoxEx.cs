@@ -122,11 +122,13 @@ internal class ImageBoxEx : ImageBox
 	public virtual int DragHandleSize {
 		get => _dragHandleSize;
 		set {
-			if (_dragHandleSize != value) {
-				_dragHandleSize = value;
-
-				OnDragHandleSizeChanged(EventArgs.Empty);
+			if (_dragHandleSize == value) {
+				return;
 			}
+
+			_dragHandleSize = value;
+
+			OnDragHandleSizeChanged(EventArgs.Empty);
 		}
 	}
 
@@ -143,11 +145,13 @@ internal class ImageBoxEx : ImageBox
 	public virtual Size MaximumSelectionSize {
 		get => _maximumSelectionSize;
 		set {
-			if (MaximumSelectionSize != value) {
-				_maximumSelectionSize = value;
-
-				OnMaximumSelectionSizeChanged(EventArgs.Empty);
+			if (MaximumSelectionSize == value) {
+				return;
 			}
+
+			_maximumSelectionSize = value;
+
+			OnMaximumSelectionSizeChanged(EventArgs.Empty);
 		}
 	}
 
@@ -156,11 +160,13 @@ internal class ImageBoxEx : ImageBox
 	public virtual Size MinimumSelectionSize {
 		get => _minimumSelectionSize;
 		set {
-			if (MinimumSelectionSize != value) {
-				_minimumSelectionSize = value;
-
-				OnMinimumSelectionSizeChanged(EventArgs.Empty);
+			if (MinimumSelectionSize == value) {
+				return;
 			}
+
+			_minimumSelectionSize = value;
+
+			OnMinimumSelectionSizeChanged(EventArgs.Empty);
 		}
 	}
 
@@ -196,10 +202,12 @@ internal class ImageBoxEx : ImageBox
 
 		OnSelectionMoving(e);
 
-		if (!e.Cancel) {
-			PreviousSelectionRegion = SelectionRegion;
-			IsMoving = true;
+		if (e.Cancel) {
+			return;
 		}
+
+		PreviousSelectionRegion = SelectionRegion;
+		IsMoving = true;
 	}
 
 	protected virtual void DrawDragHandle(Graphics graphics, DragHandle handle) {
@@ -341,11 +349,13 @@ internal class ImageBoxEx : ImageBox
 	protected override void OnPaint(PaintEventArgs e) {
 		base.OnPaint(e);
 
-		if (AllowPainting && !SelectionRegion.IsEmpty) {
-			foreach (DragHandle handle in DragHandles) {
-				if (handle.Visible) {
-					DrawDragHandle(e.Graphics, handle);
-				}
+		if (!AllowPainting || SelectionRegion.IsEmpty) {
+			return;
+		}
+
+		foreach (DragHandle handle in DragHandles) {
+			if (handle.Visible) {
+				DrawDragHandle(e.Graphics, handle);
 			}
 		}
 	}
@@ -495,46 +505,48 @@ internal class ImageBoxEx : ImageBox
 	protected virtual void SetCursor(Point point) {
 		// http://forums.cyotek.com/imagebox/cursor-issue-in-imageboxex/msg92/#msg92
 
-		if (!IsPanning) {
-			Cursor cursor;
+		if (IsPanning) {
+			return;
+		}
 
-			if (IsSelecting) {
-				cursor = Cursors.Default;
+		Cursor cursor;
+
+		if (IsSelecting) {
+			cursor = Cursors.Default;
+		}
+		else {
+			DragHandleAnchor handleAnchor = IsResizing ? ResizeAnchor : HitTest(point);
+			if (handleAnchor != DragHandleAnchor.None && DragHandles[handleAnchor].Enabled) {
+				switch (handleAnchor) {
+					case DragHandleAnchor.TopLeft:
+					case DragHandleAnchor.BottomRight:
+						cursor = Cursors.SizeNWSE;
+						break;
+					case DragHandleAnchor.TopCenter:
+					case DragHandleAnchor.BottomCenter:
+						cursor = Cursors.SizeNS;
+						break;
+					case DragHandleAnchor.TopRight:
+					case DragHandleAnchor.BottomLeft:
+						cursor = Cursors.SizeNESW;
+						break;
+					case DragHandleAnchor.MiddleLeft:
+					case DragHandleAnchor.MiddleRight:
+						cursor = Cursors.SizeWE;
+						break;
+					default:
+						throw new ArgumentOutOfRangeException();
+				}
+			}
+			else if (IsMoving || SelectionRegion.Contains(PointToImage(point))) {
+				cursor = Cursors.SizeAll;
 			}
 			else {
-				DragHandleAnchor handleAnchor = IsResizing ? ResizeAnchor : HitTest(point);
-				if (handleAnchor != DragHandleAnchor.None && DragHandles[handleAnchor].Enabled) {
-					switch (handleAnchor) {
-						case DragHandleAnchor.TopLeft:
-						case DragHandleAnchor.BottomRight:
-							cursor = Cursors.SizeNWSE;
-							break;
-						case DragHandleAnchor.TopCenter:
-						case DragHandleAnchor.BottomCenter:
-							cursor = Cursors.SizeNS;
-							break;
-						case DragHandleAnchor.TopRight:
-						case DragHandleAnchor.BottomLeft:
-							cursor = Cursors.SizeNESW;
-							break;
-						case DragHandleAnchor.MiddleLeft:
-						case DragHandleAnchor.MiddleRight:
-							cursor = Cursors.SizeWE;
-							break;
-						default:
-							throw new ArgumentOutOfRangeException();
-					}
-				}
-				else if (IsMoving || SelectionRegion.Contains(PointToImage(point))) {
-					cursor = Cursors.SizeAll;
-				}
-				else {
-					cursor = Cursors.Default;
-				}
+				cursor = Cursors.Default;
 			}
-
-			Cursor = cursor;
 		}
+
+		Cursor = cursor;
 	}
 
 	private void CancelMove() {
@@ -566,135 +578,141 @@ internal class ImageBoxEx : ImageBox
 	}
 
 	private void PositionDragHandles() {
-		if (DragHandles != null && _dragHandleSize > 0) {
-			RectangleF selectionRegion = SelectionRegion;
+		if (DragHandles == null || _dragHandleSize <= 0) {
+			return;
+		}
 
-			if (selectionRegion.IsEmpty) {
-				foreach (DragHandle handle in DragHandles) {
-					handle.Bounds = Rectangle.Empty;
-				}
-			}
-			else {
-				Rectangle viewport = GetImageViewPort();
-				int offsetX = viewport.Left + Padding.Left + AutoScrollPosition.X;
-				int offsetY = viewport.Top + Padding.Top + AutoScrollPosition.Y;
-				int halfDragHandleSize = _dragHandleSize / 2;
-				int left = Convert.ToInt32((selectionRegion.Left * ZoomFactor) + offsetX);
-				int top = Convert.ToInt32((selectionRegion.Top * ZoomFactor) + offsetY);
-				int right = left + Convert.ToInt32(selectionRegion.Width * ZoomFactor);
-				int bottom = top + Convert.ToInt32(selectionRegion.Height * ZoomFactor);
-				int halfWidth = Convert.ToInt32(selectionRegion.Width * ZoomFactor) / 2;
-				int halfHeight = Convert.ToInt32(selectionRegion.Height * ZoomFactor) / 2;
+		RectangleF selectionRegion = SelectionRegion;
 
-				DragHandles[DragHandleAnchor.TopLeft].Bounds = new Rectangle(left - _dragHandleSize,
-					top - _dragHandleSize, _dragHandleSize, _dragHandleSize);
-				DragHandles[DragHandleAnchor.TopCenter].Bounds = new Rectangle(left + halfWidth - halfDragHandleSize,
-					top - _dragHandleSize, _dragHandleSize, _dragHandleSize);
-				DragHandles[DragHandleAnchor.TopRight].Bounds =
-					new Rectangle(right, top - _dragHandleSize, _dragHandleSize, _dragHandleSize);
-				DragHandles[DragHandleAnchor.MiddleLeft].Bounds = new Rectangle(left - _dragHandleSize,
-					top + halfHeight - halfDragHandleSize, _dragHandleSize, _dragHandleSize);
-				DragHandles[DragHandleAnchor.MiddleRight].Bounds = new Rectangle(right,
-					top + halfHeight - halfDragHandleSize, _dragHandleSize, _dragHandleSize);
-				DragHandles[DragHandleAnchor.BottomLeft].Bounds = new Rectangle(left - _dragHandleSize, bottom,
-					_dragHandleSize, _dragHandleSize);
-				DragHandles[DragHandleAnchor.BottomCenter].Bounds = new Rectangle(left + halfWidth - halfDragHandleSize,
-					bottom, _dragHandleSize, _dragHandleSize);
-				DragHandles[DragHandleAnchor.BottomRight].Bounds =
-					new Rectangle(right, bottom, _dragHandleSize, _dragHandleSize);
+		if (selectionRegion.IsEmpty) {
+			foreach (DragHandle handle in DragHandles) {
+				handle.Bounds = Rectangle.Empty;
 			}
+		}
+		else {
+			Rectangle viewport = GetImageViewPort();
+			int offsetX = viewport.Left + Padding.Left + AutoScrollPosition.X;
+			int offsetY = viewport.Top + Padding.Top + AutoScrollPosition.Y;
+			int halfDragHandleSize = _dragHandleSize / 2;
+			int left = Convert.ToInt32((selectionRegion.Left * ZoomFactor) + offsetX);
+			int top = Convert.ToInt32((selectionRegion.Top * ZoomFactor) + offsetY);
+			int right = left + Convert.ToInt32(selectionRegion.Width * ZoomFactor);
+			int bottom = top + Convert.ToInt32(selectionRegion.Height * ZoomFactor);
+			int halfWidth = Convert.ToInt32(selectionRegion.Width * ZoomFactor) / 2;
+			int halfHeight = Convert.ToInt32(selectionRegion.Height * ZoomFactor) / 2;
+
+			DragHandles[DragHandleAnchor.TopLeft].Bounds = new Rectangle(left - _dragHandleSize,
+				top - _dragHandleSize, _dragHandleSize, _dragHandleSize);
+			DragHandles[DragHandleAnchor.TopCenter].Bounds = new Rectangle(left + halfWidth - halfDragHandleSize,
+				top - _dragHandleSize, _dragHandleSize, _dragHandleSize);
+			DragHandles[DragHandleAnchor.TopRight].Bounds =
+				new Rectangle(right, top - _dragHandleSize, _dragHandleSize, _dragHandleSize);
+			DragHandles[DragHandleAnchor.MiddleLeft].Bounds = new Rectangle(left - _dragHandleSize,
+				top + halfHeight - halfDragHandleSize, _dragHandleSize, _dragHandleSize);
+			DragHandles[DragHandleAnchor.MiddleRight].Bounds = new Rectangle(right,
+				top + halfHeight - halfDragHandleSize, _dragHandleSize, _dragHandleSize);
+			DragHandles[DragHandleAnchor.BottomLeft].Bounds = new Rectangle(left - _dragHandleSize, bottom,
+				_dragHandleSize, _dragHandleSize);
+			DragHandles[DragHandleAnchor.BottomCenter].Bounds = new Rectangle(left + halfWidth - halfDragHandleSize,
+				bottom, _dragHandleSize, _dragHandleSize);
+			DragHandles[DragHandleAnchor.BottomRight].Bounds =
+				new Rectangle(right, bottom, _dragHandleSize, _dragHandleSize);
 		}
 	}
 
 	private void ProcessSelectionMove(Point cursorPosition) {
-		if (IsMoving) {
-			Point imagePoint = PointToImage(cursorPosition, false);
-			Size viewSize = ViewSize;
-			RectangleF selectionRegion = SelectionRegion;
-
-			int x = Math.Max(0, imagePoint.X - _dragOriginOffset.X);
-			if (x + selectionRegion.Width >= viewSize.Width) {
-				x = viewSize.Width - (int)selectionRegion.Width;
-			}
-
-			int y = Math.Max(0, imagePoint.Y - _dragOriginOffset.Y);
-			if (y + selectionRegion.Height >= viewSize.Height) {
-				y = viewSize.Height - (int)selectionRegion.Height;
-			}
-
-			SelectionRegion = new RectangleF(x, y, selectionRegion.Width, selectionRegion.Height);
+		if (!IsMoving) {
+			return;
 		}
+
+		Point imagePoint = PointToImage(cursorPosition, false);
+		Size viewSize = ViewSize;
+		RectangleF selectionRegion = SelectionRegion;
+
+		int x = Math.Max(0, imagePoint.X - _dragOriginOffset.X);
+		if (x + selectionRegion.Width >= viewSize.Width) {
+			x = viewSize.Width - (int)selectionRegion.Width;
+		}
+
+		int y = Math.Max(0, imagePoint.Y - _dragOriginOffset.Y);
+		if (y + selectionRegion.Height >= viewSize.Height) {
+			y = viewSize.Height - (int)selectionRegion.Height;
+		}
+
+		SelectionRegion = new RectangleF(x, y, selectionRegion.Width, selectionRegion.Height);
 	}
 
 	private void ProcessSelectionResize(Point cursorPosition) {
-		if (IsResizing) {
-			Point imagePosition = PointToImage(cursorPosition);
-			Size viewSize = ViewSize;
-
-			// get the current selection
-			RectangleF selectionRegion = SelectionRegion;
-			float left = selectionRegion.Left;
-			float top = selectionRegion.Top;
-			float right = selectionRegion.Right;
-			float bottom = selectionRegion.Bottom;
-
-			// decide which edges we're resizing
-			bool resizingTopEdge =
-				ResizeAnchor >= DragHandleAnchor.TopLeft && ResizeAnchor <= DragHandleAnchor.TopRight;
-			bool resizingBottomEdge = ResizeAnchor >= DragHandleAnchor.BottomLeft &&
-									  ResizeAnchor <= DragHandleAnchor.BottomRight;
-			bool resizingLeftEdge = ResizeAnchor == DragHandleAnchor.TopLeft ||
-									ResizeAnchor == DragHandleAnchor.MiddleLeft ||
-									ResizeAnchor == DragHandleAnchor.BottomLeft;
-			bool resizingRightEdge = ResizeAnchor == DragHandleAnchor.TopRight ||
-									 ResizeAnchor == DragHandleAnchor.MiddleRight ||
-									 ResizeAnchor == DragHandleAnchor.BottomRight;
-
-			// and resize!
-			if (resizingTopEdge) {
-				top = imagePosition.Y > 0 ? imagePosition.Y : 0;
-
-				if (bottom - top < MinimumSelectionSize.Height) {
-					top = bottom - MinimumSelectionSize.Height;
-				}
-				else if (MaximumSelectionSize.Height > 0 && bottom - top > MaximumSelectionSize.Height) {
-					top = bottom - MaximumSelectionSize.Height;
-				}
-			}
-			else if (resizingBottomEdge) {
-				bottom = imagePosition.Y < viewSize.Height ? imagePosition.Y : viewSize.Height;
-
-				if (bottom - top < MinimumSelectionSize.Height) {
-					bottom = top + MinimumSelectionSize.Height;
-				}
-				else if (MaximumSelectionSize.Height > 0 && bottom - top > MaximumSelectionSize.Height) {
-					bottom = top + MaximumSelectionSize.Height;
-				}
-			}
-
-			if (resizingLeftEdge) {
-				left = imagePosition.X > 0 ? imagePosition.X : 0;
-
-				if (right - left < MinimumSelectionSize.Width) {
-					left = right - MinimumSelectionSize.Width;
-				}
-				else if (MaximumSelectionSize.Width > 0 && right - left > MaximumSelectionSize.Width) {
-					left = right - MaximumSelectionSize.Width;
-				}
-			}
-			else if (resizingRightEdge) {
-				right = imagePosition.X < viewSize.Width ? imagePosition.X : viewSize.Width;
-
-				if (right - left < MinimumSelectionSize.Width) {
-					right = left + MinimumSelectionSize.Width;
-				}
-				else if (MaximumSelectionSize.Width > 0 && right - left > MaximumSelectionSize.Width) {
-					right = left + MaximumSelectionSize.Width;
-				}
-			}
-
-			SelectionRegion = new RectangleF(left, top, right - left, bottom - top);
+		if (!IsResizing) {
+			return;
 		}
+
+		Point imagePosition = PointToImage(cursorPosition);
+		Size viewSize = ViewSize;
+
+		// get the current selection
+		RectangleF selectionRegion = SelectionRegion;
+		float left = selectionRegion.Left;
+		float top = selectionRegion.Top;
+		float right = selectionRegion.Right;
+		float bottom = selectionRegion.Bottom;
+
+		// decide which edges we're resizing
+		bool resizingTopEdge =
+			ResizeAnchor >= DragHandleAnchor.TopLeft && ResizeAnchor <= DragHandleAnchor.TopRight;
+		bool resizingBottomEdge = ResizeAnchor >= DragHandleAnchor.BottomLeft &&
+								  ResizeAnchor <= DragHandleAnchor.BottomRight;
+		bool resizingLeftEdge = ResizeAnchor == DragHandleAnchor.TopLeft ||
+								ResizeAnchor == DragHandleAnchor.MiddleLeft ||
+								ResizeAnchor == DragHandleAnchor.BottomLeft;
+		bool resizingRightEdge = ResizeAnchor == DragHandleAnchor.TopRight ||
+								 ResizeAnchor == DragHandleAnchor.MiddleRight ||
+								 ResizeAnchor == DragHandleAnchor.BottomRight;
+
+		// and resize!
+		if (resizingTopEdge) {
+			top = imagePosition.Y > 0 ? imagePosition.Y : 0;
+
+			if (bottom - top < MinimumSelectionSize.Height) {
+				top = bottom - MinimumSelectionSize.Height;
+			}
+			else if (MaximumSelectionSize.Height > 0 && bottom - top > MaximumSelectionSize.Height) {
+				top = bottom - MaximumSelectionSize.Height;
+			}
+		}
+		else if (resizingBottomEdge) {
+			bottom = imagePosition.Y < viewSize.Height ? imagePosition.Y : viewSize.Height;
+
+			if (bottom - top < MinimumSelectionSize.Height) {
+				bottom = top + MinimumSelectionSize.Height;
+			}
+			else if (MaximumSelectionSize.Height > 0 && bottom - top > MaximumSelectionSize.Height) {
+				bottom = top + MaximumSelectionSize.Height;
+			}
+		}
+
+		if (resizingLeftEdge) {
+			left = imagePosition.X > 0 ? imagePosition.X : 0;
+
+			if (right - left < MinimumSelectionSize.Width) {
+				left = right - MinimumSelectionSize.Width;
+			}
+			else if (MaximumSelectionSize.Width > 0 && right - left > MaximumSelectionSize.Width) {
+				left = right - MaximumSelectionSize.Width;
+			}
+		}
+		else if (resizingRightEdge) {
+			right = imagePosition.X < viewSize.Width ? imagePosition.X : viewSize.Width;
+
+			if (right - left < MinimumSelectionSize.Width) {
+				right = left + MinimumSelectionSize.Width;
+			}
+			else if (MaximumSelectionSize.Width > 0 && right - left > MaximumSelectionSize.Width) {
+				right = left + MaximumSelectionSize.Width;
+			}
+		}
+
+		SelectionRegion = new RectangleF(left, top, right - left, bottom - top);
 	}
 
 	private void ResetDrag() {
@@ -713,11 +731,13 @@ internal class ImageBoxEx : ImageBox
 
 		OnSelectionResizing(e);
 
-		if (!e.Cancel) {
-			ResizeAnchor = anchor;
-			PreviousSelectionRegion = SelectionRegion;
-			IsResizing = true;
+		if (e.Cancel) {
+			return;
 		}
+
+		ResizeAnchor = anchor;
+		PreviousSelectionRegion = SelectionRegion;
+		IsResizing = true;
 	}
 
 	#endregion

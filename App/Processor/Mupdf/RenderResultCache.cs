@@ -60,10 +60,12 @@ public sealed class RenderResultCache : IDisposable
 		int x = 0;
 		int i = 0;
 		foreach (int item in _buffer.Keys) {
-			if (Math.Abs(item - pageNumber) > x) {
-				x = Math.Abs(item - pageNumber);
-				i = item;
+			if (Math.Abs(item - pageNumber) <= x) {
+				continue;
 			}
+
+			x = Math.Abs(item - pageNumber);
+			i = item;
 		}
 
 		_buffer[i].Dispose();

@@ -87,10 +87,12 @@ public partial class UpdateForm : Form
 			_InfoBox.AppendLine(string.Concat("发现新版本：", v, " ", d));
 			_InfoBox.AppendLine(c.InnerText);
 			_InfoBox.SelectionStart = 0;
-			if (u.Length > 0) {
-				_DownloadButton.Enabled = true;
-				_DownloadButton.Tag = u;
+			if (u.Length <= 0) {
+				return;
 			}
+
+			_DownloadButton.Enabled = true;
+			_DownloadButton.Tag = u;
 		}
 		else {
 			_InfoBox.AppendLine(string.Join("\n", "未发现新版本。", "服务器上发布的版本是：", v + " " + d));

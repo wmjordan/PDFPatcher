@@ -54,11 +54,13 @@ public partial class PatcherControl : FunctionControl
 		_TargetPdfFile.TargetFileChangedByBrowseButton += (s, args) => {
 			int i;
 			string f = _TargetPdfFile.FileDialog.FileName;
-			if (_ItemList.Items.Count > 1 && (i = f.LastIndexOf(Path.DirectorySeparatorChar)) != -1) {
-				_TargetPdfFile.Text = string.Concat(f.Substring(0, i), Path.DirectorySeparatorChar,
-					Constants.FileNameMacros.FileName, Path.GetExtension(f));
-				args.Cancel = true;
+			if (_ItemList.Items.Count <= 1 || (i = f.LastIndexOf(Path.DirectorySeparatorChar)) == -1) {
+				return;
 			}
+
+			_TargetPdfFile.Text = string.Concat(f.Substring(0, i), Path.DirectorySeparatorChar,
+				Constants.FileNameMacros.FileName, Path.GetExtension(f));
+			args.Cancel = true;
 		};
 		ImageList.ImageCollection fi = _FileTypeList.Images;
 		fi.AddRange(new Image[] { Resources.OriginalPdfFile });

@@ -26,11 +26,13 @@ internal static class JBig2Decoder
 			c = NativeMethods.ReadData(ctxptr, data, (uint)data.Length);
 			c = NativeMethods.CompletePage(ctxptr);
 			IntPtr imageptr;
-			if ((imageptr = NativeMethods.Decode(ctxptr)) != IntPtr.Zero) {
-				JBig2Image image = PInvokeHelper.Unwrap<JBig2Image>(imageptr);
-				decodedData = image.GetData();
-				NativeMethods.ReleasePage(ctxptr, imageptr);
+			if ((imageptr = NativeMethods.Decode(ctxptr)) == IntPtr.Zero) {
+				return decodedData;
 			}
+
+			JBig2Image image = PInvokeHelper.Unwrap<JBig2Image>(imageptr);
+			decodedData = image.GetData();
+			NativeMethods.ReleasePage(ctxptr, imageptr);
 
 			return decodedData;
 		}

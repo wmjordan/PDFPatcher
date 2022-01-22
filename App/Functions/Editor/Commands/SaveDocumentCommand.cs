@@ -100,11 +100,13 @@ internal sealed class SaveDocumentCommand : IEditorCommand
 				vv.Enabled = true;
 			};
 
-			if (f.ShowDialog() == DialogResult.OK) {
-				vv.Enabled = false;
-				m.Document.PdfDocumentPath = f.SourceFilePath;
-				m.LastSavedPdfPath = f.TargetFilePath;
+			if (f.ShowDialog() != DialogResult.OK) {
+				return;
 			}
+
+			vv.Enabled = false;
+			m.Document.PdfDocumentPath = f.SourceFilePath;
+			m.LastSavedPdfPath = f.TargetFilePath;
 		}
 	}
 }

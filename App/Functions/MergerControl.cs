@@ -113,11 +113,13 @@ public partial class MergerControl : FunctionControl
 			.ConfigColumn(_PageRangeColumn, c => {
 				c.AspectGetter = o => (o as SourceItem.Pdf)?.PageRanges;
 				c.AspectPutter = (o, v) => {
-					if (o is SourceItem.Pdf p) {
-						p.PageRanges = v as string;
-						if (string.IsNullOrEmpty(p.PageRanges)) {
-							p.PageRanges = "1-" + p.PageCount.ToText();
-						}
+					if (o is not SourceItem.Pdf p) {
+						return;
+					}
+
+					p.PageRanges = v as string;
+					if (string.IsNullOrEmpty(p.PageRanges)) {
+						p.PageRanges = "1-" + p.PageCount.ToText();
 					}
 				};
 			})
@@ -394,16 +396,18 @@ public partial class MergerControl : FunctionControl
 				CheckFileExists = false,
 				Title = "选择包含图片或 PDF 的文件夹，点击“打开”按钮"
 			}) {
-				if (f.ShowDialog() == DialogResult.OK) {
-					string p = Path.GetDirectoryName(f.FileName);
-					if (string.IsNullOrEmpty(Path.GetFileName(p))) {
-						FormHelper.ErrorBox("选择的文件夹无效，不允许选择根目录。");
-						return;
-					}
-
-					ExecuteCommand(Commands.OpenFile, p);
-					AppContext.RecentItems.AddHistoryItem(AppContext.Recent.Folders, p);
+				if (f.ShowDialog() != DialogResult.OK) {
+					return;
 				}
+
+				string p = Path.GetDirectoryName(f.FileName);
+				if (string.IsNullOrEmpty(Path.GetFileName(p))) {
+					FormHelper.ErrorBox("选择的文件夹无效，不允许选择根目录。");
+					return;
+				}
+
+				ExecuteCommand(Commands.OpenFile, p);
+				AppContext.RecentItems.AddHistoryItem(AppContext.Recent.Folders, p);
 			}
 		}
 	}
@@ -617,15 +621,17 @@ public partial class MergerControl : FunctionControl
 				goto case "__Refresh";
 			case "_SetBookmarkTitle":
 				foreach (SourceItem item in _ItemList.SelectedObjects) {
-					if (item != null) {
-						BookmarkSettings b;
-						string t = Path.GetFileNameWithoutExtension(item.FileName);
-						if ((b = item.Bookmark) == null) {
-							b = item.Bookmark = new BookmarkSettings(t);
-						}
-						else {
-							item.Bookmark.Title = t;
-						}
+					if (item == null) {
+						continue;
+					}
+
+					BookmarkSettings b;
+					string t = Path.GetFileNameWithoutExtension(item.FileName);
+					if ((b = item.Bookmark) == null) {
+						b = item.Bookmark = new BookmarkSettings(t);
+					}
+					else {
+						item.Bookmark.Title = t;
 					}
 				}
 
@@ -720,13 +726,15 @@ public partial class MergerControl : FunctionControl
 			}
 
 			c++;
-			if (s.Cropping.Equals(image.Cropping) == false) {
-				if (FormHelper.YesNoBox("选择的图片具有不同的设置，是否重置为统一的值？") == DialogResult.No) {
-					return;
-				}
-
-				break;
+			if (s.Cropping.Equals(image.Cropping) != false) {
+				continue;
 			}
+
+			if (FormHelper.YesNoBox("选择的图片具有不同的设置，是否重置为统一的值？") == DialogResult.No) {
+				return;
+			}
+
+			break;
 		}
 
 		if (s == null) {
@@ -736,14 +744,16 @@ public partial class MergerControl : FunctionControl
 		SourceItem.Image o = new(c > 1 ? (FilePath)(c + " 个文件") : s.FilePath);
 		s.Cropping.CopyTo(o.Cropping);
 		using (SourceImageOptionForm f = new(o)) {
-			if (f.ShowDialog() == DialogResult.OK) {
-				foreach (SourceItem.Image image in items) {
-					if (image == null || image.Type == SourceItem.ItemType.Pdf) {
-						continue;
-					}
+			if (f.ShowDialog() != DialogResult.OK) {
+				return;
+			}
 
-					o.Cropping.CopyTo(image.Cropping);
+			foreach (SourceItem.Image image in items) {
+				if (image == null || image.Type == SourceItem.ItemType.Pdf) {
+					continue;
 				}
+
+				o.Cropping.CopyTo(image.Cropping);
 			}
 		}
 	}
@@ -835,13 +845,15 @@ public partial class MergerControl : FunctionControl
 			}
 
 			string ext = Path.GetExtension(item).ToLowerInvariant();
-			if (ext == Constants.FileExtensions.Pdf ||
-				Constants.FileExtensions.AllSupportedImageExtension.Contains(ext)) {
-				e.Handled = true;
-				e.Effect = DragDropEffects.Copy;
-				e.InfoMessage = string.Concat("添加文件", item, "到", child ? "所有子项" : string.Empty, after ? "后面" : "前面");
-				return;
+			if (ext != Constants.FileExtensions.Pdf &&
+				!Constants.FileExtensions.AllSupportedImageExtension.Contains(ext)) {
+				continue;
 			}
+
+			e.Handled = true;
+			e.Effect = DragDropEffects.Copy;
+			e.InfoMessage = string.Concat("添加文件", item, "到", child ? "所有子项" : string.Empty, after ? "后面" : "前面");
+			return;
 		}
 	}
 

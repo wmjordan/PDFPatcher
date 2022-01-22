@@ -221,12 +221,13 @@ internal sealed class PdfActionExporter
 			return 0;
 		}
 
-		if (pdfObj.Contains(PdfName.TYPE)
-			&& PdfName.PAGES.Equals(pdfObj.GetAsName(PdfName.TYPE))
-			&& pdfObj.Contains(PdfName.KIDS)) {
-			PdfArray kids = (PdfArray)pdfObj.Get(PdfName.KIDS);
-			indirect = (PdfIndirectReference)kids[0];
+		if (!pdfObj.Contains(PdfName.TYPE) || !PdfName.PAGES.Equals(pdfObj.GetAsName(PdfName.TYPE)) ||
+			!pdfObj.Contains(PdfName.KIDS)) {
+			return indirect.Number;
 		}
+
+		PdfArray kids = (PdfArray)pdfObj.Get(PdfName.KIDS);
+		indirect = (PdfIndirectReference)kids[0];
 
 		return indirect.Number;
 	}

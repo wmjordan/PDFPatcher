@@ -110,10 +110,12 @@ public partial class PatcherOptionForm : Form, IResettableControl
 
 	private void PatcherOptionForm_Load(object sender, EventArgs e) {
 		Reload();
-		if (_editorOptions) {
-			_MainTab.TabPages.Remove(_DocumentInfoPage);
-			Options.MetaData.SpecifyMetaData = false;
+		if (!_editorOptions) {
+			return;
 		}
+
+		_MainTab.TabPages.Remove(_DocumentInfoPage);
+		Options.MetaData.SpecifyMetaData = false;
 	}
 
 	protected override void OnClosing(CancelEventArgs e) {

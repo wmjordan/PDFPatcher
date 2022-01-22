@@ -61,10 +61,12 @@ internal sealed class RemoveAnnotationProcessor : IPageProcessor
 			context.Page.Remove(PdfName.ANNOTS);
 		}
 
-		if (removed) {
-			context.IsPageContentModified = true;
-			_processedPageCount++;
+		if (!removed) {
+			return removed;
 		}
+
+		context.IsPageContentModified = true;
+		_processedPageCount++;
 
 		return removed;
 	}

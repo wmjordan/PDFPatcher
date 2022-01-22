@@ -23,12 +23,13 @@ public class TextSizeFilter : AutoBookmarkFilter
 	public float MaxSize { get; }
 
 	internal override bool Matches(AutoBookmarkContext context) {
-		if (context.TextLine == null) {
-			float size = context.TextInfo.Size;
-			return MatchSize(size);
+		if (context.TextLine != null) {
+			return context.TextLine.Texts.Any(item => MatchSize(item.Size));
 		}
 
-		return context.TextLine.Texts.Any(item => MatchSize(item.Size));
+		float size = context.TextInfo.Size;
+		return MatchSize(size);
+
 	}
 
 	private bool MatchSize(float size) {

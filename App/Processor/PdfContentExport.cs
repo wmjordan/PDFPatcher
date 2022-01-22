@@ -418,24 +418,26 @@ internal sealed class PdfContentExport
 				int p1 = 0, p2 = 0;
 				for (int i = 0; i < l; i++) {
 					byte b = bs[i];
-					if (b == 0x0A || b == 0x0D || i + 1 == l) {
-						p2 = i;
-						if (i > 2 && bs[i - 2] == 'T' && (bs[i - 1] == 'J' || bs[i - 1] == 'j')) {
-							// is a text operation
-							ExportStreamTextContent(bs, sb, p1, p2);
-							sb.AppendLine();
-						}
-						else {
-							sb.Append(Encoding.ASCII.GetString(bs, p1, p2 - p1));
-							sb.AppendLine();
-						}
-
-						if (b == 0x0D && i + 1 < l && bs[i + 1] == 0x0A) {
-							i++;
-						}
-
-						p1 = i + 1;
+					if (b != 0x0A && b != 0x0D && i + 1 != l) {
+						continue;
 					}
+
+					p2 = i;
+					if (i > 2 && bs[i - 2] == 'T' && (bs[i - 1] == 'J' || bs[i - 1] == 'j')) {
+						// is a text operation
+						ExportStreamTextContent(bs, sb, p1, p2);
+						sb.AppendLine();
+					}
+					else {
+						sb.Append(Encoding.ASCII.GetString(bs, p1, p2 - p1));
+						sb.AppendLine();
+					}
+
+					if (b == 0x0D && i + 1 < l && bs[i + 1] == 0x0A) {
+						i++;
+					}
+
+					p1 = i + 1;
 				}
 
 				if (sb.Length == 0) {
@@ -653,10 +655,12 @@ internal sealed class PdfContentExport
 				case "ET":
 				case "EX":
 				case "Q":
-					if (_writerLevel > 0 && _writeOperators) {
-						_writer.WriteEndElement();
-						_writerLevel--;
+					if (_writerLevel <= 0 || !_writeOperators) {
+						return;
 					}
+
+					_writer.WriteEndElement();
+					_writerLevel--;
 
 					return;
 				case "TJ":

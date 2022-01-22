@@ -107,14 +107,15 @@ internal static class PdfModelHelper
 		byte[] bytes = text.GetBytes();
 		using (MemoryStream ms = new(bytes)) {
 			if (encoding == null) {
-				if (bytes.Length >= 2 &&
-					((bytes[0] == 0xFF && bytes[1] == 0xFE) || (bytes[0] == 0xFE && bytes[1] == 0xFF))) {
-					using (TextReader r = new StreamReader(ms, true)) {
-						return r.ReadToEnd();
-					}
+				if (bytes.Length < 2 ||
+					((bytes[0] != 0xFF || bytes[1] != 0xFE) && (bytes[0] != 0xFE || bytes[1] != 0xFF))) {
+					return PdfEncodings.ConvertToString(bytes, PdfObject.TEXT_PDFDOCENCODING);
 				}
 
-				return PdfEncodings.ConvertToString(bytes, PdfObject.TEXT_PDFDOCENCODING);
+				using (TextReader r = new StreamReader(ms, true)) {
+					return r.ReadToEnd();
+				}
+
 			}
 
 			// 忽略字节顺序标记
@@ -142,10 +143,12 @@ internal static class PdfModelHelper
 
 		bool u = false;
 		foreach (char c in text) {
-			if (c > 127) {
-				u = true;
-				break;
+			if (c <= 127) {
+				continue;
 			}
+
+			u = true;
+			break;
 		}
 
 		return u ? new PdfString(text, PdfObject.TEXT_UNICODE) : new PdfString(text);

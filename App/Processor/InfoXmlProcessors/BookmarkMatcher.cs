@@ -43,14 +43,16 @@ internal abstract class BookmarkMatcher
 
 			string t = a.Value;
 			//if (_regexSearch) {
-			if (_matcher.Matches(t)) {
-				string r = _matcher.Replace(t, replacement);
-				if (r == t) {
-					return null;
-				}
-
-				return UndoAttributeAction.GetUndoAction(item, Constants.BookmarkAttributes.Title, r);
+			if (!_matcher.Matches(t)) {
+				return null;
 			}
+
+			string r = _matcher.Replace(t, replacement);
+			if (r == t) {
+				return null;
+			}
+
+			return UndoAttributeAction.GetUndoAction(item, Constants.BookmarkAttributes.Title, r);
 
 			//}
 			//else if (t != replacement) {
@@ -58,7 +60,6 @@ internal abstract class BookmarkMatcher
 			//    item.SetAttribute (Constants.BookmarkAttributes.Title, replacement);
 			//    return undo;
 			//}
-			return null;
 		}
 	}
 

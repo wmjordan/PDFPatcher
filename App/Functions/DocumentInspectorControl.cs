@@ -56,11 +56,13 @@ namespace PDFPatcher.Functions
 		public string DocumentPath {
 			get => _fileName;
 			set {
-				if (_fileName != value) {
-					_fileName = value;
-					if (DocumentChanged != null) {
-						DocumentChanged(this, new DocumentChangedEventArgs(value));
-					}
+				if (_fileName == value) {
+					return;
+				}
+
+				_fileName = value;
+				if (DocumentChanged != null) {
+					DocumentChanged(this, new DocumentChangedEventArgs(value));
 				}
 			}
 		}
@@ -117,16 +119,18 @@ namespace PDFPatcher.Functions
 						case PdfObjectType.PageCommands:
 							return __OpNameIcons["PageCommands"];
 						case PdfObjectType.PageCommand:
-							if (d.ImageKey == null) {
-								if ((d.ExtensiveObject is string n && __OpNameIcons.TryGetValue(n, out int ic))
-									|| (d.Name.StartsWith(Constants.ContentPrefix + ":") &&
-										__OpNameIcons.TryGetValue(d.Name, out ic))
-								   ) {
-									d.ImageKey = ic;
-								}
-								else {
-									d.ImageKey = __OpNameIcons["Null"];
-								}
+							if (d.ImageKey != null) {
+								return d.ImageKey;
+							}
+
+							if ((d.ExtensiveObject is string n && __OpNameIcons.TryGetValue(n, out int ic))
+								|| (d.Name.StartsWith(Constants.ContentPrefix + ":") &&
+									__OpNameIcons.TryGetValue(d.Name, out ic))
+							   ) {
+								d.ImageKey = ic;
+							}
+							else {
+								d.ImageKey = __OpNameIcons["Null"];
 							}
 
 							return d.ImageKey;
@@ -365,11 +369,13 @@ namespace PDFPatcher.Functions
 					i += (_ObjectDetailBox.VirtualListDataSource as TreeListView.Tree).GetVisibleDescendentCount(m);
 				}
 
-				if (m.ExtensiveObject != null && m.Value != null && m.Value.Type == PdfObject.INDIRECT) {
-					PdfIndirectReference mv = m.Value as PdfIndirectReference;
-					if (mv.Number == v.Number && mv.Generation == v.Generation && m != r) {
-						_ObjectDetailBox.RefreshObject(m);
-					}
+				if (m.ExtensiveObject == null || m.Value == null || m.Value.Type != PdfObject.INDIRECT) {
+					continue;
+				}
+
+				PdfIndirectReference mv = m.Value as PdfIndirectReference;
+				if (mv.Number == v.Number && mv.Generation == v.Generation && m != r) {
+					_ObjectDetailBox.RefreshObject(m);
 				}
 			}
 		}
@@ -381,14 +387,16 @@ namespace PDFPatcher.Functions
 
 			StringCollection f = o.GetFileDropList();
 			foreach (string item in f) {
-				if (FileHelper.HasExtension(item, Constants.FileExtensions.Xml)
-					|| FileHelper.HasExtension(item, Constants.FileExtensions.Pdf)) {
-					e.Handled = true;
-					e.DropTargetLocation = DropTargetLocation.Background;
-					e.Effect = DragDropEffects.Move;
-					e.InfoMessage = "打开文件" + item;
-					return;
+				if (!FileHelper.HasExtension(item, Constants.FileExtensions.Xml) &&
+					!FileHelper.HasExtension(item, Constants.FileExtensions.Pdf)) {
+					continue;
 				}
+
+				e.Handled = true;
+				e.DropTargetLocation = DropTargetLocation.Background;
+				e.Effect = DragDropEffects.Move;
+				e.InfoMessage = "打开文件" + item;
+				return;
 			}
 
 			e.Effect = DragDropEffects.None;
@@ -515,16 +523,17 @@ namespace PDFPatcher.Functions
 		}
 
 		private static int GetImageKey(DocumentObject d) {
-			if (d.Value != null) {
-				PdfObject po = d.Value;
-				if (po.Type == PdfObject.INDIRECT && d.ExtensiveObject is PdfObject) {
-					po = d.ExtensiveObject as PdfObject;
-				}
-
-				return __PdfObjectIcons.GetOrDefault(po.Type);
+			if (d.Value == null) {
+				return __PdfObjectIcons[PdfObject.NULL];
 			}
 
-			return __PdfObjectIcons[PdfObject.NULL];
+			PdfObject po = d.Value;
+			if (po.Type == PdfObject.INDIRECT && d.ExtensiveObject is PdfObject) {
+				po = d.ExtensiveObject as PdfObject;
+			}
+
+			return __PdfObjectIcons.GetOrDefault(po.Type);
+
 		}
 
 		private void _GotoImportLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
@@ -562,10 +571,12 @@ namespace PDFPatcher.Functions
 				_DescriptionBox.AppendText("类型：" + type);
 			}
 
-			if (description != null) {
-				_DescriptionBox.AppendText(Environment.NewLine);
-				_DescriptionBox.AppendText(description);
+			if (description == null) {
+				return;
 			}
+
+			_DescriptionBox.AppendText(Environment.NewLine);
+			_DescriptionBox.AppendText(description);
 		}
 
 		private void ToolbarItemClicked(object sender, ToolStripItemClickedEventArgs e) {
@@ -593,10 +604,12 @@ namespace PDFPatcher.Functions
 					po = n.Parent.ExtensiveObject as PdfObject;
 				}
 
-				if (PdfHelper.CompoundTypes.Contains(po.Type)) {
-					if (n.Parent.RemoveChildByName(n.Name)) {
-						_ObjectDetailBox.RefreshObject(n.Parent);
-					}
+				if (!PdfHelper.CompoundTypes.Contains(po.Type)) {
+					return;
+				}
+
+				if (n.Parent.RemoveChildByName(n.Name)) {
+					_ObjectDetailBox.RefreshObject(n.Parent);
 				}
 				//}
 			}
@@ -613,13 +626,15 @@ namespace PDFPatcher.Functions
 					|| n.Name == "Thumb") {
 					ImageInfo info = new ImageInfo(s);
 					byte[] bytes = info.DecodeImage(_imgExpOption);
-					if (bytes != null) {
-						if (info.LastDecodeError != null) {
-							FormHelper.ErrorBox("导出图像时出现错误：" + info.LastDecodeError);
-						}
-						else if (info.ExtName != Constants.FileExtensions.Dat) {
-							new ImageViewerForm(info, bytes).Show();
-						}
+					if (bytes == null) {
+						return;
+					}
+
+					if (info.LastDecodeError != null) {
+						FormHelper.ErrorBox("导出图像时出现错误：" + info.LastDecodeError);
+					}
+					else if (info.ExtName != Constants.FileExtensions.Dat) {
+						new ImageViewerForm(info, bytes).Show();
 					}
 				}
 				else {
@@ -695,14 +710,16 @@ namespace PDFPatcher.Functions
 		private void AddChildNode(DocumentObject documentObject, int objectType) {
 			using (AddPdfObjectForm f = new AddPdfObjectForm()) {
 				f.PdfObjectType = objectType;
-				if (f.ShowDialog() == DialogResult.OK) {
-					PdfDictionary d =
-						(documentObject.ExtensiveObject ?? documentObject.ExtensiveObject) as PdfDictionary;
-					PdfObject v = f.PdfValue;
-					d.Put(new PdfName(f.ObjectName), f.CreateAsIndirect ? _pdf.Document.AddPdfObject(v) : v);
-					documentObject.PopulateChildren(true);
-					_ObjectDetailBox.RefreshObject(documentObject);
+				if (f.ShowDialog() != DialogResult.OK) {
+					return;
 				}
+
+				PdfDictionary d =
+					(documentObject.ExtensiveObject ?? documentObject.ExtensiveObject) as PdfDictionary;
+				PdfObject v = f.PdfValue;
+				d.Put(new PdfName(f.ObjectName), f.CreateAsIndirect ? _pdf.Document.AddPdfObject(v) : v);
+				documentObject.PopulateChildren(true);
+				_ObjectDetailBox.RefreshObject(documentObject);
 			}
 		}
 
@@ -714,24 +731,26 @@ namespace PDFPatcher.Functions
 				Filter = Constants.FileExtensions.XmlFilter,
 				Title = "请选择信息文件的保存位置"
 			}) {
-				if (d.ShowDialog() == DialogResult.OK) {
-					PdfContentExport exp = new PdfContentExport(new ExporterOptions() {
-						ExtractPageDictionary = true,
-						ExportContentOperators = true
-					});
-					using (XmlWriter w = XmlWriter.Create(d.FileName, DocInfoExporter.GetWriterSettings())) {
-						w.WriteStartDocument();
-						w.WriteStartElement(Constants.PdfInfo);
-						w.WriteAttributeString(Constants.ContentPrefix, "http://www.w3.org/2000/xmlns/",
-							Constants.ContentNamespace);
-						DocInfoExporter.WriteDocumentInfoAttributes(w, _fileName, _pdf.PageCount);
-						if (exportTrailer) {
-							exp.ExportTrailer(w, _pdf.Document);
-						}
+				if (d.ShowDialog() != DialogResult.OK) {
+					return;
+				}
 
-						exp.ExtractPage(_pdf.Document, w, pages);
-						w.WriteEndElement();
+				PdfContentExport exp = new PdfContentExport(new ExporterOptions() {
+					ExtractPageDictionary = true,
+					ExportContentOperators = true
+				});
+				using (XmlWriter w = XmlWriter.Create(d.FileName, DocInfoExporter.GetWriterSettings())) {
+					w.WriteStartDocument();
+					w.WriteStartElement(Constants.PdfInfo);
+					w.WriteAttributeString(Constants.ContentPrefix, "http://www.w3.org/2000/xmlns/",
+						Constants.ContentNamespace);
+					DocInfoExporter.WriteDocumentInfoAttributes(w, _fileName, _pdf.PageCount);
+					if (exportTrailer) {
+						exp.ExportTrailer(w, _pdf.Document);
 					}
+
+					exp.ExtractPage(_pdf.Document, w, pages);
+					w.WriteEndElement();
 				}
 			}
 		}
@@ -744,15 +763,17 @@ namespace PDFPatcher.Functions
 				Filter = "文本形式的二进制数据文件(*.txt)|*.txt|" + Constants.FileExtensions.AllFilter,
 				Title = "请选择文件流的保存位置"
 			}) {
-				if (d.ShowDialog() == DialogResult.OK) {
-					PRStream s = n.ExtensiveObject as PRStream;
-					try {
-						byte[] sb = decode ? DecodeStreamBytes(n) : PdfReader.GetStreamBytesRaw(s);
-						sb.DumpHexBinBytes(d.FileName);
-					}
-					catch (Exception ex) {
-						FormHelper.ErrorBox("在导出流数据时出错：" + ex.Message);
-					}
+				if (d.ShowDialog() != DialogResult.OK) {
+					return;
+				}
+
+				PRStream s = n.ExtensiveObject as PRStream;
+				try {
+					byte[] sb = decode ? DecodeStreamBytes(n) : PdfReader.GetStreamBytesRaw(s);
+					sb.DumpHexBinBytes(d.FileName);
+				}
+				catch (Exception ex) {
+					FormHelper.ErrorBox("在导出流数据时出错：" + ex.Message);
 				}
 			}
 		}
@@ -765,15 +786,17 @@ namespace PDFPatcher.Functions
 				Filter = "二进制数据文件(*.bin,*.dat)|*.bin;*.dat|" + Constants.FileExtensions.AllFilter,
 				Title = "请选择文件流的保存位置"
 			}) {
-				if (d.ShowDialog() == DialogResult.OK) {
-					PRStream s = n.ExtensiveObject as PRStream;
-					try {
-						byte[] sb = decode ? DecodeStreamBytes(n) : PdfReader.GetStreamBytesRaw(s);
-						sb.DumpBytes(d.FileName);
-					}
-					catch (Exception ex) {
-						FormHelper.ErrorBox("在导出流数据时出错：" + ex.Message);
-					}
+				if (d.ShowDialog() != DialogResult.OK) {
+					return;
+				}
+
+				PRStream s = n.ExtensiveObject as PRStream;
+				try {
+					byte[] sb = decode ? DecodeStreamBytes(n) : PdfReader.GetStreamBytesRaw(s);
+					sb.DumpBytes(d.FileName);
+				}
+				catch (Exception ex) {
+					FormHelper.ErrorBox("在导出流数据时出错：" + ex.Message);
 				}
 			}
 		}
@@ -786,46 +809,49 @@ namespace PDFPatcher.Functions
 				Filter = "统一码映射信息文件(*.xml)|*.xml|" + Constants.FileExtensions.AllFilter,
 				Title = "请选择统一码映射表的保存位置"
 			}) {
-				if (d.ShowDialog() == DialogResult.OK) {
-					PRStream s = n.ExtensiveObject as PRStream;
-					try {
-						byte[] touni = PdfReader.GetStreamBytes((PRStream)s);
-						CidLocationFromByte lb = new CidLocationFromByte(touni);
-						CMapToUnicode m = new CMapToUnicode();
-						CMapParserEx.ParseCid("", m, lb);
-						using (XmlWriter w = XmlWriter.Create(d.FileName, DocInfoExporter.GetWriterSettings())) {
-							w.WriteStartElement("toUnicode");
-							w.WriteAttributeString("name", m.Name);
-							w.WriteAttributeString("registry", m.Registry);
-							w.WriteAttributeString("supplement", m.Supplement.ToText());
-							w.WriteAttributeString("ordering", m.Ordering);
-							w.WriteAttributeString("oneByteMappings", m.HasOneByteMappings().ToString());
-							w.WriteAttributeString("twoByteMappings", m.HasTwoByteMappings().ToString());
-							foreach (KeyValuePair<int, int> item in m.CreateDirectMapping()) {
-								w.WriteStartElement("map");
-								w.WriteAttributeString("cid", item.Key.ToText());
-								w.WriteAttributeString("uni", Char.ConvertFromUtf32(item.Value));
-								w.WriteEndElement();
-							}
+				if (d.ShowDialog() != DialogResult.OK) {
+					return;
+				}
 
+				PRStream s = n.ExtensiveObject as PRStream;
+				try {
+					byte[] touni = PdfReader.GetStreamBytes((PRStream)s);
+					CidLocationFromByte lb = new CidLocationFromByte(touni);
+					CMapToUnicode m = new CMapToUnicode();
+					CMapParserEx.ParseCid("", m, lb);
+					using (XmlWriter w = XmlWriter.Create(d.FileName, DocInfoExporter.GetWriterSettings())) {
+						w.WriteStartElement("toUnicode");
+						w.WriteAttributeString("name", m.Name);
+						w.WriteAttributeString("registry", m.Registry);
+						w.WriteAttributeString("supplement", m.Supplement.ToText());
+						w.WriteAttributeString("ordering", m.Ordering);
+						w.WriteAttributeString("oneByteMappings", m.HasOneByteMappings().ToString());
+						w.WriteAttributeString("twoByteMappings", m.HasTwoByteMappings().ToString());
+						foreach (KeyValuePair<int, int> item in m.CreateDirectMapping()) {
+							w.WriteStartElement("map");
+							w.WriteAttributeString("cid", item.Key.ToText());
+							w.WriteAttributeString("uni", Char.ConvertFromUtf32(item.Value));
 							w.WriteEndElement();
 						}
+
+						w.WriteEndElement();
 					}
-					catch (Exception ex) {
-						FormHelper.ErrorBox("在导出统一码映射表数据时出错：" + ex.Message);
-					}
+				}
+				catch (Exception ex) {
+					FormHelper.ErrorBox("在导出统一码映射表数据时出错：" + ex.Message);
 				}
 			}
 		}
 
 		private static byte[] DecodeStreamBytes(DocumentObject d) {
 			PRStream s = d.Value as PRStream ?? d.ExtensiveObject as PRStream;
-			if (d.Type == PdfObjectType.Image) {
-				ImageInfo info = new ImageInfo(s);
-				return info.DecodeImage(_imgExpOption);
+			if (d.Type != PdfObjectType.Image) {
+				return PdfReader.GetStreamBytes(s);
 			}
 
-			return PdfReader.GetStreamBytes(s);
+			ImageInfo info = new ImageInfo(s);
+			return info.DecodeImage(_imgExpOption);
+
 		}
 
 		private void SaveDocument() {

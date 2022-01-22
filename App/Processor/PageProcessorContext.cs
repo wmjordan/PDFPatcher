@@ -37,11 +37,13 @@ internal sealed class PageProcessorContext
 	/// <summary>获取正在处理的页面指令集合。</summary>
 	public IPdfPageCommandContainer PageCommands {
 		get {
-			if (_processor == null) {
-				_processor = new PdfPageCommandProcessor();
-				PdfDictionary resources = Page.Locate<PdfDictionary>(PdfName.RESOURCES);
-				_processor.ProcessContent(PdfReader.GetPageContent(Page), resources);
+			if (_processor != null) {
+				return _processor;
 			}
+
+			_processor = new PdfPageCommandProcessor();
+			PdfDictionary resources = Page.Locate<PdfDictionary>(PdfName.RESOURCES);
+			_processor.ProcessContent(PdfReader.GetPageContent(Page), resources);
 
 			return _processor;
 		}

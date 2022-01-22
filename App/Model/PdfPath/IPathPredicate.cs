@@ -26,12 +26,13 @@ internal abstract class PathPredicate : IPathPredicate
 		public override PredicateOperatorType Operator => PredicateOperatorType.Contains;
 
 		public override bool Match(DocumentObject source, IPathValue value1, IPathValue value2) {
-			if (value1.ValueType == PathValueType.Expression) {
-				IPathExpression exp = value1 as IPathExpression;
-				return exp.SelectObjects(source).Count > 0;
+			if (value1.ValueType != PathValueType.Expression) {
+				return false;
 			}
 
-			return false;
+			IPathExpression exp = value1 as IPathExpression;
+			return exp.SelectObjects(source).Count > 0;
+
 		}
 	}
 

@@ -24,12 +24,13 @@ public class FontNameFilter : AutoBookmarkFilter
 	public bool MatchFullName { get; set; }
 
 	internal override bool Matches(AutoBookmarkContext context) {
-		if (context.TextLine == null) {
-			FontInfo font = context.TextInfo.Font;
-			return MatchFont(font);
+		if (context.TextLine != null) {
+			return context.TextLine.Texts.Any(item => MatchFont(item.Font));
 		}
 
-		return context.TextLine.Texts.Any(item => MatchFont(item.Font));
+		FontInfo font = context.TextInfo.Font;
+		return MatchFont(font);
+
 	}
 
 	private bool MatchFont(FontInfo font) {

@@ -528,32 +528,39 @@ internal static class Worker
 	/// <returns>替换目标文件名后的文件名。</returns>
 	internal static string ReplaceTargetFileNameMacros(string sourceFile, string targetFile, PdfDictionary info) {
 		string p = null; // 文档属性
-		if (info != null) {
-			if (info.Contains(PdfName.TITLE)) {
-				p = FileHelper.GetValidFileName(info.GetAsString(PdfName.TITLE).ToUnicodeString());
-			}
-
-			targetFile = targetFile.Replace(Constants.FileNameMacros.TitleProperty,
-				p ?? Path.GetFileNameWithoutExtension(sourceFile));
-			p = string.Empty;
-			if (info.Contains(PdfName.SUBJECT)) {
-				p = FileHelper.GetValidFileName(info.GetAsString(PdfName.SUBJECT).ToUnicodeString());
-			}
-
-			targetFile = targetFile.Replace(Constants.FileNameMacros.SubjectProperty, p);
-			p = string.Empty;
-			if (info.Contains(PdfName.AUTHOR)) {
-				p = FileHelper.GetValidFileName(info.GetAsString(PdfName.AUTHOR).ToUnicodeString());
-			}
-
-			targetFile = targetFile.Replace(Constants.FileNameMacros.AuthorProperty, p);
-			p = string.Empty;
-			if (info.Contains(PdfName.KEYWORDS)) {
-				p = FileHelper.GetValidFileName(info.GetAsString(PdfName.KEYWORDS).ToUnicodeString());
-			}
-
-			targetFile = targetFile.Replace(Constants.FileNameMacros.KeywordsProperty, p);
+		if (info == null) {
+			return targetFile
+				.Replace(Constants.FileNameMacros.FileName, Path.GetFileNameWithoutExtension(sourceFile))
+				.Replace(Constants.FileNameMacros.FolderName, Path.GetFileName(Path.GetDirectoryName(sourceFile)))
+				.Replace(Constants.FileNameMacros.PathName,
+					FileHelper.CombinePath(sourceFile.Substring(0, sourceFile.LastIndexOf(Path.DirectorySeparatorChar)),
+						string.Empty));
 		}
+
+		if (info.Contains(PdfName.TITLE)) {
+			p = FileHelper.GetValidFileName(info.GetAsString(PdfName.TITLE).ToUnicodeString());
+		}
+
+		targetFile = targetFile.Replace(Constants.FileNameMacros.TitleProperty,
+			p ?? Path.GetFileNameWithoutExtension(sourceFile));
+		p = string.Empty;
+		if (info.Contains(PdfName.SUBJECT)) {
+			p = FileHelper.GetValidFileName(info.GetAsString(PdfName.SUBJECT).ToUnicodeString());
+		}
+
+		targetFile = targetFile.Replace(Constants.FileNameMacros.SubjectProperty, p);
+		p = string.Empty;
+		if (info.Contains(PdfName.AUTHOR)) {
+			p = FileHelper.GetValidFileName(info.GetAsString(PdfName.AUTHOR).ToUnicodeString());
+		}
+
+		targetFile = targetFile.Replace(Constants.FileNameMacros.AuthorProperty, p);
+		p = string.Empty;
+		if (info.Contains(PdfName.KEYWORDS)) {
+			p = FileHelper.GetValidFileName(info.GetAsString(PdfName.KEYWORDS).ToUnicodeString());
+		}
+
+		targetFile = targetFile.Replace(Constants.FileNameMacros.KeywordsProperty, p);
 
 		return targetFile
 			.Replace(Constants.FileNameMacros.FileName, Path.GetFileNameWithoutExtension(sourceFile))

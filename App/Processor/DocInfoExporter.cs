@@ -314,33 +314,35 @@ internal sealed class DocInfoExporter
 		}
 
 		List<PageLabel> labels = ExtractPageLabels(catalog.GetAsDict(PdfName.PAGELABELS));
-		if (labels.Count > 0) {
-			w.WriteStartElement(Constants.PageLabels);
-			foreach (PageLabel item in labels) {
-				w.WriteStartElement(Constants.PageLabelsAttributes.Style);
-				w.WriteAttributeString(Constants.PageLabelsAttributes.PageNumber, item.PageNumber.ToText());
-				if (item.StartPage != 0) {
-					w.WriteAttributeString(Constants.PageLabelsAttributes.StartPage, item.StartPage.ToText());
-				}
+		if (labels.Count <= 0) {
+			return;
+		}
 
-				if (string.IsNullOrEmpty(item.Prefix) == false) {
-					w.WriteAttributeString(Constants.PageLabelsAttributes.Prefix, item.Prefix);
-				}
+		w.WriteStartElement(Constants.PageLabels);
+		foreach (PageLabel item in labels) {
+			w.WriteStartElement(Constants.PageLabelsAttributes.Style);
+			w.WriteAttributeString(Constants.PageLabelsAttributes.PageNumber, item.PageNumber.ToText());
+			if (item.StartPage != 0) {
+				w.WriteAttributeString(Constants.PageLabelsAttributes.StartPage, item.StartPage.ToText());
+			}
 
-				if (string.IsNullOrEmpty(item.Style) == false) {
-					w.WriteAttributeString(Constants.PageLabelsAttributes.Style,
-						ValueHelper.MapValue(item.Style[0],
-							Constants.PageLabelStyles.PdfValues,
-							Constants.PageLabelStyles.Names,
-							item.Style)
-					);
-				}
+			if (string.IsNullOrEmpty(item.Prefix) == false) {
+				w.WriteAttributeString(Constants.PageLabelsAttributes.Prefix, item.Prefix);
+			}
 
-				w.WriteEndElement();
+			if (string.IsNullOrEmpty(item.Style) == false) {
+				w.WriteAttributeString(Constants.PageLabelsAttributes.Style,
+					ValueHelper.MapValue(item.Style[0],
+						Constants.PageLabelStyles.PdfValues,
+						Constants.PageLabelStyles.Names,
+						item.Style)
+				);
 			}
 
 			w.WriteEndElement();
 		}
+
+		w.WriteEndElement();
 	}
 
 	private static List<PageLabel> ExtractPageLabels(PdfDictionary labels) {
@@ -433,18 +435,20 @@ internal sealed class DocInfoExporter
 
 	internal void ExportNamedDestinations(XmlWriter w) {
 		Dictionary<object, PdfObject> nds = _reader.GetNamedDestination();
-		if (nds != null && nds.Count > 0) {
-			w.WriteStartElement(Constants.NamedDestination);
-			foreach (KeyValuePair<object, PdfObject> item in nds) {
-				w.WriteStartElement("位置");
-				w.WriteAttributeString(Constants.DestinationAttributes.Name,
-					StringHelper.ReplaceControlAndBomCharacters(item.Key.ToString()));
-				_actionExport.ExportGotoAction(item.Value, w, PageReferenceMapper);
-				w.WriteEndElement();
-			}
+		if (nds == null || nds.Count <= 0) {
+			return;
+		}
 
+		w.WriteStartElement(Constants.NamedDestination);
+		foreach (KeyValuePair<object, PdfObject> item in nds) {
+			w.WriteStartElement("位置");
+			w.WriteAttributeString(Constants.DestinationAttributes.Name,
+				StringHelper.ReplaceControlAndBomCharacters(item.Key.ToString()));
+			_actionExport.ExportGotoAction(item.Value, w, PageReferenceMapper);
 			w.WriteEndElement();
 		}
+
+		w.WriteEndElement();
 	}
 
 	internal void ExportBookmarks(XmlElement bookmarks, TextWriter w, int level, bool isOpen) {
@@ -477,11 +481,13 @@ internal sealed class DocInfoExporter
 				w.WriteLine(page);
 			}
 
-			if (childBookmarks != null) {
-				level++;
-				ExportBookmarks(item, w, level, isOpen);
-				level--;
+			if (childBookmarks == null) {
+				continue;
 			}
+
+			level++;
+			ExportBookmarks(item, w, level, isOpen);
+			level--;
 		}
 	}
 
@@ -561,95 +567,97 @@ internal sealed class DocInfoExporter
 				}
 
 				PdfDictionary annot = (PdfDictionary)PdfReader.GetPdfObjectRelease(item);
-				if (PdfName.LINK.Equals(annot.Get(PdfName.SUBTYPE))) {
-					w.WriteStartElement(Constants.PageLinkAttributes.Link);
-					w.WriteAttributeString(Constants.PageLinkAttributes.PageNumber, i.ToText());
-					PdfArray rect = annot.GetAsArray(PdfName.RECT);
-					if (rect != null && rect.Size == 4) {
-						UnitConverter u = _options.UnitConverter;
-						float[] p = new float[4];
-						int k = 0;
-						foreach (PdfNumber ri in rect.ArrayList) {
-							if (ri == null) {
-								break;
-							}
+				if (!PdfName.LINK.Equals(annot.Get(PdfName.SUBTYPE))) {
+					continue;
+				}
 
-							p[k] = u.FromPoint(ri.FloatValue);
-							k++;
+				w.WriteStartElement(Constants.PageLinkAttributes.Link);
+				w.WriteAttributeString(Constants.PageLinkAttributes.PageNumber, i.ToText());
+				PdfArray rect = annot.GetAsArray(PdfName.RECT);
+				if (rect != null && rect.Size == 4) {
+					UnitConverter u = _options.UnitConverter;
+					float[] p = new float[4];
+					int k = 0;
+					foreach (PdfNumber ri in rect.ArrayList) {
+						if (ri == null) {
+							break;
 						}
 
-						if (k == 4) {
-							w.WriteAttributeString(Constants.Coordinates.Left, p[0].ToText());
-							w.WriteAttributeString(Constants.Coordinates.Bottom, p[1].ToText());
-							w.WriteAttributeString(Constants.Coordinates.Right, p[2].ToText());
-							w.WriteAttributeString(Constants.Coordinates.Top, p[3].ToText());
-						}
+						p[k] = u.FromPoint(ri.FloatValue);
+						k++;
 					}
 
-					if (annot.Contains(PdfName.BORDER)) {
-						w.WriteAttributeString(Constants.PageLinkAttributes.Border,
-							PdfHelper.GetNumericArrayString(annot.GetAsArray(PdfName.BORDER), 1));
+					if (k == 4) {
+						w.WriteAttributeString(Constants.Coordinates.Left, p[0].ToText());
+						w.WriteAttributeString(Constants.Coordinates.Bottom, p[1].ToText());
+						w.WriteAttributeString(Constants.Coordinates.Right, p[2].ToText());
+						w.WriteAttributeString(Constants.Coordinates.Top, p[3].ToText());
+					}
+				}
+
+				if (annot.Contains(PdfName.BORDER)) {
+					w.WriteAttributeString(Constants.PageLinkAttributes.Border,
+						PdfHelper.GetNumericArrayString(annot.GetAsArray(PdfName.BORDER), 1));
+				}
+
+				if (annot.Contains(PdfName.C)) {
+					ExportColor(annot.GetAsArray(PdfName.C), w);
+				}
+
+				if (annot.Contains(PdfName.H)) {
+					string style = PdfHelper.GetPdfNameString(annot.GetAsName(PdfName.H));
+					style = ValueHelper.MapValue(style,
+						new[] { "N", "I", "O", "P" },
+						new[] { "无", "取反内容", "取反边框", "按下" },
+						style
+					);
+					w.WriteAttributeString(Constants.PageLinkAttributes.Style, style);
+				}
+
+				//if (annot.Contains (PdfName.M)) {
+				//    try {
+				//        w.WriteAttributeString ("日期", PdfDate.Decode (annot.GetAsString (PdfName.M).ToString ()).ToString ());
+				//    }
+				//    catch (Exception) {
+				//        w.WriteAttributeString ("日期", annot.GetAsString (PdfName.M).ToString ());
+				//    }
+				//}
+				if (annot.Contains(PdfName.QUADPOINTS)) {
+					w.WriteAttributeString(Constants.PageLinkAttributes.QuadPoints,
+						PdfHelper.GetNumericArrayString(annot.GetAsArray(PdfName.QUADPOINTS),
+							_options.UnitConverter.UnitFactor));
+				}
+
+				if (annot.Contains(PdfName.CONTENTS)) {
+					w.WriteAttributeString(Constants.PageLinkAttributes.Contents,
+						annot.GetAsString(PdfName.CONTENTS).ToUnicodeString());
+				}
+
+				ExportLinkAction(annot, w);
+				if (annot.Contains(PdfName.BS)) {
+					w.WriteStartElement("边框样式");
+					PdfDictionary bs = annot.GetAsDict(PdfName.BS);
+					if (bs.Contains(PdfName.W)) {
+						w.WriteAttributeString("宽度", bs.GetAsNumber(PdfName.W).FloatValue.ToText());
 					}
 
-					if (annot.Contains(PdfName.C)) {
-						ExportColor(annot.GetAsArray(PdfName.C), w);
-					}
-
-					if (annot.Contains(PdfName.H)) {
-						string style = PdfHelper.GetPdfNameString(annot.GetAsName(PdfName.H));
+					if (bs.Contains(PdfName.S)) {
+						string style = PdfHelper.GetPdfNameString(bs.GetAsName(PdfName.S));
 						style = ValueHelper.MapValue(style,
-							new[] { "N", "I", "O", "P" },
-							new[] { "无", "取反内容", "取反边框", "按下" },
+							new[] { "S", "U", "D", "B", "I" },
+							new[] { "方框", "下划线", "虚线", "凸起", "凹陷" },
 							style
 						);
-						w.WriteAttributeString(Constants.PageLinkAttributes.Style, style);
-					}
-
-					//if (annot.Contains (PdfName.M)) {
-					//    try {
-					//        w.WriteAttributeString ("日期", PdfDate.Decode (annot.GetAsString (PdfName.M).ToString ()).ToString ());
-					//    }
-					//    catch (Exception) {
-					//        w.WriteAttributeString ("日期", annot.GetAsString (PdfName.M).ToString ());
-					//    }
-					//}
-					if (annot.Contains(PdfName.QUADPOINTS)) {
-						w.WriteAttributeString(Constants.PageLinkAttributes.QuadPoints,
-							PdfHelper.GetNumericArrayString(annot.GetAsArray(PdfName.QUADPOINTS),
-								_options.UnitConverter.UnitFactor));
-					}
-
-					if (annot.Contains(PdfName.CONTENTS)) {
-						w.WriteAttributeString(Constants.PageLinkAttributes.Contents,
-							annot.GetAsString(PdfName.CONTENTS).ToUnicodeString());
-					}
-
-					ExportLinkAction(annot, w);
-					if (annot.Contains(PdfName.BS)) {
-						w.WriteStartElement("边框样式");
-						PdfDictionary bs = annot.GetAsDict(PdfName.BS);
-						if (bs.Contains(PdfName.W)) {
-							w.WriteAttributeString("宽度", bs.GetAsNumber(PdfName.W).FloatValue.ToText());
+						w.WriteAttributeString("样式", style);
+						if (PdfName.D.Equals(bs.GetAsName(PdfName.S)) && bs.Contains(PdfName.D)) {
+							w.WriteAttributeString("线型", PdfHelper.GetArrayString(bs.GetAsArray(PdfName.D)));
 						}
-
-						if (bs.Contains(PdfName.S)) {
-							string style = PdfHelper.GetPdfNameString(bs.GetAsName(PdfName.S));
-							style = ValueHelper.MapValue(style,
-								new[] { "S", "U", "D", "B", "I" },
-								new[] { "方框", "下划线", "虚线", "凸起", "凹陷" },
-								style
-							);
-							w.WriteAttributeString("样式", style);
-							if (PdfName.D.Equals(bs.GetAsName(PdfName.S)) && bs.Contains(PdfName.D)) {
-								w.WriteAttributeString("线型", PdfHelper.GetArrayString(bs.GetAsArray(PdfName.D)));
-							}
-						}
-
-						w.WriteEndElement();
 					}
 
 					w.WriteEndElement();
 				}
+
+				w.WriteEndElement();
 			}
 		}
 

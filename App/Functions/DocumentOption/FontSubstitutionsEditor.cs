@@ -36,11 +36,13 @@ public partial class FontSubstitutionsEditor : UserControl
 			}
 		};
 		_FontSubstitutionsBox.CellEditFinishing += (s, args) => {
-			if (args.Column == _SubstitutionColumn) {
-				ComboBox c = args.Control as ComboBox;
-				if (c.FindString(c.Text) != -1) {
-					args.NewValue = c.Text;
-				}
+			if (args.Column != _SubstitutionColumn) {
+				return;
+			}
+
+			ComboBox c = args.Control as ComboBox;
+			if (c.FindString(c.Text) != -1) {
+				args.NewValue = c.Text;
 			}
 		};
 		new TypedColumn<FontSubstitution>(_OriginalFontColumn) {

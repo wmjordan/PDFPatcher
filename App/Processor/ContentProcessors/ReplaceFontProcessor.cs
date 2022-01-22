@@ -154,15 +154,17 @@ internal sealed class ReplaceFontProcessor : IPageProcessor
 			int l = a.Size;
 			for (int i = 0; i < l; i++) {
 				op = a[i];
-				if (op.Type == PdfObject.STRING) {
-					t = fontInfo.DecodeText(op as PdfString);
-					if (_trimTrailingWhiteSpace /* && i == l - 1*/) {
-						t = t.TrimEnd();
-					}
-
-					a[i] = RewriteText(ef, f, t);
-					//AddCustomDefaultWidth (ef, fontInfo, t);
+				if (op.Type != PdfObject.STRING) {
+					continue;
 				}
+
+				t = fontInfo.DecodeText(op as PdfString);
+				if (_trimTrailingWhiteSpace /* && i == l - 1*/) {
+					t = t.TrimEnd();
+				}
+
+				a[i] = RewriteText(ef, f, t);
+				//AddCustomDefaultWidth (ef, fontInfo, t);
 			}
 		}
 	}
@@ -510,11 +512,13 @@ internal sealed class ReplaceFontProcessor : IPageProcessor
 			id2 = id;
 			for (i2 = i + 1; i2 < l; i2++) {
 				cw = widths[i2];
-				if (++id2 != cw.ID || cw.Width != width) {
-					i2--;
-					id2--;
-					break;
+				if (++id2 == cw.ID && cw.Width == width) {
+					continue;
 				}
+
+				i2--;
+				id2--;
+				break;
 			}
 
 			if (i2 > i) {
@@ -719,12 +723,13 @@ internal sealed class ReplaceFontProcessor : IPageProcessor
 			return false;
 		}
 
-		if (ProcessCommands(context.PageCommands.Commands)) {
-			context.IsPageContentModified = true;
-			return true;
+		if (!ProcessCommands(context.PageCommands.Commands)) {
+			return false;
 		}
 
-		return false;
+		context.IsPageContentModified = true;
+		return true;
+
 	}
 
 	#endregion

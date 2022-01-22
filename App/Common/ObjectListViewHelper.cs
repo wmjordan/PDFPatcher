@@ -28,10 +28,12 @@ internal static class ObjectListViewHelper
 			b.Width = 60;
 		}
 
-		if (e.Control is Control c) {
-			c.Bounds = b;
-			c.Location = b.Location;
+		if (e.Control is not Control c) {
+			return;
 		}
+
+		c.Bounds = b;
+		c.Location = b.Location;
 	}
 
 	public static void SetTreeViewLine(this TreeListView view) {
@@ -177,10 +179,12 @@ internal static class ObjectListViewHelper
 		int w = cr.Left;
 		List<OLVColumn> cl = view.ColumnsInDisplayOrder;
 		for (int i = 0; i < cl.Count; i++) {
-			if (x >= w && x <= (w += cl[i].Width)) {
-				c = cl[i];
-				break;
+			if (x < w || x > (w += cl[i].Width)) {
+				continue;
 			}
+
+			c = cl[i];
+			break;
 		}
 
 		if (c == null) {

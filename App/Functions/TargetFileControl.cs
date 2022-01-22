@@ -63,17 +63,19 @@ public partial class TargetFileControl : UserControl
 			_SavePdfBox.SetLocation(t);
 		}
 
-		if (_SavePdfBox.ShowDialog() == DialogResult.OK) {
-			if (TargetFileChangedByBrowseButton != null) {
-				CancelEventArgs a = new();
-				TargetFileChangedByBrowseButton(this, a);
-				if (a.Cancel) {
-					return;
-				}
-			}
-
-			Text = _SavePdfBox.FileName;
+		if (_SavePdfBox.ShowDialog() != DialogResult.OK) {
+			return;
 		}
+
+		if (TargetFileChangedByBrowseButton != null) {
+			CancelEventArgs a = new();
+			TargetFileChangedByBrowseButton(this, a);
+			if (a.Cancel) {
+				return;
+			}
+		}
+
+		Text = _SavePdfBox.FileName;
 	}
 
 	private void _TargetPdfBox_TextChanged(object sender, EventArgs e) {

@@ -171,14 +171,15 @@ public sealed partial class SearchBookmarkForm : Form
 			FormHelper.ErrorBox("在替换匹配文本时出现错误：" + ex.Message);
 		}
 
-		if (undo.Count > 0) {
-			_controller.Model.Undo.AddUndo(p.Name, undo);
-			si.Clear();
-			si.AddRange(undo.AffectedElements);
-			b.RefreshObjects(si);
-			return si.Count;
+		if (undo.Count <= 0) {
+			return 0;
 		}
 
-		return 0;
+		_controller.Model.Undo.AddUndo(p.Name, undo);
+		si.Clear();
+		si.AddRange(undo.AffectedElements);
+		b.RefreshObjects(si);
+		return si.Count;
+
 	}
 }

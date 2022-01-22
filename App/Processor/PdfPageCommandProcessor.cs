@@ -94,10 +94,12 @@ internal sealed class PdfPageCommandProcessor : PdfContentStreamProcessor, IPdfP
 			Commands.Add(cmd);
 		}
 
-		if (cmd is EnclosingCommand ec) {
-			_commandStack.Push(ec);
-			_currentCommand = ec;
+		if (cmd is not EnclosingCommand ec) {
+			return;
 		}
+
+		_commandStack.Push(ec);
+		_currentCommand = ec;
 	}
 
 	/// <summary>

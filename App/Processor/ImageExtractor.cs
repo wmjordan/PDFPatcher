@@ -557,33 +557,35 @@ namespace PDFPatcher.Processor
 								//uint mi = 0;
 								for (int pi = 0; pi < pl; pi++) {
 									int p = Array.IndexOf(bmpPal, part.PaletteArray[pi], 0, palEntryCount);
-									if (p == -1) {
-										if (palEntryCount == 255) {
-											if (bmpPal != null) {
-												bmp.Palette.AsArray = bmpPal;
-											}
-
-											// 调色板不足以存放合并后的图片颜色
-											if (bmp.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_24_BPP)
-												&& bmp2.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_24_BPP)) {
-												ext = Constants.FileExtensions.Png;
-												bmpPal = null;
-												goto Paste;
-											}
-											else {
-												throw new OverflowException("调色板溢出，无法合并图片。");
-											}
-										}
-
-										if (palEntryCount >= bmpPal.Length && palEntryCount < 129) {
-											bmp.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_08_BPP);
-											Array.Resize(ref bmpPal, 256);
-										}
-
-										bmpPal[palEntryCount] = part.PaletteArray[pi];
-										p = palEntryCount;
-										++palEntryCount;
+									if (p != -1) {
+										continue;
 									}
+
+									if (palEntryCount == 255) {
+										if (bmpPal != null) {
+											bmp.Palette.AsArray = bmpPal;
+										}
+
+										// 调色板不足以存放合并后的图片颜色
+										if (bmp.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_24_BPP)
+											&& bmp2.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_24_BPP)) {
+											ext = Constants.FileExtensions.Png;
+											bmpPal = null;
+											goto Paste;
+										}
+										else {
+											throw new OverflowException("调色板溢出，无法合并图片。");
+										}
+									}
+
+									if (palEntryCount >= bmpPal.Length && palEntryCount < 129) {
+										bmp.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_08_BPP);
+										Array.Resize(ref bmpPal, 256);
+									}
+
+									bmpPal[palEntryCount] = part.PaletteArray[pi];
+									p = palEntryCount;
+									++palEntryCount;
 									//if (p != pi) {
 									//	palMapSrc[mi] = (byte)pi;
 									//	palMapDest[mi] = (byte)(p);
@@ -609,11 +611,13 @@ namespace PDFPatcher.Processor
 								int di = 0;
 								for (int ai = 0; ai < a2.Length; ai++) {
 									int p = Array.IndexOf(a1, a2[ai], 0, palEntryCount);
-									if (p != ai && p > -1) {
-										sp[di] = (byte)ai;
-										dp[di] = (byte)p;
-										++di;
+									if (p == ai || p <= -1) {
+										continue;
 									}
+
+									sp[di] = (byte)ai;
+									dp[di] = (byte)p;
+									++di;
 								}
 								//todo: 两幅图像调色板不一致时需调换颜色再复制数据
 								//if (di > 0) {
@@ -672,10 +676,12 @@ namespace PDFPatcher.Processor
 			}
 
 			foreach (ImageInfo item in _imageInfoList) {
-				if (item.ReferenceCount < 1) {
-					File.Delete(item.FileName);
-					item.FileName = null;
+				if (item.ReferenceCount >= 1) {
+					continue;
 				}
+
+				File.Delete(item.FileName);
+				item.FileName = null;
 			}
 
 			_imageInfoList.Sort((ImageInfo x, ImageInfo y) =>
@@ -684,22 +690,24 @@ namespace PDFPatcher.Processor
 			_imageCount = 0;
 			List<string> newFileNames = new List<string>();
 			foreach (ImageInfo item in _imageInfoList) {
-				if (item.FileName != null && item.InlineImage == null) {
-					string n;
-					do {
-						n = GetNewImageFileName() + Path.GetExtension(item.FileName);
-					} while (_imagePosList.Exists((i) => i.Image.FileName == n) || newFileNames.Contains(n));
-
-					if (PrintImageLocation) {
-						Tracker.TraceMessage(String.Concat("重命名合并后的文件 ", item.FileName, " 为 ", n));
-						Tracker.TraceMessage(Tracker.Category.OutputFile, n);
-					}
-
-					newFileNames.Add(n);
-					File.Delete(n);
-					File.Move(item.FileName, n);
-					item.FileName = n;
+				if (item.FileName == null || item.InlineImage != null) {
+					continue;
 				}
+
+				string n;
+				do {
+					n = GetNewImageFileName() + Path.GetExtension(item.FileName);
+				} while (_imagePosList.Exists((i) => i.Image.FileName == n) || newFileNames.Contains(n));
+
+				if (PrintImageLocation) {
+					Tracker.TraceMessage(String.Concat("重命名合并后的文件 ", item.FileName, " 为 ", n));
+					Tracker.TraceMessage(Tracker.Category.OutputFile, n);
+				}
+
+				newFileNames.Add(n);
+				File.Delete(n);
+				File.Move(item.FileName, n);
+				item.FileName = n;
 			}
 
 			_totalImageCount += _imageCount;

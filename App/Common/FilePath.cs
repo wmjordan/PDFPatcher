@@ -968,10 +968,12 @@ public readonly struct FilePath : IEquatable<FilePath>
 		bool r = false;
 		for (int i = 0; i < a.Length; i++) {
 			ref char c = ref a[i];
-			if (Array.IndexOf(InvalidFileNameChars, c) != -1) {
-				c = substitution;
-				r = true;
+			if (Array.IndexOf(InvalidFileNameChars, c) == -1) {
+				continue;
 			}
+
+			c = substitution;
+			r = true;
 		}
 
 		if (r) {

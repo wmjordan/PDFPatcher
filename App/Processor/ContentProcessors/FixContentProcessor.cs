@@ -41,13 +41,14 @@ internal sealed class FixContentProcessor : IPageProcessor
 
 	public bool Process(PageProcessorContext context) {
 		Tracker.IncrementProgress(3);
-		if (ProcessCommands(context.PageCommands)) {
-			context.IsPageContentModified = true;
-			_processedPageCount++;
-			return true;
+		if (!ProcessCommands(context.PageCommands)) {
+			return false;
 		}
 
-		return false;
+		context.IsPageContentModified = true;
+		_processedPageCount++;
+		return true;
+
 	}
 
 	#endregion

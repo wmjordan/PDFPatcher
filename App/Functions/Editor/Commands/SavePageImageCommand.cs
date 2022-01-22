@@ -16,11 +16,13 @@ internal sealed class SavePageImageCommand : IEditorCommand
 		_dialog = InitDialog();
 		_dialog.FileName = ((FilePath)controller.Model.DocumentPath).FileNameWithoutExtension + "." + p.Page;
 
-		if (_dialog.ShowDialog() == DialogResult.OK) {
-			_dialog.DefaultExt = ((FilePath)_dialog.FileName).FileExtension;
-			Bitmap bmp = v.GetPageImage(p.Page);
-			bmp.SaveAs(_dialog.FileName);
+		if (_dialog.ShowDialog() != DialogResult.OK) {
+			return;
 		}
+
+		_dialog.DefaultExt = ((FilePath)_dialog.FileName).FileExtension;
+		Bitmap bmp = v.GetPageImage(p.Page);
+		bmp.SaveAs(_dialog.FileName);
 	}
 
 	private static SaveFileDialog InitDialog() {

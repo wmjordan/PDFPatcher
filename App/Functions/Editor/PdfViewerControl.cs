@@ -87,10 +87,12 @@ internal sealed class PdfViewerControl : ImageBoxEx
 					v = _cache.GetBitmap(i) != null;
 				}
 
-				if (v == false && _renderWorker.IsBusy == false) {
-					_renderWorker.RunWorkerAsync();
-					return;
+				if (v != false || _renderWorker.IsBusy != false) {
+					continue;
 				}
+
+				_renderWorker.RunWorkerAsync();
+				return;
 			}
 		};
 
@@ -111,15 +113,17 @@ internal sealed class PdfViewerControl : ImageBoxEx
 					return;
 				}
 
-				if (_cache.GetBitmap(i) == null) {
-					lock (_cache.SyncObj) {
-						MuRectangle pb = _pageBounds[i];
-						Tracker.DebugMessage("load page " + i);
-						float z = GetZoomFactorForPage(pb);
-						RenderPage(i, (pb.Width * z).ToInt32(), (pb.Height * z).ToInt32());
-						if (_DisplayRange.Contains(i)) {
-							Invalidate();
-						}
+				if (_cache.GetBitmap(i) != null) {
+					continue;
+				}
+
+				lock (_cache.SyncObj) {
+					MuRectangle pb = _pageBounds[i];
+					Tracker.DebugMessage("load page " + i);
+					float z = GetZoomFactorForPage(pb);
+					RenderPage(i, (pb.Width * z).ToInt32(), (pb.Height * z).ToInt32());
+					if (_DisplayRange.Contains(i)) {
+						Invalidate();
 					}
 				}
 			}
@@ -171,10 +175,12 @@ internal sealed class PdfViewerControl : ImageBoxEx
 	public string LiteralZoom {
 		get => _LiteralZoom;
 		set {
-			if (value != null && ChangeZoom(value)) {
-				_LiteralZoom = value;
-				ZoomChanged?.Invoke(this, EventArgs.Empty);
+			if (value == null || !ChangeZoom(value)) {
+				return;
 			}
+
+			_LiteralZoom = value;
+			ZoomChanged?.Invoke(this, EventArgs.Empty);
 		}
 	}
 
@@ -206,13 +212,15 @@ internal sealed class PdfViewerControl : ImageBoxEx
 				SelectionRegion = r;
 			}
 
-			if (pp.Page > 0) {
-				if (_zoomMode == ZoomMode.FitPage) {
-					ShowPage(pp.Page);
-				}
-				else {
-					ScrollToPosition(pp);
-				}
+			if (pp.Page <= 0) {
+				return;
+			}
+
+			if (_zoomMode == ZoomMode.FitPage) {
+				ShowPage(pp.Page);
+			}
+			else {
+				ScrollToPosition(pp);
 			}
 		}
 	}
@@ -227,10 +235,12 @@ internal sealed class PdfViewerControl : ImageBoxEx
 		get => _renderOptions.ColorSpace == ColorSpace.Gray;
 		set {
 			ColorSpace v = value ? ColorSpace.Gray : ColorSpace.Rgb;
-			if (_renderOptions.ColorSpace != v) {
-				_renderOptions.ColorSpace = v;
-				UpdateDisplay();
+			if (_renderOptions.ColorSpace == v) {
+				return;
 			}
+
+			_renderOptions.ColorSpace = v;
+			UpdateDisplay();
 		}
 	}
 
@@ -302,11 +312,13 @@ internal sealed class PdfViewerControl : ImageBoxEx
 	public DrawingPoint PinPoint {
 		get => _PinPoint;
 		set {
-			if (_PinPoint != value) {
-				_PinPoint = value;
-				if (IsPinPointVisible && DesignMode == false) {
-					Invalidate();
-				}
+			if (_PinPoint == value) {
+				return;
+			}
+
+			_PinPoint = value;
+			if (IsPinPointVisible && DesignMode == false) {
+				Invalidate();
 			}
 		}
 	}
@@ -316,25 +328,29 @@ internal sealed class PdfViewerControl : ImageBoxEx
 	public bool ShowPinPoint {
 		get => _ShowPinPoint;
 		set {
-			if (_ShowPinPoint != value) {
-				_ShowPinPoint = value;
-				if (IsPinPointVisible && DesignMode == false) {
-					Invalidate();
-				}
+			if (_ShowPinPoint == value) {
+				return;
+			}
+
+			_ShowPinPoint = value;
+			if (IsPinPointVisible && DesignMode == false) {
+				Invalidate();
 			}
 		}
 	}
 
 	private bool IsPinPointVisible {
 		get {
-			if (PinPoint != DrawingPoint.Empty) {
-				DrawingPoint op = GetOffsetPoint(0, 0);
-				DrawingRectangle vp = GetImageViewPort();
-				DrawingPoint pp = PinPoint;
-				pp.Offset(op);
-				if (vp.Contains(pp)) {
-					return true;
-				}
+			if (PinPoint == DrawingPoint.Empty) {
+				return false;
+			}
+
+			DrawingPoint op = GetOffsetPoint(0, 0);
+			DrawingRectangle vp = GetImageViewPort();
+			DrawingPoint pp = PinPoint;
+			pp.Offset(op);
+			if (vp.Contains(pp)) {
+				return true;
 			}
 
 			return false;
@@ -346,11 +362,13 @@ internal sealed class PdfViewerControl : ImageBoxEx
 	public bool ShowTextBorders {
 		get => _ShowTextBorders;
 		set {
-			if (_ShowTextBorders != value) {
-				_ShowTextBorders = value;
-				if (DesignMode == false) {
-					Invalidate();
-				}
+			if (_ShowTextBorders == value) {
+				return;
+			}
+
+			_ShowTextBorders = value;
+			if (DesignMode == false) {
+				Invalidate();
 			}
 		}
 	}
@@ -378,25 +396,27 @@ internal sealed class PdfViewerControl : ImageBoxEx
 			Enabled = false;
 			InitViewer();
 			_mupdf = value;
-			if (value != null) {
-				Tracker.DebugMessage("Load document.");
-				int l = _mupdf.PageCount + 1;
-				_pageOffsets = new int[l];
-				_pageBounds = new MuRectangle[l];
-				LoadPageBounds();
-				_cache = new RenderResultCache(_mupdf);
-				Tracker.DebugMessage("Calculating document virtual size.");
-				CalculateZoomFactor(_LiteralZoom);
-				CalculateDocumentVirtualSize();
-				ShowPage(1);
-				_refreshTimer.Start();
-				if (_renderWorker.IsBusy == false) {
-					_renderWorker.RunWorkerAsync();
-				}
-
-				DocumentLoaded?.Invoke(this, EventArgs.Empty);
-				Enabled = true;
+			if (value == null) {
+				return;
 			}
+
+			Tracker.DebugMessage("Load document.");
+			int l = _mupdf.PageCount + 1;
+			_pageOffsets = new int[l];
+			_pageBounds = new MuRectangle[l];
+			LoadPageBounds();
+			_cache = new RenderResultCache(_mupdf);
+			Tracker.DebugMessage("Calculating document virtual size.");
+			CalculateZoomFactor(_LiteralZoom);
+			CalculateDocumentVirtualSize();
+			ShowPage(1);
+			_refreshTimer.Start();
+			if (_renderWorker.IsBusy == false) {
+				_renderWorker.RunWorkerAsync();
+			}
+
+			DocumentLoaded?.Invoke(this, EventArgs.Empty);
+			Enabled = true;
 		}
 	}
 
@@ -447,14 +467,16 @@ internal sealed class PdfViewerControl : ImageBoxEx
 
 	protected override void OnClientSizeChanged(EventArgs e) {
 		base.OnClientSizeChanged(e);
-		if (_zoomMode != ZoomMode.Custom && _lockDown == false) {
-			if (ChangeZoom(LiteralZoom) && ZoomChanged != null) {
-				ZoomChanged(this, EventArgs.Empty);
-			}
-
-			//CalculateDocumentVirtualSize ();
-			Invalidate();
+		if (_zoomMode == ZoomMode.Custom || _lockDown != false) {
+			return;
 		}
+
+		if (ChangeZoom(LiteralZoom) && ZoomChanged != null) {
+			ZoomChanged(this, EventArgs.Empty);
+		}
+
+		//CalculateDocumentVirtualSize ();
+		Invalidate();
 	}
 
 	private void LimitSelectionInPage(DrawingPoint location) {
@@ -565,17 +587,21 @@ internal sealed class PdfViewerControl : ImageBoxEx
 	}
 
 	internal void CloseFile() {
-		if (_mupdf != null) {
-			_cache.Clear();
-			_mupdf.ReleaseFile();
+		if (_mupdf == null) {
+			return;
 		}
+
+		_cache.Clear();
+		_mupdf.ReleaseFile();
 	}
 
 	internal void Reopen() {
-		if (_mupdf != null && _mupdf.IsDocumentOpened == false) {
-			_mupdf.Reopen();
-			UpdateDisplay(true);
+		if (_mupdf == null || _mupdf.IsDocumentOpened != false) {
+			return;
 		}
+
+		_mupdf.Reopen();
+		UpdateDisplay(true);
 	}
 
 	protected override void OnVirtualDraw(PaintEventArgs e) {
@@ -781,25 +807,29 @@ internal sealed class PdfViewerControl : ImageBoxEx
 
 						// 获取具有相同样式的邻接文本行
 						foreach (MuTextChar ch in line.Characters) {
-							if (s.Contains(ch.FontID)) {
-								r.Add(line);
-								l = line;
-								goto NEXT;
+							if (!s.Contains(ch.FontID)) {
+								continue;
 							}
+
+							r.Add(line);
+							l = line;
+							goto NEXT;
 						}
 					}
 
 				NEXT:;
 				}
 
-				if (l != null) {
-					List<MuTextSpan> spans = new(r.Count * 2);
-					foreach (MuTextLine item in r) {
-						spans.AddRange(item.Spans);
-					}
-
-					return new TextInfo(page, rect, r, spans);
+				if (l == null) {
+					continue;
 				}
+
+				List<MuTextSpan> spans = new(r.Count * 2);
+				foreach (MuTextLine item in r) {
+					spans.AddRange(item.Spans);
+				}
+
+				return new TextInfo(page, rect, r, spans);
 			}
 		}
 
@@ -975,13 +1005,15 @@ internal sealed class PdfViewerControl : ImageBoxEx
 			SelectionRegion = r;
 		}
 
-		if (pp.Page > 0) {
-			if (_zoomMode == ZoomMode.FitPage) {
-				ShowPage(pp.Page);
-			}
-			else {
-				ScrollToPosition(pp);
-			}
+		if (pp.Page <= 0) {
+			return true;
+		}
+
+		if (_zoomMode == ZoomMode.FitPage) {
+			ShowPage(pp.Page);
+		}
+		else {
+			ScrollToPosition(pp);
 		}
 
 		return true;

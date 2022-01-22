@@ -46,10 +46,12 @@ public partial class PageLabelEditor : UserControl
 		_PageLabelBox.FullRowSelect = true;
 		_PageLabelBox.LabelEdit = false;
 		_PageLabelBox.CellClick += (s, args) => {
-			if (args.Column == _LabelStyleColumn) {
-				Rectangle b = _PageLabelBox.GetSubItem(args.RowIndex, args.ColumnIndex).Bounds;
-				_LabelStyleMenu.Show(_PageLabelBox, b.Left, b.Bottom);
+			if (args.Column != _LabelStyleColumn) {
+				return;
 			}
+
+			Rectangle b = _PageLabelBox.GetSubItem(args.RowIndex, args.ColumnIndex).Bounds;
+			_LabelStyleMenu.Show(_PageLabelBox, b.Left, b.Bottom);
 		};
 		_LabelBox = new TypedObjectListView<PageLabel>(_PageLabelBox);
 		_LabelStyleMenu.ItemClicked += (s, args) => {

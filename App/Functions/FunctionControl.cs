@@ -39,15 +39,18 @@ public class FunctionControl : UserControl
 		}
 
 		// 将第一个文本框设置为文件路径
-		if (parameters.Length > 0 && string.IsNullOrEmpty(parameters[0]) == false
-								  && FileHelper.HasExtension(parameters[0], Constants.FileExtensions.Pdf)
-		   ) {
-			foreach (Control c in Controls) {
-				if (c is SourceFileControl i) {
-					i.Text = parameters[0];
-					return;
-				}
+		if (parameters.Length <= 0 || string.IsNullOrEmpty(parameters[0]) != false ||
+			!FileHelper.HasExtension(parameters[0], Constants.FileExtensions.Pdf)) {
+			return;
+		}
+
+		foreach (Control c in Controls) {
+			if (c is not SourceFileControl i) {
+				continue;
 			}
+
+			i.Text = parameters[0];
+			return;
 		}
 	}
 
@@ -93,15 +96,17 @@ public class FunctionControl : UserControl
 			}
 
 			SetupCommand(item);
-			if (item.Visible) {
-				bool s = item is ToolStripSeparator;
-				if (s) {
-					item.Visible = pvs == false;
-					pvs = true;
-				}
-				else {
-					pvs = false;
-				}
+			if (!item.Visible) {
+				continue;
+			}
+
+			bool s = item is ToolStripSeparator;
+			if (s) {
+				item.Visible = pvs == false;
+				pvs = true;
+			}
+			else {
+				pvs = false;
 			}
 		}
 	}

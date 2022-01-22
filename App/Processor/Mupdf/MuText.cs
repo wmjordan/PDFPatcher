@@ -321,12 +321,14 @@ public sealed class MuTextChar : IMuBoundedElement
 			t.Append((char)ch->_Unicode);
 		} while (ch != end);
 
-		if (t.Length > 0) {
-			string s = t.ToString().TrimEnd();
-			if (s.Length > 0) {
-				r.Add(new MuTextSpan(textLine, start->_Point, s, size, font,
-					start->_Quad.Union(end->_Quad).ToRectangle(), color));
-			}
+		if (t.Length <= 0) {
+			return r;
+		}
+
+		string s = t.ToString().TrimEnd();
+		if (s.Length > 0) {
+			r.Add(new MuTextSpan(textLine, start->_Point, s, size, font,
+				start->_Quad.Union(end->_Quad).ToRectangle(), color));
 		}
 
 		return r;

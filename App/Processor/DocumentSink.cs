@@ -20,28 +20,30 @@ internal sealed class DocumentSink
 	public bool HasDuplicateFiles { get; private set; }
 
 	public PdfReader GetPdfReader(string path) {
-		if (_sink.TryGetValue(path, out PdfReaderReference rr)) {
-			if (rr.Reader == null) {
-				rr.Reader = PdfHelper.OpenPdfFile(path, AppContext.LoadPartialPdfFile, false);
-			}
-
-			return rr.Reader;
+		if (!_sink.TryGetValue(path, out PdfReaderReference rr)) {
+			return null;
 		}
 
-		return null;
+		if (rr.Reader == null) {
+			rr.Reader = PdfHelper.OpenPdfFile(path, AppContext.LoadPartialPdfFile, false);
+		}
+
+		return rr.Reader;
+
 	}
 
 	public int DecrementReference(string path) {
-		if (_sink.TryGetValue(path, out PdfReaderReference r)) {
-			int c = --r.Reference;
-			if (c == 0) {
-				_sink.Remove(path);
-			}
-
-			return c;
+		if (!_sink.TryGetValue(path, out PdfReaderReference r)) {
+			return 0;
 		}
 
-		return 0;
+		int c = --r.Reference;
+		if (c == 0) {
+			_sink.Remove(path);
+		}
+
+		return c;
+
 	}
 
 	private void EvaluateWorkload(IEnumerable<SourceItem> items, bool useSink) {

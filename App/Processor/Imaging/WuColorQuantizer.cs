@@ -277,16 +277,20 @@ public static class WuQuantizer
 			halfBlue = wholeBlue - halfBlue;
 			halfWeight = wholeWeight - halfWeight;
 
-			if (halfWeight != 0) {
-				halfDistance = (halfRed * halfRed) + (halfGreen * halfGreen) + (halfBlue * halfBlue);
-				temp += halfDistance / halfWeight;
-
-				if (temp > result) {
-					result = temp;
-					canSplit = true;
-					cutPoint = position;
-				}
+			if (halfWeight == 0) {
+				continue;
 			}
+
+			halfDistance = (halfRed * halfRed) + (halfGreen * halfGreen) + (halfBlue * halfBlue);
+			temp += halfDistance / halfWeight;
+
+			if (!(temp > result)) {
+				continue;
+			}
+
+			result = temp;
+			canSplit = true;
+			cutPoint = position;
 		}
 
 		return new CubeCut(canSplit, cutPoint, result);

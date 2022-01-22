@@ -32,11 +32,13 @@ public partial class FontFilterForm : Form
 			return f.SelectNodes(Constants.Font.Size);
 		};
 		_FontInfoBox.RowFormatter = o => {
-			if (_FontInfoBox.GetParent(o.RowObject) == null) {
-				o.SubItems[0].Font = new Font(o.SubItems[0].Font, FontStyle.Bold);
-				o.SubItems[1].Text = string.Empty;
-				o.BackColor = Color.LightBlue;
+			if (_FontInfoBox.GetParent(o.RowObject) != null) {
+				return;
 			}
+
+			o.SubItems[0].Font = new Font(o.SubItems[0].Font, FontStyle.Bold);
+			o.SubItems[1].Text = string.Empty;
+			o.BackColor = Color.LightBlue;
 		};
 		_FontNameSizeColumn.AspectGetter = o => {
 			if (o is not XmlElement f) {
@@ -47,29 +49,32 @@ public partial class FontFilterForm : Form
 				return f.GetAttribute(Constants.Font.Name);
 			}
 
-			if (f.ParentNode?.Name == Constants.Font.ThisName) {
-				f.GetAttribute(Constants.Font.Size).TryParse(out float p);
-				string t = f.GetAttribute(Constants.FontOccurance.FirstText);
-				return string.Concat(p.ToText(), "(", t, ")");
+			if (f.ParentNode?.Name != Constants.Font.ThisName) {
+				return null;
 			}
 
-			return null;
+			f.GetAttribute(Constants.Font.Size).TryParse(out float p);
+			string t = f.GetAttribute(Constants.FontOccurance.FirstText);
+			return string.Concat(p.ToText(), "(", t, ")");
+
 		};
 		_CountColumn.AspectGetter = o => {
-			if (o is XmlElement f) {
-				f.GetAttribute(Constants.FontOccurance.Count).TryParse(out int p);
-				return p;
+			if (o is not XmlElement f) {
+				return null;
 			}
 
-			return null;
+			f.GetAttribute(Constants.FontOccurance.Count).TryParse(out int p);
+			return p;
+
 		};
 		_FirstPageColumn.AspectGetter = o => {
-			if (o is XmlElement f) {
-				f.GetAttribute(Constants.FontOccurance.FirstPage).TryParse(out int p);
-				return p;
+			if (o is not XmlElement f) {
+				return null;
 			}
 
-			return null;
+			f.GetAttribute(Constants.FontOccurance.FirstPage).TryParse(out int p);
+			return p;
+
 		};
 		_ConditionColumn.AspectGetter = o => o is AutoBookmarkCondition c ? c.Description : (object)null;
 	}

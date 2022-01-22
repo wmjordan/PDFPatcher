@@ -297,10 +297,12 @@ internal sealed class PdfDocumentCreator
 				if (imgExp != null) {
 					imgExp.ExtractPageImages(pdf, i);
 					foreach (ImageInfo item in imgExp.InfoList) {
-						if (item.FileName != null) {
-							ProcessFile(new SourceItem.Image(item.FileName), bookmark);
-							File.Delete(item.FileName);
+						if (item.FileName == null) {
+							continue;
 						}
+
+						ProcessFile(new SourceItem.Image(item.FileName), bookmark);
+						File.Delete(item.FileName);
 					}
 				}
 				else {
@@ -353,10 +355,12 @@ internal sealed class PdfDocumentCreator
 			bookmark = KeepBookmarks(bookmark, pdf, pageRemapper, cts);
 		}
 
-		if (_sink.DecrementReference(sourceFile.FilePath) < 1) {
-			_writer.FreeReader(pdf);
-			pdf.Close();
+		if (_sink.DecrementReference(sourceFile.FilePath) >= 1) {
+			return;
 		}
+
+		_writer.FreeReader(pdf);
+		pdf.Close();
 	}
 
 	private BookmarkContainer KeepBookmarks(BookmarkContainer bookmark, PdfReader pdf, int[] pageRemapper,
@@ -394,14 +398,16 @@ internal sealed class PdfDocumentCreator
 			return bookmark;
 		}
 
-		if (bm != null) {
-			while (bm.FirstChild != null) {
-				if (bm.FirstChild.NodeType == XmlNodeType.Element) {
-					bookmark.AppendChild(bookmark.OwnerDocument.ImportNode(bm.FirstChild, true));
-				}
+		if (bm == null) {
+			return bookmark;
+		}
 
-				bm.RemoveChild(bm.FirstChild);
+		while (bm.FirstChild != null) {
+			if (bm.FirstChild.NodeType == XmlNodeType.Element) {
+				bookmark.AppendChild(bookmark.OwnerDocument.ImportNode(bm.FirstChild, true));
 			}
+
+			bm.RemoveChild(bm.FirstChild);
 		}
 
 		return bookmark;

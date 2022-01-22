@@ -303,10 +303,12 @@ internal static class AppContext
 			bool m = false;
 			foreach (string li in list) {
 				i++;
-				if (string.Equals(li, item, StringComparison.OrdinalIgnoreCase)) {
-					m = true;
-					break;
+				if (!string.Equals(li, item, StringComparison.OrdinalIgnoreCase)) {
+					continue;
 				}
+
+				m = true;
+				break;
 			}
 
 			if (m) {

@@ -684,11 +684,13 @@ internal static class JpgHelper
 			}
 
 			// Finally, catalogue the thumbnail IFD if it's present
-			if (_ifd1Offset != 0) {
-				_stream.Position = _ifd1Offset + _tiffHeaderStart;
-				_ifd1Catalogue = new Dictionary<ushort, long>();
-				CatalogueIFD(ref _ifd1Catalogue);
+			if (_ifd1Offset == 0) {
+				return;
 			}
+
+			_stream.Position = _ifd1Offset + _tiffHeaderStart;
+			_ifd1Catalogue = new Dictionary<ushort, long>();
+			CatalogueIFD(ref _ifd1Catalogue);
 		}
 
 		#endregion

@@ -109,22 +109,24 @@ public partial class DocumentFontListForm : Form
 				continue;
 			}
 
-			if (PdfReader.GetPdfObjectRelease(fr) is PdfDictionary f) {
-				PdfName bf = f.GetAsName(PdfName.BASEFONT);
-				if (bf == null) {
-					continue;
-				}
-
-				fn = PdfHelper.GetPdfNameString(bf, AppContext.Encodings.FontNameEncoding); // 字体名称
-				fn = PdfDocumentFont.RemoveSubsetPrefix(fn);
-				_fontIdNames.Add(fr.Number, fn);
-				if (_pageFonts.TryGetValue(fn, out PageFont pf)) {
-					pf.IncrementReference();
-					continue;
-				}
-
-				_pageFonts.Add(fn, new PageFont(fn, pageNumber, PdfDocumentFont.HasEmbeddedFont(f)));
+			if (PdfReader.GetPdfObjectRelease(fr) is not PdfDictionary f) {
+				continue;
 			}
+
+			PdfName bf = f.GetAsName(PdfName.BASEFONT);
+			if (bf == null) {
+				continue;
+			}
+
+			fn = PdfHelper.GetPdfNameString(bf, AppContext.Encodings.FontNameEncoding); // 字体名称
+			fn = PdfDocumentFont.RemoveSubsetPrefix(fn);
+			_fontIdNames.Add(fr.Number, fn);
+			if (_pageFonts.TryGetValue(fn, out PageFont pf)) {
+				pf.IncrementReference();
+				continue;
+			}
+
+			_pageFonts.Add(fn, new PageFont(fn, pageNumber, PdfDocumentFont.HasEmbeddedFont(f)));
 		}
 	}
 

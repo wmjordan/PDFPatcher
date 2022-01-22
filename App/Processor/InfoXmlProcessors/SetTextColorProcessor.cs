@@ -9,11 +9,13 @@ internal sealed class SetTextColorProcessor : IPdfInfoXmlProcessor
 	private readonly string r, g, b;
 
 	public SetTextColorProcessor(Color color) {
-		if (color != Color.Transparent && color != Color.White) {
-			r = (color.R / 255f).ToText();
-			g = (color.G / 255f).ToText();
-			b = (color.B / 255f).ToText();
+		if (color == Color.Transparent || color == Color.White) {
+			return;
 		}
+
+		r = (color.R / 255f).ToText();
+		g = (color.G / 255f).ToText();
+		b = (color.B / 255f).ToText();
 	}
 
 	public Color Color { get; private set; }

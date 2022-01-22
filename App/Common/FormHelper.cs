@@ -160,11 +160,13 @@ internal static class FormHelper
 			Color c = textBox.SelectionColor;
 			Font f = textBox.SelectionFont;
 			textBox.InsertLink(text.Substring(p1 + TokenLength, p2 - p1 - TokenLength));
-			if (p2 < text.Length - TokenLength) {
-				textBox.SelectionColor = c;
-				textBox.SelectionFont = f;
-				textBox.AppendText(text.Substring(p2 + TokenLength));
+			if (p2 >= text.Length - TokenLength) {
+				return;
 			}
+
+			textBox.SelectionColor = c;
+			textBox.SelectionFont = f;
+			textBox.AppendText(text.Substring(p2 + TokenLength));
 		}
 		else {
 			textBox.AppendText(text);
@@ -172,38 +174,42 @@ internal static class FormHelper
 	}
 
 	public static void FeedbackDragFileOver(this DragEventArgs args, params string[] allowedFileExtension) {
-		if (args.Data.GetDataPresent(DataFormats.FileDrop)) {
-			string[] files = args.Data.GetData(DataFormats.FileDrop) as string[];
-			if (Array.Exists(files,
-					f => {
-						return Array.Exists(allowedFileExtension,
-							ext => f.EndsWith(ext, StringComparison.InvariantCultureIgnoreCase));
-					})) {
-				args.Effect = DragDropEffects.Copy;
-			}
+		if (!args.Data.GetDataPresent(DataFormats.FileDrop)) {
+			return;
+		}
+
+		string[] files = args.Data.GetData(DataFormats.FileDrop) as string[];
+		if (Array.Exists(files,
+				f => {
+					return Array.Exists(allowedFileExtension,
+						ext => f.EndsWith(ext, StringComparison.InvariantCultureIgnoreCase));
+				})) {
+			args.Effect = DragDropEffects.Copy;
 		}
 	}
 
 	public static string[] DropFileOver(this DragEventArgs args, params string[] allowedFileExtension) {
-		if (args.Data.GetDataPresent(DataFormats.FileDrop)) {
-			string[] files = (string[])args.Data.GetData(DataFormats.FileDrop);
-			return Array.FindAll(files, f => {
-				return Array.Exists(allowedFileExtension,
-					ext => f.EndsWith(ext, StringComparison.InvariantCultureIgnoreCase));
-			});
+		if (!args.Data.GetDataPresent(DataFormats.FileDrop)) {
+			return new string[0];
 		}
 
-		return new string[0];
+		string[] files = (string[])args.Data.GetData(DataFormats.FileDrop);
+		return Array.FindAll(files, f => {
+			return Array.Exists(allowedFileExtension,
+				ext => f.EndsWith(ext, StringComparison.InvariantCultureIgnoreCase));
+		});
+
 	}
 
 	public static bool DropFileOver(this Control control, DragEventArgs args, params string[] allowedFileExtension) {
 		string[] files = DropFileOver(args, allowedFileExtension);
-		if (files.Length > 0) {
-			control.Text = files[0];
-			return true;
+		if (files.Length <= 0) {
+			return false;
 		}
 
-		return false;
+		control.Text = files[0];
+		return true;
+
 	}
 
 	public static void HidePopupMenu(this ToolStripItem item) {

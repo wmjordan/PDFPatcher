@@ -61,11 +61,13 @@ public partial class SourceFileControl : UserControl
 			_OpenPdfBox.FileName = t;
 		}
 
-		if (_OpenPdfBox.ShowDialog() == DialogResult.OK) {
-			SelectFiles(_OpenPdfBox.FileNames);
-			if (BrowseSelectedFiles != null) {
-				BrowseSelectedFiles(sender, e);
-			}
+		if (_OpenPdfBox.ShowDialog() != DialogResult.OK) {
+			return;
+		}
+
+		SelectFiles(_OpenPdfBox.FileNames);
+		if (BrowseSelectedFiles != null) {
+			BrowseSelectedFiles(sender, e);
 		}
 	}
 

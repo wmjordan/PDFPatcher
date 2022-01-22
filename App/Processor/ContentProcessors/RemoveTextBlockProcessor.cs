@@ -74,12 +74,14 @@ internal sealed class RemoveTextBlockProcessor : IPageProcessor
 			}
 
 			PdfPageCommandProcessor p = new(f);
-			if (ProcessCommands(p.Commands)) {
-				using (MemoryStream ms = new()) {
-					p.WritePdfCommands(ms);
-					ms.Flush();
-					f.SetData(ms.ToArray(), ms.Length > 32);
-				}
+			if (!ProcessCommands(p.Commands)) {
+				continue;
+			}
+
+			using (MemoryStream ms = new()) {
+				p.WritePdfCommands(ms);
+				ms.Flush();
+				f.SetData(ms.ToArray(), ms.Length > 32);
 			}
 		}
 	}

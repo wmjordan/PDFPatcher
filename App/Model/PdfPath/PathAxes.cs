@@ -243,10 +243,12 @@ internal static class PathAxes
 
 			List<DocumentObject> r = new();
 			foreach (DocumentObject item in source.Children) {
-				if (MatchesPredicate(item, name, predicates)) {
-					r.Add(item);
-					SelectObjects(item, name, predicates, r);
+				if (!MatchesPredicate(item, name, predicates)) {
+					continue;
 				}
+
+				r.Add(item);
+				SelectObjects(item, name, predicates, r);
 			}
 
 			return r.ToArray();

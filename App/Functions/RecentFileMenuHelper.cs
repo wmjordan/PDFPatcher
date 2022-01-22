@@ -31,12 +31,14 @@ internal static class RecentFileMenuHelper
 
 	public static void AddInfoFiles(this ToolStripItemCollection list) {
 		foreach (string item in AppContext.Recent.InfoDocuments) {
-			if (FileHelper.IsPathValid(item) && Path.IsPathRooted(item)) {
-				ToolStripItem i = list.Add(FileHelper.GetEllipticPath(item, 50));
-				i.ToolTipText = item;
-				if (File.Exists(item) == false) {
-					i.Enabled = false;
-				}
+			if (!FileHelper.IsPathValid(item) || !Path.IsPathRooted(item)) {
+				continue;
+			}
+
+			ToolStripItem i = list.Add(FileHelper.GetEllipticPath(item, 50));
+			i.ToolTipText = item;
+			if (File.Exists(item) == false) {
+				i.Enabled = false;
 			}
 		}
 	}

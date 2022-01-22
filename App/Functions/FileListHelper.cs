@@ -31,22 +31,26 @@ internal sealed class FileListHelper
 
 		ds.CanDrop += (s, args) => {
 			string[] files = args.DragEventArgs.DropFileOver(Constants.FileExtensions.Pdf);
-			if (files.Length > 0) {
-				args.Effect = DragDropEffects.Link;
-				args.InfoMessage = "添加 " + files.Length + " 个文件";
-				args.Handled = true;
+			if (files.Length <= 0) {
+				return;
 			}
+
+			args.Effect = DragDropEffects.Link;
+			args.InfoMessage = "添加 " + files.Length + " 个文件";
+			args.Handled = true;
 		};
 		ds.Dropped += (s, args) => {
 			string[] files = args.DragEventArgs.DropFileOver(Constants.FileExtensions.Pdf);
-			if (files.Length > 0) {
-				_fileList.SelectedIndex
-					= args.DropTargetLocation == DropTargetLocation.Background
-						? _fileList.GetItemCount() - 1
-						: args.DropTargetIndex + (args.DropTargetLocation == DropTargetLocation.AboveItem ? -1 : 0);
-				addFilesCallback(files, false);
-				args.Handled = true;
+			if (files.Length <= 0) {
+				return;
 			}
+
+			_fileList.SelectedIndex
+				= args.DropTargetLocation == DropTargetLocation.Background
+					? _fileList.GetItemCount() - 1
+					: args.DropTargetIndex + (args.DropTargetLocation == DropTargetLocation.AboveItem ? -1 : 0);
+			addFilesCallback(files, false);
+			args.Handled = true;
 		};
 	}
 

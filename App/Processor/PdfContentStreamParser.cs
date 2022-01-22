@@ -169,12 +169,13 @@ internal class PdfContentStreamProcessor
 	}
 
 	internal IContentOperator RegisterContentOperator(string operatorString, IContentOperator oper) {
-		if (oper == null) {
-			operators.Remove(operatorString);
-			return null;
+		if (oper != null) {
+			return operators[operatorString] = oper;
 		}
 
-		return operators[operatorString] = oper;
+		operators.Remove(operatorString);
+		return null;
+
 	}
 
 	internal IXObjectDoHandler RegisterXObjectDoHandler(PdfName xobjectSubType, IXObjectDoHandler handler) {
@@ -328,12 +329,14 @@ internal class PdfContentStreamProcessor
 				}
 			}
 			else if (key == PdfName.COLORSPACE) {
-				if (value is PdfName) {
-					PdfName altValue;
-					inlineImageColorSpaceAbbreviationMap.TryGetValue((PdfName)value, out altValue);
-					if (altValue != null) {
-						return altValue;
-					}
+				if (value is not PdfName) {
+					return value;
+				}
+
+				PdfName altValue;
+				inlineImageColorSpaceAbbreviationMap.TryGetValue((PdfName)value, out altValue);
+				if (altValue != null) {
+					return altValue;
 				}
 			}
 
@@ -361,13 +364,17 @@ internal class PdfContentStreamProcessor
 				return 4;
 			}
 
-			if (colorSpaceDic != null) {
-				PdfArray colorSpace = colorSpaceDic.GetAsArray(colorSpaceName);
-				if (colorSpace != null) {
-					if (PdfName.INDEXED.Equals(colorSpace.GetAsName(0))) {
-						return 1;
-					}
-				}
+			if (colorSpaceDic == null) {
+				throw new ArgumentException("Unexpected color space " + colorSpaceName);
+			}
+
+			PdfArray colorSpace = colorSpaceDic.GetAsArray(colorSpaceName);
+			if (colorSpace == null) {
+				throw new ArgumentException("Unexpected color space " + colorSpaceName);
+			}
+
+			if (PdfName.INDEXED.Equals(colorSpace.GetAsName(0))) {
+				return 1;
 			}
 
 			throw new ArgumentException("Unexpected color space " + colorSpaceName);
@@ -747,12 +754,14 @@ internal class PdfContentStreamProcessor
 			}
 
 			PdfArray fontParameter = gsDic.GetAsArray(PdfName.FONT);
-			if (fontParameter != null) {
-				FontInfo font = processor.GetFont((PRIndirectReference)fontParameter[0]);
-				float size = fontParameter.GetAsNumber(1).FloatValue;
-				processor.CurrentGraphicState.Font = font;
-				processor.CurrentGraphicState.FontSize = size;
+			if (fontParameter == null) {
+				return;
 			}
+
+			FontInfo font = processor.GetFont((PRIndirectReference)fontParameter[0]);
+			float size = fontParameter.GetAsNumber(1).FloatValue;
+			processor.CurrentGraphicState.Font = font;
+			processor.CurrentGraphicState.FontSize = size;
 		}
 	}
 
@@ -773,11 +782,13 @@ internal class PdfContentStreamProcessor
 		public override PdfObject GetDirectObject(PdfName key) {
 			for (int i = resourcesStack.Count - 1; i >= 0; i--) {
 				PdfDictionary subResource = resourcesStack[i];
-				if (subResource != null) {
-					PdfObject obj = subResource.GetDirectObject(key);
-					if (obj != null) {
-						return obj;
-					}
+				if (subResource == null) {
+					continue;
+				}
+
+				PdfObject obj = subResource.GetDirectObject(key);
+				if (obj != null) {
+					return obj;
 				}
 			}
 

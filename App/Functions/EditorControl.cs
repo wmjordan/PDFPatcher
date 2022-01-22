@@ -203,10 +203,12 @@ namespace PDFPatcher.Functions
 				}
 
 				int p;
-				if (_CurrentPageBox.Text.TryParse(out p)) {
-					_ViewerBox.CurrentPageNumber = p;
-					_CurrentPageBox.Text = p.ToText();
+				if (!_CurrentPageBox.Text.TryParse(out p)) {
+					return;
 				}
+
+				_ViewerBox.CurrentPageNumber = p;
+				_CurrentPageBox.Text = p.ToText();
 			};
 			_ViewerButton.DropDownOpening += (s, args) => {
 				SetupMenu(_ViewerButton.DropDownItems);
@@ -287,19 +289,22 @@ namespace PDFPatcher.Functions
 			}
 
 			BookmarkElement el = _BookmarkBox.GetModelObject(i) as BookmarkElement;
-			if (_controller.Model.LockDownViewer == false
-				&& _BookmarkBox.SelectedIndices.Count == 1
-				&& (i = el.Page) > 0) {
-				PdfViewerControl v = _ViewerBox;
-				if (_controller.Model.PdfDocument != null && el.Page > 0 && el.Page <= _ViewerBox.Document.PageCount) {
-					Rectangle b = _ViewerBox.GetPageBound(el.Page);
-					v.ScrollToPosition(new PagePosition(el.Page,
-						v.HorizontalFlow ? el.Left > b.Width ? b.Width : el.Left : 0,
-						v.HorizontalFlow || el.Top == 0 ? 0 : el.Top.LimitInRange(b.Top, b.Bottom),
-						0, 0, true)
-					);
-				}
+			if (_controller.Model.LockDownViewer != false || _BookmarkBox.SelectedIndices.Count != 1 ||
+				(i = el.Page) <= 0) {
+				return;
 			}
+
+			PdfViewerControl v = _ViewerBox;
+			if (_controller.Model.PdfDocument == null || el.Page <= 0 || el.Page > _ViewerBox.Document.PageCount) {
+				return;
+			}
+
+			Rectangle b = _ViewerBox.GetPageBound(el.Page);
+			v.ScrollToPosition(new PagePosition(el.Page,
+				v.HorizontalFlow ? el.Left > b.Width ? b.Width : el.Left : 0,
+				v.HorizontalFlow || el.Top == 0 ? 0 : el.Top.LimitInRange(b.Top, b.Bottom),
+				0, 0, true)
+			);
 		}
 
 		//protected override void OnClick (EventArgs e) {

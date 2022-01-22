@@ -25,11 +25,12 @@ internal sealed class ConvertUnitProcessor : IInfoDocProcessor
 
 	private bool ConvertUnit(XmlElement item, string attribute) {
 		XmlAttribute a = item.GetAttributeNode(attribute);
-		if (a != null) {
-			a.Value = UnitConverter.ToPoint(a.Value, UnitFactor);
-			return true;
+		if (a == null) {
+			return false;
 		}
 
-		return false;
+		a.Value = UnitConverter.ToPoint(a.Value, UnitFactor);
+		return true;
+
 	}
 }

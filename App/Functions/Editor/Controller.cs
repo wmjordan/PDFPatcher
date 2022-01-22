@@ -56,10 +56,12 @@ namespace PDFPatcher.Functions.Editor
 			if (r != null) {
 				foreach (XmlNode item in r) {
 					XmlElement i = item as XmlElement;
-					if (i.ParentNode.Name == Constants.DocumentBookmark) {
-						b.Roots = i.ParentNode.SelectNodes(Constants.Bookmark).ToXmlNodeArray();
-						break;
+					if (i.ParentNode.Name != Constants.DocumentBookmark) {
+						continue;
 					}
+
+					b.Roots = i.ParentNode.SelectNodes(Constants.Bookmark).ToXmlNodeArray();
+					break;
 				}
 
 				b.RefreshObjects(r.ToArray());
@@ -95,10 +97,12 @@ namespace PDFPatcher.Functions.Editor
 
 			undo.Add(processor.Process(item));
 			processedItems.Add(item);
-			if (includeDescendant) {
-				foreach (BookmarkElement d in item.SubBookmarks) {
-					ProcessItem(includeDescendant, processor, processedItems, undo, d);
-				}
+			if (!includeDescendant) {
+				return;
+			}
+
+			foreach (BookmarkElement d in item.SubBookmarks) {
+				ProcessItem(includeDescendant, processor, processedItems, undo, d);
 			}
 		}
 
@@ -133,13 +137,15 @@ namespace PDFPatcher.Functions.Editor
 				}
 			}
 
-			if (s == null) {
-				v.Document.TryDispose();
-				View.AutoBookmark.TryDispose();
-				Model.PdfDocument = v.Document = null;
-				v.Enabled = false;
-				View.ViewerToolbar.Enabled = false;
+			if (s != null) {
+				return;
 			}
+
+			v.Document.TryDispose();
+			View.AutoBookmark.TryDispose();
+			Model.PdfDocument = v.Document = null;
+			v.Enabled = false;
+			View.ViewerToolbar.Enabled = false;
 		}
 
 		internal void Destroy() {
@@ -306,12 +312,14 @@ namespace PDFPatcher.Functions.Editor
 
 			Model.Document = document;
 			LoadBookmarks(b, m);
-			if (Model.PdfDocument != null && document.PageLabelRoot.HasChildNodes) {
-				PageLabelCollection pl = Model.PdfDocument.PageLabels;
-				pl.Clear();
-				foreach (PageLabelElement item in document.PageLabels) {
-					pl.Add(item.ToPageLabel());
-				}
+			if (Model.PdfDocument == null || !document.PageLabelRoot.HasChildNodes) {
+				return;
+			}
+
+			PageLabelCollection pl = Model.PdfDocument.PageLabels;
+			pl.Clear();
+			foreach (PageLabelElement item in document.PageLabels) {
+				pl.Add(item.ToPageLabel());
 			}
 		}
 
@@ -652,17 +660,19 @@ namespace PDFPatcher.Functions.Editor
 				}
 			}
 
-			if (c != null) {
-				if (c.ParentNode.Name == Constants.Bookmark) {
-					b.Expand(c.ParentNode);
-				}
-
-				b.Expand(c);
-				b.EnsureItemsVisible(new BookmarkElement[] { c });
-				b.SelectedObjects = new BookmarkElement[] { c };
-				b.FocusedObject = c;
-				//_BookmarkBox.ModelToItem (c).BeginEdit ();
+			if (c == null) {
+				return;
 			}
+
+			if (c.ParentNode.Name == Constants.Bookmark) {
+				b.Expand(c.ParentNode);
+			}
+
+			b.Expand(c);
+			b.EnsureItemsVisible(new BookmarkElement[] { c });
+			b.SelectedObjects = new BookmarkElement[] { c };
+			b.FocusedObject = c;
+			//_BookmarkBox.ModelToItem (c).BeginEdit ();
 		}
 
 		internal void Undo(int step) {
@@ -709,10 +719,12 @@ namespace PDFPatcher.Functions.Editor
 				//    Common.Form.ErrorBox ("合并的书签不能有子书签。");
 				//    return;
 				//}
-				if (es[i].ParentNode != p && es[i].ParentNode != es[0]) {
-					FormHelper.ErrorBox("合并的书签必须有相同的上级书签。");
-					return;
+				if (es[i].ParentNode == p || es[i].ParentNode == es[0]) {
+					continue;
 				}
+
+				FormHelper.ErrorBox("合并的书签必须有相同的上级书签。");
+				return;
 			}
 
 			UndoActionGroup undo = new UndoActionGroup();
@@ -778,10 +790,12 @@ namespace PDFPatcher.Functions.Editor
 					bool m = false;
 					int fs = span.Size.ToInt32();
 					foreach (EditModel.AutoBookmarkStyle item in Model.TitleStyles) {
-						if (item.InternalFontName == s.Name && item.FontSize == fs) {
-							m = true;
-							goto NEXT;
+						if (item.InternalFontName != s.Name || item.FontSize != fs) {
+							continue;
 						}
+
+						m = true;
+						goto NEXT;
 					}
 
 					if (m == false) {
@@ -964,12 +978,14 @@ namespace PDFPatcher.Functions.Editor
 		}
 
 		static void TrimBookmarkText(BookmarkContainer bm) {
-			if (bm is BookmarkElement b) {
-				string t = b.Title;
-				string t2 = b.Title.Trim();
-				if (t2 != t) {
-					b.Title = t2;
-				}
+			if (bm is not BookmarkElement b) {
+				return;
+			}
+
+			string t = b.Title;
+			string t2 = b.Title.Trim();
+			if (t2 != t) {
+				b.Title = t2;
 			}
 		}
 

@@ -103,11 +103,13 @@ internal sealed class PdfNavigator : XPathNavigator
 	}
 
 	public override bool MoveToId(string id) {
-		if (id.StartsWith("PAGE", StringComparison.OrdinalIgnoreCase)) {
-			if (id.Substring(4).TryParse(out int p) && p < _doc.PageCount) {
-				// 将当前对象设置为该页
-				return true;
-			}
+		if (!id.StartsWith("PAGE", StringComparison.OrdinalIgnoreCase)) {
+			return false;
+		}
+
+		if (id.Substring(4).TryParse(out int p) && p < _doc.PageCount) {
+			// 将当前对象设置为该页
+			return true;
 		}
 
 		return false;
@@ -118,13 +120,14 @@ internal sealed class PdfNavigator : XPathNavigator
 			return false;
 		}
 
-		if (_childIndex < _currentObject.Parent.Children.Count - 1) {
-			_childIndex++;
-			_currentObject = (_currentObject.Children as IList<DocumentObject>)[_childIndex];
-			return true;
+		if (_childIndex >= _currentObject.Parent.Children.Count - 1) {
+			return false;
 		}
 
-		return false;
+		_childIndex++;
+		_currentObject = (_currentObject.Children as IList<DocumentObject>)[_childIndex];
+		return true;
+
 	}
 
 	public override bool MoveToNextAttribute() {
@@ -150,13 +153,14 @@ internal sealed class PdfNavigator : XPathNavigator
 			return false;
 		}
 
-		if (_childIndex > 0) {
-			_childIndex--;
-			_currentObject = (_currentObject.Children as IList<DocumentObject>)[_childIndex];
-			return true;
+		if (_childIndex <= 0) {
+			return false;
 		}
 
-		return false;
+		_childIndex--;
+		_currentObject = (_currentObject.Children as IList<DocumentObject>)[_childIndex];
+		return true;
+
 	}
 
 	public override string Name => _nameTable.GetOrAdd(_currentObject.Name);

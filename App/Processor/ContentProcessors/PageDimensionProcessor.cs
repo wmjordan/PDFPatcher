@@ -214,15 +214,19 @@ internal sealed class PageDimensionProcessor : IPageProcessor
 		}
 
 		foreach (PdfObject item in ann.ArrayList) {
-			if (PdfReader.GetPdfObject(item) is PdfDictionary an) {
-				PdfArray rect = an.GetAsArray(PdfName.RECT);
-				if (rect != null && rect.Size == 4) {
-					rect[0] = new PdfNumber(((rect[0] as PdfNumber).FloatValue * ct.XScale) + ct.XTranslation);
-					rect[1] = new PdfNumber(((rect[1] as PdfNumber).FloatValue * ct.YScale) + ct.YTranslation);
-					rect[2] = new PdfNumber(((rect[2] as PdfNumber).FloatValue * ct.XScale) + ct.XTranslation);
-					rect[3] = new PdfNumber(((rect[3] as PdfNumber).FloatValue * ct.YScale) + ct.YTranslation);
-				}
+			if (PdfReader.GetPdfObject(item) is not PdfDictionary an) {
+				continue;
 			}
+
+			PdfArray rect = an.GetAsArray(PdfName.RECT);
+			if (rect == null || rect.Size != 4) {
+				continue;
+			}
+
+			rect[0] = new PdfNumber(((rect[0] as PdfNumber).FloatValue * ct.XScale) + ct.XTranslation);
+			rect[1] = new PdfNumber(((rect[1] as PdfNumber).FloatValue * ct.YScale) + ct.YTranslation);
+			rect[2] = new PdfNumber(((rect[2] as PdfNumber).FloatValue * ct.XScale) + ct.XTranslation);
+			rect[3] = new PdfNumber(((rect[3] as PdfNumber).FloatValue * ct.YScale) + ct.YTranslation);
 		}
 	}
 

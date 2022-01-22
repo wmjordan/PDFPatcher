@@ -44,12 +44,14 @@ internal sealed class FontInfo : CMapAwareDocumentFont
 
 	internal PdfDictionary FontDescriptor {
 		get {
+			if (_FontDescriptor != null) {
+				return _FontDescriptor;
+			}
+
+			_FontDescriptor = _Font.Locate<PdfArray>(PdfName.DESCENDANTFONTS).Locate<PdfDictionary>(0)
+				.Locate<PdfDictionary>(PdfName.FONTDESCRIPTOR);
 			if (_FontDescriptor == null) {
-				_FontDescriptor = _Font.Locate<PdfArray>(PdfName.DESCENDANTFONTS).Locate<PdfDictionary>(0)
-					.Locate<PdfDictionary>(PdfName.FONTDESCRIPTOR);
-				if (_FontDescriptor == null) {
-					_FontDescriptor = new PdfDictionary();
-				}
+				_FontDescriptor = new PdfDictionary();
 			}
 
 			return _FontDescriptor;
@@ -58,24 +60,26 @@ internal sealed class FontInfo : CMapAwareDocumentFont
 
 	internal string FontName {
 		get {
-			if (_FontName == null) {
-				PdfName f = FontDescriptor.GetAsName(PdfName.FONTNAME);
-				if (f != null) {
-					_FontName = PdfName.DecodeName(f.ToString());
-				}
-				else {
-					string fn = PostscriptFontName;
-					int i = fn.LastIndexOf(',');
-					if (i != -1) {
-						fn = fn.Substring(0, i);
-					}
-
-					_FontName = fn;
-				}
-
-				// 删除子集的名称
-				_FontName = PdfDocumentFont.RemoveSubsetPrefix(_FontName);
+			if (_FontName != null) {
+				return _FontName;
 			}
+
+			PdfName f = FontDescriptor.GetAsName(PdfName.FONTNAME);
+			if (f != null) {
+				_FontName = PdfName.DecodeName(f.ToString());
+			}
+			else {
+				string fn = PostscriptFontName;
+				int i = fn.LastIndexOf(',');
+				if (i != -1) {
+					fn = fn.Substring(0, i);
+				}
+
+				_FontName = fn;
+			}
+
+			// 删除子集的名称
+			_FontName = PdfDocumentFont.RemoveSubsetPrefix(_FontName);
 
 			return _FontName;
 		}
@@ -93,14 +97,16 @@ internal sealed class FontInfo : CMapAwareDocumentFont
 
 	public int DefaultWidth {
 		get {
-			if (_DefaultWidth == -1) {
-				PdfNumber w = _Font.Locate<PdfNumber>(PdfName.DESCENDANTFONTS, 0, PdfName.DW);
-				if (w == null) {
-					_DefaultWidth = DefaultDefaultWidth;
-				}
-				else {
-					_DefaultWidth = w.IntValue;
-				}
+			if (_DefaultWidth != -1) {
+				return _DefaultWidth;
+			}
+
+			PdfNumber w = _Font.Locate<PdfNumber>(PdfName.DESCENDANTFONTS, 0, PdfName.DW);
+			if (w == null) {
+				_DefaultWidth = DefaultDefaultWidth;
+			}
+			else {
+				_DefaultWidth = w.IntValue;
 			}
 
 			return _DefaultWidth;

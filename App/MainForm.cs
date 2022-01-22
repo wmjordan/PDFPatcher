@@ -310,23 +310,27 @@ public partial class MainForm : Form
 			string p = (GetActiveFunctionControl() as IDocumentEditor)?.DocumentPath;
 			FunctionControl c = GetFunctionControl(func);
 			foreach (TabPage item in _FunctionContainer.TabPages) {
-				if (item.Controls.Count > 0 && item.Controls[0] == c) {
-					_FunctionContainer.SelectedTab = item;
-					if (string.IsNullOrEmpty(p) == false) {
-						c.ExecuteCommand(Commands.OpenFile, p);
-					}
-
-					return;
+				if (item.Controls.Count <= 0 || item.Controls[0] != c) {
+					continue;
 				}
+
+				_FunctionContainer.SelectedTab = item;
+				if (string.IsNullOrEmpty(p) == false) {
+					c.ExecuteCommand(Commands.OpenFile, p);
+				}
+
+				return;
 			}
 
 			TabPage t = new(c.FunctionName) { Font = SystemFonts.SmallCaptionFont };
 			ImageList.ImageCollection im = _FunctionContainer.ImageList.Images;
 			for (int i = im.Count - 1; i >= 0; i--) {
-				if (im[i] == c.IconImage) {
-					t.ImageIndex = i;
-					break;
+				if (im[i] != c.IconImage) {
+					continue;
 				}
+
+				t.ImageIndex = i;
+				break;
 			}
 
 			if (t.ImageIndex < 0) {
@@ -358,14 +362,16 @@ public partial class MainForm : Form
 	}
 
 	private void SelectedFunctionChanged(object sender, TabControlEventArgs args) {
-		if (GetActiveFunctionControl() is FunctionControl c) {
-			//foreach (ToolStripMenuItem item in _MainMenu.Items) {
-			//	c.SetupMenu (item);
-			//}
-			c.OnSelected();
-			_MainStatusLabel.Text = c is IDocumentEditor b ? b.DocumentPath : Messages.Welcome;
-			AcceptButton = c.DefaultButton;
+		if (GetActiveFunctionControl() is not FunctionControl c) {
+			return;
 		}
+
+		//foreach (ToolStripMenuItem item in _MainMenu.Items) {
+		//	c.SetupMenu (item);
+		//}
+		c.OnSelected();
+		_MainStatusLabel.Text = c is IDocumentEditor b ? b.DocumentPath : Messages.Welcome;
+		AcceptButton = c.DefaultButton;
 	}
 
 	internal string ShowPdfFileDialog() {
@@ -447,13 +453,15 @@ public partial class MainForm : Form
 
 	///<summary>获取或指定后台进程。</summary>
 	internal BackgroundWorker GetWorker() {
-		if (_Worker == null) {
-			_Worker = new BackgroundWorker { WorkerReportsProgress = true, WorkerSupportsCancellation = true };
-			_Worker.DoWork += Worker_DoWork;
-			_Worker.ProgressChanged += Worker_ProgressChanged;
-			_Worker.RunWorkerCompleted += Worker_RunWorkerCompleted;
-			Tracker.SetWorker(_Worker);
+		if (_Worker != null) {
+			return _Worker;
 		}
+
+		_Worker = new BackgroundWorker { WorkerReportsProgress = true, WorkerSupportsCancellation = true };
+		_Worker.DoWork += Worker_DoWork;
+		_Worker.ProgressChanged += Worker_ProgressChanged;
+		_Worker.RunWorkerCompleted += Worker_RunWorkerCompleted;
+		Tracker.SetWorker(_Worker);
 
 		return _Worker;
 	}
@@ -478,14 +486,16 @@ public partial class MainForm : Form
 	}
 
 	public void ResetWorker() {
-		if (_Worker != null) {
-			if (_Worker.IsBusy) {
-				throw new InvalidOperationException("Worker is busy. Can't be reset.");
-			}
-
-			_Worker.Dispose();
-			_Worker = null;
+		if (_Worker == null) {
+			return;
 		}
+
+		if (_Worker.IsBusy) {
+			throw new InvalidOperationException("Worker is busy. Can't be reset.");
+		}
+
+		_Worker.Dispose();
+		_Worker = null;
 	}
 
 	private void Worker_ProgressChanged(object sender, ProgressChangedEventArgs e) {
@@ -611,14 +621,16 @@ public partial class MainForm : Form
 			p = p.Substring(0, 17) + "...";
 		}
 
-		if (sender is Control f) {
-			f = f.Parent;
-			if (f == null) {
-				return;
-			}
-
-			f.Text = p;
+		if (sender is not Control f) {
+			return;
 		}
+
+		f = f.Parent;
+		if (f == null) {
+			return;
+		}
+
+		f.Text = p;
 	}
 
 	#endregion

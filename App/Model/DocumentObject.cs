@@ -87,35 +87,38 @@ public sealed class DocumentObject : IHierarchicalObject<DocumentObject>
 				return true;
 			}
 
-			if (po.Type == PdfObject.INDIRECT) {
-				if (Type == PdfObjectType.GoToPage) {
-					return false;
-				}
-
-				if (ExtensiveObject is not PdfObject r) {
-					return false;
-				}
-
-				if (r.Type == PdfObject.DICTIONARY && Parent.Type == PdfObjectType.Outline && Name == "Next") {
-					return false;
-				}
-
-				return (r.Type == PdfObject.DICTIONARY && __ReversalRefNames.Contains(Name) == false)
-					   || r.Type == PdfObject.ARRAY
-					   || r.Type == PdfObject.STREAM;
+			if (po.Type != PdfObject.INDIRECT) {
+				return false;
 			}
 
-			return false;
+			if (Type == PdfObjectType.GoToPage) {
+				return false;
+			}
+
+			if (ExtensiveObject is not PdfObject r) {
+				return false;
+			}
+
+			if (r.Type == PdfObject.DICTIONARY && Parent.Type == PdfObjectType.Outline && Name == "Next") {
+				return false;
+			}
+
+			return (r.Type == PdfObject.DICTIONARY && __ReversalRefNames.Contains(Name) == false)
+				   || r.Type == PdfObject.ARRAY
+				   || r.Type == PdfObject.STREAM;
+
 		}
 	}
 
 	public ICollection<DocumentObject> Children {
 		get {
+			if (_Children != null) {
+				return _Children;
+			}
+
+			PopulateChildren(false);
 			if (_Children == null) {
-				PopulateChildren(false);
-				if (_Children == null) {
-					_Children = __Leaf;
-				}
+				_Children = __Leaf;
 			}
 
 			return _Children;
@@ -128,28 +131,32 @@ public sealed class DocumentObject : IHierarchicalObject<DocumentObject>
 		}
 
 		for (int i = _Children.Count - 1; i >= 0; i--) {
-			if (_Children[i].Name == name) {
-				if (_Children is Array) {
-					_Children = new List<DocumentObject>(_Children);
-				}
+			if (_Children[i].Name != name) {
+				continue;
+			}
 
-				_Children.RemoveAt(i);
-				PdfObject po = Value;
-				if (po != null) {
-					while (po.Type == PdfObject.INDIRECT) {
-						po = PdfReader.GetPdfObject(po);
-					}
+			if (_Children is Array) {
+				_Children = new List<DocumentObject>(_Children);
+			}
 
-					if (po.Type == PdfObject.ARRAY) {
-						((PdfArray)po).Remove(i);
-					}
-					else if (po.Type == PdfObject.DICTIONARY || po.Type == PdfObject.STREAM) {
-						((PdfDictionary)po).Remove(new PdfName(name));
-					}
-				}
-
+			_Children.RemoveAt(i);
+			PdfObject po = Value;
+			if (po == null) {
 				return true;
 			}
+
+			while (po.Type == PdfObject.INDIRECT) {
+				po = PdfReader.GetPdfObject(po);
+			}
+
+			if (po.Type == PdfObject.ARRAY) {
+				((PdfArray)po).Remove(i);
+			}
+			else if (po.Type == PdfObject.DICTIONARY || po.Type == PdfObject.STREAM) {
+				((PdfDictionary)po).Remove(new PdfName(name));
+			}
+
+			return true;
 		}
 
 		return false;
@@ -182,10 +189,12 @@ public sealed class DocumentObject : IHierarchicalObject<DocumentObject>
 				break;
 			case PdfObject.NUMBER:
 				double n;
-				if (((string)value).TryParse(out n)) {
-					Value = new PdfNumber(n);
-					break;
+				if (!((string)value).TryParse(out n)) {
+					return false;
 				}
+
+				Value = new PdfNumber(n);
+				break;
 
 				return false;
 			case PdfObject.NAME:
@@ -196,21 +205,24 @@ public sealed class DocumentObject : IHierarchicalObject<DocumentObject>
 				break;
 		}
 
-		if (Parent != null) {
-			if ((Parent.ExtensiveObject ?? Parent.Value) is PdfDictionary pd) {
-				pd.Put(new PdfName(Name), Value);
-				_Children = null;
-				return true;
-			}
-
-			if ((Parent.ExtensiveObject ?? Parent.Value) is PdfArray pa) {
-				pa.ArrayList[int.Parse(Name) - 1] = Value;
-				_Children = null;
-				return true;
-			}
+		if (Parent == null) {
+			return false;
 		}
 
-		return false;
+		if ((Parent.ExtensiveObject ?? Parent.Value) is PdfDictionary pd) {
+			pd.Put(new PdfName(Name), Value);
+			_Children = null;
+			return true;
+		}
+
+		if ((Parent.ExtensiveObject ?? Parent.Value) is not PdfArray pa) {
+			return false;
+		}
+
+		pa.ArrayList[int.Parse(Name) - 1] = Value;
+		_Children = null;
+		return true;
+
 	}
 
 	private static string GetItemValueText(PdfObject po, PdfObject eo) {
@@ -269,17 +281,19 @@ public sealed class DocumentObject : IHierarchicalObject<DocumentObject>
 			_Children = null;
 		}
 
-		if (_Children == null) {
-			if (Type == PdfObjectType.Page && Value == null) {
-				Value = OwnerDocument.Document.GetPageN((int)ExtensiveObject);
-			}
-			else if (Type != PdfObjectType.Normal) {
-				PopulateChildrenForSpecialObject();
-			}
+		if (_Children != null) {
+			return _Children;
+		}
 
-			if (_Children == null) {
-				PopulateChildrenForNormalObject();
-			}
+		if (Type == PdfObjectType.Page && Value == null) {
+			Value = OwnerDocument.Document.GetPageN((int)ExtensiveObject);
+		}
+		else if (Type != PdfObjectType.Normal) {
+			PopulateChildrenForSpecialObject();
+		}
+
+		if (_Children == null) {
+			PopulateChildrenForNormalObject();
 		}
 
 		return _Children;

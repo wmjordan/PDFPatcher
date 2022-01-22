@@ -79,17 +79,19 @@ public sealed class PdfInfoXmlDocument : XmlDocument
 	}
 
 	public override XmlElement CreateElement(string prefix, string localName, string namespaceURI) {
-		if (string.IsNullOrEmpty(prefix) && string.IsNullOrEmpty(namespaceURI)) {
-			switch (localName) {
-				case Constants.Bookmark:
-					return new BookmarkElement(this);
-				case Constants.DocumentBookmark:
-					return new BookmarkRootElement(this);
-				case Constants.PageLabelsAttributes.Style:
-					return new PageLabelElement(this);
-				case Constants.Info.ThisName:
-					return new DocumentInfoElement(this);
-			}
+		if (!string.IsNullOrEmpty(prefix) || !string.IsNullOrEmpty(namespaceURI)) {
+			return base.CreateElement(prefix, localName, namespaceURI);
+		}
+
+		switch (localName) {
+			case Constants.Bookmark:
+				return new BookmarkElement(this);
+			case Constants.DocumentBookmark:
+				return new BookmarkRootElement(this);
+			case Constants.PageLabelsAttributes.Style:
+				return new PageLabelElement(this);
+			case Constants.Info.ThisName:
+				return new DocumentInfoElement(this);
 		}
 
 		return base.CreateElement(prefix, localName, namespaceURI);
@@ -197,13 +199,14 @@ public sealed class BookmarkElement : BookmarkContainer
 				return Color.FromArgb((int)(r * 255f), (int)(g * 255f), (int)(b * 255f));
 			}
 
-			if (HasAttribute(Constants.Color)) {
-				string a = GetAttribute(Constants.Color);
-				int c = a.ToInt32(int.MaxValue);
-				return c != int.MaxValue ? Color.FromArgb(c) : Color.FromName(a);
+			if (!HasAttribute(Constants.Color)) {
+				return Color.Transparent;
 			}
 
-			return Color.Transparent;
+			string a = GetAttribute(Constants.Color);
+			int c = a.ToInt32(int.MaxValue);
+			return c != int.MaxValue ? Color.FromArgb(c) : Color.FromName(a);
+
 		}
 		set {
 			RemoveAttribute(Constants.Color);
@@ -219,12 +222,14 @@ public sealed class BookmarkElement : BookmarkContainer
 	public FontStyle TextStyle {
 		get {
 			string s = GetAttribute(Constants.BookmarkAttributes.Style);
-			if (string.IsNullOrEmpty(s) == false) {
-				switch (s) {
-					case Constants.BookmarkAttributes.StyleType.Bold: return FontStyle.Bold;
-					case Constants.BookmarkAttributes.StyleType.Italic: return FontStyle.Italic;
-					case Constants.BookmarkAttributes.StyleType.BoldItalic: return FontStyle.Italic | FontStyle.Bold;
-				}
+			if (string.IsNullOrEmpty(s) != false) {
+				return FontStyle.Regular;
+			}
+
+			switch (s) {
+				case Constants.BookmarkAttributes.StyleType.Bold: return FontStyle.Bold;
+				case Constants.BookmarkAttributes.StyleType.Italic: return FontStyle.Italic;
+				case Constants.BookmarkAttributes.StyleType.BoldItalic: return FontStyle.Italic | FontStyle.Bold;
 			}
 
 			return FontStyle.Regular;
@@ -344,10 +349,12 @@ public sealed class BookmarkElement : BookmarkContainer
 		SetAttribute(Constants.BookmarkAttributes.Title, title);
 		this.SetValue(Constants.DestinationAttributes.Page, pageNumber, 0);
 		SetAttribute(Constants.DestinationAttributes.Action, Constants.ActionType.Goto);
-		if (position != 0) {
-			SetAttribute(Constants.DestinationAttributes.View, Constants.DestinationAttributes.ViewType.XYZ);
-			this.SetValue(Constants.Coordinates.Top, position, 0);
+		if (position == 0) {
+			return;
 		}
+
+		SetAttribute(Constants.DestinationAttributes.View, Constants.DestinationAttributes.ViewType.XYZ);
+		this.SetValue(Constants.Coordinates.Top, position, 0);
 	}
 }
 
@@ -362,10 +369,12 @@ public sealed class PageLabelRootElement : XmlElement
 
 	public void Add(MuPdfSharp.PageLabel label) {
 		foreach (PageLabelElement item in Labels) {
-			if (item.PageNumber == label.FromPageNumber) {
-				item.SetAttributes(label);
-				return;
+			if (item.PageNumber != label.FromPageNumber) {
+				continue;
 			}
+
+			item.SetAttributes(label);
+			return;
 		}
 
 		(this.AppendElement(Constants.PageLabelsAttributes.Style) as PageLabelElement).SetAttributes(label);

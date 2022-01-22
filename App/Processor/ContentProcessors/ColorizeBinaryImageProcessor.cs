@@ -21,15 +21,19 @@ internal sealed class ColorizeBinaryImageProcessor : IPageProcessor
 				continue;
 			}
 
-			if (cmd.Name.ToString() == "Do") {
-				if (bwImages.Any(item => item.Equals(cmd.Operands[0]))) {
-					parent.Insert(i,
-						PdfPageCommand.Create("RG", new PdfNumber(1), new PdfNumber(0), new PdfNumber(0)));
-					parent.Insert(i,
-						PdfPageCommand.Create("rg", new PdfNumber(0), new PdfNumber(1), new PdfNumber(0)));
-					return true;
-				}
+			if (cmd.Name.ToString() != "Do") {
+				continue;
 			}
+
+			if (!bwImages.Any(item => item.Equals(cmd.Operands[0]))) {
+				continue;
+			}
+
+			parent.Insert(i,
+				PdfPageCommand.Create("RG", new PdfNumber(1), new PdfNumber(0), new PdfNumber(0)));
+			parent.Insert(i,
+				PdfPageCommand.Create("rg", new PdfNumber(0), new PdfNumber(1), new PdfNumber(0)));
+			return true;
 		}
 
 		return r;
@@ -72,13 +76,14 @@ internal sealed class ColorizeBinaryImageProcessor : IPageProcessor
 			bw.Add(item.Key);
 		}
 
-		if (ProcessCommands(context.PageCommands.Commands, bw)) {
-			context.IsPageContentModified = true;
-			_processedPageCount++;
-			return true;
+		if (!ProcessCommands(context.PageCommands.Commands, bw)) {
+			return false;
 		}
 
-		return false;
+		context.IsPageContentModified = true;
+		_processedPageCount++;
+		return true;
+
 	}
 
 	#endregion

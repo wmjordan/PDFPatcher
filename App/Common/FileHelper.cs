@@ -16,13 +16,15 @@ internal static class FileHelper
 	public static bool HasFileNameMacro(string fileName) {
 		char c = '<';
 		foreach (char item in fileName) {
-			if (item == c) {
-				if (c == '>') {
-					return true;
-				}
-
-				c = '>';
+			if (item != c) {
+				continue;
 			}
+
+			if (c == '>') {
+				return true;
+			}
+
+			c = '>';
 		}
 
 		return false;
@@ -42,22 +44,24 @@ internal static class FileHelper
 			char y = path2[i2];
 			if (x < '0' || x > '9') {
 				// 不区分大小写的文字比较
-				if (x != y) {
-					x = ToLowerAscii(x);
-					y = ToLowerAscii(y);
-					if (x == y) {
-						continue;
-					}
-
-					return x == PathDot
-						? -1
-						: y == PathDot
-							? 1
-							: y < '0' || y > '9'
-								? LocaleInfo.StringComparer(x.ToString(), y.ToString(), CompareOptions.StringSort)
-								// path2 为数字，path1 不为数字，path2 排在前面
-								: 1;
+				if (x == y) {
+					continue;
 				}
+
+				x = ToLowerAscii(x);
+				y = ToLowerAscii(y);
+				if (x == y) {
+					continue;
+				}
+
+				return x == PathDot
+					? -1
+					: y == PathDot
+						? 1
+						: y < '0' || y > '9'
+							? LocaleInfo.StringComparer(x.ToString(), y.ToString(), CompareOptions.StringSort)
+							// path2 为数字，path1 不为数字，path2 排在前面
+							: 1;
 			}
 			else if (IsPathSeparator(x)) {
 				if (IsPathSeparator(y)) {

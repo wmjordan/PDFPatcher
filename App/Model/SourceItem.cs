@@ -151,16 +151,20 @@ public abstract class SourceItem
 		// 优先采用与输入文件同名的 XML 信息文件
 		FilePath f =
 			new(FileHelper.CombinePath(FolderName, Path.ChangeExtension(FileName, Constants.FileExtensions.Xml)));
+		if (f.ExistsFile != false) {
+			return f.ToString();
+		}
+
+		// 次之采用与输入文件同名的 TXT 信息文件
+		f = f.ChangeExtension(Constants.FileExtensions.Txt);
+		if (f.ExistsFile != false) {
+			return f.ToString();
+		}
+
+		// 次之采用同一个信息文件
+		f = FilePath.ChangeExtension(Constants.FileExtensions.Xml);
 		if (f.ExistsFile == false) {
-			// 次之采用与输入文件同名的 TXT 信息文件
-			f = f.ChangeExtension(Constants.FileExtensions.Txt);
-			if (f.ExistsFile == false) {
-				// 次之采用同一个信息文件
-				f = FilePath.ChangeExtension(Constants.FileExtensions.Xml);
-				if (f.ExistsFile == false) {
-					f = FilePath.Empty;
-				}
-			}
+			f = FilePath.Empty;
 		}
 
 		return f.ToString();
@@ -229,16 +233,18 @@ public abstract class SourceItem
 			}
 		}
 
-		if (AppContext.Merger.IgnoreLeadingNumbers) {
-			int i;
-			for (i = 0; i < t.Length; i++) {
-				if (t[i] > '9' || t[i] < '0') {
-					break;
-				}
-			}
-
-			t = t.Substring(i);
+		if (!AppContext.Merger.IgnoreLeadingNumbers) {
+			return new BookmarkSettings(t);
 		}
+
+		int i;
+		for (i = 0; i < t.Length; i++) {
+			if (t[i] > '9' || t[i] < '0') {
+				break;
+			}
+		}
+
+		t = t.Substring(i);
 
 		return new BookmarkSettings(t);
 	}
@@ -307,24 +313,26 @@ public abstract class SourceItem
 
 	private static bool
 		MatchCajPatternAddPath(string path, string text, string pattern, ICollection<string> container) {
-		if (MatchCajPattern(text, pattern)) {
-			container.Add(path);
-			return true;
+		if (!MatchCajPattern(text, pattern)) {
+			return false;
 		}
 
-		return false;
+		container.Add(path);
+		return true;
+
 	}
 
 	private static BookmarkSettings CreateCajBookmark(string text, string pattern, string title) {
-		if (MatchCajPattern(text, pattern) && text.EndsWith("001")) {
-			if (text.EndsWith("001")) {
-				return new BookmarkSettings(title);
-			}
-
-			return null;
+		if (!MatchCajPattern(text, pattern) || !text.EndsWith("001")) {
+			return new BookmarkSettings(text);
 		}
 
-		return new BookmarkSettings(text);
+		if (text.EndsWith("001")) {
+			return new BookmarkSettings(title);
+		}
+
+		return null;
+
 	}
 
 	private static bool MatchCajPattern(string text, string pattern) {

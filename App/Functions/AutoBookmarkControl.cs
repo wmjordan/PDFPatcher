@@ -202,7 +202,11 @@ namespace PDFPatcher.Functions
 			}
 
 			_options.LevelAdjustment.Clear();
-			if (_LevelAdjustmentBox.Items.Count > 0) {
+			if (_LevelAdjustmentBox.Items.Count <= 0) {
+				return;
+			}
+
+			{
 				foreach (ListViewItem item in _LevelAdjustmentBox.Items) {
 					_options.LevelAdjustment.Add(
 						_LevelAdjustmentBox.GetModelObject(item.Index) as AutoBookmarkOptions.LevelAdjustmentOption);
@@ -305,14 +309,16 @@ namespace PDFPatcher.Functions
 				}
 
 				using (FontFilterForm f = new FontFilterForm(fontInfo)) {
-					if (f.ShowDialog() == DialogResult.OK && f.FilterConditions != null) {
-						foreach (AutoBookmarkCondition item in f.FilterConditions) {
-							_LevelAdjustmentBox.AddObject(new AutoBookmarkOptions.LevelAdjustmentOption() {
-								Condition = item,
-								AdjustmentLevel = 0,
-								RelativeAdjustment = false
-							});
-						}
+					if (f.ShowDialog() != DialogResult.OK || f.FilterConditions == null) {
+						return;
+					}
+
+					foreach (AutoBookmarkCondition item in f.FilterConditions) {
+						_LevelAdjustmentBox.AddObject(new AutoBookmarkOptions.LevelAdjustmentOption() {
+							Condition = item,
+							AdjustmentLevel = 0,
+							RelativeAdjustment = false
+						});
 					}
 				}
 			}
@@ -328,15 +334,17 @@ namespace PDFPatcher.Functions
 			AutoBookmarkOptions.LevelAdjustmentOption o =
 				_LevelAdjustmentBox.GetModelObject(i) as AutoBookmarkOptions.LevelAdjustmentOption;
 			using (EditAdjustmentForm dialog = new EditAdjustmentForm(o)) {
-				if (dialog.ShowDialog() == DialogResult.OK) {
-					if (dialog.Filter.Condition != null) {
-						_LevelAdjustmentBox.InsertObjects(i,
-							new AutoBookmarkOptions.LevelAdjustmentOption[] { dialog.Filter });
-						_LevelAdjustmentBox.SelectedIndex = i;
-					}
-
-					_LevelAdjustmentBox.RemoveObject(o);
+				if (dialog.ShowDialog() != DialogResult.OK) {
+					return;
 				}
+
+				if (dialog.Filter.Condition != null) {
+					_LevelAdjustmentBox.InsertObjects(i,
+						new AutoBookmarkOptions.LevelAdjustmentOption[] { dialog.Filter });
+					_LevelAdjustmentBox.SelectedIndex = i;
+				}
+
+				_LevelAdjustmentBox.RemoveObject(o);
 			}
 		}
 

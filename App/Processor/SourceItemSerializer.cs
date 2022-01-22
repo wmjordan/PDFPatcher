@@ -38,10 +38,12 @@ internal static class SourceItemSerializer
 		}
 
 		container.AppendChild(e);
-		if (item.HasSubItems) {
-			foreach (SourceItem sub in item.Items) {
-				SerializeSourceItem(doc, e, sub);
-			}
+		if (!item.HasSubItems) {
+			return;
+		}
+
+		foreach (SourceItem sub in item.Items) {
+			SerializeSourceItem(doc, e, sub);
 		}
 	}
 
@@ -77,10 +79,12 @@ internal static class SourceItemSerializer
 		}
 
 		list.Add(s);
-		if (bookmark.HasSubBookmarks) {
-			foreach (BookmarkElement sub in bookmark.SubBookmarks) {
-				DeserializeSourceItem(s.Items, sub);
-			}
+		if (!bookmark.HasSubBookmarks) {
+			return;
+		}
+
+		foreach (BookmarkElement sub in bookmark.SubBookmarks) {
+			DeserializeSourceItem(s.Items, sub);
 		}
 	}
 }

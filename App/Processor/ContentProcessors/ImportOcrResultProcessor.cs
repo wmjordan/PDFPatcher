@@ -86,10 +86,12 @@ internal sealed class ImportOcrResultProcessor : IDocProcessor
 				CreatePageOcrFontReference(context, page, fontV);
 			}
 
-			if (l < pn) {
-				l++;
-				Tracker.IncrementProgress(1);
+			if (l >= pn) {
+				continue;
 			}
+
+			l++;
+			Tracker.IncrementProgress(1);
 		}
 	}
 
@@ -121,10 +123,12 @@ internal sealed class ImportOcrResultProcessor : IDocProcessor
 	private static PdfIndirectReference CreateOcrFont(DocProcessorContext context, PdfDictionary d, bool isVertical) {
 		PdfName fontName = isVertical ? OcrFontV : OcrFont;
 		PdfIndirectReference fontRef = d.GetAsIndirectObject(fontName);
-		if (fontRef == null || d.GetDirectObject(fontName) as PdfDictionary == null) {
-			fontRef = CreateOcrFont(context, isVertical);
-			d.Put(fontName, fontRef);
+		if (fontRef != null && d.GetDirectObject(fontName) as PdfDictionary != null) {
+			return fontRef;
 		}
+
+		fontRef = CreateOcrFont(context, isVertical);
+		d.Put(fontName, fontRef);
 
 		return fontRef;
 	}
@@ -222,29 +226,31 @@ internal sealed class ImportOcrResultProcessor : IDocProcessor
 		float fSize = -1f;
 		bool isV = false, hasHFont = false, hasVFont = false;
 		foreach (object item in chars) {
-			if (info.GetInfo(item as XmlElement) && string.IsNullOrEmpty(info.Text) == false) {
-				PdfName fn;
-				if (info.IsVertical) {
-					hasVFont = true;
-					fn = OcrFontV;
-				}
-				else {
-					hasHFont = true;
-					fn = OcrFont;
-				}
-
-				if (info.FontSize != fSize) {
-					sc.Add(PdfPageCommand.Create("Tf", fn, new PdfNumber(info.FontSize)));
-					fSize = info.FontSize;
-					isV = info.IsVertical;
-				}
-				else if (isV != info.IsVertical) {
-					sc.Add(PdfPageCommand.Create("Tf", fn, new PdfNumber(fSize)));
-				}
-
-				sc.Add(PdfPageCommand.Create("Td", new PdfNumber(info.DeltaX), new PdfNumber(info.DeltaY)));
-				sc.Add(PdfPageCommand.Create("Tj", new PdfString(GbkEncoding.GetBytes(info.Text))));
+			if (!info.GetInfo(item as XmlElement) || string.IsNullOrEmpty(info.Text) != false) {
+				continue;
 			}
+
+			PdfName fn;
+			if (info.IsVertical) {
+				hasVFont = true;
+				fn = OcrFontV;
+			}
+			else {
+				hasHFont = true;
+				fn = OcrFont;
+			}
+
+			if (info.FontSize != fSize) {
+				sc.Add(PdfPageCommand.Create("Tf", fn, new PdfNumber(info.FontSize)));
+				fSize = info.FontSize;
+				isV = info.IsVertical;
+			}
+			else if (isV != info.IsVertical) {
+				sc.Add(PdfPageCommand.Create("Tf", fn, new PdfNumber(fSize)));
+			}
+
+			sc.Add(PdfPageCommand.Create("Td", new PdfNumber(info.DeltaX), new PdfNumber(info.DeltaY)));
+			sc.Add(PdfPageCommand.Create("Tj", new PdfString(GbkEncoding.GetBytes(info.Text))));
 		}
 
 		return (hasHFont ? 1 : 0) + (hasVFont ? 2 : 0);

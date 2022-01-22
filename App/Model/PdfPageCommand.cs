@@ -28,10 +28,12 @@ internal class PdfPageCommand
 {
 	public PdfPageCommand(PdfLiteral oper, List<PdfObject> operands) {
 		Name = oper;
-		if (operands?.Count > 0) {
-			Operands = new PdfObject[operands[operands.Count - 1] is PdfLiteral ? operands.Count - 1 : operands.Count];
-			operands.CopyTo(0, Operands, 0, Operands.Length);
+		if (!(operands?.Count > 0)) {
+			return;
 		}
+
+		Operands = new PdfObject[operands[operands.Count - 1] is PdfLiteral ? operands.Count - 1 : operands.Count];
+		operands.CopyTo(0, Operands, 0, Operands.Length);
 	}
 
 	public virtual PdfLiteral Name { get; }

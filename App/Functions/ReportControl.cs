@@ -16,10 +16,12 @@ public partial class ReportControl : UserControl
 
 	protected override void OnVisibleChanged(EventArgs e) {
 		base.OnVisibleChanged(e);
-		if (Visible) {
-			FindForm().AcceptButton = _CancelButton;
-			_CancelButton.Focus();
+		if (!Visible) {
+			return;
 		}
+
+		FindForm().AcceptButton = _CancelButton;
+		_CancelButton.Focus();
 	}
 
 	private void _CancelButton_Click(object sender, EventArgs e) {
@@ -27,10 +29,12 @@ public partial class ReportControl : UserControl
 			Hide();
 		}
 		else {
-			if (FormHelper.YesNoBox("程序正在工作，是否终止执行？") == DialogResult.Yes) {
-				AppContext.MainForm.GetWorker().CancelAsync();
-				AppContext.Abort = true;
+			if (FormHelper.YesNoBox("程序正在工作，是否终止执行？") != DialogResult.Yes) {
+				return;
 			}
+
+			AppContext.MainForm.GetWorker().CancelAsync();
+			AppContext.Abort = true;
 		}
 	}
 
@@ -115,13 +119,15 @@ public partial class ReportControl : UserControl
 
 	private void _LogBox_LinkClicked(object sender, LinkClickedEventArgs e) {
 		string f = e.LinkText;
-		if (File.Exists(f) || Directory.Exists(f)) {
-			try {
-				Process.Start(f);
-			}
-			catch (Exception) {
-				FormHelper.ErrorBox("无法打开文件：" + f);
-			}
+		if (!File.Exists(f) && !Directory.Exists(f)) {
+			return;
+		}
+
+		try {
+			Process.Start(f);
+		}
+		catch (Exception) {
+			FormHelper.ErrorBox("无法打开文件：" + f);
 		}
 	}
 

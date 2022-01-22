@@ -39,11 +39,12 @@ internal sealed class CommandRegistry<P>
 	/// <param name="parameters">参数。</param>
 	/// <returns>如找到对应的命令处理，则返回 true，否则返回 false。</returns>
 	public bool Process(string commandID, P context, params string[] parameters) {
-		if (_container.TryGetValue(commandID, out ICommand<P> cmd)) {
-			cmd.Process(context, parameters);
-			return true;
+		if (!_container.TryGetValue(commandID, out ICommand<P> cmd)) {
+			return false;
 		}
 
-		return false;
+		cmd.Process(context, parameters);
+		return true;
+
 	}
 }

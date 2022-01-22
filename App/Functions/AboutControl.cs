@@ -52,11 +52,13 @@ internal sealed partial class AboutControl : HtmlPageControl
 		get {
 			object[] attributes = Assembly.GetExecutingAssembly()
 				.GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
-			if (attributes.Length > 0) {
-				AssemblyTitleAttribute titleAttribute = (AssemblyTitleAttribute)attributes[0];
-				if (titleAttribute.Title != "") {
-					return titleAttribute.Title;
-				}
+			if (attributes.Length <= 0) {
+				return Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().CodeBase);
+			}
+
+			AssemblyTitleAttribute titleAttribute = (AssemblyTitleAttribute)attributes[0];
+			if (titleAttribute.Title != "") {
+				return titleAttribute.Title;
 			}
 
 			return Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().CodeBase);

@@ -17,10 +17,12 @@ internal sealed class RemoveFormProcessor : IPageProcessor
 				r |= ProcessCommands(ec.Commands, formNames);
 			}
 
-			if (cmd.Name.ToString() == "Do" && cmd.HasOperand && formNames.Contains(cmd.Operands[0] as PdfName)) {
-				parent.RemoveAt(i);
-				r = true;
+			if (cmd.Name.ToString() != "Do" || !cmd.HasOperand || !formNames.Contains(cmd.Operands[0] as PdfName)) {
+				continue;
 			}
+
+			parent.RemoveAt(i);
+			r = true;
 		}
 
 		return r;
@@ -54,10 +56,12 @@ internal sealed class RemoveFormProcessor : IPageProcessor
 			ProcessCommands(p.Commands, fl);
 		}
 
-		if (r) {
-			context.IsPageContentModified = true;
-			_processedPageCount++;
+		if (!r) {
+			return r;
 		}
+
+		context.IsPageContentModified = true;
+		_processedPageCount++;
 
 		return r;
 	}

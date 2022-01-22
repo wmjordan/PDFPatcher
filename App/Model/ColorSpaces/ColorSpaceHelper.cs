@@ -308,11 +308,13 @@ public static class ColorSpaceHelper
 		double hue = 0, sat = 0, val = 0;
 
 		// Scale Hue to be between 0 and 360. Saturation and value scale to be between 0 and 1.
-		if (h > 360 || s > 1 || b > 1) {
-			hue = h / 255.0 * 360.0 % 360.0;
-			sat = s / 255.0;
-			val = b / 255.0;
+		if (h <= 360 && s <= 1 && b <= 1) {
+			return HSBtoColor(new HSB(hue, sat, val));
 		}
+
+		hue = h / 255.0 * 360.0 % 360.0;
+		sat = s / 255.0;
+		val = b / 255.0;
 
 		return HSBtoColor(new HSB(hue, sat, val));
 	}

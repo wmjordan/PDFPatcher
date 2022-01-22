@@ -97,13 +97,17 @@ public partial class BookmarkEditorView : TreeListView
 				}
 
 				int p = e.GetValue(Constants.DestinationAttributes.Page, 0);
-				if (e.HasAttribute(Constants.DestinationAttributes.FirstPageNumber)) {
-					int o = e.GetValue(Constants.DestinationAttributes.FirstPageNumber, 0);
-					if (o > 0) {
-						p += o;
-						e.RemoveAttribute(Constants.DestinationAttributes.FirstPageNumber);
-					}
+				if (!e.HasAttribute(Constants.DestinationAttributes.FirstPageNumber)) {
+					return p;
 				}
+
+				int o = e.GetValue(Constants.DestinationAttributes.FirstPageNumber, 0);
+				if (o <= 0) {
+					return p;
+				}
+
+				p += o;
+				e.RemoveAttribute(Constants.DestinationAttributes.FirstPageNumber);
 
 				return p;
 			},
@@ -112,10 +116,12 @@ public partial class BookmarkEditorView : TreeListView
 					return;
 				}
 
-				if (value.ToString().TryParse(out int n)) {
-					ChangePageNumberProcessor p = new(n, true, false);
-					Undo.AddUndo(p.Name, p.Process(e));
+				if (!value.ToString().TryParse(out int n)) {
+					return;
 				}
+
+				ChangePageNumberProcessor p = new(n, true, false);
+				Undo.AddUndo(p.Name, p.Process(e));
 			}
 		};
 		_ActionColumn.AspectGetter = x => {
@@ -306,17 +312,19 @@ public partial class BookmarkEditorView : TreeListView
 		int c = color.ToArgb();
 		List<BookmarkElement> r = new();
 		foreach (KeyValuePair<BookmarkElement, Color> item in _markers) {
-			if (item.Value.ToArgb() == c) {
-				BookmarkElement k = item.Key;
-				Debug.Assert((k.ParentNode == null || k.OwnerDocument == null) == false);
-				if (k.ParentNode == null || k.OwnerDocument == null) {
-					r.Add(k);
-					continue;
-				}
-
-				items.Add(k);
-				MakeItemVisible(k);
+			if (item.Value.ToArgb() != c) {
+				continue;
 			}
+
+			BookmarkElement k = item.Key;
+			Debug.Assert((k.ParentNode == null || k.OwnerDocument == null) == false);
+			if (k.ParentNode == null || k.OwnerDocument == null) {
+				r.Add(k);
+				continue;
+			}
+
+			items.Add(k);
+			MakeItemVisible(k);
 		}
 
 		foreach (BookmarkElement item in r) {
@@ -378,16 +386,18 @@ public partial class BookmarkEditorView : TreeListView
 		OLVListItem fi = null, li = null;
 		foreach (BookmarkElement item in items) {
 			OLVListItem i = ModelToItem(item);
-			if (i != null) {
-				Rectangle r = GetItemRect(i.Index);
-				if (r.Top >= cr.Top && r.Bottom <= cr.Bottom) {
-					return;
-				}
+			if (i == null) {
+				continue;
+			}
 
-				li = i;
-				if (fi == null) {
-					fi = i;
-				}
+			Rectangle r = GetItemRect(i.Index);
+			if (r.Top >= cr.Top && r.Bottom <= cr.Bottom) {
+				return;
+			}
+
+			li = i;
+			if (fi == null) {
+				fi = i;
 			}
 		}
 
@@ -497,10 +507,12 @@ public partial class BookmarkEditorView : TreeListView
 		}
 
 		using (ActionEditorForm form = new(bookmark)) {
-			if (form.ShowDialog() == DialogResult.OK && form.UndoActions.Count > 0) {
-				Undo?.AddUndo("更改书签动作属性", form.UndoActions);
-				RefreshObject(bookmark);
+			if (form.ShowDialog() != DialogResult.OK || form.UndoActions.Count <= 0) {
+				return;
 			}
+
+			Undo?.AddUndo("更改书签动作属性", form.UndoActions);
+			RefreshObject(bookmark);
 		}
 	}
 
@@ -552,12 +564,14 @@ public partial class BookmarkEditorView : TreeListView
 
 		XPathNavigator n = s.CreateNavigator();
 		while (n.MoveToFollowing(Constants.Bookmark, string.Empty)) {
-			if (n.UnderlyingObject is BookmarkElement e && matcher.Match(e)) {
-				MakeItemVisible(e);
-				EnsureModelVisible(e);
-				SelectedObject = e;
-				return e;
+			if (n.UnderlyingObject is not BookmarkElement e || !matcher.Match(e)) {
+				continue;
 			}
+
+			MakeItemVisible(e);
+			EnsureModelVisible(e);
+			SelectedObject = e;
+			return e;
 		}
 
 		return null;
@@ -576,10 +590,12 @@ public partial class BookmarkEditorView : TreeListView
 		}
 
 		Unfreeze();
-		if (matches.Count > 0) {
-			EnsureItemsVisible(matches);
-			SelectedObjects = matches;
+		if (matches.Count <= 0) {
+			return matches;
 		}
+
+		EnsureItemsVisible(matches);
+		SelectedObjects = matches;
 
 		return matches;
 	}
@@ -591,10 +607,12 @@ public partial class BookmarkEditorView : TreeListView
 			}
 		}
 
-		if (matcher.Match(item)) {
-			matches.Add(item);
-			MakeItemVisible(item);
+		if (!matcher.Match(item)) {
+			return;
 		}
+
+		matches.Add(item);
+		MakeItemVisible(item);
 	}
 
 	#region 拖放操作
@@ -606,14 +624,16 @@ public partial class BookmarkEditorView : TreeListView
 
 		StringCollection f = o.GetFileDropList();
 		foreach (string item in f) {
-			if (FileHelper.HasExtension(item, Constants.FileExtensions.Xml)
-				|| FileHelper.HasExtension(item, Constants.FileExtensions.Pdf)) {
-				args.Handled = true;
-				args.DropTargetLocation = DropTargetLocation.Background;
-				args.Effect = DragDropEffects.Copy;
-				args.InfoMessage = "打开文件" + item;
-				return;
+			if (!FileHelper.HasExtension(item, Constants.FileExtensions.Xml) &&
+				!FileHelper.HasExtension(item, Constants.FileExtensions.Pdf)) {
+				continue;
 			}
+
+			args.Handled = true;
+			args.DropTargetLocation = DropTargetLocation.Background;
+			args.Effect = DragDropEffects.Copy;
+			args.InfoMessage = "打开文件" + item;
+			return;
 		}
 
 		base.OnCanDrop(args);

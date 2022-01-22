@@ -65,11 +65,13 @@ public partial class InfoExchangerControl : FunctionControl
 		_TargetPdfFile.TargetFileChangedByBrowseButton += (s, args) => {
 			int i;
 			string f = _TargetPdfFile.FileDialog.FileName;
-			if (_ItemList.Items.Count > 1 && (i = f.LastIndexOf(Path.DirectorySeparatorChar)) != -1) {
-				_TargetPdfFile.Text = string.Concat(f.Substring(0, i), Path.DirectorySeparatorChar,
-					Constants.FileNameMacros.FileName, Path.GetExtension(f));
-				args.Cancel = true;
+			if (_ItemList.Items.Count <= 1 || (i = f.LastIndexOf(Path.DirectorySeparatorChar)) == -1) {
+				return;
 			}
+
+			_TargetPdfFile.Text = string.Concat(f.Substring(0, i), Path.DirectorySeparatorChar,
+				Constants.FileNameMacros.FileName, Path.GetExtension(f));
+			args.Cancel = true;
 		};
 		ImageList.ImageCollection fi = _FileTypeList.Images;
 		fi.AddRange(new Image[] { Resources.OriginalPdfFile });
@@ -309,12 +311,14 @@ public partial class InfoExchangerControl : FunctionControl
 	}
 
 	private void _MainToolbar_ButtonClick(object sender, EventArgs e) {
-		if (sender == _AddFilesButton) {
-			OpenFileDialog b = _OpenPdfBox;
-			_AddFilesButton.DropDown.Items.ClearDropDownItems();
-			if (b.ShowDialog() == DialogResult.OK) {
-				AddFiles(b.FileNames, true);
-			}
+		if (sender != _AddFilesButton) {
+			return;
+		}
+
+		OpenFileDialog b = _OpenPdfBox;
+		_AddFilesButton.DropDown.Items.ClearDropDownItems();
+		if (b.ShowDialog() == DialogResult.OK) {
+			AddFiles(b.FileNames, true);
 		}
 	}
 

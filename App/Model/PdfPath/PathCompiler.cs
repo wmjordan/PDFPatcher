@@ -57,16 +57,17 @@ internal class PathCompiler
 			return PathAxisType.Children;
 		}
 
-		if (c == SelfChar) {
-			if (MatchNextChar(path, length, index, SelfChar)) {
-				++index;
-				return PathAxisType.Parent;
-			}
+		if (c != SelfChar) {
+			return PathAxisType.Children;
+		}
 
+		if (!MatchNextChar(path, length, index, SelfChar)) {
 			return PathAxisType.None;
 		}
 
-		return PathAxisType.Children;
+		++index;
+		return PathAxisType.Parent;
+
 	}
 
 	private static string ExtractName(string path, int length, ref int index) {

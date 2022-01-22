@@ -11,13 +11,14 @@ internal sealed class ShiftPageProcessor : IInfoDocProcessor
 
 	public bool Process(XmlElement item) {
 		XmlAttribute a = item.GetAttributeNode(Constants.DestinationAttributes.Page);
-		if (a != null && a.Value.TryParse(out int pageNum) /* && pageNum > 0*/) {
-			pageNum += Offset;
-			a.Value = pageNum.ToText();
-			return true;
+		if (a == null || !a.Value.TryParse(out int pageNum)) {
+			return false;
 		}
 
-		return false;
+		pageNum += Offset;
+		a.Value = pageNum.ToText();
+		return true;
+
 	}
 
 	#endregion

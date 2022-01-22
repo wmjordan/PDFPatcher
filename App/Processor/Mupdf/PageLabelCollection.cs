@@ -72,10 +72,12 @@ public sealed class PageLabelCollection : ICollection<PageLabel>
 	/// <returns>如包含相同页码的页码标签，返回 true，否则返回 false。</returns>
 	public bool Remove(PageLabel item) {
 		for (int i = _labels.Count - 1; i >= 0; i--) {
-			if (_labels[i].FromPageNumber == item.FromPageNumber) {
-				_labels.RemoveAt(i);
-				return true;
+			if (_labels[i].FromPageNumber != item.FromPageNumber) {
+				continue;
 			}
+
+			_labels.RemoveAt(i);
+			return true;
 		}
 
 		return false;

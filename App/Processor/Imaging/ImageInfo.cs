@@ -212,18 +212,20 @@ internal sealed class ImageInfo
 
 	EXIT:
 		PRStream sm;
-		if (options.ExtractSoftMask && (
-				(sm = data.GetAsStream(PdfName.SMASK) as PRStream) != null
-				|| (sm = data.GetAsStream(PdfName.MASK) as PRStream) != null)
-		   ) {
-			ImageInfo mi = new(sm);
-			byte[] mask = DecodeImage(mi,
-				new ImageExtracterOptions { InvertBlackAndWhiteImages = !options.InvertSoftMask });
-			if (mask != null && mi.BitsPerComponent == 1) {
-				info.MaskBytes = mask;
-				info.MaskSize = new Size(mi.Width, mi.Height);
-			}
+		if (!options.ExtractSoftMask || ((sm = data.GetAsStream(PdfName.SMASK) as PRStream) == null &&
+										 (sm = data.GetAsStream(PdfName.MASK) as PRStream) == null)) {
+			return decodedBytes;
 		}
+
+		ImageInfo mi = new(sm);
+		byte[] mask = DecodeImage(mi,
+			new ImageExtracterOptions { InvertBlackAndWhiteImages = !options.InvertSoftMask });
+		if (mask == null || mi.BitsPerComponent != 1) {
+			return decodedBytes;
+		}
+
+		info.MaskBytes = mask;
+		info.MaskSize = new Size(mi.Width, mi.Height);
 
 		return decodedBytes;
 	}
@@ -480,7 +482,11 @@ internal sealed class ImageInfo
 			return;
 		}
 
-		if (PdfName.INDEXED.Equals(colorspace.GetAsName(0))) {
+		if (!PdfName.INDEXED.Equals(colorspace.GetAsName(0))) {
+			return;
+		}
+
+		{
 			PdfObject o = colorspace.GetDirectObject(1);
 			info.PaletteColorSpace = o as PdfName;
 			if (info.PaletteColorSpace == null) {

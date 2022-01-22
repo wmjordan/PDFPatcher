@@ -101,16 +101,18 @@ internal sealed class PageRangeCollection : List<PageRange>
 				if (rangeIndicator > 0) {
 					string startRange = range.Substring(0, rangeIndicator);
 					string endRange = range.Substring(rangeIndicator + 1, range.Length - rangeIndicator - 1);
-					if (startRange.TryParse(out startNum) && endRange.TryParse(out endNum) && startNum != 0 &&
-						endNum != 0) {
-						SetReverseNumber(ref startNum, maxValue);
-						SetReverseNumber(ref endNum, maxValue);
-						if (startNum < 0 || endNum < 0) {
-							continue;
-						}
-
-						r.Add(new PageRange(startNum, endNum));
+					if (!startRange.TryParse(out startNum) || !endRange.TryParse(out endNum) || startNum == 0 ||
+						endNum == 0) {
+						continue;
 					}
+
+					SetReverseNumber(ref startNum, maxValue);
+					SetReverseNumber(ref endNum, maxValue);
+					if (startNum < 0 || endNum < 0) {
+						continue;
+					}
+
+					r.Add(new PageRange(startNum, endNum));
 				}
 				else if (range.TryParse(out startNum)) {
 					SetReverseNumber(ref startNum, maxValue);

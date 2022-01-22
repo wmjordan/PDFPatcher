@@ -101,14 +101,16 @@ internal static class PdfHelper
 				__PdfPasswordBox[sourceFile] = password;
 			}
 
-			if (r.NeedsPassword) {
-				PasswordEntryForm f = new(sourceFile);
-				if (f.ShowDialog() == DialogResult.Cancel) {
-					throw new BadPasswordException("密码错误，没有权限打开 PDF 文件。");
-				}
-
-				password = Encoding.Default.GetBytes(f.Password);
+			if (!r.NeedsPassword) {
+				return r;
 			}
+
+			PasswordEntryForm f = new(sourceFile);
+			if (f.ShowDialog() == DialogResult.Cancel) {
+				throw new BadPasswordException("密码错误，没有权限打开 PDF 文件。");
+			}
+
+			password = Encoding.Default.GetBytes(f.Password);
 
 			return r;
 		}
@@ -278,23 +280,23 @@ internal static class PdfHelper
 
 		PdfArray box;
 		float[] c = new float[4];
-		if ((page.Contains(PdfName.CROPBOX) && (box = page.GetAsArray(PdfName.CROPBOX)) != null && box.Size == 4)
-			|| (page.Contains(PdfName.MEDIABOX) && (box = page.GetAsArray(PdfName.MEDIABOX)) != null &&
-				box.Size == 4)) {
-			for (int i = 0; i < 4; i++) {
-				c[i] = box.GetAsNumber(i).FloatValue;
-			}
-
-			Rectangle rect = new(c[0], c[1], c[2], c[3]);
-			PdfNumber r = page.GetAsNumber(PdfName.ROTATE);
-			if (r != null) {
-				return new Rectangle(c[0], c[1], c[2], c[3], r.IntValue);
-			}
-
-			return rect;
+		if ((!page.Contains(PdfName.CROPBOX) || (box = page.GetAsArray(PdfName.CROPBOX)) == null || box.Size != 4) &&
+			(!page.Contains(PdfName.MEDIABOX) || (box = page.GetAsArray(PdfName.MEDIABOX)) == null || box.Size != 4)) {
+			return null;
 		}
 
-		return null;
+		for (int i = 0; i < 4; i++) {
+			c[i] = box.GetAsNumber(i).FloatValue;
+		}
+
+		Rectangle rect = new(c[0], c[1], c[2], c[3]);
+		PdfNumber r = page.GetAsNumber(PdfName.ROTATE);
+		if (r != null) {
+			return new Rectangle(c[0], c[1], c[2], c[3], r.IntValue);
+		}
+
+		return rect;
+
 	}
 
 	internal static void ClearPageLinks(this PdfReader r) {
@@ -362,20 +364,21 @@ internal static class PdfHelper
 			marks.Add(value.Length + 1);
 		}
 
-		if (marks.Count > 1) {
-			StringBuilder sb = new();
-			for (int i = 1; i < marks.Count; i++) {
-				if (i > 1) {
-					sb.Append(' ');
-				}
-
-				sb.Append(value, marks[i - 1], marks[i] - 1 - marks[i - 1]);
-			}
-
-			return sb.ToString();
+		if (marks.Count <= 1) {
+			return value;
 		}
 
-		return value;
+		StringBuilder sb = new();
+		for (int i = 1; i < marks.Count; i++) {
+			if (i > 1) {
+				sb.Append(' ');
+			}
+
+			sb.Append(value, marks[i - 1], marks[i] - 1 - marks[i - 1]);
+		}
+
+		return sb.ToString();
+
 	}
 
 	internal static string GetArrayString(PdfArray array) {

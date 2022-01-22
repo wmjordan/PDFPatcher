@@ -65,14 +65,16 @@ internal sealed class GotoDestinationProcessor : IInfoDocProcessor
 				}
 			}
 
-			if (PageRemapper != null) {
-				if (page < PageRemapper.Length && (page = PageRemapper[page]) > 0) {
-					item.SetAttribute(Constants.DestinationAttributes.Page, page.ToText());
-				}
-				else if (RemoveOrphanDestination) {
-					RemoveOrphan(item);
-					return true;
-				}
+			if (PageRemapper == null) {
+				return true;
+			}
+
+			if (page < PageRemapper.Length && (page = PageRemapper[page]) > 0) {
+				item.SetAttribute(Constants.DestinationAttributes.Page, page.ToText());
+			}
+			else if (RemoveOrphanDestination) {
+				RemoveOrphan(item);
+				return true;
 			}
 		}
 		else if (RemoveOrphanDestination) {

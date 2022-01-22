@@ -31,13 +31,15 @@ internal static class ValueHelper
 
 	public static TDisposable TryDispose<TDisposable>(this TDisposable disposable)
 		where TDisposable : IDisposable {
-		if (disposable != null) {
-			try {
-				disposable.Dispose();
-			}
-			catch (Exception) {
-				// ignore
-			}
+		if (disposable == null) {
+			return disposable;
+		}
+
+		try {
+			disposable.Dispose();
+		}
+		catch (Exception) {
+			// ignore
 		}
 
 		return disposable;
@@ -284,33 +286,38 @@ internal static class ValueHelper
 						continue;
 					}
 
-					if ((c >= '0' && c <= '9') || c == '-' || c == '+' || c == '.') {
-						bool notZero = c > '0' && c <= '9';
-						bool hasDot = false;
-						while (++i < l) {
-							c = value[i];
-							if (char.IsNumber(c) == false && char.IsWhiteSpace(c) == false) {
-								if (c == '.') {
-									if (hasDot == false) {
-										hasDot = true;
-										continue;
-									}
+					if ((c < '0' || c > '9') && c != '-' && c != '+' && c != '.') {
+						return -1;
+					}
 
-									return Invalid;
-								}
-
+					bool notZero = c > '0' && c <= '9';
+					bool hasDot = false;
+					while (++i < l) {
+						c = value[i];
+						if (char.IsNumber(c) == false && char.IsWhiteSpace(c) == false) {
+							if (c != '.') {
 								return Invalid;
 							}
 
-							if (notZero == false) {
-								notZero = c > '0' && c <= '9';
+							if (hasDot != false) {
+								return Invalid;
 							}
+
+							hasDot = true;
+							continue;
+
+							return Invalid;
+
+							return Invalid;
 						}
 
-						return notZero ? True : False;
+						if (notZero == false) {
+							notZero = c > '0' && c <= '9';
+						}
 					}
 
-					return -1;
+					return notZero ? True : False;
+
 			}
 		} while (++i < l);
 
@@ -407,12 +414,13 @@ internal static class ValueHelper
 	}
 
 	private static bool ParseFloatStringToInt32(string value, ref int result) {
-		if (double.TryParse(value, NumberStyles.Float, NumberFormatInfo.InvariantInfo, out double d)) {
-			result = d.ToInt32();
-			return true;
+		if (!double.TryParse(value, NumberStyles.Float, NumberFormatInfo.InvariantInfo, out double d)) {
+			return false;
 		}
 
-		return false;
+		result = d.ToInt32();
+		return true;
+
 	}
 
 	public static bool TryParse(this string value, out long result) {
@@ -421,12 +429,13 @@ internal static class ValueHelper
 	}
 
 	private static bool ParseFloatStringToInt64(string value, ref long result) {
-		if (double.TryParse(value, NumberStyles.Float, NumberFormatInfo.InvariantInfo, out double d)) {
-			result = d.ToInt64();
-			return true;
+		if (!double.TryParse(value, NumberStyles.Float, NumberFormatInfo.InvariantInfo, out double d)) {
+			return false;
 		}
 
-		return false;
+		result = d.ToInt64();
+		return true;
+
 	}
 
 	[DebuggerStepThrough]
@@ -453,11 +462,13 @@ internal static class ValueHelper
 		do {
 			for (int i = value < 40 ? 5 : value < 400 ? 9 : Roman.Values.Length - 1; i >= 0; i--) {
 				int n = Roman.Values[i];
-				if (value >= n) {
-					value -= n;
-					sb.Append(Roman.Chars[i]);
-					break;
+				if (value < n) {
+					continue;
 				}
+
+				value -= n;
+				sb.Append(Roman.Chars[i]);
+				break;
 			}
 		} while (value > 0);
 

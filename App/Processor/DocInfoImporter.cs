@@ -124,13 +124,15 @@ internal sealed class DocInfoImporter
 		}
 
 		BookmarkContainer be = InfoDoc.BookmarkRoot;
-		if (be?.HasSubBookmarks == true) {
-			if (be.GetAttribute(Constants.DestinationAttributes.FirstPageNumber).TryParse(out int bookmarkPageShift)) {
-				bookmarkPageShift--;
-			}
-
-			PreprocessBookmark(be, bookmarkPageShift);
+		if (be?.HasSubBookmarks != true) {
+			return be;
 		}
+
+		if (be.GetAttribute(Constants.DestinationAttributes.FirstPageNumber).TryParse(out int bookmarkPageShift)) {
+			bookmarkPageShift--;
+		}
+
+		PreprocessBookmark(be, bookmarkPageShift);
 
 		return be;
 	}
@@ -155,13 +157,15 @@ internal sealed class DocInfoImporter
 	private static int GetPageShift(XmlElement element, int baseShift) {
 		int shift = baseShift;
 		string s = element.GetAttribute(Constants.DestinationAttributes.FirstPageNumber);
-		if (string.IsNullOrEmpty(s) == false) {
-			if (s.TryParse(out shift)) {
-				shift--;
-			}
-			else {
-				shift = baseShift;
-			}
+		if (string.IsNullOrEmpty(s) != false) {
+			return shift;
+		}
+
+		if (s.TryParse(out shift)) {
+			shift--;
+		}
+		else {
+			shift = baseShift;
 		}
 
 		return shift;
@@ -336,15 +340,17 @@ internal sealed class DocInfoImporter
 		PdfPageLabels pls = new();
 		int i = 0;
 		foreach (PageLabel item in labels) {
-			if (item.PageNumber > 0 && item.StartPage > 0) {
-				pls.AddPageLabel(item.PageNumber,
-					ValueHelper.MapValue(item.Style, Constants.PageLabelStyles.Names, Constants.PageLabelStyles.Values,
-						PdfPageLabels.DECIMAL_ARABIC_NUMERALS),
-					item.Prefix,
-					item.StartPage
-				);
-				i++;
+			if (item.PageNumber <= 0 || item.StartPage <= 0) {
+				continue;
 			}
+
+			pls.AddPageLabel(item.PageNumber,
+				ValueHelper.MapValue(item.Style, Constants.PageLabelStyles.Names, Constants.PageLabelStyles.Values,
+					PdfPageLabels.DECIMAL_ARABIC_NUMERALS),
+				item.Prefix,
+				item.StartPage
+			);
+			i++;
 		}
 
 		return i > 0 ? pls : null;
@@ -423,22 +429,24 @@ internal sealed class DocInfoImporter
 				ImportAction(w.Writer, ann, action, pageCount, false);
 			}
 
-			if (ann != null) {
-				ImportColor(item, ann);
-				if (string.IsNullOrEmpty(border) == false) {
-					ImportBorder(border, ann);
-				}
-				else {
-					if (item.SelectSingleNode("边框样式") is XmlElement bse) {
-						PdfDictionary bs = ImportPdfBorderStyle(bse);
-						if (bs != null) {
-							ann.Put(PdfName.BS, bs);
-						}
+			if (ann == null) {
+				continue;
+			}
+
+			ImportColor(item, ann);
+			if (string.IsNullOrEmpty(border) == false) {
+				ImportBorder(border, ann);
+			}
+			else {
+				if (item.SelectSingleNode("边框样式") is XmlElement bse) {
+					PdfDictionary bs = ImportPdfBorderStyle(bse);
+					if (bs != null) {
+						ann.Put(PdfName.BS, bs);
 					}
 				}
-
-				w.AddAnnotation(ann, pageNum);
 			}
+
+			w.AddAnnotation(ann, pageNum);
 		}
 	}
 
@@ -700,15 +708,17 @@ internal sealed class DocInfoImporter
 
 			if (PdfReader.GetPdfObject(pr) is PdfDictionary page) {
 				box = page.GetPageVisibleRectangle();
-				if (box != null) {
-					if (true) {
-						// TODO: 检测页面旋转方向并设置正确的目标
-					}
-
-					ar.Add(PdfNull.PDFNULL);
-					ar.Add(new PdfNumber(box.Top));
-					ar.Add(PdfNull.PDFNULL);
+				if (box == null) {
+					return;
 				}
+
+				if (true) {
+					// TODO: 检测页面旋转方向并设置正确的目标
+				}
+
+				ar.Add(PdfNull.PDFNULL);
+				ar.Add(new PdfNumber(box.Top));
+				ar.Add(PdfNull.PDFNULL);
 			}
 			else {
 				ar.Add(new float[] { 0, 10000, 0 });
@@ -905,7 +915,11 @@ internal sealed class DocInfoImporter
 			(reader != null ? reader.Catalog : writer.ExtraCatalog).Put(PdfName.PAGEMODE, v);
 		}
 
-		if (options.SpecifyViewerPreferences) {
+		if (!options.SpecifyViewerPreferences) {
+			return;
+		}
+
+		{
 			PdfDictionary d = reader != null ? reader.Catalog : writer.ExtraCatalog;
 			PdfDictionary p = d.GetAsDict(PdfName.VIEWERPREFERENCES);
 			if (p == null) {
@@ -960,11 +974,13 @@ internal sealed class DocInfoImporter
 			//    prop.Add (ps);
 			//}
 			PdfObject a;
-			if (pdfDs.TryGetValue(item.Key, out a)) {
-				PdfArray sourceD = a as PdfArray;
-				sourceD.ArrayList.Clear();
-				sourceD.ArrayList.AddRange(prop.ArrayList);
+			if (!pdfDs.TryGetValue(item.Key, out a)) {
+				continue;
 			}
+
+			PdfArray sourceD = a as PdfArray;
+			sourceD.ArrayList.Clear();
+			sourceD.ArrayList.AddRange(prop.ArrayList);
 		}
 	}
 
@@ -1028,13 +1044,14 @@ internal sealed class DocInfoImporter
 			return true;
 		}
 
-		if (array.Length == 4) {
-			array = Array.ConvertAll(array, a => { return UnitConverter.ToPoint(a, _unitFactor); });
-			pdfDict.Put(pdfName, new PdfArray(array));
-			return true;
+		if (array.Length != 4) {
+			return false;
 		}
 
-		return false;
+		array = Array.ConvertAll(array, a => { return UnitConverter.ToPoint(a, _unitFactor); });
+		pdfDict.Put(pdfName, new PdfArray(array));
+		return true;
+
 	}
 
 	public static float[] ToSingleArray(string value) { return ToSingleArray(value, false); }
@@ -1052,10 +1069,12 @@ internal sealed class DocInfoImporter
 		float[] vals = new float[parts.Length];
 		bool ok = true;
 		for (int i = 0; i < vals.Length; i++) {
-			if (parts[i].TryParse(out vals[i]) == false || (allowNegativeNumber == false && vals[i] < 0)) {
-				ok = false;
-				break;
+			if (parts[i].TryParse(out vals[i]) != false && (allowNegativeNumber != false || !(vals[i] < 0))) {
+				continue;
 			}
+
+			ok = false;
+			break;
 		}
 
 		if (ok == false) {

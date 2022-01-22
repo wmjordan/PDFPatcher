@@ -168,14 +168,16 @@ public class GlassButton : Button
 	public new Color BackColor {
 		get => backColor;
 		set {
-			if (!backColor.Equals(value)) {
-				backColor = value;
-				UseVisualStyleBackColor = false;
-
-				RecalcRect(currentFrame / (framesCount - 1f));
-
-				OnBackColorChanged(EventArgs.Empty);
+			if (backColor.Equals(value)) {
+				return;
 			}
+
+			backColor = value;
+			UseVisualStyleBackColor = false;
+
+			RecalcRect(currentFrame / (framesCount - 1f));
+
+			OnBackColorChanged(EventArgs.Empty);
 		}
 	}
 
@@ -205,14 +207,16 @@ public class GlassButton : Button
 	public Color InnerBorderColor {
 		get => innerBorderColor;
 		set {
-			if (innerBorderColor != value) {
-				innerBorderColor = value;
+			if (innerBorderColor == value) {
+				return;
+			}
 
-				RecalcRect(currentFrame / (framesCount - 1f));
+			innerBorderColor = value;
 
-				if (IsHandleCreated) {
-					Invalidate();
-				}
+			RecalcRect(currentFrame / (framesCount - 1f));
+
+			if (IsHandleCreated) {
+				Invalidate();
 			}
 		}
 	}
@@ -227,13 +231,15 @@ public class GlassButton : Button
 	public Color SpecialSymbolColor {
 		get => specialSymbolColor;
 		set {
-			if (specialSymbolColor != value) {
-				specialSymbolColor = value;
-				specialSymbolBrush = new SolidBrush(Color.FromArgb(transparencyFactor, specialSymbolColor));
+			if (specialSymbolColor == value) {
+				return;
+			}
 
-				if (IsHandleCreated) {
-					Invalidate();
-				}
+			specialSymbolColor = value;
+			specialSymbolBrush = new SolidBrush(Color.FromArgb(transparencyFactor, specialSymbolColor));
+
+			if (IsHandleCreated) {
+				Invalidate();
 			}
 		}
 	}
@@ -250,14 +256,16 @@ public class GlassButton : Button
 	public int CornerRadius {
 		get => roundCorner;
 		set {
-			if (roundCorner != value) {
-				roundCorner = value;
+			if (roundCorner == value) {
+				return;
+			}
 
-				RecalcRect(currentFrame / (framesCount - 1f));
+			roundCorner = value;
 
-				if (IsHandleCreated) {
-					Invalidate();
-				}
+			RecalcRect(currentFrame / (framesCount - 1f));
+
+			if (IsHandleCreated) {
+				Invalidate();
 			}
 		}
 	}
@@ -274,16 +282,18 @@ public class GlassButton : Button
 	public string ToolTipText {
 		get => toolTipText;
 		set {
-			if (toolTipText != value) {
-				toolTipText = value;
+			if (toolTipText == value) {
+				return;
+			}
 
-				if (toolTipText.Length > 0) {
-					toolTip.SetToolTip(this, toolTipText);
-				}
+			toolTipText = value;
 
-				if (IsHandleCreated) {
-					Invalidate();
-				}
+			if (toolTipText.Length > 0) {
+				toolTip.SetToolTip(this, toolTipText);
+			}
+
+			if (IsHandleCreated) {
+				Invalidate();
 			}
 		}
 	}
@@ -300,14 +310,16 @@ public class GlassButton : Button
 	public bool AlternativeForm {
 		get => alternativeForm;
 		set {
-			if (alternativeForm != value) {
-				alternativeForm = value;
+			if (alternativeForm == value) {
+				return;
+			}
 
-				RecalcRect(currentFrame / (framesCount - 1f));
+			alternativeForm = value;
 
-				if (IsHandleCreated) {
-					Invalidate();
-				}
+			RecalcRect(currentFrame / (framesCount - 1f));
+
+			if (IsHandleCreated) {
+				Invalidate();
 			}
 		}
 	}
@@ -324,11 +336,13 @@ public class GlassButton : Button
 	public bool AnimateGlow {
 		get => animateGlow;
 		set {
-			if (animateGlow != value) {
-				animateGlow = value;
-				if (IsHandleCreated) {
-					Invalidate();
-				}
+			if (animateGlow == value) {
+				return;
+			}
+
+			animateGlow = value;
+			if (IsHandleCreated) {
+				Invalidate();
 			}
 		}
 	}
@@ -345,12 +359,14 @@ public class GlassButton : Button
 	public bool ShowSpecialSymbol {
 		get => showSpecialSymbol;
 		set {
-			if (showSpecialSymbol != value) {
-				showSpecialSymbol = value;
+			if (showSpecialSymbol == value) {
+				return;
+			}
 
-				if (IsHandleCreated) {
-					Invalidate();
-				}
+			showSpecialSymbol = value;
+
+			if (IsHandleCreated) {
+				Invalidate();
 			}
 		}
 	}
@@ -390,12 +406,14 @@ public class GlassButton : Button
 	public SpecialSymbols SpecialSymbol {
 		get => specialSymbol;
 		set {
-			if (specialSymbol != value) {
-				specialSymbol = value;
+			if (specialSymbol == value) {
+				return;
+			}
 
-				if (IsHandleCreated) {
-					Invalidate();
-				}
+			specialSymbol = value;
+
+			if (IsHandleCreated) {
+				Invalidate();
 			}
 		}
 	}
@@ -418,14 +436,16 @@ public class GlassButton : Button
 	public Direction AlternativeFormDirection {
 		get => alternativeFormDirection;
 		set {
-			if (alternativeFormDirection != value) {
-				alternativeFormDirection = value;
+			if (alternativeFormDirection == value) {
+				return;
+			}
 
-				RecalcRect(currentFrame / (framesCount - 1f));
+			alternativeFormDirection = value;
 
-				if (IsHandleCreated) {
-					Invalidate();
-				}
+			RecalcRect(currentFrame / (framesCount - 1f));
+
+			if (IsHandleCreated) {
+				Invalidate();
 			}
 		}
 	}
@@ -442,14 +462,16 @@ public class GlassButton : Button
 	public bool ShowFocusBorder {
 		get => showFocusBorder;
 		set {
-			if (showFocusBorder != value) {
-				showFocusBorder = value;
+			if (showFocusBorder == value) {
+				return;
+			}
 
-				RecalcRect(currentFrame / (framesCount - 1f));
+			showFocusBorder = value;
 
-				if (IsHandleCreated) {
-					Invalidate();
-				}
+			RecalcRect(currentFrame / (framesCount - 1f));
+
+			if (IsHandleCreated) {
+				Invalidate();
 			}
 		}
 	}
@@ -466,14 +488,16 @@ public class GlassButton : Button
 	public Color AlternativeFocusBorderColor {
 		get => alternativeFocusBorderColor;
 		set {
-			if (alternativeFocusBorderColor != value) {
-				alternativeFocusBorderColor = value;
+			if (alternativeFocusBorderColor == value) {
+				return;
+			}
 
-				RecalcRect(currentFrame / (framesCount - 1f));
+			alternativeFocusBorderColor = value;
 
-				if (IsHandleCreated) {
-					Invalidate();
-				}
+			RecalcRect(currentFrame / (framesCount - 1f));
+
+			if (IsHandleCreated) {
+				Invalidate();
 			}
 		}
 	}
@@ -490,14 +514,16 @@ public class GlassButton : Button
 	public Color OuterBorderColor {
 		get => outerBorderColor;
 		set {
-			if (outerBorderColor != value) {
-				outerBorderColor = value;
+			if (outerBorderColor == value) {
+				return;
+			}
 
-				RecalcRect(currentFrame / (framesCount - 1f));
+			outerBorderColor = value;
 
-				if (IsHandleCreated) {
-					Invalidate();
-				}
+			RecalcRect(currentFrame / (framesCount - 1f));
+
+			if (IsHandleCreated) {
+				Invalidate();
 			}
 		}
 	}
@@ -514,14 +540,16 @@ public class GlassButton : Button
 	public Color ShineColor {
 		get => shineColor;
 		set {
-			if (shineColor != value) {
-				shineColor = value;
+			if (shineColor == value) {
+				return;
+			}
 
-				RecalcRect(currentFrame / (framesCount - 1f));
+			shineColor = value;
 
-				if (IsHandleCreated) {
-					Invalidate();
-				}
+			RecalcRect(currentFrame / (framesCount - 1f));
+
+			if (IsHandleCreated) {
+				Invalidate();
 			}
 		}
 	}
@@ -538,14 +566,16 @@ public class GlassButton : Button
 	public Color GlowColor {
 		get => glowColor;
 		set {
-			if (glowColor != value) {
-				glowColor = value;
+			if (glowColor == value) {
+				return;
+			}
 
-				RecalcRect(currentFrame / (framesCount - 1f));
+			glowColor = value;
 
-				if (IsHandleCreated) {
-					Invalidate();
-				}
+			RecalcRect(currentFrame / (framesCount - 1f));
+
+			if (IsHandleCreated) {
+				Invalidate();
 			}
 		}
 	}
@@ -680,10 +710,12 @@ public class GlassButton : Button
 		}
 
 		if (!ClientRectangle.Contains(mevent.X, mevent.Y)) {
-			if (isHovered) {
-				isHovered = false;
-				Invalidate();
+			if (!isHovered) {
+				return;
 			}
+
+			isHovered = false;
+			Invalidate();
 		}
 		else if (!isHovered) {
 			isHovered = true;
@@ -1018,11 +1050,13 @@ public class GlassButton : Button
 	/// </summary>
 	/// <param name="g">The graphics to draw on.</param>
 	private void DrawButtonForeground(Graphics g) {
-		if (ShowFocusBorder && Focused && ShowFocusCues && !alternativeForm) {
-			Rectangle rect = ClientRectangle;
-			rect.Inflate(-4, -4);
-			ControlPaint.DrawFocusRectangle(g, rect);
+		if (!ShowFocusBorder || !Focused || !ShowFocusCues || alternativeForm) {
+			return;
 		}
+
+		Rectangle rect = ClientRectangle;
+		rect.Inflate(-4, -4);
+		ControlPaint.DrawFocusRectangle(g, rect);
 	}
 
 	private Button imageButton;
@@ -1463,11 +1497,13 @@ public class GlassButton : Button
 			return;
 		}
 
-		if (currentFrame == framesCount) {
-			currentFrame = framesCount - 1;
-			timer.Enabled = false;
-			direction = 0;
+		if (currentFrame != framesCount) {
+			return;
 		}
+
+		currentFrame = framesCount - 1;
+		timer.Enabled = false;
+		direction = 0;
 	}
 
 	#endregion

@@ -86,21 +86,24 @@ public partial class ActionEditorForm : Form
 
 		_AttrNameColumn.AspectGetter = o => o is XmlAttribute attr ? attr.Name : (object)null;
 		_AttrValueColumn.AspectGetter = o => {
-			if (o is XmlAttribute attr) {
-				if (attr.Name == Constants.Font.ThisName && attr.Value.TryParse(out int fid)) {
-					XmlNode n = attr.OwnerDocument.DocumentElement.SelectSingleNode(
-						string.Concat(Constants.Font.DocumentFont, "/", Constants.Font.ThisName,
-							"[@", Constants.Font.ID, "='", attr.Value, "']/@", Constants.Font.Name)
-					);
-					if (n != null) {
-						return string.Concat(attr.Value, " (", n.Value, ")");
-					}
-				}
+			if (o is not XmlAttribute attr) {
+				return null;
+			}
 
+			if (attr.Name != Constants.Font.ThisName || !attr.Value.TryParse(out int fid)) {
 				return attr.Value;
 			}
 
-			return null;
+			XmlNode n = attr.OwnerDocument.DocumentElement.SelectSingleNode(
+				string.Concat(Constants.Font.DocumentFont, "/", Constants.Font.ThisName,
+					"[@", Constants.Font.ID, "='", attr.Value, "']/@", Constants.Font.Name)
+			);
+			if (n != null) {
+				return string.Concat(attr.Value, " (", n.Value, ")");
+			}
+
+			return attr.Value;
+
 		};
 		_AttributesBox.SetObjects(element.Attributes);
 	}
@@ -219,12 +222,14 @@ public partial class ActionEditorForm : Form
 				_DestinationPanel.Enabled = i != NoAction && i != Constants.ActionType.Javascript;
 			}
 
-			if (_DestinationPanel.Enabled) {
-				_NewWindowBox.Enabled =
-					ValueHelper.IsInCollection(i, Constants.ActionType.GotoR, Constants.ActionType.Uri);
-				_PathPanel.Enabled = ValueHelper.IsInCollection(i, Constants.ActionType.GotoR,
-					Constants.ActionType.Launch, Constants.ActionType.Uri);
+			if (!_DestinationPanel.Enabled) {
+				return;
 			}
+
+			_NewWindowBox.Enabled =
+				ValueHelper.IsInCollection(i, Constants.ActionType.GotoR, Constants.ActionType.Uri);
+			_PathPanel.Enabled = ValueHelper.IsInCollection(i, Constants.ActionType.GotoR,
+				Constants.ActionType.Launch, Constants.ActionType.Uri);
 		}
 		else if (sender == _GotoLocationBox || sender == _GotoNamedDestBox) {
 			_LocationPanel.Enabled = _GotoLocationBox.Checked;
