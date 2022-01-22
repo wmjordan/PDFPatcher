@@ -346,7 +346,7 @@ internal sealed class ImportOcrResultProcessor : IDocProcessor
 	}
 
 	public bool Process(DocProcessorContext context) {
-		if (context.ExtraData[DocProcessorContext.OcrData] is not XmlReader x || x.Name != Constants.Ocr.Result) {
+		if (context.ExtraData[DocProcessorContext.OcrData] is not XmlReader { Name: Constants.Ocr.Result } x) {
 			return false;
 		}
 

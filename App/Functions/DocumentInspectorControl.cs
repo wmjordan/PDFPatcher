@@ -350,7 +350,7 @@ namespace PDFPatcher.Functions
 		}
 
 		private void RefreshReferences(DocumentObject r) {
-			if (r.Value == null || r.Value.Type != PdfObject.INDIRECT) {
+			if (r.Value is not { Type: PdfObject.INDIRECT }) {
 				return;
 			}
 
@@ -366,7 +366,7 @@ namespace PDFPatcher.Functions
 					i += (_ObjectDetailBox.VirtualListDataSource as TreeListView.Tree).GetVisibleDescendentCount(m);
 				}
 
-				if (m.ExtensiveObject == null || m.Value == null || m.Value.Type != PdfObject.INDIRECT) {
+				if (m.ExtensiveObject == null || m.Value is not { Type: PdfObject.INDIRECT }) {
 					continue;
 				}
 

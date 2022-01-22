@@ -72,7 +72,7 @@ public partial class UpdateForm : Form
 
 	private void CheckResult(XmlDocument x) {
 		XmlElement r = x.DocumentElement;
-		if (r == null || r.Name != Constants.AppEngName) {
+		if (r is not { Name: Constants.AppEngName }) {
 			_InfoBox.SelectionColor = Color.Red;
 			_InfoBox.AppendLine("版本信息文件格式错误，请稍候重试。");
 			return;

@@ -99,7 +99,7 @@ internal static class PathAxes
 		public PathAxisType Type => PathAxisType.Children;
 
 		public DocumentObject SelectObject(DocumentObject source, string name, IEnumerable<IPathPredicate> predicates) {
-			if (source == null || !source.HasChildren) {
+			if (source is not { HasChildren: true }) {
 				return null;
 			}
 

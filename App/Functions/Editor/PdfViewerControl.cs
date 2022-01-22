@@ -591,7 +591,7 @@ internal sealed class PdfViewerControl : ImageBoxEx
 	}
 
 	internal void Reopen() {
-		if (_mupdf == null || _mupdf.IsDocumentOpened != false) {
+		if (_mupdf is not { IsDocumentOpened: false }) {
 			return;
 		}
 

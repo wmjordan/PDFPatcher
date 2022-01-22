@@ -213,7 +213,7 @@ internal sealed class PageDimensionProcessor : IPageProcessor
 			}
 
 			PdfArray rect = an.GetAsArray(PdfName.RECT);
-			if (rect == null || rect.Size != 4) {
+			if (rect is not { Size: 4 }) {
 				continue;
 			}
 

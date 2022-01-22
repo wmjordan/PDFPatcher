@@ -436,7 +436,7 @@ internal sealed class DocInfoExporter
 
 	internal void ExportNamedDestinations(XmlWriter w) {
 		Dictionary<object, PdfObject> nds = _reader.GetNamedDestination();
-		if (nds == null || nds.Count <= 0) {
+		if (nds is not { Count: > 0 }) {
 			return;
 		}
 
