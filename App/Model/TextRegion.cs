@@ -27,11 +27,11 @@ internal sealed class TextRegion
 	internal void AddLine(TextLine line) {
 		if (Direction == WritingDirection.Unknown) {
 			DistanceInfo d = Region.GetDistance(line.Region, WritingDirection.Unknown);
-			Direction = d.Location is DistanceInfo.Placement.Up or DistanceInfo.Placement.Down
-				? WritingDirection.Vertical
-				: d.Location is DistanceInfo.Placement.Left or DistanceInfo.Placement.Right
-					? WritingDirection.Horizontal
-					: WritingDirection.Unknown;
+			Direction = d.Location switch {
+				DistanceInfo.Placement.Up or DistanceInfo.Placement.Down => WritingDirection.Vertical,
+				DistanceInfo.Placement.Left or DistanceInfo.Placement.Right => WritingDirection.Horizontal,
+				_ => WritingDirection.Unknown
+			};
 		}
 
 		Lines.Add(line);

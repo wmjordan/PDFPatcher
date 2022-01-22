@@ -74,7 +74,11 @@ internal sealed class MuStream : IDisposable
 	/// <param name="origin">跳转方式。</param>
 	public void Seek(int offset, SeekOrigin origin) {
 		NativeMethods.Seek(_context, _stream, offset,
-			origin == SeekOrigin.Begin ? 0 : origin == SeekOrigin.Current ? 1 : 2);
+			origin switch {
+				SeekOrigin.Begin => 0,
+				SeekOrigin.Current => 1,
+				_ => 2
+			});
 	}
 
 	/// <summary>

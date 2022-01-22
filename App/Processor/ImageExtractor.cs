@@ -262,10 +262,12 @@ namespace PDFPatcher.Processor
 
 					if (_pageRotation != 0) {
 						TransformJpeg(n,
-							_pageRotation == 90 ? FREE_IMAGE_JPEG_OPERATION.FIJPEG_OP_ROTATE_90
-							: _pageRotation == 180 ? FREE_IMAGE_JPEG_OPERATION.FIJPEG_OP_ROTATE_180
-							: _pageRotation == 270 ? FREE_IMAGE_JPEG_OPERATION.FIJPEG_OP_ROTATE_270
-							: FREE_IMAGE_JPEG_OPERATION.FIJPEG_OP_NONE);
+							_pageRotation switch {
+								90 => FREE_IMAGE_JPEG_OPERATION.FIJPEG_OP_ROTATE_90,
+								180 => FREE_IMAGE_JPEG_OPERATION.FIJPEG_OP_ROTATE_180,
+								270 => FREE_IMAGE_JPEG_OPERATION.FIJPEG_OP_ROTATE_270,
+								_ => FREE_IMAGE_JPEG_OPERATION.FIJPEG_OP_NONE
+							});
 					}
 				}
 			}

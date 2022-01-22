@@ -72,14 +72,22 @@ internal sealed class PageDimensionProcessor : IPageProcessor
 
 		if (b.Width != size.Width) {
 			d = size.Width - sw;
-			dx = hAlign == HorizontalAlignment.Left ? 0 : hAlign == HorizontalAlignment.Right ? d : d / 2;
+			dx = hAlign switch {
+				HorizontalAlignment.Left => 0,
+				HorizontalAlignment.Right => d,
+				_ => d / 2
+			};
 			b.Left -= dx;
 			b.Right = b.Left + size.Width;
 		}
 
 		if (b.Height != size.Height) {
 			d = size.Height - sh;
-			dy = vAlign == VerticalAlignment.Bottom ? d : vAlign == VerticalAlignment.Top ? 0 : d / 2;
+			dy = vAlign switch {
+				VerticalAlignment.Bottom => d,
+				VerticalAlignment.Top => 0,
+				_ => d / 2
+			};
 			b.Top += dy;
 			b.Bottom = b.Top - size.Height;
 		}

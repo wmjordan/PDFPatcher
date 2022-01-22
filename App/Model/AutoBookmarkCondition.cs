@@ -262,10 +262,13 @@ public abstract class AutoBookmarkCondition : ICloneable
 
 		private void UpdateRangeDescription() {
 			_description = string.Concat(ThisName,
-				_position == 1 ? "上" :
-				_position == 2 ? "下" :
-				_position == 3 ? "左" :
-				_position == 4 ? "右" : string.Empty,
+				_position switch {
+					1 => "上",
+					2 => "下",
+					3 => "左",
+					4 => "右",
+					_ => string.Empty
+				},
 				"坐标",
 				_minValue == _maxValue
 					? "等于" + _minValue.ToText()

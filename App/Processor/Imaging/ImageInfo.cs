@@ -195,9 +195,11 @@ internal sealed class ImageInfo
 					}
 
 					info.BitsPerComponent =
-						info.PixelFormat == PixelFormat.Format1bppIndexed ? 1
-						: info.PixelFormat == PixelFormat.Format4bppIndexed ? 4
-						: 8;
+						info.PixelFormat switch {
+							PixelFormat.Format1bppIndexed => 1,
+							PixelFormat.Format4bppIndexed => 4,
+							_ => 8
+						};
 				}
 
 				goto EXIT;

@@ -156,12 +156,14 @@ internal sealed class PdfActionExporter
 				p[i] = string.Empty;
 			}
 
-			p[i] = o.Type == PdfObject.NUMBER ? (m == Constants.DestinationAttributes.ViewType.XYZ && i == 2
+			p[i] = o.Type switch {
+				PdfObject.NUMBER => (m == Constants.DestinationAttributes.ViewType.XYZ && i == 2
 					? ((PdfNumber)o).FloatValue
 					: _unitConverter.FromPoint(((PdfNumber)o).FloatValue)).ToText(
-				)
-				: o.Type == PdfObject.NULL ? Constants.Coordinates.Unchanged
-				: o.ToString();
+				),
+				PdfObject.NULL => Constants.Coordinates.Unchanged,
+				_ => o.ToString()
+			};
 		}
 
 		switch (m) {

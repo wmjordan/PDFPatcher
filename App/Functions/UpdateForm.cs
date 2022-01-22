@@ -20,7 +20,12 @@ public partial class UpdateForm : Form
 		Load += (s, args) => {
 			CheckNewVersion();
 			int i = AppContext.CheckUpdateInterval;
-			_CheckUpdateIntervalBox.Select(i == 7 ? 0 : i == 14 ? 1 : i == 30 ? 2 : 3);
+			_CheckUpdateIntervalBox.Select(i switch {
+				7 => 0,
+				14 => 1,
+				30 => 2,
+				_ => 3
+			});
 		};
 		FormClosed += (s, args) => {
 			_UpdateChecker?.Dispose();

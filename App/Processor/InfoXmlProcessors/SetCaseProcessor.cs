@@ -83,15 +83,19 @@ internal sealed class SetCaseProcessor : IPdfInfoXmlProcessor
 	}
 
 	private static char FullWidthLetterToHalfWidth(char ch) {
-		return ch is >= 'ａ' and <= 'ｚ' ? (char)(ch - 'ａ' + 'a')
-			: ch is >= 'Ａ' and <= 'Ｚ' ? (char)(ch - 'Ａ' + 'A')
-			: ch;
+		return ch switch {
+			>= 'ａ' and <= 'ｚ' => (char)(ch - 'ａ' + 'a'),
+			>= 'Ａ' and <= 'Ｚ' => (char)(ch - 'Ａ' + 'A'),
+			_ => ch
+		};
 	}
 
 	private static char HalfWidthLetterToFullWidth(char ch) {
-		return ch is >= 'a' and <= 'z' ? (char)(ch + 'ａ' - 'a')
-			: ch is >= 'A' and <= 'Z' ? (char)(ch + 'Ａ' - 'A')
-			: ch;
+		return ch switch {
+			>= 'a' and <= 'z' => (char)(ch + 'ａ' - 'a'),
+			>= 'A' and <= 'Z' => (char)(ch + 'Ａ' - 'A'),
+			_ => ch
+		};
 	}
 
 	private static char FullWidthNumberToHalfWidth(char ch) {

@@ -76,12 +76,16 @@ public partial class PageSettingsEditor : UserControl
 				return f == PageFilterFlag.NotSpecified
 					? "所有页面"
 					: string.Concat(
-						eo == PageFilterFlag.Odd ? "单数"
-						: eo == PageFilterFlag.Even ? "双数"
-						: string.Empty,
-						pl == PageFilterFlag.Landscape ? "横向"
-						: pl == PageFilterFlag.Portrait ? "纵向"
-						: string.Empty,
+						eo switch {
+							PageFilterFlag.Odd => "单数",
+							PageFilterFlag.Even => "双数",
+							_ => string.Empty
+						},
+						pl switch {
+							PageFilterFlag.Landscape => "横向",
+							PageFilterFlag.Portrait => "纵向",
+							_ => string.Empty
+						},
 						"页");
 			}
 		};
@@ -131,11 +135,13 @@ public partial class PageSettingsEditor : UserControl
 			AspectGetter = o => {
 				int r = o.Rotation;
 				return string.Concat(
-					r == 0 ? Constants.Content.RotationDirections.Zero
-					: r == 90 ? Constants.Content.RotationDirections.Right
-					: r == 180 ? Constants.Content.RotationDirections.HalfClock
-					: r == 270 ? Constants.Content.RotationDirections.Left
-					: Constants.Content.RotationDirections.Zero
+					r switch {
+						0 => Constants.Content.RotationDirections.Zero,
+						90 => Constants.Content.RotationDirections.Right,
+						180 => Constants.Content.RotationDirections.HalfClock,
+						270 => Constants.Content.RotationDirections.Left,
+						_ => Constants.Content.RotationDirections.Zero
+					}
 				);
 			}
 		};
