@@ -310,7 +310,7 @@ namespace PDFPatcher
 #endif
 		}
 
-		void OpenFiles(string[] files) {
+		void OpenFiles(IEnumerable<string> files) {
 			foreach (var item in files) {
 				var p = new FilePath(item);
 				if (p.ExistsFile && p.HasExtension(Constants.FileExtensions.Pdf)) {

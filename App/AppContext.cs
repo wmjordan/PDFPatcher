@@ -283,7 +283,7 @@ namespace PDFPatcher
 			File.WriteAllText(path, Json.ToJson(s, JsonSm), Encoding.UTF8);
 		}
 
-		private static void WriteRecentFiles(XmlWriter writer, IList<string> list, string name) {
+		private static void WriteRecentFiles(XmlWriter writer, IEnumerable<string> list, string name) {
 			foreach (var item in list) {
 				writer.WriteStartElement(name);
 				writer.WriteAttributeString(Configuration.Path, item);
