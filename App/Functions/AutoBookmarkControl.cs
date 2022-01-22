@@ -16,8 +16,8 @@ namespace PDFPatcher.Functions;
 [ToolboxItem(false)]
 public partial class AutoBookmarkControl : FunctionControl, IResettableControl
 {
-	static AutoBookmarkOptions.LevelAdjustmentOption[] _copiedLevelAdjustments;
-	AutoBookmarkOptions _options;
+	private static AutoBookmarkOptions.LevelAdjustmentOption[] _copiedLevelAdjustments;
+	private AutoBookmarkOptions _options;
 
 	public AutoBookmarkControl() {
 		InitializeComponent();
@@ -209,7 +209,7 @@ public partial class AutoBookmarkControl : FunctionControl, IResettableControl
 		}
 	}
 
-	static void ExportControl_DoWork(object sender, DoWorkEventArgs e) {
+	private static void ExportControl_DoWork(object sender, DoWorkEventArgs e) {
 		object[] a = e.Argument as object[];
 		string[] files = a[0] as string[];
 		string b = a[1] as string;

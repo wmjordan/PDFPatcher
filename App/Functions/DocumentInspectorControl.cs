@@ -24,23 +24,23 @@ namespace PDFPatcher.Functions;
 [ToolboxItem(false)]
 public sealed partial class DocumentInspectorControl : FunctionControl, IDocumentEditor
 {
-	static readonly PdfObjectType[] __XmlExportableTypes =
+	private static readonly PdfObjectType[] __XmlExportableTypes =
 		{ PdfObjectType.Page, PdfObjectType.Pages, PdfObjectType.Trailer };
 
-	static Dictionary<string, int> __OpNameIcons;
-	static Dictionary<int, int> __PdfObjectIcons;
+	private static Dictionary<string, int> __OpNameIcons;
+	private static Dictionary<int, int> __PdfObjectIcons;
 
-	static readonly ImageExtracterOptions _imgExpOption = new() {
+	private static readonly ImageExtracterOptions _imgExpOption = new() {
 		OutputPath = Path.GetTempPath(),
 		MergeImages = false
 	};
 
-	ToolStripItem[] _addPdfObjectMenuItems;
-	string _fileName;
-	ImageExtractor _imgExp;
+	private ToolStripItem[] _addPdfObjectMenuItems;
+	private string _fileName;
+	private ImageExtractor _imgExp;
 
-	PdfPathDocument _pdf;
-	int[] _pdfTypeForAddObjectMenuItems;
+	private PdfPathDocument _pdf;
+	private int[] _pdfTypeForAddObjectMenuItems;
 
 	public DocumentInspectorControl() {
 		InitializeComponent();
@@ -375,7 +375,7 @@ public sealed partial class DocumentInspectorControl : FunctionControl, IDocumen
 		}
 	}
 
-	static void _ObjectDetailBox_CanDrop(object sender, OlvDropEventArgs e) {
+	private static void _ObjectDetailBox_CanDrop(object sender, OlvDropEventArgs e) {
 		if (e.DataObject is not DataObject o) {
 			return;
 		}
@@ -398,7 +398,7 @@ public sealed partial class DocumentInspectorControl : FunctionControl, IDocumen
 		e.DropTargetLocation = DropTargetLocation.None;
 	}
 
-	void _ObjectDetailBox_Dropped(object sender, OlvDropEventArgs e) {
+	private void _ObjectDetailBox_Dropped(object sender, OlvDropEventArgs e) {
 		if (e.DataObject is not DataObject o) {
 			return;
 		}
@@ -411,7 +411,7 @@ public sealed partial class DocumentInspectorControl : FunctionControl, IDocumen
 		LoadDocument(f[0]);
 	}
 
-	void _ObjectDetailBox_SelectionChanged(object sender, EventArgs e) {
+	private void _ObjectDetailBox_SelectionChanged(object sender, EventArgs e) {
 		OLVListItem si = _ObjectDetailBox.SelectedItem;
 		if (si == null) {
 			return;

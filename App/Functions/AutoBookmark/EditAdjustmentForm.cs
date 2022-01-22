@@ -14,9 +14,9 @@ public partial class EditAdjustmentForm : Form
 		"_FontNameFilter", "_FontSizeFilter", "_FontPositionFilter", "_PageRangeFilter", "_TextFilter"
 	};
 
-	readonly Dictionary<Type, IFilterConditionEditor> _filterEditors = new();
+	private readonly Dictionary<Type, IFilterConditionEditor> _filterEditors = new();
 
-	AutoBookmarkCondition.MultiCondition conditions;
+	private AutoBookmarkCondition.MultiCondition conditions;
 
 	public EditAdjustmentForm(AutoBookmarkOptions.LevelAdjustmentOption filter) {
 		InitializeComponent();

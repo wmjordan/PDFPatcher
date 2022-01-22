@@ -7,10 +7,10 @@ using PDFPatcher.Model;
 
 namespace PDFPatcher.Functions.Editor;
 
-sealed class InsertBookmarkCommand : IEditorCommand
+internal sealed class InsertBookmarkCommand : IEditorCommand
 {
-	static readonly Regex __RemoveOcrWhiteSpace = new(@"\s{2,}", RegexOptions.Compiled);
-	static InsertBookmarkForm _dialog;
+	private static readonly Regex __RemoveOcrWhiteSpace = new(@"\s{2,}", RegexOptions.Compiled);
+	private static InsertBookmarkForm _dialog;
 
 	public void Process(Controller controller, params string[] parameters) {
 		PdfViewerControl v = controller.View.Viewer;

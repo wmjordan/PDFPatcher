@@ -21,9 +21,9 @@ using Rectangle = MuPdfSharp.Rectangle;
 
 namespace PDFPatcher.Functions.Editor;
 
-sealed class Controller
+internal sealed class Controller
 {
-	BackgroundWorker _loader;
+	private BackgroundWorker _loader;
 
 	public Controller(IEditView view) {
 		Model = new EditModel();
@@ -66,7 +66,7 @@ sealed class Controller
 		return r;
 	}
 
-	HashSet<XmlNode> ProcessBookmarks(ICollection si, ISet<XmlElement> processedItems, bool includeDescendant,
+	private HashSet<XmlNode> ProcessBookmarks(ICollection si, ISet<XmlElement> processedItems, bool includeDescendant,
 		IPdfInfoXmlProcessor processor) {
 		if (si == null || si.Count == 0) {
 			return null;
@@ -84,7 +84,7 @@ sealed class Controller
 		return new HashSet<XmlNode>(undo.AffectedElements);
 	}
 
-	static void ProcessItem(bool includeDescendant, IPdfInfoXmlProcessor processor, ISet<XmlElement> processedItems,
+	private static void ProcessItem(bool includeDescendant, IPdfInfoXmlProcessor processor, ISet<XmlElement> processedItems,
 		UndoActionGroup undo, BookmarkContainer item) {
 		if (item == null || processedItems.Contains(item)) {
 			return;
@@ -112,7 +112,7 @@ sealed class Controller
 		View.Bookmark.ClearObjects();
 	}
 
-	void LoadPdfDocument() {
+	private void LoadPdfDocument() {
 		string s = Model.GetPdfFilePath();
 		PdfViewerControl v = View.Viewer;
 		if (s != null) {
@@ -215,7 +215,7 @@ sealed class Controller
 		//this._BookmarkBox.HeaderControl.Invalidate ();
 	}
 
-	static void _LoadBookmarkWorker_DoWork(object sender, DoWorkEventArgs e) {
+	private static void _LoadBookmarkWorker_DoWork(object sender, DoWorkEventArgs e) {
 		object[] args = e.Argument as object[];
 		string path = args[0] as string;
 		bool importMode = (bool)args[1];
@@ -240,7 +240,7 @@ sealed class Controller
 		}
 	}
 
-	void _LoadBookmarkWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
+	private void _LoadBookmarkWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
 		((BackgroundWorker)sender).Dispose();
 		Model.IsLoadingDocument = false;
 		View.MainPanel.Enabled = View.BookmarkToolbar.Enabled = true;
@@ -315,12 +315,12 @@ sealed class Controller
 		}
 	}
 
-	void LoadBookmarks(BookmarkEditorView view, XmlNodeList bookmarks) {
+	private void LoadBookmarks(BookmarkEditorView view, XmlNodeList bookmarks) {
 		InitBookmarkEditor();
 		view.LoadBookmarks(bookmarks);
 	}
 
-	void ImportBookmarks(TreeListView editView, XmlNodeList bookmarks) {
+	private void ImportBookmarks(TreeListView editView, XmlNodeList bookmarks) {
 		Model.Document ??= new PdfInfoXmlDocument();
 
 		PdfInfoXmlDocument d = Model.Document;
@@ -535,7 +535,7 @@ sealed class Controller
 		f.Show();
 	}
 
-	void InsertPageLabelForm_Closed(object sender, EventArgs e) {
+	private void InsertPageLabelForm_Closed(object sender, EventArgs e) {
 		InsertPageLabelForm form = sender as InsertPageLabelForm;
 		if (form.DialogResult == DialogResult.Cancel) {
 			return;
@@ -943,14 +943,14 @@ sealed class Controller
 		View.Bookmark.RebuildAll(false);
 	}
 
-	static BookmarkContainer CreateNewSiblingBookmarkForParent(BookmarkContainer bm, IList spans) {
+	private static BookmarkContainer CreateNewSiblingBookmarkForParent(BookmarkContainer bm, IList spans) {
 		TrimBookmarkText(bm);
 		bm = bm.Parent.AppendBookmark();
 		spans.Clear();
 		return bm;
 	}
 
-	static void TrimBookmarkText(BookmarkContainer bm) {
+	private static void TrimBookmarkText(BookmarkContainer bm) {
 		if (bm is not BookmarkElement b) {
 			return;
 		}
@@ -962,7 +962,7 @@ sealed class Controller
 		}
 	}
 
-	static BookmarkContainer CreateNewSiblingBookmark(BookmarkContainer bm, IList spans) {
+	private static BookmarkContainer CreateNewSiblingBookmark(BookmarkContainer bm, IList spans) {
 		TrimBookmarkText(bm);
 		bm = bm.AppendBookmark();
 		spans.Clear();

@@ -14,17 +14,17 @@ using PDFPatcher.Processor.Imaging;
 
 namespace PDFPatcher.Processor;
 
-sealed class ImageExtractor
+internal sealed class ImageExtractor
 {
-	readonly string _fileMask;
+	private readonly string _fileMask;
 
-	readonly ImageExtracterOptions _options;
-	readonly PdfPageImageProcessor _parser;
-	readonly HashSet<PdfObject> _Refs = new();
-	int _activePage; // 在导出文件图片时，使用此属性命名文件
-	int _imageCount;
-	int _pageRotation;
-	int _totalImageCount;
+	private readonly ImageExtracterOptions _options;
+	private readonly PdfPageImageProcessor _parser;
+	private readonly HashSet<PdfObject> _Refs = new();
+	private int _activePage; // 在导出文件图片时，使用此属性命名文件
+	private int _imageCount;
+	private int _pageRotation;
+	private int _totalImageCount;
 
 	public ImageExtractor(ImageExtracterOptions options, PdfReader reader) {
 		_fileMask = String.IsNullOrEmpty(options.FileMask) ? "0" : options.FileMask;
@@ -413,7 +413,7 @@ sealed class ImageExtractor
 		info.FileName = n;
 	}
 
-	static void RotateBitmap(FreeImageBitmap bitmap, int rotation, bool vflip) {
+	private static void RotateBitmap(FreeImageBitmap bitmap, int rotation, bool vflip) {
 		if (rotation == 0 && vflip == false) {
 			return;
 		}
@@ -695,10 +695,10 @@ sealed class ImageExtractor
 		_totalImageCount += _imageCount;
 	}
 
-	sealed class PdfPageImageProcessor : PdfContentStreamProcessor
+	private sealed class PdfPageImageProcessor : PdfContentStreamProcessor
 	{
-		readonly List<ImageInfo> _infoList;
-		readonly List<ImageDisposition> _posList;
+		private readonly List<ImageInfo> _infoList;
+		private readonly List<ImageDisposition> _posList;
 
 		public PdfPageImageProcessor(List<ImageDisposition> posList, List<ImageInfo> infoList) {
 			PopulateOperators();

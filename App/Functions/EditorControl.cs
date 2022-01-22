@@ -15,13 +15,13 @@ namespace PDFPatcher.Functions;
 
 public sealed partial class EditorControl : FunctionControl, IDocumentEditor, IEditView
 {
-	static readonly Color __DarkModeColor = Color.DarkGray;
-	static readonly Color __GreenModeColor = Color.FromArgb(0xCC, 0xFF, 0xCC);
+	private static readonly Color __DarkModeColor = Color.DarkGray;
+	private static readonly Color __GreenModeColor = Color.FromArgb(0xCC, 0xFF, 0xCC);
 
-	static readonly CommandRegistry<Controller> __Commands = InitCommands();
-	readonly Controller _controller;
-	AutoBookmarkForm _autoBookmarkForm;
-	SearchBookmarkForm _searchForm;
+	private static readonly CommandRegistry<Controller> __Commands = InitCommands();
+	private readonly Controller _controller;
+	private AutoBookmarkForm _autoBookmarkForm;
+	private SearchBookmarkForm _searchForm;
 
 	public EditorControl() {
 		InitializeComponent();
