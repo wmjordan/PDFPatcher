@@ -145,13 +145,13 @@ public abstract class SourceItem
 		// 优先采用与输入文件同名的 XML 信息文件
 		FilePath f =
 			new(FileHelper.CombinePath(FolderName, Path.ChangeExtension(FileName, Constants.FileExtensions.Xml)));
-		if (f.ExistsFile != false) {
+		if (f.ExistsFile) {
 			return f.ToString();
 		}
 
 		// 次之采用与输入文件同名的 TXT 信息文件
 		f = f.ChangeExtension(Constants.FileExtensions.Txt);
-		if (f.ExistsFile != false) {
+		if (f.ExistsFile) {
 			return f.ToString();
 		}
 

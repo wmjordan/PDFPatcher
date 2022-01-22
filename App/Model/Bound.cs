@@ -133,9 +133,7 @@ public class Bound
 			bd = -other.Bottom;
 		}
 
-		bool ov = false;
 		if (IntersectWith(other)) {
-			ov = true;
 			hd = other.Center - Center;
 			switch (hd) {
 				case > 0:
@@ -186,8 +184,8 @@ public class Bound
 			throw new ArgumentOutOfRangeException("位置错误。");
 		}
 
-		DistanceInfo v = new(ov ? DistanceInfo.Placement.Overlapping | vp : vp, hd, vd);
-		DistanceInfo h = new(ov ? DistanceInfo.Placement.Overlapping | hp : hp, hd, vd);
+		DistanceInfo v = new(vp, hd, vd);
+		DistanceInfo h = new(hp, hd, vd);
 		return writingDirection switch {
 			WritingDirection.Vertical => hp != DistanceInfo.Placement.Unknown ? h : v,
 			WritingDirection.Horizontal => vp != DistanceInfo.Placement.Unknown ? v : h,

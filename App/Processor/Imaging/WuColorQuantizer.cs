@@ -573,7 +573,6 @@ public static class WuQuantizer
 
 	private sealed class ColorData
 	{
-		private readonly int pixelsCount;
 		private int pixelFillingCounter;
 
 		public ColorData(int dataGranularity, int bitmapWidth, int bitmapHeight) {
@@ -585,7 +584,7 @@ public static class WuQuantizer
 			MomentsBlue = new long[s];
 			Moments = new float[s];
 
-			pixelsCount = bitmapWidth * bitmapHeight;
+			int pixelsCount = bitmapWidth * bitmapHeight;
 			Pixels = new Pixel[pixelsCount];
 			QuantizedPixels = new int[pixelsCount];
 		}

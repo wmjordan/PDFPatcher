@@ -192,7 +192,7 @@ internal sealed class AutoBookmarkCreator
 						}
 
 						if (options.AutoHierarchicalArrangement) {
-							float size = -1;
+							float size;
 							do {
 								//if (ValueHelper.TryParse (be.GetAttribute (Constants.Font.Size), out size) == false || s < size) {
 								if (sizes.Count == 0 || s < (size = sizes.Peek())) {
@@ -420,16 +420,16 @@ internal sealed class AutoBookmarkCreator
 				}
 
 				DistanceInfo cd = li.GetDistance(ir); // TextInfo 到 TextLine 的距离
-				if ((!cd.IsOverlapping || (md.IsOverlapping != false && !(cd.DistanceRadial < md.DistanceRadial))) &&
-					((md.Location != DistanceInfo.Placement.Unknown && (cd.IsOverlapping != false ||
-																		md.IsOverlapping != false ||
+				if ((!cd.IsOverlapping || (md.IsOverlapping && !(cd.DistanceRadial < md.DistanceRadial))) &&
+					((md.Location != DistanceInfo.Placement.Unknown && (cd.IsOverlapping ||
+																		md.IsOverlapping ||
 																		!(cd.MinDistance < md.MinDistance))) ||
 					 ((!cd.IsHorizontallyAligned || li.Direction == WritingDirection.Vertical ||
 					   !item.Region.IsAlignedWith(li.Region, WritingDirection.Horizontal)) &&
 					  (!cd.IsVerticallyAligned || li.Direction == WritingDirection.Horizontal ||
 					   !item.Region.IsAlignedWith(li.Region, WritingDirection.Vertical))) ||
-					 (options.DetectColumns != false && !(cd.MinDistance < cw)) || (!options.MergeDifferentFontTitles &&
-						 li.FirstText.Font.FontID != item.Font.FontID))) {
+					 (options.DetectColumns && !(cd.MinDistance < cw)) || (!options.MergeDifferentFontTitles &&
+																		   li.FirstText.Font.FontID != item.Font.FontID))) {
 					continue;
 				}
 
@@ -508,9 +508,9 @@ internal sealed class AutoBookmarkCreator
 				}
 
 				DistanceInfo cd = li.Region.GetDistance(ir, li.Direction); // TextInfo 到 TextLine 的距离
-				if ((!cd.IsOverlapping || (md.IsOverlapping != false && !(cd.DistanceRadial < md.DistanceRadial))) &&
-					((md.Location != DistanceInfo.Placement.Unknown && (cd.IsOverlapping != false ||
-																		md.IsOverlapping != false ||
+				if ((!cd.IsOverlapping || (md.IsOverlapping && !(cd.DistanceRadial < md.DistanceRadial))) &&
+					((md.Location != DistanceInfo.Placement.Unknown && (cd.IsOverlapping ||
+																		md.IsOverlapping ||
 																		!(cd.MinDistance < md.MinDistance))) ||
 					 ((!cd.IsHorizontallyAligned || li.Direction == WritingDirection.Vertical ||
 					   !item.Region.IsAlignedWith(li.Region, WritingDirection.Horizontal) ||

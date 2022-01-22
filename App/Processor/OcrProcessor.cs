@@ -204,7 +204,6 @@ internal sealed class OcrProcessor
 				Result r = new(item);
 				OcrPage(r);
 				or.Add(r);
-				r = null;
 			}
 		}
 		catch (COMException ex) {
@@ -454,7 +453,7 @@ internal sealed class OcrProcessor
 		const int minSize = 500;
 		OcrProcessor ocr = new(options);
 		List<TextLine> r = new();
-		string p = null;
+		string p;
 		using (FreeImageBitmap fi = new(bmp)) {
 			if (fi.Width < minSize || fi.Height < minSize) {
 				fi.EnlargeCanvas<RGBQUAD>(0, 0, fi.Width < minSize ? minSize : fi.Width,

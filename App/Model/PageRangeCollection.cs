@@ -70,7 +70,7 @@ internal sealed class PageRangeCollection : List<PageRange>
 	}
 
 	internal static PageRangeCollection CreateSingle(int minValue, int maxValue) {
-		PageRangeCollection r = new() { new(minValue, maxValue) };
+		PageRangeCollection r = new() { new PageRange(minValue, maxValue) };
 		return r;
 	}
 
@@ -85,7 +85,7 @@ internal sealed class PageRangeCollection : List<PageRange>
 				}
 
 				int endNum;
-				int startNum = endNum = 0;
+				int startNum;
 				int rangeIndicator = range.Length > 1 ? range.IndexOf('-', 1) /*排除首位可能是负数页码的可能*/ : -1;
 				if (rangeIndicator > 0) {
 					string startRange = range.Substring(0, rangeIndicator);

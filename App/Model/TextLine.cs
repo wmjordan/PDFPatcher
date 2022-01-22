@@ -157,7 +157,7 @@ internal sealed class TextLine : IDirectionalBoundObject
 		else {
 			foreach (TextInfo t in _Texts) {
 				ts += t.LetterWidth;
-				cc = t.Text.Where(c => char.IsLetterOrDigit(c) != false).Aggregate(cc, (current, c) => current + (c > 0x36F ? 2 : 1));
+				cc = t.Text.Where(c => char.IsLetterOrDigit(c)).Aggregate(cc, (current, c) => current + (c > 0x36F ? 2 : 1));
 			}
 		}
 

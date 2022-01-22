@@ -279,9 +279,7 @@ internal sealed class PdfDocumentCreator
 				goto Exit;
 			}
 
-			if (pageRemapper != null) {
-				pageRemapper[i] = _writer.CurrentPageNumber;
-			}
+			pageRemapper[i] = _writer.CurrentPageNumber;
 
 			_doc.NewPage();
 			if (imgExp != null) {
@@ -337,7 +335,7 @@ internal sealed class PdfDocumentCreator
 		}
 
 		if (_option.KeepBookmarks) {
-			bookmark = KeepBookmarks(bookmark, pdf, pageRemapper, cts);
+			KeepBookmarks(bookmark, pdf, pageRemapper, cts);
 		}
 
 		if (_sink.DecrementReference(sourceFile.FilePath) >= 1) {
@@ -380,7 +378,7 @@ internal sealed class PdfDocumentCreator
 			bookmark = PdfBookmarks.BookmarkRoot;
 		}
 		else {
-			return bookmark;
+			return null;
 		}
 
 		if (bm == null) {
@@ -472,7 +470,7 @@ internal sealed class PdfDocumentCreator
 	private static iTextImage LoadImage(SourceItem sourceFile, string ext) {
 		SourceItem.Image imageItem = sourceFile as SourceItem.Image;
 		SourceItem.CropOptions cropOptions = imageItem.Cropping;
-		if (imageItem == null || cropOptions.NeedCropping == false) {
+		if (cropOptions.NeedCropping == false) {
 			return Image.GetInstance(sourceFile.FilePath.ToString());
 		}
 

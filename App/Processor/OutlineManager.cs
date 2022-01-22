@@ -182,7 +182,7 @@ internal static class OutlineManager
 			return;
 		}
 
-		if (o != null) {
+		{
 			PRIndirectReference outlines = o as PRIndirectReference;
 			OutlineTravel(outlines);
 			PdfReader.KillIndirect(outlines);

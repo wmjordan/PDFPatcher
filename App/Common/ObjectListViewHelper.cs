@@ -146,7 +146,7 @@ internal static class ObjectListViewHelper
 
 	/// <summary>测试坐标点属于哪个单元格。</summary>
 	public static GridTestResult GetGridAt(this ObjectListView view, int x, int y) {
-		OLVColumn c = null;
+		OLVColumn c;
 		Rectangle cr = view.ContentRectangle;
 		int ic = view.GetItemCount();
 		bool ob = false;

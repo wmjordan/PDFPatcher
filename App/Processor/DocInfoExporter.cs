@@ -119,7 +119,6 @@ internal sealed class DocInfoExporter
 			info.Merge(dump);
 		}
 
-		dump = null;
 		return r;
 	}
 
@@ -363,7 +362,6 @@ internal sealed class DocInfoExporter
 			}
 
 			a.Add(l);
-			l = null;
 		}
 
 		return a;
@@ -474,10 +472,6 @@ internal sealed class DocInfoExporter
 				w.Write(title.Replace('\n', ' ').Replace('\r', ' '));
 				w.Write(SimpleBookmarkPageNumLeader);
 				w.WriteLine(page);
-			}
-
-			if (childBookmarks == null) {
-				continue;
 			}
 
 			level++;

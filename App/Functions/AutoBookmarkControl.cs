@@ -41,16 +41,16 @@ namespace PDFPatcher.Functions
 			}
 
 			_LevelAdjustmentBox.CellEditUseWholeCell = true;
-			_LevelAdjustmentBox.BeforeSorting += (object sender, BeforeSortingEventArgs e) => {
+			_LevelAdjustmentBox.BeforeSorting += (sender, e) => {
 				e.Canceled = true;
 			};
 			_LevelAdjustmentBox.DropSink = new RearrangingDropSink(false);
-			_AdvancedFilterColumn.AspectGetter = (object x) => x is not AutoBookmarkOptions.LevelAdjustmentOption f ? null : f.Condition.Description;
-			_AdjustmentLevelColumn.AspectGetter = (object x) => {
+			_AdvancedFilterColumn.AspectGetter = x => x is not AutoBookmarkOptions.LevelAdjustmentOption f ? null : f.Condition.Description;
+			_AdjustmentLevelColumn.AspectGetter = x => {
 				AutoBookmarkOptions.LevelAdjustmentOption f = x as AutoBookmarkOptions.LevelAdjustmentOption;
 				return f?.AdjustmentLevel ?? 0;
 			};
-			_AdjustmentLevelColumn.AspectPutter = (object x, object value) => {
+			_AdjustmentLevelColumn.AspectPutter = (x, value) => {
 				if (x is not AutoBookmarkOptions.LevelAdjustmentOption f) {
 					return;
 				}
@@ -59,18 +59,18 @@ namespace PDFPatcher.Functions
 					f.AdjustmentLevel = a;
 				}
 			};
-			_RelativeAdjustmentColumn.AspectGetter = (object x) =>
+			_RelativeAdjustmentColumn.AspectGetter = x =>
 				(x as AutoBookmarkOptions.LevelAdjustmentOption)?.RelativeAdjustment == true;
-			_RelativeAdjustmentColumn.AspectPutter = (object x, object value) => {
+			_RelativeAdjustmentColumn.AspectPutter = (x, value) => {
 				if (x is not AutoBookmarkOptions.LevelAdjustmentOption f) {
 					return;
 				}
 
 				f.RelativeAdjustment = value is true;
 			};
-			_FilterBeforeMergeColumn.AspectGetter = (object x) =>
+			_FilterBeforeMergeColumn.AspectGetter = x =>
 				((x as AutoBookmarkOptions.LevelAdjustmentOption)?.FilterBeforeMergeTitle) ?? false;
-			_FilterBeforeMergeColumn.AspectPutter = (object x, object value) => {
+			_FilterBeforeMergeColumn.AspectPutter = (x, value) => {
 				if (x is AutoBookmarkOptions.LevelAdjustmentOption f) {
 					f.FilterBeforeMergeTitle = value is true;
 				}
@@ -138,7 +138,8 @@ namespace PDFPatcher.Functions
 				FormHelper.ErrorBox(Messages.SourceFileNotFound);
 				return;
 			}
-			else if (String.IsNullOrEmpty(_BookmarkControl.Text)) {
+
+			if (String.IsNullOrEmpty(_BookmarkControl.Text)) {
 				FormHelper.ErrorBox(Messages.InfoDocNotSpecified);
 				return;
 			}
@@ -151,7 +152,7 @@ namespace PDFPatcher.Functions
 			}
 
 			AppContext.MainForm.ResetWorker();
-			AppContext.MainForm.GetWorker().DoWork += new DoWorkEventHandler(ExportControl_DoWork);
+			AppContext.MainForm.GetWorker().DoWork += ExportControl_DoWork;
 			SyncOptions();
 			AppContext.MainForm.GetWorker().RunWorkerAsync(new object[] {
 				AppContext.SourceFiles, AppContext.BookmarkFile, _options
@@ -286,7 +287,7 @@ namespace PDFPatcher.Functions
 					_BookmarkControl.Text = _BookmarkControl.FileDialog.FileName;
 				}
 
-				XmlDocument doc = new XmlDocument();
+				XmlDocument doc = new();
 				XmlNode fontInfo;
 				try {
 					doc.Load(_BookmarkControl.Text);
@@ -302,13 +303,13 @@ namespace PDFPatcher.Functions
 					return;
 				}
 
-				using FontFilterForm f = new FontFilterForm(fontInfo);
+				using FontFilterForm f = new(fontInfo);
 				if (f.ShowDialog() != DialogResult.OK || f.FilterConditions == null) {
 					return;
 				}
 
 				foreach (AutoBookmarkCondition item in f.FilterConditions) {
-					_LevelAdjustmentBox.AddObject(new AutoBookmarkOptions.LevelAdjustmentOption() {
+					_LevelAdjustmentBox.AddObject(new AutoBookmarkOptions.LevelAdjustmentOption {
 						Condition = item,
 						AdjustmentLevel = 0,
 						RelativeAdjustment = false
@@ -326,14 +327,14 @@ namespace PDFPatcher.Functions
 			int i = fi.Index;
 			AutoBookmarkOptions.LevelAdjustmentOption o =
 				_LevelAdjustmentBox.GetModelObject(i) as AutoBookmarkOptions.LevelAdjustmentOption;
-			using EditAdjustmentForm dialog = new EditAdjustmentForm(o);
+			using EditAdjustmentForm dialog = new(o);
 			if (dialog.ShowDialog() != DialogResult.OK) {
 				return;
 			}
 
 			if (dialog.Filter.Condition != null) {
 				_LevelAdjustmentBox.InsertObjects(i,
-					new AutoBookmarkOptions.LevelAdjustmentOption[] { dialog.Filter });
+					new[] { dialog.Filter });
 				_LevelAdjustmentBox.SelectedIndex = i;
 			}
 
@@ -346,8 +347,7 @@ namespace PDFPatcher.Functions
 				return;
 			}
 
-			using EditAdjustmentForm dialog =
-				new EditAdjustmentForm(new AutoBookmarkOptions.LevelAdjustmentOption { Condition = c });
+			using EditAdjustmentForm dialog = new(new AutoBookmarkOptions.LevelAdjustmentOption { Condition = c });
 			if (dialog.ShowDialog() == DialogResult.OK && dialog.Filter.Condition != null) {
 				_LevelAdjustmentBox.AddObject(dialog.Filter);
 			}

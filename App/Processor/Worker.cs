@@ -97,7 +97,7 @@ internal static class Worker
 		finally {
 			options.OutputPath = targetPath;
 			options.FileMask = om;
-			pdf?.Close();
+			pdf.Close();
 		}
 	}
 
@@ -241,7 +241,7 @@ internal static class Worker
 			FormHelper.ErrorBox("在导出信息文件时遇到错误：\n" + ex.Message);
 		}
 		finally {
-			r?.Close();
+			r.Close();
 		}
 	}
 
@@ -614,14 +614,12 @@ internal static class Worker
 			FormHelper.ErrorBox("在导出页面内容时出错：\n" + ex.Message);
 		}
 		finally {
-			if (r != null) {
-				try {
-					r.Close();
-				}
-				catch (Exception ex) {
-					// ignore exception
-					Tracker.TraceMessage(ex);
-				}
+			try {
+				r.Close();
+			}
+			catch (Exception ex) {
+				// ignore exception
+				Tracker.TraceMessage(ex);
 			}
 		}
 	}
@@ -784,7 +782,7 @@ internal static class Worker
 			FormHelper.ErrorBox("在导出信息文件时遇到错误：\n" + ex.Message);
 		}
 		finally {
-			r?.Close();
+			r.Close();
 		}
 	}
 
@@ -874,7 +872,7 @@ internal static class Worker
 			FormHelper.ErrorBox("在导出信息文件时遇到错误：\n" + ex.Message);
 		}
 		finally {
-			r?.Close();
+			r.Close();
 		}
 	}
 
@@ -1023,14 +1021,12 @@ internal static class Worker
 			FormHelper.ErrorBox("在导入信息时发生错误：\n" + ex.Message);
 		}
 		finally {
-			if (pdf != null) {
-				try {
-					pdf.Close();
-				}
-				catch (Exception ex) {
-					// ignore exception
-					Tracker.TraceMessage(ex);
-				}
+			try {
+				pdf.Close();
+			}
+			catch (Exception ex) {
+				// ignore exception
+				Tracker.TraceMessage(ex);
 			}
 		}
 	}

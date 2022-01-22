@@ -610,10 +610,9 @@ public partial class MergerControl : FunctionControl
 						continue;
 					}
 
-					BookmarkSettings b;
 					string t = Path.GetFileNameWithoutExtension(item.FileName);
-					if ((b = item.Bookmark) == null) {
-						b = item.Bookmark = new BookmarkSettings(t);
+					if ((item.Bookmark) == null) {
+						item.Bookmark = new BookmarkSettings(t);
 					}
 					else {
 						item.Bookmark.Title = t;
@@ -705,7 +704,7 @@ public partial class MergerControl : FunctionControl
 			}
 
 			c++;
-			if (s.Cropping.Equals(image.Cropping) != false) {
+			if (s.Cropping.Equals(image.Cropping)) {
 				continue;
 			}
 

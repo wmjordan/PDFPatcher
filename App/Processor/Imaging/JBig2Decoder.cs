@@ -12,22 +12,21 @@ internal static class JBig2Decoder
 
 	internal static byte[] Decode(byte[] data, byte[] globals) {
 		IntPtr ctxptr = IntPtr.Zero, globalptr = IntPtr.Zero;
-		byte[] decodedData = null;
-		int c;
+		byte[] decodedData;
 
 		try {
 			ctxptr = NativeMethods.New(IntPtr.Zero);
 			if (globals is { Length: > 0 }) {
-				c = NativeMethods.ReadData(ctxptr, globals, (uint)globals.Length);
+				NativeMethods.ReadData(ctxptr, globals, (uint)globals.Length);
 				globalptr = NativeMethods.MakeGlobal(ctxptr);
 				ctxptr = NativeMethods.New(globalptr);
 			}
 
-			c = NativeMethods.ReadData(ctxptr, data, (uint)data.Length);
-			c = NativeMethods.CompletePage(ctxptr);
+			NativeMethods.ReadData(ctxptr, data, (uint)data.Length);
+			NativeMethods.CompletePage(ctxptr);
 			IntPtr imageptr;
 			if ((imageptr = NativeMethods.Decode(ctxptr)) == IntPtr.Zero) {
-				return decodedData;
+				return null;
 			}
 
 			JBig2Image image = imageptr.Unwrap<JBig2Image>();

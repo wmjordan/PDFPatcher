@@ -322,7 +322,7 @@ public sealed class DocumentObject : IHierarchicalObject<DocumentObject>
 					if (Type != PdfObjectType.Normal) {
 						switch (Type) {
 							case PdfObjectType.Page:
-								r[n++] = new DocumentObject(OwnerDocument, this, Constants.Content.Operators, null,
+								r[n] = new DocumentObject(OwnerDocument, this, Constants.Content.Operators, null,
 									PdfObjectType.PageCommands) { IsKeyObject = true };
 								break;
 							case PdfObjectType.Trailer: {

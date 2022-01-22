@@ -157,7 +157,7 @@ internal sealed class DocInfoImporter
 	private static int GetPageShift(XmlElement element, int baseShift) {
 		int shift = baseShift;
 		string s = element.GetAttribute(Constants.DestinationAttributes.FirstPageNumber);
-		if (string.IsNullOrEmpty(s) != false) {
+		if (string.IsNullOrEmpty(s)) {
 			return shift;
 		}
 
@@ -411,10 +411,6 @@ internal sealed class DocInfoImporter
 				ImportAction(w.Writer, ann, action, pageCount, false);
 			}
 
-			if (ann == null) {
-				continue;
-			}
-
 			ImportColor(item, ann);
 			if (string.IsNullOrEmpty(border) == false) {
 				ImportBorder(border, ann);
@@ -539,16 +535,14 @@ internal sealed class DocInfoImporter
 				}
 
 				p = map.GetAttribute(Constants.DestinationAttributes.Path);
-				if (dic.Size > 0 && p != null) {
+				if (dic.Size > 0) {
 					dic.Put(PdfName.S, PdfName.GOTOR);
 					fs = new PdfDictionary(PdfName.FILESPEC);
 					fs.Put(PdfName.F, new PdfString(p, Encoding.Default.WebName));
 					fs.Put(PdfName.UF, new PdfString(p, PdfObject.TEXT_UNICODE));
 					dic.Put(PdfName.F, fs);
 					string nw = map.GetAttribute(Constants.DestinationAttributes.NewWindow);
-					if (nw != null) {
-						dic.Put(PdfName.NEWWINDOW, nw == Constants.Boolean.True);
-					}
+					dic.Put(PdfName.NEWWINDOW, nw == Constants.Boolean.True);
 
 					dict.Put(PdfName.A, dic);
 				}
@@ -1033,7 +1027,7 @@ internal sealed class DocInfoImporter
 		float[] vals = new float[parts.Length];
 		bool ok = true;
 		for (int i = 0; i < vals.Length; i++) {
-			if (parts[i].TryParse(out vals[i]) != false && (allowNegativeNumber != false || !(vals[i] < 0))) {
+			if (parts[i].TryParse(out vals[i]) && (allowNegativeNumber || !(vals[i] < 0))) {
 				continue;
 			}
 

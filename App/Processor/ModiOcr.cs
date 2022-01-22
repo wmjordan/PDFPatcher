@@ -239,9 +239,6 @@ public class ModiOcr
 #endif
 			FinalReleaseComObjects(rects, words, layout, image, images, ocr);
 			FinalReleaseComObjects(merge, mergeImages);
-			words = rects = null;
-			ocr = images = image = layout = null;
-			merge = mergeImages = null;
 		}
 	}
 
@@ -277,7 +274,7 @@ public class ModiOcr
 
 	private static object Get(object instance, string propertyName, int index) {
 		return instance.GetType()
-			.InvokeMember(propertyName, BindingFlags.GetProperty, null, instance, new object[1] { index });
+			.InvokeMember(propertyName, BindingFlags.GetProperty, null, instance, new object[] { index });
 	}
 
 	private static void FinalReleaseComObjects(params object[] objs) {

@@ -377,7 +377,7 @@ public partial class BookmarkEditorView : TreeListView
 		}
 
 		Rectangle cr = ClientRectangle;
-		OLVListItem fi = null, li = null;
+		OLVListItem fi = null;
 		foreach (BookmarkElement item in items) {
 			OLVListItem i = ModelToItem(item);
 			if (i == null) {
@@ -389,11 +389,10 @@ public partial class BookmarkEditorView : TreeListView
 				return;
 			}
 
-			li = i;
 			fi ??= i;
 		}
 
-		if ((fi ?? li) != null) {
+		if ((fi) != null) {
 			EnsureVisible(fi.Index);
 		}
 	}

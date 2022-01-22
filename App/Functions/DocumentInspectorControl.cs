@@ -25,12 +25,12 @@ namespace PDFPatcher.Functions
 	public sealed partial class DocumentInspectorControl : FunctionControl, IDocumentEditor
 	{
 		static readonly PdfObjectType[] __XmlExportableTypes =
-			new PdfObjectType[] { PdfObjectType.Page, PdfObjectType.Pages, PdfObjectType.Trailer };
+			{ PdfObjectType.Page, PdfObjectType.Pages, PdfObjectType.Trailer };
 
 		static Dictionary<string, int> __OpNameIcons;
 		static Dictionary<int, int> __PdfObjectIcons;
 
-		static readonly ImageExtracterOptions _imgExpOption = new ImageExtracterOptions() {
+		static readonly ImageExtracterOptions _imgExpOption = new() {
 			OutputPath = Path.GetTempPath(),
 			MergeImages = false
 		};
@@ -89,8 +89,8 @@ namespace PDFPatcher.Functions
 			_ObjectDetailBox.SetTreeViewLine();
 			_ObjectDetailBox.FixEditControlWidth();
 			new TypedColumn<DocumentObject>(_NameColumn) {
-				AspectGetter = (DocumentObject d) => d.FriendlyName ?? d.Name,
-				ImageGetter = (DocumentObject d) => {
+				AspectGetter = d => d.FriendlyName ?? d.Name,
+				ImageGetter = d => {
 					if (d.ImageKey != null) {
 						return d.ImageKey;
 					}
@@ -138,8 +138,8 @@ namespace PDFPatcher.Functions
 				}
 			};
 			new TypedColumn<DocumentObject>(_ValueColumn) {
-				AspectGetter = (DocumentObject d) => d.FriendlyValue ?? d.LiteralValue,
-				AspectPutter = (DocumentObject d, object value) => {
+				AspectGetter = d => d.FriendlyValue ?? d.LiteralValue,
+				AspectPutter = (d, value) => {
 					if (d.UpdateDocumentObject(value)) {
 						DocumentObject r = d.FindReferenceAncestor();
 						if (r != null) {
@@ -152,7 +152,7 @@ namespace PDFPatcher.Functions
 					}
 				}
 			};
-			_DescriptionColumn.AspectGetter = (object o) => ((DocumentObject)o).Description;
+			_DescriptionColumn.AspectGetter = o => ((DocumentObject)o).Description;
 			_ObjectDetailBox.PrimarySortColumn = null;
 			_ObjectDetailBox.CopySelectionOnControlC = true;
 			_ObjectDetailBox.CellEditStarting += (s, args) => {
@@ -164,10 +164,10 @@ namespace PDFPatcher.Functions
 
 				switch (po.Type) {
 					case PdfObject.BOOLEAN:
-						args.Control = new CheckBox() { Checked = (po as PdfBoolean).BooleanValue, Bounds = args.CellBounds };
+						args.Control = new CheckBox { Checked = (po as PdfBoolean).BooleanValue, Bounds = args.CellBounds };
 						break;
 					case PdfObject.NUMBER:
-						args.Control = new TextBox() {
+						args.Control = new TextBox {
 							Text = (po as PdfNumber).DoubleValue.ToText(),
 							Bounds = args.CellBounds
 						};
@@ -181,7 +181,7 @@ namespace PDFPatcher.Functions
 						}
 				}
 			};
-			_ObjectDetailBox.CanExpandGetter = (object o) => {
+			_ObjectDetailBox.CanExpandGetter = o => {
 				if (o is not DocumentObject d) {
 					return false;
 				}
@@ -193,7 +193,7 @@ namespace PDFPatcher.Functions
 				return d.HasChildren;
 			};
 			_ObjectDetailBox.ChildrenGetter = o => o is not DocumentObject d ? null : d.Children;
-			_ObjectDetailBox.RowFormatter = (OLVListItem olvItem) => {
+			_ObjectDetailBox.RowFormatter = olvItem => {
 				if (olvItem.RowObject is not DocumentObject o) {
 					return;
 				}
@@ -258,7 +258,7 @@ namespace PDFPatcher.Functions
 			_addPdfObjectMenuItems = new ToolStripItem[] {
 				_AddNameNode, _AddStringNode, _AddDictNode, _AddArrayNode, _AddNumberNode, _AddBooleanNode
 			};
-			_pdfTypeForAddObjectMenuItems = new int[] {
+			_pdfTypeForAddObjectMenuItems = new[] {
 				PdfObject.NAME, PdfObject.STRING, PdfObject.DICTIONARY, PdfObject.ARRAY, PdfObject.NUMBER,
 				PdfObject.BOOLEAN
 			};
@@ -284,8 +284,6 @@ namespace PDFPatcher.Functions
 				case Commands.Delete:
 					EnableCommand(item, _DeleteButton.Enabled, true);
 					return;
-				default:
-					break;
 			}
 
 			if (Commands.CommonSelectionCommands.Contains(n)
@@ -472,22 +470,22 @@ namespace PDFPatcher.Functions
 			ShowDescription(
 				String.IsNullOrEmpty(i.Name) || d.Name == i.Name ? d.Name : String.Concat(d.Name, ":", i.Name),
 				i.Description, t);
-			_DeleteButton.Enabled = !i.IsRequired && d != null
+			_DeleteButton.Enabled = !i.IsRequired
 												  && (d.Type is PdfObjectType.Normal or PdfObjectType.Image || d.Type == PdfObjectType.Outline && d.Name == "Outlines");
 		}
 
 		private Dictionary<string, int> InitOpNameIcons() {
-			string[] p = new string[] {
+			string[] p = {
 				"Document", "Pages", "Page", "PageCommands", "Image", "Hidden", "GoToPage", "Outline", "Null"
 			};
-			string[] n = new string[] {
+			string[] n = {
 				"q", "Tm", "cm", "gs", "ri", "CS", "cs", "RG", "rg", "scn", "SCN", "sc", "SC", "K", "k", "g", "G", "s",
 				"S", "f", "F", "f*", "b", "B", "b*", "B*", "Tf", "Tz", "Ts", "T*", "Td", "TD", "TJ", "Tj", "'", "\"",
 				"Tk", "Tr", "Tc", "Tw", "TL", "BI", "BT", "BDC", "BMC", "Do", "W*", "W", "c", "v", "y", "l", "re", "m",
 				"h", "n", "w", "J", "j", "M", "d", "i", "pdf:number", "pdf:string", "pdf:name", "pdf:dictionary",
 				"pdf:array", "pdf:boolean"
 			};
-			string[] ico = new string[] {
+			string[] ico = {
 				"op_q", "op_tm", "op_cm", "op_gs", "op_gs", "op_gs", "op_gs", "op_sc", "op_sc", "op_sc", "op_sc",
 				"op_sc", "op_sc", "op_sc", "op_sc", "op_g", "op_g", "op_s", "op_s", "op_f", "op_f", "op_f", "op_b",
 				"op_b", "op_b", "op_b", "Font", "op_Tz", "op_Ts", "op_Td", "op_Td", "op_Td", "op_TJ", "op_TJ", "op_TJ",
@@ -495,7 +493,7 @@ namespace PDFPatcher.Functions
 				"op_W*", "op_W*", "op_c", "op_c", "op_c", "op_l", "op_re", "op_m", "op_h", "op_h", "op_w", "op_l",
 				"op_l", "op_M_", "op_d", "op_gs", "Number", "String", "Name", "Dictionary", "Array", "Bool"
 			};
-			Dictionary<string, int> d = new Dictionary<string, int>(n.Length + p.Length);
+			Dictionary<string, int> d = new(n.Length + p.Length);
 			foreach (string i in p) {
 				d.Add(i, _ObjectTypeIcons.Images.IndexOfKey(i));
 			}
@@ -508,11 +506,11 @@ namespace PDFPatcher.Functions
 		}
 
 		private Dictionary<int, int> InitPdfObjectIcons() {
-			int[] n = new int[] {
+			int[] n = {
 				PdfObject.NULL, PdfObject.ARRAY, PdfObject.BOOLEAN, PdfObject.DICTIONARY, PdfObject.INDIRECT,
 				PdfObject.NAME, PdfObject.NUMBER, PdfObject.STREAM, PdfObject.STRING
 			};
-			Dictionary<int, int> d = new Dictionary<int, int>(n.Length);
+			Dictionary<int, int> d = new(n.Length);
 			foreach (var t in n) {
 				d.Add(t, _ObjectTypeIcons.Images.IndexOfKey(PdfHelper.GetTypeName(t)));
 			}
@@ -615,7 +613,7 @@ namespace PDFPatcher.Functions
 
 				if (PdfName.IMAGE.Equals(s.GetAsName(PdfName.SUBTYPE))
 					|| n.Name == "Thumb") {
-					ImageInfo info = new ImageInfo(s);
+					ImageInfo info = new(s);
 					byte[] bytes = info.DecodeImage(_imgExpOption);
 					if (bytes == null) {
 						return;
@@ -630,9 +628,9 @@ namespace PDFPatcher.Functions
 				}
 				else {
 					byte[] b = PdfReader.GetStreamBytes(s);
-					using MemoryStream ms = new MemoryStream(b);
-					using StreamReader r = new StreamReader(ms);
-					using TextViewerForm f = new TextViewerForm(r.ReadToEnd(), true);
+					using MemoryStream ms = new(b);
+					using StreamReader r = new(ms);
+					using TextViewerForm f = new(r.ReadToEnd(), true);
 					f.ShowDialog(FindForm());
 					//_DescriptionBox.Text = String.Empty;
 					//while (r.Peek () != -1) {
@@ -665,7 +663,7 @@ namespace PDFPatcher.Functions
 					case "_ExportXml": {
 							ci.HidePopupMenu();
 							IList so = _ObjectDetailBox.SelectedObjects;
-							List<int> ep = new List<int>(so.Count);
+							List<int> ep = new(so.Count);
 							bool exportTrailer = _ObjectDetailBox.Items[0].Selected || n.Type == PdfObjectType.Trailer;
 							foreach (object item in so) {
 								if (item is not DocumentObject d) {
@@ -688,7 +686,7 @@ namespace PDFPatcher.Functions
 							}
 
 							if (ep.Count == 1) {
-								ExportXmlInfo((n.FriendlyName ?? n.Name), exportTrailer, new int[] { (int)n.ExtensiveObject });
+								ExportXmlInfo((n.FriendlyName ?? n.Name), exportTrailer, new[] { (int)n.ExtensiveObject });
 							}
 							else {
 								ExportXmlInfo(Path.GetFileNameWithoutExtension(_fileName), exportTrailer, ep.ToArray());
@@ -706,7 +704,7 @@ namespace PDFPatcher.Functions
 		}
 
 		private void AddChildNode(DocumentObject documentObject, int objectType) {
-			using AddPdfObjectForm f = new AddPdfObjectForm();
+			using AddPdfObjectForm f = new();
 			f.PdfObjectType = objectType;
 			if (f.ShowDialog() != DialogResult.OK) {
 				return;
@@ -721,7 +719,7 @@ namespace PDFPatcher.Functions
 		}
 
 		private void ExportXmlInfo(string fileName, bool exportTrailer, int[] pages) {
-			using SaveFileDialog d = new SaveFileDialog() {
+			using SaveFileDialog d = new() {
 				AddExtension = true,
 				FileName = fileName + Constants.FileExtensions.Xml,
 				DefaultExt = Constants.FileExtensions.Xml,
@@ -732,7 +730,7 @@ namespace PDFPatcher.Functions
 				return;
 			}
 
-			PdfContentExport exp = new PdfContentExport(new ExporterOptions() {
+			PdfContentExport exp = new(new ExporterOptions {
 				ExtractPageDictionary = true,
 				ExportContentOperators = true
 			});
@@ -751,7 +749,7 @@ namespace PDFPatcher.Functions
 		}
 
 		private static void ExportBinHexStream(DocumentObject n, bool decode) {
-			using SaveFileDialog d = new SaveFileDialog() {
+			using SaveFileDialog d = new() {
 				AddExtension = true,
 				FileName = (n.FriendlyName ?? n.Name) + Constants.FileExtensions.Txt,
 				DefaultExt = Constants.FileExtensions.Txt,
@@ -773,7 +771,7 @@ namespace PDFPatcher.Functions
 		}
 
 		private static void ExportBinaryStream(DocumentObject n, bool decode) {
-			using SaveFileDialog d = new SaveFileDialog() {
+			using SaveFileDialog d = new() {
 				AddExtension = true,
 				FileName = (n.FriendlyName ?? n.Name) + ".bin",
 				DefaultExt = ".bin",
@@ -795,7 +793,7 @@ namespace PDFPatcher.Functions
 		}
 
 		private static void ExportToUnicode(DocumentObject n) {
-			using SaveFileDialog d = new SaveFileDialog {
+			using SaveFileDialog d = new() {
 				AddExtension = true,
 				FileName = (n.Parent.FriendlyName ?? n.Name) + ".xml",
 				DefaultExt = ".xml",
@@ -808,9 +806,9 @@ namespace PDFPatcher.Functions
 
 			PRStream s = n.ExtensiveObject as PRStream;
 			try {
-				byte[] touni = PdfReader.GetStreamBytes((PRStream)s);
-				CidLocationFromByte lb = new CidLocationFromByte(touni);
-				CMapToUnicode m = new CMapToUnicode();
+				byte[] touni = PdfReader.GetStreamBytes(s);
+				CidLocationFromByte lb = new(touni);
+				CMapToUnicode m = new();
 				CMapParserEx.ParseCid("", m, lb);
 				using XmlWriter w = XmlWriter.Create(d.FileName, DocInfoExporter.GetWriterSettings());
 				w.WriteStartElement("toUnicode");
@@ -840,14 +838,14 @@ namespace PDFPatcher.Functions
 				return PdfReader.GetStreamBytes(s);
 			}
 
-			ImageInfo info = new ImageInfo(s);
+			ImageInfo info = new(s);
 			return info.DecodeImage(_imgExpOption);
 
 		}
 
 		private void SaveDocument() {
 			string path;
-			using (SaveFileDialog d = new SaveFileDialog() {
+			using (SaveFileDialog d = new() {
 				DefaultExt = Constants.FileExtensions.Pdf,
 				Filter = Constants.FileExtensions.PdfFilter,
 				AddExtension = true,
@@ -871,8 +869,8 @@ namespace PDFPatcher.Functions
 			_pdf.Document.RemoveUnusedObjects();
 			try {
 				n = o ? FileHelper.GetTempNameFromFileDirectory(path, Constants.FileExtensions.Pdf) : path;
-				using (FileStream s = new FileStream(n, FileMode.Create)) {
-					PdfStamper w = new PdfStamper(_pdf.Document, s);
+				using (FileStream s = new(n, FileMode.Create)) {
+					PdfStamper w = new(_pdf.Document, s);
 					if (AppContext.Patcher.FullCompression) {
 						w.SetFullCompression();
 					}
@@ -907,7 +905,7 @@ namespace PDFPatcher.Functions
 		private void _LoadDocumentWorker_DoWork(object sender, DoWorkEventArgs e) {
 			string path = e.Argument as string;
 			try {
-				PdfPathDocument d = new PdfPathDocument(path);
+				PdfPathDocument d = new(path);
 				_pdf?.Close();
 				_pdf = d;
 				e.Result = path;

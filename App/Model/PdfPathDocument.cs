@@ -10,7 +10,6 @@ internal sealed class PdfPathDocument : IHierarchicalObject<DocumentObject>
 {
 	private const int pageGroupNumber = 100;
 	private static readonly DocumentObject[] __Leaf = new DocumentObject[0];
-	private readonly DocumentObject _hiddenObjects;
 	private readonly Dictionary<int, int> _pageMapper;
 	private readonly DocumentObject[] _rootObjects;
 
@@ -22,7 +21,7 @@ internal sealed class PdfPathDocument : IHierarchicalObject<DocumentObject>
 			Description = "文档根节点",
 			FriendlyValue = Path.GetFileNameWithoutExtension(pdfPath)
 		};
-		_hiddenObjects = new DocumentObject(this, null, "隐藏对象", null, PdfObjectType.Hidden);
+		DocumentObject hiddenObjects = new DocumentObject(this, null, "隐藏对象", null, PdfObjectType.Hidden);
 		int l = Document.NumberOfPages;
 		if (l > 301) {
 			DocumentObject[] c = new DocumentObject[1 + ((l + pageGroupNumber - 1) / pageGroupNumber) + 1];
@@ -37,7 +36,7 @@ internal sealed class PdfPathDocument : IHierarchicalObject<DocumentObject>
 				};
 			}
 
-			c[c.Length - 1] = _hiddenObjects;
+			c[c.Length - 1] = hiddenObjects;
 			_rootObjects = c;
 		}
 		else {
@@ -46,7 +45,7 @@ internal sealed class PdfPathDocument : IHierarchicalObject<DocumentObject>
 				new(this, null, "Pages", null, PdfObjectType.Pages) {
 					IsKeyObject = true, FriendlyValue = "共 " + l + " 页"
 				},
-				_hiddenObjects
+				hiddenObjects
 			};
 		}
 	}

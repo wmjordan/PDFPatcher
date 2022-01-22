@@ -152,7 +152,6 @@ internal sealed class ImportOcrResultProcessor : IDocProcessor
 		csi.Put(PdfName.ORDERING, new PdfString("GB1"));
 		csi.Put(PdfName.SUPPLEMENT, new PdfNumber(3));
 		df.Put(PdfName.CIDSYSTEMINFO, csi);
-		csi = null;
 
 		// FontDescriptor
 		PdfDictionary fd = new(PdfName.FONTDESCRIPTOR);
@@ -185,7 +184,7 @@ internal sealed class ImportOcrResultProcessor : IDocProcessor
 	}
 
 	private static int ImportImageOcrResult(IPdfPageCommandContainer container, XmlElement result) {
-		int w = 0, h = 0;
+		int w, h = 0;
 		IList<PdfPageCommand> sc = container.Commands;
 		XmlNodeList chars = result.SelectNodes(Constants.Ocr.Content);
 		if (chars.Count == 0) {
@@ -225,7 +224,7 @@ internal sealed class ImportOcrResultProcessor : IDocProcessor
 		float fSize = -1f;
 		bool isV = false, hasHFont = false, hasVFont = false;
 		foreach (object item in chars) {
-			if (!info.GetInfo(item as XmlElement) || string.IsNullOrEmpty(info.Text) != false) {
+			if (!info.GetInfo(item as XmlElement) || string.IsNullOrEmpty(info.Text)) {
 				continue;
 			}
 

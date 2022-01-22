@@ -16,7 +16,7 @@ namespace PDFPatcher.Functions
 		public RenderImageControl() {
 			InitializeComponent();
 			//this.Icon = Common.FormHelper.ToIcon (Properties.Resources.RenderImage);
-			_SourceFileControl.BrowseSelectedFiles += (object sender, EventArgs e) => {
+			_SourceFileControl.BrowseSelectedFiles += (sender, e) => {
 				if (_AutoOutputDirBox.Checked == false) {
 					return;
 				}
@@ -27,7 +27,7 @@ namespace PDFPatcher.Functions
 						Path.GetFileNameWithoutExtension(sourceFile));
 				}
 			};
-			_AutoOutputDirBox.CheckedChanged += (object sender, EventArgs e) => {
+			_AutoOutputDirBox.CheckedChanged += (sender, e) => {
 				AppContext.ImageRenderer.AutoOutputFolder = _AutoOutputDirBox.Checked;
 			};
 			_ResolutionBox.TextChanged += (s, args) => {
@@ -65,7 +65,7 @@ namespace PDFPatcher.Functions
 			_HorizontalFlipImageBox.Checked = o.HorizontalFlipImages;
 			_HideAnnotationsBox.Checked = o.HideAnnotations;
 			_ImageFormatBox.SelectedIndex = ValueHelper.MapValue(o.FileFormat,
-				new ImageFormat[] { ImageFormat.Png, ImageFormat.Jpeg, ImageFormat.Tiff }, new int[] { 0, 1, 2 }, 0);
+				new[] { ImageFormat.Png, ImageFormat.Jpeg, ImageFormat.Tiff }, new[] { 0, 1, 2 }, 0);
 			_InvertColorBox.Checked = o.InvertColor;
 			if (o.JpegQuality is > 0 and <= 100) {
 				_JpegQualityBox.Text = o.JpegQuality.ToText();
@@ -78,7 +78,7 @@ namespace PDFPatcher.Functions
 			_QuantizeBox.Checked = o.Quantize;
 			_ResolutionBox.Text = o.Dpi.ToText();
 			_RotationBox.SelectedIndex =
-				ValueHelper.MapValue(o.Rotation, new int[] { 0, 90, 180, 270 }, new int[] { 0, 1, 2, 3 }, 0);
+				ValueHelper.MapValue(o.Rotation, new[] { 0, 90, 180, 270 }, new[] { 0, 1, 2, 3 }, 0);
 			_SpecificRatioBox.Checked = !o.UseSpecificWidth;
 			_SpecificWidthBox.Checked = o.UseSpecificWidth;
 			_VerticalFlipImageBox.Checked = o.VerticalFlipImages;
@@ -175,8 +175,8 @@ namespace PDFPatcher.Functions
 			option.HideAnnotations = _HideAnnotationsBox.Checked;
 			option.HorizontalFlipImages = _HorizontalFlipImageBox.Checked;
 			option.InvertColor = _InvertColorBox.Checked;
-			option.FileFormat = ValueHelper.MapValue(_ImageFormatBox.SelectedIndex, new int[] { 0, 1, 2 },
-				new ImageFormat[] { ImageFormat.Png, ImageFormat.Jpeg, ImageFormat.Tiff }, ImageFormat.Png);
+			option.FileFormat = ValueHelper.MapValue(_ImageFormatBox.SelectedIndex, new[] { 0, 1, 2 },
+				new[] { ImageFormat.Png, ImageFormat.Jpeg, ImageFormat.Tiff }, ImageFormat.Png);
 			option.ImageWidth = (int)_ExtractPageImageWidthBox.Value;
 			option.JpegQuality = _JpegQualityBox.Text.TryParse(out int j)
 				? j is > 0 and <= 100 ? j : 75
@@ -189,7 +189,6 @@ namespace PDFPatcher.Functions
 			option.VerticalFlipImages = _VerticalFlipImageBox.Checked;
 			worker.RunWorkerAsync(
 				new object[] { AppContext.SourceFiles, option });
-			option = null;
 		}
 
 		private void _GoToImportImageLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {

@@ -231,7 +231,7 @@ internal static class BitmapHelper
 	/// <returns>转换后的图像。</returns>
 	/// <remarks>http://www.wischik.com/lu/programmer/1bpp.html</remarks>
 	public static Bitmap ToBitonal(this Bitmap original) {
-		Bitmap source = null;
+		Bitmap source;
 
 		if (original.PixelFormat == PixelFormat.Format1bppIndexed) {
 			return (Bitmap)original.Clone();

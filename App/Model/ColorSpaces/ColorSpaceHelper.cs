@@ -460,7 +460,7 @@ public static class ColorSpaceHelper
 	/// <param name="green">Green value, must be in [0,255].</param>
 	/// <param name="blue">Blue value, must be in [0,255].</param>
 	public static HSL RGBtoHSL(int red, int green, int blue) {
-		double h = 0, s = 0, l = 0;
+		double h = 0, s = 0, l;
 
 		// normalizes red-green-blue values
 		double nRed = red / 255.0;

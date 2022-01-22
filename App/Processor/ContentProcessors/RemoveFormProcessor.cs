@@ -57,13 +57,13 @@ internal sealed class RemoveFormProcessor : IPageProcessor
 		}
 
 		if (!r) {
-			return r;
+			return false;
 		}
 
 		context.IsPageContentModified = true;
 		_processedPageCount++;
 
-		return r;
+		return true;
 	}
 
 	private static HashSet<PdfName> ProcessFormContent(PageProcessorContext context) {

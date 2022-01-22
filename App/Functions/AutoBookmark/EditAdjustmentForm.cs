@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using BrightIdeasSoftware;
 using PDFPatcher.Common;
 using PDFPatcher.Model;
 
@@ -9,14 +8,13 @@ namespace PDFPatcher.Functions
 {
 	public partial class EditAdjustmentForm : Form
 	{
-		internal static string[] FilterNames = new string[] { "字体名称", "文本尺寸", "文本位置", "页码范围", "文本内容" };
+		internal static string[] FilterNames = { "字体名称", "文本尺寸", "文本位置", "页码范围", "文本内容" };
 
-		internal static string[] FilterIDs = new string[] {
+		internal static string[] FilterIDs = {
 			"_FontNameFilter", "_FontSizeFilter", "_FontPositionFilter", "_PageRangeFilter", "_TextFilter"
 		};
 
-		readonly Dictionary<Type, IFilterConditionEditor> _filterEditors =
-			new Dictionary<Type, IFilterConditionEditor>();
+		readonly Dictionary<Type, IFilterConditionEditor> _filterEditors = new();
 
 		AutoBookmarkCondition.MultiCondition conditions;
 
@@ -27,16 +25,16 @@ namespace PDFPatcher.Functions
 				_AddFilterMenuItem.DropDownItems.Add(item).Name = FilterIDs[i++];
 			}
 
-			_FilterBox.BeforeSorting += (object sender, BeforeSortingEventArgs e) => e.Canceled = true;
-			_ConditionColumn.AspectGetter = (object x) => x is AutoBookmarkCondition f ? f.Description : (object)null;
-			_IsInclusiveColumn.AspectGetter = (object x) => {
+			_FilterBox.BeforeSorting += (sender, e) => e.Canceled = true;
+			_ConditionColumn.AspectGetter = x => x is AutoBookmarkCondition f ? f.Description : (object)null;
+			_IsInclusiveColumn.AspectGetter = x => {
 				if (x is AutoBookmarkCondition f) {
 					return f.IsInclusive ? "包含匹配项" : "过滤匹配项";
 				}
 
 				return null;
 			};
-			_TypeColumn.AspectGetter = (object x) => x is AutoBookmarkCondition f ? f.Name : null;
+			_TypeColumn.AspectGetter = x => x is AutoBookmarkCondition f ? f.Name : null;
 			Filter = new AutoBookmarkOptions.LevelAdjustmentOption();
 			if (filter != null) {
 				Filter.AdjustmentLevel = filter.AdjustmentLevel;
@@ -106,7 +104,7 @@ namespace PDFPatcher.Functions
 				"_FontSizeFilter" => new AutoBookmarkCondition.TextSizeCondition(0, 10),
 				"_FontPositionFilter" => new AutoBookmarkCondition.TextPositionCondition(1, -9999, 9999),
 				"_PageRangeFilter" => new AutoBookmarkCondition.PageRangeCondition(),
-				"_TextFilter" => new AutoBookmarkCondition.TextCondition() {
+				"_TextFilter" => new AutoBookmarkCondition.TextCondition {
 					Pattern = new MatchPattern("筛选条件", false, false, false)
 				},
 				_ => null
@@ -125,7 +123,8 @@ namespace PDFPatcher.Functions
 				goto SetEditor;
 				// return c;
 			}
-			else if (t == typeof(AutoBookmarkCondition.FontNameCondition)) {
+
+			if (t == typeof(AutoBookmarkCondition.FontNameCondition)) {
 				c = new FontNameConditionEditor();
 			}
 			else if (t == typeof(AutoBookmarkCondition.TextSizeCondition)) {

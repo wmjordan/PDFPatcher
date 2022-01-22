@@ -79,7 +79,7 @@ internal struct PageRange : IEnumerable<int>
 				return true;
 			}
 
-			if (_isIncremental != false || Current <= _end) {
+			if (_isIncremental || Current <= _end) {
 				return false;
 			}
 

@@ -62,13 +62,13 @@ internal sealed class RemoveAnnotationProcessor : IPageProcessor
 		}
 
 		if (!removed) {
-			return removed;
+			return false;
 		}
 
 		context.IsPageContentModified = true;
 		_processedPageCount++;
 
-		return removed;
+		return true;
 	}
 
 	#endregion

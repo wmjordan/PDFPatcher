@@ -214,7 +214,7 @@ public sealed class BookmarkElement : BookmarkContainer
 	public FontStyle TextStyle {
 		get {
 			string s = GetAttribute(Constants.BookmarkAttributes.Style);
-			if (string.IsNullOrEmpty(s) != false) {
+			if (string.IsNullOrEmpty(s)) {
 				return FontStyle.Regular;
 			}
 

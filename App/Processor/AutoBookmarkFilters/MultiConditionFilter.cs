@@ -15,7 +15,7 @@ internal sealed class MultiConditionFilter : AutoBookmarkFilter
 	}
 
 	internal override bool Matches(AutoBookmarkContext context) {
-		return _filters.All(item => item.Matches(context) != false);
+		return _filters.All(item => item.Matches(context));
 	}
 
 	internal override void Reset() {

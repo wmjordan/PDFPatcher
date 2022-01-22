@@ -22,7 +22,7 @@ internal static class PathAxes
 			return false;
 		}
 
-		return predicates == null || predicates.All(p => p.Match(source, p.Operand1, p.Operand2) != false);
+		return predicates == null || predicates.All(p => p.Match(source, p.Operand1, p.Operand2));
 	}
 
 	private static IList<DocumentObject> CompriseSingleObjectCollection(DocumentObject source) {

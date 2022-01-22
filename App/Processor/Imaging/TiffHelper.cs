@@ -10,8 +10,8 @@ internal static class TiffHelper
 {
 	private static readonly ImageCodecInfo _tiffCodec = BitmapHelper.GetCodec("image/tiff");
 
-	static readonly EncoderParameters _encoderParameters = new EncoderParameters(1) {
-		Param = new EncoderParameter[] { new EncoderParameter(Encoder.Compression, (long)EncoderValue.CompressionCCITT4) }
+	static readonly EncoderParameters _encoderParameters = new(1) {
+		Param = new EncoderParameter[] { new(Encoder.Compression, (long)EncoderValue.CompressionCCITT4) }
 	};
 
 	internal static void Save(FreeImageBitmap bmp, string fileName) {

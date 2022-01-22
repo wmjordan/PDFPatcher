@@ -52,7 +52,7 @@ internal sealed class RemoveEmptyCommandProcessor : IPageProcessor
 	public bool Process(PageProcessorContext context) {
 		Tracker.IncrementProgress(3);
 		IPdfPageCommandContainer p = context.PageCommands;
-		bool r = false;
+		bool r;
 		r = ProcessCommands(p.Commands);
 		if (r) {
 			context.IsPageContentModified = true;

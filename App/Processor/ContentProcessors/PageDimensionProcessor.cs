@@ -169,7 +169,7 @@ internal sealed class PageDimensionProcessor : IPageProcessor
 
 	private static bool FilterPageNumber(int pageNumber, PageFilterFlag filter) {
 		bool odd = (pageNumber & 1) > 0;
-		return (!odd || (filter & PageFilterFlag.Even) != PageFilterFlag.Even) && (odd != false || (filter & PageFilterFlag.Odd) != PageFilterFlag.Odd);
+		return (!odd || (filter & PageFilterFlag.Even) != PageFilterFlag.Even) && (odd || (filter & PageFilterFlag.Odd) != PageFilterFlag.Odd);
 	}
 
 	/// <summary>
@@ -357,7 +357,6 @@ internal sealed class PageDimensionProcessor : IPageProcessor
 			}
 
 			_cts[context.PageNumber] = ct;
-			ct = null;
 		}
 
 		if (_adjustMargins) {

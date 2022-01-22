@@ -87,7 +87,7 @@ internal sealed class PdfViewerControl : ImageBoxEx
 					v = _cache.GetBitmap(i) != null;
 				}
 
-				if (v != false || _renderWorker.IsBusy != false) {
+				if (v || _renderWorker.IsBusy) {
 					continue;
 				}
 
@@ -462,7 +462,7 @@ internal sealed class PdfViewerControl : ImageBoxEx
 
 	protected override void OnClientSizeChanged(EventArgs e) {
 		base.OnClientSizeChanged(e);
-		if (_zoomMode == ZoomMode.Custom || _lockDown != false) {
+		if (_zoomMode == ZoomMode.Custom || _lockDown) {
 			return;
 		}
 
@@ -620,7 +620,7 @@ internal sealed class PdfViewerControl : ImageBoxEx
 			g.FillRectangle(b, vp);
 		}
 
-		DrawingRectangle r = DrawingRectangle.Empty;
+		DrawingRectangle r;
 		do {
 			Debug.Assert(p > 0 && p < _mupdf.PageCount + 1, p.ToString());
 			MuRectangle pb = _pageBounds[p];
@@ -698,9 +698,6 @@ internal sealed class PdfViewerControl : ImageBoxEx
 
 				foreach (MuTextBlock block in p.TextPage.Blocks) {
 					g.DrawRectangle(blockPen, block.BBox);
-					if (block == null) {
-						continue;
-					}
 
 					foreach (MuTextLine line in block.Lines) {
 						g.DrawRectangle(spanPen, line.BBox);

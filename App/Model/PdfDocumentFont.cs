@@ -48,7 +48,7 @@ internal class PdfDocumentFont
 		}
 
 		if (df.Type == PdfObject.ARRAY) {
-			return (df as PdfArray).ArrayList.All(item => IsEmbeddedFont(PdfReader.GetPdfObjectRelease(item) as PdfDictionary) != false);
+			return (df as PdfArray).ArrayList.All(item => IsEmbeddedFont(PdfReader.GetPdfObjectRelease(item) as PdfDictionary));
 		}
 
 		df = PdfReader.GetPdfObjectRelease(df);

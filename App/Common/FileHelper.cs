@@ -60,63 +60,62 @@ internal static class FileHelper
 							// path2 为数字，path1 不为数字，path2 排在前面
 							: 1;
 			}
-			else if (IsPathSeparator(x)) {
+
+			if (IsPathSeparator(x)) {
 				if (IsPathSeparator(y)) {
 					continue;
 				}
 
 				return -1;
 			}
-			else if (IsPathSeparator(y)) {
+			if (IsPathSeparator(y)) {
 				return 1;
 			}
-			else {
-				// 数字比较
-				if (y is >= '0' and <= '9') {
-					// 两组均为数字
-					do {
-						if (x > '0' || n1 > 0) {
-							++n1;
-						}
-					} while (++i1 < l1 && (x = path1[i1]) >= '0' && x <= '9');
-
-					do {
-						if (y > '0' || n2 > 0) {
-							++n2;
-						}
-					} while (++i2 < l2 && (y = path2[i2]) >= '0' && y <= '9');
-
-					// 数字位数少的在前面
-					if (n1 != n2) {
-						return n1 - n2;
+			// 数字比较
+			if (y is >= '0' and <= '9') {
+				// 两组均为数字
+				do {
+					if (x > '0' || n1 > 0) {
+						++n1;
 					}
+				} while (++i1 < l1 && (x = path1[i1]) >= '0' && x <= '9');
 
-					// 全是 0，继续后面的比较
-					if (n1 == 0 || n2 == 0) {
-						--i1;
-						--i2;
-						continue;
+				do {
+					if (y > '0' || n2 > 0) {
+						++n2;
 					}
+				} while (++i2 < l2 && (y = path2[i2]) >= '0' && y <= '9');
 
-					i1 -= n1;
-					i2 -= n2;
-					for (int i = 0; i < n1; i++, i1++, i2++) {
-						x = path1[i1];
-						y = path2[i2];
-						if (x != y) {
-							return x - y;
-						}
-					}
+				// 数字位数少的在前面
+				if (n1 != n2) {
+					return n1 - n2;
+				}
 
-					// 数值相等，比较下一组
-					n1 = n2 = 0;
+				// 全是 0，继续后面的比较
+				if (n1 == 0 || n2 == 0) {
 					--i1;
 					--i2;
+					continue;
 				}
-				else {
-					// 仅 x 为数字，y 不为数字
-					return y == PathDot ? 1 : x - y;
+
+				i1 -= n1;
+				i2 -= n2;
+				for (int i = 0; i < n1; i++, i1++, i2++) {
+					x = path1[i1];
+					y = path2[i2];
+					if (x != y) {
+						return x - y;
+					}
 				}
+
+				// 数值相等，比较下一组
+				n1 = n2 = 0;
+				--i1;
+				--i2;
+			}
+			else {
+				// 仅 x 为数字，y 不为数字
+				return y == PathDot ? 1 : x - y;
 			}
 		}
 

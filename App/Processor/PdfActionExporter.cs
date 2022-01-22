@@ -25,7 +25,7 @@ internal sealed class PdfActionExporter
 							PdfHelper.GetValidXmlString(fs.GetAsString(PdfName.UF).ToUnicodeString()));
 					}
 					else if (fs.Contains(PdfName.F)) {
-						file = fs.Get(PdfName.F);
+						fs.Get(PdfName.F);
 					}
 
 					break;

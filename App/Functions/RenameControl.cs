@@ -227,7 +227,7 @@ public partial class RenameControl : FunctionControl
 				FilePath s = item.FilePath;
 				string t;
 				if (s.ExistsFile == false) {
-					t = string.Concat("(找不到 PDF 文件：", s, ")");
+					string.Concat("(找不到 PDF 文件：", s, ")");
 					continue;
 				}
 

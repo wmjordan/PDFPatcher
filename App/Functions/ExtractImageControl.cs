@@ -15,7 +15,7 @@ namespace PDFPatcher.Functions
 		public ExtractImageControl() {
 			InitializeComponent();
 			//this.Icon = Common.FormHelper.ToIcon (Properties.Resources.ExtractImage);
-			_SourceFileControl.BrowseSelectedFiles += (object sender, EventArgs e) => {
+			_SourceFileControl.BrowseSelectedFiles += (sender, e) => {
 				if (_AutoOutputDirBox.Checked == false) {
 					return;
 				}
@@ -26,7 +26,7 @@ namespace PDFPatcher.Functions
 						Path.GetFileNameWithoutExtension(sourceFile));
 				}
 			};
-			_AutoOutputDirBox.CheckedChanged += (object sender, EventArgs e) => {
+			_AutoOutputDirBox.CheckedChanged += (sender, e) => {
 				AppContext.ImageExtracter.AutoOutputFolder = _AutoOutputDirBox.Checked;
 			};
 		}

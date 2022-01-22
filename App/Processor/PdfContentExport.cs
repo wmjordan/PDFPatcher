@@ -158,7 +158,7 @@ internal sealed class PdfContentExport
 					ExportColorSpaceContent(writer, a);
 				}
 				else {
-					val = PdfHelper.GetArrayString(a);
+					PdfHelper.GetArrayString(a);
 					ExportArray(a.ArrayList, writer);
 				}
 
@@ -489,7 +489,6 @@ internal sealed class PdfContentExport
 	private static void ExportStreamTextContent(IList<byte> bs, StringBuilder sb, int p1, int p2) {
 		bool inText = false;
 		bool escape = false;
-		int beginTextPosition = 0;
 		for (int c = p1; c < p2; c++) {
 			char ch = (char)bs[c];
 			switch (ch) {
@@ -510,7 +509,6 @@ internal sealed class PdfContentExport
 					}
 					else {
 						inText = true;
-						beginTextPosition = c;
 						sb.Append(ch);
 					}
 
@@ -632,7 +630,7 @@ internal sealed class PdfContentExport
 
 		protected override void InvokeOperator(PdfLiteral oper, List<PdfObject> operands) {
 			base.InvokeOperator(oper, operands);
-			string t = null;
+			string t;
 			bool open = false;
 			bool hasDescriptiveOperands = false;
 			string o = oper.ToString();

@@ -20,7 +20,7 @@ namespace PDFPatcher.Processor
 
 		readonly ImageExtracterOptions _options;
 		readonly PdfPageImageProcessor _parser;
-		readonly HashSet<PdfObject> _Refs = new HashSet<PdfObject>();
+		readonly HashSet<PdfObject> _Refs = new();
 		int _activePage; // 在导出文件图片时，使用此属性命名文件
 		int _imageCount;
 		int _pageRotation;
@@ -32,9 +32,9 @@ namespace PDFPatcher.Processor
 			_parser = new PdfPageImageProcessor(PosList, InfoList);
 		}
 
-		internal List<ImageInfo> InfoList { get; } = new List<ImageInfo>();
+		internal List<ImageInfo> InfoList { get; } = new();
 
-		internal List<ImageDisposition> PosList { get; } = new List<ImageDisposition>();
+		internal List<ImageDisposition> PosList { get; } = new();
 
 		internal bool PrintImageLocation { get; set; }
 
@@ -77,12 +77,13 @@ namespace PDFPatcher.Processor
 			_parser.ProcessContent(reader.GetPageContent(pageNum), o.Locate<PdfDictionary>(PdfName.RESOURCES));
 			PosList.Sort();
 			InfoList.Sort((x, y) => {
-				ImageDisposition xi = PosList.Find((info) => info.Image == x);
-				ImageDisposition yi = PosList.Find((info) => info.Image == y);
+				ImageDisposition xi = PosList.Find(info => info.Image == x);
+				ImageDisposition yi = PosList.Find(info => info.Image == y);
 				if (xi == null) {
 					return yi == null ? 0 : -1;
 				}
-				else if (yi == null) {
+
+				if (yi == null) {
 					return -1;
 				}
 
@@ -150,7 +151,7 @@ namespace PDFPatcher.Processor
 							}
 						}
 						else if (includeDescendants) {
-							ExtractImageInstances(stream, true);
+							ExtractImageInstances(null, true);
 						}
 					}
 				}
@@ -188,7 +189,7 @@ namespace PDFPatcher.Processor
 			}
 
 			if (info.MaskBytes != null) {
-				using FreeImageBitmap m = new FreeImageBitmap(
+				using FreeImageBitmap m = new(
 					info.MaskSize.Width, info.MaskSize.Height,
 					(info.MaskSize.Width + 7) / 8, PixelFormat.Format1bppIndexed,
 					info.MaskBytes);
@@ -213,8 +214,8 @@ namespace PDFPatcher.Processor
 				//var pixmap = new MuPdfSharp.PixmapData(ctx, ctx.LoadJpeg2000(bytes));
 				//var b = pixmap.ToBitmap(new MuPdfSharp.ImageRendererOptions());
 				try {
-					using MemoryStream ms = new MemoryStream(bytes);
-					using FreeImageBitmap bmp = new FreeImageBitmap(ms);
+					using MemoryStream ms = new(bytes);
+					using FreeImageBitmap bmp = new(ms);
 					RotateBitmap(bmp, _pageRotation, vFlip);
 					info.CreatePaletteAndIccProfile(bmp);
 					try {
@@ -231,8 +232,8 @@ namespace PDFPatcher.Processor
 				}
 			}
 			else if (PdfName.DEVICECMYK.Equals(info.ColorSpace)) {
-				using MemoryStream ms = new MemoryStream(bytes);
-				using FreeImageBitmap bmp = new FreeImageBitmap(ms,
+				using MemoryStream ms = new(bytes);
+				using FreeImageBitmap bmp = new(ms,
 					FREE_IMAGE_LOAD_FLAGS.JPEG_CMYK | FREE_IMAGE_LOAD_FLAGS.TIFF_CMYK);
 				RotateBitmap(bmp, _pageRotation, vFlip);
 				if (bmp.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_24_BPP)) {
@@ -251,7 +252,7 @@ namespace PDFPatcher.Processor
 				}
 			}
 			else {
-				using (FileStream f = new FileStream(n, FileMode.Create)) {
+				using (FileStream f = new(n, FileMode.Create)) {
 					f.Write(bytes, 0, bytes.Length);
 				}
 
@@ -280,7 +281,6 @@ namespace PDFPatcher.Processor
 			FreeImageBitmap b = bmp.GetChannel(FREE_IMAGE_COLOR_CHANNEL.FICC_BLUE);
 			bmp.SetChannel(b, FREE_IMAGE_COLOR_CHANNEL.FICC_RED);
 			bmp.SetChannel(r, FREE_IMAGE_COLOR_CHANNEL.FICC_BLUE);
-			return;
 			//var stride = bmp.Stride;
 			//var Scan0 = bmp.Scan0;
 
@@ -333,7 +333,7 @@ namespace PDFPatcher.Processor
 					return;
 			}
 
-			using (FreeImageBitmap bmp = new FreeImageBitmap(fileName)) {
+			using (FreeImageBitmap bmp = new(fileName)) {
 				bmp.RotateFlip(type);
 				if (bmp.UniqueColors < 256) {
 					bmp.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_08_BPP);
@@ -361,7 +361,7 @@ namespace PDFPatcher.Processor
 			if (PdfName.DEVICECMYK.Equals(info.ColorSpace)) {
 				// TODO: 转换字节数组的 CMYK 为 RGB 后加载到 FreeImageBitmap
 				//info.PixelFormat = PixelFormat.Undefined;
-				using FreeImageBitmap bmp = new FreeImageBitmap(
+				using FreeImageBitmap bmp = new(
 					//info.Width,
 					//info.Height,
 					//GetStride (info, bytes, vFlip),
@@ -531,7 +531,7 @@ namespace PDFPatcher.Processor
 
 				if (PrintImageLocation) {
 					Tracker.TraceMessage("合并图片：" + String.Join("、",
-						Array.ConvertAll<ImageInfo, string>(imageParts, p => Path.GetFileName(p.FileName))));
+						Array.ConvertAll(imageParts, p => Path.GetFileName(p.FileName))));
 				}
 
 				string ext = Path.GetExtension(imageI.Image.FileName).ToLowerInvariant();
@@ -540,7 +540,7 @@ namespace PDFPatcher.Processor
 				}
 
 				string f = GetNewImageFileName();
-				using FreeImageBitmap bmp = new FreeImageBitmap(w, h, imageI.Image.PixelFormat);
+				using FreeImageBitmap bmp = new(w, h, imageI.Image.PixelFormat);
 				h = 0;
 				byte palEntryCount = 0;
 				RGBQUAD[] bmpPal = bmp.HasPalette ? bmp.Palette.AsArray : null;
@@ -570,9 +570,8 @@ namespace PDFPatcher.Processor
 											bmpPal = null;
 											goto Paste;
 										}
-										else {
-											throw new OverflowException("调色板溢出，无法合并图片。");
-										}
+
+										throw new OverflowException("调色板溢出，无法合并图片。");
 									}
 
 									if (palEntryCount >= bmpPal.Length && palEntryCount < 129) {
@@ -581,7 +580,6 @@ namespace PDFPatcher.Processor
 									}
 
 									bmpPal[palEntryCount] = part.PaletteArray[pi];
-									p = palEntryCount;
 									++palEntryCount;
 									//if (p != pi) {
 									//	palMapSrc[mi] = (byte)pi;
@@ -662,7 +660,7 @@ namespace PDFPatcher.Processor
 					bmp.Save(f);
 				}
 
-				ImageInfo mii = new ImageInfo { FileName = f, ReferenceCount = 1, Height = h, Width = w };
+				ImageInfo mii = new() { FileName = f, ReferenceCount = 1, Height = h, Width = w };
 				InfoList.Add(mii);
 				PosList.Add(new ImageDisposition(PosList[i].Ctm, mii));
 			}
@@ -672,16 +670,16 @@ namespace PDFPatcher.Processor
 				item.FileName = null;
 			}
 
-			InfoList.Sort((ImageInfo x, ImageInfo y) =>
+			InfoList.Sort((x, y) =>
 				string.Compare(x.FileName, y.FileName, StringComparison.OrdinalIgnoreCase));
 			_totalImageCount -= _imageCount;
 			_imageCount = 0;
-			List<string> newFileNames = new List<string>();
+			List<string> newFileNames = new();
 			foreach (var item in InfoList.Where(item => item.FileName != null && item.InlineImage == null)) {
 				string n;
 				do {
 					n = GetNewImageFileName() + Path.GetExtension(item.FileName);
-				} while (PosList.Exists((i) => i.Image.FileName == n) || newFileNames.Contains(n));
+				} while (PosList.Exists(i => i.Image.FileName == n) || newFileNames.Contains(n));
 
 				if (PrintImageLocation) {
 					Tracker.TraceMessage(String.Concat("重命名合并后的文件 ", item.FileName, " 为 ", n));

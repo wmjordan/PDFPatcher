@@ -51,7 +51,7 @@ namespace PDFPatcher.Functions
 		}
 
 		private static CommandRegistry<Controller> InitCommands() {
-			CommandRegistry<Controller> d = new CommandRegistry<Controller>();
+			CommandRegistry<Controller> d = new();
 			d.Register(new LoadDocumentCommand(true, false), Commands.Open);
 			d.Register(new LoadDocumentCommand(true, true), Commands.ImportBookmark);
 			d.Register(new LoadDocumentCommand(false, false), Commands.OpenFile);
@@ -129,7 +129,7 @@ namespace PDFPatcher.Functions
 			di.Insert(0,
 				new ToolStripMenuItem { Name = Constants.Coordinates.Unchanged, Text = Constants.Coordinates.Unchanged });
 			_ChangeZoomRate.DropDownItemClicked += _MainToolbar_ItemClicked;
-			_ChangeCase.DropDownItemClicked += (object s, ToolStripItemClickedEventArgs args) => {
+			_ChangeCase.DropDownItemClicked += (s, args) => {
 				args.ClickedItem.HidePopupMenu();
 				_EditMenu.Hide();
 				int i = Array.IndexOf(SetCaseProcessor.CaseNames, args.ClickedItem.Text);
@@ -148,14 +148,14 @@ namespace PDFPatcher.Functions
 				_BookmarkBox.OperationAffectsDescendants = _IncludeDecendantBox.Checked;
 			};
 
-			_UndoButton.DropDownOpening += (object s, EventArgs args) => {
+			_UndoButton.DropDownOpening += (s, args) => {
 				ToolStripItemCollection i = _UndoMenu.Items;
 				i.Clear();
 				foreach (string item in _controller.Model.Undo.GetActionNames(16)) {
 					i.Add(item);
 				}
 			};
-			_UndoButton.DropDownItemClicked += (object s, ToolStripItemClickedEventArgs args) => {
+			_UndoButton.DropDownItemClicked += (s, args) => {
 				int i = args.ClickedItem.Owner.Items.IndexOf(args.ClickedItem) + 1;
 				_controller.Undo(i);
 			};
@@ -217,7 +217,7 @@ namespace PDFPatcher.Functions
 				ToolStripItemCollection m = _OcrMenu.DropDownItems;
 				if (m.Count == 1) {
 					for (int i = 0; i < Constants.Ocr.LangIDs.Length; i++) {
-						ToolStripMenuItem item = new ToolStripMenuItem(Constants.Ocr.LangNames[i]);
+						ToolStripMenuItem item = new(Constants.Ocr.LangNames[i]);
 						m.Add(item);
 						item.Tag = Constants.Ocr.LangIDs[i];
 						item.Enabled = ModiOcr.IsLanguageInstalled(Constants.Ocr.LangIDs[i]);
@@ -286,8 +286,8 @@ namespace PDFPatcher.Functions
 			}
 
 			BookmarkElement el = _BookmarkBox.GetModelObject(i) as BookmarkElement;
-			if (_controller.Model.LockDownViewer != false || _BookmarkBox.SelectedIndices.Count != 1 ||
-				(i = el.Page) <= 0) {
+			if (_controller.Model.LockDownViewer || _BookmarkBox.SelectedIndices.Count != 1 ||
+				(el.Page) <= 0) {
 				return;
 			}
 

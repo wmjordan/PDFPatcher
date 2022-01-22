@@ -490,7 +490,7 @@ internal class PdfContentStreamProcessor
 						accumulated.WriteByte((byte)ch);
 						break;
 					default: {
-							byte[] ff = null;
+							byte[] ff;
 							switch (found) {
 								case 1 when PRTokeniser.IsWhitespace(ch):
 									// this clause is needed if we have a white space character that is part of the image data
@@ -928,10 +928,9 @@ internal class PdfContentStreamProcessor
 			//}
 
 			foreach (PdfObject entryObj in array.ArrayList) {
-				float tj = 0f;
+				float tj;
 				if (entryObj is PdfString) {
 					processor.DisplayPdfString((PdfString)entryObj);
-					tj = 0f;
 				}
 				else {
 					tj = ((PdfNumber)entryObj).FloatValue;

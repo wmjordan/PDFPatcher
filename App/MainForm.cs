@@ -261,7 +261,7 @@ public partial class MainForm : Form
 			_GeneralToolbar.Items[i].Dispose();
 		}
 
-		foreach (var item in AppContext.Toolbar.Buttons.Where(item => item.Visible != false)) {
+		foreach (var item in AppContext.Toolbar.Buttons.Where(item => item.Visible)) {
 			_GeneralToolbar.Items.Add(item.CreateButton());
 		}
 	}

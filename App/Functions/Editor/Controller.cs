@@ -28,7 +28,7 @@ namespace PDFPatcher.Functions.Editor
 		public Controller(IEditView view) {
 			Model = new EditModel();
 			View = view;
-			Model.Undo.OnAddUndo += (UndoManager u, IUndoAction a) => View.UndoButton.Enabled = true;
+			Model.Undo.OnAddUndo += (u, a) => View.UndoButton.Enabled = true;
 			View.Bookmark.Undo = Model.Undo;
 		}
 
@@ -51,7 +51,7 @@ namespace PDFPatcher.Functions.Editor
 			BookmarkEditorView b = View.Bookmark;
 			b.Freeze();
 			List<BookmarkElement> si = b.GetSelectedElements(selectChildren);
-			HashSet<XmlElement> pi = new HashSet<XmlElement>();
+			HashSet<XmlElement> pi = new();
 			HashSet<XmlNode> r = ProcessBookmarks(si, pi, includeDescendant, processor);
 			if (r != null) {
 				foreach (var i in r.Select(item => item as XmlElement).Where(i => i.ParentNode.Name == Constants.DocumentBookmark)) {
@@ -72,7 +72,7 @@ namespace PDFPatcher.Functions.Editor
 				return null;
 			}
 
-			UndoActionGroup undo = new UndoActionGroup();
+			UndoActionGroup undo = new();
 			foreach (BookmarkElement item in si) {
 				ProcessItem(includeDescendant, processor, processedItems, undo, item);
 			}
@@ -97,7 +97,7 @@ namespace PDFPatcher.Functions.Editor
 			}
 
 			foreach (BookmarkElement d in item.SubBookmarks) {
-				ProcessItem(includeDescendant, processor, processedItems, undo, d);
+				ProcessItem(true, processor, processedItems, undo, d);
 			}
 		}
 
@@ -170,7 +170,7 @@ namespace PDFPatcher.Functions.Editor
 			}
 
 			string ext = Path.GetExtension(path).ToLowerInvariant();
-			PdfInfoXmlDocument infoDoc = new PdfInfoXmlDocument();
+			PdfInfoXmlDocument infoDoc = new();
 			switch (ext) {
 				case Constants.FileExtensions.Txt:
 					OutlineManager.ImportSimpleBookmarks(path, infoDoc);
@@ -197,13 +197,13 @@ namespace PDFPatcher.Functions.Editor
 					break;
 				case "<load>":
 					if (importMode) {
-						LoadInfoDocument(infoDoc, importMode);
+						LoadInfoDocument(infoDoc, true);
 						break;
 					}
 
 					View.Bookmark.ClearObjects();
 					View.DocumentPath = path;
-					LoadInfoDocument(infoDoc, importMode);
+					LoadInfoDocument(infoDoc, false);
 					LoadPdfDocument();
 					break;
 				default:
@@ -226,7 +226,7 @@ namespace PDFPatcher.Functions.Editor
 				reader.ConsolidateNamedDestinations();
 				Tracker.DebugMessage("get bookmark");
 				e.Result = new object[] {
-					OutlineManager.GetBookmark(reader, new UnitConverter() {Unit = Constants.Units.Point}),
+					OutlineManager.GetBookmark(reader, new UnitConverter {Unit = Constants.Units.Point}),
 					importMode, path
 				};
 				Tracker.DebugMessage("finished loading");
@@ -257,7 +257,7 @@ namespace PDFPatcher.Functions.Editor
 			}
 
 			if (r[0] is XmlElement b) {
-				PdfInfoXmlDocument infoDoc = new PdfInfoXmlDocument();
+				PdfInfoXmlDocument infoDoc = new();
 				XmlElement root = infoDoc.DocumentElement;
 				(root.AppendChild(infoDoc.CreateElement(Constants.Units.ThisName)) as XmlElement).SetAttribute(
 					Constants.Units.Unit, Constants.Units.Point);
@@ -324,9 +324,9 @@ namespace PDFPatcher.Functions.Editor
 			Model.Document ??= new PdfInfoXmlDocument();
 
 			PdfInfoXmlDocument d = Model.Document;
-			UndoActionGroup g = new UndoActionGroup();
+			UndoActionGroup g = new();
 			BookmarkElement s = editView.GetFirstSelectedModel<BookmarkElement>();
-			List<XmlNode> il = new List<XmlNode>();
+			List<XmlNode> il = new();
 			XmlElement n;
 			if (s != null) {
 				foreach (XmlNode item in bookmarks) {
@@ -381,7 +381,7 @@ namespace PDFPatcher.Functions.Editor
 			string t = null;
 			EditModel.TextSource ts;
 			if (Model.InsertBookmarkWithOcrOnly == false && lines.HasContent()) {
-				StringBuilder sb = new StringBuilder();
+				StringBuilder sb = new();
 				Rectangle r = lines[0].BBox;
 				foreach (var line in lines.TakeWhile(line => sb.Length <= 100)) {
 					t = line.Text.TrimEnd();
@@ -402,18 +402,18 @@ namespace PDFPatcher.Functions.Editor
 				pp = v.TransposeVirtualImageToPagePosition(pp.Page, v.PinPoint.X, v.PinPoint.Y);
 				ts = EditModel.TextSource.Text;
 			}
-			else if (t == null && ModiOcr.ModiInstalled && v.OcrLanguage != 0) {
+			else if (ModiOcr.ModiInstalled && v.OcrLanguage != 0) {
 				v.UseWaitCursor = true;
 				List<TextLine> r = v.OcrPage(pp.Page, true);
 				v.UseWaitCursor = false;
 				if (r.HasContent()) {
 					RectangleF ir = v.GetSelection().ImageRegion;
-					Bound ib = new Bound(ir.Left, ir.Bottom, ir.Right, ir.Top);
+					Bound ib = new(ir.Left, ir.Bottom, ir.Right, ir.Top);
 					RectangleF b = RectangleF.Empty;
 					if (ps) {
-						List<TextLine> mr = r.FindAll((i) => i.Region.IntersectWith(ib));
+						List<TextLine> mr = r.FindAll(i => i.Region.IntersectWith(ib));
 						if (mr.HasContent()) {
-							StringBuilder sb = new StringBuilder();
+							StringBuilder sb = new();
 							b = mr[0].Region;
 							foreach (TextLine line in mr) {
 								t = OcrProcessor.CleanUpText(line.Text, v.OcrOptions);
@@ -431,7 +431,7 @@ namespace PDFPatcher.Functions.Editor
 					}
 					else {
 						PagePoint l = v.TransposeClientToPageImage(cp.X, cp.Y);
-						TextLine tl = r.Find((i) => i.Region.Contains(l.ImageX, l.ImageY));
+						TextLine tl = r.Find(i => i.Region.Contains(l.ImageX, l.ImageY));
 						if (tl != null) {
 							t = tl.Text;
 							b = (RectangleF)tl.Region;
@@ -522,7 +522,7 @@ namespace PDFPatcher.Functions.Editor
 			}
 
 			PdfViewerControl v = View.Viewer;
-			InsertPageLabelForm f = new InsertPageLabelForm {
+			InsertPageLabelForm f = new() {
 				Location = Cursor.Position.Transpose(-16, -16),
 				PageNumber = position.Page
 			};
@@ -582,7 +582,7 @@ namespace PDFPatcher.Functions.Editor
 			BookmarkEditorView b = View.Bookmark;
 			PdfInfoXmlDocument d = Model.Document;
 			int i = b.SelectedIndex;
-			BookmarkElement c = null;
+			BookmarkElement c;
 			if (i == -1 && b.Items.Count == 0) {
 				c = d.BookmarkRoot.AppendBookmark();
 				Model.Undo.AddUndo("插入书签", new RemoveElementAction(c));
@@ -598,7 +598,7 @@ namespace PDFPatcher.Functions.Editor
 				string t = title ?? Constants.Bookmark;
 				int p = pageNumber > 0 ? pageNumber : o.Page;
 				if (type == InsertBookmarkPositionType.NoDefined) {
-					UndoActionGroup g = new UndoActionGroup();
+					UndoActionGroup g = new();
 					g.SetAttribute(o, Constants.BookmarkAttributes.Title, t);
 					g.SetAttribute(o, Constants.DestinationAttributes.Action, Constants.ActionType.Goto);
 					g.SetAttribute(o, Constants.DestinationAttributes.Page, p.ToText());
@@ -646,17 +646,13 @@ namespace PDFPatcher.Functions.Editor
 				}
 			}
 
-			if (c == null) {
-				return;
-			}
-
 			if (c.ParentNode.Name == Constants.Bookmark) {
 				b.Expand(c.ParentNode);
 			}
 
 			b.Expand(c);
-			b.EnsureItemsVisible(new BookmarkElement[] { c });
-			b.SelectedObjects = new BookmarkElement[] { c };
+			b.EnsureItemsVisible(new[] { c });
+			b.SelectedObjects = new[] { c };
 			b.FocusedObject = c;
 			//_BookmarkBox.ModelToItem (c).BeginEdit ();
 		}
@@ -669,7 +665,7 @@ namespace PDFPatcher.Functions.Editor
 			Model.LockDownViewer = true;
 			IList sl = View.Bookmark.SelectedObjects;
 			bool r = false; // 是否需要刷新根节点
-			HashSet<XmlNode> rl = new HashSet<XmlNode>();
+			HashSet<XmlNode> rl = new();
 			while (step-- > 0) {
 				IEnumerable<XmlNode> a = Model.Undo.Undo();
 				foreach (XmlNode item in a) {
@@ -713,7 +709,7 @@ namespace PDFPatcher.Functions.Editor
 				return;
 			}
 
-			UndoActionGroup undo = new UndoActionGroup();
+			UndoActionGroup undo = new();
 			string[] ts = new string[l];
 			BookmarkElement dest = es[0];
 			ts[0] = dest.Title;
@@ -773,16 +769,12 @@ namespace PDFPatcher.Functions.Editor
 			foreach (MuTextSpan span in textInfo.Spans) {
 				MuFont s = textInfo.Page.GetFont(span);
 				if (s != null) {
-					bool m = false;
 					int fs = span.Size.ToInt32();
 					foreach (var item in Model.TitleStyles.Where(item => item.InternalFontName == s.Name && item.FontSize == fs)) {
-						m = true;
 						goto NEXT;
 					}
 
-					if (m == false) {
-						Model.TitleStyles.Add(new EditModel.AutoBookmarkStyle(level, s.Name, fs));
-					}
+					Model.TitleStyles.Add(new EditModel.AutoBookmarkStyle(level, s.Name, fs));
 				}
 
 			NEXT:;
@@ -806,7 +798,7 @@ namespace PDFPatcher.Functions.Editor
 			MuDocument pdf = Model.PdfDocument;
 			BookmarkContainer bm = Model.Document.BookmarkRoot;
 			int c = pdf.PageCount;
-			List<EditModel.AutoBookmarkStyle> bs = new List<EditModel.AutoBookmarkStyle>(list);
+			List<EditModel.AutoBookmarkStyle> bs = new(list);
 			if (bs.Count == 0) {
 				return;
 			}
@@ -817,14 +809,14 @@ namespace PDFPatcher.Functions.Editor
 				mp[i] = bs[i].MatchPattern?.CreateMatcher();
 			}
 
-			UndoActionGroup ug = new UndoActionGroup();
+			UndoActionGroup ug = new();
 			Model.Undo.AddUndo("自动生成书签", ug);
 			foreach (XmlElement item in bm.SubBookmarks) {
 				ug.Add(new AddElementAction(item));
 			}
 
 			bm.RemoveAll();
-			List<MuTextSpan> spans = new List<MuTextSpan>(3);
+			List<MuTextSpan> spans = new(3);
 			int bl = 0;
 			for (int i = 0; i < c;) {
 				using MuPage p = pdf.LoadPage(++i);

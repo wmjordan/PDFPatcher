@@ -39,7 +39,7 @@ public class FunctionControl : UserControl
 		}
 
 		// 将第一个文本框设置为文件路径
-		if (parameters.Length <= 0 || string.IsNullOrEmpty(parameters[0]) != false ||
+		if (parameters.Length <= 0 || string.IsNullOrEmpty(parameters[0]) ||
 			!FileHelper.HasExtension(parameters[0], Constants.FileExtensions.Pdf)) {
 			return;
 		}

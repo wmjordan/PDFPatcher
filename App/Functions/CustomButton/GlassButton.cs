@@ -845,7 +845,7 @@ public class GlassButton : Button
 
 			case SpecialSymbols.Play:
 				g.FillPolygon(specialSymbolBrush,
-					new Point[3] {
+					new Point[] {
 						new((Width / 4) + (Width / 20), Height / 4),
 						new(Width - (Width / 4) + (Width / 20), Height / 2),
 						new((Width / 4) + (Width / 20), Height - (Height / 4))
@@ -879,11 +879,11 @@ public class GlassButton : Button
 
 			case SpecialSymbols.FastForward:
 				g.FillPolygon(specialSymbolBrush,
-					new Point[3] {
+					new Point[] {
 						new(Width / 4, Height / 4), new(Width / 2, Height / 2), new(Width / 4, Height - (Height / 4))
 					});
 				g.FillPolygon(specialSymbolBrush,
-					new Point[3] {
+					new Point[] {
 						new(Width / 2, Height / 4), new(3 * Width / 4, Height / 2),
 						new(Width / 2, Height - (Height / 4))
 					});
@@ -897,12 +897,12 @@ public class GlassButton : Button
 
 			case SpecialSymbols.Forward:
 				g.FillPolygon(specialSymbolBrush,
-					new Point[3] {
+					new Point[] {
 						new((Width / 4) + (Width / 12), Height / 4), new((Width / 2) + (Width / 12), Height / 2),
 						new((Width / 4) + (Width / 12), Height - (Height / 4))
 					});
 				g.FillPolygon(specialSymbolBrush,
-					new Point[3] {
+					new Point[] {
 						new((Width / 2) + (Width / 12), Height / 4), new((3 * Width / 4) + (Width / 12), Height / 2),
 						new((Width / 2) + (Width / 12), Height - (Height / 4))
 					});
@@ -914,12 +914,12 @@ public class GlassButton : Button
 
 			case SpecialSymbols.Backward:
 				g.FillPolygon(specialSymbolBrush,
-					new Point[3] {
+					new Point[] {
 						new((Width / 4) - (Width / 12), Height / 2), new((Width / 2) - (Width / 12), Height / 4),
 						new((Width / 2) - (Width / 12), Height - (Height / 4))
 					});
 				g.FillPolygon(specialSymbolBrush,
-					new Point[3] {
+					new Point[] {
 						new((Width / 2) - (Width / 12), Height / 2), new((3 * Width / 4) - (Width / 12), Height / 4),
 						new((3 * Width / 4) - (Width / 12), Height - (Height / 4))
 					});
@@ -931,11 +931,11 @@ public class GlassButton : Button
 
 			case SpecialSymbols.FastBackward:
 				g.FillPolygon(specialSymbolBrush,
-					new Point[3] {
+					new Point[] {
 						new(Width / 4, Height / 2), new(Width / 2, Height / 4), new(Width / 2, Height - (Height / 4))
 					});
 				g.FillPolygon(specialSymbolBrush,
-					new Point[3] {
+					new Point[] {
 						new(Width / 2, Height / 2), new(3 * Width / 4, Height / 4),
 						new(3 * Width / 4, Height - (Height / 4))
 					});
@@ -949,7 +949,7 @@ public class GlassButton : Button
 
 			case SpecialSymbols.Speaker:
 				g.DrawPolygon(new Pen(specialSymbolBrush, Width / 20),
-					new Point[6] {
+					new Point[] {
 						new((Width / 2) - (Width / 6) - (Width / offset), (Height / 4) + (Height / 10)),
 						new((Width / 2) - (Width / offset), (Height / 4) + (Height / 10)),
 						new((Width / 2) + (Width / 5) - (Width / offset), Height / 4),
@@ -968,7 +968,7 @@ public class GlassButton : Button
 
 			case SpecialSymbols.NoSpeaker:
 				g.DrawPolygon(new Pen(specialSymbolBrush, Width / 20),
-					new Point[6] {
+					new Point[] {
 						new((Width / 2) - (Width / 6) - (Width / offset), (Height / 4) + (Height / 10)),
 						new((Width / 2) - (Width / offset), (Height / 4) + (Height / 10)),
 						new((Width / 2) + (Width / 5) - (Width / offset), Height / 4),
@@ -1122,14 +1122,14 @@ public class GlassButton : Button
 			if (alternativeFormDirection == Direction.Left) {
 				path.AddArc(l, t, h, h, 90, 180);
 				path.AddLine(l + h, t, l + w, t);
-				path.AddCurve(new Point[5] {
+				path.AddCurve(new Point[] {
 					new(l + w, t), new(l + w - (h / 6), t + (h / 4)), new((int)(l + w - (h / 4.7)), t + (h / 2)),
 					new(l + w - (h / 6), t + (3 * h / 4)), new(l + w, t + h)
 				});
 				path.AddLine(l + h, t + h, l + w, t + h);
 			}
 			else {
-				path.AddCurve(new Point[5] {
+				path.AddCurve(new Point[] {
 					new(l, t), new(l + (h / 6), t + (h / 4)), new((int)(l + (h / 4.85)), t + (h / 2)),
 					new(l + (h / 6), t + (3 * h / 4)), new(l, t + h)
 				});
@@ -1172,13 +1172,13 @@ public class GlassButton : Button
 			if (alternativeFormDirection == Direction.Left) {
 				path.AddArc(l, t, h * 2, h * 2, 180, 90);
 				path.AddLine(l + h, t, l + w, t);
-				path.AddCurve(new Point[3] {
+				path.AddCurve(new Point[] {
 					new(l + w, t), new(l + w - (h / 3), t + (h / 2)), new((int)(l + w - (h / 2.35)), t + h)
 				});
 			}
 			else {
 				path.AddCurve(
-					new Point[3] { new(l, t), new(l + (h / 3), t + (h / 2)), new((int)(l + (h / 2.35)), t + h) });
+					new Point[] { new(l, t), new(l + (h / 3), t + (h / 2)), new((int)(l + (h / 2.35)), t + h) });
 				path.AddLine((int)(l + (h / 2.35)), t + h, l + w - h, t + h);
 				path.AddArc(l + w - (h * 2), t, h * 2, h * 2, 0, -90);
 			}

@@ -133,7 +133,7 @@ internal sealed class FontInfo : CMapAwareDocumentFont
 	internal int DecodeCidToUnicode(int cid) {
 		string s;
 		if (AppContext.Encodings.TextEncoding != null) {
-			s = AppContext.Encodings.TextEncoding.GetString(new[] { (byte)(cid >> 8), (byte)cid });
+			AppContext.Encodings.TextEncoding.GetString(new[] { (byte)(cid >> 8), (byte)cid });
 		}
 
 		//if (CjkType == CjkFontType.Chinese) {

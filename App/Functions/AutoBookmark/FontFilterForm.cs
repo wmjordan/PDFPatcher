@@ -168,7 +168,7 @@ public partial class FontFilterForm : Form
 				_AddFilterMenu.Items.Add("筛选名称包含“" + fn + "”的字体").Tag = new FilterSetting(fn, false, 0);
 			}
 		}
-		else if (p == -1 && m != -1) {
+		else if (m != -1) {
 			fn = n.Substring(0, m);
 			if (s > 0) {
 				_AddFilterMenu.Items.Add("筛选名称包含“" + fn + "”且尺寸为" + s.ToText() + "的字体").Tag =

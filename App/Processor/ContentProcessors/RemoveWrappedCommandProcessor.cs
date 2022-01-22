@@ -32,11 +32,9 @@ internal sealed class RemoveWrappedCommandProcessor : IPageProcessor
 			for (int i = _RemoveTrailing - 1; i >= 0 && parent.Count > 0; i--) {
 				parent.RemoveAt(parent.Count - 1);
 			}
-
-			r = true;
 		}
 
-		return r;
+		return true;
 	}
 
 	#region IPageProcessor 成员
@@ -62,13 +60,13 @@ internal sealed class RemoveWrappedCommandProcessor : IPageProcessor
 		IPdfPageCommandContainer p = context.PageCommands;
 		bool r = ProcessCommands(p.Commands);
 		if (!r) {
-			return r;
+			return false;
 		}
 
 		context.IsPageContentModified = true;
 		_processedPageCount++;
 
-		return r;
+		return true;
 	}
 
 	#endregion

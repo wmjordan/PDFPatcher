@@ -9,7 +9,7 @@ namespace PDFPatcher.Functions.Editor
 {
 	sealed class InsertBookmarkCommand : IEditorCommand
 	{
-		static readonly Regex __RemoveOcrWhiteSpace = new Regex(@"\s{2,}", RegexOptions.Compiled);
+		static readonly Regex __RemoveOcrWhiteSpace = new(@"\s{2,}", RegexOptions.Compiled);
 		static InsertBookmarkForm _dialog;
 
 		public void Process(Controller controller, params string[] parameters) {
@@ -88,7 +88,7 @@ namespace PDFPatcher.Functions.Editor
 			}
 
 			_dialog = new InsertBookmarkForm { Controller = controller };
-			_dialog.OkClicked += (object sender, EventArgs e) => {
+			_dialog.OkClicked += (sender, e) => {
 				InsertBookmarkForm f = (InsertBookmarkForm)sender;
 				Controller c = f.Controller;
 				string t = f.Title;

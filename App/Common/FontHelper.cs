@@ -96,7 +96,7 @@ internal static class FontHelper
 
 	private static class NativeMethods
 	{
-		[System.Runtime.InteropServices.DllImport("Gdi32.dll", CharSet = CharSet.Unicode)]
+		[DllImport("Gdi32.dll", CharSet = CharSet.Unicode)]
 		private static extern int AddFontResourceEx(string fontPath, int flag, IntPtr preserved);
 
 		[DllImport("Gdi32.dll", CharSet = CharSet.Unicode)]
