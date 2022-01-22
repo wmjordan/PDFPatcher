@@ -287,7 +287,7 @@ public sealed partial class EditorControl : FunctionControl, IDocumentEditor, IE
 
 		BookmarkElement el = _BookmarkBox.GetModelObject(i) as BookmarkElement;
 		if (_controller.Model.LockDownViewer || _BookmarkBox.SelectedIndices.Count != 1 ||
-			(el.Page) <= 0) {
+			el.Page <= 0) {
 			return;
 		}
 
@@ -534,7 +534,7 @@ public sealed partial class EditorControl : FunctionControl, IDocumentEditor, IE
 	}
 
 	private void _OpenButton_DropDownOpening(object sender, EventArgs e) {
-		ToolStripDropDownItem m = (sender as ToolStripDropDownItem);
+		ToolStripDropDownItem m = sender as ToolStripDropDownItem;
 		ToolStripItemCollection l = m.DropDown.Items;
 		l.ClearDropDownItems();
 		l.AddSourcePdfFiles();

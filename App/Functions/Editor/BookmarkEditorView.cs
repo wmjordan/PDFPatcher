@@ -392,7 +392,7 @@ public partial class BookmarkEditorView : TreeListView
 			fi ??= i;
 		}
 
-		if ((fi) != null) {
+		if (fi != null) {
 			EnsureVisible(fi.Index);
 		}
 	}

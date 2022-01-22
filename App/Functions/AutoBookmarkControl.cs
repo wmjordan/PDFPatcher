@@ -69,7 +69,7 @@ public partial class AutoBookmarkControl : FunctionControl, IResettableControl
 			f.RelativeAdjustment = value is true;
 		};
 		_FilterBeforeMergeColumn.AspectGetter = x =>
-			((x as AutoBookmarkOptions.LevelAdjustmentOption)?.FilterBeforeMergeTitle) ?? false;
+			(x as AutoBookmarkOptions.LevelAdjustmentOption)?.FilterBeforeMergeTitle ?? false;
 		_FilterBeforeMergeColumn.AspectPutter = (x, value) => {
 			if (x is AutoBookmarkOptions.LevelAdjustmentOption f) {
 				f.FilterBeforeMergeTitle = value is true;

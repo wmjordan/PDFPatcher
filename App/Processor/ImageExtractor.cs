@@ -465,7 +465,7 @@ internal sealed class ImageExtractor
 
 	private static int GetStride(ImageInfo info, ICollection<byte> bytes, bool vFlip) {
 		if (PdfName.COLORSPACE.Equals(info.ColorSpace)) {
-			return vFlip ? -(info.Width << 2) : (info.Width << 2);
+			return vFlip ? -(info.Width << 2) : info.Width << 2;
 		}
 
 		int components = bytes.Count / info.Width / info.Height;

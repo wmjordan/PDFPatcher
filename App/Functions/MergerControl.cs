@@ -611,7 +611,7 @@ public partial class MergerControl : FunctionControl
 					}
 
 					string t = Path.GetFileNameWithoutExtension(item.FileName);
-					if ((item.Bookmark) == null) {
+					if (item.Bookmark == null) {
 						item.Bookmark = new BookmarkSettings(t);
 					}
 					else {

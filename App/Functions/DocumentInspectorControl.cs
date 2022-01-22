@@ -462,7 +462,7 @@ public sealed partial class DocumentInspectorControl : FunctionControl, IDocumen
 
 		PdfStructInfo i = PdfStructInfo.GetInfo(d.Parent.GetContextName(), d.Name);
 		string t = null;
-		PdfObject o = (d.ExtensiveObject as PdfObject ?? d.Value);
+		PdfObject o = d.ExtensiveObject as PdfObject ?? d.Value;
 		if (o != null) {
 			t = PdfHelper.GetTypeName(o.Type);
 		}
@@ -686,7 +686,7 @@ public sealed partial class DocumentInspectorControl : FunctionControl, IDocumen
 						}
 
 						if (ep.Count == 1) {
-							ExportXmlInfo((n.FriendlyName ?? n.Name), exportTrailer, new[] { (int)n.ExtensiveObject });
+							ExportXmlInfo(n.FriendlyName ?? n.Name, exportTrailer, new[] { (int)n.ExtensiveObject });
 						}
 						else {
 							ExportXmlInfo(Path.GetFileNameWithoutExtension(_fileName), exportTrailer, ep.ToArray());
@@ -949,10 +949,10 @@ public sealed partial class DocumentInspectorControl : FunctionControl, IDocumen
 			= m["_ExportBinary"].Enabled
 				= m["_ExportUncompressedHexText"].Enabled
 					= m["_ExportUncompressedBinary"].Enabled
-						= (n.ExtensiveObject as PRStream) != null;
+						= n.ExtensiveObject as PRStream != null;
 		m["_ExportXml"].Enabled
 			= __XmlExportableTypes.Contains(n.Type);
-		m["_ExportToUnicode"].Visible = (n.ExtensiveObject as PRStream) != null && n.Name == "ToUnicode";
+		m["_ExportToUnicode"].Visible = n.ExtensiveObject as PRStream != null && n.Name == "ToUnicode";
 	}
 
 	private void _AddObjectMenu_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e) {

@@ -119,7 +119,7 @@ internal static class PdfModelHelper
 
 		switch (bytes.Length) {
 			// 忽略字节顺序标记
-			case >= 2 when ((bytes[0] == 0xFF && bytes[1] == 0xFE) || (bytes[0] == 0xFE && bytes[1] == 0xFF)):
+			case >= 2 when (bytes[0] == 0xFF && bytes[1] == 0xFE) || (bytes[0] == 0xFE && bytes[1] == 0xFF):
 				ms.Position += 2;
 				break;
 			case >= 3 when bytes[0] == 0xef && bytes[1] == 0xbb && bytes[2] == 0xbf:
