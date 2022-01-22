@@ -21,12 +21,8 @@ internal sealed class CollapseBookmarkProcessor : IInfoDocProcessor
 				return true;
 			case BookmarkStatus.ExpandTop:
 				XmlNode p = bookmark.ParentNode;
-				if (p is { Name: Constants.DocumentBookmark }) {
-					bookmark.SetAttribute(Constants.BookmarkAttributes.Open, Constants.Boolean.True);
-				}
-				else {
-					bookmark.SetAttribute(Constants.BookmarkAttributes.Open, Constants.Boolean.False);
-				}
+				bookmark.SetAttribute(Constants.BookmarkAttributes.Open,
+					p is { Name: Constants.DocumentBookmark } ? Constants.Boolean.True : Constants.Boolean.False);
 
 				return true;
 			default:

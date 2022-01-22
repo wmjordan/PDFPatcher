@@ -663,12 +663,7 @@ public partial class MergerControl : FunctionControl
 	private void SelectItemsByType(SourceItem.ItemType type) {
 		List<SourceItem> r = new();
 		SelectItemsByType(type, r, _itemsContainer);
-		if (r.Count > 0) {
-			_ItemList.SelectedObjects = r;
-		}
-		else {
-			_ItemList.SelectedObjects = null;
-		}
+		_ItemList.SelectedObjects = r.Count > 0 ? r : null;
 	}
 
 	private void SelectItemsByType(SourceItem.ItemType type, ICollection<SourceItem> result, SourceItem container) {

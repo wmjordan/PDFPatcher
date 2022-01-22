@@ -95,12 +95,7 @@ public sealed partial class SearchBookmarkForm : Form
 		}
 		else {
 			BookmarkElement m = _controller.View.Bookmark.SearchBookmark(matcher);
-			if (m == null) {
-				_ResultLabel.Text = "没有找到对应的书签。";
-			}
-			else {
-				_ResultLabel.Text = string.Empty;
-			}
+			_ResultLabel.Text = m == null ? "没有找到对应的书签。" : string.Empty;
 		}
 	}
 

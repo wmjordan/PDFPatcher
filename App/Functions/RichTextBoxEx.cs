@@ -145,12 +145,7 @@ public class RichTextBoxEx : RichTextBox
 		int state;
 		// dwMask holds the information which properties are consistent throughout the selection:
 		if ((cf.dwMask & mask) == mask) {
-			if ((cf.dwEffects & effect) == effect) {
-				state = 1;
-			}
-			else {
-				state = 0;
-			}
+			state = (cf.dwEffects & effect) == effect ? 1 : 0;
 		}
 		else {
 			state = -1;

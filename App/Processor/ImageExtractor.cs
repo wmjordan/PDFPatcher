@@ -644,12 +644,7 @@ namespace PDFPatcher.Processor
 					ext = Constants.FileExtensions.Png;
 				}
 				else if (bmp.PixelFormat == PixelFormat.Format1bppIndexed) {
-					if (_options.MonoPng == false) {
-						ext = Constants.FileExtensions.Tif;
-					}
-					else {
-						ext = Constants.FileExtensions.Png;
-					}
+					ext = _options.MonoPng == false ? Constants.FileExtensions.Tif : Constants.FileExtensions.Png;
 				}
 
 				f += ext;

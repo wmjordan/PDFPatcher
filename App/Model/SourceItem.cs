@@ -549,12 +549,9 @@ public abstract class SourceItem
 			Array.Copy(d, 0, s, fl.Length, d.Length);
 			SortFileList(s);
 			foreach (string item in s) {
-				if (item[item.Length - 1] == '\\') {
-					list.Add(new Folder(item.Substring(0, item.Length - 1), true));
-				}
-				else {
-					list.Add(Create(item));
-				}
+				list.Add(item[item.Length - 1] == '\\'
+					? new Folder(item.Substring(0, item.Length - 1), true)
+					: Create(item));
 			}
 		}
 

@@ -1353,12 +1353,7 @@ public class GlassButton : Button
 		int opacity = (int)((0xB2 * glowOpacity) + .5f);
 
 		if (!animateGlow) {
-			if (isHovered) {
-				opacity = 255;
-			}
-			else {
-				opacity = 0;
-			}
+			opacity = isHovered ? 255 : 0;
 		}
 
 		GlowRadialPath.CenterColor = Color.FromArgb(opacity, glowColor);

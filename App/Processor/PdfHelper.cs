@@ -55,12 +55,7 @@ internal static class PdfHelper
 				}
 
 				PdfReader r;
-				if (partial) {
-					r = new PdfReader(new RandomAccessFileOrArray(sourceFile), password);
-				}
-				else {
-					r = new PdfReader(sourceFile, password);
-				}
+				r = partial ? new PdfReader(new RandomAccessFileOrArray(sourceFile), password) : new PdfReader(sourceFile, password);
 
 				if (password is { Length: > 0 }) {
 					__PdfPasswordBox[sourceFile] = password;
