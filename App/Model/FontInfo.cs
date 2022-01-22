@@ -99,7 +99,7 @@ internal sealed class FontInfo : CMapAwareDocumentFont
 			}
 
 			PdfNumber w = _Font.Locate<PdfNumber>(PdfName.DESCENDANTFONTS, 0, PdfName.DW);
-			_DefaultWidth = w == null ? DefaultDefaultWidth : w.IntValue;
+			_DefaultWidth = w?.IntValue ?? DefaultDefaultWidth;
 
 			return _DefaultWidth;
 		}

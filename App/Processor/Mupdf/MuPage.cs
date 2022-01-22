@@ -60,7 +60,7 @@ public sealed class MuPage : IDisposable
 	/// <returns>渲染后生成的 <see cref="FreeImageAPI.FreeImageBitmap" />。</returns>
 	public FreeImageBitmap RenderPage(int width, int height, ImageRendererOptions options) {
 		using PixmapData pix = InternalRenderPage(width, height, options);
-		return pix != null ? pix.ToFreeImageBitmap(options) : null;
+		return pix?.ToFreeImageBitmap(options);
 	}
 
 	/// <summary>
@@ -72,7 +72,7 @@ public sealed class MuPage : IDisposable
 	/// <returns>渲染后生成的 <see cref="Bitmap" />。</returns>
 	public Bitmap RenderBitmapPage(int width, int height, ImageRendererOptions options) {
 		using PixmapData pix = InternalRenderPage(width, height, options);
-		return pix != null ? pix.ToBitmap(options) : null;
+		return pix?.ToBitmap(options);
 	}
 
 	public MuFont GetFont(MuTextChar character) {
