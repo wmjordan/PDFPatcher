@@ -65,7 +65,7 @@ namespace PDFPatcher.Processor
 		readonly MergerOptions _option;
 		readonly ImporterOptions _impOptions;
 		readonly Document _doc;
-		readonly PdfSmartCopy _writer;
+		readonly PdfCopy _writer;
 		readonly PaperSize _content;
 		readonly DocumentSink _sink;
 		readonly PageBoxSettings _pageSettings;
@@ -81,7 +81,7 @@ namespace PDFPatcher.Processor
 		/// </summary>
 		public PdfInfoXmlDocument PdfBookmarks { get; }
 
-		public PdfDocumentCreator(DocumentSink sink, MergerOptions option, ImporterOptions impOptions, Document document, PdfSmartCopy writer) {
+		public PdfDocumentCreator(DocumentSink sink, MergerOptions option, ImporterOptions impOptions, Document document, PdfCopy writer) {
 			_sink = sink;
 			_option = option;
 			_impOptions = impOptions;

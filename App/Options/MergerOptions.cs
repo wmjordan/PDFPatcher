@@ -34,6 +34,10 @@ namespace PDFPatcher
 		[DefaultValue(false)]
 		public bool AutoScaleUp { get; set; }
 
+		[XmlAttribute("压缩冗余数据")]
+		[DefaultValue(false)]
+		public bool Deduplicate { get; set; }
+
 		/// <summary>
 		/// 获取页面除去上下留白的高度。
 		/// </summary>

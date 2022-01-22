@@ -82,6 +82,7 @@ namespace PDFPatcher.Functions
 			_SourceOrientationBox.SelectedIndex = options.RotateVerticalPages ? 1 : 0;
 			_RotationBox.SelectedIndex = options.RotateAntiClockwise ? 1 : 0;
 			_UnifyOrientationBox.Checked = options.UnifyPageOrtientation;
+			_DeduplicateBox.Checked = options.Deduplicate;
 
 			_RecompressImageBox.Checked = options.RecompressWithJbig2;
 			_FullCompressionBox.Checked = options.FullCompression;
@@ -129,6 +130,7 @@ namespace PDFPatcher.Functions
 
 			option.RecompressWithJbig2 = _RecompressImageBox.Checked;
 			option.FullCompression = _FullCompressionBox.Checked;
+			option.Deduplicate = _DeduplicateBox.Checked;
 
 			//if (_CompressionLevelBox.SelectedIndex == 0) {
 			//    option.CompressionLevel = -1;
@@ -137,11 +139,11 @@ namespace PDFPatcher.Functions
 			//}
 		}
 
-		private float CmToPoint(NumericUpDown box) {
+		float CmToPoint(NumericUpDown box) {
 			return (float)box.Value * Constants.Units.CmToPoint;
 		}
 
-		private void _PageSizeBox_SelectedIndexChanged(object sender, EventArgs e) {
+		void _PageSizeBox_SelectedIndexChanged(object sender, EventArgs e) {
 			if (_PageSizeBox.SelectedIndex == -1) {
 				return;
 			}
@@ -184,7 +186,7 @@ namespace PDFPatcher.Functions
 			}
 		}
 
-		private void MarginBox_ValueChanged(object sender, EventArgs e) {
+		void MarginBox_ValueChanged(object sender, EventArgs e) {
 			if (_SyncMarginsBox.Checked == false || _uiLockDown) {
 				return;
 			}
@@ -193,7 +195,7 @@ namespace PDFPatcher.Functions
 			_TopMarginBox.Value = _BottomMarginBox.Value = _LeftMarginBox.Value = _RightMarginBox.Value = d;
 		}
 
-		private void CheckBoxChanged(object sender, EventArgs e) {
+		void CheckBoxChanged(object sender, EventArgs e) {
 			_IgnoreLeadingNumbersBox.Enabled = _AutoBookmarkTitleBox.Checked;
 			_RemoveOrphanBoomarksBox.Enabled = _KeepSourcePdfBookmarkBox.Checked;
 			_SourceOrientationBox.Enabled = _RotationBox.Enabled = _UnifyOrientationBox.Checked;
