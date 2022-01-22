@@ -327,12 +327,7 @@ public abstract class SourceItem
 			return new BookmarkSettings(text);
 		}
 
-		if (text.EndsWith("001")) {
-			return new BookmarkSettings(title);
-		}
-
-		return null;
-
+		return text.EndsWith("001") ? new BookmarkSettings(title) : null;
 	}
 
 	private static bool MatchCajPattern(string text, string pattern) {

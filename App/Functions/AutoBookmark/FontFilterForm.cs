@@ -25,11 +25,7 @@ public partial class FontFilterForm : Form
 			return o is XmlElement { Name: Constants.Font.ThisName, HasChildNodes: true };
 		};
 		_FontInfoBox.ChildrenGetter = o => {
-			if (o is not XmlElement f) {
-				return null;
-			}
-
-			return f.SelectNodes(Constants.Font.Size);
+			return o is not XmlElement f ? null : f.SelectNodes(Constants.Font.Size);
 		};
 		_FontInfoBox.RowFormatter = o => {
 			if (_FontInfoBox.GetParent(o.RowObject) != null) {

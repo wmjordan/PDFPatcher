@@ -163,13 +163,7 @@ internal sealed class PageDimensionProcessor : IPageProcessor
 
 	private static bool FilterPageNumber(int pageNumber, PageFilterFlag filter) {
 		bool odd = (pageNumber & 1) > 0;
-		if ((odd && (filter & PageFilterFlag.Even) == PageFilterFlag.Even)
-			|| (odd == false && (filter & PageFilterFlag.Odd) == PageFilterFlag.Odd)
-		   ) {
-			return false;
-		}
-
-		return true;
+		return (!odd || (filter & PageFilterFlag.Even) != PageFilterFlag.Even) && (odd != false || (filter & PageFilterFlag.Odd) != PageFilterFlag.Odd);
 	}
 
 	/// <summary>

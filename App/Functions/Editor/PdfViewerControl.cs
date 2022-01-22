@@ -349,11 +349,7 @@ internal sealed class PdfViewerControl : ImageBoxEx
 			DrawingRectangle vp = GetImageViewPort();
 			DrawingPoint pp = PinPoint;
 			pp.Offset(op);
-			if (vp.Contains(pp)) {
-				return true;
-			}
-
-			return false;
+			return vp.Contains(pp);
 		}
 	}
 
@@ -674,11 +670,7 @@ internal sealed class PdfViewerControl : ImageBoxEx
 	}
 
 	private string GetPageLabel(int pageNumber) {
-		if (_mupdf.IsDocumentOpened == false) {
-			return string.Empty;
-		}
-
-		return _mupdf.PageLabels.Format(pageNumber);
+		return _mupdf.IsDocumentOpened == false ? string.Empty : _mupdf.PageLabels.Format(pageNumber);
 	}
 
 	private PageRange GetDisplayingPageRange() {
@@ -966,11 +958,7 @@ internal sealed class PdfViewerControl : ImageBoxEx
 			return _pageOffsets.Length - 1;
 		}
 
-		if (p < 1) {
-			return 1;
-		}
-
-		return p;
+		return p < 1 ? 1 : p;
 	}
 
 	private bool ChangeZoom(string zoomMode) {

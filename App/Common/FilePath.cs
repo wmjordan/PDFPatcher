@@ -709,11 +709,7 @@ public readonly struct FilePath : IEquatable<FilePath>
 			return true;
 		}
 
-		if (ext.Length == 0) {
-			return false;
-		}
-
-		return extensions.Where(item => !string.IsNullOrEmpty(item)).Any(item => ext.EndsWith(item, StringComparison.OrdinalIgnoreCase) && (item[0] == '.' || (ext.Length > item.Length && ext[ext.Length - item.Length - 1] == '.')));
+		return ext.Length != 0 && extensions.Where(item => !string.IsNullOrEmpty(item)).Any(item => ext.EndsWith(item, StringComparison.OrdinalIgnoreCase) && (item[0] == '.' || (ext.Length > item.Length && ext[ext.Length - item.Length - 1] == '.')));
 	}
 
 	/// <summary>检查当前路径是否属于指定的路径（子目录或其下文件）。</summary>
@@ -977,11 +973,7 @@ public readonly struct FilePath : IEquatable<FilePath>
 			r = true;
 		}
 
-		if (r) {
-			return new FilePath(new string(a));
-		}
-
-		return this;
+		return r ? new FilePath(new string(a)) : this;
 	}
 
 	/// <summary>将路径转换为绝对定位的路径。路径的基准位置为 <see cref="AppRoot" />。执行此方法前，必须确保路径中不包含无效字符，否则将抛出异常。</summary>

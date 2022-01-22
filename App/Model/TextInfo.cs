@@ -16,11 +16,7 @@ internal sealed class TextInfo : ITextRegion
 	public string Text { get; set; }
 
 	internal static int CompareRegionX(ITextRegion a, ITextRegion b) {
-		if (a == b) {
-			return 0;
-		}
-
-		return CompareRegionX(a, b, true);
+		return a == b ? 0 : CompareRegionX(a, b, true);
 	}
 
 	private static int CompareRegionX(ITextRegion a, ITextRegion b, bool checkAlignment) {
@@ -36,11 +32,7 @@ internal sealed class TextInfo : ITextRegion
 	}
 
 	internal static int CompareRegionY(ITextRegion a, ITextRegion b) {
-		if (a == b) {
-			return 0;
-		}
-
-		return CompareRegionY(a, b, true);
+		return a == b ? 0 : CompareRegionY(a, b, true);
 	}
 
 	private static int CompareRegionY(ITextRegion a, ITextRegion b, bool checkAlignment) {

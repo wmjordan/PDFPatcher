@@ -50,11 +50,7 @@ public class HistoryComboBox : ComboBox
 
 	private int IndexOf(string o) {
 		IList<string> l = Contents;
-		if (l != null) {
-			return l.IndexOf(o);
-		}
-
-		return Items.IndexOf(o);
+		return l != null ? l.IndexOf(o) : Items.IndexOf(o);
 	}
 
 	private void RemoveAt(int i) {

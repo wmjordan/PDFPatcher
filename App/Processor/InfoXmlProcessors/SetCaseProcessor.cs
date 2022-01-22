@@ -231,11 +231,7 @@ internal sealed class SetCaseProcessor : IPdfInfoXmlProcessor
 
 		string source = a.Value;
 		string value = ConvertCase(source, Case);
-		if (source == value) {
-			return null;
-		}
-
-		return UndoAttributeAction.GetUndoAction(item, Constants.BookmarkAttributes.Title, value);
+		return source == value ? null : UndoAttributeAction.GetUndoAction(item, Constants.BookmarkAttributes.Title, value);
 	}
 
 	#endregion

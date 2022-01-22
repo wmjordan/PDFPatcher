@@ -18,11 +18,7 @@ internal sealed class TextPositionFilter : AutoBookmarkFilter
 	public float MinValue { get; private set; }
 
 	internal override bool Matches(AutoBookmarkContext context) {
-		if (context.TextLine == null) {
-			return MatchPosition(context.TextInfo.Region);
-		}
-
-		return context.TextLine.Texts.Any(item => MatchPosition(item.Region));
+		return context.TextLine == null ? MatchPosition(context.TextInfo.Region) : context.TextLine.Texts.Any(item => MatchPosition(item.Region));
 	}
 
 	private bool MatchPosition(Bound bound) {

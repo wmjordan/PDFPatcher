@@ -48,11 +48,7 @@ internal abstract class BookmarkMatcher
 			}
 
 			string r = _matcher.Replace(t, replacement);
-			if (r == t) {
-				return null;
-			}
-
-			return UndoAttributeAction.GetUndoAction(item, Constants.BookmarkAttributes.Title, r);
+			return r == t ? null : UndoAttributeAction.GetUndoAction(item, Constants.BookmarkAttributes.Title, r);
 
 			//}
 			//else if (t != replacement) {
@@ -102,11 +98,7 @@ internal abstract class BookmarkMatcher
 				return null;
 			}
 
-			if (a.Value != replacement) {
-				return UndoAttributeAction.GetUndoAction(item, Constants.BookmarkAttributes.Title, replacement);
-			}
-
-			return null;
+			return a.Value != replacement ? UndoAttributeAction.GetUndoAction(item, Constants.BookmarkAttributes.Title, replacement) : null;
 		}
 	}
 }

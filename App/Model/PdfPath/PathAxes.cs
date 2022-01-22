@@ -22,11 +22,7 @@ internal static class PathAxes
 			return false;
 		}
 
-		if (predicates == null) {
-			return true;
-		}
-
-		return predicates.All(p => p.Match(source, p.Operand1, p.Operand2) != false);
+		return predicates == null || predicates.All(p => p.Match(source, p.Operand1, p.Operand2) != false);
 	}
 
 	private static IList<DocumentObject> CompriseSingleObjectCollection(DocumentObject source) {
@@ -113,11 +109,7 @@ internal static class PathAxes
 
 		public IList<DocumentObject> SelectObjects(DocumentObject source, string name,
 			IEnumerable<IPathPredicate> predicates) {
-			if (source is { HasChildren: true }) {
-				return source.Children.Where(item => MatchesPredicate(item, name, predicates)).ToArray();
-			}
-
-			return PathExpression.EmptyMatchResult;
+			return source is { HasChildren: true } ? source.Children.Where(item => MatchesPredicate(item, name, predicates)).ToArray() : PathExpression.EmptyMatchResult;
 		}
 
 		#endregion
@@ -138,11 +130,7 @@ internal static class PathAxes
 				source = source.Parent;
 			}
 
-			if (MatchesPredicate(source, name, predicates)) {
-				return source;
-			}
-
-			return null;
+			return MatchesPredicate(source, name, predicates) ? source : null;
 		}
 
 		public IList<DocumentObject> SelectObjects(DocumentObject source, string name,

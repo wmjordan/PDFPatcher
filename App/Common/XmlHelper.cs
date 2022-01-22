@@ -65,11 +65,7 @@ internal static class XmlHelper
 		}
 
 		XmlAttribute a = element.GetAttributeNode(name);
-		if (a == null) {
-			return defaultValue;
-		}
-
-		return a.Value.ToDouble(defaultValue);
+		return a == null ? defaultValue : a.Value.ToDouble(defaultValue);
 	}
 
 	[DebuggerStepThrough]

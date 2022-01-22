@@ -177,11 +177,7 @@ internal static class PdfHelper
 	}
 
 	internal static string DecodeKeyName(object name) {
-		if (name is PdfName) {
-			return PdfName.DecodeName(name.ToString());
-		}
-
-		return name.ToString();
+		return name is PdfName ? PdfName.DecodeName(name.ToString()) : name.ToString();
 	}
 
 	/// <summary>
@@ -291,12 +287,7 @@ internal static class PdfHelper
 
 		Rectangle rect = new(c[0], c[1], c[2], c[3]);
 		PdfNumber r = page.GetAsNumber(PdfName.ROTATE);
-		if (r != null) {
-			return new Rectangle(c[0], c[1], c[2], c[3], r.IntValue);
-		}
-
-		return rect;
-
+		return r != null ? new Rectangle(c[0], c[1], c[2], c[3], r.IntValue) : rect;
 	}
 
 	internal static void ClearPageLinks(this PdfReader r) {

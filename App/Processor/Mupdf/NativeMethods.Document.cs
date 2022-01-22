@@ -108,17 +108,9 @@ internal static partial class NativeMethods
 		int italic, int needExactMetrics) {
 		Debug.WriteLine("Requesting system font: " + name);
 		string f = TryLoadCompatibleFont(name);
-		if (f != null) {
-			return LoadFontFromFile(ctx, null, f, 0, 0);
-			//unsafe {
-			//	MuFontFlags* flags = (MuFontFlags*)GetFontFlags(p);
-			//	var n = GetFontName(ctx, p);
-			//	var f = p.MarshalAs<FzFont>();
-			//}
-		}
+		return f != null ? LoadFontFromFile(ctx, null, f, 0, 0) : IntPtr.Zero;
 
 		//var p = LoadFontFromFile(ctx, name, @"C:\Windows\Fonts\simsun.ttc", 1, 1);
-		return IntPtr.Zero;
 	}
 
 	private static IntPtr RequestSystemCjkFont(IntPtr ctx, string name, int registry, int serifDesired) {

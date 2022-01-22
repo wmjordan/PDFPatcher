@@ -98,12 +98,7 @@ public partial class ActionEditorForm : Form
 				string.Concat(Constants.Font.DocumentFont, "/", Constants.Font.ThisName,
 					"[@", Constants.Font.ID, "='", attr.Value, "']/@", Constants.Font.Name)
 			);
-			if (n != null) {
-				return string.Concat(attr.Value, " (", n.Value, ")");
-			}
-
-			return attr.Value;
-
+			return n != null ? string.Concat(attr.Value, " (", n.Value, ")") : attr.Value;
 		};
 		_AttributesBox.SetObjects(element.Attributes);
 	}

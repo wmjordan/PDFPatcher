@@ -50,11 +50,7 @@ internal class PathCompiler
 				return PathAxisType.Descendants;
 			}
 
-			if (canBeRoot) {
-				return PathAxisType.Root;
-			}
-
-			return PathAxisType.Children;
+			return canBeRoot ? PathAxisType.Root : PathAxisType.Children;
 		}
 
 		if (c != SelfChar) {

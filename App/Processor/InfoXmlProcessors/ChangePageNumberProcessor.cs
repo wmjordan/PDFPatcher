@@ -41,11 +41,7 @@ internal sealed class ChangePageNumberProcessor : IPdfInfoXmlProcessor
 				p += Amount;
 			}
 
-			if (p < 1) {
-				return null;
-			}
-
-			return UndoAttributeAction.GetUndoAction(item, Constants.DestinationAttributes.Page, p.ToText());
+			return p < 1 ? null : UndoAttributeAction.GetUndoAction(item, Constants.DestinationAttributes.Page, p.ToText());
 		}
 
 		UndoActionGroup undo = new();

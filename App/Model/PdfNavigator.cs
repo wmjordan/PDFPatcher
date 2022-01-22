@@ -107,12 +107,7 @@ internal sealed class PdfNavigator : XPathNavigator
 			return false;
 		}
 
-		if (id.Substring(4).TryParse(out int p) && p < _doc.PageCount) {
-			// 将当前对象设置为该页
-			return true;
-		}
-
-		return false;
+		return id.Substring(4).TryParse(out int p) && p < _doc.PageCount;
 	}
 
 	public override bool MoveToNext() {

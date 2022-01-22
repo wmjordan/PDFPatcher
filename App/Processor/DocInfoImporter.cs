@@ -1066,11 +1066,7 @@ internal sealed class DocInfoImporter
 			break;
 		}
 
-		if (ok == false) {
-			return null;
-		}
-
-		return vals;
+		return ok == false ? null : vals;
 	}
 
 	public static int[] ToInt32Array(string value) {

@@ -46,11 +46,7 @@ namespace PDFPatcher.Functions
 			};
 			_LevelAdjustmentBox.DropSink = new RearrangingDropSink(false);
 			_AdvancedFilterColumn.AspectGetter = (object x) => {
-				if (x is not AutoBookmarkOptions.LevelAdjustmentOption f) {
-					return null;
-				}
-
-				return f.Condition.Description;
+				return x is not AutoBookmarkOptions.LevelAdjustmentOption f ? null : f.Condition.Description;
 			};
 			_AdjustmentLevelColumn.AspectGetter = (object x) => {
 				AutoBookmarkOptions.LevelAdjustmentOption f = x as AutoBookmarkOptions.LevelAdjustmentOption;

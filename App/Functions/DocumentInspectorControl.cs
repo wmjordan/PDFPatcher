@@ -201,11 +201,7 @@ namespace PDFPatcher.Functions
 				return d.HasChildren;
 			};
 			_ObjectDetailBox.ChildrenGetter = delegate (object o) {
-				if (o is not DocumentObject d) {
-					return null;
-				}
-
-				return d.Children;
+				return o is not DocumentObject d ? null : d.Children;
 			};
 			_ObjectDetailBox.RowFormatter = (OLVListItem olvItem) => {
 				if (olvItem.RowObject is not DocumentObject o) {

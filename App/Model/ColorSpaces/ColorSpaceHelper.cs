@@ -601,11 +601,7 @@ public static class ColorSpaceHelper
 		double y = (double)(255 - blue) / 255;
 
 		double min = Math.Min(c, Math.Min(m, y));
-		if (min == 1.0) {
-			return new CMYK(0, 0, 0, 1);
-		}
-
-		return new CMYK((c - min) / (1 - min), (m - min) / (1 - min), (y - min) / (1 - min), min);
+		return min == 1.0 ? new CMYK(0, 0, 0, 1) : new CMYK((c - min) / (1 - min), (m - min) / (1 - min), (y - min) / (1 - min), min);
 	}
 
 	/// <summary>

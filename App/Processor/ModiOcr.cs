@@ -251,11 +251,7 @@ public class ModiOcr
 
 	private static object Create(string type) {
 		Type t = Type.GetTypeFromProgID(type);
-		if (t == null) {
-			return null;
-		}
-
-		return Activator.CreateInstance(t);
+		return t == null ? null : Activator.CreateInstance(t);
 	}
 
 	private static object Call(object instance, string method, params object[] parameters) {

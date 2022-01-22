@@ -150,11 +150,7 @@ internal sealed class FontInfo : CMapAwareDocumentFont
 		//else {
 		s = Decode(new[] { (byte)(cid >> 8), (byte)cid }, 0, 2);
 		//}
-		if (s.Length == 0) {
-			return 0;
-		}
-
-		return s[0];
+		return s.Length == 0 ? 0 : s[0];
 	}
 
 	internal string DecodeTextBytes(byte[] bytes) {
@@ -162,14 +158,11 @@ internal sealed class FontInfo : CMapAwareDocumentFont
 			return AppContext.Encodings.TextEncoding.GetString(bytes);
 		}
 
-		if (CjkType == CjkFontType.Chinese) {
-			return __GbkEncoding.GetString(bytes);
-		}
+		return CjkType == CjkFontType.Chinese ? __GbkEncoding.GetString(bytes) : Decode(bytes, 0, bytes.Length);
 
 		//else if (CjkType == CjkFontType.Big5Chinese) {
 		//	return __Big5Encoding.GetString (bytes);
 		//}
-		return Decode(bytes, 0, bytes.Length);
 	}
 
 	internal string DecodeText(PdfString text) {

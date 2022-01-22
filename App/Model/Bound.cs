@@ -161,11 +161,7 @@ public class Bound
 					return new DistanceInfo(DistanceInfo.Placement.Overlapping | hp, hd, vd);
 			}
 
-			if (hp == 0) {
-				return new DistanceInfo(DistanceInfo.Placement.Overlapping | vp, hd, vd);
-			}
-
-			return new DistanceInfo(DistanceInfo.Placement.Overlapping, hd, vd);
+			return hp == 0 ? new DistanceInfo(DistanceInfo.Placement.Overlapping | vp, hd, vd) : new DistanceInfo(DistanceInfo.Placement.Overlapping, hd, vd);
 		}
 
 		if (other.Left >= Right) {

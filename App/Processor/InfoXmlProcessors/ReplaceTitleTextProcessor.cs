@@ -30,11 +30,7 @@ internal sealed class ReplaceTitleTextProcessor : IPdfInfoXmlProcessor
 
 	public IUndoAction Process(XmlElement item) {
 		XmlAttribute a = item.GetAttributeNode(Constants.BookmarkAttributes.Title);
-		if (a == null) {
-			return null;
-		}
-
-		return _matcher.Replace(item, _replacement);
+		return a == null ? null : _matcher.Replace(item, _replacement);
 	}
 
 	#endregion

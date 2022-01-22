@@ -57,11 +57,7 @@ internal sealed partial class AboutControl : HtmlPageControl
 			}
 
 			AssemblyTitleAttribute titleAttribute = (AssemblyTitleAttribute)attributes[0];
-			if (titleAttribute.Title != "") {
-				return titleAttribute.Title;
-			}
-
-			return Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().CodeBase);
+			return titleAttribute.Title != "" ? titleAttribute.Title : Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().CodeBase);
 		}
 	}
 

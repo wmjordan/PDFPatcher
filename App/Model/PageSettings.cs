@@ -78,13 +78,7 @@ public class PageSettings
 			return false;
 		}
 
-		if (s1.Rotation != s2.Rotation || s1.PageSize != s2.PageSize
-									   || s1.CropBox != s2.CropBox || s1.TrimBox != s2.TrimBox
-									   || s1.BleedBox != s2.BleedBox || s1.ArtBox != s2.ArtBox) {
-			return false;
-		}
-
-		return true;
+		return s1.Rotation == s2.Rotation && s1.PageSize == s2.PageSize && s1.CropBox == s2.CropBox && s1.TrimBox == s2.TrimBox && s1.BleedBox == s2.BleedBox && s1.ArtBox == s2.ArtBox;
 	}
 
 	internal void WriteXml(XmlWriter writer) {

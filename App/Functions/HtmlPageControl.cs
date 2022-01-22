@@ -44,10 +44,6 @@ internal class HtmlPageControl : FunctionControl
 	/// <remarks>如果找不到指定字符串，则返回空字符串。</remarks>
 	protected static string SubstringAfter(string source, char value) {
 		int index = source.LastIndexOf(value);
-		if (index != -1) {
-			return source.Substring(index + 1);
-		}
-
-		return string.Empty;
+		return index != -1 ? source.Substring(index + 1) : string.Empty;
 	}
 }
