@@ -16,9 +16,7 @@ public class PageRangeFilter : AutoBookmarkFilter
 
 	internal override bool Matches(AutoBookmarkContext context) {
 		int p = context.CurrentPageNumber;
-		if (_range == null) {
-			_range = PageRangeCollection.Parse(_rangeText, 1, context.TotalPageNumber, false);
-		}
+		_range ??= PageRangeCollection.Parse(_rangeText, 1, context.TotalPageNumber, false);
 
 		foreach (PageRange item in _range) {
 			if (p <= item.EndValue && p >= item.StartValue) {

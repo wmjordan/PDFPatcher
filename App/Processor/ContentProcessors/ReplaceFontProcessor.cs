@@ -664,9 +664,7 @@ internal sealed class ReplaceFontProcessor : IPageProcessor
 	public string Name => "嵌入汉字库";
 
 	public void BeginProcess(DocProcessorContext context) {
-		if (_fontSubstitutions == null) {
-			_fontSubstitutions = new Dictionary<string, FontSubstitution>(0);
-		}
+		_fontSubstitutions ??= new Dictionary<string, FontSubstitution>(0);
 
 		int l = __LegacyFonts.Length + _fontSubstitutions.Count;
 		_newFonts = new Dictionary<string, NewFont>(l, StringComparer.CurrentCultureIgnoreCase);

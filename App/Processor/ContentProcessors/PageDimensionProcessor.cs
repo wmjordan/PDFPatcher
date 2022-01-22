@@ -47,9 +47,7 @@ internal sealed class PageDimensionProcessor : IPageProcessor
 			size = new PaperSize(size.PaperName, size.Height, size.Width);
 		}
 
-		if (b == null) {
-			b = new Rectangle(mb);
-		}
+		b ??= new Rectangle(mb);
 
 		float d, z = 1;
 		float dx = 0, dy = 0;

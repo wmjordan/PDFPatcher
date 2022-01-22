@@ -283,9 +283,7 @@ internal class PdfContentStreamProcessor
 				PdfObject value = ps.ReadPRObject();
 
 				inlineImageEntryAbbreviationMap.TryGetValue((PdfName)key, out PdfName resolvedKey);
-				if (resolvedKey == null) {
-					resolvedKey = (PdfName)key;
-				}
+				resolvedKey ??= (PdfName)key;
 
 				dictionary.Put(resolvedKey, GetAlternateValue(resolvedKey, value));
 			}

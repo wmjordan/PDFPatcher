@@ -102,9 +102,7 @@ namespace PDFPatcher.Functions.Editor
 		}
 
 		internal XmlElement PrepareBookmarkDocument() {
-			if (Model.Document == null) {
-				Model.Document = new PdfInfoXmlDocument();
-			}
+			Model.Document ??= new PdfInfoXmlDocument();
 
 			return Model.Document.BookmarkRoot;
 		}
@@ -323,9 +321,7 @@ namespace PDFPatcher.Functions.Editor
 		}
 
 		void ImportBookmarks(TreeListView editView, XmlNodeList bookmarks) {
-			if (Model.Document == null) {
-				Model.Document = new PdfInfoXmlDocument();
-			}
+			Model.Document ??= new PdfInfoXmlDocument();
 
 			PdfInfoXmlDocument d = Model.Document;
 			UndoActionGroup g = new UndoActionGroup();

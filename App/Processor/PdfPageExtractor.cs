@@ -43,9 +43,7 @@ internal class PdfPageExtractor
 		}
 
 		for (int i = 1; i <= pn; i += options.SeparateByPage) {
-			if (pdf == null) {
-				pdf = PdfHelper.OpenPdfFile(sourceFile, AppContext.LoadPartialPdfFile, false);
-			}
+			pdf ??= PdfHelper.OpenPdfFile(sourceFile, AppContext.LoadPartialPdfFile, false);
 
 			string tf = RewriteTargetFileName(sourceFile, targetFile, pdf);
 			int e = i + options.SeparateByPage - 1;
@@ -76,9 +74,7 @@ internal class PdfPageExtractor
 
 		Tracker.SetProgressGoal(c);
 		foreach (string range in rl) {
-			if (pdf == null) {
-				pdf = PdfHelper.OpenPdfFile(sourceFile, AppContext.LoadPartialPdfFile, false);
-			}
+			pdf ??= PdfHelper.OpenPdfFile(sourceFile, AppContext.LoadPartialPdfFile, false);
 
 			string tf = RewriteTargetFileName(sourceFile, targetFile, pdf);
 			string s = options.NumberFileNames || i > 1 ? string.Concat("[", i.ToText(), "]") : null;

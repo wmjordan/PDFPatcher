@@ -390,9 +390,7 @@ public partial class BookmarkEditorView : TreeListView
 			}
 
 			li = i;
-			if (fi == null) {
-				fi = i;
-			}
+			fi ??= i;
 		}
 
 		if ((fi ?? li) != null) {

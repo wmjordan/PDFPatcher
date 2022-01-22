@@ -122,9 +122,7 @@ public partial class ActionEditorForm : Form
 	}
 
 	private void SetValue(string name, string value) {
-		if (UndoActions == null) {
-			UndoActions = new UndoActionGroup();
-		}
+		UndoActions ??= new UndoActionGroup();
 
 		bool a = Action.HasAttribute(name);
 		if ((value == null && a == false)
