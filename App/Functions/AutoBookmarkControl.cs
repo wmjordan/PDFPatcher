@@ -66,13 +66,13 @@ namespace PDFPatcher.Functions
 					return;
 				}
 
-				f.RelativeAdjustment = value is bool and true;
+				f.RelativeAdjustment = value is true;
 			};
 			_FilterBeforeMergeColumn.AspectGetter = (object x) =>
 				((x as AutoBookmarkOptions.LevelAdjustmentOption)?.FilterBeforeMergeTitle) ?? false;
 			_FilterBeforeMergeColumn.AspectPutter = (object x, object value) => {
 				if (x is AutoBookmarkOptions.LevelAdjustmentOption f) {
-					f.FilterBeforeMergeTitle = value is bool and true;
+					f.FilterBeforeMergeTitle = value is true;
 				}
 			};
 
