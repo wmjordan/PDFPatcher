@@ -845,7 +845,7 @@ public partial class MergerControl : FunctionControl
 		f.CopyTo(fl, 0);
 		SourceItem.SortFileList(fl);
 		List<SourceItem> sl = new(fl.Length);
-		sl.AddRange(fl.Select(item => SourceItem.Create(item)).Where(si => si != null));
+		sl.AddRange(fl.Select(SourceItem.Create).Where(si => si != null));
 
 		SourceItem ti = e.ListView.GetModelObject(e.DropTargetIndex) as SourceItem;
 		OLVListItem d = e.DropTargetItem;
