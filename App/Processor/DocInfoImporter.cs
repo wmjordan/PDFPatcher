@@ -73,9 +73,9 @@ internal sealed class DocInfoImporter
 									SpecialPaperSize.AsPageSize))
 							   && patcherOptions.RemoveAnnotations == false,
 			ExtractPageSettings = false,
-			ExportViewerPreferences = true
+			ExportViewerPreferences = true,
+			UnitConverter = { Unit = Constants.Units.Point }
 		};
-		o.UnitConverter.Unit = Constants.Units.Point;
 		DocInfoExporter exp = new(pdf, o);
 		Tracker.SetProgressGoal(exp.EstimateWorkload());
 		using MemoryStream ms = new();

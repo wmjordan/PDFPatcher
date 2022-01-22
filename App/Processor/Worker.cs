@@ -1005,8 +1005,7 @@ internal static class Worker
 				infoReader.MoveToContent(); // 移到根元素
 				using (Stream s = new FileStream(targetFile, FileMode.Create)) {
 					PdfStamper st = new(pdf, s);
-					PdfProcessingEngine en = new(pdf);
-					en.ExtraData[DocProcessorContext.OcrData] = infoReader;
+					PdfProcessingEngine en = new(pdf) { ExtraData = { [DocProcessorContext.OcrData] = infoReader } };
 					en.DocumentProcessors.Add(new ImportOcrResultProcessor());
 					Tracker.SetProgressGoal(en.EstimateWorkload());
 					en.ProcessDocument(st.Writer);
