@@ -55,13 +55,13 @@ internal sealed class ContextHandle : MuHandle
 	}
 
 	private IntPtr FindDeviceColorSpace(ColorSpace colorspace) {
-		switch (colorspace) {
-			case ColorSpace.Rgb: return NativeMethods.GetRgbColorSpace(this);
-			case ColorSpace.Bgr: return NativeMethods.GetBgrColorSpace(this);
-			case ColorSpace.Cmyk: return NativeMethods.GetCmykColorSpace(this);
-			case ColorSpace.Gray: return NativeMethods.GetGrayColorSpace(this);
-			default: throw new NotImplementedException(colorspace + " not supported.");
-		}
+		return colorspace switch {
+			ColorSpace.Rgb => NativeMethods.GetRgbColorSpace(this),
+			ColorSpace.Bgr => NativeMethods.GetBgrColorSpace(this),
+			ColorSpace.Cmyk => NativeMethods.GetCmykColorSpace(this),
+			ColorSpace.Gray => NativeMethods.GetGrayColorSpace(this),
+			_ => throw new NotImplementedException(colorspace + " not supported.")
+		};
 	}
 }
 

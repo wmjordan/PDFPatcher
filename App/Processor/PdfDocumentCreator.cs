@@ -248,21 +248,13 @@ internal sealed class PdfDocumentCreator
 			bookmark.SetAttribute(Constants.DestinationAttributes.Page, n.ToText());
 			bookmark.SetAttribute(Constants.DestinationAttributes.View, Constants.DestinationAttributes.ViewType.XYZ);
 			Rectangle r = pdf.GetPageN(ranges[0].StartValue).GetPageVisibleRectangle();
-			float t = 0;
-			switch (r.Rotation % 360 / 90) {
-				case 0:
-					t = r.Top;
-					break;
-				case 1:
-					t = r.Right;
-					break;
-				case 2:
-					t = r.Bottom;
-					break;
-				case 3:
-					t = r.Left;
-					break;
-			}
+			float t = (r.Rotation % 360 / 90) switch {
+				0 => r.Top,
+				1 => r.Right,
+				2 => r.Bottom,
+				3 => r.Left,
+				_ => 0
+			};
 
 			bookmark.SetAttribute(Constants.Coordinates.Top, t.ToText());
 		}
@@ -586,23 +578,17 @@ internal sealed class PdfDocumentCreator
 					}
 
 					float px = 0, py = 0;
-					switch (hAlign) {
-						case HorizontalAlignment.Center:
-							px = (_content.Width - image.ScaledWidth) / 2f;
-							break;
-						case HorizontalAlignment.Right:
-							px = _content.Width - image.ScaledWidth;
-							break;
-					}
+					px = hAlign switch {
+						HorizontalAlignment.Center => (_content.Width - image.ScaledWidth) / 2f,
+						HorizontalAlignment.Right => _content.Width - image.ScaledWidth,
+						_ => px
+					};
 
-					switch (vAlign) {
-						case VerticalAlignment.Middle:
-							py = (_content.Height - image.ScaledHeight) / 2f;
-							break;
-						case VerticalAlignment.Top:
-							py = _content.Height - image.ScaledHeight;
-							break;
-					}
+					py = vAlign switch {
+						VerticalAlignment.Middle => (_content.Height - image.ScaledHeight) / 2f,
+						VerticalAlignment.Top => _content.Height - image.ScaledHeight,
+						_ => py
+					};
 
 					image.SetAbsolutePosition(_doc.LeftMargin + px, _doc.BottomMargin + py);
 					break;

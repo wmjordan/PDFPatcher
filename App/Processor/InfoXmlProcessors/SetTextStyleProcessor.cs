@@ -14,22 +14,15 @@ internal sealed class SetTextStyleProcessor : IPdfInfoXmlProcessor
 
 	public SetTextStyleProcessor(XmlElement element, Style style) {
 		string s = element.GetAttribute(Constants.BookmarkAttributes.Style);
-		switch (style) {
-			case Style.SetBold when s != Constants.BookmarkAttributes.StyleType.Bold &&
-									s != Constants.BookmarkAttributes.StyleType.BoldItalic:
-				_style = Style.SetBold;
-				break;
-			case Style.SetBold:
-				_style = Style.RemoveBold;
-				break;
-			case Style.SetItalic when s != Constants.BookmarkAttributes.StyleType.Italic &&
-									  s != Constants.BookmarkAttributes.StyleType.BoldItalic:
-				_style = Style.SetItalic;
-				break;
-			case Style.SetItalic:
-				_style = Style.RemoveItalic;
-				break;
-		}
+		_style = style switch {
+			Style.SetBold when s != Constants.BookmarkAttributes.StyleType.Bold &&
+							   s != Constants.BookmarkAttributes.StyleType.BoldItalic => Style.SetBold,
+			Style.SetBold => Style.RemoveBold,
+			Style.SetItalic when s != Constants.BookmarkAttributes.StyleType.Italic &&
+								 s != Constants.BookmarkAttributes.StyleType.BoldItalic => Style.SetItalic,
+			Style.SetItalic => Style.RemoveItalic,
+			_ => _style
+		};
 	}
 
 	#region IInfoDocProcessor 成员
@@ -45,18 +38,12 @@ internal sealed class SetTextStyleProcessor : IPdfInfoXmlProcessor
 
 	public IUndoAction Process(XmlElement item) {
 		string value = item.GetAttribute(Constants.BookmarkAttributes.Style);
-		int style = 0;
-		switch (value) {
-			case Constants.BookmarkAttributes.StyleType.Bold:
-				style = 1;
-				break;
-			case Constants.BookmarkAttributes.StyleType.Italic:
-				style = 2;
-				break;
-			case Constants.BookmarkAttributes.StyleType.BoldItalic:
-				style = 3;
-				break;
-		}
+		int style = value switch {
+			Constants.BookmarkAttributes.StyleType.Bold => 1,
+			Constants.BookmarkAttributes.StyleType.Italic => 2,
+			Constants.BookmarkAttributes.StyleType.BoldItalic => 3,
+			_ => 0
+		};
 
 		switch (_style) {
 			case Style.SetBold:

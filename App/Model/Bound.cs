@@ -202,17 +202,14 @@ public class Bound
 	/// <param name="direction">比较方向。</param>
 	/// <returns>在同一行上时返回 true。</returns>
 	internal bool IsAlignedWith(Bound other, WritingDirection direction) {
-		switch (direction) {
-			case WritingDirection.Horizontal:
-				return IsTopDown
-					? (other.Top < Middle && Middle < other.Bottom) || (Top < other.Middle && other.Middle < Bottom)
-					: (other.Bottom < Middle && Middle < other.Top) || (Bottom < other.Middle && other.Middle < Top);
-			case WritingDirection.Vertical:
-				return (other.Left < Center && Center < other.Right)
-					   || (Left < other.Center && other.Center < Right);
-			default:
-				return IntersectWith(other);
-		}
+		return direction switch {
+			WritingDirection.Horizontal => IsTopDown
+				? (other.Top < Middle && Middle < other.Bottom) || (Top < other.Middle && other.Middle < Bottom)
+				: (other.Bottom < Middle && Middle < other.Top) || (Bottom < other.Middle && other.Middle < Top),
+			WritingDirection.Vertical => (other.Left < Center && Center < other.Right) ||
+										 (Left < other.Center && other.Center < Right),
+			_ => IntersectWith(other)
+		};
 	}
 
 	internal bool IntersectWith(Bound other) {

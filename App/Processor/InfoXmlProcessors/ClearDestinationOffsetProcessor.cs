@@ -16,34 +16,22 @@ internal sealed class ClearDestinationOffsetProcessor : IPdfInfoXmlProcessor,
 
 	public ClearDestinationOffsetProcessor(PositionType type) {
 		Parameter = type;
-		switch (type) {
-			case PositionType.X:
-				_name = "横";
-				break;
-			case PositionType.Y:
-				_name = "纵";
-				break;
-			default:
-				_name = string.Empty;
-				break;
-		}
+		_name = type switch {
+			PositionType.X => "横",
+			PositionType.Y => "纵",
+			_ => string.Empty
+		};
 	}
 
 	public PositionType Parameter {
 		get => _type;
 		set {
 			_type = value;
-			switch (_type) {
-				case PositionType.X:
-					_name = "横";
-					break;
-				case PositionType.Y:
-					_name = "纵";
-					break;
-				default:
-					_name = string.Empty;
-					break;
-			}
+			_name = _type switch {
+				PositionType.X => "横",
+				PositionType.Y => "纵",
+				_ => string.Empty
+			};
 		}
 	}
 

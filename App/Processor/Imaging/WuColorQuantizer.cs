@@ -224,28 +224,12 @@ public static class WuQuantizer
 		r1 = (r1 << 10) + (r1 << 6) + r1;
 		g0 = (g0 << 5) + g0;
 		g1 = (g1 << 5) + g1;
-		switch (direction) {
-			case __Red:
-				return
-					-moment[r0 + g1 + b1]
-					+ moment[r0 + g1 + b0]
-					+ moment[r0 + g0 + b1]
-					- moment[r0 + g0 + b0];
-			case __Green:
-				return
-					-moment[r1 + g0 + b1]
-					+ moment[r1 + g0 + b0]
-					+ moment[r0 + g0 + b1]
-					- moment[r0 + g0 + b0];
-			case __Blue:
-				return
-					-moment[r1 + g1 + b0]
-					+ moment[r1 + g0 + b0]
-					+ moment[r0 + g1 + b0]
-					- moment[r0 + g0 + b0];
-			default:
-				return 0;
-		}
+		return direction switch {
+			__Red => -moment[r0 + g1 + b1] + moment[r0 + g1 + b0] + moment[r0 + g0 + b1] - moment[r0 + g0 + b0],
+			__Green => -moment[r1 + g0 + b1] + moment[r1 + g0 + b0] + moment[r0 + g0 + b1] - moment[r0 + g0 + b0],
+			__Blue => -moment[r1 + g1 + b0] + moment[r1 + g0 + b0] + moment[r0 + g1 + b0] - moment[r0 + g0 + b0],
+			_ => 0
+		};
 	}
 
 	private static CubeCut Maximize(ColorData data, Box cube, int direction, byte first, byte last, long wholeRed,

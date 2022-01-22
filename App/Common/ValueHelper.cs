@@ -206,11 +206,11 @@ internal static class ValueHelper
 			return defaultValue;
 		}
 
-		switch (ParseBoolean(value)) {
-			case 1: return true;
-			case 0: return false;
-			default: return defaultValue;
-		}
+		return ParseBoolean(value) switch {
+			1 => true,
+			0 => false,
+			_ => defaultValue
+		};
 	}
 
 	private static int ParseBoolean(string value) {

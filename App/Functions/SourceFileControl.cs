@@ -105,14 +105,11 @@ public partial class SourceFileControl : UserControl
 	private void SourceFileControl_Show(object sender, EventArgs e) {
 		_controlLockDown = true;
 		string t = Text;
-		switch (Visible) {
-			case true when AppContext.MainForm != null:
-				FileList.Contents = AppContext.Recent.SourcePdfFiles;
-				break;
-			case false:
-				FileList.Contents = null;
-				break;
-		}
+		FileList.Contents = Visible switch {
+			true when AppContext.MainForm != null => AppContext.Recent.SourcePdfFiles,
+			false => null,
+			_ => FileList.Contents
+		};
 
 		Text = t;
 		_controlLockDown = false;

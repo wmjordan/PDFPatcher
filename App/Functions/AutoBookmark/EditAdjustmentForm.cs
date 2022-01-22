@@ -101,17 +101,16 @@ namespace PDFPatcher.Functions
 		}
 
 		internal static AutoBookmarkCondition CreateCondition(string name) {
-			switch (name) {
-				case "_FontNameFilter": return new AutoBookmarkCondition.FontNameCondition("SimSun", false);
-				case "_FontSizeFilter": return new AutoBookmarkCondition.TextSizeCondition(0, 10);
-				case "_FontPositionFilter": return new AutoBookmarkCondition.TextPositionCondition(1, -9999, 9999);
-				case "_PageRangeFilter": return new AutoBookmarkCondition.PageRangeCondition();
-				case "_TextFilter":
-					return new AutoBookmarkCondition.TextCondition() {
-						Pattern = new MatchPattern("筛选条件", false, false, false)
-					};
-				default: return null;
-			}
+			return name switch {
+				"_FontNameFilter" => new AutoBookmarkCondition.FontNameCondition("SimSun", false),
+				"_FontSizeFilter" => new AutoBookmarkCondition.TextSizeCondition(0, 10),
+				"_FontPositionFilter" => new AutoBookmarkCondition.TextPositionCondition(1, -9999, 9999),
+				"_PageRangeFilter" => new AutoBookmarkCondition.PageRangeCondition(),
+				"_TextFilter" => new AutoBookmarkCondition.TextCondition() {
+					Pattern = new MatchPattern("筛选条件", false, false, false)
+				},
+				_ => null
+			};
 		}
 
 		internal static void UpdateFilter(IFilterConditionEditor filter) {

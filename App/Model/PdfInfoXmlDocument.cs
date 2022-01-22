@@ -83,18 +83,13 @@ public sealed class PdfInfoXmlDocument : XmlDocument
 			return base.CreateElement(prefix, localName, namespaceURI);
 		}
 
-		switch (localName) {
-			case Constants.Bookmark:
-				return new BookmarkElement(this);
-			case Constants.DocumentBookmark:
-				return new BookmarkRootElement(this);
-			case Constants.PageLabelsAttributes.Style:
-				return new PageLabelElement(this);
-			case Constants.Info.ThisName:
-				return new DocumentInfoElement(this);
-		}
-
-		return base.CreateElement(prefix, localName, namespaceURI);
+		return localName switch {
+			Constants.Bookmark => new BookmarkElement(this),
+			Constants.DocumentBookmark => new BookmarkRootElement(this),
+			Constants.PageLabelsAttributes.Style => new PageLabelElement(this),
+			Constants.Info.ThisName => new DocumentInfoElement(this),
+			_ => base.CreateElement(prefix, localName, namespaceURI)
+		};
 	}
 }
 
@@ -226,13 +221,12 @@ public sealed class BookmarkElement : BookmarkContainer
 				return FontStyle.Regular;
 			}
 
-			switch (s) {
-				case Constants.BookmarkAttributes.StyleType.Bold: return FontStyle.Bold;
-				case Constants.BookmarkAttributes.StyleType.Italic: return FontStyle.Italic;
-				case Constants.BookmarkAttributes.StyleType.BoldItalic: return FontStyle.Italic | FontStyle.Bold;
-			}
-
-			return FontStyle.Regular;
+			return s switch {
+				Constants.BookmarkAttributes.StyleType.Bold => FontStyle.Bold,
+				Constants.BookmarkAttributes.StyleType.Italic => FontStyle.Italic,
+				Constants.BookmarkAttributes.StyleType.BoldItalic => FontStyle.Italic | FontStyle.Bold,
+				_ => FontStyle.Regular
+			};
 		}
 		set {
 			string s;

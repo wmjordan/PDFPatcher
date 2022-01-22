@@ -401,21 +401,13 @@ internal sealed class DocInfoImporter
 			ann.Put(PdfName.P, w.Writer.GetPageReference(pageNum));
 			string hl = item.GetAttribute(Constants.PageLinkAttributes.Style);
 			if (string.IsNullOrEmpty(hl) == false) {
-				PdfName h = PdfName.I;
-				switch (hl) {
-					case "无":
-						h = PdfName.N;
-						break;
-					case "取反内容":
-						h = PdfName.I;
-						break;
-					case "取反边框":
-						h = PdfName.O;
-						break;
-					case "按下":
-						h = PdfName.P;
-						break;
-				}
+				PdfName h = hl switch {
+					"无" => PdfName.N,
+					"取反内容" => PdfName.I,
+					"取反边框" => PdfName.O,
+					"按下" => PdfName.P,
+					_ => PdfName.I
+				};
 
 				ann.Put(PdfName.H, h);
 			}
@@ -803,21 +795,12 @@ internal sealed class DocInfoImporter
 	}
 
 	private static PdfDashPattern GetPdfDashPattern(IList<int> p) {
-		PdfDashPattern dp;
-		switch (p.Count) {
-			case 1:
-				dp = new PdfDashPattern(p[0]);
-				break;
-			case 2:
-				dp = new PdfDashPattern(p[0], p[1]);
-				break;
-			case 3:
-				dp = new PdfDashPattern(p[0], p[1], p[2]);
-				break;
-			default:
-				dp = null;
-				break;
-		}
+		PdfDashPattern dp = p.Count switch {
+			1 => new PdfDashPattern(p[0]),
+			2 => new PdfDashPattern(p[0], p[1]),
+			3 => new PdfDashPattern(p[0], p[1], p[2]),
+			_ => null
+		};
 
 		return dp;
 	}

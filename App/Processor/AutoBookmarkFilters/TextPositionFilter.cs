@@ -22,14 +22,13 @@ internal sealed class TextPositionFilter : AutoBookmarkFilter
 	}
 
 	private bool MatchPosition(Bound bound) {
-		switch (Position) {
-			case 1: return bound.Top > MinValue && bound.Top < MaxValue;
-			case 2: return bound.Bottom > MinValue && bound.Bottom < MaxValue;
-			case 3: return bound.Left > MinValue && bound.Left < MaxValue;
-			case 4: return bound.Right > MinValue && bound.Right < MaxValue;
-			default:
-				return false;
-		}
+		return Position switch {
+			1 => bound.Top > MinValue && bound.Top < MaxValue,
+			2 => bound.Bottom > MinValue && bound.Bottom < MaxValue,
+			3 => bound.Left > MinValue && bound.Left < MaxValue,
+			4 => bound.Right > MinValue && bound.Right < MaxValue,
+			_ => false
+		};
 	}
 
 	internal override void Reset() {

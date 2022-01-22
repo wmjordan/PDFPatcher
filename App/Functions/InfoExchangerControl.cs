@@ -298,14 +298,11 @@ public partial class InfoExchangerControl : FunctionControl
 	}
 
 	private void _SortMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e) {
-		switch (e.ClickedItem.Name) {
-			case "_SortByAlphaItem":
-				_ItemList.ListViewItemSorter = new ListViewItemComparer(0, false);
-				break;
-			case "_SortByNaturalNumberItem":
-				_ItemList.ListViewItemSorter = new ListViewItemComparer(0, true);
-				break;
-		}
+		_ItemList.ListViewItemSorter = e.ClickedItem.Name switch {
+			"_SortByAlphaItem" => new ListViewItemComparer(0, false),
+			"_SortByNaturalNumberItem" => new ListViewItemComparer(0, true),
+			_ => _ItemList.ListViewItemSorter
+		};
 	}
 
 	private void _ImageList_ColumnClick(object sender, ColumnClickEventArgs e) {

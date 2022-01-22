@@ -32,14 +32,11 @@ namespace PDFPatcher.Functions
 			};
 			_ResolutionBox.TextChanged += (s, args) => {
 				float v = _ResolutionBox.Text.ToSingle();
-				switch (v) {
-					case <= 0:
-						_ResolutionBox.Text = "72";
-						break;
-					case > 3000:
-						_ResolutionBox.Text = "3000";
-						break;
-				}
+				_ResolutionBox.Text = v switch {
+					<= 0 => "72",
+					> 3000 => "3000",
+					_ => _ResolutionBox.Text
+				};
 			};
 			_ExtractPageImageWidthBox.GotFocus += (s, args) => { _SpecificWidthBox.Checked = true; };
 			_ExtractPageRatioBox.GotFocus += (s, args) => { _SpecificRatioBox.Checked = true; };

@@ -140,18 +140,18 @@ internal static class PdfHelper
 	}
 
 	internal static string GetTypeName(int t) {
-		switch (t) {
-			case PdfObject.ARRAY: return "array";
-			case PdfObject.BOOLEAN: return "bool";
-			case PdfObject.DICTIONARY: return "dictionary";
-			case PdfObject.INDIRECT: return "reference";
-			case PdfObject.NAME: return "name";
-			case PdfObject.NULL: return "null";
-			case PdfObject.NUMBER: return "number";
-			case PdfObject.STREAM: return "stream";
-			case PdfObject.STRING: return "string";
-			default: return string.Empty;
-		}
+		return t switch {
+			PdfObject.ARRAY => "array",
+			PdfObject.BOOLEAN => "bool",
+			PdfObject.DICTIONARY => "dictionary",
+			PdfObject.INDIRECT => "reference",
+			PdfObject.NAME => "name",
+			PdfObject.NULL => "null",
+			PdfObject.NUMBER => "number",
+			PdfObject.STREAM => "stream",
+			PdfObject.STRING => "string",
+			_ => string.Empty
+		};
 	}
 
 	/// <summary>

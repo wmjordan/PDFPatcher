@@ -127,29 +127,15 @@ public static class ColorSpaceHelper
 	///     Gets the int equivalent for a hexadecimal value.
 	/// </summary>
 	private static int GetIntFromHex(string strHex) {
-		switch (strHex) {
-			case "A": {
-					return 10;
-				}
-			case "B": {
-					return 11;
-				}
-			case "C": {
-					return 12;
-				}
-			case "D": {
-					return 13;
-				}
-			case "E": {
-					return 14;
-				}
-			case "F": {
-					return 15;
-				}
-			default: {
-					return int.Parse(strHex);
-				}
-		}
+		return strHex switch {
+			"A" => 10,
+			"B" => 11,
+			"C" => 12,
+			"D" => 13,
+			"E" => 14,
+			"F" => 15,
+			_ => int.Parse(strHex)
+		};
 	}
 
 
@@ -508,14 +494,13 @@ public static class ColorSpaceHelper
 		if (l == 0 || max == min) {
 			s = 0;
 		}
-		else switch (l) {
-				case > 0 and <= 0.5:
-					s = (max - min) / (max + min);
-					break;
-				case > 0.5:
-					s = (max - min) / (2 - (max + min)); //(max-min > 0)?
-					break;
-			}
+		else
+			s = l switch {
+				> 0 and <= 0.5 => (max - min) / (max + min),
+				> 0.5 => (max - min) / (2 - (max + min)) //(max-min > 0)?
+				,
+				_ => s
+			};
 
 		return new HSL(
 			double.Parse(string.Format("{0:0.##}", h)),

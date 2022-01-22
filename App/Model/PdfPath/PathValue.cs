@@ -46,18 +46,13 @@ public static class PathValue
 	}
 
 	public static bool ToBoolean(DocumentObject source, IPathValue value) {
-		switch (value.ValueType) {
-			case PathValueType.Expression:
-				return (value as IPathExpression).SelectObject(source) != null;
-			case PathValueType.String:
-				return (value as PathStringValue).Value.Length > 0;
-			case PathValueType.Number:
-				return (value as PathNumberValue).Value != 0;
-			case PathValueType.Boolean:
-				return (value as PathBooleanValue).Value;
-			default:
-				return false;
-		}
+		return value.ValueType switch {
+			PathValueType.Expression => (value as IPathExpression).SelectObject(source) != null,
+			PathValueType.String => (value as PathStringValue).Value.Length > 0,
+			PathValueType.Number => (value as PathNumberValue).Value != 0,
+			PathValueType.Boolean => (value as PathBooleanValue).Value,
+			_ => false
+		};
 	}
 
 
