@@ -265,11 +265,11 @@ public sealed partial class EditorControl : FunctionControl, IDocumentEditor, IE
 			}
 
 			TextInfo ti = _ViewerBox.FindTextLines(p);
-			string t = ti.TextLines != null ? ti.TextLines[0].Text : String.Empty;
+			string t = ti.TextLines != null ? ti.TextLines[0].Text : string.Empty;
 			_PageInfoBox.Text = string.Concat("页面：", p.Page, "; 位置：", Math.Round(p.PageX, 2), " * ",
 				Math.Round(p.PageY, 2),
 				ti.Spans.HasContent()
-					? String.Concat("; 字体：", ti.Page.GetFont(ti.Spans[0]).Name, " ", ti.Spans[0].Size)
+					? string.Concat("; 字体：", ti.Page.GetFont(ti.Spans[0]).Name, " ", ti.Spans[0].Size)
 					: null, t.Length > 0 ? "; 文本：" : null, t);
 		};
 		_ViewerBox.MouseClick += _ViewBox_MouseClick;
@@ -437,7 +437,7 @@ public sealed partial class EditorControl : FunctionControl, IDocumentEditor, IE
 				break;
 			case "_EnableOcr":
 				item.Enabled = ModiOcr.ModiInstalled;
-				item.ToolTipText = item.Enabled ? String.Empty : Messages.ModiNotAvailable;
+				item.ToolTipText = item.Enabled ? string.Empty : Messages.ModiNotAvailable;
 				break;
 			case "_OcrDisabled":
 				m.Checked = _ViewerBox.OcrLanguage == Constants.Ocr.NoLanguage;

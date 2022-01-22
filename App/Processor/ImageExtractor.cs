@@ -27,7 +27,7 @@ internal sealed class ImageExtractor
 	private int _totalImageCount;
 
 	public ImageExtractor(ImageExtracterOptions options, PdfReader reader) {
-		_fileMask = String.IsNullOrEmpty(options.FileMask) ? "0" : options.FileMask;
+		_fileMask = string.IsNullOrEmpty(options.FileMask) ? "0" : options.FileMask;
 		_options = options;
 		_parser = new PdfPageImageProcessor(PosList, InfoList);
 	}
@@ -477,7 +477,7 @@ internal sealed class ImageExtractor
 
 	private string GetNewImageFileName() {
 		_imageCount++;
-		return String.Concat(
+		return string.Concat(
 			FileHelper.CombinePath(_options.OutputPath, _activePage.ToString(_fileMask)),
 			_imageCount > 1 ? "[" + _imageCount + "]" : null);
 	}
@@ -530,7 +530,7 @@ internal sealed class ImageExtractor
 			}
 
 			if (PrintImageLocation) {
-				Tracker.TraceMessage("合并图片：" + String.Join("、",
+				Tracker.TraceMessage("合并图片：" + string.Join("、",
 					Array.ConvertAll(imageParts, p => Path.GetFileName(p.FileName))));
 			}
 
@@ -622,10 +622,10 @@ internal sealed class ImageExtractor
 					//}
 				}
 
-				if (bmp.Paste(bmp2, 0, h, Int32.MaxValue) == false) {
+				if (bmp.Paste(bmp2, 0, h, int.MaxValue) == false) {
 					if (bmp.HasPalette && bmp2.HasPalette == false) {
 						bmp.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_24_BPP);
-						if (bmp.Paste(bmp2, 0, h, Int32.MaxValue) == false) {
+						if (bmp.Paste(bmp2, 0, h, int.MaxValue) == false) {
 							Tracker.TraceMessage("合并图片失败");
 						}
 
@@ -682,7 +682,7 @@ internal sealed class ImageExtractor
 			} while (PosList.Exists(i => i.Image.FileName == n) || newFileNames.Contains(n));
 
 			if (PrintImageLocation) {
-				Tracker.TraceMessage(String.Concat("重命名合并后的文件 ", item.FileName, " 为 ", n));
+				Tracker.TraceMessage(string.Concat("重命名合并后的文件 ", item.FileName, " 为 ", n));
 				Tracker.TraceMessage(Tracker.Category.OutputFile, n);
 			}
 
@@ -721,7 +721,7 @@ internal sealed class ImageExtractor
 						_posList.Add(new ImageDisposition(CurrentGraphicState.TransMatrix, info));
 					}
 					else {
-						Trace.WriteLine(String.Concat("Image ", r, " not found."));
+						Trace.WriteLine(string.Concat("Image ", r, " not found."));
 					}
 
 					break;

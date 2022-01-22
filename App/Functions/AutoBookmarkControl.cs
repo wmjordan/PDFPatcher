@@ -125,7 +125,7 @@ public partial class AutoBookmarkControl : FunctionControl, IResettableControl
 		_LevelAdjustmentBox.SetObjects(_options.LevelAdjustment);
 		_IgnorePatternsBox.Rows.Clear();
 		foreach (MatchPattern item in _options.IgnorePatterns) {
-			if (String.IsNullOrEmpty(item.Text)) {
+			if (string.IsNullOrEmpty(item.Text)) {
 				continue;
 			}
 
@@ -139,7 +139,7 @@ public partial class AutoBookmarkControl : FunctionControl, IResettableControl
 			return;
 		}
 
-		if (String.IsNullOrEmpty(_BookmarkControl.Text)) {
+		if (string.IsNullOrEmpty(_BookmarkControl.Text)) {
 			FormHelper.ErrorBox(Messages.InfoDocNotSpecified);
 			return;
 		}
@@ -278,7 +278,7 @@ public partial class AutoBookmarkControl : FunctionControl, IResettableControl
 			}
 		}
 		else if (sender == _AddFilterFromInfoFileButton) {
-			if (String.IsNullOrEmpty(_BookmarkControl.Text)) {
+			if (string.IsNullOrEmpty(_BookmarkControl.Text)) {
 				if (_BookmarkControl.FileDialog.ShowDialog() != DialogResult.OK) {
 					FormHelper.InfoBox("请先指定信息文件的路径。");
 					return;

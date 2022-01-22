@@ -468,7 +468,7 @@ public sealed partial class DocumentInspectorControl : FunctionControl, IDocumen
 		}
 
 		ShowDescription(
-			String.IsNullOrEmpty(i.Name) || d.Name == i.Name ? d.Name : String.Concat(d.Name, ":", i.Name),
+			string.IsNullOrEmpty(i.Name) || d.Name == i.Name ? d.Name : string.Concat(d.Name, ":", i.Name),
 			i.Description, t);
 		_DeleteButton.Enabled = !i.IsRequired
 								&& (d.Type is PdfObjectType.Normal or PdfObjectType.Image || d.Type == PdfObjectType.Outline && d.Name == "Outlines");
@@ -553,8 +553,8 @@ public sealed partial class DocumentInspectorControl : FunctionControl, IDocumen
 	}
 
 	private void ShowDescription(string name, string description, string type) {
-		_DescriptionBox.Text = String.Empty;
-		if (String.IsNullOrEmpty(name)) {
+		_DescriptionBox.Text = string.Empty;
+		if (string.IsNullOrEmpty(name)) {
 			return;
 		}
 
@@ -821,7 +821,7 @@ public sealed partial class DocumentInspectorControl : FunctionControl, IDocumen
 			foreach (KeyValuePair<int, int> item in m.CreateDirectMapping()) {
 				w.WriteStartElement("map");
 				w.WriteAttributeString("cid", item.Key.ToText());
-				w.WriteAttributeString("uni", Char.ConvertFromUtf32(item.Value));
+				w.WriteAttributeString("uni", char.ConvertFromUtf32(item.Value));
 				w.WriteEndElement();
 			}
 
@@ -860,7 +860,7 @@ public sealed partial class DocumentInspectorControl : FunctionControl, IDocumen
 		}
 
 		bool o = false;
-		string n = String.Empty;
+		string n = string.Empty;
 		if (FileHelper.ComparePath(path, _fileName) && FormHelper.YesNoBox("是否覆盖原始文件？") == DialogResult.Yes) {
 			o = true;
 		}
@@ -922,7 +922,7 @@ public sealed partial class DocumentInspectorControl : FunctionControl, IDocumen
 
 	private void _LoadDocumentWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
 		string path = e.Result as string;
-		_DescriptionBox.Text = String.Empty;
+		_DescriptionBox.Text = string.Empty;
 		if (path != null) {
 			AppContext.RecentItems.AddHistoryItem(AppContext.Recent.SourcePdfFiles, path);
 			DocumentPath = path;

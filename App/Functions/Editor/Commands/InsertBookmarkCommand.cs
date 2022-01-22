@@ -1,5 +1,4 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using PDFPatcher.Common;
@@ -72,7 +71,7 @@ internal sealed class InsertBookmarkCommand : IEditorCommand
 
 		f.Location = l;
 		f.TargetPosition = p.PageY;
-		if (String.IsNullOrEmpty(region.Text) == false) {
+		if (string.IsNullOrEmpty(region.Text) == false) {
 			f.Title = __RemoveOcrWhiteSpace.Replace(region.Text, " ").Trim();
 		}
 

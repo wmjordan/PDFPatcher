@@ -554,7 +554,7 @@ internal sealed class Controller
 		}
 
 		XmlElement pl = Model.Document.PageLabelRoot;
-		pl.InnerText = String.Empty;
+		pl.InnerText = string.Empty;
 		foreach (PageLabel item in l) {
 			pl.AppendChild(Model.Document.CreatePageLabel(item));
 		}
@@ -746,7 +746,7 @@ internal sealed class Controller
 			dest.AppendChild(ct.FirstChild);
 		}
 
-		undo.Add(UndoAttributeAction.GetUndoAction(dest, Constants.BookmarkAttributes.Title, String.Concat(ts)));
+		undo.Add(UndoAttributeAction.GetUndoAction(dest, Constants.BookmarkAttributes.Title, string.Concat(ts)));
 		BookmarkEditorView b = View.Bookmark;
 		if (p.Name != Constants.DocumentBookmark) {
 			b.RefreshObject(p);
@@ -878,7 +878,7 @@ internal sealed class Controller
 										string ct = cb.Title;
 										if (ct.Length > 0) {
 											char lc = ct[ct.Length - 1];
-											cb.Title = (Char.IsLetterOrDigit(lc) || Char.IsPunctuation(lc)
+											cb.Title = (char.IsLetterOrDigit(lc) || char.IsPunctuation(lc)
 												&& lc != '-') && t[0] != ' '
 												? ct + ' ' + t
 												: ct + t;

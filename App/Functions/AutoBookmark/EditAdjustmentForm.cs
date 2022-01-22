@@ -53,7 +53,7 @@ public partial class EditAdjustmentForm : Form
 	private void EditAdjustmentForm_Load(object sender, EventArgs e) {
 	}
 
-	protected void _OkButton_Click(Object source, EventArgs args) {
+	protected void _OkButton_Click(object source, EventArgs args) {
 		DialogResult = DialogResult.OK;
 		conditions = new AutoBookmarkCondition.MultiCondition();
 		foreach (ListViewItem item in _FilterBox.Items) {
@@ -68,7 +68,7 @@ public partial class EditAdjustmentForm : Form
 		Close();
 	}
 
-	protected void _CancelButton_Click(Object source, EventArgs args) {
+	protected void _CancelButton_Click(object source, EventArgs args) {
 		DialogResult = DialogResult.Cancel;
 		Close();
 	}

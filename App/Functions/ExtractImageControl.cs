@@ -182,7 +182,7 @@ public partial class ExtractImageControl : FunctionControl, IResettableControl
 			previews[4] = 12.ToString(f) + ".jpg";
 			previews[5] = 13.ToString(f) + ".jpg ...";
 			previews[6] = 100.ToString(f) + ".jpg";
-			_FileMaskPreviewBox.Text = String.Join(" ", previews);
+			_FileMaskPreviewBox.Text = string.Join(" ", previews);
 		}
 		catch (Exception) {
 			_FileMaskPreviewBox.Text = "文件名掩码无效。";
