@@ -100,12 +100,7 @@ public sealed class MatchPattern : ICloneable
 		}
 
 		private static string Replace(string original, string pattern, string replacement,
-			StringComparison comparisonType) {
-			return Replace(original, pattern, replacement, comparisonType, -1);
-		}
-
-		private static string Replace(string original, string pattern, string replacement,
-			StringComparison comparisonType, int stringBuilderInitialSize) {
+			StringComparison comparisonType, int stringBuilderInitialSize = -1) {
 			if (original == null) {
 				return null;
 			}

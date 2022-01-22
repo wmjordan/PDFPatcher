@@ -238,11 +238,7 @@ internal static class JpgHelper
 			: this(new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) {
 		}
 
-		private ExifReader(Stream stream)
-			: this(stream, false) {
-		}
-
-		private ExifReader(Stream stream, bool leaveOpen) {
+		private ExifReader(Stream stream, bool leaveOpen = false) {
 			if (stream == null) {
 				throw new ArgumentNullException(nameof(stream));
 			}

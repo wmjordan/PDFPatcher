@@ -1043,9 +1043,7 @@ internal sealed class PdfViewerControl : ImageBoxEx
 		return true;
 	}
 
-	private void UpdateDisplay() { UpdateDisplay(false); }
-
-	private void UpdateDisplay(bool resized) {
+	private void UpdateDisplay(bool resized = false) {
 		if (DesignMode) {
 			return;
 		}

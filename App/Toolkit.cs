@@ -22,15 +22,11 @@ internal sealed class Toolkit
 		new("程序配置", "Options", "AppOptions", "修改 PDF 补丁丁的程序配置", false, false)
 	};
 
-	private Toolkit(string name, string id, string icon, string description)
-		: this(name, id, icon, description, false, true) {
-	}
-
 	private Toolkit(string name, string id, string icon, string description, bool showText)
 		: this(name, id, icon, description, showText, true) {
 	}
 
-	private Toolkit(string name, string id, string icon, string description, bool showText, bool defaultVisible) {
+	private Toolkit(string name, string id, string icon, string description, bool showText = false, bool defaultVisible = true) {
 		Name = name;
 		Identifier = id;
 		Icon = icon;
