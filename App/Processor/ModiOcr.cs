@@ -281,13 +281,13 @@ public class ModiOcr
 	}
 
 	private static void FinalReleaseComObjects(params object[] objs) {
-		for (int i = 0; i < objs.Length; i++) {
-			if (objs[i] == null) {
+		foreach (var t in objs) {
+			if (t == null) {
 				continue;
 			}
 
 			try {
-				int r = Marshal.ReleaseComObject(objs[i]);
+				int r = Marshal.ReleaseComObject(t);
 				Debug.Assert(r == 0);
 			}
 			catch (Exception ex) {

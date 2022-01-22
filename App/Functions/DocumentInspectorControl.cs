@@ -523,8 +523,8 @@ namespace PDFPatcher.Functions
 				PdfObject.NAME, PdfObject.NUMBER, PdfObject.STREAM, PdfObject.STRING
 			};
 			Dictionary<int, int> d = new Dictionary<int, int>(n.Length);
-			for (int i = 0; i < n.Length; i++) {
-				d.Add(n[i], _ObjectTypeIcons.Images.IndexOfKey(PdfHelper.GetTypeName(n[i])));
+			foreach (var t in n) {
+				d.Add(t, _ObjectTypeIcons.Images.IndexOfKey(PdfHelper.GetTypeName(t)));
 			}
 
 			return d;
