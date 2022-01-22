@@ -53,7 +53,7 @@ public sealed class MuTextPage : IMuBoundedElement, IDisposable
 	}
 
 	public IEnumerable<MuTextBlock> Blocks =>
-		_Blocks ?? (_Blocks = MuContentBlock.GetTextBlocks(_TextPage._FirstBlock));
+		_Blocks ??= MuContentBlock.GetTextBlocks(_TextPage._FirstBlock);
 
 	public Rectangle BBox => _TextPage.MediaBox;
 
@@ -203,7 +203,7 @@ public sealed class MuTextBlock : MuContentBlock, IMuBoundedElement
 	}
 
 	public override ContentBlockType Type => ContentBlockType.Text;
-	public IEnumerable<MuTextLine> Lines => _Lines ?? (_Lines = MuTextLine.GetLines(_FirstLine));
+	public IEnumerable<MuTextLine> Lines => _Lines ??= MuTextLine.GetLines(_FirstLine);
 	public override Rectangle BBox { get; }
 }
 
@@ -219,10 +219,10 @@ public sealed class MuTextLine : IMuBoundedElement
 	}
 
 	public IEnumerable<MuTextChar> Characters =>
-		_Characters ?? (_Characters = MuTextChar.GetCharacters(_textLine._FirstChar));
+		_Characters ??= MuTextChar.GetCharacters(_textLine._FirstChar);
 
 	public IList<MuTextSpan> Spans => MuTextChar.GetSpans(this, _textLine._FirstChar, _textLine._LastChar);
-	public string Text => _Text ?? (_Text = GetText());
+	public string Text => _Text ??= GetText();
 	public MuTextChar FirstCharacter => MuTextChar.GetChar(_textLine._FirstChar);
 
 	public Rectangle BBox => _textLine.BBox;

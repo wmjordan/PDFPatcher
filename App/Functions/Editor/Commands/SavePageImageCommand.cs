@@ -26,9 +26,9 @@ internal sealed class SavePageImageCommand : IEditorCommand
 	}
 
 	private static SaveFileDialog InitDialog() {
-		return _dialog ?? (_dialog = new SaveFileDialog {
+		return _dialog ??= new SaveFileDialog {
 			DefaultExt = Constants.FileExtensions.Png,
 			Filter = Constants.FileExtensions.ImageFilter
-		});
+		};
 	}
 }
