@@ -592,7 +592,7 @@ namespace PDFPatcher.Processor
 						new iTextSharp.text.Rectangle(ps.PaperSize.Width, ps.PaperSize.Height),
 						ps.Margins.Left, ps.Margins.Right, ps.Margins.Top, ps.Margins.Bottom
 						);
-					var w = new PdfSmartCopy(doc, s);
+					PdfCopy w = option.Deduplicate ? new PdfSmartCopy(doc, s) : new PdfCopy(doc, s);
 					if (option.FullCompression) {
 						w.SetFullCompression();
 					}
