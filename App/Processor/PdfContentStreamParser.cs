@@ -45,7 +45,7 @@ namespace PDFPatcher.Processor
 			markedContentStack.Push(new MarkedContentInfo(tag, dict));
 		}
 
-		private void BeginText() {
+		private static void BeginText() {
 			//this.renderListener.BeginTextBlock ();
 		}
 		private Model.FontInfo GetFont(PRIndirectReference fontRef) {
@@ -87,7 +87,7 @@ namespace PDFPatcher.Processor
 			markedContentStack.Pop();
 		}
 
-		private void EndText() {
+		private static void EndText() {
 			//this.renderListener.EndTextBlock ();
 		}
 
@@ -205,7 +205,7 @@ namespace PDFPatcher.Processor
 		protected sealed class BeginMarkedContentDictionary : IContentOperator
 		{
 			// Methods
-			private PdfDictionary GetPropertiesDictionary(PdfObject operand1, PdfContentStreamProcessor.ResourceDictionary resources) {
+			private static PdfDictionary GetPropertiesDictionary(PdfObject operand1, PdfDictionary resources) {
 				if (operand1.IsDictionary()) {
 					return (PdfDictionary)operand1;
 				}
@@ -225,7 +225,7 @@ namespace PDFPatcher.Processor
 			public void Invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
 				processor._TextMatrix = new Matrix();
 				processor._TextLineMatrix = processor._TextMatrix;
-				processor.BeginText();
+				BeginText();
 			}
 		}
 
@@ -252,7 +252,7 @@ namespace PDFPatcher.Processor
 			public void Invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
 				processor._TextMatrix = null;
 				processor._TextLineMatrix = null;
-				processor.EndText();
+				EndText();
 			}
 		}
 
@@ -556,8 +556,8 @@ namespace PDFPatcher.Processor
 				//    processor.DisplayPdfString (new PdfString (ms.ToArray ()));
 				//}
 
-				float tj = 0f;
 				foreach (PdfObject entryObj in array.ArrayList) {
+					float tj = 0f;
 					if (entryObj is PdfString) {
 						processor.DisplayPdfString((PdfString)entryObj);
 						tj = 0f;
@@ -907,7 +907,6 @@ namespace PDFPatcher.Processor
 				int ch;
 				int found = 0;
 				var tokeniser = ps.GetTokeniser();
-				byte[] ff = null;
 
 				while ((ch = tokeniser.Read()) != -1) {
 					if (found == 0 && PRTokeniser.IsWhitespace(ch)) {
@@ -918,28 +917,31 @@ namespace PDFPatcher.Processor
 						found++;
 						accumulated.WriteByte((byte)ch);
 					}
-					else if (found == 1 && PRTokeniser.IsWhitespace(ch)) {
-						// this clause is needed if we have a white space character that is part of the image data
-						// followed by a whitespace character that precedes the EI operator.  In this case, we need
-						// to flush the first whitespace, then treat the current whitespace as the first potential
-						// character for the end of stream check.  Note that we don't increment 'found' here.
-						baos.Write(ff = accumulated.ToArray(), 0, ff.Length);
-						accumulated.SetLength(0);
-						accumulated.WriteByte((byte)ch);
-					}
-					else if (found == 2 && ch == 'I') {
-						found++;
-						accumulated.WriteByte((byte)ch);
-					}
-					else if (found == 3 && PRTokeniser.IsWhitespace(ch)) {
-						return baos.ToArray();
-					}
 					else {
-						baos.Write(ff = accumulated.ToArray(), 0, ff.Length);
-						accumulated.SetLength(0);
+						byte[] ff = null;
+						if (found == 1 && PRTokeniser.IsWhitespace(ch)) {
+							// this clause is needed if we have a white space character that is part of the image data
+							// followed by a whitespace character that precedes the EI operator.  In this case, we need
+							// to flush the first whitespace, then treat the current whitespace as the first potential
+							// character for the end of stream check.  Note that we don't increment 'found' here.
+							baos.Write(ff = accumulated.ToArray(), 0, ff.Length);
+							accumulated.SetLength(0);
+							accumulated.WriteByte((byte)ch);
+						}
+						else if (found == 2 && ch == 'I') {
+							found++;
+							accumulated.WriteByte((byte)ch);
+						}
+						else if (found == 3 && PRTokeniser.IsWhitespace(ch)) {
+							return baos.ToArray();
+						}
+						else {
+							baos.Write(ff = accumulated.ToArray(), 0, ff.Length);
+							accumulated.SetLength(0);
 
-						baos.WriteByte((byte)ch);
-						found = 0;
+							baos.WriteByte((byte)ch);
+							found = 0;
+						}
 					}
 				}
 				throw new InlineImageParseException("Could not find image data or EI");

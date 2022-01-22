@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using PDFPatcher.Common;
@@ -303,11 +302,10 @@ namespace PDFPatcher.Functions
 			var i = 0;
 			var result = new string[items.Count];
 			var source = new string[items.Count];
-			FilePath s;
-			string t;
 			foreach (var item in items) {
 				try {
-					s = item.FilePath;
+					FilePath s = item.FilePath;
+					string t;
 					if (s.ExistsFile == false) {
 						t = string.Concat("(找不到 PDF 文件：", s, ")");
 						continue;

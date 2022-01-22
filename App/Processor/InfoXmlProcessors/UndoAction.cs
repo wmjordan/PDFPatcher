@@ -123,8 +123,8 @@ namespace PDFPatcher.Processor
 
 	abstract class UndoElementAction : IUndoAction
 	{
-		public XmlNode Parent { get; private set; }
-		public XmlElement TargetElement { get; private set; }
+		public XmlNode Parent { get; }
+		public XmlElement TargetElement { get; }
 
 		protected UndoElementAction(XmlElement target) {
 			TargetElement = target ?? throw new ArgumentNullException("undo/element/target");
@@ -152,7 +152,7 @@ namespace PDFPatcher.Processor
 
 	sealed class AddElementAction : UndoElementAction
 	{
-		public XmlNode RefNode { get; private set; }
+		public XmlNode RefNode { get; }
 
 		public AddElementAction(XmlElement target) : base(target) {
 			RefNode = target.NextSibling;
@@ -171,8 +171,8 @@ namespace PDFPatcher.Processor
 
 	abstract class UndoAttributeAction : IUndoAction
 	{
-		public XmlElement TargetElement { get; private set; }
-		public string Name { get; private set; }
+		public XmlElement TargetElement { get; }
+		public string Name { get; }
 
 		protected UndoAttributeAction(XmlElement targetNode, string name) {
 			if (String.IsNullOrEmpty(name)) {
@@ -255,7 +255,7 @@ namespace PDFPatcher.Processor
 
 	sealed class SetAttributeAction : UndoAttributeAction
 	{
-		public string Value { get; private set; }
+		public string Value { get; }
 
 		public SetAttributeAction(XmlElement targeNode, string name, string value) : base(targeNode, name) {
 			Value = value;

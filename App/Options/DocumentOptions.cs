@@ -13,7 +13,7 @@ namespace PDFPatcher
 		public ViewerOptions ViewerPreferences { get; set; }
 
 		[XmlIgnore]
-		internal List<PageLabel> PageLabels { get; private set; }
+		internal List<PageLabel> PageLabels { get; }
 
 		[XmlAttribute("压缩索引表和书签")]
 		public bool FullCompression { get; set; }

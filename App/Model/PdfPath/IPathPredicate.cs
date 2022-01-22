@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace PDFPatcher.Model.PdfPath
 {
@@ -52,7 +50,7 @@ namespace PDFPatcher.Model.PdfPath
 		{
 			public override PredicateOperatorType Operator => PredicateOperatorType.Equal;
 
-			public EqualityPredicate(IPathExpression operand1, IPathExpression operand2)
+			protected EqualityPredicate(IPathExpression operand1, IPathExpression operand2)
 				: base(operand1, operand2) {
 			}
 

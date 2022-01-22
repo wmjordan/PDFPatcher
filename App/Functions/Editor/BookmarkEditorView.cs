@@ -240,7 +240,7 @@ namespace PDFPatcher.Functions
 			if (copy) {
 				var clones = new List<BookmarkElement>(source.Count);
 				var td = target.OwnerDocument;
-				foreach (XmlElement item in source) {
+				foreach (BookmarkElement item in source) {
 					if (item.OwnerDocument == td) {
 						clones.Add((BookmarkElement)item.CloneNode(deepCopy));
 					}
@@ -270,7 +270,7 @@ namespace PDFPatcher.Functions
 			if (child) {
 				if (after) {
 					tpr = target.Name == Constants.DocumentBookmark;
-					foreach (XmlElement item in source) {
+					foreach (BookmarkElement item in source) {
 						if (!copy) {
 							undo.Add(new AddElementAction(item));
 						}
@@ -280,7 +280,7 @@ namespace PDFPatcher.Functions
 				}
 				else {
 					source.Reverse();
-					foreach (XmlElement item in source) {
+					foreach (BookmarkElement item in source) {
 						if (!copy) {
 							undo.Add(new AddElementAction(item));
 						}
@@ -295,7 +295,7 @@ namespace PDFPatcher.Functions
 				if (after) {
 					tpr = p.Name == Constants.DocumentBookmark;
 					source.Reverse();
-					foreach (XmlElement item in source) {
+					foreach (BookmarkElement item in source) {
 						if (!copy) {
 							undo.Add(new AddElementAction(item));
 						}
@@ -304,7 +304,7 @@ namespace PDFPatcher.Functions
 					}
 				}
 				else {
-					foreach (XmlElement item in source) {
+					foreach (BookmarkElement item in source) {
 						if (!copy) {
 							undo.Add(new AddElementAction(item));
 						}
@@ -456,7 +456,7 @@ namespace PDFPatcher.Functions
 
 		internal List<BookmarkElement> GetSelectedElements() { return GetSelectedElements(this, true); }
 		internal List<BookmarkElement> GetSelectedElements(bool selectChildren) { return GetSelectedElements(this, selectChildren); }
-		private static List<BookmarkElement> GetSelectedElements(TreeListView treeList, bool selectChildren) {
+		private static List<BookmarkElement> GetSelectedElements(VirtualObjectListView treeList, bool selectChildren) {
 			if (treeList == null) {
 				return null;
 			}
@@ -466,9 +466,8 @@ namespace PDFPatcher.Functions
 			Array.Sort(il);
 			var el = new List<BookmarkElement>();
 			var l = -1;
-			BookmarkElement e;
 			foreach (var item in il) {
-				e = treeList.GetModelObject(item) as BookmarkElement;
+				BookmarkElement e = treeList.GetModelObject(item) as BookmarkElement;
 				if (selectChildren) {
 					el.Add(e);
 				}
@@ -540,11 +539,10 @@ namespace PDFPatcher.Functions
 			}
 			e.Item.UseItemStyleForSubItems = false;
 			e.UseCellFormatEvents = false;
-			Color c;
 			if (b.MarkerColor != 0) {
 				e.Item.BackColor = Color.FromArgb(b.MarkerColor);
 			}
-			c = b.ForeColor;
+			Color c = b.ForeColor;
 			if (c != Color.Transparent) {
 				e.Item.ForeColor = c;
 			}
@@ -566,9 +564,8 @@ namespace PDFPatcher.Functions
 				}
 			}
 			var n = s.CreateNavigator();
-			BookmarkElement e;
 			while (n.MoveToFollowing(Constants.Bookmark, String.Empty)) {
-				e = n.UnderlyingObject as BookmarkElement;
+				BookmarkElement e = n.UnderlyingObject as BookmarkElement;
 				if (e != null && matcher.Match(e)) {
 					MakeItemVisible(e);
 					EnsureModelVisible(e);
@@ -598,7 +595,7 @@ namespace PDFPatcher.Functions
 			return matches;
 		}
 
-		private void SearchBookmarks(BookmarkMatcher matcher, List<BookmarkElement> matches, BookmarkElement item) {
+		private void SearchBookmarks(BookmarkMatcher matcher, ICollection<BookmarkElement> matches, BookmarkElement item) {
 			if (item.HasChildNodes) {
 				foreach (BookmarkElement c in item.SelectNodes(Constants.Bookmark)) {
 					SearchBookmarks(matcher, matches, c);

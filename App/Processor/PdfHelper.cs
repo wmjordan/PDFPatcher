@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
 using iTextSharp.text.pdf;
@@ -419,8 +417,8 @@ namespace PDFPatcher.Processor
 		}
 
 		internal static PdfDictionary CreateDictionaryPath(this PdfDictionary source, params PdfName[] path) {
-			PdfDictionary d;
 			foreach (var item in path) {
+				PdfDictionary d;
 				if (source.Contains(item)) {
 					d = source.GetAsDict(item);
 					if (d == null) {
@@ -467,8 +465,7 @@ namespace PDFPatcher.Processor
 		internal static IList<PdfObject> GetObjectDirectOrFromContainerArray(this PdfDictionary d, PdfName name, int pdfObjectType) {
 			var results = new List<PdfObject>();
 
-			PdfObject tmp;
-			tmp = d.Get(name);
+			PdfObject tmp = d.Get(name);
 			if (tmp == null) {
 			}
 			else if (tmp.Type == pdfObjectType) {
@@ -528,7 +525,7 @@ namespace PDFPatcher.Processor
 			}
 		}
 
-		private static void GetUnusedNode(PdfReader pdf, bool partial, PdfObject obj, bool[] hits) {
+		private static void GetUnusedNode(PdfReader pdf, bool partial, PdfObject obj, IList<bool> hits) {
 			var state = new Stack<object>();
 			state.Push(obj);
 			int oc = pdf.XrefSize;

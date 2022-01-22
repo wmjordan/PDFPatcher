@@ -125,8 +125,8 @@ namespace PDFPatcher.Common
 
 		internal static void InsertLinkedText(this RichTextBoxLinks.RichTextBoxEx textBox, string text) {
 			const int TokenLength = 2;
-			int p1 = text.IndexOf("<<");
-			int p2 = text.IndexOf(">>");
+			int p1 = text.IndexOf("<<", StringComparison.Ordinal);
+			int p2 = text.IndexOf(">>", StringComparison.Ordinal);
 			if (p1 != -1 && p2 != -1 && p2 > p1) {
 				textBox.AppendText(text.Substring(0, p1));
 				var c = textBox.SelectionColor;

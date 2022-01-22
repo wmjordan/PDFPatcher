@@ -92,11 +92,10 @@ namespace PDFPatcher.Processor
 			}
 		}
 
-		static string Translate(string s, char[] source, char[] target) {
+		static string Translate(string s, char[] source, IList<char> target) {
 			var cs = s.ToCharArray();
-			int p;
 			for (int i = 0; i < cs.Length; i++) {
-				p = Array.IndexOf(source, cs[i]);
+				int p = Array.IndexOf(source, cs[i]);
 				if (p != -1) {
 					cs[i] = target[p];
 				}

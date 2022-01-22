@@ -108,10 +108,9 @@ namespace PDFPatcher.Processor
 
 		bool ProcessCommands(IList<PdfPageCommand> parent) {
 			var r = false;
-			EnclosingCommand ec;
 			var l = parent.Count;
 			for (int i = 0; i < l; i++) {
-				ec = parent[i] as EnclosingCommand;
+				EnclosingCommand ec = parent[i] as EnclosingCommand;
 				if (ec == null) {
 					continue;
 				}
@@ -231,7 +230,7 @@ namespace PDFPatcher.Processor
 			}
 		}
 
-		static PdfString RewriteText(NewFont newFont, TrueTypeFontUnicode ttf, string text) {
+		static PdfString RewriteText(NewFont newFont, TrueTypeFont ttf, string text) {
 			var cs = newFont.CharSubstitutions.Count > 0;
 			using (var bb = new ByteBuffer()) {
 				foreach (var ch in text) {
@@ -268,8 +267,6 @@ namespace PDFPatcher.Processor
 		void LoadFonts(PageProcessorContext context, PdfDictionary fonts) {
 			var r = new Dictionary<PdfName, PRIndirectReference>(fonts.Length); // 替代的字体
 			foreach (var item in fonts) {
-				string sn; // 替换字体名称
-				string n; // 字体名称
 				var fr = item.Value as PdfIndirectReference;
 				if (fr == null
 					|| _bypassFonts.Contains(fr.Number)) {
@@ -284,9 +281,10 @@ namespace PDFPatcher.Processor
 					if (fn == null) {
 						goto BYPASSFONT;
 					}
-					n = PdfDocumentFont.RemoveSubsetPrefix(PdfHelper.GetPdfNameString(fn)); // 字体名称
+					string n = PdfDocumentFont.RemoveSubsetPrefix(PdfHelper.GetPdfNameString(fn)); // 字体名称
 					var p = -1;
 					FontSubstitution fs;
+					string sn; // 替换字体名称
 					if (_fontSubstitutions.TryGetValue(n, out fs)) {
 						sn = fs.Substitution;
 					}
@@ -398,14 +396,14 @@ namespace PDFPatcher.Processor
 			}
 		}
 
-		static void Map(Dictionary<char, char> map, string from, string to) {
+		static void Map(IDictionary<char, char> map, string from, string to) {
 			var i = 0;
 			foreach (var item in from) {
 				map[item] = to[i++];
 			}
 		}
 
-		static void ReadSingleByteFontWidths(PdfDictionary font, FontInfo fontInfo, NewFont newFont) {
+		static void ReadSingleByteFontWidths(PdfDictionary font, CMapAwareDocumentFont fontInfo, NewFont newFont) {
 			var wl = font.GetAsArray(PdfName.WIDTHS);
 			if (wl == null) {
 				return;
@@ -436,15 +434,13 @@ namespace PDFPatcher.Processor
 				}
 			}
 			var l = w.Size;
-			PdfObject cw;
-			int cid;
 			var widths = newfont.GlyphWidths;
 			for (int i = 0; i < l; i++) {
-				cid = (w[i] as PdfNumber).IntValue;
+				int cid = (w[i] as PdfNumber).IntValue;
 				if (++i >= l) {
 					break;
 				}
-				cw = w[i];
+				PdfObject cw = w[i];
 				if (cw.Type == PdfObject.ARRAY) {
 					foreach (var width in cw as PdfArray) {
 						var u = fontInfo.DecodeCidToUnicode(cid);
@@ -498,7 +494,6 @@ namespace PDFPatcher.Processor
 			}
 			var widths = new CharacterWidth[l];
 			var i = -1;
-			int width;
 			foreach (var item in font.GlyphWidths) {
 				if (item.Value == FontInfo.DefaultDefaultWidth) {
 					continue;
@@ -509,17 +504,16 @@ namespace PDFPatcher.Processor
 			Array.Resize(ref widths, l);
 			Array.Sort(widths, CharacterWidth.Compare);
 			var w = new PdfArray();
-			int id, id2;
-			CharacterWidth cw;
 			for (i = 0; i < l; i++) {
-				id = widths[i].ID;
+				int id = widths[i].ID;
 				w.Add(new PdfNumber(id));
-				width = widths[i].Width;
+				int width = widths[i].Width;
 				var i2 = i;
-				id2 = id;
+				int id2 = id;
 				var wl = new PdfArray {
 					new PdfNumber(width)
 				};
+				CharacterWidth cw;
 				while (++i2 < l && (cw = widths[i2]).ID == ++id2 && cw.Width != width) {
 					wl.Add(new PdfNumber(cw.Width));
 				}
@@ -583,14 +577,13 @@ namespace PDFPatcher.Processor
 			}
 		}
 
-		static PdfStream SubsetFont(NewFont ef, TrueTypeFontUnicode ttf) {
+		static PdfStream SubsetFont(NewFont ef, TrueTypeFont ttf) {
 			//ttf.AddSubsetRange (r);
 			byte[] b;
 			if (ttf.Cff) {
-				int[] metricsTT;
 				var d = new Dictionary<int, int[]>(ef.UsedCidMap.Count);
 				foreach (var item in ef.UsedCidMap) {
-					metricsTT = ttf.GetMetricsTT(item.Key);
+					int[] metricsTT = ttf.GetMetricsTT(item.Key);
 					d.Add(item.Value, new int[] { metricsTT[0], metricsTT[1], item.Key });
 				}
 				//ttf.AddRangeUni (d, false, true);
@@ -629,7 +622,7 @@ namespace PDFPatcher.Processor
 		[System.Diagnostics.DebuggerDisplay("{FontName}")]
 		sealed class NewFont
 		{
-			public Dictionary<int, PdfDictionary> FontDictionaries { get; set; }
+			private Dictionary<int, PdfDictionary> FontDictionaries { get; }
 			public PRIndirectReference FontRef { get; set; }
 			public PdfIndirectReference DescendantFontRef { get; set; }
 			/// <summary>

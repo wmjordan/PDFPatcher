@@ -334,7 +334,7 @@ namespace PDFPatcher.Functions
 			_pdf.Document?.SafeFile.ReOpen();
 		}
 
-		void _ObjectDetailBox_CanDrop(object sender, OlvDropEventArgs e) {
+		static void _ObjectDetailBox_CanDrop(object sender, OlvDropEventArgs e) {
 			var o = e.DataObject as DataObject;
 			if (o == null) {
 				return;
@@ -604,10 +604,7 @@ namespace PDFPatcher.Functions
 				ci.HidePopupMenu();
 				var so = _ObjectDetailBox.SelectedObjects;
 				var ep = new List<int>(so.Count);
-				bool exportTrailer = false;
-				if (_ObjectDetailBox.Items[0].Selected || n.Type == PdfObjectType.Trailer) {
-					exportTrailer = true;
-				}
+				bool exportTrailer = _ObjectDetailBox.Items[0].Selected || n.Type == PdfObjectType.Trailer;
 				foreach (var item in so) {
 					var d = item as DocumentObject;
 					if (d == null) {
@@ -671,7 +668,7 @@ namespace PDFPatcher.Functions
 			}
 		}
 
-		private void ExportBinHexStream(DocumentObject n, bool decode) {
+		private static void ExportBinHexStream(DocumentObject n, bool decode) {
 			using (var d = new SaveFileDialog() { AddExtension = true, FileName = (n.FriendlyName ?? n.Name) + Constants.FileExtensions.Txt, DefaultExt = Constants.FileExtensions.Txt, Filter = "文本形式的二进制数据文件(*.txt)|*.txt|" + Constants.FileExtensions.AllFilter, Title = "请选择文件流的保存位置" }) {
 				if (d.ShowDialog() == DialogResult.OK) {
 					var s = n.ExtensiveObject as PRStream;
@@ -686,7 +683,7 @@ namespace PDFPatcher.Functions
 			}
 		}
 
-		private void ExportBinaryStream(DocumentObject n, bool decode) {
+		private static void ExportBinaryStream(DocumentObject n, bool decode) {
 			using (var d = new SaveFileDialog() { AddExtension = true, FileName = (n.FriendlyName ?? n.Name) + ".bin", DefaultExt = ".bin", Filter = "二进制数据文件(*.bin,*.dat)|*.bin;*.dat|" + Constants.FileExtensions.AllFilter, Title = "请选择文件流的保存位置" }) {
 				if (d.ShowDialog() == DialogResult.OK) {
 					var s = n.ExtensiveObject as PRStream;
@@ -701,7 +698,7 @@ namespace PDFPatcher.Functions
 			}
 		}
 
-		private void ExportToUnicode(DocumentObject n) {
+		private static void ExportToUnicode(DocumentObject n) {
 			using (var d = new SaveFileDialog { AddExtension = true, FileName = (n.Parent.FriendlyName ?? n.Name) + ".xml", DefaultExt = ".xml", Filter = "统一码映射信息文件(*.xml)|*.xml|" + Constants.FileExtensions.AllFilter, Title = "请选择统一码映射表的保存位置" }) {
 				if (d.ShowDialog() == DialogResult.OK) {
 					var s = n.ExtensiveObject as PRStream;
@@ -734,7 +731,7 @@ namespace PDFPatcher.Functions
 			}
 		}
 
-		private byte[] DecodeStreamBytes(DocumentObject d) {
+		private static byte[] DecodeStreamBytes(DocumentObject d) {
 			var s = d.Value as PRStream ?? d.ExtensiveObject as PRStream;
 			if (d.Type == PdfObjectType.Image) {
 				var info = new Processor.Imaging.ImageInfo(s);

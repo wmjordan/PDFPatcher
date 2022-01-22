@@ -110,7 +110,7 @@ namespace PDFPatcher.Processor
 			return l;
 		}
 
-		private static void DetectInstalledLanguages(RegistryKey k, List<int> list) {
+		private static void DetectInstalledLanguages(RegistryKey k, ICollection<int> list) {
 			if (k == null) {
 				return;
 			}
@@ -131,7 +131,6 @@ namespace PDFPatcher.Processor
 			IEnumerable words = null, rects = null;
 			TextLine line = null;
 			int lineID = -1, regionID = -1;
-			int cl, cr;
 			TextInfo cti = null;
 			try {
 #if DEBUGOCR
@@ -206,8 +205,8 @@ namespace PDFPatcher.Processor
 					if (Char.IsLetterOrDigit(ti.Text[0]) && ti.Size > 0) {
 						ti.LetterWidth = ti.Size;
 					}
-					cl = Get<int>(word, "LineID");
-					cr = Get<int>(word, "RegionID");
+					int cl = Get<int>(word, "LineID");
+					int cr = Get<int>(word, "RegionID");
 					var sl = (cl == lineID && cr == regionID); // 处于同一行
 					if (sl && WritingDirection != WritingDirection.Unknown) {
 						sl = cti != null

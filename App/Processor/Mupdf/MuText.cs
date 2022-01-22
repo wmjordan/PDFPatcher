@@ -130,7 +130,7 @@ namespace MuPdfSharp
 			}
 		}
 
-		struct NativeImageBlock
+		readonly struct NativeImageBlock
 		{
 			readonly ContentBlockType _Type;
 			readonly Rectangle _BBox;
@@ -146,7 +146,7 @@ namespace MuPdfSharp
 				return new MuImageBlock(_BBox, _Transform, _Image);
 			}
 		}
-		struct NativeContentBlock : Interop.ILinkedList
+		readonly struct NativeContentBlock : Interop.ILinkedList
 		{
 			readonly ContentBlockType _Type;
 			readonly Rectangle _BBox;
@@ -255,7 +255,7 @@ namespace MuPdfSharp
 	[DebuggerDisplay("Point={Point}; Size={Size}, Char={System.Char.ConvertFromUtf32(Unicode)}({Unicode}); Font={FontID}")]
 	public sealed class MuTextChar : IMuBoundedElement
 	{
-		NativeTextChar _textChar;
+		readonly NativeTextChar _textChar;
 		readonly Rectangle _Box;
 
 		public Point Point => _textChar._Point;

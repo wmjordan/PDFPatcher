@@ -106,7 +106,6 @@ namespace PDFPatcher.Model
 			var cs = GetAverageCharSize();
 			var sb = new StringBuilder();
 			sb.Append(tl[0].Text);
-			char c;
 			for (int i = 1; i < l; i++) {
 				if (cs > 0) {
 					var dx = Direction == WritingDirection.Vertical
@@ -115,6 +114,7 @@ namespace PDFPatcher.Model
 					if (dx > cs) {
 						var t = tl[i - 1].Text;
 						// 调整标点留下的空白
+						char c;
 						if (t.Length > 0) {
 							c = t[t.Length - 1];
 							if (Char.IsPunctuation(c) && c > 128) {

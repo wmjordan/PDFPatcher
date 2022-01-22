@@ -38,7 +38,7 @@ namespace PDFPatcher
 			}
 			var a = ((ListViewItem)x).SubItems[Col].Text;
 			var b = ((ListViewItem)y).SubItems[Col].Text;
-			int r = UseSmartSort ? FileHelper.NumericAwareComparePath(a, b) : String.Compare(a, b);
+			int r = UseSmartSort ? FileHelper.NumericAwareComparePath(a, b) : String.CompareOrdinal(a, b);
 			return (SortOrder == SortOrder.Ascending) ? r : -r;
 		}
 

@@ -42,9 +42,9 @@ namespace PDFPatcher.Functions.Editor
 
 		internal sealed class Region
 		{
-			internal PagePosition Position { get; private set; }
-			internal string Text { get; private set; }
-			internal TextSource TextSource { get; private set; }
+			internal PagePosition Position { get; }
+			internal string Text { get; }
+			internal TextSource TextSource { get; }
 			internal string LiteralTextSource {
 				get {
 					switch (TextSource) {

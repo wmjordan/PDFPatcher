@@ -52,7 +52,7 @@ namespace PDFPatcher.Common
 			return d;
 		}
 
-		static void AddFontNames(Dictionary<string, string> fontNames, string fontPath, bool includeFamilyName) {
+		static void AddFontNames(IDictionary<string, string> fontNames, string fontPath, bool includeFamilyName) {
 			var nl = BaseFont.GetAllFontNames(fontPath, "Cp936", null);
 			//Tracker.DebugMessage (fontPath);
 			if (includeFamilyName) {

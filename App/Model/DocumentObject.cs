@@ -14,8 +14,8 @@ namespace PDFPatcher.Model
 		static readonly int[] __CompoundTypes = new int[] { PdfObject.DICTIONARY, PdfObject.ARRAY, PdfObject.STREAM };
 		static readonly DocumentObject[] __Leaf = new DocumentObject[0];
 
-		internal PdfPathDocument OwnerDocument { get; private set; }
-		internal DocumentObject Parent { get; private set; }
+		internal PdfPathDocument OwnerDocument { get; }
+		internal DocumentObject Parent { get; }
 		internal string Name { get; set; }
 		internal PdfObject Value { get; set; }
 		internal string Description { get; set; }

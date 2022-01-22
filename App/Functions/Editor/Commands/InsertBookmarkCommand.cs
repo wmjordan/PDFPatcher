@@ -17,7 +17,7 @@ namespace PDFPatcher.Functions.Editor
 			BookmarkAtClientPoint(controller, v.TransposeVirtualImageToClient(v.PinPoint.X, v.PinPoint.Y));
 		}
 
-		private void BookmarkAtClientPoint(Controller controller, Point cp) {
+		private static void BookmarkAtClientPoint(Controller controller, Point cp) {
 			var v = controller.View.Viewer;
 			var pp = v.TransposeClientToPagePosition(cp.X, cp.Y);
 			if (pp.Page == 0) {
@@ -32,7 +32,7 @@ namespace PDFPatcher.Functions.Editor
 			ShowInsertBookmarkDialog(controller, cp, r);
 		}
 
-		private void ShowInsertBookmarkDialog(Controller controller, Point mousePoint, EditModel.Region region) {
+		private static void ShowInsertBookmarkDialog(Controller controller, Point mousePoint, EditModel.Region region) {
 			var p = region.Position;
 			if (p.Page == 0) {
 				return;
@@ -74,7 +74,7 @@ namespace PDFPatcher.Functions.Editor
 			f.TargetPageNumber = p.Page;
 		}
 
-		private InsertBookmarkForm GetDialog(Controller controller) {
+		private static InsertBookmarkForm GetDialog(Controller controller) {
 			if (_dialog != null && _dialog.IsDisposed == false) {
 				_dialog.Controller = controller;
 				return _dialog;

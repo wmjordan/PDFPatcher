@@ -1,6 +1,5 @@
-﻿using System;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using System.Xml;
 using PDFPatcher.Processor;
 
@@ -12,7 +11,7 @@ namespace PDFPatcher.Functions.Editor
 			RemoveItems(controller, controller.View.Bookmark.GetSelectedElements(false));
 		}
 
-		private void RemoveItems(Controller controller, System.Collections.IList si) {
+		private static void RemoveItems(Controller controller, ICollection si) {
 			if (si.Count == 0) {
 				return;
 			}

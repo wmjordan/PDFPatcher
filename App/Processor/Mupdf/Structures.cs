@@ -301,11 +301,11 @@ namespace MuPdfSharp
 			if (IsInfinite) {
 				return other;
 			}
-			float x0, y0, x1, y1;
-			x0 = Left < other.Left ? other.Left : Left;
-			y0 = Top < other.Top ? other.Top : Top;
-			x1 = Right > other.Right ? other.Right : Right;
-			y1 = Bottom > other.Bottom ? other.Bottom : Bottom;
+
+			float x0 = Left < other.Left ? other.Left : Left;
+			float y0 = Top < other.Top ? other.Top : Top;
+			float x1 = Right > other.Right ? other.Right : Right;
+			float y1 = Bottom > other.Bottom ? other.Bottom : Bottom;
 			if (x1 < x0 || y1 < y0) {
 				return Rectangle.Empty;
 			}
@@ -583,15 +583,13 @@ namespace MuPdfSharp
 			return new Point(x * A + y * C + E, x * B + y * D + F);
 		}
 		public Rectangle Transform(Rectangle rect) {
-			Point s, t, u, v;
-
 			if (rect.IsInfinite)
 				return rect;
 
-			s = Transform(rect.Left, rect.Top);
-			t = Transform(rect.Left, rect.Bottom);
-			u = Transform(rect.Right, rect.Bottom);
-			v = Transform(rect.Right, rect.Top);
+			Point s = Transform(rect.Left, rect.Top);
+			Point t = Transform(rect.Left, rect.Bottom);
+			Point u = Transform(rect.Right, rect.Bottom);
+			Point v = Transform(rect.Right, rect.Top);
 			return new Rectangle(Min4(s.X, t.X, u.X, v.X),
 				Min4(s.Y, t.Y, u.Y, v.Y),
 				Max4(s.X, t.X, u.X, v.X),

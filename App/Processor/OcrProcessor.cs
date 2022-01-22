@@ -176,7 +176,7 @@ namespace PDFPatcher.Processor
 			return text;
 		}
 
-		private IList<Result> OcrPage(int i, List<int> errorList) {
+		private IList<Result> OcrPage(int i, ICollection<int> errorList) {
 #if DEBUGOCR
 			Tracker.TraceMessage("导出第 " + i + " 页的图片。");
 #endif
@@ -398,7 +398,7 @@ namespace PDFPatcher.Processor
 #if !DEBUG
 					var t = Path.GetDirectoryName (p) + "\\ocr-" + new Random ().Next ().ToText () +".tif";
 #else
-					var t = "m:\\ocr.tif";
+					const string t = "m:\\ocr.tif";
 #endif
 					if (_options.PreserveColor) {
 						fi.Save(t, FreeImageAPI.FREE_IMAGE_FORMAT.FIF_TIFF);

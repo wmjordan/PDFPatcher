@@ -27,7 +27,6 @@ namespace PDFPatcher.Model.PdfPath
 			}
 			var l = path.Length;
 			var i = 0;
-			string n;
 			var ctx = new Context();
 			while (i < l) {
 				ctx.Axis = ExtractAxis(path, l, ctx.CanBeRoot, ref i);
@@ -36,7 +35,7 @@ namespace PDFPatcher.Model.PdfPath
 					r.Enqueue(new PathExpression(ctx.Axis));
 					continue;
 				}
-				n = ExtractName(path, l, ref i);
+				string n = ExtractName(path, l, ref i);
 				r.Enqueue(new PathExpression(ctx.Axis, n));
 			}
 			return r.ToArray();

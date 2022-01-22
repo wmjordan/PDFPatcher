@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace PDFPatcher.Common
 {
 	/// <summary>
 	/// 表示在指定上下文下执行的处理命令。
 	/// </summary>
-	/// <typeparam name="P">处理命令时的上下文类型。</typeparam>
-	interface ICommand<P>
+	/// <typeparam name="TP">处理命令时的上下文类型。</typeparam>
+	interface ICommand<in TP>
 	{
-		void Process(P context, params string[] parameters);
+		void Process(TP context, params string[] parameters);
 	}
 
 	/// <summary>

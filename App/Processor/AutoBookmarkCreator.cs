@@ -13,9 +13,9 @@ namespace PDFPatcher.Processor
 	{
 		sealed class SizeOccurrence
 		{
-			public float Size { get; set; }
-			public int FirstPage { get; set; }
-			public string FirstInstance { get; set; }
+			public float Size { get; }
+			public int FirstPage { get; }
+			public string FirstInstance { get; }
 			public int Occurrence { get; set; }
 			public SizeOccurrence(float size, int page, string instance) {
 				Size = size;
@@ -80,7 +80,6 @@ namespace PDFPatcher.Processor
 			var ranges = PageRangeCollection.Parse(options.PageRanges, 1, reader.NumberOfPages, true);
 			var doc = new XmlDocument();
 			var be = doc.AppendChild(doc.CreateElement(Constants.Bookmark)) as XmlElement;
-			float size = -1;
 			var sizes = new Stack<float>();
 			float yOffset = 1 + options.YOffset;
 			int level = 0;
@@ -205,6 +204,7 @@ namespace PDFPatcher.Processor
 								}
 							}
 							if (options.AutoHierarchicalArrangement) {
+								float size = -1;
 								do {
 									//if (ValueHelper.TryParse (be.GetAttribute (Constants.Font.Size), out size) == false || s < size) {
 									if (sizes.Count == 0 || s < (size = sizes.Peek())) {
@@ -331,7 +331,7 @@ namespace PDFPatcher.Processor
 			}
 		}
 
-		string ConcatRegionText(TextRegion region) {
+		static string ConcatRegionText(TextRegion region) {
 			var ls = region.Lines;
 			if (ls.Count == 0) {
 				return String.Empty;
@@ -386,7 +386,6 @@ namespace PDFPatcher.Processor
 			// 遍历识别所得的各 TextInfo，使用最小距离聚类方法将其聚类为行
 			foreach (var item in textInfos) {
 				var ir = item.Region;
-				DistanceInfo cd = null; // TextInfo 到 TextLine 的距离
 				var md = new DistanceInfo(DistanceInfo.Placement.Unknown, float.MaxValue, float.MaxValue); // 最小距离
 				TextLine ml = null; // 最小距离的 TextLine
 
@@ -403,7 +402,7 @@ namespace PDFPatcher.Processor
 					if (options.MergeDifferentFontTitles == false && li.FirstText.Font.FontID != item.Font.FontID) {
 						break;
 					}
-					cd = li.GetDistance(ir);
+					DistanceInfo cd = li.GetDistance(ir); // TextInfo 到 TextLine 的距离
 					if ((cd.IsOverlapping // 当前项与文本行交叠
 							&& (md.IsOverlapping == false // 最小距离不是交叠
 								|| cd.DistanceRadial < md.DistanceRadial) // 当前项与文本行的交叠中心距离小于最小距离
@@ -482,7 +481,6 @@ namespace PDFPatcher.Processor
 			// 遍历识别所得的各 TextInfo，使用最小距离聚类方法将其聚类为行
 			foreach (var item in textLines) {
 				var ir = item.Region;
-				DistanceInfo cd = null; // TextInfo 到 TextLine 的距离
 				var md = new DistanceInfo(DistanceInfo.Placement.Unknown, float.MaxValue, float.MaxValue); // 最小距离
 				TextRegion mr = null; // 最小距离的 TextRegion
 
@@ -498,7 +496,7 @@ namespace PDFPatcher.Processor
 					if (_options.MergeDifferentFontTitles == false && li.Lines[0].FirstText.Font.FontID != item.FirstText.Font.FontID) {
 						break;
 					}
-					cd = li.Region.GetDistance(ir, li.Direction);
+					DistanceInfo cd = li.Region.GetDistance(ir, li.Direction); // TextInfo 到 TextLine 的距离
 					if ((cd.IsOverlapping // 当前项与文本行交叠
 							&& (md.IsOverlapping == false // 最小距离不是交叠
 								|| cd.DistanceRadial < md.DistanceRadial) // 当前项与文本行的交叠中心距离小于最小距离
@@ -682,7 +680,7 @@ namespace PDFPatcher.Processor
 				return;
 			}
 
-			string DecodeTJText(List<PdfObject> operands, float size) {
+			string DecodeTJText(IList<PdfObject> operands, float size) {
 				//if (size < _fontSizeThreshold) {
 				//    goto default;
 				//}
@@ -738,7 +736,7 @@ namespace PDFPatcher.Processor
 			/// <param name="a">大边框。</param>
 			/// <param name="b">小边框。</param>
 			/// <returns>小边框完全处于大边框内，则返回 true。</returns>
-			internal static bool IsBoundOutOfRectangle(Rectangle a, Bound b) {
+			private static bool IsBoundOutOfRectangle(Rectangle a, Bound b) {
 				return b.Right < a.Left
 						|| b.Top < a.Bottom
 						|| b.Bottom > a.Top

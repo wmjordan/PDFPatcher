@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Text;
 using FreeImageAPI;
 
 namespace PDFPatcher.Processor.Imaging
 {
 	class JBig2Encoder
 	{
-		static readonly uint White = 0x00FFFFFF;
+		private const uint White = 0x00FFFFFF;
 
 		internal static byte[] Encode(FreeImageBitmap fi) {
 			bool zeroIsWhite = fi.HasPalette && fi.Palette.Data[0].uintValue == White;

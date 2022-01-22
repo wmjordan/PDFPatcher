@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using PDFPatcher.Common;
@@ -7,14 +8,13 @@ namespace PDFPatcher.Functions
 {
 	public partial class RenamePreviewForm : Form
 	{
-		public RenamePreviewForm(string[] sourceFiles, string[] targetFiles) {
+		public RenamePreviewForm(IList<string> sourceFiles, IList<string> targetFiles) {
 			InitializeComponent();
-			var l = sourceFiles.Length;
+			var l = sourceFiles.Count;
 			var c = _RenamePreviewBox.Items;
-			FilePath s, t;
 			for (int i = 0; i < l; i++) {
-				s = sourceFiles[i];
-				t = targetFiles[i];
+				FilePath s = sourceFiles[i];
+				FilePath t = targetFiles[i];
 				if (t.IsEmpty) {
 					continue;
 				}

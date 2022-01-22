@@ -37,7 +37,8 @@ namespace PDFPatcher.Processor
 			if (b == null) {
 				b = new Rectangle(mb);
 			}
-			float d, z = 1, zx = 1, zy = 1;
+
+			float d, z = 1;
 			float dx = 0, dy = 0;
 			float sw = b.Width, sh = b.Height; // resized width and height
 			if (size.SpecialSize == SpecialPaperSize.FixedWidthAutoHeight || size.SpecialSize == SpecialPaperSize.AsWidestPage || size.SpecialSize == SpecialPaperSize.AsNarrowestPage) {
@@ -45,8 +46,8 @@ namespace PDFPatcher.Processor
 			}
 
 			if (settings.ScaleContent) {
-				zx = size.Width / b.Width;
-				zy = size.Height / b.Height;
+				float zx = size.Width / b.Width;
+				float zy = size.Height / b.Height;
 				z = zx < zy ? zx : zy;
 				sw *= z;
 				sh *= z;

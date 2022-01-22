@@ -30,7 +30,7 @@ namespace PDFPatcher.Processor.Imaging
 		public byte[] MaskBytes { get; private set; }
 		public int PaletteEntryCount { get; private set; }
 		public RGBQUAD[] PaletteArray { get; private set; }
-		public PdfImageData InlineImage { get; private set; }
+		public PdfImageData InlineImage { get; }
 
 		internal ImageInfo() { }
 		internal ImageInfo(PdfImageData image) {
@@ -47,7 +47,6 @@ namespace PDFPatcher.Processor.Imaging
 		}
 
 		private static byte[] DecodeImage(ImageInfo info, ImageExtracterOptions options) {
-			byte[] decodedBytes;
 			var data = info.InlineImage;
 			info.ExtName = Constants.FileExtensions.Dat;
 
@@ -66,7 +65,7 @@ namespace PDFPatcher.Processor.Imaging
 			info.PixelFormat = PixelFormat.Format8bppIndexed;
 			var decParams = PdfHelper.GetObjectDirectOrFromContainerArray(data, PdfName.DECODEPARMS, PdfObject.DICTIONARY);
 			var filters = PdfHelper.GetObjectDirectOrFromContainerArray(data, PdfName.FILTER, PdfObject.NAME);
-			decodedBytes = DecodeStreamContent(data, filters);
+			byte[] decodedBytes = DecodeStreamContent(data, filters);
 			var filter = filters.Count > 0 ? (filters[filters.Count - 1] as PdfName ?? PdfName.DEFAULT).ToString() : "BMP";
 			var decParam = decParams.Count > 0 ? decParams[decParams.Count - 1] as PdfDictionary : null;
 			ExportColorspace(data.GetDirectObject(PdfName.COLORSPACE), info);
@@ -208,8 +207,8 @@ namespace PDFPatcher.Processor.Imaging
 			return decodedBytes;
 		}
 
-		private static void InvertBits(byte[] outBuf) {
-			int len = outBuf.Length;
+		private static void InvertBits(IList<byte> outBuf) {
+			int len = outBuf.Count;
 			for (int t = 0; t < len; ++t) {
 				outBuf[t] ^= 0xff;
 			}
@@ -260,9 +259,8 @@ namespace PDFPatcher.Processor.Imaging
 					var l = pattern.Length;
 					var l2 = pal.Count;
 					int i;
-					byte p;
 					for (i = 0; i < l && i < l2; i++) {
-						p = pattern[i];
+						byte p = pattern[i];
 						pal.SetValue(new RGBQUAD(Color.FromArgb(p, p, p)), i);
 					}
 					PaletteEntryCount = i;
@@ -453,9 +451,8 @@ namespace PDFPatcher.Processor.Imaging
 		internal void ConvertDecodedBytes(ref byte[] bytes) {
 			if (PixelFormat == PixelFormat.Format24bppRgb) {
 				// from RGB array to BGR GDI+ data
-				byte b;
 				for (int i = 0; i < bytes.Length; i += 3) {
-					b = bytes[i];
+					byte b = bytes[i];
 					bytes[i] = bytes[i + 2];
 					bytes[i + 2] = b;
 				}

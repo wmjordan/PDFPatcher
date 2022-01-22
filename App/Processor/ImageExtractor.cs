@@ -418,11 +418,11 @@ namespace PDFPatcher.Processor
 			return bmp;
 		}
 
-		private static int GetStride(ImageInfo info, byte[] bytes, bool vFlip) {
+		private static int GetStride(ImageInfo info, ICollection<byte> bytes, bool vFlip) {
 			if (PdfName.COLORSPACE.Equals(info.ColorSpace)) {
 				return vFlip ? -(info.Width << 2) : (info.Width << 2);
 			}
-			var components = bytes.Length / info.Width / info.Height;
+			var components = bytes.Count / info.Width / info.Height;
 			var stride = components > 0
 				? info.Width * components
 				: (info.Width + 8 / info.BitsPerComponent - 1) / (8 / info.BitsPerComponent);

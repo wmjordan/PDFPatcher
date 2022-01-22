@@ -242,7 +242,7 @@ namespace PDFPatcher.Common
 				if (source == null) {
 					return null;
 				}
-				byte t;
+
 				for (int i = 0; i < source.Length; i++) {
 					if (i > 0) {
 						if ((i & 0xF) == 0) {
@@ -253,7 +253,7 @@ namespace PDFPatcher.Common
 						}
 					}
 					var b = source[i];
-					t = (byte)(b >> 4);
+					byte t = (byte)(b >> 4);
 					f.Write((char)(t + (t > 9 ? ('A' - 10) : 0x30)));
 					t = (byte)(b & 0x0F);
 					f.Write((char)(t + (t > 9 ? ('A' - 10) : 0x30)));

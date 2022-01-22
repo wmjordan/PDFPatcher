@@ -243,13 +243,12 @@ namespace PDFPatcher.Functions
 		}
 
 		private void ScrollToSelectedBookmarkLocation() {
-			BookmarkElement el;
 			var i = _BookmarkBox.GetFirstSelectedIndex();
 			//_MainToolbar.ToggleEnabled (i != -1, _editButtonNames);
 			if (i == -1) {
 				return;
 			}
-			el = _BookmarkBox.GetModelObject(i) as BookmarkElement;
+			BookmarkElement el = _BookmarkBox.GetModelObject(i) as BookmarkElement;
 			if (_controller.Model.LockDownViewer == false
 				&& _BookmarkBox.SelectedIndices.Count == 1
 				&& (i = el.Page) > 0) {

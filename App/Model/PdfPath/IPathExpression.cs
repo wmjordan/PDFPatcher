@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using PDFPatcher.Model;
+﻿using System.Collections.Generic;
 
 namespace PDFPatcher.Model.PdfPath
 {
@@ -21,9 +18,9 @@ namespace PDFPatcher.Model.PdfPath
 		#region IPathExpression 成员
 		public PathValueType ValueType => PathValueType.Expression;
 
-		public IPathAxis Axis { get; private set; }
+		public IPathAxis Axis { get; }
 
-		public string Name { get; private set; }
+		public string Name { get; }
 
 		private IList<IPathPredicate> _Predicates;
 		///<summary>获取匹配条件列表。</summary>

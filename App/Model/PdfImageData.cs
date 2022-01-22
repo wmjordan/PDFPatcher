@@ -7,7 +7,7 @@ namespace PDFPatcher.Model
 	{
 		readonly PdfIndirectReference _pdfRef;
 		readonly byte[] _bytes;
-		public int DataType { get; private set; }
+		public int DataType { get; }
 		public PdfIndirectReference PdfRef => _pdfRef;
 		public byte[] RawBytes => _bytes;
 

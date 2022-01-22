@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using PDFPatcher.Common;
 using PDFPatcher.Model;
@@ -137,7 +133,7 @@ namespace PDFPatcher.Functions
 			//}
 		}
 
-		private float CmToPoint(NumericUpDown box) {
+		private static float CmToPoint(NumericUpDown box) {
 			return (float)box.Value * Constants.Units.CmToPoint;
 		}
 

@@ -213,13 +213,11 @@ namespace Cyotek.Windows.Forms.Demo
 		}
 
 		public void StartMove() {
-			CancelEventArgs e;
-
 			if (_isMoving || _isResizing) {
 				throw new InvalidOperationException("A move or resize action is currently being performed.");
 			}
 
-			e = new CancelEventArgs();
+			CancelEventArgs e = new CancelEventArgs();
 
 			OnSelectionMoving(e);
 
@@ -230,17 +228,13 @@ namespace Cyotek.Windows.Forms.Demo
 		}
 
 		protected virtual void DrawDragHandle(Graphics graphics, DragHandle handle) {
-			int left;
-			int top;
-			int width;
-			int height;
 			Pen outerPen;
 			Brush innerBrush;
 
-			left = handle.Bounds.Left;
-			top = handle.Bounds.Top;
-			width = handle.Bounds.Width;
-			height = handle.Bounds.Height;
+			int left = handle.Bounds.Left;
+			int top = handle.Bounds.Top;
+			int width = handle.Bounds.Width;
+			int height = handle.Bounds.Height;
 
 			if (handle.Enabled) {
 				outerPen = SystemPens.WindowFrame;
@@ -263,12 +257,10 @@ namespace Cyotek.Windows.Forms.Demo
 		/// </summary>
 		/// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
 		protected virtual void OnDragHandleSizeChanged(EventArgs e) {
-			EventHandler handler;
-
 			PositionDragHandles();
 			Invalidate();
 
-			handler = (EventHandler)Events[_eventDragHandleSizeChanged];
+			EventHandler handler = (EventHandler)Events[_eventDragHandleSizeChanged];
 
 			handler?.Invoke(this, e);
 		}
@@ -278,9 +270,7 @@ namespace Cyotek.Windows.Forms.Demo
 		/// </summary>
 		/// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
 		protected virtual void OnMaximumSelectionSizeChanged(EventArgs e) {
-			EventHandler handler;
-
-			handler = (EventHandler)Events[_eventMaximumSelectionSizeChanged];
+			EventHandler handler = (EventHandler)Events[_eventMaximumSelectionSizeChanged];
 
 			handler?.Invoke(this, e);
 		}
@@ -290,9 +280,7 @@ namespace Cyotek.Windows.Forms.Demo
 		/// </summary>
 		/// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
 		protected virtual void OnMinimumSelectionSizeChanged(EventArgs e) {
-			EventHandler handler;
-
-			handler = (EventHandler)Events[_eventMinimumSelectionSizeChanged];
+			EventHandler handler = (EventHandler)Events[_eventMinimumSelectionSizeChanged];
 
 			handler?.Invoke(this, e);
 		}
@@ -304,11 +292,8 @@ namespace Cyotek.Windows.Forms.Demo
 		///   A <see cref="T:System.Windows.Forms.MouseEventArgs" /> that contains the event data.
 		/// </param>
 		protected override void OnMouseDown(MouseEventArgs e) {
-			Point imagePoint;
-			RectangleF selectionRegion;
-
-			imagePoint = PointToImage(e.Location);
-			selectionRegion = SelectionRegion;
+			Point imagePoint = PointToImage(e.Location);
+			RectangleF selectionRegion = SelectionRegion;
 
 			if (e.Button == MouseButtons.Left && (selectionRegion.Contains(imagePoint) || HitTest(e.Location) != DragHandleAnchor.None)) {
 				_dragOrigin = e.Location;
@@ -331,9 +316,7 @@ namespace Cyotek.Windows.Forms.Demo
 		protected override void OnMouseMove(MouseEventArgs e) {
 			// start either a move or a resize operation
 			if (!IsSelecting && !_isMoving && !_isResizing && e.Button == MouseButtons.Left && !_dragOrigin.IsEmpty && IsOutsideDragZone(e.Location)) {
-				DragHandleAnchor anchor;
-
-				anchor = HitTest(_dragOrigin);
+				DragHandleAnchor anchor = HitTest(_dragOrigin);
 
 				if (anchor == DragHandleAnchor.None) {
 					// move
@@ -447,9 +430,7 @@ namespace Cyotek.Windows.Forms.Demo
 		/// </summary>
 		/// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
 		protected virtual void OnSelectionMoved(EventArgs e) {
-			EventHandler handler;
-
-			handler = (EventHandler)Events[_eventSelectionMoved];
+			EventHandler handler = (EventHandler)Events[_eventSelectionMoved];
 
 			handler?.Invoke(this, e);
 		}
@@ -459,9 +440,7 @@ namespace Cyotek.Windows.Forms.Demo
 		/// </summary>
 		/// <param name="e">The <see cref="CancelEventArgs" /> instance containing the event data.</param>
 		protected virtual void OnSelectionMoving(CancelEventArgs e) {
-			CancelEventHandler handler;
-
-			handler = (CancelEventHandler)Events[_eventSelectionMoving];
+			CancelEventHandler handler = (CancelEventHandler)Events[_eventSelectionMoving];
 
 			handler?.Invoke(this, e);
 		}
@@ -483,9 +462,7 @@ namespace Cyotek.Windows.Forms.Demo
 		/// </summary>
 		/// <param name="e">The <see cref="EventArgs" /> instance containing the event data.</param>
 		protected virtual void OnSelectionResized(EventArgs e) {
-			EventHandler handler;
-
-			handler = (EventHandler)Events[_eventSelectionResized];
+			EventHandler handler = (EventHandler)Events[_eventSelectionResized];
 
 			handler?.Invoke(this, e);
 		}
@@ -495,9 +472,7 @@ namespace Cyotek.Windows.Forms.Demo
 		/// </summary>
 		/// <param name="e">The <see cref="CancelEventArgs" /> instance containing the event data.</param>
 		protected virtual void OnSelectionResizing(CancelEventArgs e) {
-			CancelEventHandler handler;
-
-			handler = (CancelEventHandler)Events[_eventSelectionResizing];
+			CancelEventHandler handler = (CancelEventHandler)Events[_eventSelectionResizing];
 
 			handler?.Invoke(this, e);
 		}
@@ -551,11 +526,9 @@ namespace Cyotek.Windows.Forms.Demo
 					cursor = Cursors.Default;
 				}
 				else {
-					DragHandleAnchor handleAnchor;
-
-					handleAnchor = _isResizing ? _resizeAnchor : HitTest(point);
+					DragHandleAnchor handleAnchor = _isResizing ? _resizeAnchor : HitTest(point);
 					if (handleAnchor != DragHandleAnchor.None && _dragHandles[handleAnchor].
-						  Enabled) {
+							Enabled) {
 						switch (handleAnchor) {
 							case DragHandleAnchor.TopLeft:
 							case DragHandleAnchor.BottomRight:
@@ -609,22 +582,16 @@ namespace Cyotek.Windows.Forms.Demo
 		}
 
 		private bool IsOutsideDragZone(Point location) {
-			Rectangle dragZone;
-			int dragWidth;
-			int dragHeight;
-
-			dragWidth = SystemInformation.DragSize.Width;
-			dragHeight = SystemInformation.DragSize.Height;
-			dragZone = new Rectangle(_dragOrigin.X - (dragWidth / 2), _dragOrigin.Y - (dragHeight / 2), dragWidth, dragHeight);
+			int dragWidth = SystemInformation.DragSize.Width;
+			int dragHeight = SystemInformation.DragSize.Height;
+			Rectangle dragZone = new Rectangle(_dragOrigin.X - (dragWidth / 2), _dragOrigin.Y - (dragHeight / 2), dragWidth, dragHeight);
 
 			return !dragZone.Contains(location);
 		}
 
 		private void PositionDragHandles() {
 			if (_dragHandles != null && _dragHandleSize > 0) {
-				RectangleF selectionRegion;
-
-				selectionRegion = SelectionRegion;
+				RectangleF selectionRegion = SelectionRegion;
 
 				if (selectionRegion.IsEmpty) {
 					foreach (DragHandle handle in _dragHandles) {
@@ -632,27 +599,16 @@ namespace Cyotek.Windows.Forms.Demo
 					}
 				}
 				else {
-					int left;
-					int top;
-					int right;
-					int bottom;
-					int halfWidth;
-					int halfHeight;
-					int halfDragHandleSize;
-					Rectangle viewport;
-					int offsetX;
-					int offsetY;
-
-					viewport = GetImageViewPort();
-					offsetX = viewport.Left + Padding.Left + AutoScrollPosition.X;
-					offsetY = viewport.Top + Padding.Top + AutoScrollPosition.Y;
-					halfDragHandleSize = _dragHandleSize / 2;
-					left = Convert.ToInt32((selectionRegion.Left * ZoomFactor) + offsetX);
-					top = Convert.ToInt32((selectionRegion.Top * ZoomFactor) + offsetY);
-					right = left + Convert.ToInt32(selectionRegion.Width * ZoomFactor);
-					bottom = top + Convert.ToInt32(selectionRegion.Height * ZoomFactor);
-					halfWidth = Convert.ToInt32(selectionRegion.Width * ZoomFactor) / 2;
-					halfHeight = Convert.ToInt32(selectionRegion.Height * ZoomFactor) / 2;
+					Rectangle viewport = GetImageViewPort();
+					int offsetX = viewport.Left + Padding.Left + AutoScrollPosition.X;
+					int offsetY = viewport.Top + Padding.Top + AutoScrollPosition.Y;
+					int halfDragHandleSize = _dragHandleSize / 2;
+					int left = Convert.ToInt32((selectionRegion.Left * ZoomFactor) + offsetX);
+					int top = Convert.ToInt32((selectionRegion.Top * ZoomFactor) + offsetY);
+					int right = left + Convert.ToInt32(selectionRegion.Width * ZoomFactor);
+					int bottom = top + Convert.ToInt32(selectionRegion.Height * ZoomFactor);
+					int halfWidth = Convert.ToInt32(selectionRegion.Width * ZoomFactor) / 2;
+					int halfHeight = Convert.ToInt32(selectionRegion.Height * ZoomFactor) / 2;
 
 					_dragHandles[DragHandleAnchor.TopLeft].
 					  Bounds = new Rectangle(left - _dragHandleSize, top - _dragHandleSize, _dragHandleSize, _dragHandleSize);
@@ -676,22 +632,16 @@ namespace Cyotek.Windows.Forms.Demo
 
 		private void ProcessSelectionMove(Point cursorPosition) {
 			if (_isMoving) {
-				int x;
-				int y;
-				Point imagePoint;
-				Size viewSize;
-				RectangleF selectionRegion;
+				Point imagePoint = PointToImage(cursorPosition, false);
+				Size viewSize = ViewSize;
+				RectangleF selectionRegion = SelectionRegion;
 
-				imagePoint = PointToImage(cursorPosition, false);
-				viewSize = ViewSize;
-				selectionRegion = SelectionRegion;
-
-				x = Math.Max(0, imagePoint.X - _dragOriginOffset.X);
+				int x = Math.Max(0, imagePoint.X - _dragOriginOffset.X);
 				if (x + selectionRegion.Width >= viewSize.Width) {
 					x = viewSize.Width - (int)selectionRegion.Width;
 				}
 
-				y = Math.Max(0, imagePoint.Y - _dragOriginOffset.Y);
+				int y = Math.Max(0, imagePoint.Y - _dragOriginOffset.Y);
 				if (y + selectionRegion.Height >= viewSize.Height) {
 					y = viewSize.Height - (int)selectionRegion.Height;
 				}
@@ -702,33 +652,21 @@ namespace Cyotek.Windows.Forms.Demo
 
 		private void ProcessSelectionResize(Point cursorPosition) {
 			if (_isResizing) {
-				Point imagePosition;
-				float left;
-				float top;
-				float right;
-				float bottom;
-				bool resizingTopEdge;
-				bool resizingBottomEdge;
-				bool resizingLeftEdge;
-				bool resizingRightEdge;
-				RectangleF selectionRegion;
-				Size viewSize;
-
-				imagePosition = PointToImage(cursorPosition);
-				viewSize = ViewSize;
+				Point imagePosition = PointToImage(cursorPosition);
+				Size viewSize = ViewSize;
 
 				// get the current selection
-				selectionRegion = SelectionRegion;
-				left = selectionRegion.Left;
-				top = selectionRegion.Top;
-				right = selectionRegion.Right;
-				bottom = selectionRegion.Bottom;
+				RectangleF selectionRegion = SelectionRegion;
+				float left = selectionRegion.Left;
+				float top = selectionRegion.Top;
+				float right = selectionRegion.Right;
+				float bottom = selectionRegion.Bottom;
 
 				// decide which edges we're resizing
-				resizingTopEdge = _resizeAnchor >= DragHandleAnchor.TopLeft && _resizeAnchor <= DragHandleAnchor.TopRight;
-				resizingBottomEdge = _resizeAnchor >= DragHandleAnchor.BottomLeft && _resizeAnchor <= DragHandleAnchor.BottomRight;
-				resizingLeftEdge = _resizeAnchor == DragHandleAnchor.TopLeft || _resizeAnchor == DragHandleAnchor.MiddleLeft || _resizeAnchor == DragHandleAnchor.BottomLeft;
-				resizingRightEdge = _resizeAnchor == DragHandleAnchor.TopRight || _resizeAnchor == DragHandleAnchor.MiddleRight || _resizeAnchor == DragHandleAnchor.BottomRight;
+				bool resizingTopEdge = _resizeAnchor >= DragHandleAnchor.TopLeft && _resizeAnchor <= DragHandleAnchor.TopRight;
+				bool resizingBottomEdge = _resizeAnchor >= DragHandleAnchor.BottomLeft && _resizeAnchor <= DragHandleAnchor.BottomRight;
+				bool resizingLeftEdge = _resizeAnchor == DragHandleAnchor.TopLeft || _resizeAnchor == DragHandleAnchor.MiddleLeft || _resizeAnchor == DragHandleAnchor.BottomLeft;
+				bool resizingRightEdge = _resizeAnchor == DragHandleAnchor.TopRight || _resizeAnchor == DragHandleAnchor.MiddleRight || _resizeAnchor == DragHandleAnchor.BottomRight;
 
 				// and resize!
 				if (resizingTopEdge) {
@@ -785,13 +723,11 @@ namespace Cyotek.Windows.Forms.Demo
 		}
 
 		private void StartResize(DragHandleAnchor anchor) {
-			CancelEventArgs e;
-
 			if (_isMoving || _isResizing) {
 				throw new InvalidOperationException("A move or resize action is currently being performed.");
 			}
 
-			e = new CancelEventArgs();
+			CancelEventArgs e = new CancelEventArgs();
 
 			OnSelectionResizing(e);
 

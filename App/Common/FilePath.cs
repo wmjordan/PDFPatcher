@@ -116,9 +116,9 @@ namespace PDFPatcher.Common
 				if (IsEmpty) {
 					return string.Empty;
 				}
-				char c;
+
 				for (int i = _value.Length - 1; i >= 0; i--) {
-					c = _value[i];
+					char c = _value[i];
 					if (IsDirectorySeparator(c) || c == Path.VolumeSeparatorChar) {
 						return _value.Substring(++i);
 					}
@@ -133,11 +133,11 @@ namespace PDFPatcher.Common
 				if (IsEmpty) {
 					return string.Empty;
 				}
-				char c;
+
 				var l = _value.Length;
 				var d = l;
 				for (int i = d - 1; i >= 0; i--) {
-					c = _value[i];
+					char c = _value[i];
 					if (c == '.') {
 						if (d == l) {
 							d = i;
@@ -157,10 +157,10 @@ namespace PDFPatcher.Common
 				if (IsEmpty) {
 					return string.Empty;
 				}
-				char c;
+
 				int i;
 				for (i = _value.Length - 1; i >= 0; i--) {
-					c = _value[i];
+					char c = _value[i];
 					if (IsDirectorySeparator(c)) {
 						i = -1;
 						break;
@@ -221,9 +221,8 @@ namespace PDFPatcher.Common
 				extension = "." + extension;
 			}
 			int i;
-			char c;
 			for (i = _value.Length - 1; i >= 0; i--) {
-				c = _value[i];
+				char c = _value[i];
 				if (IsDirectorySeparator(c)) {
 					i = -1;
 					break;
@@ -429,11 +428,10 @@ namespace PDFPatcher.Common
 					: new FilePath[0];
 		}
 
-		static NameList GetDirectories(string path, string[] parts, int partCount) {
-			NameList r;
+		static NameList GetDirectories(string path, IList<string> parts, int partCount) {
 			var t = new NameList(1) { path };
 			for (int i = 0; i < partCount; i++) {
-				r = new NameList(10);
+				NameList r = new NameList(10);
 				var pi = parts[i];
 				if (pi.Length == 0) {
 					t = new NameList(1) { Path.GetPathRoot(path) };
@@ -497,11 +495,10 @@ namespace PDFPatcher.Common
 				return new string[0];
 			}
 			var p = _value.Split(__PathSeparators);
-			string s;
 			var r = false;
 			var v = 0;
 			for (int i = 0; i < p.Length; i++) {
-				s = p[i].Trim();
+				string s = p[i].Trim();
 				if (s.Length == 0) {
 					// 保留第一个根目录引用
 					if (i == 0) {

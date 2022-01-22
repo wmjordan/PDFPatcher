@@ -80,7 +80,7 @@ namespace MuPdfSharp
 
 		sealed class RenderResult : IDisposable
 		{
-			public MuPage Page { get; private set; }
+			public MuPage Page { get; }
 			public Bitmap Image { get; internal set; }
 
 			public RenderResult(MuPage page) {

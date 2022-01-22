@@ -58,7 +58,7 @@ namespace PDFPatcher.Functions.Editor
 			b.Unfreeze();
 			return r;
 		}
-		HashSet<XmlNode> ProcessBookmarks(IList si, HashSet<XmlElement> processedItems, bool includeDescendant, IPdfInfoXmlProcessor processor) {
+		HashSet<XmlNode> ProcessBookmarks(ICollection si, ISet<XmlElement> processedItems, bool includeDescendant, IPdfInfoXmlProcessor processor) {
 			if (si == null || si.Count == 0) {
 				return null;
 			}
@@ -72,7 +72,7 @@ namespace PDFPatcher.Functions.Editor
 			return new HashSet<XmlNode>(undo.AffectedElements);
 		}
 
-		static void ProcessItem(bool includeDescendant, IPdfInfoXmlProcessor processor, HashSet<XmlElement> processedItems, UndoActionGroup undo, BookmarkElement item) {
+		static void ProcessItem(bool includeDescendant, IPdfInfoXmlProcessor processor, ISet<XmlElement> processedItems, UndoActionGroup undo, BookmarkContainer item) {
 			if (item == null || processedItems.Contains(item)) {
 				return;
 			}
@@ -191,7 +191,7 @@ namespace PDFPatcher.Functions.Editor
 			//this._BookmarkBox.HeaderControl.Invalidate ();
 		}
 
-		void _LoadBookmarkWorker_DoWork(object sender, DoWorkEventArgs e) {
+		static void _LoadBookmarkWorker_DoWork(object sender, DoWorkEventArgs e) {
 			var args = e.Argument as object[];
 			var path = args[0] as string;
 			bool importMode = (bool)args[1];
@@ -290,7 +290,7 @@ namespace PDFPatcher.Functions.Editor
 			view.LoadBookmarks(bookmarks);
 		}
 
-		void ImportBookmarks(BookmarkEditorView editView, XmlNodeList bookmarks) {
+		void ImportBookmarks(TreeListView editView, XmlNodeList bookmarks) {
 			if (Model.Document == null) {
 				Model.Document = new PdfInfoXmlDocument();
 			}
@@ -616,13 +616,12 @@ namespace PDFPatcher.Functions.Editor
 			}
 			Model.LockDownViewer = true;
 			var sl = View.Bookmark.SelectedObjects;
-			XmlElement e;
 			bool r = false; // 是否需要刷新根节点
 			var rl = new HashSet<XmlNode>();
 			while (step-- > 0) {
 				var a = Model.Undo.Undo();
 				foreach (var item in a) {
-					e = item as XmlElement;
+					XmlElement e = item as XmlElement;
 					if (r == false && e.Name == Constants.DocumentBookmark) {
 						r = true;
 					}
@@ -871,7 +870,7 @@ namespace PDFPatcher.Functions.Editor
 			View.Bookmark.RebuildAll(false);
 		}
 
-		static BookmarkContainer CreateNewSiblingBookmarkForParent(BookmarkContainer bm, List<MuPdfSharp.MuTextSpan> spans) {
+		static BookmarkContainer CreateNewSiblingBookmarkForParent(BookmarkContainer bm, IList spans) {
 			TrimBookmarkText(bm);
 			bm = bm.Parent.AppendBookmark();
 			spans.Clear();
@@ -888,7 +887,7 @@ namespace PDFPatcher.Functions.Editor
 			}
 		}
 
-		static BookmarkContainer CreateNewSiblingBookmark(BookmarkContainer bm, List<MuPdfSharp.MuTextSpan> spans) {
+		static BookmarkContainer CreateNewSiblingBookmark(BookmarkContainer bm, IList spans) {
 			TrimBookmarkText(bm);
 			bm = bm.AppendBookmark();
 			spans.Clear();

@@ -310,7 +310,7 @@ namespace PDFPatcher
 #endif
 		}
 
-		void OpenFiles(string[] files) {
+		void OpenFiles(IEnumerable<string> files) {
 			foreach (var item in files) {
 				var p = new FilePath(item);
 				if (p.ExistsFile && p.HasExtension(Constants.FileExtensions.Pdf)) {
@@ -387,7 +387,7 @@ namespace PDFPatcher
 					FormHelper.ErrorBox("无法加载指定的配置文件。");
 					return;
 				}
-				foreach (Control item in __FunctionControls.Values) {
+				foreach (FunctionControl item in __FunctionControls.Values) {
 					(item as IResettableControl)?.Reload();
 				}
 				SetupCustomizeToolbar();

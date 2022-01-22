@@ -182,7 +182,7 @@ namespace PDFPatcher.Model.PdfPath
 
 		sealed class DescendantsAxis : IPathAxis
 		{
-			void SelectObjects(DocumentObject source, string name, IEnumerable<IPathPredicate> predicates, List<DocumentObject> list) {
+			static void SelectObjects(DocumentObject source, string name, IEnumerable<IPathPredicate> predicates, ICollection<DocumentObject> list) {
 				if (source == null || source.HasChildren == false) {
 					return;
 				}

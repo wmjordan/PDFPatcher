@@ -142,7 +142,7 @@ namespace PDFPatcher.Functions
 		}
 
 		#region 拖放操作
-		private void ItemList_CanDropFile(object sender, OlvDropEventArgs e) {
+		private static void ItemList_CanDropFile(object sender, OlvDropEventArgs e) {
 			var o = e.DataObject as DataObject;
 			if (o == null) {
 				return;
@@ -742,7 +742,7 @@ namespace PDFPatcher.Functions
 			}
 		}
 
-		private void SelectItemsByType(SourceItem.ItemType type, List<SourceItem> result, SourceItem container) {
+		private void SelectItemsByType(SourceItem.ItemType type, ICollection<SourceItem> result, SourceItem container) {
 			foreach (var item in container.Items) {
 				if (item.Type == type) {
 					_ItemList.Reveal(item, false);
@@ -842,7 +842,7 @@ namespace PDFPatcher.Functions
 			return items;
 		}
 
-		private static void SelectItems<T>(System.Collections.IEnumerable list, List<T> results) where T : SourceItem {
+		private static void SelectItems<T>(System.Collections.IEnumerable list, ICollection<T> results) where T : SourceItem {
 			foreach (T item in list) {
 				if (item == null) {
 					continue;

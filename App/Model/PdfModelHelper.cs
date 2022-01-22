@@ -12,9 +12,9 @@ namespace PDFPatcher.Model
 			if (s == null) {
 				return null;
 			}
-			PdfName n;
+
 			foreach (var item in path) {
-				n = item as PdfName;
+				PdfName n = item as PdfName;
 				if (s == null) {
 					return null;
 				}

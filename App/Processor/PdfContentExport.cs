@@ -352,7 +352,7 @@ namespace PDFPatcher.Processor
 			}
 		}
 
-		void ExportStreamContent(XmlWriter writer, PdfStream s) {
+		void ExportStreamContent(XmlWriter writer, PdfDictionary s) {
 			if (s is not PRStream prs || writer is NullXmlWriter) {
 				return;
 			}
@@ -371,11 +371,10 @@ namespace PDFPatcher.Processor
 			if (isRaw == false) {
 				if (key == "Contents" || key == "ToUnicode" || PdfName.XOBJECT.Equals(s.GetAsName(PdfName.TYPE)) && PdfName.FORM.Equals(s.GetAsName(PdfName.SUBTYPE))) {
 					var sb = new StringBuilder();
-					byte b;
 					int l = bs.Length;
 					int p1 = 0, p2 = 0;
 					for (int i = 0; i < l; i++) {
-						b = bs[i];
+						byte b = bs[i];
 						if (b == 0x0A || b == 0x0D || i + 1 == l) {
 							p2 = i;
 							if (i > 2 && bs[i - 2] == 'T' && (bs[i - 1] == 'J' || bs[i - 1] == 'j')) {
@@ -441,13 +440,12 @@ namespace PDFPatcher.Processor
 			}
 		}
 
-		static void ExportStreamTextContent(byte[] bs, StringBuilder sb, int p1, int p2) {
+		static void ExportStreamTextContent(IList<byte> bs, StringBuilder sb, int p1, int p2) {
 			bool inText = false;
 			bool escape = false;
-			char ch;
 			int beginTextPosition = 0;
 			for (int c = p1; c < p2; c++) {
-				ch = (char)bs[c];
+				char ch = (char)bs[c];
 				switch (ch) {
 					case '\\':
 						if (escape) {
@@ -583,11 +581,11 @@ namespace PDFPatcher.Processor
 
 			protected override void InvokeOperator(PdfLiteral oper, List<PdfObject> operands) {
 				base.InvokeOperator(oper, operands);
-				string o, fn, t = null;
+				string t = null;
 				bool open = false;
 				bool hasDescriptiveOperands = false;
-				o = oper.ToString();
-				PdfPageCommand.GetFriendlyCommandName(o, out fn);
+				string o = oper.ToString();
+				PdfPageCommand.GetFriendlyCommandName(o, out string fn);
 				_operands.Clear();
 				switch (o) {
 					case "BDC":

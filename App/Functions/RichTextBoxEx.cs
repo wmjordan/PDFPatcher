@@ -1,6 +1,5 @@
 using System;
 using System.ComponentModel;
-using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
@@ -16,23 +15,24 @@ namespace RichTextBoxLinks
 			public UInt32 dwMask;
 			public UInt32 dwEffects;
 			public Int32 yHeight;
-			public Int32 yOffset;
-			public Int32 crTextColor;
-			public byte bCharSet;
-			public byte bPitchAndFamily;
+			private readonly Int32 yOffset;
+			private readonly Int32 crTextColor;
+			private readonly byte bCharSet;
+			private readonly byte bPitchAndFamily;
 			[MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
 			public char[] szFaceName;
-			public UInt16 wWeight;
-			public UInt16 sSpacing;
-			public int crBackColor; // Color.ToArgb() -> int
-			public int lcid;
-			public int dwReserved;
-			public Int16 sStyle;
-			public Int16 wKerning;
-			public byte bUnderlineType;
-			public byte bAnimation;
-			public byte bRevAuthor;
-			public byte bReserved1;
+
+			private readonly UInt16 wWeight;
+			private readonly UInt16 sSpacing;
+			private readonly int crBackColor; // Color.ToArgb() -> int
+			private readonly int lcid;
+			private readonly int dwReserved;
+			private readonly Int16 sStyle;
+			private readonly Int16 wKerning;
+			private readonly byte bUnderlineType;
+			private readonly byte bAnimation;
+			private readonly byte bRevAuthor;
+			private readonly byte bReserved1;
 		}
 
 		[DllImport("user32.dll", CharSet = CharSet.Auto)]

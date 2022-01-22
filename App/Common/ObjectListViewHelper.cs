@@ -205,9 +205,9 @@ namespace BrightIdeasSoftware
 
 	public struct GridTestResult
 	{
-		public int ColumnIndex { get; private set; }
-		public int RowIndex { get; private set; }
-		public bool IsOutOfRange { get; private set; }
+		public int ColumnIndex { get; }
+		public int RowIndex { get; }
+		public bool IsOutOfRange { get; }
 
 		public GridTestResult(int columnIndex, int rowIndex, bool isOutOfRange) {
 			ColumnIndex = columnIndex;

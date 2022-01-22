@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using iTextSharp.text.pdf;
 using PDFPatcher.Model;
-using PDFPatcher.Processor.Imaging;
 
 namespace PDFPatcher.Processor
 {
@@ -57,13 +54,11 @@ namespace PDFPatcher.Processor
 
 		#endregion
 
-		private bool ProcessCommands(IList<Model.PdfPageCommand> parent, IList<PdfName> bwImages) {
+		private static bool ProcessCommands(IList<Model.PdfPageCommand> parent, IList<PdfName> bwImages) {
 			var r = false;
-			Model.PdfPageCommand cmd;
-			Model.EnclosingCommand ec;
 			for (int i = 0; i < parent.Count; i++) {
-				cmd = parent[i];
-				ec = cmd as Model.EnclosingCommand;
+				Model.PdfPageCommand cmd = parent[i];
+				Model.EnclosingCommand ec = cmd as Model.EnclosingCommand;
 				if (ec != null) {
 					r |= ProcessCommands(ec.Commands, bwImages);
 					continue;

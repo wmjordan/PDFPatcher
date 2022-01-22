@@ -144,7 +144,7 @@ namespace PDFPatcher.Functions
 			settings.FullCompression = _FullCompressionBox.Checked;
 		}
 
-		private float CmToPoint(NumericUpDown box) {
+		private static float CmToPoint(NumericUpDown box) {
 			return (float)box.Value * Constants.Units.CmToPoint;
 		}
 

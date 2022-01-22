@@ -207,7 +207,7 @@ namespace PDFPatcher.Model
 
 	class TextCommand : PdfPageCommand
 	{
-		public TextInfo TextInfo { get; private set; }
+		public TextInfo TextInfo { get; }
 		public override PdfPageCommandType Type => PdfPageCommandType.Text;
 		public TextCommand(PdfLiteral oper, List<PdfObject> operands, TextInfo text)
 			: base(oper, operands) {
@@ -217,7 +217,7 @@ namespace PDFPatcher.Model
 
 	sealed class PaceAndTextCommand : TextCommand
 	{
-		public string[] DecodedTexts { get; private set; }
+		public string[] DecodedTexts { get; }
 		public PaceAndTextCommand(PdfLiteral oper, List<PdfObject> operands, TextInfo text, FontInfo font)
 			: base(oper, operands, text) {
 			var a = base.Operands[0] as PdfArray;

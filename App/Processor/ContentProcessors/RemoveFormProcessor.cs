@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using iTextSharp.text.pdf;
 using PDFPatcher.Common;
 using PDFPatcher.Model;
@@ -67,7 +66,7 @@ namespace PDFPatcher.Processor
 
 		#endregion
 
-		private bool ProcessCommands(IList<Model.PdfPageCommand> parent, HashSet<PdfName> formNames) {
+		private static bool ProcessCommands(IList<Model.PdfPageCommand> parent, ICollection<PdfName> formNames) {
 			var r = false;
 			for (int i = parent.Count - 1; i >= 0; i--) {
 				var cmd = parent[i];

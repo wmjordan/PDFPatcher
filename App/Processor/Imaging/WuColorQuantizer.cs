@@ -81,8 +81,7 @@ namespace PDFPatcher.Processor.Imaging
 				for (var i = 0; i < __MaxColor; ++i) {
 					t[i] = i * i;
 				}
-				int pos;
-				byte vr, vg, vb, r, g, b;
+
 				var w = colorData.Weights;
 				var mr = colorData.MomentsRed;
 				var mg = colorData.MomentsGreen;
@@ -93,13 +92,13 @@ namespace PDFPatcher.Processor.Imaging
 					for (int x = 0; x < bitmapWidth; x++) {
 						var indexOffset = offset + (index >> 3);
 
-						vr = buffer[indexOffset + __Red];
-						vg = buffer[indexOffset + __Green];
-						vb = buffer[indexOffset + __Blue];
-						r = (byte)((vr >> 3) + 1);
-						g = (byte)((vg >> 3) + 1);
-						b = (byte)((vb >> 3) + 1);
-						pos = (r << 10) + (r << 6) + r + (g << 5) + g + b; // [r,g,b]
+						byte vr = buffer[indexOffset + __Red];
+						byte vg = buffer[indexOffset + __Green];
+						byte vb = buffer[indexOffset + __Blue];
+						byte r = (byte)((vr >> 3) + 1);
+						byte g = (byte)((vg >> 3) + 1);
+						byte b = (byte)((vb >> 3) + 1);
+						int pos = (r << 10) + (r << 6) + r + (g << 5) + g + b;
 						w[pos]++;
 						mr[pos] += vr;
 						mg[pos] += vg;
@@ -166,7 +165,7 @@ namespace PDFPatcher.Processor.Imaging
 			}
 		}
 
-		private static long Top(Box cube, int direction, int position, long[] moment) {
+		private static long Top(Box cube, int direction, int position, IList<long> moment) {
 			int r0 = cube.RedMinimum,
 				r1 = cube.RedMaximum,
 				g0 = cube.GreenMinimum,
@@ -207,7 +206,7 @@ namespace PDFPatcher.Processor.Imaging
 			}
 		}
 
-		private static long Bottom(Box cube, int direction, long[] moment) {
+		private static long Bottom(Box cube, int direction, IList<long> moment) {
 			int r0 = cube.RedMinimum, r1 = cube.RedMaximum,
 				g0 = cube.GreenMinimum, g1 = cube.GreenMaximum,
 				b0 = cube.BlueMinimum, b1 = cube.BlueMaximum;
@@ -347,7 +346,7 @@ namespace PDFPatcher.Processor.Imaging
 			return double.IsNaN(result) ? 0.0f : result;
 		}
 
-		private static long Volume(Box cube, long[] moment) {
+		private static long Volume(Box cube, IList<long> moment) {
 			int r0 = cube.RedMinimum, r1 = cube.RedMaximum,
 				g0 = cube.GreenMinimum, g1 = cube.GreenMaximum,
 				b0 = cube.BlueMinimum, b1 = cube.BlueMaximum;
@@ -365,7 +364,7 @@ namespace PDFPatcher.Processor.Imaging
 					- moment[r0 + g0 + b0];
 		}
 
-		private static float VolumeFloat(Box cube, float[] moment) {
+		private static float VolumeFloat(Box cube, IList<float> moment) {
 			int r0 = cube.RedMinimum, r1 = cube.RedMaximum,
 				g0 = cube.GreenMinimum, g1 = cube.GreenMaximum,
 				b0 = cube.BlueMinimum, b1 = cube.BlueMaximum;
@@ -383,7 +382,7 @@ namespace PDFPatcher.Processor.Imaging
 					- moment[r0 + g0 + b0];
 		}
 
-		private static Box[] SplitData(ref int colorCount, ColorData data) {
+		private static IEnumerable<Box> SplitData(ref int colorCount, ColorData data) {
 			--colorCount;
 			var next = 0;
 			var volumeVariance = new float[__MaxColor];
@@ -425,7 +424,6 @@ namespace PDFPatcher.Processor.Imaging
 			var lookups = lookupData.Lookups;
 			int lookupsCount = lookupData.Lookups.Count;
 			var tags = lookupData.Tags;
-			int ri, rgi;
 			foreach (var cube in cubes) {
 				byte r1 = cube.RedMaximum,
 					g1 = cube.GreenMaximum,
@@ -434,9 +432,9 @@ namespace PDFPatcher.Processor.Imaging
 					g0 = (byte)(cube.GreenMinimum + 1),
 					b0 = (byte)(cube.BlueMinimum + 1);
 				for (var redIndex = r0; redIndex <= r1; ++redIndex) {
-					ri = (redIndex << 10) + (redIndex << 6) + redIndex; // redIndex * 33 * 33
+					int ri = (redIndex << 10) + (redIndex << 6) + redIndex;
 					for (var greenIndex = g0; greenIndex <= g1; ++greenIndex) {
-						rgi = ri + (greenIndex << 5) + greenIndex;
+						int rgi = ri + (greenIndex << 5) + greenIndex;
 						for (var blueIndex = b0; blueIndex <= b1; ++blueIndex) {
 							tags[rgi + blueIndex] = lookupsCount; // [redIndex,greenIndex,blueIndex]
 						}
@@ -462,10 +460,10 @@ namespace PDFPatcher.Processor.Imaging
 			var lookups = BuildLookups(cubes, data);
 
 			var quantizedPixels = data.QuantizedPixels;
-			for (int index = 0, pixel = 0, red = 0, green = 0; index < imageSize; ++index) {
-				pixel = quantizedPixels[index];
-				red = pixel >> 16;
-				green = 0xFF & (pixel >> 8);
+			for (int index = 0; index < imageSize; ++index) {
+				int pixel = quantizedPixels[index];
+				int red = pixel >> 16;
+				int green = 0xFF & (pixel >> 8);
 				quantizedPixels[index] = lookups.Tags[(red << 10) + (red << 6) + red + (green << 5) + green + (0xFF & pixel)];// red*33*33 + green*33 + blue
 			}
 
@@ -564,11 +562,11 @@ namespace PDFPatcher.Processor.Imaging
 				quantizedPixels = new int[pixelsCount];
 			}
 
-			internal long[] Weights { get; private set; }
-			internal long[] MomentsRed { get; private set; }
-			internal long[] MomentsGreen { get; private set; }
-			internal long[] MomentsBlue { get; private set; }
-			internal float[] Moments { get; private set; }
+			internal long[] Weights { get; }
+			internal long[] MomentsRed { get; }
+			internal long[] MomentsGreen { get; }
+			internal long[] MomentsBlue { get; }
+			internal float[] Moments { get; }
 
 			internal int[] QuantizedPixels => quantizedPixels;
 			internal Pixel[] Pixels => pixels;
@@ -603,8 +601,8 @@ namespace PDFPatcher.Processor.Imaging
 				Tags = new int[granularity * granularity * granularity];
 			}
 
-			public IList<Pixel> Lookups { get; private set; }
-			public int[] Tags { get; private set; }
+			public IList<Pixel> Lookups { get; }
+			public int[] Tags { get; }
 		}
 		struct Pixel
 		{
@@ -624,8 +622,8 @@ namespace PDFPatcher.Processor.Imaging
 				Colors = new List<Color>();
 				PixelIndex = new int[size];
 			}
-			public IList<Color> Colors { get; private set; }
-			public int[] PixelIndex { get; private set; }
+			public IList<Color> Colors { get; }
+			public int[] PixelIndex { get; }
 		}
 
 		sealed class QuantizationException : ApplicationException

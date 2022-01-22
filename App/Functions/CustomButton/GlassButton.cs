@@ -65,7 +65,7 @@ namespace EnhancedGlassButton
 		/// <summary>
 		/// Set the trynsperency of the special Symbols.
 		/// </summary>
-		readonly int transparencyFactor = 128;
+		private const int transparencyFactor = 128;
 
 		#endregion
 
@@ -141,7 +141,7 @@ namespace EnhancedGlassButton
 			base.Dispose(disposing);
 		}
 
-		private void DisposeAll(params IDisposable[] objects) {
+		private static void DisposeAll(params IDisposable[] objects) {
 			foreach (var item in objects) {
 				item?.Dispose();
 			}
@@ -710,7 +710,7 @@ namespace EnhancedGlassButton
 		/// </summary>
 		/// <param name="g">The graphics to draw on.</param>
 		private void DrawSpecialSymbol(Graphics g) {
-			var offset = 15;
+			const int offset = 15;
 			var LineWidth = Width / 15;
 			var pen = new Pen(specialSymbolBrush, Width / 8) {
 				EndCap = LineCap.ArrowAnchor
@@ -1052,7 +1052,7 @@ namespace EnhancedGlassButton
 		/// </summary>
 		/// <param name="rectangle">The rectangle.</param>
 		/// <returns></returns>
-		private GraphicsPath CreateBottomRadialPath(Rectangle rectangle) {
+		private static GraphicsPath CreateBottomRadialPath(Rectangle rectangle) {
 			var path = new GraphicsPath();
 			RectangleF rect = rectangle;
 			rect.X -= rectangle.Width * .35f;

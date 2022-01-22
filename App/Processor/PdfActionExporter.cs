@@ -117,9 +117,8 @@ namespace PDFPatcher.Processor
 			var m = PdfHelper.GetPdfFriendlyName(pn);
 			target.WriteAttributeString(Constants.DestinationAttributes.View, m);
 			var p = new string[dest.Size - 2];
-			PdfObject o;
 			for (int i = 0; i < p.Length; i++) {
-				o = dest[i + 2];
+				PdfObject o = dest[i + 2];
 				if (o == null) {
 					p[i] = String.Empty;
 				}

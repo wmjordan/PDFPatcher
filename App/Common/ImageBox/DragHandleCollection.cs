@@ -59,9 +59,7 @@ namespace Cyotek.Windows.Forms.Demo
 		}
 
 		public DragHandleAnchor HitTest(Point point) {
-			DragHandleAnchor result;
-
-			result = DragHandleAnchor.None;
+			DragHandleAnchor result = DragHandleAnchor.None;
 
 			foreach (DragHandle handle in this) {
 				if (handle.Visible && handle.Bounds.Contains(point)) {

@@ -391,11 +391,9 @@ namespace PDFPatcher.Processor
 			}
 
 			var c = item.FirstChild;
-			XmlNode r;
-			XmlElement ce;
 			while (c != null) {
-				ce = c as XmlElement;
-				r = c.PreviousSibling;
+				XmlElement ce = c as XmlElement;
+				XmlNode r = c.PreviousSibling;
 				if (ce != null) {
 					ProcessInfoItem(ce, processors);
 				}
@@ -491,7 +489,7 @@ namespace PDFPatcher.Processor
 			}
 		}
 
-		private BookmarkElement CreateAutoBookmark(SourceItem sourceFile, XmlElement bookmarkContainer) {
+		private BookmarkElement CreateAutoBookmark(SourceItem sourceFile, XmlNode bookmarkContainer) {
 			if (PdfBookmarks == null
 				|| sourceFile.Bookmark == null
 				|| String.IsNullOrEmpty(sourceFile.Bookmark.Title)) {

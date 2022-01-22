@@ -71,7 +71,7 @@ namespace PDFPatcher.Functions.Editor
 		sealed class Box
 		{
 			public readonly MuRectangle Rect;
-			public readonly string Title;
+			private readonly string Title;
 			public Box(MuRectangle rect, string title) {
 				Rect = rect;
 				Title = title;

@@ -18,7 +18,7 @@ namespace PDFPatcher.Processor.Imaging
 		public ImageDisposition(Matrix ctm, ImageInfo image) {
 			Image = image;
 			Ctm = ctm;
-			var v = new Vector(0, 0, 1).Cross(ctm); ;
+			var v = new Vector(0, 0, 1).Cross(ctm);
 			X = v[0]; Y = v[1]; Z = v[2];
 			image.VerticalFlip = Ctm[Matrix.I22] < 0;
 		}

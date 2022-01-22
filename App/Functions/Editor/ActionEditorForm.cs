@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using PDFPatcher.Common;
@@ -16,7 +11,7 @@ namespace PDFPatcher.Functions
 	{
 		const string KeepZoomRate = "保持不变";
 		const string NoAction = "无";
-		public BookmarkElement Action { get; private set; }
+		public BookmarkElement Action { get; }
 		internal UndoActionGroup UndoActions { get; private set; }
 
 		public ActionEditorForm(BookmarkElement element) {
@@ -99,7 +94,7 @@ namespace PDFPatcher.Functions
 			_AttributesBox.SetObjects(element.Attributes);
 		}
 
-		void InitCoordinateValue(XmlElement element, string name, NumericUpDown control, CheckBox check) {
+		static void InitCoordinateValue(XmlElement element, string name, NumericUpDown control, CheckBox check) {
 			if (element.HasAttribute(name)) {
 				var s = element.GetAttribute(name);
 				if (s.TryParse(out decimal x)) {

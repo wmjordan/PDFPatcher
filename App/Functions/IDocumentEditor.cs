@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace PDFPatcher.Functions
 {
@@ -14,7 +12,7 @@ namespace PDFPatcher.Functions
 
 	public sealed class DocumentChangedEventArgs : EventArgs
 	{
-		public string Path { get; private set; }
+		public string Path { get; }
 		internal DocumentChangedEventArgs(string path) {
 			Path = path;
 		}

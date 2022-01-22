@@ -210,9 +210,9 @@ namespace PDFPatcher.Model
 		}
 
 		internal bool Contains(float x, float y) {
-			float x1, x2, y1, y2;
-			x1 = Left;
-			x2 = Right;
+			float y1, y2;
+			float x1 = Left;
+			float x2 = Right;
 			if (IsTopUp) {
 				y1 = Bottom;
 				y2 = Top;

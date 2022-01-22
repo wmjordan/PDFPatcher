@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
-using CC = System.Runtime.InteropServices.CallingConvention;
 
 namespace MuPdfSharp
 {
@@ -25,9 +25,9 @@ namespace MuPdfSharp
 		}
 		#endregion
 
-		internal MuStream(byte[] data) {
+		internal MuStream(ICollection<byte> data) {
 			var ctx = ContextHandle.Create();
-			_knownDataLength = data.Length;
+			_knownDataLength = data.Count;
 			_data = GCHandle.Alloc(data, GCHandleType.Pinned);
 			_stream = new StreamHandle(ctx, NativeMethods.OpenMemory(ctx, _data.AddrOfPinnedObject(), _knownDataLength));
 			_context = ctx;
@@ -66,9 +66,9 @@ namespace MuPdfSharp
 			}
 			else {
 				var b = new byte[initialSize];
-				int l;
 				using (var ms = new MemoryStream(initialSize))
 				using (var mw = new BinaryWriter(ms)) {
+					int l;
 					while ((l = NativeMethods.Read(_context, _stream, b, initialSize)) > 0) {
 						mw.Write(b, 0, l);
 						if (ms.Length >= __CompressionBomb && ms.Length / 200 > initialSize) {

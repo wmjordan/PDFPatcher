@@ -198,7 +198,7 @@ namespace PDFPatcher.Functions
 			}
 		}
 
-		void ExportControl_DoWork(object sender, DoWorkEventArgs e) {
+		static void ExportControl_DoWork(object sender, DoWorkEventArgs e) {
 			var a = e.Argument as object[];
 			var files = a[0] as string[];
 			var b = a[1] as string;

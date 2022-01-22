@@ -184,7 +184,7 @@ namespace PDFPatcher.Functions
 			_options.WritingDirection = (WritingDirection)_WritingDirectionBox.SelectedIndex;
 		}
 
-		void OcrExport(object sender, DoWorkEventArgs e) {
+		static void OcrExport(object sender, DoWorkEventArgs e) {
 			var a = e.Argument as object[];
 			var files = a[0] as string[];
 			var b = a[1] as string;
@@ -204,7 +204,7 @@ namespace PDFPatcher.Functions
 			}
 		}
 
-		void ImportOcr(object sender, DoWorkEventArgs e) {
+		static void ImportOcr(object sender, DoWorkEventArgs e) {
 			var a = e.Argument as object[];
 			var files = a[0] as string[];
 			var b = a[1] as string;

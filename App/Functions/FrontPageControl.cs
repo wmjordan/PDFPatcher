@@ -74,7 +74,7 @@ namespace PDFPatcher
 						 .Replace("<li></li>", GetLastFileList());
 		}
 
-		private string GetLastFileList() {
+		private static string GetLastFileList() {
 			var i = 0;
 			return String.Concat(AppContext.Recent.SourcePdfFiles.ConvertAll((s) => FileHelper.IsPathValid(s) && System.IO.File.Exists(s)
 				  ? String.Concat(@"<li><a href=""recent:", i++, "\">", SubstringAfter(s, '\\'), "</a></li>")

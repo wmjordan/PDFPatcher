@@ -11,7 +11,7 @@ namespace PDFPatcher.Functions
 		internal static string[] FilterIDs = new string[] { "_FontNameFilter", "_FontSizeFilter", "_FontPositionFilter", "_PageRangeFilter", "_TextFilter" };
 
 		readonly Dictionary<Type, IFilterConditionEditor> _filterEditors = new Dictionary<Type, IFilterConditionEditor>();
-		internal AutoBookmarkOptions.LevelAdjustmentOption Filter { get; private set; }
+		internal AutoBookmarkOptions.LevelAdjustmentOption Filter { get; }
 		AutoBookmarkCondition.MultiCondition conditions;
 
 		public EditAdjustmentForm(AutoBookmarkOptions.LevelAdjustmentOption filter) {

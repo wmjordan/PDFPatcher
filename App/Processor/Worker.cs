@@ -794,14 +794,13 @@ namespace PDFPatcher.Processor
 		}
 
 		internal static string RenameFile(string template, SourceItem.Pdf item) {
-			string t;
 			var s = item.FilePath;
 			var d = new PdfDictionary();
 			DocInfoImporter.UpdateInfoValue(d, PdfName.TITLE, item.DocInfo.Title, s);
 			DocInfoImporter.UpdateInfoValue(d, PdfName.AUTHOR, item.DocInfo.Author, s);
 			DocInfoImporter.UpdateInfoValue(d, PdfName.SUBJECT, item.DocInfo.Subject, s);
 			DocInfoImporter.UpdateInfoValue(d, PdfName.KEYWORDS, item.DocInfo.Keywords, s);
-			t = ReplaceTargetFileNameMacros(s.ToString(), template, d);
+			string t = ReplaceTargetFileNameMacros(s.ToString(), template, d);
 			if (FileHelper.IsPathValid(t) == false) {
 				return t;
 			}

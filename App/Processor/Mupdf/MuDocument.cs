@@ -256,7 +256,7 @@ namespace MuPdfSharp
 		struct FzFontFlags
 		{
 #pragma warning disable 649
-			internal uint flag;
+			private uint flag;
 #pragma warning restore 649
 			bool IsMono => (flag & 1) > 0;
 			bool IsSerif => (flag & 2) > 0;

@@ -71,12 +71,11 @@ namespace Devcorp.Controls.Design
 		/// The alpha value used for each colors.
 		/// </param>
 		public static Color[] GetWheelColors(int alpha) {
-			Color temp;
-			int colorCount = 6 * 256;
+			const int colorCount = 6 * 256;
 			var colors = new Color[colorCount];
 
 			for (int i = 0; i < colorCount; i++) {
-				temp = HSBtoColor((int)((double)(i * 255.0) / colorCount), 255, 255);
+				Color temp = HSBtoColor((int)((double)(i * 255.0) / colorCount), 255, 255);
 				colors[i] = Color.FromArgb(alpha, temp.R, temp.G, temp.B);
 			}
 
@@ -149,8 +148,6 @@ namespace Devcorp.Controls.Design
 		/// </summary>
 		/// <param name="hexColor">The desired hexadecimal color to convert.</param>
 		public static Color HexToColor(string hexColor) {
-			string r, g, b;
-
 			if (hexColor == String.Empty) {
 				return Color.Empty;
 			}
@@ -158,9 +155,9 @@ namespace Devcorp.Controls.Design
 			hexColor = hexColor.Trim();
 			if (hexColor[0] == '#') hexColor = hexColor.Substring(1, hexColor.Length - 1);
 
-			r = hexColor.Substring(0, 2);
-			g = hexColor.Substring(2, 2);
-			b = hexColor.Substring(4, 2);
+			string r = hexColor.Substring(0, 2);
+			string g = hexColor.Substring(2, 2);
+			string b = hexColor.Substring(4, 2);
 
 			r = Convert.ToString(16 * GetIntFromHex(r.Substring(0, 1)) + GetIntFromHex(r.Substring(1, 1)));
 			g = Convert.ToString(16 * GetIntFromHex(g.Substring(0, 1)) + GetIntFromHex(g.Substring(1, 1)));
@@ -935,7 +932,7 @@ namespace Devcorp.Controls.Design
 		/// Converts CIELab to CIEXYZ.
 		/// </summary>
 		public static CIEXYZ LabtoXYZ(double l, double a, double b) {
-			double theta = 6.0 / 29.0;
+			const double theta = 6.0 / 29.0;
 
 			double fy = (l + 16) / 116.0;
 			double fx = fy + (a / 500.0);

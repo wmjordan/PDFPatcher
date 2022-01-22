@@ -81,18 +81,18 @@ namespace PDFPatcher.Model
 			var r = new PageRangeCollection();
 			if (String.IsNullOrEmpty(rangeText) == false) {
 				var ranges = rangeText.Split(',', ';', ' ', '\t');
-				string startRange, endRange;
-				int startNum, endNum;
 
 				foreach (string range in ranges) {
 					if (range.Length == 0) {
 						continue;
 					}
-					startNum = endNum = 0;
+
+					int endNum;
+					int startNum = endNum = 0;
 					int rangeIndicator = range.Length > 1 ? range.IndexOf('-', 1) /*排除首位可能是负数页码的可能*/ : -1;
 					if (rangeIndicator > 0) {
-						startRange = range.Substring(0, rangeIndicator);
-						endRange = range.Substring(rangeIndicator + 1, range.Length - rangeIndicator - 1);
+						string startRange = range.Substring(0, rangeIndicator);
+						string endRange = range.Substring(rangeIndicator + 1, range.Length - rangeIndicator - 1);
 						if (startRange.TryParse(out startNum) && endRange.TryParse(out endNum) && startNum != 0 && endNum != 0) {
 							SetReverseNumber(ref startNum, maxValue);
 							SetReverseNumber(ref endNum, maxValue);

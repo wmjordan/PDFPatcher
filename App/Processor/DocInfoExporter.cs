@@ -82,16 +82,13 @@ namespace PDFPatcher.Processor
 				return r;
 			}
 			var dump = new PdfDictionary();
-			string t;
-			PdfName n;
-			PdfString s;
 			foreach (var item in info) {
-				s = item.Value as PdfString;
+				PdfString s = item.Value as PdfString;
 				if (s == null) {
 					continue;
 				}
-				n = item.Key;
-				t = s.Decode(encoding);
+				PdfName n = item.Key;
+				string t = s.Decode(encoding);
 				if (PdfName.TITLE.Equals(n)) {
 					r.Title = t;
 				}
@@ -186,10 +183,9 @@ namespace PDFPatcher.Processor
 				w.WriteAttributeString(Constants.Version, PdfHelper.GetPdfNameString(info.GetAsName(PdfName.VERSION)));
 			info = _reader.Trailer.GetAsDict(PdfName.INFO);
 			if (info?.Length > 0) {
-				string key, val;
 				foreach (var item in info) {
-					key = PdfName.DecodeName(item.Key.ToString());
-					val = item.Value.IsString() ? ((PdfString)item.Value).Decode(null) : item.Value.ToString();
+					string key = PdfName.DecodeName(item.Key.ToString());
+					string val = item.Value.IsString() ? ((PdfString)item.Value).Decode(null) : item.Value.ToString();
 					switch (key) {
 						case "Title": key = Constants.Info.Title; break;
 						case "Author": key = Constants.Info.Author; break;
@@ -323,11 +319,11 @@ namespace PDFPatcher.Processor
 
 		internal void ExtractPageSettings(XmlWriter w) {
 			int n = _reader.NumberOfPages;
-			PageSettings active = null, current;
-			int fromP = 1, toP;
+			PageSettings active = null;
+			int fromP = 1;
 			for (int i = 1; i <= n; i++) {
 				Tracker.IncrementProgress(1);
-				current = PageSettings.FromReader(_reader, i, _options.UnitConverter);
+				PageSettings current = PageSettings.FromReader(_reader, i, _options.UnitConverter);
 				if (PageSettings.HavingSameDimension(active, current) && i != n) {
 					continue;
 				}
@@ -337,7 +333,7 @@ namespace PDFPatcher.Processor
 						continue;
 					}
 				}
-				toP = i == n ? n : i - 1;
+				int toP = i == n ? n : i - 1;
 				active.PageRange = (fromP != toP) ? String.Concat(fromP.ToText(), '-', toP.ToText()) : toP.ToText();
 				w.WriteStartElement(Constants.Content.Page);
 				active.WriteXml(w);
@@ -398,12 +394,11 @@ namespace PDFPatcher.Processor
 			if (childBookmarks == null || childBookmarks.Count == 0) {
 				return;
 			}
-			string title, page;
-			bool open;
+
 			foreach (XmlElement item in childBookmarks) {
-				title = item.GetAttribute(Constants.BookmarkAttributes.Title);
-				page = item.GetAttribute(Constants.DestinationAttributes.Page);
-				open = item.GetAttribute(Constants.BookmarkAttributes.Open) == Constants.Boolean.True;
+				string title = item.GetAttribute(Constants.BookmarkAttributes.Title);
+				string page = item.GetAttribute(Constants.DestinationAttributes.Page);
+				bool open = item.GetAttribute(Constants.BookmarkAttributes.Open) == Constants.Boolean.True;
 
 				if (open != isOpen && item.HasChildNodes) {
 					OutlineManager.WriteSimpleBookmarkInstruction(w, "打开书签", open ? "是" : "否");

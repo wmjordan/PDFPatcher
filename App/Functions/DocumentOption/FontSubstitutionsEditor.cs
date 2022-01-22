@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using PDFPatcher.Common;
@@ -79,9 +78,8 @@ namespace PDFPatcher.Functions
 				_Fonts = FontUtility.InstalledFonts;
 			}
 			var l = _Fonts.Length;
-			string fn;
 			for (int i = 0; i < l; i++) {
-				fn = _Fonts[i].ToString();
+				string fn = _Fonts[i].ToString();
 				b.Add(fn);
 				if (String.Equals(fn, sf, StringComparison.OrdinalIgnoreCase)) {
 					cb.SelectedIndex = i + 1;

@@ -2,8 +2,6 @@
 using System.Drawing;
 using System.Drawing.Imaging;
 using FreeImageAPI;
-using CC = System.Runtime.InteropServices.CallingConvention;
-using DllImport = System.Runtime.InteropServices.DllImportAttribute;
 
 namespace MuPdfSharp
 {
@@ -19,11 +17,11 @@ namespace MuPdfSharp
 			_context = context;
 			_pixmap = pixmap;
 		}
-		public int Width { get; private set; }
-		public int Height { get; private set; }
-		public int Components { get; private set; }
+		public int Width { get; }
+		public int Height { get; }
+		public int Components { get; }
 		/// <summary>获取指向 Pixmap 数据内容的指针。</summary>
-		public IntPtr Samples { get; private set; }
+		public IntPtr Samples { get; }
 		/// <summary>获取 Pixmap 的边框。</summary>
 		public BBox BBox => NativeMethods.GetBBox(_context, _pixmap);
 		/// <summary>number of colorants (components, less any spots and alpha)。</summary>

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Xml;
+using System.Xml.XPath;
 using iTextSharp.text.pdf;
 using iTextSharp.text.xml.xmp;
 using PDFPatcher.Common;
@@ -48,7 +49,7 @@ namespace PDFPatcher.Processor
 			_options = options;
 		}
 
-		internal DocInfoImporter(ImporterOptions importerOptions, PdfReader pdf, PatcherOptions patcherOptions, BookmarkRootElement bookmarkRoot) {
+		internal DocInfoImporter(ImporterOptions importerOptions, PdfReader pdf, PatcherOptions patcherOptions, IXPathNavigable bookmarkRoot) {
 			var v = patcherOptions.ViewerPreferences;
 			var o = new ExporterOptions() {
 				ExportBookmarks = bookmarkRoot == null
@@ -126,7 +127,7 @@ namespace PDFPatcher.Processor
 		/// </summary>
 		/// <param name="source"></param>
 		/// <param name="bookmarkPageShift"></param>
-		private void PreprocessBookmark(BookmarkContainer source, int bookmarkPageShift) {
+		private void PreprocessBookmark(XmlNode source, int bookmarkPageShift) {
 			foreach (BookmarkElement b in source.ChildNodes) {
 				if (b == null) {
 					continue;
@@ -415,7 +416,7 @@ namespace PDFPatcher.Processor
 			}
 		}
 
-		private static void ImportBorder(string border, PdfAnnotation ann) {
+		private static void ImportBorder(string border, PdfDictionary ann) {
 			var bs = ToInt32Array(border);
 			PdfBorderArray a;
 			if (bs == null) {
@@ -696,9 +697,9 @@ namespace PDFPatcher.Processor
 			return bs;
 		}
 
-		private static PdfDashPattern GetPdfDashPattern(int[] p) {
+		private static PdfDashPattern GetPdfDashPattern(IList<int> p) {
 			PdfDashPattern dp;
-			switch (p.Length) {
+			switch (p.Count) {
 				case 1: dp = new PdfDashPattern(p[0]); break;
 				case 2: dp = new PdfDashPattern(p[0], p[1]); break;
 				case 3: dp = new PdfDashPattern(p[0], p[1], p[2]); break;
@@ -716,10 +717,10 @@ namespace PDFPatcher.Processor
 			if (ps == null) {
 				return;
 			}
-			PdfName n;
-			PdfObject v;
 
 			foreach (XmlAttribute item in ps.Attributes) {
+				PdfName n;
+				PdfObject v;
 				switch (item.Name) {
 					case Constants.PageLayout:
 						v = ValueHelper.MapValue(item.Value, Constants.PageLayoutType.Names, Constants.PageLayoutType.PdfNames, PdfName.NONE);
@@ -855,18 +856,15 @@ namespace PDFPatcher.Processor
 			}
 
 			Tracker.TraceMessage("导入页面设置。");
-			PdfDictionary p;
 			int pn = pdf.NumberOfPages;
-			float[] mb, cb, tb, ab, bb;
-			int pageFilter;
 			foreach (XmlElement item in ps) {
 				List<PageRange> ranges = PageRangeCollection.Parse(item.GetAttribute(Constants.PageRange), 1, pn, true);
-				mb = ToSingleArray(item.GetAttribute(Constants.Content.PageSettings.MediaBox), true);
-				cb = ToSingleArray(item.GetAttribute(Constants.Content.PageSettings.CropBox), true);
-				tb = ToSingleArray(item.GetAttribute(Constants.Content.PageSettings.TrimBox), true);
-				ab = ToSingleArray(item.GetAttribute(Constants.Content.PageSettings.ArtBox), true);
-				bb = ToSingleArray(item.GetAttribute(Constants.Content.PageSettings.BleedBox), true);
-				pageFilter = ValueHelper.MapValue(item.GetAttribute(Constants.PageFilterTypes.ThisName),
+				float[] mb = ToSingleArray(item.GetAttribute(Constants.Content.PageSettings.MediaBox), true);
+				float[] cb = ToSingleArray(item.GetAttribute(Constants.Content.PageSettings.CropBox), true);
+				float[] tb = ToSingleArray(item.GetAttribute(Constants.Content.PageSettings.TrimBox), true);
+				float[] ab = ToSingleArray(item.GetAttribute(Constants.Content.PageSettings.ArtBox), true);
+				float[] bb = ToSingleArray(item.GetAttribute(Constants.Content.PageSettings.BleedBox), true);
+				int pageFilter = ValueHelper.MapValue(item.GetAttribute(Constants.PageFilterTypes.ThisName),
 					Constants.PageFilterTypes.Names,
 					Constants.PageFilterTypes.Values, -1);
 				if (item.GetAttribute(Constants.Content.PageSettings.Rotation).TryParse(out int rotate)) {
@@ -880,7 +878,7 @@ namespace PDFPatcher.Processor
 						if (pageFilter != -1 && i % 2 != pageFilter) {
 							continue;
 						}
-						p = pdf.GetPageN(i);
+						PdfDictionary p = pdf.GetPageN(i);
 						ImportPageBox(mb, p, PdfName.MEDIABOX);
 						ImportPageBox(cb, p, PdfName.CROPBOX);
 						ImportPageBox(tb, p, PdfName.TRIMBOX);

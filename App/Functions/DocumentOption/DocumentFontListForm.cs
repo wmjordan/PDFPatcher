@@ -142,7 +142,7 @@ namespace PDFPatcher.Functions
 			public string Name { get; }
 			public int FirstPage { get; }
 			public int Reference { get; private set; }
-			public bool Embedded { get; set; }
+			public bool Embedded { get; }
 
 			public PageFont(string name, int firstPage, bool embedded) {
 				Name = name;

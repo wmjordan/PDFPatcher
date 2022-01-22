@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using iTextSharp.text.pdf;
 using PDFPatcher.Model;
 
@@ -64,9 +63,8 @@ namespace PDFPatcher.Processor
 
 		private static bool ProcessCommands(IList<PdfPageCommand> parent) {
 			var r = false;
-			EnclosingCommand ec;
 			for (int i = parent.Count - 1; i >= 0; i--) {
-				ec = parent[i] as EnclosingCommand;
+				EnclosingCommand ec = parent[i] as EnclosingCommand;
 				if (ec == null) {
 					continue;
 				}

@@ -61,13 +61,12 @@ namespace PDFPatcher.Processor
 
 		private void ImportOcrResult(DocProcessorContext context, XmlReader x) {
 			int l = 0;
-			int p;
 			var pdf = context.Pdf;
 			int pn = pdf.NumberOfPages;
 			var xd = new XmlDocument();
-			PdfDictionary page;
 			while (x.EOF == false) {
 				// 读取一页识别结果
+				int p;
 				if (x.MoveToContent() != XmlNodeType.Element
 					|| x.Name != Constants.Ocr.Result
 					|| x.GetAttribute(Constants.Content.PageNumber).TryParse(out p) == false
@@ -78,7 +77,7 @@ namespace PDFPatcher.Processor
 				using (var r = x.ReadSubtree()) {
 					xd.Load(r);
 				}
-				page = pdf.GetPageN(p);
+				PdfDictionary page = pdf.GetPageN(p);
 				var cp = new PdfPageCommandProcessor();
 				cp.ProcessContent(pdf.GetPageContent(p), page.GetAsDict(PdfName.RESOURCES));
 				var commands = cp.Commands;
@@ -146,9 +145,8 @@ namespace PDFPatcher.Processor
 		}
 
 		private static PdfIndirectReference CreateOcrFont(DocProcessorContext context, PdfDictionary d, bool isVertical) {
-			PdfIndirectReference fontRef;
 			var fontName = isVertical ? OcrFontV : OcrFont;
-			fontRef = d.GetAsIndirectObject(fontName);
+			PdfIndirectReference fontRef = d.GetAsIndirectObject(fontName);
 			if (fontRef == null || (d.GetDirectObject(fontName) as PdfDictionary) == null) {
 				fontRef = CreateOcrFont(context, isVertical);
 				d.Put(fontName, fontRef);
@@ -206,7 +204,7 @@ namespace PDFPatcher.Processor
 			return n;
 		}
 
-		static int ImportImageOcrResult(EnclosingCommand container, XmlElement result) {
+		static int ImportImageOcrResult(IPdfPageCommandContainer container, XmlElement result) {
 			int w = 0, h = 0;
 			var sc = container.Commands;
 			var chars = result.SelectNodes(Constants.Ocr.Content);
@@ -240,9 +238,9 @@ namespace PDFPatcher.Processor
 				)); // 设置初始偏移
 			var fSize = -1f;
 			bool isV = false, hasHFont = false, hasVFont = false;
-			PdfName fn;
 			foreach (var item in chars) {
 				if (info.GetInfo(item as XmlElement) && String.IsNullOrEmpty(info.Text) == false) {
+					PdfName fn;
 					if (info.IsVertical) {
 						hasVFont = true;
 						fn = OcrFontV;
@@ -269,8 +267,8 @@ namespace PDFPatcher.Processor
 		sealed class OcrContentInfo
 		{
 			internal const int A1 = 0, A2 = 1, B1 = 2, B2 = 3, DX = 4, DY = 5; // 矩阵数组索引
-			internal int ImageWidth { get; private set; }
-			internal int ImageHeight { get; private set; }
+			private int ImageWidth { get; }
+			private int ImageHeight { get; }
 			internal string Text { get; private set; }
 			internal int DeltaX => _dx;
 			internal int DeltaY => _dy;

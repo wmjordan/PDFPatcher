@@ -9,9 +9,9 @@ namespace PDFPatcher.Model
 {
 	public abstract class SourceItem
 	{
-		public FilePath FilePath { get; private set; }
-		public string FileName { get; private set; }
-		public string FolderName { get; private set; }
+		public FilePath FilePath { get; }
+		public string FileName { get; }
+		public string FolderName { get; }
 		public BookmarkSettings Bookmark { get; set; }
 		public int PageCount { get; private set; }
 		public abstract int FileSize { get; }
@@ -240,7 +240,7 @@ namespace PDFPatcher.Model
 
 			public string PageRanges { get; set; }
 			public bool ImportImagesOnly { get; set; }
-			public ImageExtracterOptions ExtractImageOptions { get; private set; }
+			public ImageExtracterOptions ExtractImageOptions { get; }
 			public Model.GeneralInfo DocInfo { get; private set; }
 			public override ItemType Type => ItemType.Pdf;
 			public override int FileSize {
@@ -324,7 +324,7 @@ namespace PDFPatcher.Model
 				return n;
 			}
 
-			private static void AddSubDirectoriesAndFiles(string folderPath, List<SourceItem> list) {
+			private static void AddSubDirectoriesAndFiles(string folderPath, ICollection<SourceItem> list) {
 				var fl = Array.FindAll(Directory.GetFiles(folderPath), (i) => {
 					var ext = Path.GetExtension(i).ToLowerInvariant();
 					return Constants.FileExtensions.Pdf == ext
@@ -345,7 +345,7 @@ namespace PDFPatcher.Model
 				}
 			}
 
-			static void AddFiles(string folderPath, List<SourceItem> list) {
+			static void AddFiles(string folderPath, ICollection<SourceItem> list) {
 				try {
 					var fl = Directory.GetFiles(folderPath);
 					SortFileList(fl);
@@ -361,7 +361,7 @@ namespace PDFPatcher.Model
 				catch (IOException) { }
 			}
 
-			static void AddSubDirectories(string folderPath, List<SourceItem> list) {
+			static void AddSubDirectories(string folderPath, ICollection<SourceItem> list) {
 				try {
 					foreach (var item in Directory.EnumerateDirectories(folderPath)) {
 						var f = new Folder(item, true);
@@ -498,13 +498,13 @@ namespace PDFPatcher.Model
 			return true;
 		}
 
-		static int CopyItem(string[] fileList, List<string> list, int position) {
+		static int CopyItem(string[] fileList, ICollection<string> list, int position) {
 			list.CopyTo(fileList, position);
 			position += list.Count;
 			return position;
 		}
 
-		static bool MatchCajPatternAddPath(string path, string text, string pattern, List<string> container) {
+		static bool MatchCajPatternAddPath(string path, string text, string pattern, ICollection<string> container) {
 			if (MatchCajPattern(text, pattern)) {
 				container.Add(path);
 				return true;

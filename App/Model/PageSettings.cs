@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Xml.Serialization;
+using iTextSharp.text;
 using iTextSharp.text.pdf;
 using PDFPatcher.Common;
 
@@ -36,9 +37,8 @@ namespace PDFPatcher.Model
 		public int Rotation { get; set; }
 
 		static internal PageSettings FromReader(PdfReader reader, int pageIndex, UnitConverter converter) {
-			iTextSharp.text.Rectangle b;
 			var s = new PageSettings();
-			b = reader.GetPageSize(pageIndex);
+			Rectangle b = reader.GetPageSize(pageIndex);
 			s.PageSize = ConvertPageSize(b, converter);
 			b = reader.GetCropBox(pageIndex);
 			s.CropBox = (b != null) ? ConvertPageSize(b, converter) : null;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using System.Xml.XPath;
 using PDFPatcher.Model;
 
 namespace PDFPatcher.Functions
@@ -13,7 +14,7 @@ namespace PDFPatcher.Functions
 		public string SourceFilePath => _SourceFileBox.Text;
 		public string TargetFilePath => _TargetFileBox.Text;
 
-		public SavePdfForm(string sourcePath, string targetPath, PdfInfoXmlDocument bookmarkDocument) {
+		public SavePdfForm(string sourcePath, string targetPath, IXPathNavigable bookmarkDocument) {
 			InitializeComponent();
 			if (String.IsNullOrEmpty(sourcePath) == false) {
 				_SourceFileBox.Text = sourcePath;

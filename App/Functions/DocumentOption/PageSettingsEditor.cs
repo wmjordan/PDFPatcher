@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using PDFPatcher.Common;
@@ -140,7 +137,7 @@ namespace PDFPatcher.Functions
 			};
 		}
 
-		private void ShowMenuForClickedCell(CellClickEventArgs args, ContextMenuStrip menu) {
+		private void ShowMenuForClickedCell(CellEventArgs args, ToolStripDropDown menu) {
 			var b = _PageSettingsBox.GetSubItem(args.RowIndex, args.ColumnIndex).Bounds;
 			menu.Show(_PageSettingsBox, b.Left, b.Bottom);
 		}

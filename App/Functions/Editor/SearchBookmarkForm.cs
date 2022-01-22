@@ -147,9 +147,8 @@ namespace PDFPatcher.Functions
 			var undo = new UndoActionGroup();
 			var p = new ReplaceTitleTextProcessor(matcher, replacement);
 			try {
-				XmlElement x;
 				foreach (XmlNode item in si) {
-					x = item as XmlElement;
+					XmlElement x = item as XmlElement;
 					if (x == null) {
 						continue;
 					}

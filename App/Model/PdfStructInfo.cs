@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Xml;
 namespace PDFPatcher.Model
 {
-	struct PdfStructInfo
+	readonly struct PdfStructInfo
 	{
 		static readonly Dictionary<string, PdfStructInfo> _Info = InitStructInfo();
 		readonly string _Name;
@@ -50,7 +49,7 @@ namespace PDFPatcher.Model
 			return d;
 		}
 
-		private static void AddSubItems(Dictionary<string, PdfStructInfo> d, XmlElement element) {
+		private static void AddSubItems(IDictionary<string, PdfStructInfo> d, XmlElement element) {
 			if (element.HasChildNodes == false) {
 				return;
 			}
@@ -74,7 +73,7 @@ namespace PDFPatcher.Model
 			}
 		}
 
-		private static void AddItem(Dictionary<string, PdfStructInfo> d, string key, PdfStructInfo item) {
+		private static void AddItem(IDictionary<string, PdfStructInfo> d, string key, PdfStructInfo item) {
 			if (d.ContainsKey(key)) {
 				System.Diagnostics.Debug.WriteLine("已添加 " + key);
 				return;

@@ -37,14 +37,13 @@ namespace PDFPatcher.Processor.Imaging
 			if (bmp.PixelFormat != PixelFormat.Format24bppRgb && bmp.PixelFormat != PixelFormat.Format32bppArgb) {
 				throw new InvalidOperationException("仅支持 Format24bppRgb 和 Format32bppArgb。");
 			}
-			BitmapData bmpData;
+
 			int bw = bmp.PixelFormat == PixelFormat.Format24bppRgb ? 3 : 4;
-			byte* ps, pl;
-			bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, bmp.PixelFormat);
-			pl = (byte*)bmpData.Scan0;
+			BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, bmp.PixelFormat);
+			byte* pl = (byte*)bmpData.Scan0;
 			int w = bmp.Width, h = bmp.Height;
 			for (int y = 0; y < h; y++) {
-				ps = pl;
+				byte* ps = pl;
 				if (bw == 3) {
 					for (int x = 0; x < w; x++) {
 						hs.Add((*ps) + (*(++ps) << 8) + (*(++ps) << 16) + (0xFF << 24));
@@ -153,9 +152,8 @@ namespace PDFPatcher.Processor.Imaging
 			var sourceData = source.LockBits(false);
 			var targetData = result.LockBits(true);
 			int bw = source.PixelFormat == PixelFormat.Format24bppRgb ? 3 : 4;
-			byte* ps, pr, src, res;
-			src = (byte*)sourceData.Scan0;
-			res = (byte*)targetData.Scan0;
+			byte* src = (byte*)sourceData.Scan0;
+			byte* res = (byte*)targetData.Scan0;
 			var rp = result.Palette;
 			for (int i = 0; i < pallette.Length; i++) {
 				rp.Entries[i] = pallette[i];
@@ -163,8 +161,8 @@ namespace PDFPatcher.Processor.Imaging
 			result.Palette = rp;
 			int w = source.Width, h = source.Height;
 			for (int y = 0; y < h; y++) {
-				ps = src;
-				pr = res;
+				byte* ps = src;
+				byte* pr = res;
 				if (bw == 3) {
 					for (int x = 0; x < w; x++) {
 						*pr = pi[(*ps) + (*(++ps) << 8) + (*(++ps) << 16) + (0xFF << 24)];
@@ -265,21 +263,17 @@ namespace PDFPatcher.Processor.Imaging
 			byte[] destinationBuffer = new byte[dstStride * height];
 			int srcIx = 0;
 			int dstIx = 0;
-			byte bit;
-			byte pix8;
-
-			int newPixel, i, j;
 
 			// Iterate lines
 			for (int y = 0; y < height; y++, srcIx += srcStride, dstIx += dstStride) {
-				bit = 128;
-				i = srcIx;
-				j = dstIx;
-				pix8 = 0;
+				byte bit = 128;
+				int i = srcIx;
+				int j = dstIx;
+				byte pix8 = 0;
 				// Iterate pixels
 				for (int x = 0; x < width; x++, i += 3) {
 					// Compute pixel brightness (i.e. total of Red, Green, and Blue values)
-					newPixel = sourceBuffer[i] + sourceBuffer[i + 1] + sourceBuffer[i + 2];
+					int newPixel = sourceBuffer[i] + sourceBuffer[i + 1] + sourceBuffer[i + 2];
 
 					if (newPixel > threshold)
 						pix8 |= bit;

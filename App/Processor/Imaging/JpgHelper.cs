@@ -99,10 +99,10 @@ namespace PDFPatcher.Processor.Imaging
 			public ExifReader(string fileName)
 				: this(new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) { }
 
-			public ExifReader(Stream stream)
+			private ExifReader(Stream stream)
 				: this(stream, false) { }
 
-			public ExifReader(Stream stream, bool leaveOpen) {
+			private ExifReader(Stream stream, bool leaveOpen) {
 				if (stream == null)
 					throw new ArgumentNullException("stream");
 
@@ -320,7 +320,7 @@ namespace PDFPatcher.Processor.Imaging
 				return BitConverter.ToInt16(data, 0);
 			}
 
-			private sbyte ToSByte(byte[] data) {
+			private static sbyte ToSByte(byte[] data) {
 				// An sbyte should just be a byte with an offset range.
 				return (sbyte)(data[0] - byte.MaxValue);
 			}
@@ -462,7 +462,7 @@ namespace PDFPatcher.Processor.Imaging
 				return GetTagValue((ushort)tag, out result);
 			}
 
-			public bool GetTagValue<T>(ushort tagId, out T result) {
+			private bool GetTagValue<T>(ushort tagId, out T result) {
 				// All useful EXIF tags are stored in the ifd0 catalogue. The ifd1 catalogue is only for thumbnail retrieval.            
 				Initialize();
 				return GetTagValue(_ifd0Catalogue, tagId, out result);

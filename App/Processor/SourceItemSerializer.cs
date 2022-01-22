@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Xml;
 using PDFPatcher.Common;
 using PDFPatcher.Model;
 
@@ -28,7 +29,7 @@ namespace PDFPatcher.Processor
 			}
 		}
 
-		private static void SerializeSourceItem(PdfInfoXmlDocument doc, BookmarkContainer container, SourceItem item) {
+		private static void SerializeSourceItem(PdfInfoXmlDocument doc, XmlNode container, SourceItem item) {
 			var e = doc.CreateBookmark(item.Bookmark ?? __EmptyBookmark);
 			e.SetValue(Constants.DestinationAttributes.Path, item.FilePath.ToString());
 			if (item.Type == SourceItem.ItemType.Pdf) {
@@ -58,7 +59,7 @@ namespace PDFPatcher.Processor
 			return l;
 		}
 
-		private static void DeserializeSourceItem(List<SourceItem> list, BookmarkElement bookmark) {
+		private static void DeserializeSourceItem(ICollection<SourceItem> list, BookmarkElement bookmark) {
 			var b = new BookmarkSettings(bookmark);
 			var p = bookmark.GetValue(Constants.DestinationAttributes.Path);
 			var s = SourceItem.Create(p, false);

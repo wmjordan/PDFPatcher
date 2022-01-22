@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using PDFPatcher.Common;
 
 namespace PDFPatcher.Model.PdfPath
@@ -66,7 +64,7 @@ namespace PDFPatcher.Model.PdfPath
 		{
 			public PathValueType ValueType => PathValueType.String;
 
-			public string Value { get; private set; }
+			public string Value { get; }
 
 			public string LiteralValue => Value;
 
@@ -79,7 +77,7 @@ namespace PDFPatcher.Model.PdfPath
 		{
 			public PathValueType ValueType => PathValueType.Number;
 
-			public double Value { get; private set; }
+			public double Value { get; }
 
 			public string LiteralValue => Value.ToText();
 
@@ -92,7 +90,7 @@ namespace PDFPatcher.Model.PdfPath
 		{
 			public PathValueType ValueType => PathValueType.Boolean;
 
-			public bool Value { get; private set; }
+			public bool Value { get; }
 
 			public string LiteralValue => Value.ToString();
 

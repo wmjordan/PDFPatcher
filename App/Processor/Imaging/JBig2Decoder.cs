@@ -10,7 +10,6 @@ namespace PDFPatcher.Processor.Imaging
 
 		internal static byte[] Decode(byte[] data, byte[] globals) {
 			IntPtr ctxptr = IntPtr.Zero, globalptr = IntPtr.Zero;
-			IntPtr imageptr;
 			byte[] decodedData = null;
 			int c;
 
@@ -23,6 +22,7 @@ namespace PDFPatcher.Processor.Imaging
 				}
 				c = NativeMethods.ReadData(ctxptr, data, (uint)data.Length);
 				c = NativeMethods.CompletePage(ctxptr);
+				IntPtr imageptr;
 				if ((imageptr = NativeMethods.Decode(ctxptr)) != IntPtr.Zero) {
 					var image = Common.PInvokeHelper.Unwrap<JBig2Image>(imageptr);
 					decodedData = image.GetData();

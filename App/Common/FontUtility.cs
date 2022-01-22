@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace PDFPatcher.Common
@@ -25,10 +24,9 @@ namespace PDFPatcher.Common
 			var uf = new List<FriendlyFontName>(); // 可能包含中文的字体
 			var of = new List<FriendlyFontName>(); // 其他字体
 			var fs = FontHelper.GetInstalledFonts(false);
-			string dn /*显示名称*/, fn /*字体名称*/;
 			foreach (var item in fs.Keys) {
-				fn = item;
-				dn = _boldItalic.Replace(fn, "(粗斜体)");
+				string fn = item /*字体名称*/;
+				string dn = _boldItalic.Replace(fn, "(粗斜体)") /*字体名称*/;
 				dn = _italic.Replace(dn, "(斜体)");
 				dn = _bold.Replace(dn, "(粗体)");
 				if (dn[0] > 0xFF) {
@@ -60,7 +58,7 @@ namespace PDFPatcher.Common
 			#region IComparable<FriendlyFontName> 成员
 
 			int IComparable<FriendlyFontName>.CompareTo(FriendlyFontName other) {
-				return OriginalName.CompareTo(other.OriginalName);
+				return String.Compare(OriginalName, other.OriginalName, StringComparison.Ordinal);
 			}
 
 			#endregion

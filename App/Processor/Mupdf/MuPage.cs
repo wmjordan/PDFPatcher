@@ -19,7 +19,7 @@ namespace MuPdfSharp
 		bool _flattened;
 
 		/// <summary>获取当前页面的页码。</summary>
-		public int PageNumber { get; private set; }
+		public int PageNumber { get; }
 		/// <summary>获取当前页面的尺寸（左下角坐标置为“0,0”）。如需获取页面字典中的原始可视区域，请使用 <see cref="VisualBound"/> 属性。</summary>
 		public Rectangle Bound => NativeMethods.BoundPage(_context, _page);
 		/// <summary>获取当前页面可视区域的坐标及尺寸。</summary>

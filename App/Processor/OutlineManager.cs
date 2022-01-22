@@ -86,7 +86,7 @@ namespace PDFPatcher.Processor
 			return doc.DocumentElement;
 		}
 
-		private static Object[] CreateOutlines(PdfWriter writer, PdfIndirectReference parent, XmlElement kids, int maxPageNumber, bool namedAsNames) {
+		private static Object[] CreateOutlines(PdfWriter writer, PdfObject parent, XmlNode kids, int maxPageNumber, bool namedAsNames) {
 			var bookmarks = kids.SelectNodes(Constants.Bookmark);
 			var refs = new PdfIndirectReference[bookmarks.Count];
 			for (int k = 0; k < refs.Length; ++k)
@@ -254,28 +254,27 @@ namespace PDFPatcher.Processor
 		}
 
 		internal static void ImportSimpleBookmarks(TextReader source, PdfInfoXmlDocument target) {
-			string cmd, cmdData, s, title, indentString = "\t", pnText;
+			string indentString = "\t";
 			bool isOpen = false; // 书签是否默认打开
-			int pageOffset = 0, pageNum;
-			int currentIndent = -1, indent, p;
+			int pageOffset = 0;
+			int currentIndent = -1;
 			int lineNum = 0;
-			char[] digits;
 			var pattern = new Regex(@"(.+?)[\s\.…　\-_]*(-?[0-9０１２３４５６７８９]+)?\s*$", RegexOptions.Compiled);
 			var docInfo = target.InfoNode;
 			var root = target.BookmarkRoot;
 			var pageLabels = target.PageLabelRoot;
 			BookmarkContainer currentBookmark = root;
-			BookmarkElement bookmark;
 			while (source.Peek() != -1) {
-				s = source.ReadLine();
+				string s = source.ReadLine();
 				lineNum++;
 				if (s.Trim().Length == 0) {
 					continue;
 				}
 
+				int p;
 				if ((s[0] == '#' || s[0] == '＃') && (p = s.IndexOfAny(__cmdIdentifiers)) != -1) {
-					cmd = s.Substring(1, p - 1);
-					cmdData = s.Substring(p + 1);
+					string cmd = s.Substring(1, p - 1);
+					string cmdData = s.Substring(p + 1);
 					switch (cmd) {
 						case "首页页码":
 							if (cmdData.TryParse(out pageOffset)) {
@@ -336,8 +335,8 @@ namespace PDFPatcher.Processor
 					}
 					continue;
 				}
-				indent = p = 0;
-				while (s.IndexOf(indentString, p) == p) {
+				int indent = p = 0;
+				while (s.IndexOf(indentString, p, StringComparison.Ordinal) == p) {
 					p += indentString.Length;
 					indent++;
 				}
@@ -345,21 +344,22 @@ namespace PDFPatcher.Processor
 				if (m.Success == false) {
 					continue;
 				}
-				title = m.Groups[1].Value;
-				pnText = m.Groups[2].Value;
+				string title = m.Groups[1].Value;
+				string pnText = m.Groups[2].Value;
+				int pageNum;
 				if (pnText.Length == 0) {
 					pageNum = 0;
 				}
 				else {
 					if (pnText.IndexOfAny(__fullWidthNums) != -1) {
-						digits = Array.ConvertAll(m.Groups[2].Value.ToCharArray(), d => ValueHelper.MapValue(d, __fullWidthNums, __halfWidthNums, d));
+						char[] digits = Array.ConvertAll(m.Groups[2].Value.ToCharArray(), d => ValueHelper.MapValue(d, __fullWidthNums, __halfWidthNums, d));
 						pnText = new string(digits, 0, digits.Length);
 					}
 					if (pnText.TryParse(out pageNum)) {
 						pageNum += pageOffset;
 					}
 				}
-				bookmark = target.CreateBookmark();
+				BookmarkElement bookmark = target.CreateBookmark();
 				if (indent == currentIndent) {
 					currentBookmark.ParentNode.AppendChild(bookmark);
 				}
