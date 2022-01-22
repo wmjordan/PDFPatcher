@@ -616,7 +616,7 @@ internal sealed class PdfViewerControl : ImageBoxEx
 			g.FillRectangle(Brushes.FloralWhite, vp);
 		}
 		else {
-			using SolidBrush b = new(BitmapHelper.Tint(Color.Gainsboro, TintColor));
+			using SolidBrush b = new(Color.Gainsboro.Tint(TintColor));
 			g.FillRectangle(b, vp);
 		}
 

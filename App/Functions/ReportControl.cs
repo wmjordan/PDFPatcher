@@ -71,13 +71,13 @@ public partial class ReportControl : UserControl
 				goto default;
 			case Tracker.Category.ImportantMessage:
 				_LogBox.SelectionColor = Color.DarkBlue;
-				FormHelper.InsertLinkedText(_LogBox, text);
+				_LogBox.InsertLinkedText(text);
 				_LogBox.AppendText(Environment.NewLine);
 				break;
 			case Tracker.Category.Alert:
 				_LogBox.SelectionFont = new Font(_LogBox.Font, FontStyle.Bold);
 				_LogBox.SelectionColor = Color.Blue;
-				FormHelper.InsertLinkedText(_LogBox, text);
+				_LogBox.InsertLinkedText(text);
 				_LogBox.AppendText(Environment.NewLine);
 				break;
 			case Tracker.Category.Error:

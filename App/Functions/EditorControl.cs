@@ -130,7 +130,7 @@ namespace PDFPatcher.Functions
 				new ToolStripMenuItem { Name = Constants.Coordinates.Unchanged, Text = Constants.Coordinates.Unchanged });
 			_ChangeZoomRate.DropDownItemClicked += _MainToolbar_ItemClicked;
 			_ChangeCase.DropDownItemClicked += (object s, ToolStripItemClickedEventArgs args) => {
-				FormHelper.HidePopupMenu(args.ClickedItem);
+				args.ClickedItem.HidePopupMenu();
 				_EditMenu.Hide();
 				int i = Array.IndexOf(SetCaseProcessor.CaseNames, args.ClickedItem.Text);
 				if (i != -1) {
@@ -336,7 +336,7 @@ namespace PDFPatcher.Functions
 		}
 
 		private void _MainToolbar_ItemClicked(object sender, ToolStripItemClickedEventArgs e) {
-			FormHelper.HidePopupMenu(e.ClickedItem);
+			e.ClickedItem.HidePopupMenu();
 			ExecuteCommand(e.ClickedItem.Name);
 		}
 
@@ -546,7 +546,7 @@ namespace PDFPatcher.Functions
 		}
 
 		private void _OpenButton_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e) {
-			FormHelper.HidePopupMenu(e.ClickedItem);
+			e.ClickedItem.HidePopupMenu();
 			ExecuteCommand(Commands.OpenFile, e.ClickedItem.ToolTipText);
 		}
 
@@ -639,11 +639,11 @@ namespace PDFPatcher.Functions
 		}
 
 		private void _BookmarkBox_DragEnter(object sender, DragEventArgs e) {
-			FormHelper.FeedbackDragFileOver(e, Constants.FileExtensions.PdfAndAllBookmarkExtension);
+			e.FeedbackDragFileOver(Constants.FileExtensions.PdfAndAllBookmarkExtension);
 		}
 
 		private void _BookmarkBox_DragDrop(object sender, DragEventArgs e) {
-			if (FormHelper.DropFileOver(this, e, Constants.FileExtensions.PdfAndAllBookmarkExtension)) {
+			if (this.DropFileOver(e, Constants.FileExtensions.PdfAndAllBookmarkExtension)) {
 				_controller.LoadDocument(Text, false);
 			}
 		}

@@ -127,28 +127,28 @@ internal static class Worker
 							Tracker.TraceMessage(Tracker.Category.Error, "页面" + i + "的尺寸为空。");
 						}
 						else if (options.FileFormat == ImageFormat.Tiff) {
-							using Bitmap b = BitmapHelper.ToBitonal(bmp);
-							BitmapHelper.SaveAs(b, fn);
+							using Bitmap b = bmp.ToBitonal();
+							b.SaveAs(fn);
 						}
 						else {
-							Color[] uc = BitmapHelper.GetPalette(bmp);
+							Color[] uc = bmp.GetPalette();
 							switch (uc.Length) {
 								case > 256 when options.Quantize: {
 										using Bitmap b = WuQuantizer.QuantizeImage(bmp);
-										BitmapHelper.SaveAs(b, fn);
+										b.SaveAs(fn);
 										break;
 									}
-								case <= 256 when BitmapHelper.IsIndexed(bmp) == false: {
-										using Bitmap b = BitmapHelper.ToIndexImage(bmp, uc);
-										BitmapHelper.SaveAs(b, fn);
+								case <= 256 when bmp.IsIndexed() == false: {
+										using Bitmap b = bmp.ToIndexImage(uc);
+										b.SaveAs(fn);
 										break;
 									}
 								default: {
 										if (options.FileFormat == ImageFormat.Jpeg) {
-											JpgHelper.Save(bmp, fn, options.JpegQuality);
+											bmp.Save(fn, options.JpegQuality);
 										}
 										else {
-											BitmapHelper.SaveAs(bmp, fn);
+											bmp.SaveAs(fn);
 										}
 
 										break;

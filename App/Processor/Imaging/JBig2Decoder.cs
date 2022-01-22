@@ -30,7 +30,7 @@ internal static class JBig2Decoder
 				return decodedData;
 			}
 
-			JBig2Image image = PInvokeHelper.Unwrap<JBig2Image>(imageptr);
+			JBig2Image image = imageptr.Unwrap<JBig2Image>();
 			decodedData = image.GetData();
 			NativeMethods.ReleasePage(ctxptr, imageptr);
 
