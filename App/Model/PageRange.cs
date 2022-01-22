@@ -49,18 +49,17 @@ internal struct PageRange : IEnumerable<int>
 	{
 		private readonly bool _isIncremental;
 		private readonly int _start, _end;
-		private int _Current;
 
 		public PageRangeEnumerator(int start, int end) {
 			_start = start;
 			_isIncremental = start < end;
 			_end = end;
-			_Current = _isIncremental ? start - 1 : start + 1;
+			Current = _isIncremental ? start - 1 : start + 1;
 		}
 
 		#region IEnumerator<int> 成员
 
-		public int Current => _Current;
+		public int Current { get; private set; }
 
 		#endregion
 
@@ -72,25 +71,25 @@ internal struct PageRange : IEnumerable<int>
 
 		#region IEnumerator 成员
 
-		object IEnumerator.Current => _Current;
+		object IEnumerator.Current => Current;
 
 		public bool MoveNext() {
-			if (_isIncremental && _Current < _end) {
-				_Current++;
+			if (_isIncremental && Current < _end) {
+				Current++;
 				return true;
 			}
 
-			if (_isIncremental != false || _Current <= _end) {
+			if (_isIncremental != false || Current <= _end) {
 				return false;
 			}
 
-			_Current--;
+			Current--;
 			return true;
 
 		}
 
 		public void Reset() {
-			_Current = _start < _end ? _start : _end;
+			Current = _start < _end ? _start : _end;
 		}
 
 		#endregion

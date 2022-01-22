@@ -17,9 +17,7 @@ namespace PDFPatcher.Processor
 	sealed class ImageExtractor
 	{
 		readonly string _fileMask;
-		readonly List<ImageInfo> _imageInfoList = new List<ImageInfo>();
 
-		readonly List<ImageDisposition> _imagePosList = new List<ImageDisposition>();
 		readonly ImageExtracterOptions _options;
 		readonly PdfPageImageProcessor _parser;
 		readonly HashSet<PdfObject> _Refs = new HashSet<PdfObject>();
@@ -31,11 +29,13 @@ namespace PDFPatcher.Processor
 		public ImageExtractor(ImageExtracterOptions options, PdfReader reader) {
 			_fileMask = String.IsNullOrEmpty(options.FileMask) ? "0" : options.FileMask;
 			_options = options;
-			_parser = new PdfPageImageProcessor(_imagePosList, _imageInfoList);
+			_parser = new PdfPageImageProcessor(PosList, InfoList);
 		}
 
-		internal List<ImageInfo> InfoList => _imageInfoList;
-		internal List<ImageDisposition> PosList => _imagePosList;
+		internal List<ImageInfo> InfoList { get; } = new List<ImageInfo>();
+
+		internal List<ImageDisposition> PosList { get; } = new List<ImageDisposition>();
+
 		internal bool PrintImageLocation { get; set; }
 
 		internal void ExtractPageImages(PdfReader reader, int pageNum) {
@@ -46,8 +46,8 @@ namespace PDFPatcher.Processor
 			_activePage = pageNum;
 			_parser.Reset();
 			_imageCount = 0;
-			_imageInfoList.Clear();
-			_imagePosList.Clear();
+			InfoList.Clear();
+			PosList.Clear();
 			PdfDictionary o = reader.GetPageNRelease(pageNum);
 			if (o == null) {
 				return;
@@ -70,15 +70,15 @@ namespace PDFPatcher.Processor
 			}
 
 			_pageRotation = PdfHelper.GetPageRotation(o);
-			if (_imageInfoList.Count == 0) {
+			if (InfoList.Count == 0) {
 				return;
 			}
 
 			_parser.ProcessContent(reader.GetPageContent(pageNum), o.Locate<PdfDictionary>(PdfName.RESOURCES));
-			_imagePosList.Sort();
-			_imageInfoList.Sort((x, y) => {
-				ImageDisposition xi = _imagePosList.Find((info) => info.Image == x);
-				ImageDisposition yi = _imagePosList.Find((info) => info.Image == y);
+			PosList.Sort();
+			InfoList.Sort((x, y) => {
+				ImageDisposition xi = PosList.Find((info) => info.Image == x);
+				ImageDisposition yi = PosList.Find((info) => info.Image == y);
 				if (xi == null) {
 					return yi == null ? 0 : -1;
 				}
@@ -88,7 +88,7 @@ namespace PDFPatcher.Processor
 
 				return xi.CompareTo(yi);
 			});
-			foreach (ImageInfo item in _imageInfoList) {
+			foreach (ImageInfo item in InfoList) {
 				try {
 					ExtractImage(item);
 				}
@@ -99,7 +99,7 @@ namespace PDFPatcher.Processor
 				}
 			}
 
-			if (_options.MergeImages && _imagePosList.Count > 1) {
+			if (_options.MergeImages && PosList.Count > 1) {
 				// 合并相同宽度、相同类型的图片
 				MergeImages();
 			}
@@ -126,7 +126,7 @@ namespace PDFPatcher.Processor
 				PdfName subType = stream.GetAsName(PdfName.SUBTYPE);
 				if (PdfName.IMAGE.Equals(subType)) {
 					try {
-						_imageInfoList.Add(new ImageInfo(item.Value as PRIndirectReference));
+						InfoList.Add(new ImageInfo(item.Value as PRIndirectReference));
 					}
 					catch (NullReferenceException) {
 						Debug.WriteLine(item.Value);
@@ -143,7 +143,7 @@ namespace PDFPatcher.Processor
 						if (stream != null) {
 							subType = stream.GetAsName(PdfName.SUBTYPE);
 							if (PdfName.IMAGE.Equals(subType)) {
-								_imageInfoList.Add(new ImageInfo(fri.Value as PRIndirectReference));
+								InfoList.Add(new ImageInfo(fri.Value as PRIndirectReference));
 							}
 							else if (includeDescendants || PdfName.FORM.Equals(subType)) {
 								ExtractImageInstances(stream, true);
@@ -483,9 +483,9 @@ namespace PDFPatcher.Processor
 		}
 
 		private void MergeImages() {
-			int l = _imagePosList.Count;
+			int l = PosList.Count;
 			for (int i = 0; i < l; i++) {
-				ImageDisposition imageI = _imagePosList[i];
+				ImageDisposition imageI = PosList[i];
 				// 由于在导出图像时仅为 PNG 和 TIF 指定 ImageInfo 的 PixelFormat，因此合并过程中仅处理这两类文件
 				if (imageI.Image.ReferenceCount < 1 // 图像已处理
 					|| imageI.Image.PixelFormat == PixelFormat.Undefined // 不属于可合并的类型
@@ -499,7 +499,7 @@ namespace PDFPatcher.Processor
 				int h = 0;
 				int i2 = 0;
 				for (int j = i; j < l; j++) {
-					ImageDisposition imageJ = _imagePosList[j];
+					ImageDisposition imageJ = PosList[j];
 					if (imageJ.Image.ReferenceCount < 1 // 图像已处理
 						|| imageJ.Image.Width != w // 宽度不相符
 						|| Math.Abs(Math.Round(imageJ.X - imageI.X)) > 1 // 位置相差超过 1 点
@@ -512,7 +512,7 @@ namespace PDFPatcher.Processor
 
 					imageParts[i2] = imageJ.Image;
 					h += imageJ.Image.Height;
-					_imagePosList[j].Image.ReferenceCount--; // 避免重复处理
+					PosList[j].Image.ReferenceCount--; // 避免重复处理
 					i2++;
 				}
 
@@ -521,7 +521,7 @@ namespace PDFPatcher.Processor
 						// 没有符合合并条件的图片
 						continue;
 					case 1:
-						_imagePosList[i].Image.ReferenceCount++;
+						PosList[i].Image.ReferenceCount++;
 						continue;
 				}
 
@@ -663,25 +663,25 @@ namespace PDFPatcher.Processor
 				}
 
 				ImageInfo mii = new ImageInfo { FileName = f, ReferenceCount = 1, Height = h, Width = w };
-				_imageInfoList.Add(mii);
-				_imagePosList.Add(new ImageDisposition(_imagePosList[i].Ctm, mii));
+				InfoList.Add(mii);
+				PosList.Add(new ImageDisposition(PosList[i].Ctm, mii));
 			}
 
-			foreach (var item in _imageInfoList.Where(item => item.ReferenceCount < 1)) {
+			foreach (var item in InfoList.Where(item => item.ReferenceCount < 1)) {
 				File.Delete(item.FileName);
 				item.FileName = null;
 			}
 
-			_imageInfoList.Sort((ImageInfo x, ImageInfo y) =>
+			InfoList.Sort((ImageInfo x, ImageInfo y) =>
 				string.Compare(x.FileName, y.FileName, StringComparison.OrdinalIgnoreCase));
 			_totalImageCount -= _imageCount;
 			_imageCount = 0;
 			List<string> newFileNames = new List<string>();
-			foreach (var item in _imageInfoList.Where(item => item.FileName != null && item.InlineImage == null)) {
+			foreach (var item in InfoList.Where(item => item.FileName != null && item.InlineImage == null)) {
 				string n;
 				do {
 					n = GetNewImageFileName() + Path.GetExtension(item.FileName);
-				} while (_imagePosList.Exists((i) => i.Image.FileName == n) || newFileNames.Contains(n));
+				} while (PosList.Exists((i) => i.Image.FileName == n) || newFileNames.Contains(n));
 
 				if (PrintImageLocation) {
 					Tracker.TraceMessage(String.Concat("重命名合并后的文件 ", item.FileName, " 为 ", n));
