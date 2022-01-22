@@ -672,9 +672,7 @@ namespace PDFPatcher.Functions
 					else if (d.Type == PdfObjectType.Pages) {
 						foreach (PageRange r in PageRangeCollection.Parse((string)d.ExtensiveObject, 1, _pdf.PageCount,
 									 true)) {
-							foreach (int p in r) {
-								ep.Add(p);
-							}
+							ep.AddRange(r);
 						}
 					}
 				}

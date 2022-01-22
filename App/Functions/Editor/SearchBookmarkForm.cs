@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using PDFPatcher.Common;
@@ -150,13 +151,10 @@ public sealed partial class SearchBookmarkForm : Form
 			return 0;
 		}
 
-		List<XmlNode> si = new();
 		IEnumerable ol = replaceInSelection
 			? b.SelectedObjects
 			: (b.GetModelObject(0) as XmlElement).ParentNode.SelectNodes(".//" + Constants.Bookmark);
-		foreach (XmlNode item in ol) {
-			si.Add(item);
-		}
+		List<XmlNode> si = ol.Cast<XmlNode>().ToList();
 
 		UndoActionGroup undo = new();
 		ReplaceTitleTextProcessor p = new(matcher, replacement);

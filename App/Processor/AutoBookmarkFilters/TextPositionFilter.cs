@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Linq;
 using PDFPatcher.Model;
 
 namespace PDFPatcher.Processor;
@@ -21,13 +22,7 @@ internal sealed class TextPositionFilter : AutoBookmarkFilter
 			return MatchPosition(context.TextInfo.Region);
 		}
 
-		foreach (TextInfo item in context.TextLine.Texts) {
-			if (MatchPosition(item.Region)) {
-				return true;
-			}
-		}
-
-		return false;
+		return context.TextLine.Texts.Any(item => MatchPosition(item.Region));
 	}
 
 	private bool MatchPosition(Bound bound) {

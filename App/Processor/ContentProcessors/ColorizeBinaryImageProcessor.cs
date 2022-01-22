@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using iTextSharp.text.pdf;
 using PDFPatcher.Model;
 
@@ -21,14 +22,12 @@ internal sealed class ColorizeBinaryImageProcessor : IPageProcessor
 			}
 
 			if (cmd.Name.ToString() == "Do") {
-				foreach (PdfName item in bwImages) {
-					if (item.Equals(cmd.Operands[0])) {
-						parent.Insert(i,
-							PdfPageCommand.Create("RG", new PdfNumber(1), new PdfNumber(0), new PdfNumber(0)));
-						parent.Insert(i,
-							PdfPageCommand.Create("rg", new PdfNumber(0), new PdfNumber(1), new PdfNumber(0)));
-						return true;
-					}
+				if (bwImages.Any(item => item.Equals(cmd.Operands[0]))) {
+					parent.Insert(i,
+						PdfPageCommand.Create("RG", new PdfNumber(1), new PdfNumber(0), new PdfNumber(0)));
+					parent.Insert(i,
+						PdfPageCommand.Create("rg", new PdfNumber(0), new PdfNumber(1), new PdfNumber(0)));
+					return true;
 				}
 			}
 		}

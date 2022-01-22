@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using NameList = System.Collections.Generic.List<string>;
@@ -707,18 +708,7 @@ public readonly struct FilePath : IEquatable<FilePath>
 			return false;
 		}
 
-		foreach (string item in extensions) {
-			if (string.IsNullOrEmpty(item)) {
-				continue;
-			}
-
-			if (ext.EndsWith(item, StringComparison.OrdinalIgnoreCase)
-				&& (item[0] == '.' || (ext.Length > item.Length && ext[ext.Length - item.Length - 1] == '.'))) {
-				return true;
-			}
-		}
-
-		return false;
+		return extensions.Where(item => !string.IsNullOrEmpty(item)).Any(item => ext.EndsWith(item, StringComparison.OrdinalIgnoreCase) && (item[0] == '.' || (ext.Length > item.Length && ext[ext.Length - item.Length - 1] == '.')));
 	}
 
 	/// <summary>检查当前路径是否属于指定的路径（子目录或其下文件）。</summary>

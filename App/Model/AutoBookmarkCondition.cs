@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Xml.Serialization;
 using PDFPatcher.Common;
 using PDFPatcher.Processor;
@@ -59,15 +60,7 @@ public abstract class AutoBookmarkCondition : ICloneable
 		public override string Name => "多条件组合";
 
 		internal override bool IsTextLineFilter {
-			get {
-				foreach (AutoBookmarkCondition item in Conditions) {
-					if (item.IsTextLineFilter) {
-						return true;
-					}
-				}
-
-				return false;
-			}
+			get { return Conditions.Any(item => item.IsTextLineFilter); }
 		}
 
 		public override object Clone() {

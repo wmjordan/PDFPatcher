@@ -1,4 +1,6 @@
-﻿namespace PDFPatcher.Model.PdfPath;
+﻿using System.Linq;
+
+namespace PDFPatcher.Model.PdfPath;
 
 public interface IPathPredicate
 {
@@ -53,13 +55,7 @@ internal abstract class PathPredicate : IPathPredicate
 					v = o != null ? o.FriendlyValue ?? o.LiteralValue : string.Empty;
 				}
 
-				foreach (DocumentObject item in exp.SelectObjects(source)) {
-					if ((item.FriendlyValue ?? item.LiteralValue) == v) {
-						return true;
-					}
-				}
-
-				return false;
+				return exp.SelectObjects(source).Any(item => (item.FriendlyValue ?? item.LiteralValue) == v);
 			}
 
 			if (value1.ValueType == PathValueType.Number || value2.ValueType == PathValueType.Number) {

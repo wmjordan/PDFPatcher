@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Cyotek.Windows.Forms;
@@ -832,14 +833,8 @@ internal sealed class PdfViewerControl : ImageBoxEx
 				}
 
 				HashSet<int> s = new();
-				List<MuTextLine> r = new();
-				foreach (MuTextLine line in block.Lines) {
-					if (pr.Intersect(line.BBox).IsEmpty == false) {
-						r.Add(line);
-					}
-				}
 
-				return r;
+				return block.Lines.Where(line => pr.Intersect(line.BBox).IsEmpty == false).ToList();
 			}
 		}
 

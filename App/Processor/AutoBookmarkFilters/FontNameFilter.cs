@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using PDFPatcher.Model;
 
 namespace PDFPatcher.Processor;
@@ -28,13 +29,7 @@ public class FontNameFilter : AutoBookmarkFilter
 			return MatchFont(font);
 		}
 
-		foreach (TextInfo item in context.TextLine.Texts) {
-			if (MatchFont(item.Font)) {
-				return true;
-			}
-		}
-
-		return false;
+		return context.TextLine.Texts.Any(item => MatchFont(item.Font));
 	}
 
 	private bool MatchFont(FontInfo font) {

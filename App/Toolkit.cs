@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using PDFPatcher.Properties;
 
@@ -46,13 +47,7 @@ internal sealed class Toolkit
 	public bool DefaultVisible { get; }
 
 	internal static Toolkit Get(string id) {
-		foreach (Toolkit item in Toolkits) {
-			if (item.Identifier == id) {
-				return item;
-			}
-		}
-
-		return null;
+		return Toolkits.FirstOrDefault(item => item.Identifier == id);
 	}
 
 	internal ToolStripButton CreateButton() {

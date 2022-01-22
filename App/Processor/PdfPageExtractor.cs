@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using iTextSharp.text.pdf;
@@ -71,10 +72,7 @@ internal class PdfPageExtractor
 		string[] rl = options.PageRanges.Split(';', '；');
 		int pn = pdf.NumberOfPages;
 		int i = 1;
-		int c = 0;
-		foreach (string range in rl) {
-			c += PageRangeCollection.Parse(range, 1, pn, true).TotalPages;
-		}
+		int c = rl.Sum(range => PageRangeCollection.Parse(range, 1, pn, true).TotalPages);
 
 		Tracker.SetProgressGoal(c);
 		foreach (string range in rl) {

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using PDFPatcher.Common;
 
 namespace PDFPatcher.Model.PdfPath;
@@ -25,13 +26,7 @@ internal static class PathAxes
 			return true;
 		}
 
-		foreach (IPathPredicate p in predicates) {
-			if (p.Match(source, p.Operand1, p.Operand2) == false) {
-				return false;
-			}
-		}
-
-		return true;
+		return predicates.All(p => p.Match(source, p.Operand1, p.Operand2) != false);
 	}
 
 	private static IList<DocumentObject> CompriseSingleObjectCollection(DocumentObject source) {
@@ -113,26 +108,13 @@ internal static class PathAxes
 			}
 
 			List<DocumentObject> r = new();
-			foreach (DocumentObject item in source.Children) {
-				if (MatchesPredicate(item, name, predicates)) {
-					return item;
-				}
-			}
-
-			return null;
+			return source.Children.FirstOrDefault(item => MatchesPredicate(item, name, predicates));
 		}
 
 		public IList<DocumentObject> SelectObjects(DocumentObject source, string name,
 			IEnumerable<IPathPredicate> predicates) {
 			if (source != null && source.HasChildren) {
-				List<DocumentObject> r = new();
-				foreach (DocumentObject item in source.Children) {
-					if (MatchesPredicate(item, name, predicates)) {
-						r.Add(item);
-					}
-				}
-
-				return r.ToArray();
+				return source.Children.Where(item => MatchesPredicate(item, name, predicates)).ToArray();
 			}
 
 			return PathExpression.EmptyMatchResult;

@@ -855,14 +855,7 @@ public partial class MergerControl : FunctionControl
 		f.CopyTo(fl, 0);
 		SourceItem.SortFileList(fl);
 		List<SourceItem> sl = new(fl.Length);
-		foreach (string item in fl) {
-			SourceItem si = SourceItem.Create(item);
-			if (si == null) {
-				continue;
-			}
-
-			sl.Add(si);
-		}
+		sl.AddRange(fl.Select(item => SourceItem.Create(item)).Where(si => si != null));
 
 		SourceItem ti = e.ListView.GetModelObject(e.DropTargetIndex) as SourceItem;
 		OLVListItem d = e.DropTargetItem;
@@ -888,12 +881,10 @@ public partial class MergerControl : FunctionControl
 			}
 
 			List<SourceItem> al = _ItemList.GetAncestorsOrSelf(ti);
-			foreach (SourceItem item in si) {
-				if (al.IndexOf(item) != -1) {
-					e.Effect = DragDropEffects.None;
-					e.InfoMessage = "目标项不能是源项目的子项。";
-					return;
-				}
+			if (si.Cast<SourceItem>().Any(item => al.IndexOf(item) != -1)) {
+				e.Effect = DragDropEffects.None;
+				e.InfoMessage = "目标项不能是源项目的子项。";
+				return;
 			}
 		}
 

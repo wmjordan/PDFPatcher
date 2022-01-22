@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 
 namespace Cyotek.Windows.Forms.Demo;
 // Cyotek ImageBox
@@ -72,16 +73,7 @@ internal sealed class DragHandleCollection : IEnumerable<DragHandle>
 	}
 
 	public DragHandleAnchor HitTest(Point point) {
-		DragHandleAnchor result = DragHandleAnchor.None;
-
-		foreach (DragHandle handle in this) {
-			if (handle.Visible && handle.Bounds.Contains(point)) {
-				result = handle.Anchor;
-				break;
-			}
-		}
-
-		return result;
+		return (from handle in this where handle.Visible && handle.Bounds.Contains(point) select handle.Anchor).FirstOrDefault();
 	}
 
 	#endregion

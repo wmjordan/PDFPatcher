@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.XPath;
@@ -634,12 +635,10 @@ public partial class BookmarkEditorView : TreeListView
 				return;
 			}
 
-			foreach (XmlElement item in si) {
-				if (IsAncestorOrSelf(item, ti)) {
-					e.Effect = DragDropEffects.None;
-					e.InfoMessage = "目标书签不能是源书签的子书签。";
-					return;
-				}
+			if (si.Cast<XmlElement>().Any(item => IsAncestorOrSelf(item, ti))) {
+				e.Effect = DragDropEffects.None;
+				e.InfoMessage = "目标书签不能是源书签的子书签。";
+				return;
 			}
 		}
 

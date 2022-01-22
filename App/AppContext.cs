@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
@@ -118,11 +119,7 @@ internal static class AppContext
 
 	internal static void CleanUpInexistentFiles(IList<string> list) {
 		List<string> s = new(list.Count);
-		foreach (string item in list) {
-			if (FileHelper.HasFileNameMacro(item) || File.Exists(item)) {
-				s.Add(item);
-			}
-		}
+		s.AddRange(list.Where(item => FileHelper.HasFileNameMacro(item) || File.Exists(item)));
 
 		list.Clear();
 		list.AddRange(s);
@@ -130,11 +127,7 @@ internal static class AppContext
 
 	internal static void CleanUpInexistentFolders(IList<string> list) {
 		List<string> s = new(list.Count);
-		foreach (string item in list) {
-			if (FileHelper.HasFileNameMacro(item) || Directory.Exists(item)) {
-				s.Add(item);
-			}
-		}
+		s.AddRange(list.Where(item => FileHelper.HasFileNameMacro(item) || Directory.Exists(item)));
 
 		list.Clear();
 		list.AddRange(s);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 
 #pragma warning disable 649, 169
@@ -131,11 +132,7 @@ public abstract class MuContentBlock : IMuBoundedElement
 	}
 
 	internal static IEnumerable<MuTextBlock> GetTextBlocks(IntPtr firstBlock) {
-		foreach (NativeObject<NativeContentBlock> item in firstBlock.EnumerateLinkedList<NativeContentBlock>()) {
-			if (item.Data.Type == ContentBlockType.Text) {
-				yield return item.Data.ToMuBlock() as MuTextBlock;
-			}
-		}
+		return from item in firstBlock.EnumerateLinkedList<NativeContentBlock>() where item.Data.Type == ContentBlockType.Text select item.Data.ToMuBlock() as MuTextBlock;
 	}
 
 	private readonly struct NativeImageBlock
@@ -240,9 +237,7 @@ public sealed class MuTextLine : IMuBoundedElement
 	}
 
 	internal static IEnumerable<MuTextLine> GetLines(IntPtr firstLine) {
-		foreach (NativeObject<NativeTextLine> item in firstLine.EnumerateLinkedList<NativeTextLine>()) {
-			yield return new MuTextLine(item.Ptr);
-		}
+		return firstLine.EnumerateLinkedList<NativeTextLine>().Select(item => new MuTextLine(item.Ptr));
 	}
 
 	internal struct NativeTextLine : IMuBoundedElement, Interop.ILinkedList
@@ -288,9 +283,7 @@ public sealed class MuTextChar : IMuBoundedElement
 	}
 
 	internal static IEnumerable<MuTextChar> GetCharacters(IntPtr firstChar) {
-		foreach (NativeObject<NativeTextChar> item in firstChar.EnumerateLinkedList<NativeTextChar>()) {
-			yield return new MuTextChar(item.Data);
-		}
+		return firstChar.EnumerateLinkedList<NativeTextChar>().Select(item => new MuTextChar(item.Data));
 	}
 
 	internal static unsafe IList<MuTextSpan> GetSpans(MuTextLine textLine, IntPtr firstChar, IntPtr lastChar) {

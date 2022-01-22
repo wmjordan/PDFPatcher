@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Xml;
 using iTextSharp.text.pdf;
@@ -626,12 +627,7 @@ internal sealed class PdfContentExport
 			GraphicsState gs = CurrentGraphicState;
 			FontInfo font = gs.Font;
 			char[] chars = font.DecodeText(str).ToCharArray();
-			float totalWidth = 0;
-			foreach (char c in chars) {
-				float w = font.GetWidth(c) / 1000.0f;
-				float wordSpacing = c == ' ' ? gs.WordSpacing : 0f;
-				totalWidth += ((w * gs.FontSize) + gs.CharacterSpacing + wordSpacing) * gs.HorizontalScaling;
-			}
+			float totalWidth = (from c in chars let w = font.GetWidth(c) / 1000.0f let wordSpacing = c == ' ' ? gs.WordSpacing : 0f select ((w * gs.FontSize) + gs.CharacterSpacing + wordSpacing) * gs.HorizontalScaling).Sum();
 
 			_textWidth = totalWidth;
 		}

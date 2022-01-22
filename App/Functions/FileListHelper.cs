@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
@@ -234,13 +235,7 @@ internal sealed class FileListHelper
 
 		IEnumerable l = selectedOnly ? _fileList.SelectedObjects : _fileList.Objects;
 		List<T> items = new(selectedOnly ? 10 : _fileList.GetItemCount());
-		foreach (T item in l) {
-			if (item == null) {
-				continue;
-			}
-
-			items.Add(item);
-		}
+		items.AddRange(l.Cast<T>().Where(item => item != null));
 
 		return items;
 	}

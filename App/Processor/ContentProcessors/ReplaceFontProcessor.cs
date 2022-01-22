@@ -267,13 +267,7 @@ internal sealed class ReplaceFontProcessor : IPageProcessor
 							n = sn;
 						}
 
-						string sf = null;
-						foreach (FontUtility.FriendlyFontName font in FontUtility.InstalledFonts) {
-							if (font.DisplayName == n) {
-								sf = font.OriginalName;
-								break;
-							}
-						}
+						string sf = (from font in FontUtility.InstalledFonts where font.DisplayName == n select font.OriginalName).FirstOrDefault();
 
 						nf = new NewFont {
 							Font = _fontFactory.GetFont(sf ?? n, BaseFont.IDENTITY_H),

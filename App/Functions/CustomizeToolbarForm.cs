@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using PDFPatcher.Properties;
@@ -49,10 +50,7 @@ public partial class CustomizeToolbarForm : Form
 	}
 
 	private void _OkButton_Click(object sender, EventArgs e) {
-		List<BO> l = new();
-		foreach (BO item in _ItemListBox.Objects) {
-			l.Add(item);
-		}
+		List<BO> l = _ItemListBox.Objects.Cast<BO>().ToList();
 
 		AppContext.Toolbar.Buttons.Clear();
 		AppContext.Toolbar.Buttons.AddRange(l);

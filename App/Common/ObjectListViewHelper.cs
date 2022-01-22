@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace BrightIdeasSoftware;
@@ -124,35 +125,19 @@ internal static class ObjectListViewHelper
 	/// <remarks>树视图存在子节点且多选节点时，在 SelectedIndexChanged 事件中，SelectedIndices属性可能返回无内容的集合。</remarks>
 	public static int GetFirstSelectedIndex(this ObjectListView view) {
 		int c = view.GetItemCount();
-		int i = c;
-		foreach (int item in view.SelectedIndices) {
-			if (item < i) {
-				i = item;
-			}
-		}
+		int i = view.SelectedIndices.Cast<int>().Concat(new[] { c }).Min();
 
 		return i == c ? -1 : i;
 	}
 
 	public static int GetLastSelectedIndex(this ObjectListView view) {
-		int i = -1;
-		foreach (int item in view.SelectedIndices) {
-			if (item > i) {
-				i = item;
-			}
-		}
-
-		return i;
+		return view.SelectedIndices.Cast<int>().Concat(new[] { -1 }).Max();
 	}
 
 	public static List<T> GetSelectedModels<T>(this ObjectListView view) where T : class {
 		IList s = view.SelectedObjects;
 		List<T> r = new(s.Count);
-		foreach (T item in s) {
-			if (item != null) {
-				r.Add(item);
-			}
-		}
+		r.AddRange(s.Cast<T>().Where(item => item != null));
 
 		return r;
 	}

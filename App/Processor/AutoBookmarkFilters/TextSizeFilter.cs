@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Linq;
 using PDFPatcher.Model;
 
 namespace PDFPatcher.Processor;
@@ -27,13 +28,7 @@ public class TextSizeFilter : AutoBookmarkFilter
 			return MatchSize(size);
 		}
 
-		foreach (TextInfo item in context.TextLine.Texts) {
-			if (MatchSize(item.Size)) {
-				return true;
-			}
-		}
-
-		return false;
+		return context.TextLine.Texts.Any(item => MatchSize(item.Size));
 	}
 
 	private bool MatchSize(float size) {

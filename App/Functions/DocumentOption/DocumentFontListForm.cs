@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using iTextSharp.text.pdf;
@@ -87,12 +88,7 @@ public partial class DocumentFontListForm : Form
 
 	public IList<string> SelectedFonts {
 		get {
-			List<string> sf = new();
-			foreach (PageFont item in _FontListBox.CheckedObjects) {
-				sf.Add(item.Name);
-			}
-
-			return sf;
+			return (from PageFont item in _FontListBox.CheckedObjects select item.Name).ToList();
 		}
 	}
 
