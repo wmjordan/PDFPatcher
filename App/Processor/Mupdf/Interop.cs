@@ -58,15 +58,14 @@ internal static class Interop
 
 	internal static unsafe string DecodeUtf8String(IntPtr chars) {
 		byte* b = (byte*)chars.ToPointer();
-		using (MemoryStream buffer = new()) {
-			while (*b != 0) {
-				buffer.WriteByte(*b);
-				++b;
-			}
-
-			buffer.Position = 0;
-			return Encoding.UTF8.GetString(buffer.GetBuffer(), (int)buffer.Position, (int)buffer.Length);
+		using MemoryStream buffer = new();
+		while (*b != 0) {
+			buffer.WriteByte(*b);
+			++b;
 		}
+
+		buffer.Position = 0;
+		return Encoding.UTF8.GetString(buffer.GetBuffer(), (int)buffer.Position, (int)buffer.Length);
 	}
 
 	internal interface ILinkedList

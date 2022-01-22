@@ -106,13 +106,12 @@ internal static class BitmapHelper
 	/// <returns>调整后的新 <see cref="Bitmap" />。</returns>
 	public static Bitmap ResizeImage(this Image source, Size size, bool highQuality) {
 		Bitmap b = new(size.Width, size.Height);
-		using (Graphics g = Graphics.FromImage(b)) {
-			if (highQuality) {
-				g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-			}
-
-			g.DrawImage(source, 0, 0, size.Width, size.Height);
+		using Graphics g = Graphics.FromImage(b);
+		if (highQuality) {
+			g.InterpolationMode = InterpolationMode.HighQualityBicubic;
 		}
+
+		g.DrawImage(source, 0, 0, size.Width, size.Height);
 
 		return b;
 	}
@@ -232,12 +231,11 @@ internal static class BitmapHelper
 			// source = original.Clone( new Rectangle( Point.Empty, original.Size ), PixelFormat.Format24bppRgb );
 			source = new Bitmap(original.Width, original.Height, PixelFormat.Format24bppRgb);
 			source.SetResolution(original.HorizontalResolution, original.VerticalResolution);
-			using (Graphics g = Graphics.FromImage(source)) {
-				//g.CompositingQuality = Drawing2D.CompositingQuality.GammaCorrected;
-				//g.InterpolationMode = Drawing2D.InterpolationMode.Low;
-				//g.SmoothingMode = Drawing2D.SmoothingMode.None;
-				g.DrawImageUnscaled(original, 0, 0);
-			}
+			using Graphics g = Graphics.FromImage(source);
+			//g.CompositingQuality = Drawing2D.CompositingQuality.GammaCorrected;
+			//g.InterpolationMode = Drawing2D.InterpolationMode.Low;
+			//g.SmoothingMode = Drawing2D.SmoothingMode.None;
+			g.DrawImageUnscaled(original, 0, 0);
 		}
 		else {
 			source = original;

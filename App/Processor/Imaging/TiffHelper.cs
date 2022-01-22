@@ -22,9 +22,8 @@ internal static class TiffHelper
 				bmp.Invert();
 			}
 
-			using (Bitmap b = bmp.ToBitmap()) {
-				b.Save(fileName, _tiffCodec, _encoderParameters);
-			}
+			using Bitmap b = bmp.ToBitmap();
+			b.Save(fileName, _tiffCodec, _encoderParameters);
 		}
 		else {
 			bmp.Save(fileName, FREE_IMAGE_FORMAT.FIF_TIFF, FREE_IMAGE_SAVE_FLAGS.TIFF_CCITTFAX4);
@@ -47,11 +46,10 @@ internal static class TiffHelper
 
 	internal static byte[] Decode(ImageInfo info, byte[] bytes, int k, bool endOfLine, bool encodedByteAlign,
 		bool endOfBlock, bool blackIs1) {
-		using (MuStream s = new(bytes))
-		using (MuStream img =
-			   s.DecodeTiffFax(info.Width, info.Height, k, endOfLine, encodedByteAlign, endOfBlock, blackIs1)) {
-			return img.ReadAll(bytes.Length);
-		}
+		using MuStream s = new(bytes);
+		using MuStream img =
+			s.DecodeTiffFax(info.Width, info.Height, k, endOfLine, encodedByteAlign, endOfBlock, blackIs1);
+		return img.ReadAll(bytes.Length);
 		//var outBuf = new byte[(info.Width + 7) / 8 * info.Height];
 		//var decoder = new TIFFFaxDecoder (1, info.Width, info.Height);
 		//if (k < 0) {

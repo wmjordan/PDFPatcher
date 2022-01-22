@@ -118,11 +118,10 @@ internal sealed class PdfPageCommandProcessor : PdfContentStreamProcessor, IPdfP
 	/// <param name="pdf">目标 <see cref="PdfReader" />。</param>
 	/// <param name="pageNumber">要写入的页码。</param>
 	internal void WritePdfCommands(PdfReader pdf, int pageNumber) {
-		using (MemoryStream ms = new()) {
-			WritePdfCommands(ms);
-			ms.Flush();
-			pdf.SafeSetPageContent(pageNumber, ms.ToArray());
-		}
+		using MemoryStream ms = new();
+		WritePdfCommands(ms);
+		ms.Flush();
+		pdf.SafeSetPageContent(pageNumber, ms.ToArray());
 	}
 
 	internal void WritePdfCommands(PageProcessorContext context) {

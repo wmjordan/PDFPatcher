@@ -501,9 +501,8 @@ namespace PDFPatcher.Functions
 				case "_CopySelection":
 					Selection sel = _ViewerBox.GetSelection();
 					if (sel.Page > 0) {
-						using (Bitmap b = sel.GetSelectedBitmap()) {
-							Clipboard.SetImage(b);
-						}
+						using Bitmap b = sel.GetSelectedBitmap();
+						Clipboard.SetImage(b);
 					}
 
 					break;

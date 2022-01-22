@@ -186,30 +186,29 @@ internal sealed class ReplaceFontProcessor : IPageProcessor
 
 	private static PdfString RewriteText(NewFont newFont, TrueTypeFont ttf, string text) {
 		bool cs = newFont.CharSubstitutions.Count > 0;
-		using (ByteBuffer bb = new()) {
-			foreach (char ch in text) {
-				if (cs == false || newFont.CharSubstitutions.TryGetValue(ch, out char c) == false) {
-					c = ch;
-				}
-
-				if (newFont.UsedCidMap.TryGetValue(c, out int cid) == false) {
-					int[] tt = ttf.GetMetricsTT(c);
-					if (tt == null) {
-						newFont.AbsentChars.Add(c);
-						continue;
-					}
-
-					cid = tt[0];
-					newFont.UsedCidMap[c] = cid;
-					newFont.GlyphWidths[cid] = tt[1];
-				}
-
-				bb.Append((byte)(cid >> 8));
-				bb.Append((byte)cid);
+		using ByteBuffer bb = new();
+		foreach (char ch in text) {
+			if (cs == false || newFont.CharSubstitutions.TryGetValue(ch, out char c) == false) {
+				c = ch;
 			}
 
-			return new PdfString(bb.ToByteArray());
+			if (newFont.UsedCidMap.TryGetValue(c, out int cid) == false) {
+				int[] tt = ttf.GetMetricsTT(c);
+				if (tt == null) {
+					newFont.AbsentChars.Add(c);
+					continue;
+				}
+
+				cid = tt[0];
+				newFont.UsedCidMap[c] = cid;
+				newFont.GlyphWidths[cid] = tt[1];
+			}
+
+			bb.Append((byte)(cid >> 8));
+			bb.Append((byte)cid);
 		}
+
+		return new PdfString(bb.ToByteArray());
 	}
 
 	private static bool DetectLegacyCjkFont(PdfDictionary font) {

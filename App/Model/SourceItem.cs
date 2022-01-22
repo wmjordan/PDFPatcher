@@ -491,11 +491,10 @@ public abstract class SourceItem
 
 		private void Refresh(string path, Encoding encoding) {
 			try {
-				using (PdfReader reader = PdfHelper.OpenPdfFile(path, true, false)) {
-					DocInfo = DocInfoExporter.RewriteDocInfoWithEncoding(reader, encoding);
-					PageCount = reader.NumberOfPages;
-					PageRanges = new PageRange(1, PageCount).ToString();
-				}
+				using PdfReader reader = PdfHelper.OpenPdfFile(path, true, false);
+				DocInfo = DocInfoExporter.RewriteDocInfoWithEncoding(reader, encoding);
+				PageCount = reader.NumberOfPages;
+				PageRanges = new PageRange(1, PageCount).ToString();
 			}
 			catch (Exception) {
 				FormHelper.ErrorBox(string.Concat("打开 PDF 文件时“", path, "”出错。"));

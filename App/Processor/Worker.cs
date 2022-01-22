@@ -129,21 +129,18 @@ internal static class Worker
 							Tracker.TraceMessage(Tracker.Category.Error, "页面" + i + "的尺寸为空。");
 						}
 						else if (options.FileFormat == ImageFormat.Tiff) {
-							using (Bitmap b = BitmapHelper.ToBitonal(bmp)) {
-								BitmapHelper.SaveAs(b, fn);
-							}
+							using Bitmap b = BitmapHelper.ToBitonal(bmp);
+							BitmapHelper.SaveAs(b, fn);
 						}
 						else {
 							Color[] uc = BitmapHelper.GetPalette(bmp);
 							if (uc.Length > 256 && options.Quantize) {
-								using (Bitmap b = WuQuantizer.QuantizeImage(bmp)) {
-									BitmapHelper.SaveAs(b, fn);
-								}
+								using Bitmap b = WuQuantizer.QuantizeImage(bmp);
+								BitmapHelper.SaveAs(b, fn);
 							}
 							else if (uc.Length <= 256 && BitmapHelper.IsIndexed(bmp) == false) {
-								using (Bitmap b = BitmapHelper.ToIndexImage(bmp, uc)) {
-									BitmapHelper.SaveAs(b, fn);
-								}
+								using Bitmap b = BitmapHelper.ToIndexImage(bmp, uc);
+								BitmapHelper.SaveAs(b, fn);
 							}
 							else if (options.FileFormat == ImageFormat.Jpeg) {
 								JpgHelper.Save(bmp, fn, options.JpegQuality);
@@ -199,25 +196,23 @@ internal static class Worker
 			Tracker.TraceMessage("正在导出信息文件。");
 			if (targetFile.EndsWith(".txt", StringComparison.OrdinalIgnoreCase)) {
 				Tracker.SetProgressGoal(50);
-				using (TextWriter w = new StreamWriter(targetFile, false, AppContext.Exporter.GetEncoding())) {
-					DocInfoExporter.WriteDocumentInfoAttributes(w, sourceFile, r.NumberOfPages);
-					export.ExportDocument(w);
-					w.WriteLine();
-					Tracker.SetProgressGoal(10);
-					r.ConsolidateNamedDestinations();
-					export.ExportBookmarks(OutlineManager.GetBookmark(r, new UnitConverter()), w, 0, false);
-				}
+				using TextWriter w = new StreamWriter(targetFile, false, AppContext.Exporter.GetEncoding());
+				DocInfoExporter.WriteDocumentInfoAttributes(w, sourceFile, r.NumberOfPages);
+				export.ExportDocument(w);
+				w.WriteLine();
+				Tracker.SetProgressGoal(10);
+				r.ConsolidateNamedDestinations();
+				export.ExportBookmarks(OutlineManager.GetBookmark(r, new UnitConverter()), w, 0, false);
 			}
 			else {
 				int workload = export.EstimateWorkload();
 				Tracker.SetProgressGoal(workload);
-				using (XmlWriter w = XmlWriter.Create(targetFile, DocInfoExporter.GetWriterSettings())) {
-					w.WriteStartDocument();
-					w.WriteStartElement(Constants.PdfInfo);
-					DocInfoExporter.WriteDocumentInfoAttributes(w, sourceFile, r.NumberOfPages);
-					export.ExportDocument(w);
-					w.WriteEndElement();
-				}
+				using XmlWriter w = XmlWriter.Create(targetFile, DocInfoExporter.GetWriterSettings());
+				w.WriteStartDocument();
+				w.WriteStartElement(Constants.PdfInfo);
+				DocInfoExporter.WriteDocumentInfoAttributes(w, sourceFile, r.NumberOfPages);
+				export.ExportDocument(w);
+				w.WriteEndElement();
 			}
 
 			Tracker.TraceMessage(Tracker.Category.Alert, "成功导出信息文件到 <<" + targetFile + ">>。");
@@ -351,128 +346,127 @@ internal static class Worker
 
 			targetFile.CreateContainingDirectory();
 
-			using (Stream s = new FileStream(targetFile, FileMode.Create)) {
-				PdfStamper st = new(pdf, s);
-				pdfEngine.ProcessDocument(st.Writer);
+			using Stream s = new FileStream(targetFile, FileMode.Create);
+			PdfStamper st = new(pdf, s);
+			pdfEngine.ProcessDocument(st.Writer);
 
-				#region 处理信息文件
+			#region 处理信息文件
 
-				List<IInfoDocProcessor> processors = new();
-				if (pdfSettings.ViewerPreferences.RemoveZoomRate) {
-					processors.Add(new RemoveZoomRateProcessor());
-				}
-
-				if (pdfEngine.ExtraData.ContainsKey(DocProcessorContext.CoordinateTransition) &&
-					pdfSettings.UnifiedPageSettings.ScaleContent) {
-					processors.Add(new GotoDestinationProcessor {
-						TransitionMapper =
-							pdfEngine.ExtraData[DocProcessorContext.CoordinateTransition] as
-								CoordinateTranslationSettings[]
-					});
-				}
-
-				if (pdfSettings.ViewerPreferences.ForceInternalLink) {
-					processors.Add(new ForceInternalDestinationProcessor());
-				}
-
-				//var cts = new CoordinateTranslationSettings[pdf.NumberOfPages + 1]; // 页面的位置偏移量
-				//var sc = false;
-				//if (pdfSettings.PageSettings.Count > 0) {
-				//    Tracker.TraceMessage ("重设页面尺寸。");
-				//    pdf.ResetReleasePage ();
-				//    foreach (var item in pdfSettings.PageSettings) {
-				//        var ranges = PageRangeCollection.Parse (item.PageRanges, 1, pdf.NumberOfPages, true);
-				//        foreach (var range in ranges) {
-				//            foreach (var i in range) {
-				//                var s = PageDimensionProcessor.ResizePage (pdf.GetPageN (i), item.PaperSize, item.HorizontalAlign, item.VerticalAlign, -1, item.ScaleContent);
-				//                if (item.ScaleContent && s.XScale != 1 && s.YScale != 1) {
-				//                    PageDimensionProcessor.ScaleContent (pdf, i, s);
-				//                    cts[i] = s; // TODO: 需要解决重复指定相同页面的问题
-				//                    sc = true;
-				//                }
-				//            }
-				//        }
-				//    }
-				//    pdf.ResetReleasePage ();
-				//}
-				if (pdfSettings.UnifiedPageSettings.PaperSize.PaperName == PaperSize.AsPageSize) {
-					import.ImportPageSettings(pdf);
-				}
-
-				//if (sc == false) {
-				//    cts = null;
-				//}
-
-				#endregion
-
-				if (pdfSettings.FullCompression) {
-					st.SetFullCompression();
-				}
-
-				//st.Writer.CompressionLevel = ContextData.CreateDocumentOptions.CompressionLevel;
-				PdfPageLabels labels = DocInfoImporter.ImportPageLabels(pdfSettings.PageLabels) ??
-									   import.ImportPageLabels();
-				if (labels != null) {
-					st.Writer.PageLabels = labels;
-				}
-
-				if (options.ImportPageLinks ||
-					pdfSettings.UnifiedPageSettings.PaperSize.PaperName != PaperSize.AsPageSize /* sc*/) {
-					import.ImportPageLinks(pdf, st);
-				}
-
-				PdfDocumentCreator.ProcessInfoItem(
-					import.InfoDoc.DocumentElement.SelectSingleNode(Constants.PageLink) as XmlElement, processors);
-				PdfDocumentCreator.ProcessInfoItem(
-					import.InfoDoc.DocumentElement.SelectSingleNode(Constants.NamedDestination) as XmlElement,
-					processors);
-				XmlElement bookmarks = null;
-				if ((options.ImportBookmarks && pdfSettings.RemoveBookmarks == false) || xInfoDoc != null) {
-					Tracker.TraceMessage("导入书签。");
-					bookmarks = import.GetBookmarks() ??
-								OutlineManager.GetBookmark(pdf, new UnitConverter { Unit = Constants.Units.Point });
-				}
-
-				if (bookmarks != null) {
-					// 预处理书签
-					processors.Add(new CollapseBookmarkProcessor {
-						BookmarkStatus = pdfSettings.ViewerPreferences.CollapseBookmark
-					});
-					PdfDocumentCreator.ProcessInfoItem(bookmarks, processors);
-					if (bookmarks.ChildNodes.Count > 0 || xInfoDoc != null) {
-						import.ImportNamedDestinations(pdf, st.Writer);
-						OutlineManager.KillOutline(pdf);
-						PdfIndirectReference bm = OutlineManager.WriteOutline(st.Writer, bookmarks, pdf.NumberOfPages);
-						if (bm != null) {
-							pdf.Catalog.Put(PdfName.OUTLINES, bm);
-						}
-
-						if (pdf.Catalog.Contains(PdfName.PAGEMODE) == false) {
-							pdf.Catalog.Put(PdfName.PAGEMODE, PdfName.USEOUTLINES);
-						}
-					}
-					else if (string.IsNullOrEmpty(docPath) == false) {
-						OutlineManager.KillOutline(pdf);
-					}
-				}
-
-				Tracker.IncrementProgress(10);
-				Tracker.TraceMessage("导入文档设置。");
-				import.ImportViewerPreferences(pdf);
-				DocInfoImporter.OverrideViewerPreferences(pdfSettings.ViewerPreferences, pdf, st.Writer);
-				//import.OverrideDocumentSettings (pdf);
-				Tracker.IncrementProgress(5);
-				Tracker.TraceMessage("清理输出文件。");
-				pdf.RemoveUnusedObjects();
-				if (pdf.AcroForm == null) {
-					pdf.Trailer.Locate<PdfDictionary>(PdfName.ROOT).Remove(PdfName.ACROFORM);
-				}
-
-				Tracker.IncrementProgress(10);
-				Tracker.TraceMessage("保存文件：" + targetFile);
-				st.Close();
-				Tracker.TrackProgress(workload);
+			List<IInfoDocProcessor> processors = new();
+			if (pdfSettings.ViewerPreferences.RemoveZoomRate) {
+				processors.Add(new RemoveZoomRateProcessor());
 			}
+
+			if (pdfEngine.ExtraData.ContainsKey(DocProcessorContext.CoordinateTransition) &&
+				pdfSettings.UnifiedPageSettings.ScaleContent) {
+				processors.Add(new GotoDestinationProcessor {
+					TransitionMapper =
+						pdfEngine.ExtraData[DocProcessorContext.CoordinateTransition] as
+							CoordinateTranslationSettings[]
+				});
+			}
+
+			if (pdfSettings.ViewerPreferences.ForceInternalLink) {
+				processors.Add(new ForceInternalDestinationProcessor());
+			}
+
+			//var cts = new CoordinateTranslationSettings[pdf.NumberOfPages + 1]; // 页面的位置偏移量
+			//var sc = false;
+			//if (pdfSettings.PageSettings.Count > 0) {
+			//    Tracker.TraceMessage ("重设页面尺寸。");
+			//    pdf.ResetReleasePage ();
+			//    foreach (var item in pdfSettings.PageSettings) {
+			//        var ranges = PageRangeCollection.Parse (item.PageRanges, 1, pdf.NumberOfPages, true);
+			//        foreach (var range in ranges) {
+			//            foreach (var i in range) {
+			//                var s = PageDimensionProcessor.ResizePage (pdf.GetPageN (i), item.PaperSize, item.HorizontalAlign, item.VerticalAlign, -1, item.ScaleContent);
+			//                if (item.ScaleContent && s.XScale != 1 && s.YScale != 1) {
+			//                    PageDimensionProcessor.ScaleContent (pdf, i, s);
+			//                    cts[i] = s; // TODO: 需要解决重复指定相同页面的问题
+			//                    sc = true;
+			//                }
+			//            }
+			//        }
+			//    }
+			//    pdf.ResetReleasePage ();
+			//}
+			if (pdfSettings.UnifiedPageSettings.PaperSize.PaperName == PaperSize.AsPageSize) {
+				import.ImportPageSettings(pdf);
+			}
+
+			//if (sc == false) {
+			//    cts = null;
+			//}
+
+			#endregion
+
+			if (pdfSettings.FullCompression) {
+				st.SetFullCompression();
+			}
+
+			//st.Writer.CompressionLevel = ContextData.CreateDocumentOptions.CompressionLevel;
+			PdfPageLabels labels = DocInfoImporter.ImportPageLabels(pdfSettings.PageLabels) ??
+								   import.ImportPageLabels();
+			if (labels != null) {
+				st.Writer.PageLabels = labels;
+			}
+
+			if (options.ImportPageLinks ||
+				pdfSettings.UnifiedPageSettings.PaperSize.PaperName != PaperSize.AsPageSize /* sc*/) {
+				import.ImportPageLinks(pdf, st);
+			}
+
+			PdfDocumentCreator.ProcessInfoItem(
+				import.InfoDoc.DocumentElement.SelectSingleNode(Constants.PageLink) as XmlElement, processors);
+			PdfDocumentCreator.ProcessInfoItem(
+				import.InfoDoc.DocumentElement.SelectSingleNode(Constants.NamedDestination) as XmlElement,
+				processors);
+			XmlElement bookmarks = null;
+			if ((options.ImportBookmarks && pdfSettings.RemoveBookmarks == false) || xInfoDoc != null) {
+				Tracker.TraceMessage("导入书签。");
+				bookmarks = import.GetBookmarks() ??
+							OutlineManager.GetBookmark(pdf, new UnitConverter { Unit = Constants.Units.Point });
+			}
+
+			if (bookmarks != null) {
+				// 预处理书签
+				processors.Add(new CollapseBookmarkProcessor {
+					BookmarkStatus = pdfSettings.ViewerPreferences.CollapseBookmark
+				});
+				PdfDocumentCreator.ProcessInfoItem(bookmarks, processors);
+				if (bookmarks.ChildNodes.Count > 0 || xInfoDoc != null) {
+					import.ImportNamedDestinations(pdf, st.Writer);
+					OutlineManager.KillOutline(pdf);
+					PdfIndirectReference bm = OutlineManager.WriteOutline(st.Writer, bookmarks, pdf.NumberOfPages);
+					if (bm != null) {
+						pdf.Catalog.Put(PdfName.OUTLINES, bm);
+					}
+
+					if (pdf.Catalog.Contains(PdfName.PAGEMODE) == false) {
+						pdf.Catalog.Put(PdfName.PAGEMODE, PdfName.USEOUTLINES);
+					}
+				}
+				else if (string.IsNullOrEmpty(docPath) == false) {
+					OutlineManager.KillOutline(pdf);
+				}
+			}
+
+			Tracker.IncrementProgress(10);
+			Tracker.TraceMessage("导入文档设置。");
+			import.ImportViewerPreferences(pdf);
+			DocInfoImporter.OverrideViewerPreferences(pdfSettings.ViewerPreferences, pdf, st.Writer);
+			//import.OverrideDocumentSettings (pdf);
+			Tracker.IncrementProgress(5);
+			Tracker.TraceMessage("清理输出文件。");
+			pdf.RemoveUnusedObjects();
+			if (pdf.AcroForm == null) {
+				pdf.Trailer.Locate<PdfDictionary>(PdfName.ROOT).Remove(PdfName.ACROFORM);
+			}
+
+			Tracker.IncrementProgress(10);
+			Tracker.TraceMessage("保存文件：" + targetFile);
+			st.Close();
+			Tracker.TrackProgress(workload);
 		}
 		catch (OperationCanceledException) {
 			Tracker.TraceMessage(Tracker.Category.ImportantMessage, OperationCanceled);
@@ -665,51 +659,50 @@ internal static class Worker
 			}
 
 			f.CreateContainingDirectory();
-			using (Stream s = new FileStream(f, FileMode.Create)) {
-				PageBoxSettings ps = option.PageSettings;
-				doc = new Document(
-					new Rectangle(ps.PaperSize.Width, ps.PaperSize.Height),
-					ps.Margins.Left, ps.Margins.Right, ps.Margins.Top, ps.Margins.Bottom
-				);
-				PdfSmartCopy w = new(doc, s);
-				if (option.FullCompression) {
-					w.SetFullCompression();
-				}
-
-				//w.CompressionLevel = ContextData.CreateDocumentOptions.CompressionLevel;
-				doc.Open();
-				doc.AddCreator(Application.ProductName + " " + Application.ProductVersion);
-				if (labels != null) {
-					w.PageLabels = labels;
-				}
-
-				Tracker.IncrementProgress(10);
-				PdfDocumentCreator creator = new(sink, option, impOptions, doc, w);
-				foreach (SourceItem item in sources) {
-					creator.ProcessFile(item, creator.PdfBookmarks.BookmarkRoot);
-				}
-
-				Tracker.TraceMessage("设置文档选项。");
-				DocInfoImporter.ImportDocumentInformation(option.MetaData.SpecifyMetaData
-					? option.MetaData
-					: info, doc);
-				DocInfoImporter.OverrideViewerPreferences(option.ViewerPreferences, null, w);
-				if ((bookmarks == null || bookmarks.HasChildNodes == false) &&
-					creator.PdfBookmarks.DocumentElement.HasChildNodes) {
-					bookmarks = creator.PdfBookmarks.BookmarkRoot;
-				}
-
-				if (bookmarks != null && bookmarks.HasChildNodes) {
-					Tracker.TraceMessage("写入文档书签。");
-					OutlineManager.WriteOutline(w, bookmarks,
-						w.PageEmpty ? w.CurrentPageNumber - 1 : w.CurrentPageNumber);
-					w.ViewerPreferences = PdfWriter.PageModeUseOutlines;
-				}
-
-				Tracker.TraceMessage("写入文件索引。");
-				Tracker.TraceMessage(Tracker.Category.Alert, "生成文件：<<" + targetFile + ">>。");
-				w.Close();
+			using Stream s = new FileStream(f, FileMode.Create);
+			PageBoxSettings ps = option.PageSettings;
+			doc = new Document(
+				new Rectangle(ps.PaperSize.Width, ps.PaperSize.Height),
+				ps.Margins.Left, ps.Margins.Right, ps.Margins.Top, ps.Margins.Bottom
+			);
+			PdfSmartCopy w = new(doc, s);
+			if (option.FullCompression) {
+				w.SetFullCompression();
 			}
+
+			//w.CompressionLevel = ContextData.CreateDocumentOptions.CompressionLevel;
+			doc.Open();
+			doc.AddCreator(Application.ProductName + " " + Application.ProductVersion);
+			if (labels != null) {
+				w.PageLabels = labels;
+			}
+
+			Tracker.IncrementProgress(10);
+			PdfDocumentCreator creator = new(sink, option, impOptions, doc, w);
+			foreach (SourceItem item in sources) {
+				creator.ProcessFile(item, creator.PdfBookmarks.BookmarkRoot);
+			}
+
+			Tracker.TraceMessage("设置文档选项。");
+			DocInfoImporter.ImportDocumentInformation(option.MetaData.SpecifyMetaData
+				? option.MetaData
+				: info, doc);
+			DocInfoImporter.OverrideViewerPreferences(option.ViewerPreferences, null, w);
+			if ((bookmarks == null || bookmarks.HasChildNodes == false) &&
+				creator.PdfBookmarks.DocumentElement.HasChildNodes) {
+				bookmarks = creator.PdfBookmarks.BookmarkRoot;
+			}
+
+			if (bookmarks != null && bookmarks.HasChildNodes) {
+				Tracker.TraceMessage("写入文档书签。");
+				OutlineManager.WriteOutline(w, bookmarks,
+					w.PageEmpty ? w.CurrentPageNumber - 1 : w.CurrentPageNumber);
+				w.ViewerPreferences = PdfWriter.PageModeUseOutlines;
+			}
+
+			Tracker.TraceMessage("写入文件索引。");
+			Tracker.TraceMessage(Tracker.Category.Alert, "生成文件：<<" + targetFile + ">>。");
+			w.Close();
 		}
 		catch (OperationCanceledException) {
 			Tracker.TraceMessage(Tracker.Category.ImportantMessage, OperationCanceled);
@@ -841,23 +834,21 @@ internal static class Worker
 			else if (new FilePath(bookmarkFile).HasExtension(Ext.Txt)) {
 				Tracker.TraceMessage(Tracker.Category.OutputFile, bookmarkFile);
 				Tracker.TraceMessage("输出简易信息文件：" + bookmarkFile);
-				using (TextWriter w = new StreamWriter(bookmarkFile, false, AppContext.Exporter.GetEncoding())) {
-					DocInfoExporter.WriteDocumentInfoAttributes(w, sourceFile, r.NumberOfPages);
-					ocr.SetWriter(w);
-					ocr.PerformOcr();
-				}
+				using TextWriter w = new StreamWriter(bookmarkFile, false, AppContext.Exporter.GetEncoding());
+				DocInfoExporter.WriteDocumentInfoAttributes(w, sourceFile, r.NumberOfPages);
+				ocr.SetWriter(w);
+				ocr.PerformOcr();
 			}
 			else {
 				Tracker.TraceMessage(Tracker.Category.OutputFile, bookmarkFile);
 				Tracker.TraceMessage("输出信息文件：" + bookmarkFile);
-				using (XmlWriter w = XmlWriter.Create(bookmarkFile, DocInfoExporter.GetWriterSettings())) {
-					w.WriteStartDocument();
-					w.WriteStartElement(Constants.PdfInfo);
-					DocInfoExporter.WriteDocumentInfoAttributes(w, sourceFile, r.NumberOfPages);
-					ocr.SetWriter(w);
-					ocr.PerformOcr();
-					w.WriteEndElement();
-				}
+				using XmlWriter w = XmlWriter.Create(bookmarkFile, DocInfoExporter.GetWriterSettings());
+				w.WriteStartDocument();
+				w.WriteStartElement(Constants.PdfInfo);
+				DocInfoExporter.WriteDocumentInfoAttributes(w, sourceFile, r.NumberOfPages);
+				ocr.SetWriter(w);
+				ocr.PerformOcr();
+				w.WriteEndElement();
 			}
 
 			if (noOutputFile == false) {

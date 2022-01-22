@@ -390,25 +390,24 @@ public partial class MergerControl : FunctionControl
 			AppContext.MainForm.SelectFunctionList(Function.MergerOptions);
 		}
 		else if (sender == _AddFolderButton) {
-			using (OpenFileDialog f = new() {
+			using OpenFileDialog f = new() {
 				FileName = "【选择目录】",
 				Filter = _OpenImageBox.Filter,
 				CheckFileExists = false,
 				Title = "选择包含图片或 PDF 的文件夹，点击“打开”按钮"
-			}) {
-				if (f.ShowDialog() != DialogResult.OK) {
-					return;
-				}
-
-				string p = Path.GetDirectoryName(f.FileName);
-				if (string.IsNullOrEmpty(Path.GetFileName(p))) {
-					FormHelper.ErrorBox("选择的文件夹无效，不允许选择根目录。");
-					return;
-				}
-
-				ExecuteCommand(Commands.OpenFile, p);
-				AppContext.RecentItems.AddHistoryItem(AppContext.Recent.Folders, p);
+			};
+			if (f.ShowDialog() != DialogResult.OK) {
+				return;
 			}
+
+			string p = Path.GetDirectoryName(f.FileName);
+			if (string.IsNullOrEmpty(Path.GetFileName(p))) {
+				FormHelper.ErrorBox("选择的文件夹无效，不允许选择根目录。");
+				return;
+			}
+
+			ExecuteCommand(Commands.OpenFile, p);
+			AppContext.RecentItems.AddHistoryItem(AppContext.Recent.Folders, p);
 		}
 	}
 
@@ -694,10 +693,9 @@ public partial class MergerControl : FunctionControl
 		ListViewItem vi = GetFocusedPdfItem();
 		if (vi != null) {
 			SourceItem.Pdf pdfItem = _ItemList.GetModelObject(vi.Index) as SourceItem.Pdf;
-			using (SourcePdfOptionForm f = new(pdfItem)) {
-				if (f.ShowDialog() == DialogResult.OK) {
-					_ItemList.RefreshObject(pdfItem);
-				}
+			using SourcePdfOptionForm f = new(pdfItem);
+			if (f.ShowDialog() == DialogResult.OK) {
+				_ItemList.RefreshObject(pdfItem);
 			}
 
 			return;
@@ -743,18 +741,17 @@ public partial class MergerControl : FunctionControl
 
 		SourceItem.Image o = new(c > 1 ? (FilePath)(c + " 个文件") : s.FilePath);
 		s.Cropping.CopyTo(o.Cropping);
-		using (SourceImageOptionForm f = new(o)) {
-			if (f.ShowDialog() != DialogResult.OK) {
-				return;
+		using SourceImageOptionForm f = new(o);
+		if (f.ShowDialog() != DialogResult.OK) {
+			return;
+		}
+
+		foreach (SourceItem.Image image in items) {
+			if (image == null || image.Type == SourceItem.ItemType.Pdf) {
+				continue;
 			}
 
-			foreach (SourceItem.Image image in items) {
-				if (image == null || image.Type == SourceItem.ItemType.Pdf) {
-					continue;
-				}
-
-				o.Cropping.CopyTo(image.Cropping);
-			}
+			o.Cropping.CopyTo(image.Cropping);
 		}
 	}
 

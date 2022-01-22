@@ -246,49 +246,44 @@ internal static class FormHelper
 	}
 
 	public static DialogResult ShowDialog<TForm>() where TForm : Form, new() {
-		using (TForm f = new()) {
-			return f.ShowDialog();
-		}
+		using TForm f = new();
+		return f.ShowDialog();
 	}
 
 	public static DialogResult ShowDialog<TForm>(this IWin32Window form) where TForm : Form, new() {
-		using (TForm f = new()) {
-			return f.ShowDialog(form);
-		}
+		using TForm f = new();
+		return f.ShowDialog(form);
 	}
 
 	public static DialogResult ShowDialog<TForm>(this IWin32Window form, object formParameter)
 		where TForm : Form, new() {
-		using (TForm f = new()) {
-			f.Tag = formParameter;
-			return f.ShowDialog(form);
-		}
+		using TForm f = new();
+		f.Tag = formParameter;
+		return f.ShowDialog(form);
 	}
 
 	public static DialogResult ShowDialog<TForm>(this IWin32Window form, Action<TForm> formConfigurator,
 		Action<TForm> formConfirmationHandler) where TForm : Form, new() {
-		using (TForm f = new()) {
-			formConfigurator?.Invoke(f);
-			DialogResult r = f.ShowDialog(form);
-			if (formConfirmationHandler != null && (r == DialogResult.OK || r == DialogResult.Yes)) {
-				formConfirmationHandler(f);
-			}
-
-			return r;
+		using TForm f = new();
+		formConfigurator?.Invoke(f);
+		DialogResult r = f.ShowDialog(form);
+		if (formConfirmationHandler != null && (r == DialogResult.OK || r == DialogResult.Yes)) {
+			formConfirmationHandler(f);
 		}
+
+		return r;
 	}
 
 	public static DialogResult ShowCommonDialog<TDialog>(this IWin32Window form, Action<TDialog> formConfigurator,
 		Action<TDialog> formConfirmationHandler) where TDialog : CommonDialog, new() {
-		using (TDialog f = new()) {
-			formConfigurator?.Invoke(f);
-			DialogResult r = f.ShowDialog(form);
-			if (formConfirmationHandler != null && (r == DialogResult.OK || r == DialogResult.Yes)) {
-				formConfirmationHandler(f);
-			}
-
-			return r;
+		using TDialog f = new();
+		formConfigurator?.Invoke(f);
+		DialogResult r = f.ShowDialog(form);
+		if (formConfirmationHandler != null && (r == DialogResult.OK || r == DialogResult.Yes)) {
+			formConfirmationHandler(f);
 		}
+
+		return r;
 	}
 
 	internal static void ErrorBox(string text) {

@@ -80,11 +80,10 @@ internal sealed class RemoveEmptyCommandProcessor : IPageProcessor
 				continue;
 			}
 
-			using (MemoryStream ms = new()) {
-				p.WritePdfCommands(ms);
-				ms.Flush();
-				f.SetData(ms.ToArray(), ms.Length > 32);
-			}
+			using MemoryStream ms = new();
+			p.WritePdfCommands(ms);
+			ms.Flush();
+			f.SetData(ms.ToArray(), ms.Length > 32);
 		}
 	}
 

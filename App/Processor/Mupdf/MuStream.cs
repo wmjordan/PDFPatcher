@@ -52,19 +52,18 @@ internal sealed class MuStream : IDisposable
 		}
 		else {
 			byte[] b = new byte[initialSize];
-			using (MemoryStream ms = new(initialSize))
-			using (BinaryWriter mw = new(ms)) {
-				int l;
-				while ((l = NativeMethods.Read(_context, _stream, b, initialSize)) > 0) {
-					mw.Write(b, 0, l);
-					if (ms.Length >= __CompressionBomb && ms.Length / 200 > initialSize) {
-						throw new IOException("Compression bomb detected.");
-					}
+			using MemoryStream ms = new(initialSize);
+			using BinaryWriter mw = new(ms);
+			int l;
+			while ((l = NativeMethods.Read(_context, _stream, b, initialSize)) > 0) {
+				mw.Write(b, 0, l);
+				if (ms.Length >= __CompressionBomb && ms.Length / 200 > initialSize) {
+					throw new IOException("Compression bomb detected.");
 				}
-
-				ms.Flush();
-				return ms.ToArray();
 			}
+
+			ms.Flush();
+			return ms.ToArray();
 		}
 	}
 

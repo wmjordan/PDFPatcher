@@ -427,9 +427,8 @@ internal sealed class PdfViewerControl : ImageBoxEx
 
 	protected override void OnCreateControl() {
 		base.OnCreateControl();
-		using (Graphics g = CreateGraphics()) {
-			_renderOptions.Dpi = g.DpiX;
-		}
+		using Graphics g = CreateGraphics();
+		_renderOptions.Dpi = g.DpiX;
 	}
 
 	protected override void OnMouseMove(MouseEventArgs e) {
@@ -621,9 +620,8 @@ internal sealed class PdfViewerControl : ImageBoxEx
 			g.FillRectangle(Brushes.FloralWhite, vp);
 		}
 		else {
-			using (SolidBrush b = new(BitmapHelper.Tint(Color.Gainsboro, TintColor))) {
-				g.FillRectangle(b, vp);
-			}
+			using SolidBrush b = new(BitmapHelper.Tint(Color.Gainsboro, TintColor));
+			g.FillRectangle(b, vp);
 		}
 
 		DrawingRectangle r = DrawingRectangle.Empty;
@@ -1147,16 +1145,15 @@ internal sealed class PdfViewerControl : ImageBoxEx
 	private void LoadPageBounds() {
 		float w = 0, h = 0;
 		for (int i = _mupdf.PageCount; i > 0; i--) {
-			using (MuPage p = _mupdf.LoadPage(i)) {
-				MuRectangle b = p.VisualBound;
-				_pageBounds[i] = b;
-				if (b.Width > w) {
-					w = b.Width;
-				}
+			using MuPage p = _mupdf.LoadPage(i);
+			MuRectangle b = p.VisualBound;
+			_pageBounds[i] = b;
+			if (b.Width > w) {
+				w = b.Width;
+			}
 
-				if (b.Height > h) {
-					h = b.Height;
-				}
+			if (b.Height > h) {
+				h = b.Height;
 			}
 		}
 

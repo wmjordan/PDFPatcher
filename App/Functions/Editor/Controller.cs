@@ -227,24 +227,23 @@ namespace PDFPatcher.Functions.Editor
 			string path = args[0] as string;
 			bool importMode = (bool)args[1];
 			Tracker.DebugMessage("open file");
-			using (PdfReader reader = PdfHelper.OpenPdfFile(path, AppContext.LoadPartialPdfFile, false)) {
-				try {
-					Tracker.DebugMessage("consolidate");
-					reader.ConsolidateNamedDestinations();
-					Tracker.DebugMessage("get bookmark");
-					e.Result = new object[] {
-						OutlineManager.GetBookmark(reader, new UnitConverter() {Unit = Constants.Units.Point}),
-						importMode, path
-					};
-					Tracker.DebugMessage("finished loading");
-				}
-				catch (BadPasswordException) {
-					FormHelper.ErrorBox(Messages.PasswordInvalid);
-					Tracker.TraceMessage(Tracker.Category.Error, Messages.PasswordInvalid);
-				}
-				catch (Exception ex) {
-					FormHelper.ErrorBox("在打开 PDF 文件时遇到错误：\n" + ex.Message);
-				}
+			using PdfReader reader = PdfHelper.OpenPdfFile(path, AppContext.LoadPartialPdfFile, false);
+			try {
+				Tracker.DebugMessage("consolidate");
+				reader.ConsolidateNamedDestinations();
+				Tracker.DebugMessage("get bookmark");
+				e.Result = new object[] {
+					OutlineManager.GetBookmark(reader, new UnitConverter() {Unit = Constants.Units.Point}),
+					importMode, path
+				};
+				Tracker.DebugMessage("finished loading");
+			}
+			catch (BadPasswordException) {
+				FormHelper.ErrorBox(Messages.PasswordInvalid);
+				Tracker.TraceMessage(Tracker.Category.Error, Messages.PasswordInvalid);
+			}
+			catch (Exception ex) {
+				FormHelper.ErrorBox("在打开 PDF 文件时遇到错误：\n" + ex.Message);
 			}
 		}
 
@@ -845,121 +844,120 @@ namespace PDFPatcher.Functions.Editor
 			List<MuTextSpan> spans = new List<MuTextSpan>(3);
 			int bl = 0;
 			for (int i = 0; i < c;) {
-				using (MuPage p = pdf.LoadPage(++i)) {
-					float h = p.VisualBound.Height;
-					float dh = p.VisualBound.Bottom - h;
-					foreach (MuTextBlock block in p.TextPage.Blocks) {
-						foreach (MuTextLine line in block.Lines) {
-							foreach (MuTextSpan span in line.Spans) {
-								for (int si = 0; si < bs.Count; si++) {
-									EditModel.AutoBookmarkStyle style = bs[si];
-									MatchPattern.IMatcher matcher = mp[si];
-									if (style.FontName != PdfDocumentFont.RemoveSubsetPrefix(p.GetFont(span).Name)
-										|| style.FontSize != span.Size.ToInt32()) {
+				using MuPage p = pdf.LoadPage(++i);
+				float h = p.VisualBound.Height;
+				float dh = p.VisualBound.Bottom - h;
+				foreach (MuTextBlock block in p.TextPage.Blocks) {
+					foreach (MuTextLine line in block.Lines) {
+						foreach (MuTextSpan span in line.Spans) {
+							for (int si = 0; si < bs.Count; si++) {
+								EditModel.AutoBookmarkStyle style = bs[si];
+								MatchPattern.IMatcher matcher = mp[si];
+								if (style.FontName != PdfDocumentFont.RemoveSubsetPrefix(p.GetFont(span).Name)
+									|| style.FontSize != span.Size.ToInt32()) {
+									continue;
+								}
+
+								string t = span.Text;
+								Rectangle b = span.Box;
+								if (t.Length == 0) {
+									continue;
+								}
+
+								if (bl < style.Level) {
+									if (matcher?.Matches(line.Text) == false) {
 										continue;
 									}
 
-									string t = span.Text;
-									Rectangle b = span.Box;
-									if (t.Length == 0) {
-										continue;
-									}
-
-									if (bl < style.Level) {
-										if (matcher?.Matches(line.Text) == false) {
-											continue;
-										}
-
-										bm = CreateNewSiblingBookmark(bm, spans);
-										++bl;
-									}
-									else if (bl == style.Level) {
-										// todo+ 删除重复的文本
-										BookmarkElement cb = bm as BookmarkElement;
-										float bb = h - cb.Bottom + dh;
-										float bt = h - cb.Top;
-										float lt = b.Top - b.Height * 2 + dh;
-										float lb = b.Bottom;
-										if (cb.Page == p.PageNumber
-											&& (bb >= lt && bb <= lb || bt >= lt && bt <= lb || bt < lt && bb > lb)
-											&& (mergeAdjacentTitle || spans.Count == 1 ||
-												spans[spans.Count - 1].Point.Y == span.Point.Y)) {
-											//var m = false;
-											//var bs = b.Size.Area();
-											//foreach (var ss in spans) {
-											//	var a = ss.Box.Intersect(b).Size.Area();
-											//	var ov = a / bs;
-											//	if (0.5 < ov && ov <= 1) {
-											//		m = true;
-											//		break;
-											//	}
-											//	ov = a / ss.Box.Size.Area();
-											//	if (0.5 < ov && ov <= 1) {
-											//		m = true;
-											//		break;
-											//	}
-											//}
-											if ( /*m == false &&*/ t.Length > 0) {
-												// 保留英文和数字文本之间的空格
-												string ct = cb.Title;
-												if (ct.Length > 0) {
-													char lc = ct[ct.Length - 1];
-													cb.Title = (Char.IsLetterOrDigit(lc) || Char.IsPunctuation(lc)
-														&& lc != '-') && t[0] != ' '
-														? ct + ' ' + t
-														: ct + t;
-												}
-
-												cb.Bottom = h - lb;
-												spans.Add(span);
+									bm = CreateNewSiblingBookmark(bm, spans);
+									++bl;
+								}
+								else if (bl == style.Level) {
+									// todo+ 删除重复的文本
+									BookmarkElement cb = bm as BookmarkElement;
+									float bb = h - cb.Bottom + dh;
+									float bt = h - cb.Top;
+									float lt = b.Top - b.Height * 2 + dh;
+									float lb = b.Bottom;
+									if (cb.Page == p.PageNumber
+										&& (bb >= lt && bb <= lb || bt >= lt && bt <= lb || bt < lt && bb > lb)
+										&& (mergeAdjacentTitle || spans.Count == 1 ||
+											spans[spans.Count - 1].Point.Y == span.Point.Y)) {
+										//var m = false;
+										//var bs = b.Size.Area();
+										//foreach (var ss in spans) {
+										//	var a = ss.Box.Intersect(b).Size.Area();
+										//	var ov = a / bs;
+										//	if (0.5 < ov && ov <= 1) {
+										//		m = true;
+										//		break;
+										//	}
+										//	ov = a / ss.Box.Size.Area();
+										//	if (0.5 < ov && ov <= 1) {
+										//		m = true;
+										//		break;
+										//	}
+										//}
+										if ( /*m == false &&*/ t.Length > 0) {
+											// 保留英文和数字文本之间的空格
+											string ct = cb.Title;
+											if (ct.Length > 0) {
+												char lc = ct[ct.Length - 1];
+												cb.Title = (Char.IsLetterOrDigit(lc) || Char.IsPunctuation(lc)
+													&& lc != '-') && t[0] != ' '
+													? ct + ' ' + t
+													: ct + t;
 											}
 
-											continue;
+											cb.Bottom = h - lb;
+											spans.Add(span);
 										}
 
-										if (matcher?.Matches(line.Text) == false) {
-											continue;
-										}
-
-										bm = CreateNewSiblingBookmarkForParent(bm, spans);
-									}
-									else {
-										while (bl > style.Level) {
-											bm = bm.ParentBookmark;
-											--bl;
-										}
-
-										if (matcher?.Matches(line.Text) == false) {
-											continue;
-										}
-
-										bm = CreateNewSiblingBookmarkForParent(bm, spans);
+										continue;
 									}
 
-									BookmarkElement be = bm as BookmarkElement;
-									be.Title = t;
-									be.Top = h - b.Top + b.Height + dh;
-									be.Bottom = h - b.Bottom + dh;
-									be.Action = Constants.ActionType.Goto;
-									be.Page = p.PageNumber;
-									BookmarkSettings s = style.Style;
-									if (s.IsBold || s.IsItalic) {
-										be.TextStyle = s.IsBold && s.IsItalic ? FontStyle.Bold | FontStyle.Italic
-											: s.IsBold ? FontStyle.Bold
-											: s.IsItalic ? FontStyle.Italic
-											: FontStyle.Regular;
+									if (matcher?.Matches(line.Text) == false) {
+										continue;
 									}
 
-									if (s.IsOpened) {
-										be.IsOpen = true;
-									}
-
-									be.ForeColor = s.ForeColor;
-									//todo+ 删除尾随的空格
-									ug.Add(new RemoveElementAction(bm));
-									spans.Add(span);
-									break;
+									bm = CreateNewSiblingBookmarkForParent(bm, spans);
 								}
+								else {
+									while (bl > style.Level) {
+										bm = bm.ParentBookmark;
+										--bl;
+									}
+
+									if (matcher?.Matches(line.Text) == false) {
+										continue;
+									}
+
+									bm = CreateNewSiblingBookmarkForParent(bm, spans);
+								}
+
+								BookmarkElement be = bm as BookmarkElement;
+								be.Title = t;
+								be.Top = h - b.Top + b.Height + dh;
+								be.Bottom = h - b.Bottom + dh;
+								be.Action = Constants.ActionType.Goto;
+								be.Page = p.PageNumber;
+								BookmarkSettings s = style.Style;
+								if (s.IsBold || s.IsItalic) {
+									be.TextStyle = s.IsBold && s.IsItalic ? FontStyle.Bold | FontStyle.Italic
+										: s.IsBold ? FontStyle.Bold
+										: s.IsItalic ? FontStyle.Italic
+										: FontStyle.Regular;
+								}
+
+								if (s.IsOpened) {
+									be.IsOpen = true;
+								}
+
+								be.ForeColor = s.ForeColor;
+								//todo+ 删除尾随的空格
+								ug.Add(new RemoveElementAction(bm));
+								spans.Add(span);
+								break;
 							}
 						}
 					}

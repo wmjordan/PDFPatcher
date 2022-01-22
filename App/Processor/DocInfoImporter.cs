@@ -77,33 +77,32 @@ internal sealed class DocInfoImporter
 		o.UnitConverter.Unit = Constants.Units.Point;
 		DocInfoExporter exp = new(pdf, o);
 		Tracker.SetProgressGoal(exp.EstimateWorkload());
-		using (MemoryStream ms = new()) {
-			using (XmlWriter w = XmlWriter.Create(ms)) {
-				w.WriteStartElement(Constants.PdfInfo);
-				w.WriteAttributeString(Constants.Info.ProductVersion, Constants.InfoDocVersion);
-				exp.ExportDocument(w);
-				if (bookmarkRoot != null) {
-					XPathNavigator bookmark = bookmarkRoot.CreateNavigator();
-					bookmark.WriteSubtree(w);
-					//if (bookmark.MoveToFirstChild()) {
-					//	bookmark.WriteSubtree(w);
-					//}
-					//while (bookmark.MoveToNext()) {
-					//	bookmark.WriteSubtree(w);
-					//}
-				}
-
-				w.WriteEndElement();
+		using MemoryStream ms = new();
+		using (XmlWriter w = XmlWriter.Create(ms)) {
+			w.WriteStartElement(Constants.PdfInfo);
+			w.WriteAttributeString(Constants.Info.ProductVersion, Constants.InfoDocVersion);
+			exp.ExportDocument(w);
+			if (bookmarkRoot != null) {
+				XPathNavigator bookmark = bookmarkRoot.CreateNavigator();
+				bookmark.WriteSubtree(w);
+				//if (bookmark.MoveToFirstChild()) {
+				//	bookmark.WriteSubtree(w);
+				//}
+				//while (bookmark.MoveToNext()) {
+				//	bookmark.WriteSubtree(w);
+				//}
 			}
 
-			ms.Flush();
-			ms.Position = 0;
-			PdfInfoXmlDocument x = new();
-			x.Load(ms);
-			_options = importerOptions;
-			_unitFactor = 1;
-			InfoDoc = x;
+			w.WriteEndElement();
 		}
+
+		ms.Flush();
+		ms.Position = 0;
+		PdfInfoXmlDocument x = new();
+		x.Load(ms);
+		_options = importerOptions;
+		_unitFactor = 1;
+		InfoDoc = x;
 	}
 
 	internal PdfInfoXmlDocument InfoDoc { get; }

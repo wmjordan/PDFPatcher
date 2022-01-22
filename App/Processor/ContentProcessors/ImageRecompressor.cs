@@ -93,35 +93,34 @@ internal sealed class ImageRecompressor : IPageProcessor
 
 		ImageInfo info = new(imgRef);
 		byte[] bytes = info.DecodeImage(_imgExpOption);
-		using (FreeImageBitmap fi = ImageExtractor.CreateFreeImageBitmap(info, ref bytes, false, false)) {
-			byte[] sb = JBig2Encoder.Encode(fi);
-			if (sb.Length > length) {
-				return false;
-			}
-
-			imgStream.SetData(sb, false);
-			imgStream.Put(PdfName.FILTER, PdfName.JBIG2DECODE);
-			if (imgStream.GetAsArray(PdfName.COLORSPACE) == null) {
-				imgStream.Put(PdfName.COLORSPACE, PdfName.DEVICEGRAY);
-			}
-
-			imgStream.Put(PdfName.BITSPERCOMPONENT, new PdfNumber(1));
-			imgStream.Put(PdfName.LENGTH, new PdfNumber(sb.Length));
-			imgStream.Remove(PdfName.K);
-			imgStream.Remove(PdfName.ENDOFLINE);
-			imgStream.Remove(PdfName.ENCODEDBYTEALIGN);
-			imgStream.Remove(PdfName.COLUMNS);
-			imgStream.Remove(PdfName.ROWS);
-			imgStream.Remove(PdfName.ENDOFBLOCK);
-			imgStream.Remove(PdfName.BLACKIS1);
-			imgStream.Remove(PdfName.PREDICTOR);
-			imgStream.Remove(PdfName.COLORS);
-			imgStream.Remove(PdfName.COLUMNS);
-			imgStream.Remove(PdfName.EARLYCHANGE);
-			imgStream.Remove(PdfName.DECODEPARMS);
-			imgStream.Remove(PdfName.DECODE);
-			_optimizedImageCount++;
+		using FreeImageBitmap fi = ImageExtractor.CreateFreeImageBitmap(info, ref bytes, false, false);
+		byte[] sb = JBig2Encoder.Encode(fi);
+		if (sb.Length > length) {
+			return false;
 		}
+
+		imgStream.SetData(sb, false);
+		imgStream.Put(PdfName.FILTER, PdfName.JBIG2DECODE);
+		if (imgStream.GetAsArray(PdfName.COLORSPACE) == null) {
+			imgStream.Put(PdfName.COLORSPACE, PdfName.DEVICEGRAY);
+		}
+
+		imgStream.Put(PdfName.BITSPERCOMPONENT, new PdfNumber(1));
+		imgStream.Put(PdfName.LENGTH, new PdfNumber(sb.Length));
+		imgStream.Remove(PdfName.K);
+		imgStream.Remove(PdfName.ENDOFLINE);
+		imgStream.Remove(PdfName.ENCODEDBYTEALIGN);
+		imgStream.Remove(PdfName.COLUMNS);
+		imgStream.Remove(PdfName.ROWS);
+		imgStream.Remove(PdfName.ENDOFBLOCK);
+		imgStream.Remove(PdfName.BLACKIS1);
+		imgStream.Remove(PdfName.PREDICTOR);
+		imgStream.Remove(PdfName.COLORS);
+		imgStream.Remove(PdfName.COLUMNS);
+		imgStream.Remove(PdfName.EARLYCHANGE);
+		imgStream.Remove(PdfName.DECODEPARMS);
+		imgStream.Remove(PdfName.DECODE);
+		_optimizedImageCount++;
 
 		return true;
 	}

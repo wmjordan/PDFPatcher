@@ -452,11 +452,10 @@ internal sealed class PdfContentExport
 				writer.WriteCData(sb.ToString());
 			}
 			else if (key == "Metadata") {
-				using (MemoryStream ms = new(bs))
-				using (StreamReader sr = new(ms, true)) {
-					// strip byte-order-marks
-					writer.WriteCData(sr.ReadToEnd().Replace("\uFFFE", "&#xFFFE;").Replace("\uFEFF", "&#xFEFF;"));
-				}
+				using MemoryStream ms = new(bs);
+				using StreamReader sr = new(ms, true);
+				// strip byte-order-marks
+				writer.WriteCData(sr.ReadToEnd().Replace("\uFFFE", "&#xFFFE;").Replace("\uFEFF", "&#xFEFF;"));
 			}
 			else {
 				ExportRawStreamContent(writer, bs);

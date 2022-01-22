@@ -188,14 +188,13 @@ namespace PDFPatcher.Processor
 			}
 
 			if (info.MaskBytes != null) {
-				using (FreeImageBitmap m = new FreeImageBitmap(
-						   info.MaskSize.Width, info.MaskSize.Height,
-						   (info.MaskSize.Width + 7) / 8, PixelFormat.Format1bppIndexed,
-						   info.MaskBytes)) {
-					//var r = bmp.Composite (false, null, m);
-					m.Palette.CreateGrayscalePalette();
-					m.Save(fileName + "[mask]" + Constants.FileExtensions.Tif);
-				}
+				using FreeImageBitmap m = new FreeImageBitmap(
+					info.MaskSize.Width, info.MaskSize.Height,
+					(info.MaskSize.Width + 7) / 8, PixelFormat.Format1bppIndexed,
+					info.MaskBytes);
+				//var r = bmp.Composite (false, null, m);
+				m.Palette.CreateGrayscalePalette();
+				m.Save(fileName + "[mask]" + Constants.FileExtensions.Tif);
 			}
 
 			_totalImageCount++;
@@ -214,17 +213,16 @@ namespace PDFPatcher.Processor
 				//var pixmap = new MuPdfSharp.PixmapData(ctx, ctx.LoadJpeg2000(bytes));
 				//var b = pixmap.ToBitmap(new MuPdfSharp.ImageRendererOptions());
 				try {
-					using (MemoryStream ms = new MemoryStream(bytes))
-					using (FreeImageBitmap bmp = new FreeImageBitmap(ms)) {
-						RotateBitmap(bmp, _pageRotation, vFlip);
-						info.CreatePaletteAndIccProfile(bmp);
-						try {
-							bmp.Save(n);
-						}
-						catch (FreeImageException) {
-							File.Delete(n);
-							bmp.Save(new FilePath(n).ChangeExtension(Constants.FileExtensions.Png));
-						}
+					using MemoryStream ms = new MemoryStream(bytes);
+					using FreeImageBitmap bmp = new FreeImageBitmap(ms);
+					RotateBitmap(bmp, _pageRotation, vFlip);
+					info.CreatePaletteAndIccProfile(bmp);
+					try {
+						bmp.Save(n);
+					}
+					catch (FreeImageException) {
+						File.Delete(n);
+						bmp.Save(new FilePath(n).ChangeExtension(Constants.FileExtensions.Png));
 					}
 				}
 				catch (FreeImageException ex) {
@@ -233,24 +231,23 @@ namespace PDFPatcher.Processor
 				}
 			}
 			else if (PdfName.DEVICECMYK.Equals(info.ColorSpace)) {
-				using (MemoryStream ms = new MemoryStream(bytes))
-				using (FreeImageBitmap bmp = new FreeImageBitmap(ms,
-						   FREE_IMAGE_LOAD_FLAGS.JPEG_CMYK | FREE_IMAGE_LOAD_FLAGS.TIFF_CMYK)) {
-					RotateBitmap(bmp, _pageRotation, vFlip);
-					if (bmp.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_24_BPP)) {
-						SwapRedBlue(bmp);
-						n = fileName + Constants.FileExtensions.Png;
-						bmp.Save(n, FREE_IMAGE_FORMAT.FIF_PNG);
-					}
-					else {
-						n = fileName + Constants.FileExtensions.Tif;
-						bmp.Save(n, FREE_IMAGE_FORMAT.FIF_TIFF,
-							FREE_IMAGE_SAVE_FLAGS.TIFF_CMYK | FREE_IMAGE_SAVE_FLAGS.TIFF_DEFLATE);
-					}
+				using MemoryStream ms = new MemoryStream(bytes);
+				using FreeImageBitmap bmp = new FreeImageBitmap(ms,
+					FREE_IMAGE_LOAD_FLAGS.JPEG_CMYK | FREE_IMAGE_LOAD_FLAGS.TIFF_CMYK);
+				RotateBitmap(bmp, _pageRotation, vFlip);
+				if (bmp.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_24_BPP)) {
+					SwapRedBlue(bmp);
+					n = fileName + Constants.FileExtensions.Png;
+					bmp.Save(n, FREE_IMAGE_FORMAT.FIF_PNG);
+				}
+				else {
+					n = fileName + Constants.FileExtensions.Tif;
+					bmp.Save(n, FREE_IMAGE_FORMAT.FIF_TIFF,
+						FREE_IMAGE_SAVE_FLAGS.TIFF_CMYK | FREE_IMAGE_SAVE_FLAGS.TIFF_DEFLATE);
+				}
 
-					if (PrintImageLocation) {
-						Tracker.TraceMessage("导出图片：" + n);
-					}
+				if (PrintImageLocation) {
+					Tracker.TraceMessage("导出图片：" + n);
 				}
 			}
 			else {
@@ -362,53 +359,51 @@ namespace PDFPatcher.Processor
 			if (PdfName.DEVICECMYK.Equals(info.ColorSpace)) {
 				// TODO: 转换字节数组的 CMYK 为 RGB 后加载到 FreeImageBitmap
 				//info.PixelFormat = PixelFormat.Undefined;
-				using (FreeImageBitmap bmp = new FreeImageBitmap(
-						   //info.Width,
-						   //info.Height,
-						   //GetStride (info, bytes, vFlip),
-						   //PixelFormat.Format32bppArgb, bytes
-						   new MemoryStream(bytes), FREE_IMAGE_LOAD_FLAGS.JPEG_CMYK
-					   )) {
-					if (info.ICCProfile != null) {
-						bmp.CreateICCProfile(info.ICCProfile);
-					}
+				using FreeImageBitmap bmp = new FreeImageBitmap(
+					//info.Width,
+					//info.Height,
+					//GetStride (info, bytes, vFlip),
+					//PixelFormat.Format32bppArgb, bytes
+					new MemoryStream(bytes), FREE_IMAGE_LOAD_FLAGS.JPEG_CMYK
+				);
+				if (info.ICCProfile != null) {
+					bmp.CreateICCProfile(info.ICCProfile);
+				}
 
-					RotateBitmap(bmp, _pageRotation, false);
-					if (bmp.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_24_BPP)) {
-						SwapRedBlue(bmp);
-						n = fileName + Constants.FileExtensions.Png;
-						bmp.Save(n, FREE_IMAGE_FORMAT.FIF_PNG);
-					}
-					else {
-						bmp.Save(n,
-							FREE_IMAGE_FORMAT.FIF_TIFF,
-							FREE_IMAGE_SAVE_FLAGS.TIFF_CMYK | FREE_IMAGE_SAVE_FLAGS.TIFF_DEFLATE);
-					}
+				RotateBitmap(bmp, _pageRotation, false);
+				if (bmp.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_24_BPP)) {
+					SwapRedBlue(bmp);
+					n = fileName + Constants.FileExtensions.Png;
+					bmp.Save(n, FREE_IMAGE_FORMAT.FIF_PNG);
+				}
+				else {
+					bmp.Save(n,
+						FREE_IMAGE_FORMAT.FIF_TIFF,
+						FREE_IMAGE_SAVE_FLAGS.TIFF_CMYK | FREE_IMAGE_SAVE_FLAGS.TIFF_DEFLATE);
 				}
 			}
 			else {
-				using (FreeImageBitmap bmp = CreateFreeImageBitmap(info, ref bytes, vFlip, true)) {
-					if (ext == Constants.FileExtensions.Png
-						&& _options.InvertBlackAndWhiteImages
-						&& info.PixelFormat == PixelFormat.Format1bppIndexed
-						&& bmp.Palette.Length == 2) {
-						bmp.SwapPaletteIndices(0, 1);
-					}
+				using FreeImageBitmap bmp = CreateFreeImageBitmap(info, ref bytes, vFlip, true);
+				if (ext == Constants.FileExtensions.Png
+					&& _options.InvertBlackAndWhiteImages
+					&& info.PixelFormat == PixelFormat.Format1bppIndexed
+					&& bmp.Palette.Length == 2) {
+					bmp.SwapPaletteIndices(0, 1);
+				}
 
-					RotateBitmap(bmp, _pageRotation, false);
-					if (ext == Constants.FileExtensions.Tif) {
-						TiffHelper.Save(bmp, n);
+				RotateBitmap(bmp, _pageRotation, false);
+				if (ext == Constants.FileExtensions.Tif) {
+					TiffHelper.Save(bmp, n);
+				}
+				//else if (info.MaskBytes != null) {
+				//    bmp.Save (fileName + Constants.FileExtensions.Png);
+				//}
+				else {
+					try {
+						bmp.Save(n, FREE_IMAGE_FORMAT.FIF_PNG);
 					}
-					//else if (info.MaskBytes != null) {
-					//    bmp.Save (fileName + Constants.FileExtensions.Png);
-					//}
-					else {
-						try {
-							bmp.Save(n, FREE_IMAGE_FORMAT.FIF_PNG);
-						}
-						catch (SEHException) {
-							Tracker.TraceMessage(Tracker.Category.Error, "保存图片时出现错误，请联系程序开发者：" + n);
-						}
+					catch (SEHException) {
+						Tracker.TraceMessage(Tracker.Category.Error, "保存图片时出现错误，请联系程序开发者：" + n);
 					}
 				}
 			}
@@ -544,135 +539,133 @@ namespace PDFPatcher.Processor
 				}
 
 				string f = GetNewImageFileName();
-				using (FreeImageBitmap bmp = new FreeImageBitmap(w, h, imageI.Image.PixelFormat)) {
-					h = 0;
-					byte palEntryCount = 0;
-					RGBQUAD[] bmpPal = bmp.HasPalette ? bmp.Palette.AsArray : null;
-					foreach (ImageInfo part in imageParts) {
-						using (FreeImageBitmap bmp2 = FreeImageBitmap.FromFile(part.FileName)) {
-							int pl = part.PaletteEntryCount;
-							if (pl > 0 && bmp.HasPalette && bmp2.HasPalette) {
-								//var palMapSrc = new byte[pl];
-								//var palMapDest = new byte[pl];
-								//uint mi = 0;
-								for (int pi = 0; pi < pl; pi++) {
-									int p = Array.IndexOf(bmpPal, part.PaletteArray[pi], 0, palEntryCount);
-									if (p != -1) {
-										continue;
-									}
+				using FreeImageBitmap bmp = new FreeImageBitmap(w, h, imageI.Image.PixelFormat);
+				h = 0;
+				byte palEntryCount = 0;
+				RGBQUAD[] bmpPal = bmp.HasPalette ? bmp.Palette.AsArray : null;
+				foreach (ImageInfo part in imageParts) {
+					using FreeImageBitmap bmp2 = FreeImageBitmap.FromFile(part.FileName);
+					int pl = part.PaletteEntryCount;
+					if (pl > 0 && bmp.HasPalette && bmp2.HasPalette) {
+						//var palMapSrc = new byte[pl];
+						//var palMapDest = new byte[pl];
+						//uint mi = 0;
+						for (int pi = 0; pi < pl; pi++) {
+							int p = Array.IndexOf(bmpPal, part.PaletteArray[pi], 0, palEntryCount);
+							if (p != -1) {
+								continue;
+							}
 
-									if (palEntryCount == 255) {
-										if (bmpPal != null) {
-											bmp.Palette.AsArray = bmpPal;
-										}
-
-										// 调色板不足以存放合并后的图片颜色
-										if (bmp.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_24_BPP)
-											&& bmp2.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_24_BPP)) {
-											ext = Constants.FileExtensions.Png;
-											bmpPal = null;
-											goto Paste;
-										}
-										else {
-											throw new OverflowException("调色板溢出，无法合并图片。");
-										}
-									}
-
-									if (palEntryCount >= bmpPal.Length && palEntryCount < 129) {
-										bmp.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_08_BPP);
-										Array.Resize(ref bmpPal, 256);
-									}
-
-									bmpPal[palEntryCount] = part.PaletteArray[pi];
-									p = palEntryCount;
-									++palEntryCount;
-									//if (p != pi) {
-									//	palMapSrc[mi] = (byte)pi;
-									//	palMapDest[mi] = (byte)(p);
-									//	mi++;
-									//}
+							if (palEntryCount == 255) {
+								if (bmpPal != null) {
+									bmp.Palette.AsArray = bmpPal;
 								}
-								//bmp2.ApplyPaletteIndexMapping (palMapSrc, palMapDest, mi, false);
-							}
-							else if (pl > 0 && bmp2.HasPalette) {
-								bmp2.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_24_BPP);
-							}
 
-						Paste:
-							if (bmpPal != null) {
-								bmp.Palette.AsArray = bmpPal;
-							}
-
-							if (bmp.HasPalette && bmp2.HasPalette) {
-								RGBQUAD[] a1 = bmp.Palette.AsArray;
-								RGBQUAD[] a2 = bmp2.Palette.AsArray;
-								byte[] sp = new byte[palEntryCount];
-								byte[] dp = new byte[palEntryCount];
-								int di = 0;
-								for (int ai = 0; ai < a2.Length; ai++) {
-									int p = Array.IndexOf(a1, a2[ai], 0, palEntryCount);
-									if (p == ai || p <= -1) {
-										continue;
-									}
-
-									sp[di] = (byte)ai;
-									dp[di] = (byte)p;
-									++di;
-								}
-								//todo: 两幅图像调色板不一致时需调换颜色再复制数据
-								//if (di > 0) {
-								//	bmp2.ApplyPaletteIndexMapping(sp, dp, (uint)di, true);
-								//}
-							}
-
-							if (bmp.Paste(bmp2, 0, h, Int32.MaxValue) == false) {
-								if (bmp.HasPalette && bmp2.HasPalette == false) {
-									bmp.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_24_BPP);
-									if (bmp.Paste(bmp2, 0, h, Int32.MaxValue) == false) {
-										Tracker.TraceMessage("合并图片失败");
-									}
-
+								// 调色板不足以存放合并后的图片颜色
+								if (bmp.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_24_BPP)
+									&& bmp2.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_24_BPP)) {
+									ext = Constants.FileExtensions.Png;
 									bmpPal = null;
+									goto Paste;
+								}
+								else {
+									throw new OverflowException("调色板溢出，无法合并图片。");
 								}
 							}
 
-							h += bmp2.Height;
+							if (palEntryCount >= bmpPal.Length && palEntryCount < 129) {
+								bmp.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_08_BPP);
+								Array.Resize(ref bmpPal, 256);
+							}
+
+							bmpPal[palEntryCount] = part.PaletteArray[pi];
+							p = palEntryCount;
+							++palEntryCount;
+							//if (p != pi) {
+							//	palMapSrc[mi] = (byte)pi;
+							//	palMapDest[mi] = (byte)(p);
+							//	mi++;
+							//}
 						}
+						//bmp2.ApplyPaletteIndexMapping (palMapSrc, palMapDest, mi, false);
+					}
+					else if (pl > 0 && bmp2.HasPalette) {
+						bmp2.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_24_BPP);
 					}
 
+				Paste:
 					if (bmpPal != null) {
 						bmp.Palette.AsArray = bmpPal;
 					}
 
-					if (ext == Constants.FileExtensions.Jpg && _options.MergeJpgToPng) {
-						ext = Constants.FileExtensions.Png;
-					}
-					else if (bmp.PixelFormat == PixelFormat.Format1bppIndexed) {
-						if (_options.MonoPng == false) {
-							ext = Constants.FileExtensions.Tif;
+					if (bmp.HasPalette && bmp2.HasPalette) {
+						RGBQUAD[] a1 = bmp.Palette.AsArray;
+						RGBQUAD[] a2 = bmp2.Palette.AsArray;
+						byte[] sp = new byte[palEntryCount];
+						byte[] dp = new byte[palEntryCount];
+						int di = 0;
+						for (int ai = 0; ai < a2.Length; ai++) {
+							int p = Array.IndexOf(a1, a2[ai], 0, palEntryCount);
+							if (p == ai || p <= -1) {
+								continue;
+							}
+
+							sp[di] = (byte)ai;
+							dp[di] = (byte)p;
+							++di;
 						}
-						else {
-							ext = Constants.FileExtensions.Png;
+						//todo: 两幅图像调色板不一致时需调换颜色再复制数据
+						//if (di > 0) {
+						//	bmp2.ApplyPaletteIndexMapping(sp, dp, (uint)di, true);
+						//}
+					}
+
+					if (bmp.Paste(bmp2, 0, h, Int32.MaxValue) == false) {
+						if (bmp.HasPalette && bmp2.HasPalette == false) {
+							bmp.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_24_BPP);
+							if (bmp.Paste(bmp2, 0, h, Int32.MaxValue) == false) {
+								Tracker.TraceMessage("合并图片失败");
+							}
+
+							bmpPal = null;
 						}
 					}
 
-					f += ext;
-					if (PrintImageLocation) {
-						Tracker.TraceMessage(Tracker.Category.OutputFile, f);
-						Tracker.TraceMessage("保存合并后的图片：" + f);
-					}
+					h += bmp2.Height;
+				}
 
-					if (ext == Constants.FileExtensions.Tif) {
-						TiffHelper.Save(bmp, f);
+				if (bmpPal != null) {
+					bmp.Palette.AsArray = bmpPal;
+				}
+
+				if (ext == Constants.FileExtensions.Jpg && _options.MergeJpgToPng) {
+					ext = Constants.FileExtensions.Png;
+				}
+				else if (bmp.PixelFormat == PixelFormat.Format1bppIndexed) {
+					if (_options.MonoPng == false) {
+						ext = Constants.FileExtensions.Tif;
 					}
 					else {
-						bmp.Save(f);
+						ext = Constants.FileExtensions.Png;
 					}
-
-					ImageInfo mii = new ImageInfo { FileName = f, ReferenceCount = 1, Height = h, Width = w };
-					_imageInfoList.Add(mii);
-					_imagePosList.Add(new ImageDisposition(_imagePosList[i].Ctm, mii));
 				}
+
+				f += ext;
+				if (PrintImageLocation) {
+					Tracker.TraceMessage(Tracker.Category.OutputFile, f);
+					Tracker.TraceMessage("保存合并后的图片：" + f);
+				}
+
+				if (ext == Constants.FileExtensions.Tif) {
+					TiffHelper.Save(bmp, f);
+				}
+				else {
+					bmp.Save(f);
+				}
+
+				ImageInfo mii = new ImageInfo { FileName = f, ReferenceCount = 1, Height = h, Width = w };
+				_imageInfoList.Add(mii);
+				_imagePosList.Add(new ImageDisposition(_imagePosList[i].Ctm, mii));
 			}
 
 			foreach (ImageInfo item in _imageInfoList) {

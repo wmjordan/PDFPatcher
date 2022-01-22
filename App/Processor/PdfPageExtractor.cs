@@ -173,85 +173,84 @@ internal class PdfPageExtractor
 			PageRangeCollection.Parse(options.ExcludePageRanges, 1, pdf.NumberOfPages, false);
 		targetFile.CreateContainingDirectory();
 
-		using (Stream s = new FileStream(targetFile, FileMode.Create)) {
-			int[] pages = new int[ranges.TotalPages];
-			int[] remapper = new int[pdf.NumberOfPages + 1];
-			int i = 0;
-			foreach (PageRange range in excludeRanges) {
-				foreach (int item in range) {
-					remapper[item] = -1;
-				}
+		using Stream s = new FileStream(targetFile, FileMode.Create);
+		int[] pages = new int[ranges.TotalPages];
+		int[] remapper = new int[pdf.NumberOfPages + 1];
+		int i = 0;
+		foreach (PageRange range in excludeRanges) {
+			foreach (int item in range) {
+				remapper[item] = -1;
 			}
-
-			foreach (PageRange range in ranges) {
-				foreach (int item in range) {
-					if (remapper[item] < 0) {
-						continue;
-					}
-
-					pages[i++] = item;
-					if (remapper[item] == 0) {
-						remapper[item] = i;
-					}
-				}
-			}
-
-			PdfStamper w = new(pdf, s);
-			XmlElement bm = null;
-			if (options.KeepBookmarks) {
-				Tracker.TraceMessage("导出原文档书签。");
-				pdf.ConsolidateNamedDestinations();
-				bm = OutlineManager.GetBookmark(pdf, new UnitConverter { Unit = Constants.Units.Point });
-				if (bm != null && bm.HasChildNodes) {
-					IInfoDocProcessor[] processors = {
-						new GotoDestinationProcessor {
-							RemoveOrphanDestination = options.RemoveOrphanBookmarks,
-							PageRemapper = remapper,
-							TransitionMapper = null
-						}
-					};
-					PdfDocumentCreator.ProcessInfoItem(bm, processors);
-				}
-			}
-			else {
-				OutlineManager.KillOutline(pdf);
-			}
-
-			pdf.SelectPages(pages);
-			if (options.KeepDocumentProperties == false) {
-				pdf.Trailer.Remove(PdfName.INFO);
-				pdf.Catalog.Remove(PdfName.METADATA);
-			}
-
-			if (bm != null) {
-				pdf.Catalog.Put(PdfName.OUTLINES, OutlineManager.WriteOutline(w.Writer, bm, ranges.TotalPages));
-				w.ViewerPreferences = PdfWriter.PageModeUseOutlines;
-			}
-
-			w.Writer.Info.Put(PdfName.PRODUCER,
-				new PdfString(string.Concat(Application.ProductName, " ", Application.ProductVersion)));
-			Tracker.TraceMessage("保存文件：" + targetFile);
-			w.Close();
-			//Document doc = new Document ();
-			//PdfSmartCopy w = new PdfSmartCopy (doc, s);
-			//if (impOptions.ImportDocProperties) {
-			//    w.Info.Merge (info ?? new PdfDictionary ());
-			//}
-			//w.Info.Put (PdfName.CREATOR, new PdfString (String.Concat (Application.ProductName, " ", Application.ProductVersion)));
-			//doc.Open ();
-			//var creator = new PdfDocumentCreator (options, impOptions, doc, w);
-			//creator.ProcessFile (options.SourceItems[0]);
-			//Tracker.TraceMessage ("保存文件：" + targetFile);
-			//var bm = creator.PdfBookmarks;
-			//if (bm != null && bm.DocumentElement != null && bm.DocumentElement.HasChildNodes) {
-			//    Tracker.TraceMessage ("自动生成文档书签。");
-			//    PdfBookmarkUtility.WriteOutline (w, bm.DocumentElement, w.PageEmpty ? w.CurrentPageNumber - 1 : w.CurrentPageNumber);
-			//    w.ViewerPreferences = PdfWriter.PageModeUseOutlines;
-			//}
-			//doc.Close ();
-			//w.Close ();
-			Tracker.TraceMessage(Tracker.Category.Alert, "成功提取文件内容到 <<" + targetFile + ">>。");
 		}
+
+		foreach (PageRange range in ranges) {
+			foreach (int item in range) {
+				if (remapper[item] < 0) {
+					continue;
+				}
+
+				pages[i++] = item;
+				if (remapper[item] == 0) {
+					remapper[item] = i;
+				}
+			}
+		}
+
+		PdfStamper w = new(pdf, s);
+		XmlElement bm = null;
+		if (options.KeepBookmarks) {
+			Tracker.TraceMessage("导出原文档书签。");
+			pdf.ConsolidateNamedDestinations();
+			bm = OutlineManager.GetBookmark(pdf, new UnitConverter { Unit = Constants.Units.Point });
+			if (bm != null && bm.HasChildNodes) {
+				IInfoDocProcessor[] processors = {
+					new GotoDestinationProcessor {
+						RemoveOrphanDestination = options.RemoveOrphanBookmarks,
+						PageRemapper = remapper,
+						TransitionMapper = null
+					}
+				};
+				PdfDocumentCreator.ProcessInfoItem(bm, processors);
+			}
+		}
+		else {
+			OutlineManager.KillOutline(pdf);
+		}
+
+		pdf.SelectPages(pages);
+		if (options.KeepDocumentProperties == false) {
+			pdf.Trailer.Remove(PdfName.INFO);
+			pdf.Catalog.Remove(PdfName.METADATA);
+		}
+
+		if (bm != null) {
+			pdf.Catalog.Put(PdfName.OUTLINES, OutlineManager.WriteOutline(w.Writer, bm, ranges.TotalPages));
+			w.ViewerPreferences = PdfWriter.PageModeUseOutlines;
+		}
+
+		w.Writer.Info.Put(PdfName.PRODUCER,
+			new PdfString(string.Concat(Application.ProductName, " ", Application.ProductVersion)));
+		Tracker.TraceMessage("保存文件：" + targetFile);
+		w.Close();
+		//Document doc = new Document ();
+		//PdfSmartCopy w = new PdfSmartCopy (doc, s);
+		//if (impOptions.ImportDocProperties) {
+		//    w.Info.Merge (info ?? new PdfDictionary ());
+		//}
+		//w.Info.Put (PdfName.CREATOR, new PdfString (String.Concat (Application.ProductName, " ", Application.ProductVersion)));
+		//doc.Open ();
+		//var creator = new PdfDocumentCreator (options, impOptions, doc, w);
+		//creator.ProcessFile (options.SourceItems[0]);
+		//Tracker.TraceMessage ("保存文件：" + targetFile);
+		//var bm = creator.PdfBookmarks;
+		//if (bm != null && bm.DocumentElement != null && bm.DocumentElement.HasChildNodes) {
+		//    Tracker.TraceMessage ("自动生成文档书签。");
+		//    PdfBookmarkUtility.WriteOutline (w, bm.DocumentElement, w.PageEmpty ? w.CurrentPageNumber - 1 : w.CurrentPageNumber);
+		//    w.ViewerPreferences = PdfWriter.PageModeUseOutlines;
+		//}
+		//doc.Close ();
+		//w.Close ();
+		Tracker.TraceMessage(Tracker.Category.Alert, "成功提取文件内容到 <<" + targetFile + ">>。");
 	}
 
 	private static string RewriteTargetFileName(string sourceFile, string targetFile, PdfReader pdf) {

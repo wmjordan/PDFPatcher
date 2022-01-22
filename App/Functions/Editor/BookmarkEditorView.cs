@@ -506,14 +506,13 @@ public partial class BookmarkEditorView : TreeListView
 			return;
 		}
 
-		using (ActionEditorForm form = new(bookmark)) {
-			if (form.ShowDialog() != DialogResult.OK || form.UndoActions.Count <= 0) {
-				return;
-			}
-
-			Undo?.AddUndo("更改书签动作属性", form.UndoActions);
-			RefreshObject(bookmark);
+		using ActionEditorForm form = new(bookmark);
+		if (form.ShowDialog() != DialogResult.OK || form.UndoActions.Count <= 0) {
+			return;
 		}
+
+		Undo?.AddUndo("更改书签动作属性", form.UndoActions);
+		RefreshObject(bookmark);
 	}
 
 	private void BookmarkEditor_HotItemChanged(object sender, HotItemChangedEventArgs e) {

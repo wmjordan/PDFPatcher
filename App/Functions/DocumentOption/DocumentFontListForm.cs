@@ -51,25 +51,24 @@ public partial class DocumentFontListForm : Form
 				_fontIdNames = new Dictionary<int, string>();
 				_pageFonts = new Dictionary<string, PageFont>();
 				_FontListBox.ClearObjects();
-				using (PdfReader p = PdfHelper.OpenPdfFile(_SourceFileBox.FirstFile, false, false)) {
-					PageRangeCollection r = PageRangeCollection.Parse(_PageRangeBox.Text, 1, p.NumberOfPages, true);
-					int[] pp = new int[p.NumberOfPages + 1];
-					_Worker.ReportProgress(-r.TotalPages);
-					int i = 0;
-					foreach (PageRange range in r) {
-						foreach (int page in range) {
-							if (_Worker.CancellationPending) {
-								return;
-							}
-
-							_Worker.ReportProgress(++i);
-							if (pp[page] != 0) {
-								continue;
-							}
-
-							pp[page] = 1;
-							GetPageFonts(p, page);
+				using PdfReader p = PdfHelper.OpenPdfFile(_SourceFileBox.FirstFile, false, false);
+				PageRangeCollection r = PageRangeCollection.Parse(_PageRangeBox.Text, 1, p.NumberOfPages, true);
+				int[] pp = new int[p.NumberOfPages + 1];
+				_Worker.ReportProgress(-r.TotalPages);
+				int i = 0;
+				foreach (PageRange range in r) {
+					foreach (int page in range) {
+						if (_Worker.CancellationPending) {
+							return;
 						}
+
+						_Worker.ReportProgress(++i);
+						if (pp[page] != 0) {
+							continue;
+						}
+
+						pp[page] = 1;
+						GetPageFonts(p, page);
 					}
 				}
 			}

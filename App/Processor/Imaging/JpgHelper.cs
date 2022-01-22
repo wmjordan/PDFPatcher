@@ -167,20 +167,19 @@ internal static class JpgHelper
 		//    bmp.Save (fileName, _jpgCodec, GetEncoderParameters (quality, 8));
 		//}
 		//else {
-		using (EncoderParameters p = GetEncoderParameters(quality)) {
-			bmp.Save(fileName, _jpgCodec, p);
-			foreach (EncoderParameter item in p.Param) {
-				item.Dispose();
-			}
+		using EncoderParameters p = GetEncoderParameters(quality);
+		bmp.Save(fileName, _jpgCodec, p);
+		foreach (EncoderParameter item in p.Param) {
+			item.Dispose();
 		}
+
 		//}
 	}
 
 	internal static bool TryGetExifOrientation(string fileName, out ushort b) {
 		try {
-			using (ExifReader r = new(fileName)) {
-				return r.GetTagValue(ExifTags.Orientation, out b);
-			}
+			using ExifReader r = new(fileName);
+			return r.GetTagValue(ExifTags.Orientation, out b);
 		}
 		catch (Exception) {
 			b = 0;

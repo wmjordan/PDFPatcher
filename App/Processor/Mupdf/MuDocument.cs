@@ -103,9 +103,8 @@ public sealed class MuDocument : IDisposable
 			return null;
 		}
 
-		using (MuPage p = LoadPage(pageNumber)) {
-			return options != null ? p.RenderPage(width, height, options) : p.RenderPage(width, height);
-		}
+		using MuPage p = LoadPage(pageNumber);
+		return options != null ? p.RenderPage(width, height, options) : p.RenderPage(width, height);
 	}
 
 	public MuPage LoadPage(int pageNumber) {

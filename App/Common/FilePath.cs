@@ -861,16 +861,15 @@ public readonly struct FilePath : IEquatable<FilePath>
 			return new byte[0];
 		}
 
-		using (FileStream s = new(ToFullPath()._value, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) {
-			if (s.CanRead == false) {
-				return new byte[0];
-			}
-
-			long l = s.Length;
-			byte[] r = new byte[maxBytes < 1 || maxBytes > l ? l : maxBytes];
-			s.Read(r, 0, r.Length);
-			return r;
+		using FileStream s = new(ToFullPath()._value, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+		if (s.CanRead == false) {
+			return new byte[0];
 		}
+
+		long l = s.Length;
+		byte[] r = new byte[maxBytes < 1 || maxBytes > l ? l : maxBytes];
+		s.Read(r, 0, r.Length);
+		return r;
 	}
 
 	/// <summary>打开当前路径对应的文件，并以指定编码逐行读取所有行。如文件不存在，返回 <see cref="String.Empty" />。</summary>
@@ -902,10 +901,9 @@ public readonly struct FilePath : IEquatable<FilePath>
 
 		FilePath fp = ToFullPath();
 		fp.CreateContainingDirectory();
-		using (FileStream s = new(fp._value, append ? FileMode.Append : FileMode.Create, FileAccess.Write,
-				   FileShare.Read)) {
-			s.Write(bytes, 0, bytes.Length);
-		}
+		using FileStream s = new(fp._value, append ? FileMode.Append : FileMode.Create, FileAccess.Write,
+			FileShare.Read);
+		s.Write(bytes, 0, bytes.Length);
 	}
 
 	/// <summary>将 <paramref name="text" /> 以指定编码写入文件。</summary>
@@ -917,9 +915,8 @@ public readonly struct FilePath : IEquatable<FilePath>
 			return;
 		}
 
-		using (StreamWriter w = OpenTextWriter(append, encoding)) {
-			w.Write(text);
-		}
+		using StreamWriter w = OpenTextWriter(append, encoding);
+		w.Write(text);
 	}
 
 	/// <summary>将 <paramref name="lines" /> 的每项内容后附加换行，以指定编码写入文件。</summary>
@@ -931,10 +928,9 @@ public readonly struct FilePath : IEquatable<FilePath>
 			return;
 		}
 
-		using (StreamWriter w = OpenTextWriter(append, encoding)) {
-			foreach (string item in lines) {
-				w.WriteLine(item);
-			}
+		using StreamWriter w = OpenTextWriter(append, encoding);
+		foreach (string item in lines) {
+			w.WriteLine(item);
 		}
 	}
 

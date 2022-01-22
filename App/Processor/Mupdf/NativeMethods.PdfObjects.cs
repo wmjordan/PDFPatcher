@@ -166,11 +166,9 @@ internal partial class NativeMethods
 		byte[] bytes = new byte[l];
 		Marshal.Copy(b, bytes, 0, l);
 		if (bytes.Length >= 2 && ((bytes[0] == 255 && bytes[1] == 254) || (bytes[0] == 254 && bytes[1] == 255))) {
-			using (MemoryStream ms = new(bytes)) {
-				using (StreamReader r = new(ms, true)) {
-					return r.ReadToEnd();
-				}
-			}
+			using MemoryStream ms = new(bytes);
+			using StreamReader r = new(ms, true);
+			return r.ReadToEnd();
 		}
 
 		char[] c = new char[l];

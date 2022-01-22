@@ -14,11 +14,10 @@ internal sealed class PagePropertiesCommand : IEditorCommand
 		Point l = v.PinPoint;
 		PagePosition p = v.TransposeVirtualImageToPagePosition(l.X, l.Y);
 		PagePropertyForm f = GetDialog();
-		using (MuPage page = controller.Model.PdfDocument.LoadPage(p.Page)) {
-			f.LoadPage(page);
-			f.Location = v.PointToScreen(v.TransposeVirtualImageToClient(l.X, l.Y));
-			f.Show();
-		}
+		using MuPage page = controller.Model.PdfDocument.LoadPage(p.Page);
+		f.LoadPage(page);
+		f.Location = v.PointToScreen(v.TransposeVirtualImageToClient(l.X, l.Y));
+		f.Show();
 	}
 
 	private static PagePropertyForm GetDialog() {

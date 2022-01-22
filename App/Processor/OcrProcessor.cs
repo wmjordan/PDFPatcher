@@ -413,23 +413,22 @@ internal sealed class OcrProcessor
 	private void OcrImageFile(List<TextLine> result, string p) {
 		string sp = _options.SaveOcredImagePath;
 		if (FileHelper.HasExtension(p, Constants.FileExtensions.Tif) == false) {
-			using (FreeImageBitmap fi = new(p)) {
+			using FreeImageBitmap fi = new(p);
 #if !DEBUG
 					var t = Path.GetDirectoryName (p) + "\\ocr-" + new Random ().Next ().ToText () +".tif";
 #else
-				const string t = "m:\\ocr.tif";
+			const string t = "m:\\ocr.tif";
 #endif
-				if (_options.PreserveColor) {
-					fi.Save(t, FREE_IMAGE_FORMAT.FIF_TIFF);
-				}
-				else {
-					using (FreeImageBitmap ti =
-						   fi.GetColorConvertedInstance(FREE_IMAGE_COLOR_DEPTH.FICD_01_BPP_THRESHOLD)) {
-						ti.Save(t, FREE_IMAGE_FORMAT.FIF_TIFF);
-					}
-				}
+			if (_options.PreserveColor) {
+				fi.Save(t, FREE_IMAGE_FORMAT.FIF_TIFF);
+			}
+			else {
+				using FreeImageBitmap ti =
+					fi.GetColorConvertedInstance(FREE_IMAGE_COLOR_DEPTH.FICD_01_BPP_THRESHOLD);
+				ti.Save(t, FREE_IMAGE_FORMAT.FIF_TIFF);
+			}
 
-				_Ocr.Ocr(t, sp, result);
+			_Ocr.Ocr(t, sp, result);
 #if !DEBUG
 					try {
 						File.Delete (t);
@@ -438,7 +437,6 @@ internal sealed class OcrProcessor
 						Tracker.TraceMessage (Tracker.Category.Notice, "无法删除临时文件：" + t);
 					}
 #endif
-			}
 		}
 		else {
 			_Ocr.Ocr(p, sp, result);

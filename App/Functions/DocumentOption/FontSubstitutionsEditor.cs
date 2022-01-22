@@ -146,10 +146,9 @@ public partial class FontSubstitutionsEditor : UserControl
 	}
 
 	private void _ListDocumentFontButton_Click(object sender, EventArgs e) {
-		using (DocumentFontListForm f = new()) {
-			f.SubstitutionsEditor = this;
-			f.ShowDialog();
-		}
+		using DocumentFontListForm f = new();
+		f.SubstitutionsEditor = this;
+		f.ShowDialog();
 	}
 
 	internal void AddFonts(IEnumerable<string> fonts) {

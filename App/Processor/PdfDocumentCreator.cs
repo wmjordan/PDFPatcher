@@ -492,39 +492,37 @@ internal sealed class PdfDocumentCreator
 		}
 
 		ext = ext.ToLowerInvariant();
-		using (FreeImageBitmap fi = new(sourceFile.FilePath)) {
-			if (fi.Height < cropOptions.MinHeight // 不满足尺寸限制
-				|| fi.Width < cropOptions.MinWidth
-				|| fi.Height <= cropOptions.Top + cropOptions.Bottom // 裁剪后尺寸小于 0
-				|| fi.Width <= cropOptions.Left + cropOptions.Right
-			   ) {
-				return Image.GetInstance(sourceFile.FilePath.ToString());
-			}
+		using FreeImageBitmap fi = new(sourceFile.FilePath);
+		if (fi.Height < cropOptions.MinHeight // 不满足尺寸限制
+			|| fi.Width < cropOptions.MinWidth
+			|| fi.Height <= cropOptions.Top + cropOptions.Bottom // 裁剪后尺寸小于 0
+			|| fi.Width <= cropOptions.Left + cropOptions.Right
+		   ) {
+			return Image.GetInstance(sourceFile.FilePath.ToString());
+		}
 
-			if (ext == Constants.FileExtensions.Jpg || ext == ".jpeg") {
-				// is JPEG file
-				FilePath t = sourceFile.FilePath.EnsureExtension(Constants.FileExtensions.Jpg);
-				if (FreeImageBitmap.JPEGCrop(sourceFile.FilePath, t, cropOptions.Left, cropOptions.Top,
-						fi.Width - cropOptions.Right, fi.Height - cropOptions.Bottom)) {
-					iTextImage image;
-					using (FileStream fs = new(t, FileMode.Open)) {
-						image = Image.GetInstance(fs);
-					}
-
-					File.Delete(t);
-					return image;
+		if (ext == Constants.FileExtensions.Jpg || ext == ".jpeg") {
+			// is JPEG file
+			FilePath t = sourceFile.FilePath.EnsureExtension(Constants.FileExtensions.Jpg);
+			if (FreeImageBitmap.JPEGCrop(sourceFile.FilePath, t, cropOptions.Left, cropOptions.Top,
+					fi.Width - cropOptions.Right, fi.Height - cropOptions.Bottom)) {
+				iTextImage image;
+				using (FileStream fs = new(t, FileMode.Open)) {
+					image = Image.GetInstance(fs);
 				}
-			}
 
-			using (FreeImageBitmap tmp = fi.Copy(cropOptions.Left, cropOptions.Top, fi.Width - cropOptions.Right,
-					   fi.Height - cropOptions.Bottom))
-			using (MemoryStream ms = new()) {
-				tmp.Save(ms, fi.ImageFormat);
-				ms.Flush();
-				ms.Position = 0;
-				return Image.GetInstance(ms);
+				File.Delete(t);
+				return image;
 			}
 		}
+
+		using FreeImageBitmap tmp = fi.Copy(cropOptions.Left, cropOptions.Top, fi.Width - cropOptions.Right,
+			fi.Height - cropOptions.Bottom);
+		using MemoryStream ms = new();
+		tmp.Save(ms, fi.ImageFormat);
+		ms.Flush();
+		ms.Position = 0;
+		return Image.GetInstance(ms);
 	}
 
 	private BookmarkElement CreateAutoBookmark(SourceItem sourceFile, XmlNode bookmarkContainer) {

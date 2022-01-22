@@ -12,13 +12,12 @@ internal class JBig2Encoder
 
 	internal static byte[] Encode(FreeImageBitmap fi) {
 		bool zeroIsWhite = fi.HasPalette && fi.Palette.Data[0].uintValue == White;
-		using (Bitmap bmp = fi.ToBitmap()) {
-			BitmapData bits = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly,
-				PixelFormat.Format1bppIndexed);
-			byte[] bytes = Encode(bmp.Width, bmp.Height, bits.Stride, zeroIsWhite, bits.Scan0);
-			bmp.UnlockBits(bits);
-			return bytes;
-		}
+		using Bitmap bmp = fi.ToBitmap();
+		BitmapData bits = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly,
+			PixelFormat.Format1bppIndexed);
+		byte[] bytes = Encode(bmp.Width, bmp.Height, bits.Stride, zeroIsWhite, bits.Scan0);
+		bmp.UnlockBits(bits);
+		return bytes;
 	}
 
 	private static byte[] Encode(int width, int height, int stride, bool zeroIsWhite, IntPtr b) {

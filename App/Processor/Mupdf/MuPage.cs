@@ -59,10 +59,9 @@ public sealed class MuPage : IDisposable
 	/// <param name="options">渲染选项。</param>
 	/// <returns>渲染后生成的 <see cref="FreeImageAPI.FreeImageBitmap" />。</returns>
 	public FreeImageBitmap RenderPage(int width, int height, ImageRendererOptions options) {
-		using (PixmapData pix = InternalRenderPage(width, height, options)) {
-			if (pix != null) {
-				return pix.ToFreeImageBitmap(options);
-			}
+		using PixmapData pix = InternalRenderPage(width, height, options);
+		if (pix != null) {
+			return pix.ToFreeImageBitmap(options);
 		}
 
 		return null;
@@ -76,10 +75,9 @@ public sealed class MuPage : IDisposable
 	/// <param name="options">渲染选项。</param>
 	/// <returns>渲染后生成的 <see cref="Bitmap" />。</returns>
 	public Bitmap RenderBitmapPage(int width, int height, ImageRendererOptions options) {
-		using (PixmapData pix = InternalRenderPage(width, height, options)) {
-			if (pix != null) {
-				return pix.ToBitmap(options);
-			}
+		using PixmapData pix = InternalRenderPage(width, height, options);
+		if (pix != null) {
+			return pix.ToBitmap(options);
 		}
 
 		return null;
@@ -149,42 +147,41 @@ public sealed class MuPage : IDisposable
 		PixmapHandle pix = _context.CreatePixmap(options.ColorSpace, bbox);
 		try {
 			NativeMethods.ClearPixmap(_context, pix, 0xFF);
-			using (DeviceHandle dev = new(_context, pix, Matrix.Identity)) {
-				if (options.LowQuality) {
-					NativeMethods.EnableDeviceHints(_context, dev,
-						DeviceHints.IgnoreShade | DeviceHints.DontInterperateImages | DeviceHints.NoCache);
-				}
-
-				if (_cookie.IsCancellationPending) {
-					return null;
-				}
-
-				NativeMethods.RunPageContents(_context, _page, dev, ctm, ref _cookie);
-				if (options.HideAnnotations == false) {
-					NativeMethods.RunPageAnnotations(_context, _page, dev, ctm, ref _cookie);
-					NativeMethods.RunPageWidgets(_context, _page, dev, ctm, ref _cookie);
-				}
-				//NativeMethods.BeginPage (dev, ref b, ref ctm);
-				//NativeMethods.RunDisplayList (_context, GetDisplayList(), dev, ctm, ctm.Transform(VisualBound), ref _cookie);
-				//NativeMethods.EndPage (dev);
-
-				dev.EndOperations();
-
-				if (_cookie.IsCancellationPending) {
-					return null;
-				}
-
-				PixmapData pd = new(_context, pix);
-				if (options.TintColor != Color.Transparent) {
-					pd.Tint(options.TintColor);
-				}
-
-				if (options.Gamma != 1.0f) {
-					pd.Gamma(options.Gamma);
-				}
-
-				return pd;
+			using DeviceHandle dev = new(_context, pix, Matrix.Identity);
+			if (options.LowQuality) {
+				NativeMethods.EnableDeviceHints(_context, dev,
+					DeviceHints.IgnoreShade | DeviceHints.DontInterperateImages | DeviceHints.NoCache);
 			}
+
+			if (_cookie.IsCancellationPending) {
+				return null;
+			}
+
+			NativeMethods.RunPageContents(_context, _page, dev, ctm, ref _cookie);
+			if (options.HideAnnotations == false) {
+				NativeMethods.RunPageAnnotations(_context, _page, dev, ctm, ref _cookie);
+				NativeMethods.RunPageWidgets(_context, _page, dev, ctm, ref _cookie);
+			}
+			//NativeMethods.BeginPage (dev, ref b, ref ctm);
+			//NativeMethods.RunDisplayList (_context, GetDisplayList(), dev, ctm, ctm.Transform(VisualBound), ref _cookie);
+			//NativeMethods.EndPage (dev);
+
+			dev.EndOperations();
+
+			if (_cookie.IsCancellationPending) {
+				return null;
+			}
+
+			PixmapData pd = new(_context, pix);
+			if (options.TintColor != Color.Transparent) {
+				pd.Tint(options.TintColor);
+			}
+
+			if (options.Gamma != 1.0f) {
+				pd.Gamma(options.Gamma);
+			}
+
+			return pd;
 		}
 		catch (AccessViolationException) {
 			pix.DisposeHandle();
@@ -251,18 +248,17 @@ public sealed class MuPage : IDisposable
 	public Rectangle GetContentBoundary() {
 		Rectangle b = Bound;
 		Rectangle o = b;
-		using (DeviceHandle dev = new(_context, ref o)) {
-			try {
-				Matrix im = Matrix.Identity;
-				//NativeMethods.BeginPage (dev, ref b, ref im);
-				NativeMethods.RunDisplayList(_context, GetDisplayList(), dev, Matrix.Identity, b, ref _cookie);
-				dev.EndOperations();
-				//NativeMethods.EndPage (dev);
-				return o;
-			}
-			catch (AccessViolationException) {
-				throw new MuPdfException("无法获取页面内容边框：" + PageNumber);
-			}
+		using DeviceHandle dev = new(_context, ref o);
+		try {
+			Matrix im = Matrix.Identity;
+			//NativeMethods.BeginPage (dev, ref b, ref im);
+			NativeMethods.RunDisplayList(_context, GetDisplayList(), dev, Matrix.Identity, b, ref _cookie);
+			dev.EndOperations();
+			//NativeMethods.EndPage (dev);
+			return o;
+		}
+		catch (AccessViolationException) {
+			throw new MuPdfException("无法获取页面内容边框：" + PageNumber);
 		}
 	}
 

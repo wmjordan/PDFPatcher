@@ -251,9 +251,8 @@ public partial class RenameControl : FunctionControl
 			}
 		}
 
-		using (RenamePreviewForm f = new(source, result)) {
-			f.ShowDialog();
-		}
+		using RenamePreviewForm f = new(source, result);
+		f.ShowDialog();
 	}
 
 	#region AddDocumentWorker

@@ -441,9 +441,8 @@ internal static class OutlineManager
 	}
 
 	internal static void ImportSimpleBookmarks(string path, PdfInfoXmlDocument target) {
-		using (TextReader r = new StreamReader(path, DetectEncoding(path))) {
-			ImportSimpleBookmarks(r, target);
-		}
+		using TextReader r = new StreamReader(path, DetectEncoding(path));
+		ImportSimpleBookmarks(r, target);
 	}
 
 	public static void WriteSimpleBookmarkInstruction(TextWriter writer, string item, string value) {

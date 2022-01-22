@@ -639,16 +639,15 @@ namespace PDFPatcher.Functions
 				}
 				else {
 					byte[] b = PdfReader.GetStreamBytes(s);
-					using (MemoryStream ms = new MemoryStream(b))
-					using (StreamReader r = new StreamReader(ms))
-					using (TextViewerForm f = new TextViewerForm(r.ReadToEnd(), true)) {
-						f.ShowDialog(FindForm());
-						//_DescriptionBox.Text = String.Empty;
-						//while (r.Peek () != -1) {
-						//    _DescriptionBox.AppendText (r.ReadLine ());
-						//    _DescriptionBox.AppendText (Environment.NewLine);
-						//}
-					}
+					using MemoryStream ms = new MemoryStream(b);
+					using StreamReader r = new StreamReader(ms);
+					using TextViewerForm f = new TextViewerForm(r.ReadToEnd(), true);
+					f.ShowDialog(FindForm());
+					//_DescriptionBox.Text = String.Empty;
+					//while (r.Peek () != -1) {
+					//    _DescriptionBox.AppendText (r.ReadLine ());
+					//    _DescriptionBox.AppendText (Environment.NewLine);
+					//}
 				}
 			}
 			else if (cn == "_ExportBinary") {
@@ -708,138 +707,131 @@ namespace PDFPatcher.Functions
 		}
 
 		private void AddChildNode(DocumentObject documentObject, int objectType) {
-			using (AddPdfObjectForm f = new AddPdfObjectForm()) {
-				f.PdfObjectType = objectType;
-				if (f.ShowDialog() != DialogResult.OK) {
-					return;
-				}
-
-				PdfDictionary d =
-					(documentObject.ExtensiveObject ?? documentObject.ExtensiveObject) as PdfDictionary;
-				PdfObject v = f.PdfValue;
-				d.Put(new PdfName(f.ObjectName), f.CreateAsIndirect ? _pdf.Document.AddPdfObject(v) : v);
-				documentObject.PopulateChildren(true);
-				_ObjectDetailBox.RefreshObject(documentObject);
+			using AddPdfObjectForm f = new AddPdfObjectForm();
+			f.PdfObjectType = objectType;
+			if (f.ShowDialog() != DialogResult.OK) {
+				return;
 			}
+
+			PdfDictionary d =
+				(documentObject.ExtensiveObject ?? documentObject.ExtensiveObject) as PdfDictionary;
+			PdfObject v = f.PdfValue;
+			d.Put(new PdfName(f.ObjectName), f.CreateAsIndirect ? _pdf.Document.AddPdfObject(v) : v);
+			documentObject.PopulateChildren(true);
+			_ObjectDetailBox.RefreshObject(documentObject);
 		}
 
 		private void ExportXmlInfo(string fileName, bool exportTrailer, int[] pages) {
-			using (SaveFileDialog d = new SaveFileDialog() {
+			using SaveFileDialog d = new SaveFileDialog() {
 				AddExtension = true,
 				FileName = fileName + Constants.FileExtensions.Xml,
 				DefaultExt = Constants.FileExtensions.Xml,
 				Filter = Constants.FileExtensions.XmlFilter,
 				Title = "请选择信息文件的保存位置"
-			}) {
-				if (d.ShowDialog() != DialogResult.OK) {
-					return;
-				}
-
-				PdfContentExport exp = new PdfContentExport(new ExporterOptions() {
-					ExtractPageDictionary = true,
-					ExportContentOperators = true
-				});
-				using (XmlWriter w = XmlWriter.Create(d.FileName, DocInfoExporter.GetWriterSettings())) {
-					w.WriteStartDocument();
-					w.WriteStartElement(Constants.PdfInfo);
-					w.WriteAttributeString(Constants.ContentPrefix, "http://www.w3.org/2000/xmlns/",
-						Constants.ContentNamespace);
-					DocInfoExporter.WriteDocumentInfoAttributes(w, _fileName, _pdf.PageCount);
-					if (exportTrailer) {
-						exp.ExportTrailer(w, _pdf.Document);
-					}
-
-					exp.ExtractPage(_pdf.Document, w, pages);
-					w.WriteEndElement();
-				}
+			};
+			if (d.ShowDialog() != DialogResult.OK) {
+				return;
 			}
+
+			PdfContentExport exp = new PdfContentExport(new ExporterOptions() {
+				ExtractPageDictionary = true,
+				ExportContentOperators = true
+			});
+			using XmlWriter w = XmlWriter.Create(d.FileName, DocInfoExporter.GetWriterSettings());
+			w.WriteStartDocument();
+			w.WriteStartElement(Constants.PdfInfo);
+			w.WriteAttributeString(Constants.ContentPrefix, "http://www.w3.org/2000/xmlns/",
+				Constants.ContentNamespace);
+			DocInfoExporter.WriteDocumentInfoAttributes(w, _fileName, _pdf.PageCount);
+			if (exportTrailer) {
+				exp.ExportTrailer(w, _pdf.Document);
+			}
+
+			exp.ExtractPage(_pdf.Document, w, pages);
+			w.WriteEndElement();
 		}
 
 		private static void ExportBinHexStream(DocumentObject n, bool decode) {
-			using (SaveFileDialog d = new SaveFileDialog() {
+			using SaveFileDialog d = new SaveFileDialog() {
 				AddExtension = true,
 				FileName = (n.FriendlyName ?? n.Name) + Constants.FileExtensions.Txt,
 				DefaultExt = Constants.FileExtensions.Txt,
 				Filter = "文本形式的二进制数据文件(*.txt)|*.txt|" + Constants.FileExtensions.AllFilter,
 				Title = "请选择文件流的保存位置"
-			}) {
-				if (d.ShowDialog() != DialogResult.OK) {
-					return;
-				}
+			};
+			if (d.ShowDialog() != DialogResult.OK) {
+				return;
+			}
 
-				PRStream s = n.ExtensiveObject as PRStream;
-				try {
-					byte[] sb = decode ? DecodeStreamBytes(n) : PdfReader.GetStreamBytesRaw(s);
-					sb.DumpHexBinBytes(d.FileName);
-				}
-				catch (Exception ex) {
-					FormHelper.ErrorBox("在导出流数据时出错：" + ex.Message);
-				}
+			PRStream s = n.ExtensiveObject as PRStream;
+			try {
+				byte[] sb = decode ? DecodeStreamBytes(n) : PdfReader.GetStreamBytesRaw(s);
+				sb.DumpHexBinBytes(d.FileName);
+			}
+			catch (Exception ex) {
+				FormHelper.ErrorBox("在导出流数据时出错：" + ex.Message);
 			}
 		}
 
 		private static void ExportBinaryStream(DocumentObject n, bool decode) {
-			using (SaveFileDialog d = new SaveFileDialog() {
+			using SaveFileDialog d = new SaveFileDialog() {
 				AddExtension = true,
 				FileName = (n.FriendlyName ?? n.Name) + ".bin",
 				DefaultExt = ".bin",
 				Filter = "二进制数据文件(*.bin,*.dat)|*.bin;*.dat|" + Constants.FileExtensions.AllFilter,
 				Title = "请选择文件流的保存位置"
-			}) {
-				if (d.ShowDialog() != DialogResult.OK) {
-					return;
-				}
+			};
+			if (d.ShowDialog() != DialogResult.OK) {
+				return;
+			}
 
-				PRStream s = n.ExtensiveObject as PRStream;
-				try {
-					byte[] sb = decode ? DecodeStreamBytes(n) : PdfReader.GetStreamBytesRaw(s);
-					sb.DumpBytes(d.FileName);
-				}
-				catch (Exception ex) {
-					FormHelper.ErrorBox("在导出流数据时出错：" + ex.Message);
-				}
+			PRStream s = n.ExtensiveObject as PRStream;
+			try {
+				byte[] sb = decode ? DecodeStreamBytes(n) : PdfReader.GetStreamBytesRaw(s);
+				sb.DumpBytes(d.FileName);
+			}
+			catch (Exception ex) {
+				FormHelper.ErrorBox("在导出流数据时出错：" + ex.Message);
 			}
 		}
 
 		private static void ExportToUnicode(DocumentObject n) {
-			using (SaveFileDialog d = new SaveFileDialog {
+			using SaveFileDialog d = new SaveFileDialog {
 				AddExtension = true,
 				FileName = (n.Parent.FriendlyName ?? n.Name) + ".xml",
 				DefaultExt = ".xml",
 				Filter = "统一码映射信息文件(*.xml)|*.xml|" + Constants.FileExtensions.AllFilter,
 				Title = "请选择统一码映射表的保存位置"
-			}) {
-				if (d.ShowDialog() != DialogResult.OK) {
-					return;
+			};
+			if (d.ShowDialog() != DialogResult.OK) {
+				return;
+			}
+
+			PRStream s = n.ExtensiveObject as PRStream;
+			try {
+				byte[] touni = PdfReader.GetStreamBytes((PRStream)s);
+				CidLocationFromByte lb = new CidLocationFromByte(touni);
+				CMapToUnicode m = new CMapToUnicode();
+				CMapParserEx.ParseCid("", m, lb);
+				using XmlWriter w = XmlWriter.Create(d.FileName, DocInfoExporter.GetWriterSettings());
+				w.WriteStartElement("toUnicode");
+				w.WriteAttributeString("name", m.Name);
+				w.WriteAttributeString("registry", m.Registry);
+				w.WriteAttributeString("supplement", m.Supplement.ToText());
+				w.WriteAttributeString("ordering", m.Ordering);
+				w.WriteAttributeString("oneByteMappings", m.HasOneByteMappings().ToString());
+				w.WriteAttributeString("twoByteMappings", m.HasTwoByteMappings().ToString());
+				foreach (KeyValuePair<int, int> item in m.CreateDirectMapping()) {
+					w.WriteStartElement("map");
+					w.WriteAttributeString("cid", item.Key.ToText());
+					w.WriteAttributeString("uni", Char.ConvertFromUtf32(item.Value));
+					w.WriteEndElement();
 				}
 
-				PRStream s = n.ExtensiveObject as PRStream;
-				try {
-					byte[] touni = PdfReader.GetStreamBytes((PRStream)s);
-					CidLocationFromByte lb = new CidLocationFromByte(touni);
-					CMapToUnicode m = new CMapToUnicode();
-					CMapParserEx.ParseCid("", m, lb);
-					using (XmlWriter w = XmlWriter.Create(d.FileName, DocInfoExporter.GetWriterSettings())) {
-						w.WriteStartElement("toUnicode");
-						w.WriteAttributeString("name", m.Name);
-						w.WriteAttributeString("registry", m.Registry);
-						w.WriteAttributeString("supplement", m.Supplement.ToText());
-						w.WriteAttributeString("ordering", m.Ordering);
-						w.WriteAttributeString("oneByteMappings", m.HasOneByteMappings().ToString());
-						w.WriteAttributeString("twoByteMappings", m.HasTwoByteMappings().ToString());
-						foreach (KeyValuePair<int, int> item in m.CreateDirectMapping()) {
-							w.WriteStartElement("map");
-							w.WriteAttributeString("cid", item.Key.ToText());
-							w.WriteAttributeString("uni", Char.ConvertFromUtf32(item.Value));
-							w.WriteEndElement();
-						}
-
-						w.WriteEndElement();
-					}
-				}
-				catch (Exception ex) {
-					FormHelper.ErrorBox("在导出统一码映射表数据时出错：" + ex.Message);
-				}
+				w.WriteEndElement();
+			}
+			catch (Exception ex) {
+				FormHelper.ErrorBox("在导出统一码映射表数据时出错：" + ex.Message);
 			}
 		}
 

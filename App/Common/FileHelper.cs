@@ -264,40 +264,38 @@ internal static class FileHelper
 	}
 
 	public static byte[] DumpBytes(this byte[] source, FilePath path, int offset, int count) {
-		using (FileStream f = new(path.ToFullPath(), FileMode.OpenOrCreate, FileAccess.Write)) {
-			if (source == null) {
-				return null;
-			}
-
-			f.Write(source, offset, count);
+		using FileStream f = new(path.ToFullPath(), FileMode.OpenOrCreate, FileAccess.Write);
+		if (source == null) {
+			return null;
 		}
+
+		f.Write(source, offset, count);
 
 		return source;
 	}
 
 	public static byte[] DumpHexBinBytes(this byte[] source, FilePath path) {
-		using (StreamWriter f = new(path.ToFullPath())) {
-			if (source == null) {
-				return null;
-			}
+		using StreamWriter f = new(path.ToFullPath());
+		if (source == null) {
+			return null;
+		}
 
-			for (int i = 0; i < source.Length; i++) {
-				if (i > 0) {
-					if ((i & 0xF) == 0) {
-						f.WriteLine();
-					}
-
-					if ((i & 0x1) == 0) {
-						f.Write(' ');
-					}
+		for (int i = 0; i < source.Length; i++) {
+			if (i > 0) {
+				if ((i & 0xF) == 0) {
+					f.WriteLine();
 				}
 
-				byte b = source[i];
-				byte t = (byte)(b >> 4);
-				f.Write((char)(t + (t > 9 ? 'A' - 10 : 0x30)));
-				t = (byte)(b & 0x0F);
-				f.Write((char)(t + (t > 9 ? 'A' - 10 : 0x30)));
+				if ((i & 0x1) == 0) {
+					f.Write(' ');
+				}
 			}
+
+			byte b = source[i];
+			byte t = (byte)(b >> 4);
+			f.Write((char)(t + (t > 9 ? 'A' - 10 : 0x30)));
+			t = (byte)(b & 0x0F);
+			f.Write((char)(t + (t > 9 ? 'A' - 10 : 0x30)));
 		}
 
 		return source;

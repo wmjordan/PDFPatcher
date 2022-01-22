@@ -36,38 +36,36 @@ internal sealed class SaveDocumentCommand : IEditorCommand
 
 		if (t.HasExtension(Constants.FileExtensions.Xml) == false
 			|| showDialog) {
-			using (SaveFileDialog d = new() {
+			using SaveFileDialog d = new() {
 				DefaultExt = Constants.FileExtensions.Xml,
 				Title = "指定保存文件的路径",
 				Filter = Constants.FileExtensions.XmlFilter + "|" + Constants.FileExtensions.TxtFilter
-			}) {
-				if (t.ExistsFile) {
-					d.InitialDirectory = t.Directory;
-					d.FileName = t.FileNameWithoutExtension;
-				}
+			};
+			if (t.ExistsFile) {
+				d.InitialDirectory = t.Directory;
+				d.FileName = t.FileNameWithoutExtension;
+			}
 
-				if (d.ShowDialog() == DialogResult.OK) {
-					t = d.FileName;
-				}
-				else {
-					return;
-				}
+			if (d.ShowDialog() == DialogResult.OK) {
+				t = d.FileName;
+			}
+			else {
+				return;
 			}
 		}
 
 		if (t.HasExtension(Constants.FileExtensions.Txt)) {
-			using (StreamWriter writer = new(t)) {
-				const string indentString = "\t";
-				writer.WriteLine("#版本=" + Constants.InfoDocVersion);
-				if (mudoc != null) {
-					writer.WriteLine("#" + Constants.Info.DocumentPath + "=" + mudoc.FilePath);
-				}
-
-				writer.WriteLine("#缩进标记=" + indentString);
-				writer.WriteLine("#首页页码=1");
-				writer.WriteLine();
-				OutlineManager.WriteSimpleBookmark(writer, idoc.BookmarkRoot, 0, indentString);
+			using StreamWriter writer = new(t);
+			const string indentString = "\t";
+			writer.WriteLine("#版本=" + Constants.InfoDocVersion);
+			if (mudoc != null) {
+				writer.WriteLine("#" + Constants.Info.DocumentPath + "=" + mudoc.FilePath);
 			}
+
+			writer.WriteLine("#缩进标记=" + indentString);
+			writer.WriteLine("#首页页码=1");
+			writer.WriteLine();
+			OutlineManager.WriteSimpleBookmark(writer, idoc.BookmarkRoot, 0, indentString);
 		}
 		else {
 			t = t.EnsureExtension(Constants.FileExtensions.Xml);
@@ -93,20 +91,19 @@ internal sealed class SaveDocumentCommand : IEditorCommand
 			return;
 		}
 
-		using (SavePdfForm f = new(m.GetPdfFilePath(), m.LastSavedPdfPath, m.Document)) {
-			f.DoWork = (s, args) => vv.CloseFile();
-			f.Finished = (s, args) => {
-				vv.Reopen();
-				vv.Enabled = true;
-			};
+		using SavePdfForm f = new(m.GetPdfFilePath(), m.LastSavedPdfPath, m.Document);
+		f.DoWork = (s, args) => vv.CloseFile();
+		f.Finished = (s, args) => {
+			vv.Reopen();
+			vv.Enabled = true;
+		};
 
-			if (f.ShowDialog() != DialogResult.OK) {
-				return;
-			}
-
-			vv.Enabled = false;
-			m.Document.PdfDocumentPath = f.SourceFilePath;
-			m.LastSavedPdfPath = f.TargetFilePath;
+		if (f.ShowDialog() != DialogResult.OK) {
+			return;
 		}
+
+		vv.Enabled = false;
+		m.Document.PdfDocumentPath = f.SourceFilePath;
+		m.LastSavedPdfPath = f.TargetFilePath;
 	}
 }

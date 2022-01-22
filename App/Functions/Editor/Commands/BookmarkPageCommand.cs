@@ -14,13 +14,12 @@ internal sealed class BookmarkPageCommand : IEditorCommand
 	public void Process(Controller controller, params string[] parameters) {
 		int n = _number;
 		if (_number == 0) {
-			using (ShiftPageNumberEntryForm form = new()) {
-				if (form.ShowDialog() != DialogResult.OK || form.ShiftNumber == 0) {
-					return;
-				}
-
-				n = form.ShiftNumber;
+			using ShiftPageNumberEntryForm form = new();
+			if (form.ShowDialog() != DialogResult.OK || form.ShiftNumber == 0) {
+				return;
 			}
+
+			n = form.ShiftNumber;
 		}
 
 		controller.ProcessBookmarks(new ChangePageNumberProcessor(n, false, true));

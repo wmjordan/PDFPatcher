@@ -263,10 +263,9 @@ public partial class MainForm : Form
 	}
 
 	private DialogResult ShowDialogWindow(Form window) {
-		using (Form f = window) {
-			f.StartPosition = FormStartPosition.CenterParent;
-			return f.ShowDialog(this);
-		}
+		using Form f = window;
+		f.StartPosition = FormStartPosition.CenterParent;
+		return f.ShowDialog(this);
 	}
 
 	private Control GetActiveFunctionControl() {
