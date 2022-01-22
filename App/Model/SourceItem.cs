@@ -330,11 +330,7 @@ public abstract class SourceItem
 		}
 
 		int l = pattern.Length;
-		if (text.Length == l) {
-			return false;
-		}
-
-		return text.Substring(l).All(ch => ch is >= '0' and <= '9');
+		return text.Length != l && text.Substring(l).All(ch => ch is >= '0' and <= '9');
 	}
 
 	internal sealed class Empty : SourceItem
