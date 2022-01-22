@@ -1,88 +1,73 @@
-﻿using System;
-using System.ComponentModel;
+﻿namespace Devcorp.Controls.Design;
 
-namespace Devcorp.Controls.Design
+/// <summary>
+///     Structure to define CIE L*a*b*.
+/// </summary>
+public struct CIELab
 {
-	/// <summary>
-	/// Structure to define CIE L*a*b*.
-	/// </summary>
-	public struct CIELab
-	{
-		/// <summary>
-		/// Gets an empty CIELab structure.
-		/// </summary>
-		public static readonly CIELab Empty = new CIELab();
+    /// <summary>
+    ///     Gets an empty CIELab structure.
+    /// </summary>
+    public static readonly CIELab Empty = new();
 
-		#region Fields
-		private double l;
-		private double a;
-		private double b;
+    #region Fields
 
-		#endregion
+    #endregion
 
-		#region Operators
-		public static bool operator ==(CIELab item1, CIELab item2) {
-			return (
-				item1.L == item2.L
-				&& item1.A == item2.A
-				&& item1.B == item2.B
-				);
-		}
+    #region Operators
 
-		public static bool operator !=(CIELab item1, CIELab item2) {
-			return (
-				item1.L != item2.L
-				|| item1.A != item2.A
-				|| item1.B != item2.B
-				);
-		}
+    public static bool operator ==(CIELab item1, CIELab item2) {
+        return item1.L == item2.L
+               && item1.A == item2.A
+               && item1.B == item2.B;
+    }
 
-		#endregion
+    public static bool operator !=(CIELab item1, CIELab item2) {
+        return item1.L != item2.L
+               || item1.A != item2.A
+               || item1.B != item2.B;
+    }
 
-		#region Accessors
-		/// <summary>
-		/// Gets or sets L component.
-		/// </summary>
-		public double L {
-			get => l;
-			set => l = value;
-		}
+    #endregion
 
-		/// <summary>
-		/// Gets or sets a component.
-		/// </summary>
-		public double A {
-			get => a;
-			set => a = value;
-		}
+    #region Accessors
 
-		/// <summary>
-		/// Gets or sets a component.
-		/// </summary>
-		public double B {
-			get => b;
-			set => b = value;
-		}
+    /// <summary>
+    ///     Gets or sets L component.
+    /// </summary>
+    public double L { get; set; }
 
-		#endregion
+    /// <summary>
+    ///     Gets or sets a component.
+    /// </summary>
+    public double A { get; set; }
 
-		public CIELab(double l, double a, double b) {
-			this.l = l;
-			this.a = a;
-			this.b = b;
-		}
+    /// <summary>
+    ///     Gets or sets a component.
+    /// </summary>
+    public double B { get; set; }
 
-		#region Methods
-		public override bool Equals(Object obj) {
-			if (obj == null || GetType() != obj.GetType()) return false;
+    #endregion
 
-			return (this == (CIELab)obj);
-		}
+    public CIELab(double l, double a, double b) {
+        this.L = l;
+        this.A = a;
+        this.B = b;
+    }
 
-		public override int GetHashCode() {
-			return L.GetHashCode() ^ a.GetHashCode() ^ b.GetHashCode();
-		}
+    #region Methods
 
-		#endregion
-	}
+    public override bool Equals(object obj) {
+        if (obj == null || GetType() != obj.GetType()) {
+            return false;
+        }
+
+        return this == (CIELab)obj;
+    }
+
+    public override int GetHashCode() {
+        return L.GetHashCode() ^ A.GetHashCode() ^ B.GetHashCode();
+    }
+
+    #endregion
 }

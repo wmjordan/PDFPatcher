@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace PDFPatcher.Model;
 
-namespace PDFPatcher.Model
+public enum InsertBookmarkPositionType
 {
-	public enum InsertBookmarkPositionType
-	{
-		NoDefined,
-		AfterCurrent,
-		AsChild,
-		AfterParent,
-		BeforeCurrent
-	}
+    NoDefined,
+    AfterCurrent,
+    AsChild,
+    AfterParent,
+    BeforeCurrent
 }

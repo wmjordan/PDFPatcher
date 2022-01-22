@@ -1,52 +1,54 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using iTextSharp.text.pdf;
-using PDFPatcher.Model;
+﻿using iTextSharp.text.pdf;
 
-namespace PDFPatcher.Processor
+namespace PDFPatcher.Processor;
+
+/// <summary>
+///     删除指定字典名称项目的处理器。
+/// </summary>
+internal sealed class RemoveDictionaryItemProcessor : IPageProcessor
 {
-	/// <summary>
-	/// 删除指定字典名称项目的处理器。
-	/// </summary>
-	sealed class RemoveDictionaryItemProcessor : IPageProcessor
-	{
-		readonly PdfName _ItemName;
-		public RemoveDictionaryItemProcessor(PdfName itemName) {
-			_ItemName = itemName;
-		}
+    private readonly PdfName _ItemName;
 
-		#region IPageProcessor 成员
-		public string Name => "删除字典项目";
-		public void BeginProcess(DocProcessorContext context) {
-		}
-		public bool EndProcess(PdfReader pdf) {
-			return false;
-		}
-		public int EstimateWorkload(PdfReader pdf) {
-			return 0;
-		}
+    public RemoveDictionaryItemProcessor(PdfName itemName) {
+        _ItemName = itemName;
+    }
 
-		public bool Process(PageProcessorContext context) {
-			if (context.Page.Contains(_ItemName)) {
-				context.Page.Remove(_ItemName);
-				return true;
-			}
-			return false;
-		}
+    #region IDocProcessor 成员
 
-		#endregion
+    public bool Process(DocProcessorContext context) {
+        if (context.Pdf.Catalog.Contains(_ItemName)) {
+            context.Pdf.Catalog.Remove(_ItemName);
+            return true;
+        }
 
-		#region IDocProcessor 成员
+        return false;
+    }
 
-		public bool Process(DocProcessorContext context) {
-			if (context.Pdf.Catalog.Contains(_ItemName)) {
-				context.Pdf.Catalog.Remove(_ItemName);
-				return true;
-			}
-			return false;
-		}
+    #endregion
 
-		#endregion
-	}
+    #region IPageProcessor 成员
+
+    public string Name => "删除字典项目";
+
+    public void BeginProcess(DocProcessorContext context) {
+    }
+
+    public bool EndProcess(PdfReader pdf) {
+        return false;
+    }
+
+    public int EstimateWorkload(PdfReader pdf) {
+        return 0;
+    }
+
+    public bool Process(PageProcessorContext context) {
+        if (context.Page.Contains(_ItemName)) {
+            context.Page.Remove(_ItemName);
+            return true;
+        }
+
+        return false;
+    }
+
+    #endregion
 }

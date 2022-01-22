@@ -1,22 +1,20 @@
 ﻿using System;
 
-namespace PDFPatcher.Functions
+namespace PDFPatcher.Functions;
+
+internal interface IDocumentEditor
 {
-	interface IDocumentEditor
-	{
-		event EventHandler<DocumentChangedEventArgs> DocumentChanged;
-		string DocumentPath { get; }
-		void CloseDocument();
-		void Reopen();
+	string DocumentPath { get; }
+	event EventHandler<DocumentChangedEventArgs> DocumentChanged;
+	void CloseDocument();
+	void Reopen();
+}
+
+public sealed class DocumentChangedEventArgs : EventArgs
+{
+	internal DocumentChangedEventArgs(string path) {
+		Path = path;
 	}
 
-	public sealed class DocumentChangedEventArgs : EventArgs
-	{
-		public string Path { get; }
-		internal DocumentChangedEventArgs(string path) {
-			Path = path;
-		}
-	}
-
-
+	public string Path { get; }
 }

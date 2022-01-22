@@ -1,13 +1,12 @@
-﻿namespace PDFPatcher.Model.PdfPath
-{
-	sealed class Context
-	{
-		public DocumentObject Current { get; }
-		public int Position { get; }
+﻿namespace PDFPatcher.Model.PdfPath;
 
-		public Context(DocumentObject currentObject, int position) {
-			Current = currentObject;
-			Position = position;
-		}
+internal sealed class Context
+{
+	public Context(DocumentObject currentObject, int position) {
+		Current = currentObject;
+		Position = position;
 	}
+
+	public DocumentObject Current { get; }
+	public int Position { get; }
 }

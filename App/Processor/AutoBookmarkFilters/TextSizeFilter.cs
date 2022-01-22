@@ -1,46 +1,45 @@
-﻿using System;
+﻿using System.Diagnostics;
+using PDFPatcher.Model;
 
-namespace PDFPatcher.Processor
+namespace PDFPatcher.Processor;
+
+[DebuggerDisplay("{MinSize}->{MaxSize}")]
+public class TextSizeFilter : AutoBookmarkFilter
 {
-	[System.Diagnostics.DebuggerDisplay("{MinSize}->{MaxSize}")]
-	public class TextSizeFilter : AutoBookmarkFilter
-	{
-		readonly float _minSize, _maxSize;
-		public float MinSize => _minSize;
-		public float MaxSize => _maxSize;
+	public TextSizeFilter(float a, float b) {
+		if (a > b) {
+			MinSize = b;
+			MaxSize = a;
+		}
+		else {
+			MinSize = a;
+			MaxSize = b;
+		}
+	}
 
-		public TextSizeFilter(float a, float b) {
-			if (a > b) {
-				_minSize = b;
-				_maxSize = a;
-			}
-			else {
-				_minSize = a;
-				_maxSize = b;
-			}
+	public float MinSize { get; }
+
+	public float MaxSize { get; }
+
+	internal override bool Matches(AutoBookmarkContext context) {
+		if (context.TextLine == null) {
+			float size = context.TextInfo.Size;
+			return MatchSize(size);
 		}
 
-		internal override bool Matches(PDFPatcher.Model.AutoBookmarkContext context) {
-			if (context.TextLine == null) {
-				var size = context.TextInfo.Size;
-				return MatchSize(size);
-			}
-			else {
-				foreach (var item in context.TextLine.Texts) {
-					if (MatchSize(item.Size)) {
-						return true;
-					}
-				}
-				return false;
+		foreach (TextInfo item in context.TextLine.Texts) {
+			if (MatchSize(item.Size)) {
+				return true;
 			}
 		}
 
-		private bool MatchSize(float size) {
-			return _minSize <= size && size <= _maxSize;
-		}
+		return false;
+	}
 
-		internal override void Reset() {
-		}
+	private bool MatchSize(float size) {
+		return MinSize <= size && size <= MaxSize;
+	}
 
+	internal override void Reset() {
 	}
 }

@@ -1,9 +1,8 @@
-﻿using System;
+﻿using System.Xml;
 
-namespace PDFPatcher.Processor
+namespace PDFPatcher.Processor;
+
+internal interface IInfoDocProcessor
 {
-	interface IInfoDocProcessor
-	{
-		bool Process(System.Xml.XmlElement item);
-	}
+    bool Process(XmlElement item);
 }

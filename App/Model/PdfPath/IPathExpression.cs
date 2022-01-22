@@ -1,56 +1,57 @@
 ﻿using System.Collections.Generic;
 
-namespace PDFPatcher.Model.PdfPath
+namespace PDFPatcher.Model.PdfPath;
+
+public interface IPathExpression : IPathValue
 {
-	public interface IPathExpression : IPathValue
-	{
-		IList<IPathPredicate> Predicates { get; }
-		IPathAxis Axis { get; }
-		string Name { get; }
-		DocumentObject SelectObject(DocumentObject source);
-		IList<DocumentObject> SelectObjects(DocumentObject source);
+	IList<IPathPredicate> Predicates { get; }
+	IPathAxis Axis { get; }
+	string Name { get; }
+	DocumentObject SelectObject(DocumentObject source);
+	IList<DocumentObject> SelectObjects(DocumentObject source);
+}
+
+public class PathExpression : IPathExpression
+{
+	internal static readonly IList<DocumentObject> EmptyMatchResult = new DocumentObject[0];
+
+	public PathExpression(PathAxisType axis) {
+		Axis = PathAxes.Create(axis);
 	}
 
-	public class PathExpression : IPathExpression
-	{
-		internal static readonly IList<DocumentObject> EmptyMatchResult = new DocumentObject[0];
+	public PathExpression(PathAxisType axis, string name) {
+		Axis = PathAxes.Create(axis);
+		Name = name;
+	}
 
-		#region IPathExpression 成员
-		public PathValueType ValueType => PathValueType.Expression;
+	#region IPathExpression 成员
 
-		public IPathAxis Axis { get; }
+	public PathValueType ValueType => PathValueType.Expression;
 
-		public string Name { get; }
+	public IPathAxis Axis { get; }
 
-		private IList<IPathPredicate> _Predicates;
-		///<summary>获取匹配条件列表。</summary>
-		public IList<IPathPredicate> Predicates {
-			get {
-				if (_Predicates == null)
-					_Predicates = new List<IPathPredicate>();
-				return _Predicates;
+	public string Name { get; }
+
+	private IList<IPathPredicate> _Predicates;
+
+	///<summary>获取匹配条件列表。</summary>
+	public IList<IPathPredicate> Predicates {
+		get {
+			if (_Predicates == null) {
+				_Predicates = new List<IPathPredicate>();
 			}
+
+			return _Predicates;
 		}
-
-		public DocumentObject SelectObject(DocumentObject source) {
-			return Axis.SelectObject(source, Name, Predicates);
-		}
-
-		public IList<DocumentObject> SelectObjects(DocumentObject source) {
-			return Axis.SelectObjects(source, Name, _Predicates);
-		}
-
-		#endregion
-
-		public PathExpression(PathAxisType axis) {
-			Axis = PathAxes.Create(axis);
-		}
-		public PathExpression(PathAxisType axis, string name) {
-			Axis = PathAxes.Create(axis);
-			Name = name;
-		}
-
-
 	}
 
+	public DocumentObject SelectObject(DocumentObject source) {
+		return Axis.SelectObject(source, Name, Predicates);
+	}
+
+	public IList<DocumentObject> SelectObjects(DocumentObject source) {
+		return Axis.SelectObjects(source, Name, _Predicates);
+	}
+
+	#endregion
 }

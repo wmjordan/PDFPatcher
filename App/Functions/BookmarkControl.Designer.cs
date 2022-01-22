@@ -30,7 +30,7 @@
             this._OpenBookmarkBox = new System.Windows.Forms.OpenFileDialog();
             this._SaveBookmarkBox = new System.Windows.Forms.SaveFileDialog();
             this.panel1 = new System.Windows.Forms.Panel();
-            this._BookmarkBox = new PDFPatcher.HistoryComboBox();
+            this.FileList = new PDFPatcher.HistoryComboBox();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -70,7 +70,7 @@
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this._BookmarkBox);
+            this.panel1.Controls.Add(this.FileList);
             this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this._BrowseBookmarkButton);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -81,19 +81,19 @@
             // 
             // _BookmarkBox
             // 
-            this._BookmarkBox.AllowDrop = true;
-            this._BookmarkBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.FileList.AllowDrop = true;
+            this.FileList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this._BookmarkBox.Contents = null;
-            this._BookmarkBox.FormattingEnabled = true;
-            this._BookmarkBox.Location = new System.Drawing.Point(104, 3);
-            this._BookmarkBox.MaxItemCount = 16;
-            this._BookmarkBox.Name = "_BookmarkBox";
-            this._BookmarkBox.Size = new System.Drawing.Size(281, 20);
-            this._BookmarkBox.TabIndex = 1;
-            this._BookmarkBox.DragDrop += new System.Windows.Forms.DragEventHandler(this._BookmarkBox_DragDrop);
-            this._BookmarkBox.DragEnter += new System.Windows.Forms.DragEventHandler(this._BookmarkBox_DragEnter);
-            this._BookmarkBox.TextChanged += new System.EventHandler(this._BookmarkBox_TextChanged);
+            this.FileList.Contents = null;
+            this.FileList.FormattingEnabled = true;
+            this.FileList.Location = new System.Drawing.Point(104, 3);
+            this.FileList.MaxItemCount = 16;
+            this.FileList.Name = "FileList";
+            this.FileList.Size = new System.Drawing.Size(281, 20);
+            this.FileList.TabIndex = 1;
+            this.FileList.DragDrop += new System.Windows.Forms.DragEventHandler(this._BookmarkBox_DragDrop);
+            this.FileList.DragEnter += new System.Windows.Forms.DragEventHandler(this._BookmarkBox_DragEnter);
+            this.FileList.TextChanged += new System.EventHandler(this._BookmarkBox_TextChanged);
             // 
             // BookmarkControl
             // 
@@ -116,7 +116,6 @@
 		private System.Windows.Forms.Button _BrowseBookmarkButton;
 		private System.Windows.Forms.OpenFileDialog _OpenBookmarkBox;
 		private System.Windows.Forms.SaveFileDialog _SaveBookmarkBox;
-		private PDFPatcher.HistoryComboBox _BookmarkBox;
-        private System.Windows.Forms.Panel panel1;
+		private System.Windows.Forms.Panel panel1;
 	}
 }

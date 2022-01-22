@@ -4,74 +4,35 @@ using System.Security.Permissions;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using PDFPatcher.Common;
+using PDFPatcher.Functions.Editor;
 using PDFPatcher.Model;
 using PDFPatcher.Processor;
+using PDFPatcher.Properties;
+using Rectangle = MuPdfSharp.Rectangle;
+using TextInfo = PDFPatcher.Functions.Editor.TextInfo;
 
 namespace PDFPatcher.Functions
 {
-	public sealed partial class EditorControl : FunctionControl, IDocumentEditor, Editor.IEditView
+	public sealed partial class EditorControl : FunctionControl, IDocumentEditor, IEditView
 	{
 		static readonly Color __DarkModeColor = Color.DarkGray;
 		static readonly Color __GreenModeColor = Color.FromArgb(0xCC, 0xFF, 0xCC);
 
-		public event EventHandler<DocumentChangedEventArgs> DocumentChanged;
-
-		static readonly CommandRegistry<Editor.Controller> __Commands = InitCommands();
-
-		private static CommandRegistry<Editor.Controller> InitCommands() {
-			var d = new CommandRegistry<Editor.Controller>();
-			d.Register(new Editor.LoadDocumentCommand(true, false), Commands.Open);
-			d.Register(new Editor.LoadDocumentCommand(true, true), Commands.ImportBookmark);
-			d.Register(new Editor.LoadDocumentCommand(false, false), Commands.OpenFile);
-			d.Register(new Editor.InsertBookmarkCommand(), Commands.EditorInsertBookmark);
-			d.Register(new Editor.SaveDocumentCommand(false, true), "_SaveButton", Commands.SaveBookmark);
-			d.Register(new Editor.SaveDocumentCommand(true, true), Commands.SaveAsInfoFile);
-			d.Register(new Editor.SaveDocumentCommand(true, false), Commands.Action, Commands.EditorSavePdf);
-			d.Register(new Editor.BookmarkLevelCommand(true), Commands.EditorBookmarkLevelUp);
-			d.Register(new Editor.BookmarkLevelCommand(false), Commands.EditorBookmarkLevelDown);
-			d.Register(new Editor.DocumentPropertyCommand(), Commands.DocumentProperties);
-			d.Register(new Editor.CopyBookmarkItemCommand(), Commands.Copy);
-			d.Register(new Editor.PasteBookmarkItemCommand(), Commands.Paste);
-			d.Register(new Editor.DeleteBookmarkItemCommand(), Commands.EditorBookmarkDelete, Commands.Delete);
-			d.Register(new Editor.BookmarkStyleCommand(SetTextStyleProcessor.Style.SetBold), Commands.EditorBookmarkBold);
-			d.Register(new Editor.BookmarkStyleCommand(SetTextStyleProcessor.Style.SetItalic), Commands.EditorBookmarkItalic);
-			d.Register(new Editor.BookmarkPageCommand(1), Commands.EditorBookmarkPageNumberIncrement);
-			d.Register(new Editor.BookmarkPageCommand(-1), Commands.EditorBookmarkPageNumberDecrement);
-			d.Register(new Editor.BookmarkPageCommand(0), Commands.EditorBookmarkPageNumberShift);
-			d.Register(new Editor.SimpleBookmarkCommand<ClearDestinationOffsetProcessor, ClearDestinationOffsetProcessor.PositionType>(ClearDestinationOffsetProcessor.PositionType.XY), "_ClearPositionXY");
-			d.Register(new Editor.SimpleBookmarkCommand<ClearDestinationOffsetProcessor, ClearDestinationOffsetProcessor.PositionType>(ClearDestinationOffsetProcessor.PositionType.X), "_ClearPositionX");
-			d.Register(new Editor.SimpleBookmarkCommand<ClearDestinationOffsetProcessor, ClearDestinationOffsetProcessor.PositionType>(ClearDestinationOffsetProcessor.PositionType.Y), "_ClearPositionY");
-			d.Register(new Editor.SimpleBookmarkCommand<BookmarkOpenStatusProcessor, bool>(true), "_SetOpenStatusTrue");
-			d.Register(new Editor.SimpleBookmarkCommand<BookmarkOpenStatusProcessor, bool>(false), "_SetOpenStatusFalse");
-			foreach (var item in Constants.DestinationAttributes.ViewType.Names) {
-				d.Register(new Editor.BookmarkActionCommand(item), item);
-			}
-			d.Register(new Editor.BookmarkActionCommand(Constants.Coordinates.Unchanged), Constants.Coordinates.Unchanged);
-			d.Register(new Editor.BookmarkActionCommand("_ChangeCoordinates"), "_ChangeCoordinates");
-			d.Register(new Editor.BookmarkActionCommand("_BookmarkAction"), "_BookmarkAction");
-			d.Register(new Editor.SimpleBookmarkCommand<DestinationGotoTopProcessor>(), "_SetGotoTop");
-			d.Register(new Editor.SimpleBookmarkCommand<ForceInternalLinkProcessor>(), "_ForceInternalLink");
-			d.Register(new Editor.BookmarkSelectionCommand(Commands.SelectAllItems), Commands.SelectAllItems);
-			d.Register(new Editor.BookmarkSelectionCommand(Commands.SelectNone), Commands.SelectNone);
-			d.Register(new Editor.BookmarkSelectionCommand(Commands.InvertSelectItem), Commands.InvertSelectItem);
-			d.Register(new Editor.BookmarkSelectionCommand("_CollapseAll"), "_CollapseAll");
-			d.Register(new Editor.BookmarkSelectionCommand("_ExpandAll"), "_ExpandAll");
-			d.Register(new Editor.BookmarkSelectionCommand("_CollapseChildren"), "_CollapseChildren");
-			d.Register(new Editor.OcrPageCommand(), Commands.EditorOcrPage);
-			d.Register(new Editor.PagePropertiesCommand(), Commands.EditorPageProperties);
-			d.Register(new Editor.SavePageImageCommand(), Commands.EditorSavePageImage);
-			Editor.BookmarkMarkerCommand.RegisterCommands(d);
-			Editor.ViewerCommand.RegisterCommands(d);
-			Editor.QuickSelectCommand.RegisterCommands(d);
-			return d;
-		}
-		SearchBookmarkForm _searchForm;
+		static readonly CommandRegistry<Controller> __Commands = InitCommands();
+		readonly Controller _controller;
 		AutoBookmarkForm _autoBookmarkForm;
-		readonly Editor.Controller _controller;
+		SearchBookmarkForm _searchForm;
+
+		public EditorControl() {
+			InitializeComponent();
+			_controller = new Controller(this);
+		}
 
 		public override string FunctionName => "文档编辑器";
 
-		public override Bitmap IconImage => Properties.Resources.Editor;
+		public override Bitmap IconImage => Resources.Editor;
+
+		public event EventHandler<DocumentChangedEventArgs> DocumentChanged;
 
 		public string DocumentPath {
 			get => _controller?.Model.DocumentPath;
@@ -83,9 +44,70 @@ namespace PDFPatcher.Functions
 			}
 		}
 
-		public EditorControl() {
-			InitializeComponent();
-			_controller = new Editor.Controller(this);
+		public void CloseDocument() {
+			_ViewerBox.CloseFile();
+		}
+
+		public void Reopen() {
+			_ViewerBox.Reopen();
+		}
+
+		private static CommandRegistry<Controller> InitCommands() {
+			CommandRegistry<Controller> d = new CommandRegistry<Controller>();
+			d.Register(new LoadDocumentCommand(true, false), Commands.Open);
+			d.Register(new LoadDocumentCommand(true, true), Commands.ImportBookmark);
+			d.Register(new LoadDocumentCommand(false, false), Commands.OpenFile);
+			d.Register(new InsertBookmarkCommand(), Commands.EditorInsertBookmark);
+			d.Register(new SaveDocumentCommand(false, true), "_SaveButton", Commands.SaveBookmark);
+			d.Register(new SaveDocumentCommand(true, true), Commands.SaveAsInfoFile);
+			d.Register(new SaveDocumentCommand(true, false), Commands.Action, Commands.EditorSavePdf);
+			d.Register(new BookmarkLevelCommand(true), Commands.EditorBookmarkLevelUp);
+			d.Register(new BookmarkLevelCommand(false), Commands.EditorBookmarkLevelDown);
+			d.Register(new DocumentPropertyCommand(), Commands.DocumentProperties);
+			d.Register(new CopyBookmarkItemCommand(), Commands.Copy);
+			d.Register(new PasteBookmarkItemCommand(), Commands.Paste);
+			d.Register(new DeleteBookmarkItemCommand(), Commands.EditorBookmarkDelete, Commands.Delete);
+			d.Register(new BookmarkStyleCommand(SetTextStyleProcessor.Style.SetBold), Commands.EditorBookmarkBold);
+			d.Register(new BookmarkStyleCommand(SetTextStyleProcessor.Style.SetItalic), Commands.EditorBookmarkItalic);
+			d.Register(new BookmarkPageCommand(1), Commands.EditorBookmarkPageNumberIncrement);
+			d.Register(new BookmarkPageCommand(-1), Commands.EditorBookmarkPageNumberDecrement);
+			d.Register(new BookmarkPageCommand(0), Commands.EditorBookmarkPageNumberShift);
+			d.Register(
+				new SimpleBookmarkCommand<ClearDestinationOffsetProcessor,
+					ClearDestinationOffsetProcessor.PositionType>(ClearDestinationOffsetProcessor.PositionType.XY),
+				"_ClearPositionXY");
+			d.Register(
+				new SimpleBookmarkCommand<ClearDestinationOffsetProcessor,
+					ClearDestinationOffsetProcessor.PositionType>(ClearDestinationOffsetProcessor.PositionType.X),
+				"_ClearPositionX");
+			d.Register(
+				new SimpleBookmarkCommand<ClearDestinationOffsetProcessor,
+					ClearDestinationOffsetProcessor.PositionType>(ClearDestinationOffsetProcessor.PositionType.Y),
+				"_ClearPositionY");
+			d.Register(new SimpleBookmarkCommand<BookmarkOpenStatusProcessor, bool>(true), "_SetOpenStatusTrue");
+			d.Register(new SimpleBookmarkCommand<BookmarkOpenStatusProcessor, bool>(false), "_SetOpenStatusFalse");
+			foreach (string item in Constants.DestinationAttributes.ViewType.Names) {
+				d.Register(new BookmarkActionCommand(item), item);
+			}
+
+			d.Register(new BookmarkActionCommand(Constants.Coordinates.Unchanged), Constants.Coordinates.Unchanged);
+			d.Register(new BookmarkActionCommand("_ChangeCoordinates"), "_ChangeCoordinates");
+			d.Register(new BookmarkActionCommand("_BookmarkAction"), "_BookmarkAction");
+			d.Register(new SimpleBookmarkCommand<DestinationGotoTopProcessor>(), "_SetGotoTop");
+			d.Register(new SimpleBookmarkCommand<ForceInternalLinkProcessor>(), "_ForceInternalLink");
+			d.Register(new BookmarkSelectionCommand(Commands.SelectAllItems), Commands.SelectAllItems);
+			d.Register(new BookmarkSelectionCommand(Commands.SelectNone), Commands.SelectNone);
+			d.Register(new BookmarkSelectionCommand(Commands.InvertSelectItem), Commands.InvertSelectItem);
+			d.Register(new BookmarkSelectionCommand("_CollapseAll"), "_CollapseAll");
+			d.Register(new BookmarkSelectionCommand("_ExpandAll"), "_ExpandAll");
+			d.Register(new BookmarkSelectionCommand("_CollapseChildren"), "_CollapseChildren");
+			d.Register(new OcrPageCommand(), Commands.EditorOcrPage);
+			d.Register(new PagePropertiesCommand(), Commands.EditorPageProperties);
+			d.Register(new SavePageImageCommand(), Commands.EditorSavePageImage);
+			BookmarkMarkerCommand.RegisterCommands(d);
+			ViewerCommand.RegisterCommands(d);
+			QuickSelectCommand.RegisterCommands(d);
+			return d;
 		}
 
 		protected override void OnLoad(EventArgs e) {
@@ -93,6 +115,7 @@ namespace PDFPatcher.Functions
 			if (DesignMode) {
 				return;
 			}
+
 			ListRecentFiles = _OpenButton_DropDownOpening;
 			RecentFileItemClicked = _OpenButton_DropDownItemClicked;
 			_ViewerToolbar.Left = _BookmarkToolbar.Right;
@@ -100,16 +123,18 @@ namespace PDFPatcher.Functions
 
 			_controller.PrepareBookmarkDocument();
 
-			var di = _ChangeZoomRate.DropDownItems;
-			di.AddRange(Array.ConvertAll(Constants.DestinationAttributes.ViewType.Names, n => new ToolStripMenuItem { Name = n, Text = n }));
+			ToolStripItemCollection di = _ChangeZoomRate.DropDownItems;
+			di.AddRange(Array.ConvertAll(Constants.DestinationAttributes.ViewType.Names,
+				n => new ToolStripMenuItem { Name = n, Text = n }));
 			di.RemoveByKey(Constants.DestinationAttributes.ViewType.FitR);
 			di[0].Text += "...";
-			di.Insert(0, new ToolStripMenuItem { Name = Constants.Coordinates.Unchanged, Text = Constants.Coordinates.Unchanged });
+			di.Insert(0,
+				new ToolStripMenuItem { Name = Constants.Coordinates.Unchanged, Text = Constants.Coordinates.Unchanged });
 			_ChangeZoomRate.DropDownItemClicked += _MainToolbar_ItemClicked;
 			_ChangeCase.DropDownItemClicked += (object s, ToolStripItemClickedEventArgs args) => {
 				FormHelper.HidePopupMenu(args.ClickedItem);
 				_EditMenu.Hide();
-				var i = Array.IndexOf(SetCaseProcessor.CaseNames, args.ClickedItem.Text);
+				int i = Array.IndexOf(SetCaseProcessor.CaseNames, args.ClickedItem.Text);
 				if (i != -1) {
 					_controller.ProcessBookmarks(new SetCaseProcessor((SetCaseProcessor.LetterCase)i));
 				}
@@ -117,27 +142,31 @@ namespace PDFPatcher.Functions
 			foreach (int item in Enum.GetValues(typeof(SetCaseProcessor.LetterCase))) {
 				_ChangeCase.DropDownItems.Add(SetCaseProcessor.CaseNames[item]);
 			}
+
 			_SetOpenStatus.DropDownItemClicked += _MainToolbar_ItemClicked;
 
 			AppContext.MainForm.SetTooltip(_IncludeDecendantBox, "选中此选项后，加粗、斜体等其它修改书签的操作将应用到选中书签的子书签");
-			_IncludeDecendantBox.CheckedChanged += (s, args) => { _BookmarkBox.OperationAffectsDescendants = _IncludeDecendantBox.Checked; };
+			_IncludeDecendantBox.CheckedChanged += (s, args) => {
+				_BookmarkBox.OperationAffectsDescendants = _IncludeDecendantBox.Checked;
+			};
 
 			_UndoButton.DropDownOpening += (object s, EventArgs args) => {
-				var i = _UndoMenu.Items;
+				ToolStripItemCollection i = _UndoMenu.Items;
 				i.Clear();
-				foreach (var item in _controller.Model.Undo.GetActionNames(16)) {
+				foreach (string item in _controller.Model.Undo.GetActionNames(16)) {
 					i.Add(item);
 				}
 			};
 			_UndoButton.DropDownItemClicked += (object s, ToolStripItemClickedEventArgs args) => {
-				var i = args.ClickedItem.Owner.Items.IndexOf(args.ClickedItem) + 1;
+				int i = args.ClickedItem.Owner.Items.IndexOf(args.ClickedItem) + 1;
 				_controller.Undo(i);
 			};
-			Editor.QuickSelectCommand.RegisterMenuItems(_QuickSelect.DropDownItems);
+			QuickSelectCommand.RegisterMenuItems(_QuickSelect.DropDownItems);
 			_BookmarkBox.CellClick += (s, args) => {
 				if (args.ColumnIndex != 0 || args.ClickCount > 1 || ModifierKeys != Keys.None) {
 					return;
 				}
+
 				ScrollToSelectedBookmarkLocation();
 				//var bs = el.GetAttribute (Constants.BookmarkAttributes.Style);
 				//switch (bs) {
@@ -172,6 +201,7 @@ namespace PDFPatcher.Functions
 				if (args.KeyCode != Keys.Enter) {
 					return;
 				}
+
 				int p;
 				if (_CurrentPageBox.Text.TryParse(out p)) {
 					_ViewerBox.CurrentPageNumber = p;
@@ -185,15 +215,16 @@ namespace PDFPatcher.Functions
 				_ViewerBox.OcrLanguage = (int)(args.ClickedItem.Tag ?? 0);
 			};
 			_OcrMenu.DropDownOpening += (s, args) => {
-				var m = _OcrMenu.DropDownItems;
+				ToolStripItemCollection m = _OcrMenu.DropDownItems;
 				if (m.Count == 1) {
 					for (int i = 0; i < Constants.Ocr.LangIDs.Length; i++) {
-						var item = new ToolStripMenuItem(Constants.Ocr.LangNames[i]);
+						ToolStripMenuItem item = new ToolStripMenuItem(Constants.Ocr.LangNames[i]);
 						m.Add(item);
 						item.Tag = Constants.Ocr.LangIDs[i];
 						item.Enabled = ModiOcr.IsLanguageInstalled(Constants.Ocr.LangIDs[i]);
 					}
 				}
+
 				foreach (ToolStripMenuItem item in _OcrMenu.DropDownItems) {
 					item.Checked = _ViewerBox.OcrLanguage == (int)(item.Tag ?? 0);
 				}
@@ -227,14 +258,20 @@ namespace PDFPatcher.Functions
 				if (_ViewerBox.FirstPage == 0) {
 					return;
 				}
-				var l = args.Location;
-				var p = _ViewerBox.TransposeClientToPagePosition(l.X, l.Y);
+
+				Point l = args.Location;
+				PagePosition p = _ViewerBox.TransposeClientToPagePosition(l.X, l.Y);
 				if (p.Page == 0) {
 					return;
 				}
-				var ti = _ViewerBox.FindTextLines(p);
-				var t = ti.TextLines != null ? ti.TextLines[0].Text : String.Empty;
-				_PageInfoBox.Text = string.Concat("页面：", p.Page, "; 位置：", Math.Round(p.PageX, 2), " * ", Math.Round(p.PageY, 2), ti.Spans.HasContent() ? String.Concat("; 字体：", ti.Page.GetFont(ti.Spans[0]).Name, " ", ti.Spans[0].Size) : null, t.Length > 0 ? "; 文本：" : null, t);
+
+				TextInfo ti = _ViewerBox.FindTextLines(p);
+				string t = ti.TextLines != null ? ti.TextLines[0].Text : String.Empty;
+				_PageInfoBox.Text = string.Concat("页面：", p.Page, "; 位置：", Math.Round(p.PageX, 2), " * ",
+					Math.Round(p.PageY, 2),
+					ti.Spans.HasContent()
+						? String.Concat("; 字体：", ti.Page.GetFont(ti.Spans[0]).Name, " ", ti.Spans[0].Size)
+						: null, t.Length > 0 ? "; 文本：" : null, t);
 			};
 			_ViewerBox.MouseClick += _ViewBox_MouseClick;
 			_ViewerToolbar.Enabled = false;
@@ -243,19 +280,20 @@ namespace PDFPatcher.Functions
 		}
 
 		private void ScrollToSelectedBookmarkLocation() {
-			var i = _BookmarkBox.GetFirstSelectedIndex();
+			int i = _BookmarkBox.GetFirstSelectedIndex();
 			//_MainToolbar.ToggleEnabled (i != -1, _editButtonNames);
 			if (i == -1) {
 				return;
 			}
+
 			BookmarkElement el = _BookmarkBox.GetModelObject(i) as BookmarkElement;
 			if (_controller.Model.LockDownViewer == false
 				&& _BookmarkBox.SelectedIndices.Count == 1
 				&& (i = el.Page) > 0) {
-				var v = _ViewerBox;
+				PdfViewerControl v = _ViewerBox;
 				if (_controller.Model.PdfDocument != null && el.Page > 0 && el.Page <= _ViewerBox.Document.PageCount) {
-					var b = _ViewerBox.GetPageBound(el.Page);
-					v.ScrollToPosition(new Editor.PagePosition(el.Page,
+					Rectangle b = _ViewerBox.GetPageBound(el.Page);
+					v.ScrollToPosition(new PagePosition(el.Page,
 						v.HorizontalFlow ? el.Left > b.Width ? b.Width : el.Left : 0,
 						v.HorizontalFlow || el.Top == 0 ? 0 : el.Top.LimitInRange(b.Top, b.Bottom),
 						0, 0, true)
@@ -277,7 +315,8 @@ namespace PDFPatcher.Functions
 			if (_ViewerBox.FirstPage == 0) {
 				return;
 			}
-			var l = args.Location;
+
+			Point l = args.Location;
 			if (args.Button != MouseButtons.Right) {
 				return;
 			}
@@ -309,13 +348,14 @@ namespace PDFPatcher.Functions
 		}
 
 		public override void SetupCommand(ToolStripItem item) {
-			var n = item.Name;
-			var l = _controller.Model.DocumentPath != null;
-			var m = item as ToolStripMenuItem;
+			string n = item.Name;
+			bool l = _controller.Model.DocumentPath != null;
+			ToolStripMenuItem m = item as ToolStripMenuItem;
 			if (_controller.Model.IsLoadingDocument) {
 				item.Enabled = false;
 				return;
 			}
+
 			switch (n) {
 				case Commands.Action:
 					EnableCommand(item, l, true);
@@ -344,20 +384,48 @@ namespace PDFPatcher.Functions
 					item.Enabled = _ViewerBox.Document != null && _ViewerBox.Document.IsDocumentOpened;
 					item.Visible = true;
 					break;
-				case "_ScrollVertical": m.Checked = _ViewerBox.ContentDirection == Editor.ContentDirection.TopToDown; break;
-				case "_ScrollHorizontal": m.Checked = _ViewerBox.ContentDirection == Editor.ContentDirection.RightToLeft; break;
-				case "_TrueColorSpace": m.Checked = _ViewerBox.GrayScale == false; break;
-				case "_GrayColorSpace": m.Checked = _ViewerBox.GrayScale; break;
-				case "_InvertColor": m.Checked = _ViewerBox.InvertColor; break;
-				case "_MoveMode": m.Checked = _ViewerBox.MouseMode == Editor.MouseMode.Move; break;
-				case "_SelectionMode": m.Checked = _ViewerBox.MouseMode == Editor.MouseMode.Selection; break;
-				case "_FullPageScroll": m.Checked = _ViewerBox.FullPageScroll; break;
-				case "_ShowTextBorders": m.Checked = _ViewerBox.ShowTextBorders; break;
-				case "_DarkMode": m.Checked = _ViewerBox.TintColor == __DarkModeColor; break;
-				case "_GreenMode": m.Checked = _ViewerBox.TintColor == __GreenModeColor; break;
-				case "_ShowAnnotations": m.Checked = _ViewerBox.HideAnnotations == false; break;
-				case "_ShowBookmarks": m.Checked = _MainPanel.Panel1Collapsed == false; break;
-				case "_OcrPage": item.Enabled = ModiOcr.ModiInstalled && _ViewerBox.OcrLanguage != Constants.Ocr.NoLanguage; break;
+				case "_ScrollVertical":
+					m.Checked = _ViewerBox.ContentDirection == ContentDirection.TopToDown;
+					break;
+				case "_ScrollHorizontal":
+					m.Checked = _ViewerBox.ContentDirection == ContentDirection.RightToLeft;
+					break;
+				case "_TrueColorSpace":
+					m.Checked = _ViewerBox.GrayScale == false;
+					break;
+				case "_GrayColorSpace":
+					m.Checked = _ViewerBox.GrayScale;
+					break;
+				case "_InvertColor":
+					m.Checked = _ViewerBox.InvertColor;
+					break;
+				case "_MoveMode":
+					m.Checked = _ViewerBox.MouseMode == MouseMode.Move;
+					break;
+				case "_SelectionMode":
+					m.Checked = _ViewerBox.MouseMode == MouseMode.Selection;
+					break;
+				case "_FullPageScroll":
+					m.Checked = _ViewerBox.FullPageScroll;
+					break;
+				case "_ShowTextBorders":
+					m.Checked = _ViewerBox.ShowTextBorders;
+					break;
+				case "_DarkMode":
+					m.Checked = _ViewerBox.TintColor == __DarkModeColor;
+					break;
+				case "_GreenMode":
+					m.Checked = _ViewerBox.TintColor == __GreenModeColor;
+					break;
+				case "_ShowAnnotations":
+					m.Checked = _ViewerBox.HideAnnotations == false;
+					break;
+				case "_ShowBookmarks":
+					m.Checked = _MainPanel.Panel1Collapsed == false;
+					break;
+				case "_OcrPage":
+					item.Enabled = ModiOcr.ModiInstalled && _ViewerBox.OcrLanguage != Constants.Ocr.NoLanguage;
+					break;
 				case "_OcrDetectPunctuation":
 					item.Enabled = ModiOcr.ModiInstalled && _ViewerBox.OcrLanguage != Constants.Ocr.NoLanguage;
 					m.Checked = _ViewerBox.OcrOptions.DetectContentPunctuations;
@@ -379,9 +447,11 @@ namespace PDFPatcher.Functions
 					if (m.DropDownItems.Count == 0) {
 						m.DropDownItemClicked += _MainToolbar_ItemClicked;
 						for (int i = 1; i < 8; i++) {
-							m.DropDownItems.Add(new ToolStripMenuItem("&" + i + " 级标题") { Name = "_AutoBookmarkLevel" + i });
+							m.DropDownItems.Add(
+								new ToolStripMenuItem("&" + i + " 级标题") { Name = "_AutoBookmarkLevel" + i });
 						}
 					}
+
 					break;
 				case "_FullScreen":
 					m.Checked = AppContext.MainForm.FullScreen;
@@ -390,12 +460,14 @@ namespace PDFPatcher.Functions
 					EnableCommand(item, true, true);
 					break;
 			}
+
 			base.SetupCommand(item);
 		}
 
 		public override void ExecuteCommand(string cmd, params string[] parameters) {
 			switch (cmd) {
 				#region 书签命令
+
 				case "_InsertBookmark":
 					_controller.InsertBookmark();
 					break;
@@ -406,64 +478,69 @@ namespace PDFPatcher.Functions
 					if (_searchForm == null || _searchForm.IsDisposed) {
 						_searchForm = new SearchBookmarkForm(_controller);
 					}
+
 					if (_searchForm.Visible == false) {
 						_searchForm.Show(this);
 					}
+
 					_searchForm.BringToFront();
 					break;
+
 				#endregion
+
 				#region 阅读器工具栏命令
+
 				case "_AutoBookmark":
 					_controller.ShowAutoBookmarkForm();
 					break;
 				case "_CopySelection":
-					var sel = _ViewerBox.GetSelection();
+					Selection sel = _ViewerBox.GetSelection();
 					if (sel.Page > 0) {
-						using (var b = sel.GetSelectedBitmap()) {
+						using (Bitmap b = sel.GetSelectedBitmap()) {
 							Clipboard.SetImage(b);
 						}
 					}
+
 					break;
 				case "_InsertPageLabel":
-					_controller.LabelAtPage(_ViewerBox.TransposeVirtualImageToPagePosition(_ViewerBox.PinPoint.X, _ViewerBox.PinPoint.Y));
+					_controller.LabelAtPage(
+						_ViewerBox.TransposeVirtualImageToPagePosition(_ViewerBox.PinPoint.X, _ViewerBox.PinPoint.Y));
 					break;
 				case "_InsertWithOcrOnly":
 					_controller.Model.InsertBookmarkWithOcrOnly = !_controller.Model.InsertBookmarkWithOcrOnly;
 					break;
+
 				#endregion
+
 				default:
 					if (cmd.StartsWith("_AutoBookmarkLevel", StringComparison.Ordinal)) {
 						_controller.ConfigAutoBookmarkTextStyles(
 							cmd.Substring("_AutoBookmarkLevel".Length).ToInt32(),
-							_ViewerBox.FindTextLines(_ViewerBox.TransposeVirtualImageToPagePosition(_ViewerBox.PinPoint.X, _ViewerBox.PinPoint.Y)));
+							_ViewerBox.FindTextLines(
+								_ViewerBox.TransposeVirtualImageToPagePosition(_ViewerBox.PinPoint.X,
+									_ViewerBox.PinPoint.Y)));
 						break;
 					}
+
 					__Commands.Process(cmd, _controller, parameters);
 					break;
 			}
 		}
 
-		public void CloseDocument() {
-			_ViewerBox.CloseFile();
-		}
-
-		public void Reopen() {
-			_ViewerBox.Reopen();
-		}
-
 		private void _BookmarkColorButton_SelectedColorChanged(object sender, EventArgs e) {
-			var c = _BookmarkColorButton.Color;
+			Color c = _BookmarkColorButton.Color;
 			_controller.ProcessBookmarks(new SetTextColorProcessor(c));
 		}
 
 		private void _OpenButton_DropDownOpening(object sender, EventArgs e) {
-			var m = (sender as ToolStripDropDownItem);
-			var l = m.DropDown.Items;
+			ToolStripDropDownItem m = (sender as ToolStripDropDownItem);
+			ToolStripItemCollection l = m.DropDown.Items;
 			l.ClearDropDownItems();
 			l.AddSourcePdfFiles();
 			if (l.Count > 0) {
 				l.Add(new ToolStripSeparator());
 			}
+
 			l.AddInfoFiles();
 		}
 
@@ -477,47 +554,69 @@ namespace PDFPatcher.Functions
 			if (_BookmarkBox.IsCellEditing || _BookmarkBox.IsLabelEditing || _CurrentPageBox.Focused) {
 				return base.ProcessCmdKey(ref msg, keyData);
 			}
+
 			switch (keyData ^ Keys.Control) {
 				case Keys.B:
-					ExecuteCommand("_BookmarkBoldButton"); return true;
+					ExecuteCommand("_BookmarkBoldButton");
+					return true;
 				case Keys.I:
-					ExecuteCommand("_BookmarkItalicButton"); return true;
-				case Keys.Z: _controller.Undo(1); return true;
+					ExecuteCommand("_BookmarkItalicButton");
+					return true;
+				case Keys.Z:
+					_controller.Undo(1);
+					return true;
 				case Keys.F:
-					ExecuteCommand("_SearchReplace"); return true;
+					ExecuteCommand("_SearchReplace");
+					return true;
 				case Keys.R:
-					ExecuteCommand(Commands.ImportBookmark); return true;
+					ExecuteCommand(Commands.ImportBookmark);
+					return true;
 				case Keys.Q:
-					ExecuteCommand(Commands.SaveBookmark); return true;
+					ExecuteCommand(Commands.SaveBookmark);
+					return true;
 				case Keys.S:
-					ExecuteCommand(Commands.Action); return true;
+					ExecuteCommand(Commands.Action);
+					return true;
 				case Keys.O:
-					ExecuteCommand(Commands.Open); return true;
+					ExecuteCommand(Commands.Open);
+					return true;
 				case Keys.C:
-					ExecuteCommand(Commands.Copy); return true;
+					ExecuteCommand(Commands.Copy);
+					return true;
 				case Keys.V:
-					ExecuteCommand(Commands.Paste); return true;
+					ExecuteCommand(Commands.Paste);
+					return true;
 			}
+
 			switch (keyData ^ Keys.Shift) {
 				case Keys.Tab:
-					ExecuteCommand("_LevelUp"); return true;
+					ExecuteCommand("_LevelUp");
+					return true;
 			}
+
 			switch (keyData) {
 				case Keys.Insert:
-					_controller.InsertBookmark(); return true;
+					_controller.InsertBookmark();
+					return true;
 				case Keys.Delete:
-					ExecuteCommand(Commands.Delete); return true;
+					ExecuteCommand(Commands.Delete);
+					return true;
 				case Keys.Add:
-					ExecuteCommand("_IncrementPageNumber"); return true;
+					ExecuteCommand("_IncrementPageNumber");
+					return true;
 				case Keys.Subtract:
-					ExecuteCommand("_DecrementPageNumber"); return true;
+					ExecuteCommand("_DecrementPageNumber");
+					return true;
 				case Keys.P:
 					if (_BookmarkBox.FocusedItem != null) {
-						_BookmarkBox.EditSubItem(_BookmarkBox.FocusedItem as BrightIdeasSoftware.OLVListItem, _BookmarkBox.BookmarkPageColumn.Index);
+						_BookmarkBox.EditSubItem(_BookmarkBox.FocusedItem as OLVListItem,
+							_BookmarkBox.BookmarkPageColumn.Index);
 					}
+
 					return true;
 				case Keys.Tab:
-					ExecuteCommand("_LevelDown"); return true;
+					ExecuteCommand("_LevelDown");
+					return true;
 				case Keys.F2:
 					if (_BookmarkBox.FocusedItem != null) {
 						_BookmarkBox.FocusedItem.BeginEdit();
@@ -525,11 +624,13 @@ namespace PDFPatcher.Functions
 					else {
 						_BookmarkBox.SelectedItem?.BeginEdit();
 					}
+
 					return true;
 				case Keys.Space:
 					if (_BookmarkBox.FocusedItem != null) {
 						_ViewerBox.CurrentPageNumber = (_BookmarkBox.FocusedObject as BookmarkElement).Page;
 					}
+
 					return true;
 			}
 
@@ -548,28 +649,30 @@ namespace PDFPatcher.Functions
 
 
 		#region Editor.IEditView
-		bool Editor.IEditView.AffectsDescendantBookmarks => _IncludeDecendantBox.Checked || ModifierKeys == Keys.Shift;
 
-		ToolStripSplitButton Editor.IEditView.UndoButton => _UndoButton;
+		bool IEditView.AffectsDescendantBookmarks => _IncludeDecendantBox.Checked || ModifierKeys == Keys.Shift;
 
-		AutoBookmarkForm Editor.IEditView.AutoBookmark {
+		ToolStripSplitButton IEditView.UndoButton => _UndoButton;
+
+		AutoBookmarkForm IEditView.AutoBookmark {
 			get {
 				if (_autoBookmarkForm == null || _autoBookmarkForm.IsDisposed) {
 					_autoBookmarkForm = new AutoBookmarkForm(_controller);
 				}
+
 				return _autoBookmarkForm;
 			}
 		}
 
-		BookmarkEditorView Editor.IEditView.Bookmark => _BookmarkBox;
+		BookmarkEditorView IEditView.Bookmark => _BookmarkBox;
 
-		PdfViewerControl Editor.IEditView.Viewer => _ViewerBox;
+		PdfViewerControl IEditView.Viewer => _ViewerBox;
 
-		ToolStrip Editor.IEditView.ViewerToolbar => _ViewerToolbar;
+		ToolStrip IEditView.ViewerToolbar => _ViewerToolbar;
 
-		ToolStrip Editor.IEditView.BookmarkToolbar => _BookmarkToolbar;
+		ToolStrip IEditView.BookmarkToolbar => _BookmarkToolbar;
 
-		SplitContainer Editor.IEditView.MainPanel => _MainPanel;
+		SplitContainer IEditView.MainPanel => _MainPanel;
 
 		#endregion
 	}

@@ -1,22 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Xml;
 
-namespace PDFPatcher.Processor
+namespace PDFPatcher.Processor;
+
+internal sealed class RemoveZoomRateProcessor : IInfoDocProcessor
 {
-	sealed class RemoveZoomRateProcessor : IInfoDocProcessor
-	{
-		#region IInfoDocProcessor 成员
+	#region IInfoDocProcessor 成员
 
-		public bool Process(System.Xml.XmlElement item) {
-			var d = item.GetAttributeNode(Constants.DestinationAttributes.View);
-			if (d != null && d.Value != Constants.DestinationAttributes.ViewType.XYZ) {
-				d.Value = Constants.DestinationAttributes.ViewType.XYZ;
-			}
-			item.RemoveAttribute(Constants.Coordinates.ScaleFactor);
-			return true;
+	public bool Process(XmlElement item) {
+		XmlAttribute d = item.GetAttributeNode(Constants.DestinationAttributes.View);
+		if (d != null && d.Value != Constants.DestinationAttributes.ViewType.XYZ) {
+			d.Value = Constants.DestinationAttributes.ViewType.XYZ;
 		}
 
-		#endregion
+		item.RemoveAttribute(Constants.Coordinates.ScaleFactor);
+		return true;
 	}
+
+	#endregion
 }

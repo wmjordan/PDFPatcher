@@ -1,32 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace PDFPatcher.Model.PdfPath;
 
-namespace PDFPatcher.Model.PdfPath
+internal interface IPathFunction
 {
-	interface IPathFunction
-	{
-		object Evaluate(DocumentObject source);
-	}
+	object Evaluate(DocumentObject source);
+}
 
-	sealed class CurrentPosition : IPathFunction
-	{
-		#region IPathFunction 成员
+internal sealed class CurrentPosition : IPathFunction
+{
+	#region IPathFunction 成员
 
-		public object Evaluate(DocumentObject source) {
-			if (source == null || source.Parent == null) {
-				return 0;
-			}
-			int i = 0;
-			foreach (var item in source.Parent.Children) {
-				++i;
-				if (item == source) {
-					return i;
-				}
-			}
-			return i;
+	public object Evaluate(DocumentObject source) {
+		if (source == null || source.Parent == null) {
+			return 0;
 		}
 
-		#endregion
+		int i = 0;
+		foreach (DocumentObject item in source.Parent.Children) {
+			++i;
+			if (item == source) {
+				return i;
+			}
+		}
+
+		return i;
 	}
+
+	#endregion
 }

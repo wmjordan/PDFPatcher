@@ -29,7 +29,7 @@
             this._BrowseSourcePdfButton = new System.Windows.Forms.Button();
             this._OpenPdfBox = new System.Windows.Forms.OpenFileDialog();
             this.panel1 = new System.Windows.Forms.Panel();
-            this._SourcePdfBox = new PDFPatcher.HistoryComboBox();
+            this.FileList = new PDFPatcher.HistoryComboBox();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -65,7 +65,7 @@
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this._SourcePdfBox);
+            this.panel1.Controls.Add(this.FileList);
             this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this._BrowseSourcePdfButton);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -76,20 +76,20 @@
             // 
             // _SourcePdfBox
             // 
-            this._SourcePdfBox.AllowDrop = true;
-            this._SourcePdfBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.FileList.AllowDrop = true;
+            this.FileList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this._SourcePdfBox.Contents = null;
-            this._SourcePdfBox.FormattingEnabled = true;
-            this._SourcePdfBox.Location = new System.Drawing.Point(104, 3);
-            this._SourcePdfBox.MaxItemCount = 16;
-            this._SourcePdfBox.Name = "_SourcePdfBox";
-            this._SourcePdfBox.Size = new System.Drawing.Size(281, 20);
-            this._SourcePdfBox.TabIndex = 3;
-            this._SourcePdfBox.SelectedIndexChanged += new System.EventHandler(this._SourcePdfBox_SelectedIndexChanged);
-            this._SourcePdfBox.DragDrop += new System.Windows.Forms.DragEventHandler(this._SourcePdfBox_DragDrop);
-            this._SourcePdfBox.DragEnter += new System.Windows.Forms.DragEventHandler(this._SourcePdfBox_DragEnter);
-            this._SourcePdfBox.TextChanged += new System.EventHandler(this._SourcePdfBox_TextChanged);
+            this.FileList.Contents = null;
+            this.FileList.FormattingEnabled = true;
+            this.FileList.Location = new System.Drawing.Point(104, 3);
+            this.FileList.MaxItemCount = 16;
+            this.FileList.Name = "FileList";
+            this.FileList.Size = new System.Drawing.Size(281, 20);
+            this.FileList.TabIndex = 3;
+            this.FileList.SelectedIndexChanged += new System.EventHandler(this._SourcePdfBox_SelectedIndexChanged);
+            this.FileList.DragDrop += new System.Windows.Forms.DragEventHandler(this._SourcePdfBox_DragDrop);
+            this.FileList.DragEnter += new System.Windows.Forms.DragEventHandler(this._SourcePdfBox_DragEnter);
+            this.FileList.TextChanged += new System.EventHandler(this._SourcePdfBox_TextChanged);
             // 
             // SourceFileControl
             // 
@@ -111,7 +111,6 @@
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Button _BrowseSourcePdfButton;
 		private System.Windows.Forms.OpenFileDialog _OpenPdfBox;
-		private HistoryComboBox _SourcePdfBox;
-        private System.Windows.Forms.Panel panel1;
+		private System.Windows.Forms.Panel panel1;
 	}
 }

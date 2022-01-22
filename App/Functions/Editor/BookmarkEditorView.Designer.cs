@@ -26,27 +26,27 @@
 		/// </summary>
 		private void InitializeComponent () {
 			this.components = new System.ComponentModel.Container ();
-			this._BookmarkNameColumn = new BrightIdeasSoftware.OLVColumn ();
-			this._BookmarkOpenColumn = new BrightIdeasSoftware.OLVColumn ();
-			this._BookmarkPageColumn = new BrightIdeasSoftware.OLVColumn ();
+			this.BookmarkNameColumn = new BrightIdeasSoftware.OLVColumn ();
+			this.BookmarkOpenColumn = new BrightIdeasSoftware.OLVColumn ();
+			this.BookmarkPageColumn = new BrightIdeasSoftware.OLVColumn ();
 			this._ActionColumn = new BrightIdeasSoftware.OLVColumn ();
 			((System.ComponentModel.ISupportInitialize)(this)).BeginInit ();
 			this.SuspendLayout ();
 			// 
 			// _BookmarkBox
 			// 
-			this.AllColumns.Add (this._BookmarkNameColumn);
-			this.AllColumns.Add (this._BookmarkOpenColumn);
-			this.AllColumns.Add (this._BookmarkPageColumn);
+			this.AllColumns.Add (this.BookmarkNameColumn);
+			this.AllColumns.Add (this.BookmarkOpenColumn);
+			this.AllColumns.Add (this.BookmarkPageColumn);
 			this.AllColumns.Add (this._ActionColumn);
 			this.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
 						| System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
 			this.CellEditActivation = BrightIdeasSoftware.ObjectListView.CellEditActivateMode.SingleClick;
 			this.Columns.AddRange (new System.Windows.Forms.ColumnHeader[] {
-            this._BookmarkNameColumn,
-            this._BookmarkOpenColumn,
-            this._BookmarkPageColumn,
+            this.BookmarkNameColumn,
+            this.BookmarkOpenColumn,
+            this.BookmarkPageColumn,
             this._ActionColumn});
 			this.CopySelectionOnControlC = false;
 			this.Cursor = System.Windows.Forms.Cursors.Default;
@@ -77,27 +77,27 @@
 			// 
 			// _BookmarkNameColumn
 			// 
-			this._BookmarkNameColumn.AspectName = "";
-			this._BookmarkNameColumn.Text = "书签文本";
-			this._BookmarkNameColumn.Width = 241;
+			this.BookmarkNameColumn.AspectName = "";
+			this.BookmarkNameColumn.Text = "书签文本";
+			this.BookmarkNameColumn.Width = 241;
 			// 
 			// _BookmarkOpenColumn
 			// 
-			this._BookmarkOpenColumn.AspectName = "";
-			this._BookmarkOpenColumn.CheckBoxes = true;
-			this._BookmarkOpenColumn.DisplayIndex = 2;
-			this._BookmarkOpenColumn.HeaderTextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-			this._BookmarkOpenColumn.Text = "打开";
-			this._BookmarkOpenColumn.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-			this._BookmarkOpenColumn.Width = 40;
+			this.BookmarkOpenColumn.AspectName = "";
+			this.BookmarkOpenColumn.CheckBoxes = true;
+			this.BookmarkOpenColumn.DisplayIndex = 2;
+			this.BookmarkOpenColumn.HeaderTextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+			this.BookmarkOpenColumn.Text = "打开";
+			this.BookmarkOpenColumn.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+			this.BookmarkOpenColumn.Width = 40;
 			// 
 			// _BookmarkPageColumn
 			// 
-			this._BookmarkPageColumn.AspectName = "";
-			this._BookmarkPageColumn.DisplayIndex = 1;
-			this._BookmarkPageColumn.HeaderTextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-			this._BookmarkPageColumn.Text = "页码";
-			this._BookmarkPageColumn.Width = 42;
+			this.BookmarkPageColumn.AspectName = "";
+			this.BookmarkPageColumn.DisplayIndex = 1;
+			this.BookmarkPageColumn.HeaderTextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			this.BookmarkPageColumn.Text = "页码";
+			this.BookmarkPageColumn.Width = 42;
 			// 
 			// _ActionColumn
 			// 
@@ -118,9 +118,6 @@
 
 		#endregion
 
-		private BrightIdeasSoftware.OLVColumn _BookmarkNameColumn;
-		private BrightIdeasSoftware.OLVColumn _BookmarkOpenColumn;
-		private BrightIdeasSoftware.OLVColumn _BookmarkPageColumn;
 		private BrightIdeasSoftware.OLVColumn _ActionColumn;
 	}
 }

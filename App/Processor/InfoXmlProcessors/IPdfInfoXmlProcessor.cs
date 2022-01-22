@@ -1,15 +1,14 @@
-﻿using System;
+﻿using System.Xml;
 
-namespace PDFPatcher.Processor
+namespace PDFPatcher.Processor;
+
+internal interface IPdfInfoXmlProcessor
 {
-	interface IPdfInfoXmlProcessor
-	{
-		string Name { get; }
-		IUndoAction Process(System.Xml.XmlElement item);
-	}
+    string Name { get; }
+    IUndoAction Process(XmlElement item);
+}
 
-	interface IPdfInfoXmlProcessor<T> : IPdfInfoXmlProcessor
-	{
-		T Parameter { get; set; }
-	}
+internal interface IPdfInfoXmlProcessor<T> : IPdfInfoXmlProcessor
+{
+    T Parameter { get; set; }
 }

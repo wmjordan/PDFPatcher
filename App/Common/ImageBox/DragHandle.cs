@@ -1,46 +1,44 @@
 ﻿using System.Drawing;
 
-namespace Cyotek.Windows.Forms.Demo
+namespace Cyotek.Windows.Forms.Demo;
+// Cyotek ImageBox
+// Copyright (c) 2010-2015 Cyotek Ltd.
+// http://cyotek.com
+// http://cyotek.com/blog/tag/imagebox
+
+// Licensed under the MIT License. See license.txt for the full text.
+
+// If you use this control in your applications, attribution, donations or contributions are welcome.
+
+internal sealed class DragHandle
 {
-	// Cyotek ImageBox
-	// Copyright (c) 2010-2015 Cyotek Ltd.
-	// http://cyotek.com
-	// http://cyotek.com/blog/tag/imagebox
+    #region Public Constructors
 
-	// Licensed under the MIT License. See license.txt for the full text.
+    public DragHandle(DragHandleAnchor anchor)
+        : this() {
+        Anchor = anchor;
+    }
 
-	// If you use this control in your applications, attribution, donations or contributions are welcome.
+    #endregion
 
-	internal sealed class DragHandle
-	{
-		#region Public Constructors
+    #region Protected Constructors
 
-		public DragHandle(DragHandleAnchor anchor)
-		  : this() {
-			Anchor = anchor;
-		}
+    private DragHandle() {
+        Enabled = true;
+        Visible = true;
+    }
 
-		#endregion
+    #endregion
 
-		#region Protected Constructors
+    #region Public Properties
 
-		private DragHandle() {
-			Enabled = true;
-			Visible = true;
-		}
+    public DragHandleAnchor Anchor { get; set; }
 
-		#endregion
+    public Rectangle Bounds { get; set; }
 
-		#region Public Properties
+    public bool Enabled { get; set; }
 
-		public DragHandleAnchor Anchor { get; set; }
+    public bool Visible { get; set; }
 
-		public Rectangle Bounds { get; set; }
-
-		public bool Enabled { get; set; }
-
-		public bool Visible { get; set; }
-
-		#endregion
-	}
+    #endregion
 }

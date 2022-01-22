@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace PDFPatcher.Model;
 
-namespace PDFPatcher.Model
+internal interface ITextRegion
 {
-	interface ITextRegion
-	{
-		string Text { get; }
-		Bound Region { get; }
-	}
+    string Text { get; }
+    Bound Region { get; }
+}
 
-	interface IDirectionalBoundObject : ITextRegion
-	{
-		WritingDirection Direction { get; }
-	}
+internal interface IDirectionalBoundObject : ITextRegion
+{
+    WritingDirection Direction { get; }
 }

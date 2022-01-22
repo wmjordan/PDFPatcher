@@ -1,10 +1,10 @@
-﻿using System;
+﻿using System.Windows.Forms;
+using PDFPatcher.Model;
 
-namespace PDFPatcher.Functions
+namespace PDFPatcher.Functions;
+
+internal interface IFilterConditionEditor
 {
-	interface IFilterConditionEditor
-	{
-		PDFPatcher.Model.AutoBookmarkCondition Filter { get; set; }
-		System.Windows.Forms.UserControl EditorControl { get; }
-	}
+    AutoBookmarkCondition Filter { get; set; }
+    UserControl EditorControl { get; }
 }

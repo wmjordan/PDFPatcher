@@ -1,15 +1,15 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using PDFPatcher;
 
 // 有关程序集的常规信息通过下列属性集
 // 控制。更改这些属性值可修改
 // 与程序集关联的信息。
 [assembly: AssemblyTitle("PDFPatcher")]
-[assembly: AssemblyDescription(PDFPatcher.Constants.AppName)]
+[assembly: AssemblyDescription(Constants.AppName)]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("wmjordan@163.com")]
-[assembly: AssemblyProduct(PDFPatcher.Constants.AppEngName)]
+[assembly: AssemblyProduct(Constants.AppEngName)]
 [assembly: AssemblyCopyright("著作权所有 © WMJordan 2009～2021")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
