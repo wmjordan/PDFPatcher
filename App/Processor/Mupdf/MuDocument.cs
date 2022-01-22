@@ -218,13 +218,7 @@ public sealed class MuDocument : IDisposable
 	///     返回文档的页码标签。
 	/// </summary>
 	public PageLabelCollection PageLabels {
-		get {
-			if (_PageLabels == null) {
-				_PageLabels = new PageLabelCollection(this);
-			}
-
-			return _PageLabels;
-		}
+		get { return _PageLabels ?? (_PageLabels = new PageLabelCollection(this)); }
 	}
 
 	private MuCookie _cookie;
