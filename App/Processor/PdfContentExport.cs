@@ -411,8 +411,8 @@ internal sealed class PdfContentExport
 		}
 
 		if (isRaw == false) {
-			if (key == "Contents" || key == "ToUnicode" || (PdfName.XOBJECT.Equals(s.GetAsName(PdfName.TYPE)) &&
-															PdfName.FORM.Equals(s.GetAsName(PdfName.SUBTYPE)))) {
+			if (key is "Contents" or "ToUnicode" || (PdfName.XOBJECT.Equals(s.GetAsName(PdfName.TYPE)) &&
+													 PdfName.FORM.Equals(s.GetAsName(PdfName.SUBTYPE)))) {
 				StringBuilder sb = new();
 				int l = bs.Length;
 				int p1 = 0, p2 = 0;

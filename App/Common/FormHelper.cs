@@ -267,7 +267,7 @@ internal static class FormHelper
 		using TForm f = new();
 		formConfigurator?.Invoke(f);
 		DialogResult r = f.ShowDialog(form);
-		if (formConfirmationHandler != null && (r == DialogResult.OK || r == DialogResult.Yes)) {
+		if (formConfirmationHandler != null && r is DialogResult.OK or DialogResult.Yes) {
 			formConfirmationHandler(f);
 		}
 
@@ -279,7 +279,7 @@ internal static class FormHelper
 		using TDialog f = new();
 		formConfigurator?.Invoke(f);
 		DialogResult r = f.ShowDialog(form);
-		if (formConfirmationHandler != null && (r == DialogResult.OK || r == DialogResult.Yes)) {
+		if (formConfirmationHandler != null && r is DialogResult.OK or DialogResult.Yes) {
 			formConfirmationHandler(f);
 		}
 

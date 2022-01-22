@@ -6,7 +6,7 @@ namespace PDFPatcher.Processor;
 internal sealed class ChangeZoomRateProcessor : IPdfInfoXmlProcessor
 {
 	public ChangeZoomRateProcessor(object zoomRate) {
-		if (zoomRate is string || zoomRate == null) {
+		if (zoomRate is string or null) {
 			ZoomMethod = zoomRate as string;
 			ZoomRate = -1;
 		}

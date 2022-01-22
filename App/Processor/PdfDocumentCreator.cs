@@ -146,7 +146,7 @@ internal sealed class PdfDocumentCreator
 		string ext = source.FilePath.FileExtension.ToLowerInvariant();
 		if (__BuiltInImageTypes.Contains(ext)) {
 			iTextImage image = LoadImage(source, ext);
-			if (ext == Constants.FileExtensions.Jpg || ext == Constants.FileExtensions.Jpeg) {
+			if (ext is Constants.FileExtensions.Jpg or Constants.FileExtensions.Jpeg) {
 				if (JpgHelper.TryGetExifOrientation(source.FilePath, out ushort o) && o != 0) {
 					switch (o) {
 						case 6:
@@ -202,7 +202,7 @@ internal sealed class PdfDocumentCreator
 	}
 
 	private void AddEmptyPage() {
-		if (_content.SpecialSize == SpecialPaperSize.None || _content.SpecialSize == SpecialPaperSize.AsSpecificPage) {
+		if (_content.SpecialSize is SpecialPaperSize.None or SpecialPaperSize.AsSpecificPage) {
 			// 插入空白页
 			_doc.NewPage();
 			_writer.PageEmpty = false;
@@ -501,7 +501,7 @@ internal sealed class PdfDocumentCreator
 			return Image.GetInstance(sourceFile.FilePath.ToString());
 		}
 
-		if (ext == Constants.FileExtensions.Jpg || ext == ".jpeg") {
+		if (ext is Constants.FileExtensions.Jpg or ".jpeg") {
 			// is JPEG file
 			FilePath t = sourceFile.FilePath.EnsureExtension(Constants.FileExtensions.Jpg);
 			if (FreeImageBitmap.JPEGCrop(sourceFile.FilePath, t, cropOptions.Left, cropOptions.Top,

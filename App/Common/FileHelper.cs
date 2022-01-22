@@ -42,7 +42,7 @@ internal static class FileHelper
 		for (int i1 = 0, i2 = 0; i1 < l1 && i2 < l2; i1++, i2++) {
 			char x = path1[i1];
 			char y = path2[i2];
-			if (x < '0' || x > '9') {
+			if (x is < '0' or > '9') {
 				// 不区分大小写的文字比较
 				if (x == y) {
 					continue;
@@ -58,7 +58,7 @@ internal static class FileHelper
 					? -1
 					: y == PathDot
 						? 1
-						: y < '0' || y > '9'
+						: y is < '0' or > '9'
 							? LocaleInfo.StringComparer(x.ToString(), y.ToString(), CompareOptions.StringSort)
 							// path2 为数字，path1 不为数字，path2 排在前面
 							: 1;

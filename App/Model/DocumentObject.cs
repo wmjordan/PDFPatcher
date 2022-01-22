@@ -72,9 +72,7 @@ public sealed class DocumentObject : IHierarchicalObject<DocumentObject>
 	public bool HasChildren {
 		get {
 			if (Type != PdfObjectType.Normal
-				&& (Type == PdfObjectType.Trailer || Type == PdfObjectType.Pages || Type == PdfObjectType.Page ||
-					Type == PdfObjectType.PageCommands || Type == PdfObjectType.Hidden ||
-					(Type == PdfObjectType.PageCommand && Children.Count > 0))) {
+				&& (Type is PdfObjectType.Trailer or PdfObjectType.Pages or PdfObjectType.Page or PdfObjectType.PageCommands or PdfObjectType.Hidden || (Type == PdfObjectType.PageCommand && Children.Count > 0))) {
 				return true;
 			}
 
@@ -104,8 +102,7 @@ public sealed class DocumentObject : IHierarchicalObject<DocumentObject>
 			}
 
 			return (r.Type == PdfObject.DICTIONARY && __ReversalRefNames.Contains(Name) == false)
-				   || r.Type == PdfObject.ARRAY
-				   || r.Type == PdfObject.STREAM;
+				   || r.Type is PdfObject.ARRAY or PdfObject.STREAM;
 
 		}
 	}
@@ -152,7 +149,7 @@ public sealed class DocumentObject : IHierarchicalObject<DocumentObject>
 			if (po.Type == PdfObject.ARRAY) {
 				((PdfArray)po).Remove(i);
 			}
-			else if (po.Type == PdfObject.DICTIONARY || po.Type == PdfObject.STREAM) {
+			else if (po.Type is PdfObject.DICTIONARY or PdfObject.STREAM) {
 				((PdfDictionary)po).Remove(new PdfName(name));
 			}
 
@@ -306,7 +303,7 @@ public sealed class DocumentObject : IHierarchicalObject<DocumentObject>
 			return;
 		}
 
-		if (po.Type == PdfObject.DICTIONARY || po.Type == PdfObject.STREAM) {
+		if (po.Type is PdfObject.DICTIONARY or PdfObject.STREAM) {
 			PdfDictionary pd = po as PdfDictionary;
 			DocumentObject[] r = new DocumentObject[pd.Size + (Type == PdfObjectType.Page ? 1 : 0)];
 			int n = 0;

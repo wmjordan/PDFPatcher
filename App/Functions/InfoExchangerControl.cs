@@ -125,8 +125,7 @@ public partial class InfoExchangerControl : FunctionControl
 	public override void SetupCommand(ToolStripItem item) {
 		string n = item.Name;
 		if (Commands.CommonSelectionCommands.Contains(n)
-			|| n == Commands.Delete
-			|| n == Commands.Action) {
+			|| n is Commands.Delete or Commands.Action) {
 			item.Enabled = _ItemList.GetItemCount() > 0;
 		}
 		else if (n == Commands.SaveBookmark) {

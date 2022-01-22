@@ -238,7 +238,7 @@ namespace PDFPatcher.Functions
 					olvItem.SubItems[0].ForeColor = SystemColors.HotTrack;
 					olvItem.SubItems[_ValueColumn.Index].ForeColor = SystemColors.HotTrack;
 				}
-				else if (o.Type == PdfObjectType.PageCommand && (o.Name == "字符串" || o.Name == "换行字符串")) {
+				else if (o.Type == PdfObjectType.PageCommand && o.Name is "字符串" or "换行字符串") {
 					olvItem.UseItemStyleForSubItems = false;
 					ListViewItem.ListViewSubItem s = olvItem.SubItems[_DescriptionColumn.Index];
 					s.Font = new Font(olvItem.Font, FontStyle.Underline);
@@ -432,7 +432,7 @@ namespace PDFPatcher.Functions
 				return;
 			}
 
-			if (d.Value != null && (d.Value.Type == PdfObject.INDIRECT || d.Value.Type == PdfObject.STREAM)) {
+			if (d.Value != null && d.Value.Type is PdfObject.INDIRECT or PdfObject.STREAM) {
 				PRStream s = d.Value as PRStream ?? d.ExtensiveObject as PRStream;
 				if (s != null) {
 					_ViewButton.Enabled = d.Name.StartsWith("Font") == false;
@@ -474,8 +474,7 @@ namespace PDFPatcher.Functions
 				String.IsNullOrEmpty(i.Name) || d.Name == i.Name ? d.Name : String.Concat(d.Name, ":", i.Name),
 				i.Description, t);
 			_DeleteButton.Enabled = !i.IsRequired && d != null
-												  && (d.Type == PdfObjectType.Normal || d.Type == PdfObjectType.Image ||
-													  d.Type == PdfObjectType.Outline && d.Name == "Outlines");
+												  && (d.Type is PdfObjectType.Normal or PdfObjectType.Image || d.Type == PdfObjectType.Outline && d.Name == "Outlines");
 		}
 
 		private Dictionary<string, int> InitOpNameIcons() {

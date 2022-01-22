@@ -330,8 +330,7 @@ internal static class OutlineManager
 						break;
 					case "打开书签":
 						cmdData = cmdData.ToLowerInvariant();
-						isOpen = cmdData == "是" || cmdData == "true" || cmdData == "y" || cmdData == "yes" ||
-								 cmdData == "1";
+						isOpen = cmdData is "是" or "true" or "y" or "yes" or "1";
 						break;
 					case Constants.Info.DocumentPath:
 						target.PdfDocumentPath = cmdData.Trim();

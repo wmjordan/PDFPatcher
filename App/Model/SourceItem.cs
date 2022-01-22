@@ -346,7 +346,7 @@ public abstract class SourceItem
 		}
 
 		foreach (char ch in text.Substring(l)) {
-			if (ch < '0' || ch > '9') {
+			if (ch is < '0' or > '9') {
 				return false;
 			}
 		}

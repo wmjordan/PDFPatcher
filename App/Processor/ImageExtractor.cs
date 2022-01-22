@@ -155,7 +155,7 @@ namespace PDFPatcher.Processor
 				}
 
 			NEXT:
-				if ((obj.Type == PdfObject.DICTIONARY || obj.Type == PdfObject.STREAM) && includeDescendants) {
+				if (obj.Type is PdfObject.DICTIONARY or PdfObject.STREAM && includeDescendants) {
 					ExtractImageInstances(obj as PdfDictionary, true);
 				}
 			}
@@ -177,8 +177,7 @@ namespace PDFPatcher.Processor
 			}
 
 			string fileName = GetNewImageFileName();
-			if (info.ExtName == Constants.FileExtensions.Png
-				|| info.ExtName == Constants.FileExtensions.Tif
+			if (info.ExtName is Constants.FileExtensions.Png or Constants.FileExtensions.Tif
 			   //|| info.MaskBytes != null
 			   ) {
 				SaveBitmap(info, bytes, fileName);
@@ -446,7 +445,7 @@ namespace PDFPatcher.Processor
 			if (PdfName.DEVICECMYK.Equals(info.ColorSpace)) {
 				bmp = new FreeImageBitmap(new MemoryStream(bytes), FREE_IMAGE_LOAD_FLAGS.TIFF_CMYK);
 			}
-			else if (info.ExtName == Constants.FileExtensions.Jp2 || info.ExtName == Constants.FileExtensions.Jpg) {
+			else if (info.ExtName is Constants.FileExtensions.Jp2 or Constants.FileExtensions.Jpg) {
 				bmp = new FreeImageBitmap(new MemoryStream(bytes));
 			}
 			else {

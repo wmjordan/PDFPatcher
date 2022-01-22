@@ -36,7 +36,7 @@ internal sealed class PageDimensionProcessor : IPageProcessor
 
 		Rectangle mb = PdfReader.GetNormalizedRectangle(pb);
 		int n = PdfHelper.GetPageRotation(page);
-		if (n == 90 || n == 270) {
+		if (n is 90 or 270) {
 			size = new PaperSize(size.PaperName, size.Height, size.Width);
 		}
 
@@ -53,8 +53,7 @@ internal sealed class PageDimensionProcessor : IPageProcessor
 		float d, z = 1;
 		float dx = 0, dy = 0;
 		float sw = b.Width, sh = b.Height; // resized width and height
-		if (size.SpecialSize == SpecialPaperSize.FixedWidthAutoHeight ||
-			size.SpecialSize == SpecialPaperSize.AsWidestPage || size.SpecialSize == SpecialPaperSize.AsNarrowestPage) {
+		if (size.SpecialSize is SpecialPaperSize.FixedWidthAutoHeight or SpecialPaperSize.AsWidestPage or SpecialPaperSize.AsNarrowestPage) {
 			size.Height = b.Height * size.Width / b.Width;
 		}
 

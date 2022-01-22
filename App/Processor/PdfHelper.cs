@@ -398,7 +398,7 @@ internal static class PdfHelper
 				sb.Append(GetArrayString(item as PdfArray));
 				sb.Append(']');
 			}
-			else if (item.Type == PdfObject.DICTIONARY || item.Type == PdfObject.STREAM) {
+			else if (item.Type is PdfObject.DICTIONARY or PdfObject.STREAM) {
 				sb.Append("<<...>>");
 			}
 			else {

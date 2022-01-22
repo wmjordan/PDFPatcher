@@ -258,7 +258,7 @@ internal static class ValueHelper
 						goto EndsWithWhitespaceFalse;
 					}
 
-					if (i + 1 < l && ((c = value[++i]) == 'n' || c == 'N' || c == 'k' || c == 'K')) {
+					if (i + 1 < l && ((c = value[++i]) == 'n' || c is 'N' or 'k' or 'K')) {
 						goto EndsWithWhitespaceTrue;
 					}
 
@@ -286,7 +286,7 @@ internal static class ValueHelper
 						continue;
 					}
 
-					if ((c < '0' || c > '9') && c != '-' && c != '+' && c != '.') {
+					if (c is < '0' or > '9' && c != '-' && c != '+' && c != '.') {
 						return -1;
 					}
 
@@ -454,7 +454,7 @@ internal static class ValueHelper
 	}
 
 	public static string ToRoman(this int value) {
-		if (value > 49999 || value < 1) {
+		if (value is > 49999 or < 1) {
 			return string.Empty;
 		}
 

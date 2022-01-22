@@ -225,7 +225,7 @@ public partial class MainForm : Form
 
 			_FunctionContainer.SelectedTab.Dispose();
 		}
-		else if (commandName == Commands.CustomizeToolbar || commandName == "_CustomizeToolbarCommand") {
+		else if (commandName is Commands.CustomizeToolbar or "_CustomizeToolbarCommand") {
 			ShowDialogWindow(new CustomizeToolbarForm());
 			SetupCustomizeToolbar();
 		}

@@ -30,7 +30,7 @@ public class UnitConverter
 	public int Precision {
 		get => _Precision;
 		set {
-			if (value < 0 || value > 6) {
+			if (value is < 0 or > 6) {
 				throw new ArgumentException("转换精度不能小于 0 或大于 6。");
 			}
 

@@ -14,7 +14,7 @@ public sealed partial class ImageViewerForm : Form
 	internal ImageViewerForm(ImageInfo image, byte[] bytes) {
 		InitializeComponent();
 		this.SetIcon(Resources.ViewContent);
-		if (image.ExtName == Constants.FileExtensions.Png || image.ExtName == Constants.FileExtensions.Tif) {
+		if (image.ExtName is Constants.FileExtensions.Png or Constants.FileExtensions.Tif) {
 			using FreeImageBitmap bmp = ImageExtractor.CreateFreeImageBitmap(image, ref bytes, false, true);
 			_ImageBox.Image = bmp.ToBitmap();
 		}

@@ -24,8 +24,7 @@ internal sealed class ChangePageNumberProcessor : IPdfInfoXmlProcessor
 	public IUndoAction Process(XmlElement item) {
 		int p;
 		string a = item.GetAttribute(Constants.DestinationAttributes.Action);
-		if (((string.IsNullOrEmpty(a) && SkipZero == false) || a == Constants.ActionType.Goto ||
-			 a == Constants.ActionType.GotoR) == false &&
+		if (((string.IsNullOrEmpty(a) && SkipZero == false) || a is Constants.ActionType.Goto or Constants.ActionType.GotoR) == false &&
 			item.HasAttribute(Constants.DestinationAttributes.Page) == false) {
 			return null;
 		}

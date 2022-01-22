@@ -33,7 +33,7 @@ public partial class PageSettingsEditor : UserControl
 		_SettingsBox = new TypedObjectListView<PageBoxSettings>(_PageSettingsBox);
 		_PageRangeFilterTypeMenu.Opening += (s, args) => {
 			PageFilterFlag f = _SettingsBox.SelectedObject.Filter;
-			_AllPagesMenu.Checked = f == PageFilterFlag.All || f == PageFilterFlag.NotSpecified;
+			_AllPagesMenu.Checked = f is PageFilterFlag.All or PageFilterFlag.NotSpecified;
 			_OddPagesMenu.Checked = (f & PageFilterFlag.Odd) == PageFilterFlag.Odd;
 			_EvenPagesMenu.Checked = (f & PageFilterFlag.Even) == PageFilterFlag.Even;
 			_PortraitPagesMenu.Checked = (f & PageFilterFlag.Portrait) == PageFilterFlag.Portrait;
