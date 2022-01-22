@@ -28,11 +28,10 @@ internal sealed class BookmarkActionCommand : IEditorCommand
 					}
 
 					string z = form.ZoomRate;
-					float r;
 					if (z == Constants.Coordinates.Unchanged) {
 						controller.ProcessBookmarks(new ChangeZoomRateProcessor(null));
 					}
-					else if (z.TryParse(out r)) {
+					else if (z.TryParse(out float r)) {
 						controller.ProcessBookmarks(new ChangeZoomRateProcessor(r));
 					}
 				}

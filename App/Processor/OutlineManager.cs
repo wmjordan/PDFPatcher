@@ -345,8 +345,7 @@ internal static class OutlineManager
 							continue;
 						}
 
-						int pn;
-						if (l[0].TryParse(out pn) == false || pn < 1) {
+						if (l[0].TryParse(out int pn) == false || pn < 1) {
 							Tracker.TraceMessage(Constants.PageLabels + "格式不正确：起始页码应为正整数。");
 							continue;
 						}

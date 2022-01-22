@@ -190,8 +190,7 @@ public sealed class DocumentObject : IHierarchicalObject<DocumentObject>
 				Value = s.ToPdfString();
 				break;
 			case PdfObject.NUMBER:
-				double n;
-				if (!((string)value).TryParse(out n)) {
+				if (!((string)value).TryParse(out double n)) {
 					return false;
 				}
 
@@ -448,9 +447,8 @@ public sealed class DocumentObject : IHierarchicalObject<DocumentObject>
 	}
 
 	private void PopulatePageCommand(PdfPageCommand item) {
-		string fn;
 		string op = item.Name.ToString();
-		if (PdfPageCommand.GetFriendlyCommandName(op, out fn) == false) {
+		if (PdfPageCommand.GetFriendlyCommandName(op, out string fn) == false) {
 			fn = "未知操作符";
 		}
 

@@ -32,10 +32,9 @@ internal sealed class ImportOcrResultProcessor : IDocProcessor
 		XmlDocument xd = new();
 		while (x.EOF == false) {
 			// 读取一页识别结果
-			int p;
 			if (x.MoveToContent() != XmlNodeType.Element
 				|| x.Name != Constants.Ocr.Result
-				|| x.GetAttribute(Constants.Content.PageNumber).TryParse(out p) == false
+				|| x.GetAttribute(Constants.Content.PageNumber).TryParse(out int p) == false
 				|| p < 1 || p > pn) {
 				x.Skip();
 				continue;

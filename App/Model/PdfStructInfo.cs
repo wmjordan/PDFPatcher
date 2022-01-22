@@ -32,8 +32,7 @@ internal readonly struct PdfStructInfo
 	}
 
 	internal static PdfStructInfo GetInfo(string context, string name) {
-		PdfStructInfo i;
-		if (_Info.TryGetValue(string.Concat(context, "/", name), out i)) {
+		if (_Info.TryGetValue(string.Concat(context, "/", name), out PdfStructInfo i)) {
 			return i;
 		}
 

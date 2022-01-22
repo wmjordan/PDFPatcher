@@ -321,8 +321,7 @@ internal static class JpgHelper
 			}
 
 			// Get the thumbnail encoding
-			ushort compression;
-			if (!GetTagValue(_ifd1Catalogue, (ushort)ExifTags.Compression, out compression)) {
+			if (!GetTagValue(_ifd1Catalogue, (ushort)ExifTags.Compression, out ushort compression)) {
 				return null;
 			}
 
@@ -332,14 +331,12 @@ internal static class JpgHelper
 			}
 
 			// Get the location of the thumbnail
-			uint offset;
-			if (!GetTagValue(_ifd1Catalogue, (ushort)ExifTags.JPEGInterchangeFormat, out offset)) {
+			if (!GetTagValue(_ifd1Catalogue, (ushort)ExifTags.JPEGInterchangeFormat, out uint offset)) {
 				return null;
 			}
 
 			// Get the length of the thumbnail data
-			uint length;
-			if (!GetTagValue(_ifd1Catalogue, (ushort)ExifTags.JPEGInterchangeFormatLength, out length)) {
+			if (!GetTagValue(_ifd1Catalogue, (ushort)ExifTags.JPEGInterchangeFormatLength, out uint length)) {
 				return null;
 			}
 
@@ -661,8 +658,7 @@ internal static class JpgHelper
 
 			// There's more data stored in the subifd, the offset to which is found in tag 0x8769.
 			// As with all TIFF offsets, it will be relative to the first byte of the TIFF header.
-			uint offset;
-			if (!GetTagValue(_ifd0Catalogue, 0x8769, out offset)) {
+			if (!GetTagValue(_ifd0Catalogue, 0x8769, out uint offset)) {
 				throw new ExifLibException("Unable to locate Exif data");
 			}
 
@@ -710,9 +706,7 @@ internal static class JpgHelper
 		///     Retrieves an Exif value with the requested tag ID
 		/// </summary>
 		private bool GetTagValue<T>(IDictionary<ushort, long> tagDictionary, ushort tagId, out T result) {
-			ushort tiffDataType;
-			uint numberOfComponents;
-			byte[] tagData = GetTagBytes(tagDictionary, tagId, out tiffDataType, out numberOfComponents);
+			byte[] tagData = GetTagBytes(tagDictionary, tagId, out ushort tiffDataType, out uint numberOfComponents);
 
 			if (tagData == null) {
 				result = default;
@@ -746,8 +740,7 @@ internal static class JpgHelper
 
 					// Special processing for dates.
 					if (typeof(T) == typeof(DateTime)) {
-						DateTime dateResult;
-						bool success = ToDateTime(str, out dateResult);
+						bool success = ToDateTime(str, out DateTime dateResult);
 
 						result = (T)(object)dateResult;
 						return success;

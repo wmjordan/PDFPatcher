@@ -602,11 +602,10 @@ internal sealed class DocInfoImporter
 	}
 
 	private static void CreateDestination(PdfWriter writer, XmlElement map, string p, PdfArray ar, bool isRemote) {
-		int pn;
 		bool useDefaultPos = false;
 		float[] pos = new float[4];
 		int posItemCount = 0;
-		if (p.TryParse(out pn) == false || pn < (isRemote ? 0 : 1)) {
+		if (p.TryParse(out int pn) == false || pn < (isRemote ? 0 : 1)) {
 			return;
 		}
 
@@ -969,8 +968,7 @@ internal sealed class DocInfoImporter
 			//    ps = UnitConverter.ConvertUnit (ps, this._unitFactor);
 			//    prop.Add (ps);
 			//}
-			PdfObject a;
-			if (!pdfDs.TryGetValue(item.Key, out a)) {
+			if (!pdfDs.TryGetValue(item.Key, out PdfObject a)) {
 				continue;
 			}
 

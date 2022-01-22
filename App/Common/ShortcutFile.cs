@@ -55,9 +55,8 @@ public sealed class ShortcutFile
 		sb.Length = 0;
 		l.GetWorkingDirectory(sb, 256);
 		s.WorkingDirectory = sb.ToString();
-		int ii;
 		sb.Length = 0;
-		l.GetIconLocation(sb, 256, out ii);
+		l.GetIconLocation(sb, 256, out int ii);
 		s.IconLocation = sb.ToString();
 		sb.Length = 0;
 		l.GetArguments(sb, 256);

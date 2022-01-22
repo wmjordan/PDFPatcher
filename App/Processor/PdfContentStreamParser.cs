@@ -56,8 +56,7 @@ internal class PdfContentStreamProcessor
 	}
 
 	private FontInfo GetFont(PRIndirectReference fontRef) {
-		WeakReference r;
-		if (_FontCache.TryGetValue(fontRef.Number, out r)) {
+		if (_FontCache.TryGetValue(fontRef.Number, out WeakReference r)) {
 			return (FontInfo)(r.Target ?? (r.Target = new FontInfo(fontRef)));
 		}
 
@@ -98,8 +97,7 @@ internal class PdfContentStreamProcessor
 	}
 
 	protected virtual void InvokeOperator(PdfLiteral oper, List<PdfObject> operands) {
-		IContentOperator op;
-		if (operators.TryGetValue(oper.ToString(), out op)) {
+		if (operators.TryGetValue(oper.ToString(), out IContentOperator op)) {
 			op.Invoke(this, oper, operands);
 		}
 		else {
@@ -179,8 +177,7 @@ internal class PdfContentStreamProcessor
 	}
 
 	internal IXObjectDoHandler RegisterXObjectDoHandler(PdfName xobjectSubType, IXObjectDoHandler handler) {
-		IXObjectDoHandler old;
-		_XObjectDoHandlers.TryGetValue(xobjectSubType, out old);
+		_XObjectDoHandlers.TryGetValue(xobjectSubType, out IXObjectDoHandler old);
 		_XObjectDoHandlers[xobjectSubType] = handler;
 		return old;
 	}
@@ -285,8 +282,7 @@ internal class PdfContentStreamProcessor
 				 key = ps.ReadPRObject()) {
 				PdfObject value = ps.ReadPRObject();
 
-				PdfName resolvedKey;
-				inlineImageEntryAbbreviationMap.TryGetValue((PdfName)key, out resolvedKey);
+				inlineImageEntryAbbreviationMap.TryGetValue((PdfName)key, out PdfName resolvedKey);
 				if (resolvedKey == null) {
 					resolvedKey = (PdfName)key;
 				}
@@ -312,8 +308,7 @@ internal class PdfContentStreamProcessor
 			if (key == PdfName.FILTER) {
 				switch (value) {
 					case PdfName name: {
-							PdfName altValue;
-							inlineImageFilterAbbreviationMap.TryGetValue(name, out altValue);
+							inlineImageFilterAbbreviationMap.TryGetValue(name, out PdfName altValue);
 							if (altValue != null) {
 								return altValue;
 							}
@@ -336,8 +331,7 @@ internal class PdfContentStreamProcessor
 					return value;
 				}
 
-				PdfName altValue;
-				inlineImageColorSpaceAbbreviationMap.TryGetValue((PdfName)value, out altValue);
+				inlineImageColorSpaceAbbreviationMap.TryGetValue((PdfName)value, out PdfName altValue);
 				if (altValue != null) {
 					return altValue;
 				}

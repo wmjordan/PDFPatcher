@@ -250,9 +250,8 @@ internal sealed class ReplaceFontProcessor : IPageProcessor
 
 				string n = PdfDocumentFont.RemoveSubsetPrefix(PdfHelper.GetPdfNameString(fn)); // 字体名称
 				int p = -1;
-				FontSubstitution fs;
 				string sn; // 替换字体名称
-				if (_fontSubstitutions.TryGetValue(n, out fs)) {
+				if (_fontSubstitutions.TryGetValue(n, out FontSubstitution fs)) {
 					sn = fs.Substitution;
 				}
 				else {
@@ -401,8 +400,7 @@ internal sealed class ReplaceFontProcessor : IPageProcessor
 				continue;
 			}
 
-			int w;
-			if (widths.TryGetValue(s[0], out w) == false || w == 0) {
+			if (widths.TryGetValue(s[0], out int w) == false || w == 0) {
 				widths[s[0]] = item.IntValue;
 			}
 

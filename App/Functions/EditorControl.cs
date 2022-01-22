@@ -202,8 +202,7 @@ namespace PDFPatcher.Functions
 					return;
 				}
 
-				int p;
-				if (!_CurrentPageBox.Text.TryParse(out p)) {
+				if (!_CurrentPageBox.Text.TryParse(out int p)) {
 					return;
 				}
 

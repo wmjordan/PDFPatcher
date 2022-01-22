@@ -65,14 +65,12 @@ internal static class ValueHelper
 	}
 
 	public static TValue GetOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key) {
-		TValue r;
-		return dictionary == null ? default : dictionary.TryGetValue(key, out r) ? r : r;
+		return dictionary == null ? default : dictionary.TryGetValue(key, out TValue r) ? r : r;
 	}
 
 	public static TValue GetOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key,
 		TValue defaultValue) {
-		TValue r;
-		return dictionary != null && dictionary.TryGetValue(key, out r) ? r : defaultValue;
+		return dictionary != null && dictionary.TryGetValue(key, out TValue r) ? r : defaultValue;
 	}
 
 	public static TMapped MapValue<TValue, TMapped>(TValue input, TValue[] fromValues, TMapped[] toValues) {
@@ -349,54 +347,46 @@ internal static class ValueHelper
 
 	[DebuggerStepThrough]
 	public static int ToInt32(this string value) {
-		int i;
-		value.TryParse(out i);
+		value.TryParse(out int i);
 		return i;
 	}
 
 	[DebuggerStepThrough]
 	public static int ToInt32(this string value, int defaultValue) {
-		int i;
-		return value.TryParse(out i) ? i : defaultValue;
+		return value.TryParse(out int i) ? i : defaultValue;
 	}
 
 	[DebuggerStepThrough]
 	public static long ToInt64(this string value) {
-		long i;
-		value.TryParse(out i);
+		value.TryParse(out long i);
 		return i;
 	}
 
 	[DebuggerStepThrough]
 	public static long ToInt64(this string value, long defaultValue) {
-		long i;
-		return value.TryParse(out i) ? i : defaultValue;
+		return value.TryParse(out long i) ? i : defaultValue;
 	}
 
 	[DebuggerStepThrough]
 	public static float ToSingle(this string value) {
-		float i;
-		value.TryParse(out i);
+		value.TryParse(out float i);
 		return i;
 	}
 
 	[DebuggerStepThrough]
 	public static float ToSingle(this string value, float defaultValue) {
-		float i;
-		return value.TryParse(out i) ? i : defaultValue;
+		return value.TryParse(out float i) ? i : defaultValue;
 	}
 
 	[DebuggerStepThrough]
 	public static double ToDouble(this string value) {
-		double i;
-		value.TryParse(out i);
+		value.TryParse(out double i);
 		return i;
 	}
 
 	[DebuggerStepThrough]
 	public static double ToDouble(this string value, double defaultValue) {
-		double i;
-		return value.TryParse(out i) ? i : defaultValue;
+		return value.TryParse(out double i) ? i : defaultValue;
 	}
 
 	[DebuggerStepThrough]

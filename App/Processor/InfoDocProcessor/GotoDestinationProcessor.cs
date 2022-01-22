@@ -12,8 +12,7 @@ internal sealed class GotoDestinationProcessor : IInfoDocProcessor
 	public CoordinateTranslationSettings[] TransitionMapper { get; set; }
 
 	private static void TranslateDestinationCoordinates(XmlElement item, CoordinateTranslationSettings ct) {
-		float p;
-		if (item.GetAttribute(Constants.Coordinates.Top).TryParse(out p) && p != 0) {
+		if (item.GetAttribute(Constants.Coordinates.Top).TryParse(out float p) && p != 0) {
 			item.SetAttribute(Constants.Coordinates.Top, ((p * ct.YScale) + ct.YTranslation).ToText());
 		}
 
@@ -33,8 +32,6 @@ internal sealed class GotoDestinationProcessor : IInfoDocProcessor
 	#region IBookmarkProcessor 成员
 
 	public bool Process(XmlElement item) {
-		int page;
-
 		if (item.ParentNode == null) {
 			return false;
 		}
@@ -48,7 +45,7 @@ internal sealed class GotoDestinationProcessor : IInfoDocProcessor
 			return false;
 		}
 
-		if (item.GetAttribute(Constants.DestinationAttributes.Page).TryParse(out page) == false) {
+		if (item.GetAttribute(Constants.DestinationAttributes.Page).TryParse(out int page) == false) {
 			RemoveGotoAction(item);
 			return true;
 		}

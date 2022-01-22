@@ -22,9 +22,8 @@ internal sealed class ChangeCoordinateProcessor : IPdfInfoXmlProcessor
 	public string Name => string.Concat(IsAbsolute ? "更改" : IsProportional ? "缩放" : "调整", CoordinateName, "坐标定位");
 
 	public IUndoAction Process(XmlElement item) {
-		float c;
 		string v;
-		item.GetAttribute(CoordinateName).TryParse(out c);
+		item.GetAttribute(CoordinateName).TryParse(out float c);
 		if (IsAbsolute) {
 			if (c != Value) {
 				v = Value.ToText();

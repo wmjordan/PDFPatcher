@@ -398,8 +398,7 @@ internal static class BitmapHelper
 		// optimal: a difficult topic: http://en.wikipedia.org/wiki/Color_quantization
 		// 
 		// Now create the indexed bitmap "hbm0"
-		IntPtr bits0; // not used for our purposes. It returns a pointer to the raw bits that make up the bitmap.
-		IntPtr hbm0 = NativeMethods.CreateDIBSection(IntPtr.Zero, ref bmi, NativeMethods.DIB_RGB_COLORS, out bits0,
+		IntPtr hbm0 = NativeMethods.CreateDIBSection(IntPtr.Zero, ref bmi, NativeMethods.DIB_RGB_COLORS, out IntPtr bits0,
 			IntPtr.Zero, 0);
 		//
 		// Step (3): use GDI's BitBlt function to copy from original hbitmap into monocrhome bitmap

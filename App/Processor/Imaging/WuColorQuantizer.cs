@@ -525,11 +525,10 @@ public static class WuQuantizer
 		for (int pixelIndex = 0; pixelIndex < pixelsCount; pixelIndex++) {
 			Pixel pixel = pixels[pixelIndex];
 			pixelIndexes[pixelIndex] = -1;
-			int bestMatch;
 			int pr = pixel.Red, pg = pixel.Green, pb = pixel.Blue;
 			int argb = (pr << 16) | (pg << 8) | pb;
 
-			if (!cachedMatches.TryGetValue(argb, out bestMatch)) {
+			if (!cachedMatches.TryGetValue(argb, out int bestMatch)) {
 				int match = quantizedPixels[pixelIndex];
 				bestMatch = match;
 				int bestDistance = int.MaxValue;

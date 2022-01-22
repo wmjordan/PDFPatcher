@@ -22,14 +22,13 @@ internal sealed class ChangePageNumberProcessor : IPdfInfoXmlProcessor
 	public string Name => "更改目标页码";
 
 	public IUndoAction Process(XmlElement item) {
-		int p;
 		string a = item.GetAttribute(Constants.DestinationAttributes.Action);
 		if (((string.IsNullOrEmpty(a) && SkipZero == false) || a is Constants.ActionType.Goto or Constants.ActionType.GotoR) == false &&
 			item.HasAttribute(Constants.DestinationAttributes.Page) == false) {
 			return null;
 		}
 
-		if (item.GetAttribute(Constants.DestinationAttributes.Page).TryParse(out p)) {
+		if (item.GetAttribute(Constants.DestinationAttributes.Page).TryParse(out int p)) {
 			if (IsAbsolute) {
 				if (p == Amount) {
 					return null;

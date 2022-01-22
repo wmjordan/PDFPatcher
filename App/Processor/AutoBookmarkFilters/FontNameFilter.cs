@@ -38,8 +38,7 @@ public class FontNameFilter : AutoBookmarkFilter
 			return true;
 		}
 
-		bool result;
-		if (_matchResultCache.TryGetValue(font.FontID, out result)) {
+		if (_matchResultCache.TryGetValue(font.FontID, out bool result)) {
 			return result;
 		}
 

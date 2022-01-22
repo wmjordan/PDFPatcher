@@ -47,8 +47,7 @@ internal static class PdfHelper
 	/// <param name="partial">是否仅打开文件的部分内容。</param>
 	/// <returns><see cref="PdfReader" /> 实例。</returns>
 	internal static PdfReader OpenPdfFile(string sourceFile, bool partial, bool removeUnusedObjects) {
-		byte[] password;
-		__PdfPasswordBox.TryGetValue(sourceFile, out password);
+		__PdfPasswordBox.TryGetValue(sourceFile, out byte[] password);
 		while (true) {
 			try {
 				if (File.Exists(sourceFile) == false) {
@@ -93,8 +92,7 @@ internal static class PdfHelper
 	}
 
 	internal static MuDocument OpenMuDocument(string sourceFile) {
-		byte[] password;
-		__PdfPasswordBox.TryGetValue(sourceFile, out password);
+		__PdfPasswordBox.TryGetValue(sourceFile, out byte[] password);
 		while (true) {
 			MuDocument r = new(sourceFile, password != null ? Encoding.Default.GetString(password) : string.Empty);
 			if (password is { Length: > 0 }) {

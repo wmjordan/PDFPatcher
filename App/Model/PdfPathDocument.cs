@@ -62,8 +62,7 @@ internal sealed class PdfPathDocument : IHierarchicalObject<DocumentObject>
 	}
 
 	public int GetPageNumber(PdfIndirectReference pdfRef) {
-		int page;
-		_pageMapper.TryGetValue(pdfRef.Number, out page);
+		_pageMapper.TryGetValue(pdfRef.Number, out int page);
 		return page;
 	}
 

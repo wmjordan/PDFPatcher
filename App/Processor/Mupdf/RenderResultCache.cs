@@ -38,8 +38,7 @@ public sealed class RenderResultCache : IDisposable
 			return null;
 		}
 
-		RenderResult result;
-		_buffer.TryGetValue(pageNumber, out result);
+		_buffer.TryGetValue(pageNumber, out RenderResult result);
 		return result?.Image;
 	}
 
