@@ -25,7 +25,7 @@ internal sealed class PageProcessorContext
 
 	/// <summary>获取正在处理的页面。</summary>
 	public PdfDictionary Page {
-		get { return _Page ?? (_Page = Pdf.GetPageN(PageNumber)); }
+		get { return _Page ??= Pdf.GetPageN(PageNumber); }
 	}
 
 	/// <summary>获取正在处理的页面指令集合。</summary>

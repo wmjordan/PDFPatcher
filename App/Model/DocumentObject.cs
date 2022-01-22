@@ -117,7 +117,7 @@ public sealed class DocumentObject : IHierarchicalObject<DocumentObject>
 			}
 
 			PopulateChildren(false);
-			return _Children ?? (_Children = __Leaf);
+			return _Children ??= __Leaf;
 		}
 	}
 

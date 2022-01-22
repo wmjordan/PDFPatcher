@@ -36,7 +36,7 @@ public class PathExpression : IPathExpression
 
 	///<summary>获取匹配条件列表。</summary>
 	public IList<IPathPredicate> Predicates {
-		get { return _Predicates ?? (_Predicates = new List<IPathPredicate>()); }
+		get { return _Predicates ??= new List<IPathPredicate>(); }
 	}
 
 	public DocumentObject SelectObject(DocumentObject source) {

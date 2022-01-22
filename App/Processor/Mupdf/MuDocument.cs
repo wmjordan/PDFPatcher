@@ -206,7 +206,7 @@ public sealed class MuDocument : IDisposable
 
 	internal MuPdfDictionary Trailer {
 		get {
-			return _trailer ?? (_trailer = new MuPdfDictionary(Context, NativeMethods.GetTrailer(Context, _document)));
+			return _trailer ??= new MuPdfDictionary(Context, NativeMethods.GetTrailer(Context, _document));
 		}
 	}
 
@@ -218,7 +218,7 @@ public sealed class MuDocument : IDisposable
 	///     返回文档的页码标签。
 	/// </summary>
 	public PageLabelCollection PageLabels {
-		get { return _PageLabels ?? (_PageLabels = new PageLabelCollection(this)); }
+		get { return _PageLabels ??= new PageLabelCollection(this); }
 	}
 
 	private MuCookie _cookie;

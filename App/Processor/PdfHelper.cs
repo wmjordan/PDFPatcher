@@ -451,11 +451,8 @@ internal static class PdfHelper
 			PdfDictionary d;
 			if (source.Contains(item)) {
 				d = source.GetAsDict(item);
-				if (d == null) {
-					throw new InvalidCastException(item + "不是 PdfDictionary。");
-				}
 
-				source = d;
+				source = d ?? throw new InvalidCastException(item + "不是 PdfDictionary。");
 				continue;
 			}
 
