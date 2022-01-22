@@ -49,10 +49,7 @@ internal sealed class FontInfo : CMapAwareDocumentFont
 			}
 
 			_FontDescriptor = _Font.Locate<PdfArray>(PdfName.DESCENDANTFONTS).Locate<PdfDictionary>(0)
-				.Locate<PdfDictionary>(PdfName.FONTDESCRIPTOR);
-			if (_FontDescriptor == null) {
-				_FontDescriptor = new PdfDictionary();
-			}
+				.Locate<PdfDictionary>(PdfName.FONTDESCRIPTOR) ?? new PdfDictionary();
 
 			return _FontDescriptor;
 		}

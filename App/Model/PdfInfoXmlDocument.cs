@@ -40,10 +40,7 @@ public sealed class PdfInfoXmlDocument : XmlDocument
 		DocumentElement.SelectNodes(Constants.DocumentBookmark + "[1]/" + Constants.Bookmark);
 
 	private void Init() {
-		XmlElement root = DocumentElement;
-		if (root == null) {
-			root = AppendChild(CreateElement(Constants.PdfInfo)) as XmlElement;
-		}
+		XmlElement root = DocumentElement ?? AppendChild(CreateElement(Constants.PdfInfo)) as XmlElement;
 
 		root.SetAttribute(Constants.Info.ProductName, Application.ProductName);
 		root.SetAttribute(Constants.Info.ProductVersion, Constants.InfoDocVersion);

@@ -24,12 +24,7 @@ internal sealed class DocumentSink
 			return null;
 		}
 
-		if (rr.Reader == null) {
-			rr.Reader = PdfHelper.OpenPdfFile(path, AppContext.LoadPartialPdfFile, false);
-		}
-
-		return rr.Reader;
-
+		return rr.Reader ?? (rr.Reader = PdfHelper.OpenPdfFile(path, AppContext.LoadPartialPdfFile, false));
 	}
 
 	public int DecrementReference(string path) {

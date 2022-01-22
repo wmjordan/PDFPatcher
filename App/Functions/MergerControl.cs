@@ -239,10 +239,7 @@ public partial class MergerControl : FunctionControl
 	}
 
 	private SourceItem GetParentSourceItem(SourceItem item) {
-		SourceItem p = _ItemList.GetParentModel(item);
-		if (p == null) {
-			p = _itemsContainer;
-		}
+		SourceItem p = _ItemList.GetParentModel(item) ?? _itemsContainer;
 
 		return p;
 	}

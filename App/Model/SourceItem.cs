@@ -45,13 +45,7 @@ public abstract class SourceItem
 	public abstract int FileSize { get; }
 
 	public List<SourceItem> Items {
-		get {
-			if (_Items == null) {
-				_Items = new List<SourceItem>();
-			}
-
-			return _Items;
-		}
+		get { return _Items ?? (_Items = new List<SourceItem>()); }
 	}
 
 	public bool HasSubItems => _Items.HasContent();

@@ -206,11 +206,7 @@ public sealed class MuDocument : IDisposable
 
 	internal MuPdfDictionary Trailer {
 		get {
-			if (_trailer == null) {
-				_trailer = new MuPdfDictionary(Context, NativeMethods.GetTrailer(Context, _document));
-			}
-
-			return _trailer;
+			return _trailer ?? (_trailer = new MuPdfDictionary(Context, NativeMethods.GetTrailer(Context, _document)));
 		}
 	}
 

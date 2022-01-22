@@ -31,13 +31,7 @@ internal sealed class DocInfoExporter
 	}
 
 	private Dictionary<int, int> PageReferenceMapper {
-		get {
-			if (_pageReferenceMapper == null) {
-				_pageReferenceMapper = _reader.GetPageRefMapper();
-			}
-
-			return _pageReferenceMapper;
-		}
+		get { return _pageReferenceMapper ?? (_pageReferenceMapper = _reader.GetPageRefMapper()); }
 	}
 
 	internal static XmlWriterSettings GetWriterSettings() {
