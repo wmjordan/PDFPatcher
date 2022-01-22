@@ -43,12 +43,10 @@ internal sealed class PixmapData : IDisposable
 	///     将 Pixmap 的数据转换为 <see cref="Bitmap" />。
 	/// </summary>
 	public unsafe Bitmap ToBitmap(ImageRendererOptions options) {
-		int width = Width;
-		int height = Height;
 		bool grayscale = options.ColorSpace == ColorSpace.Gray;
 		bool invert = options.InvertColor;
-		Bitmap bmp = new(width, height, grayscale ? PixelFormat.Format8bppIndexed : PixelFormat.Format24bppRgb);
-		BitmapData imageData = bmp.LockBits(new System.Drawing.Rectangle(0, 0, width, height), ImageLockMode.ReadWrite,
+		Bitmap bmp = new(Width, Height, grayscale ? PixelFormat.Format8bppIndexed : PixelFormat.Format24bppRgb);
+		BitmapData imageData = bmp.LockBits(new System.Drawing.Rectangle(0, 0, Width, Height), ImageLockMode.ReadWrite,
 			bmp.PixelFormat);
 		byte* ptrSrc = (byte*)Samples;
 		byte* ptrDest = (byte*)imageData.Scan0;
@@ -59,10 +57,10 @@ internal sealed class PixmapData : IDisposable
 			}
 
 			bmp.Palette = palette;
-			for (int y = 0; y < height; y++) {
+			for (int y = 0; y < Height; y++) {
 				byte* pl = ptrDest;
 				byte* sl = ptrSrc;
-				for (int x = 0; x < width; x++) {
+				for (int x = 0; x < Width; x++) {
 					*pl = invert ? (byte)(*sl ^ 0xFF) : *sl;
 					pl++;
 					sl++;
@@ -74,11 +72,11 @@ internal sealed class PixmapData : IDisposable
 		}
 		else {
 			// DeviceBGR
-			for (int y = 0; y < height; y++) {
+			for (int y = 0; y < Height; y++) {
 				byte* pl = ptrDest;
 				byte* sl = ptrSrc;
 				if (invert) {
-					for (int x = 0; x < width; x++) {
+					for (int x = 0; x < Width; x++) {
 						// 在这里进行 RGB 到 DIB BGR 的转换（省去 Mupdf 内部的转换工作）
 						pl[2] = (byte)(*sl ^ 0xFF);
 						sl++; // R
@@ -90,7 +88,7 @@ internal sealed class PixmapData : IDisposable
 					}
 				}
 				else {
-					for (int x = 0; x < width; x++) {
+					for (int x = 0; x < Width; x++) {
 						// 在这里进行 RGB 到 DIB BGR 的转换（省去 Mupdf 内部的转换工作）
 						pl[2] = *sl;
 						sl++; // R
@@ -119,20 +117,18 @@ internal sealed class PixmapData : IDisposable
 	///     将 Pixmap 的数据转换为 <see cref="FreeImageBitmap" />。
 	/// </summary>
 	public unsafe FreeImageBitmap ToFreeImageBitmap(ImageRendererOptions options) {
-		int width = Width;
-		int height = Height;
 		bool grayscale = options.ColorSpace == ColorSpace.Gray;
 		bool invert = options.InvertColor;
-		FreeImageBitmap bmp = new(width, height,
+		FreeImageBitmap bmp = new(Width, Height,
 			grayscale ? PixelFormat.Format8bppIndexed : PixelFormat.Format24bppRgb);
 		byte* ptrSrc = (byte*)Samples;
 		if (grayscale) {
 			bmp.Palette.CreateGrayscalePalette();
-			for (int y = height - 1; y >= 0; y--) {
+			for (int y = Height - 1; y >= 0; y--) {
 				IntPtr pDest = bmp.GetScanlinePointer(y);
 				byte* pl = (byte*)pDest.ToPointer();
 				byte* sl = ptrSrc;
-				for (int x = 0; x < width; x++) {
+				for (int x = 0; x < Width; x++) {
 					*pl = invert ? (byte)(*sl ^ 0xFF) : *sl;
 					pl++;
 					sl++;
@@ -143,12 +139,12 @@ internal sealed class PixmapData : IDisposable
 		}
 		else {
 			// DeviceBGR
-			for (int y = height - 1; y >= 0; y--) {
+			for (int y = Height - 1; y >= 0; y--) {
 				IntPtr pDest = bmp.GetScanlinePointer(y);
 				byte* pl = (byte*)pDest.ToPointer();
 				byte* sl = ptrSrc;
 				if (invert) {
-					for (int x = 0; x < width; x++) {
+					for (int x = 0; x < Width; x++) {
 						// 在这里进行 RGB 到 DIB BGR 的转换（省去 Mupdf 内部的转换工作）
 						pl[2] = (byte)(*sl ^ 0xFF);
 						sl++; // R
@@ -160,7 +156,7 @@ internal sealed class PixmapData : IDisposable
 					}
 				}
 				else {
-					for (int x = 0; x < width; x++) {
+					for (int x = 0; x < Width; x++) {
 						// 在这里进行 RGB 到 DIB BGR 的转换（省去 Mupdf 内部的转换工作）
 						pl[2] = *sl;
 						sl++; // R

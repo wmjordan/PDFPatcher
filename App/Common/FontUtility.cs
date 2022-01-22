@@ -31,15 +31,14 @@ internal static class FontUtility
 		List<FriendlyFontName> of = new(); // 其他字体
 		Dictionary<string, string> fs = FontHelper.GetInstalledFonts(false);
 		foreach (string item in fs.Keys) {
-			string fn = item /*字体名称*/;
-			string dn = _boldItalic.Replace(fn, "(粗斜体)") /*字体名称*/;
+			string dn = _boldItalic.Replace(item, "(粗斜体)") /*字体名称*/;
 			dn = _italic.Replace(dn, "(斜体)");
 			dn = _bold.Replace(dn, "(粗体)");
 			if (dn[0] > 0xFF) {
-				uf.Add(new FriendlyFontName(fn, dn));
+				uf.Add(new FriendlyFontName(item, dn));
 			}
 			else {
-				of.Add(new FriendlyFontName(fn, dn));
+				of.Add(new FriendlyFontName(item, dn));
 			}
 		}
 

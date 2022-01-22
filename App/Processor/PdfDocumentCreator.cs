@@ -267,12 +267,11 @@ internal sealed class PdfDocumentCreator
 			bookmark.SetAttribute(Constants.Coordinates.Top, t.ToText());
 		}
 
-		SourceItem.Pdf pdfItem = sourceFile;
-		bool importImagesOnly = pdfItem.ImportImagesOnly;
+		bool importImagesOnly = sourceFile.ImportImagesOnly;
 		int pn = pdf.NumberOfPages;
 		ImageExtractor imgExp = null;
 		if (importImagesOnly) {
-			imgExp = new ImageExtractor(pdfItem.ExtractImageOptions, pdf);
+			imgExp = new ImageExtractor(sourceFile.ExtractImageOptions, pdf);
 		}
 
 		if (_option.KeepBookmarks) {

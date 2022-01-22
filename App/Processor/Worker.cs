@@ -61,13 +61,12 @@ internal static class Worker
 		PageRangeCollection ranges = PageRangeCollection.Parse(options.PageRange, 1, pdf.NumberOfPages, true);
 		int loadCount = loadDocProgressWeight + ranges.TotalPages;
 		Tracker.SetProgressGoal(loadCount);
-		string op = targetPath;
 		string om = options.FileMask;
 		try {
 			Tracker.TraceMessage("正在导出图片。");
 			Tracker.TrackProgress(loadDocProgressWeight);
-			if (FileHelper.HasFileNameMacro(op)) {
-				options.OutputPath = ReplaceTargetFileNameMacros(sourceFile, op, pdf);
+			if (FileHelper.HasFileNameMacro(targetPath)) {
+				options.OutputPath = ReplaceTargetFileNameMacros(sourceFile, targetPath, pdf);
 			}
 
 			if (FileHelper.HasFileNameMacro(om)) {
@@ -96,7 +95,7 @@ internal static class Worker
 			FormHelper.ErrorBox("在导出图片时遇到错误：\n" + ex.Message);
 		}
 		finally {
-			options.OutputPath = op;
+			options.OutputPath = targetPath;
 			options.FileMask = om;
 			pdf?.Close();
 		}

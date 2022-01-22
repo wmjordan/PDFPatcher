@@ -263,13 +263,12 @@ internal sealed class PdfContentExport
 		if (ValueHelper.IsInCollection(iType, PdfObject.NAME, PdfObject.NUMBER, PdfObject.BOOLEAN)) {
 			writer.WriteAttributeString(Constants.Content.Type, PdfHelper.GetTypeName(iType));
 			writer.WriteStartAttribute(Constants.Content.Value);
-			List<PdfObject> l = array;
-			for (int i = 0; i < l.Count; i++) {
+			for (int i = 0; i < array.Count; i++) {
 				if (i > 0) {
 					writer.WriteString(" ");
 				}
 
-				writer.WriteString(l[i].ToString());
+				writer.WriteString(array[i].ToString());
 			}
 
 			writer.WriteEndAttribute();

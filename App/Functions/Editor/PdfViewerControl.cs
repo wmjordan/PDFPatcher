@@ -770,11 +770,10 @@ internal sealed class PdfViewerControl : ImageBoxEx
 					continue;
 				}
 
-				MuTextBlock tb = block;
 				HashSet<IntPtr> s = null;
 				MuTextLine l = null;
 				List<MuTextLine> r = null;
-				foreach (MuTextLine line in tb.Lines) {
+				foreach (MuTextLine line in block.Lines) {
 					if (l == null) {
 						if (line.BBox.Contains(point) == false) {
 							continue;

@@ -321,11 +321,10 @@ internal class PdfContentStreamProcessor
 							break;
 						}
 					case PdfArray pdfArray: {
-							PdfArray array = pdfArray;
 							PdfArray altArray = new();
-							int count = array.Size;
+							int count = pdfArray.Size;
 							for (int i = 0; i < count; i++) {
-								altArray.Add(GetAlternateValue(key, array[i]));
+								altArray.Add(GetAlternateValue(key, pdfArray[i]));
 							}
 
 							return altArray;

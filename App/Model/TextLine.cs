@@ -101,26 +101,25 @@ internal sealed class TextLine : IDirectionalBoundObject
 				return _Texts[0].Text;
 		}
 
-		List<TextInfo> tl = _Texts;
 		if (SuppressTextInfoArrangement == false) {
 			if (Direction == WritingDirection.Vertical) {
-				tl.Sort(TextInfo.CompareRegionY);
+				_Texts.Sort(TextInfo.CompareRegionY);
 			}
 			else {
-				tl.Sort(TextInfo.CompareRegionX);
+				_Texts.Sort(TextInfo.CompareRegionX);
 			}
 		}
 
 		float cs = GetAverageCharSize();
 		StringBuilder sb = new();
-		sb.Append(tl[0].Text);
+		sb.Append(_Texts[0].Text);
 		for (int i = 1; i < l; i++) {
 			if (cs > 0) {
 				float dx = Direction == WritingDirection.Vertical
-					? tl[i].Region.Top - tl[i - 1].Region.Bottom
-					: tl[i].Region.Left - tl[i - 1].Region.Right;
+					? _Texts[i].Region.Top - _Texts[i - 1].Region.Bottom
+					: _Texts[i].Region.Left - _Texts[i - 1].Region.Right;
 				if (dx > cs) {
-					string t = tl[i - 1].Text;
+					string t = _Texts[i - 1].Text;
 					// 调整标点留下的空白
 					char c;
 					if (t.Length > 0) {
@@ -130,9 +129,9 @@ internal sealed class TextLine : IDirectionalBoundObject
 						}
 					}
 
-					t = tl[i].Text;
+					t = _Texts[i].Text;
 					if (t.Length > 0) {
-						c = tl[i].Text[0];
+						c = _Texts[i].Text[0];
 						if (char.IsPunctuation(c) && c > 128) {
 							dx -= cs;
 						}
@@ -144,7 +143,7 @@ internal sealed class TextLine : IDirectionalBoundObject
 				}
 			}
 
-			sb.Append(tl[i].Text);
+			sb.Append(_Texts[i].Text);
 		}
 
 		return sb.ToString();
@@ -153,16 +152,15 @@ internal sealed class TextLine : IDirectionalBoundObject
 	/// <summary>获取 <see cref="Texts" /> 内文字或数字的平均尺寸。</summary>
 	/// <returns>返回平均字符尺寸。</returns>
 	internal float GetAverageCharSize() {
-		List<TextInfo> tl = _Texts;
 		float ts = 0, cc = 0;
 		if (Direction == WritingDirection.Vertical) {
-			tl.ForEach(t => {
+			_Texts.ForEach(t => {
 				ts += t.LetterWidth;
 				cc += t.Text.Length;
 			});
 		}
 		else {
-			foreach (TextInfo t in tl) {
+			foreach (TextInfo t in _Texts) {
 				ts += t.LetterWidth;
 				foreach (char c in t.Text) {
 					if (char.IsLetterOrDigit(c) == false) {
