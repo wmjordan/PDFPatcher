@@ -50,9 +50,9 @@ public struct CIELab
 	#endregion
 
 	public CIELab(double l, double a, double b) {
-		this.L = l;
-		this.A = a;
-		this.B = b;
+		L = l;
+		A = a;
+		B = b;
 	}
 
 	#region Methods
