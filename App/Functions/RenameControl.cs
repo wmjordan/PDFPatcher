@@ -211,7 +211,7 @@ namespace PDFPatcher.Functions
 						continue;
 					}
 					else {
-						t = Processor.Worker.RenameFile(template, item);
+						t = Processor.Worker.GetExpandedFileName(item, template);
 						if (t.Length == 0) {
 							t = "<输出文件名无效>";
 						}

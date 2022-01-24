@@ -179,7 +179,7 @@ namespace PDFPatcher.Processor
 
 			try {
 				Tracker.TraceMessage("正在导出信息文件。");
-				if (targetFile.EndsWith(".txt", StringComparison.OrdinalIgnoreCase)) {
+				if (targetFile.EndsWith(Ext.Txt, StringComparison.OrdinalIgnoreCase)) {
 					Tracker.SetProgressGoal(50);
 					using (TextWriter w = new StreamWriter(targetFile, false, AppContext.Exporter.GetEncoding())) {
 						DocInfoExporter.WriteDocumentInfoAttributes(w, sourceFile, r.NumberOfPages);
@@ -793,7 +793,7 @@ namespace PDFPatcher.Processor
 			}
 		}
 
-		internal static string RenameFile(string template, SourceItem.Pdf item) {
+		internal static string GetExpandedFileName(SourceItem.Pdf item, string template) {
 			string t;
 			var s = item.FilePath;
 			var d = new PdfDictionary();
@@ -821,7 +821,7 @@ namespace PDFPatcher.Processor
 						Tracker.TraceMessage(Tracker.Category.Error, String.Concat("找不到 PDF 文件：", s));
 						continue;
 					}
-					var t = RenameFile(template, item);
+					var t = GetExpandedFileName(item, template);
 					Tracker.TraceMessage(Tracker.Category.InputFile, s.ToString());
 					Tracker.TraceMessage(Tracker.Category.OutputFile, t);
 					Tracker.TraceMessage(Tracker.Category.ImportantMessage, String.Concat("重命名 PDF 文件：", s));
