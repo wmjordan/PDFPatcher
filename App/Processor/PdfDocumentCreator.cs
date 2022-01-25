@@ -185,6 +185,7 @@ namespace PDFPatcher.Processor
 					fi = FreeImageBitmap.FromFile(source.FilePath);
 					var c = fi.FrameCount;
 					for (int i = 0; i < c; i++) {
+						fi.SelectActiveFrame(i);
 						var img = LoadImageFrame(source as SourceItem.Image, _option.RecompressWithJbig2, ref fi);
 						AddImage(img);
 						if (i == 0) {
