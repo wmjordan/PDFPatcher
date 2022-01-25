@@ -26,6 +26,7 @@ namespace MuPdfSharp
 		public bool IsDocumentOpened => _document.IsValid() && _sourceStream.IsValid();
 		/// <summary>获取文档是否设置了打开密码。</summary>
 		public bool NeedsPassword => NativeMethods.NeedsPdfPassword(_context, _document);
+		public bool IsAuthenticated { get; private set; }
 		public bool IsCancellationPending => _cookie.IsCancellationPending;
 		object _SyncObj = new object();
 		public object SyncObj => _SyncObj;
@@ -151,18 +152,14 @@ namespace MuPdfSharp
 			return new MuPage(_context, _document, pageNumber, ref _cookie);
 		}
 
-		private int InitPdf(string password) {
-			if (NativeMethods.NeedsPdfPassword(_context, _document)) {
-				if (String.IsNullOrEmpty(password) == false) {
-					if (NativeMethods.AuthenticatePassword(_context, _document, password) == false) {
-						throw new iTextSharp.text.exceptions.BadPasswordException("密码无效。");
-					}
-				}
-				else {
-					throw new iTextSharp.text.exceptions.BadPasswordException("需要提供打开 PDF 文档的密码。");
-				}
-			}
+		public bool AuthenticatePassword(string password) {
+			return IsAuthenticated = 
+				NativeMethods.NeedsPdfPassword(_context, _document) == false
+				|| String.IsNullOrEmpty(password) == false && NativeMethods.AuthenticatePassword(_context, _document, password);
+		}
 
+		int InitPdf(string password) {
+			AuthenticatePassword(password);
 			PageCount = NativeMethods.CountPages(_context, _document);
 			return PageCount;
 		}

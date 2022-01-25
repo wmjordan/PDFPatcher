@@ -103,7 +103,7 @@ namespace PDFPatcher.Functions.Editor
 			if (s != null) {
 				try {
 					var d = v.Document;
-					Model.PdfDocument = v.Document = new MuPdfSharp.MuDocument(s);
+					Model.PdfDocument = v.Document = PdfHelper.OpenMuDocument(s);
 					d.TryDispose();
 					View.AutoBookmark.TryDispose();
 					v.Enabled = true;

@@ -80,22 +80,22 @@ namespace PDFPatcher.Processor
 		}
 
 		internal static MuPdfSharp.MuDocument OpenMuDocument(string sourceFile) {
-			byte[] password;
-			__PdfPasswordBox.TryGetValue(sourceFile, out password);
-			while (true) {
-				var r = new MuPdfSharp.MuDocument(sourceFile, password != null ? Encoding.Default.GetString(password) : String.Empty);
-				if (password != null && password.Length > 0) {
-					__PdfPasswordBox[sourceFile] = password;
+			var d = new MuPdfSharp.MuDocument(sourceFile);
+			if (d.NeedsPassword) {
+				if (__PdfPasswordBox.TryGetValue(sourceFile, out byte[] password)) {
+					d.AuthenticatePassword(password != null ? Encoding.Default.GetString(password) : String.Empty);
 				}
-				if (r.NeedsPassword) {
-					var f = new PasswordEntryForm(sourceFile);
-					if (f.ShowDialog() == System.Windows.Forms.DialogResult.Cancel) {
-						throw new iTextSharp.text.exceptions.BadPasswordException("密码错误，没有权限打开 PDF 文件。");
+				while (d.IsAuthenticated == false) {
+					using (var f = new PasswordEntryForm(sourceFile)) {
+						if (f.ShowDialog() == System.Windows.Forms.DialogResult.Cancel) {
+							throw new iTextSharp.text.exceptions.BadPasswordException("密码错误，没有权限打开 PDF 文件。");
+						}
+						__PdfPasswordBox[sourceFile] = password = Encoding.Default.GetBytes(f.Password);
 					}
-					password = Encoding.Default.GetBytes(f.Password);
+					d.AuthenticatePassword(password != null ? Encoding.Default.GetString(password) : String.Empty);
 				}
-				return r;
 			}
+			return d;
 		}
 
 		static PdfHelper() {
