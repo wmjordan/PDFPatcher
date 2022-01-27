@@ -159,27 +159,28 @@ namespace PDFPatcher.Processor
 			}
 		}
 
-		internal static void ExportInfo(string sourceFile, string targetFile) {
+		internal static void ExportInfo(FilePath sourceFile, FilePath targetFile) {
 			Tracker.TraceMessage(Tracker.Category.InputFile, sourceFile);
 			Tracker.TraceMessage(Tracker.Category.OutputFile, targetFile);
 			var r = OpenPdf(sourceFile, AppContext.LoadPartialPdfFile, false);
 			if (r == null) {
 				return;
 			}
-			if (FileHelper.IsPathValid(targetFile) == false || Path.GetFileName(targetFile).Length == 0) {
+			if (targetFile.IsValidPath == false || targetFile.FileName.Length == 0) {
 				Tracker.TraceMessage(Tracker.Category.Error, Messages.InfoFileNameInvalid);
 				FormHelper.ErrorBox(Messages.InfoFileNameInvalid);
 				return;
 			}
 			targetFile = FileHelper.MakePathRootedAndWithExtension(targetFile, sourceFile, Ext.Xml, false);
+			targetFile.CreateContainingDirectory();
 			var export = new DocInfoExporter(r, AppContext.Exporter);
 			if (AppContext.Exporter.ExtractImages) {
-				AppContext.Exporter.Images.OutputPath = FileHelper.CombinePath(Path.GetDirectoryName(targetFile), Path.GetFileNameWithoutExtension(targetFile) + "图片文件\\");
+				AppContext.Exporter.Images.OutputPath = FileHelper.CombinePath(targetFile.Directory, targetFile.FileNameWithoutExtension + "图片文件\\");
 			}
 
 			try {
 				Tracker.TraceMessage("正在导出信息文件。");
-				if (targetFile.EndsWith(Ext.Txt, StringComparison.OrdinalIgnoreCase)) {
+				if (targetFile.HasExtension(Ext.Txt)) {
 					Tracker.SetProgressGoal(50);
 					using (TextWriter w = new StreamWriter(targetFile, false, AppContext.Exporter.GetEncoding())) {
 						DocInfoExporter.WriteDocumentInfoAttributes(w, sourceFile, r.NumberOfPages);

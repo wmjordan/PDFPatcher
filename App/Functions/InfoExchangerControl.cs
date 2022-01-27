@@ -229,13 +229,14 @@ namespace PDFPatcher.Functions
 			AppContext.MainForm.ResetWorker();
 			var w = AppContext.MainForm.GetWorker();
 			w.DoWork += (dummy, arg) => {
-				var a = arg.Argument as object[];
-				if (files.Count > 1) {
-					var p = Path.GetDirectoryName(a[0] as string);
-					var ext = Path.GetExtension(a[0] as string);
-					Tracker.SetTotalProgressGoal(files.Count);
-					foreach (var file in files) {
-						Processor.Worker.ExportInfo(file.FilePath.ToString(), file.FilePath.Directory.Combine(p).Combine(file.FilePath.ChangeExtension(ext)).ToString());
+				var b = AppContext.BookmarkFile;
+				var fs = arg.Argument as List<SourceItem>;
+				if (fs.Count > 1) {
+					var p = b.Contains(Path.DirectorySeparatorChar) || b.Contains(Path.AltDirectorySeparatorChar) ? Path.GetDirectoryName(b) : Path.GetFileNameWithoutExtension(b);
+					var ext = Path.GetExtension(b);
+					Tracker.SetTotalProgressGoal(fs.Count);
+					foreach (var file in fs) {
+						Processor.Worker.ExportInfo(file.FilePath, file.FilePath.Directory.Combine(p).Combine(file.FilePath.ChangeExtension(ext).FileName));
 						Tracker.IncrementTotalProgress();
 						if (AppContext.Abort) {
 							return;
@@ -243,14 +244,14 @@ namespace PDFPatcher.Functions
 					}
 				}
 				else {
-					if (files[0].Type != SourceItem.ItemType.Pdf) {
+					if (fs[0].Type != SourceItem.ItemType.Pdf) {
 						Tracker.TraceMessage("输入文件不是 PDF 文件。");
 						return;
 					}
-					Processor.Worker.ExportInfo(files[0].FilePath.ToString(), a[0] as string);
+					Processor.Worker.ExportInfo(fs[0].FilePath, b);
 				}
 			};
-			w.RunWorkerAsync(new object[] { AppContext.BookmarkFile });
+			w.RunWorkerAsync(files);
 		}
 
 		List<SourceItem> GetSourceItemList() {
