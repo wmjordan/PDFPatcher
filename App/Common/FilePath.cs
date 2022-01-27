@@ -211,11 +211,8 @@ namespace PDFPatcher.Common
 			if (IsEmpty) {
 				return Empty;
 			}
-			if (extension == null) {
+			if (extension == null || (extension = extension.TrimEnd()).Length == 0) {
 				extension = String.Empty;
-			}
-			else if ((extension = extension.TrimEnd()).Length == 0) {
-				extension = ".";
 			}
 			else if (extension[0] != '.') {
 				extension = "." + extension;
