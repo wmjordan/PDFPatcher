@@ -27,6 +27,7 @@
 		private void InitializeComponent () {
 			this._MainTab = new System.Windows.Forms.TabControl();
 			this._FilePage = new System.Windows.Forms.TabPage();
+			this._DeduplicateBox = new System.Windows.Forms.CheckBox();
 			this._CajSortBox = new System.Windows.Forms.CheckBox();
 			this._NumericAwareSortBox = new System.Windows.Forms.CheckBox();
 			this._SubFoldersBeforeFilesBox = new System.Windows.Forms.CheckBox();
@@ -75,7 +76,8 @@
 			this._DocumentInfoEditor = new PDFPatcher.Functions.DocumentInfoEditor();
 			this._PageLabelsPage = new System.Windows.Forms.TabPage();
 			this._PageLabelEditor = new PDFPatcher.Functions.PageLabelEditor();
-			this._DeduplicateBox = new System.Windows.Forms.CheckBox();
+			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this.groupBox3 = new System.Windows.Forms.GroupBox();
 			this._MainTab.SuspendLayout();
 			this._FilePage.SuspendLayout();
 			this._LayoutPage.SuspendLayout();
@@ -93,6 +95,8 @@
 			this._ViewerSettingsPage.SuspendLayout();
 			this._DocumentInfoPage.SuspendLayout();
 			this._PageLabelsPage.SuspendLayout();
+			this.groupBox1.SuspendLayout();
+			this.groupBox3.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// _MainTab
@@ -106,7 +110,7 @@
 			this._MainTab.Controls.Add(this._DocumentInfoPage);
 			this._MainTab.Controls.Add(this._PageLabelsPage);
 			this._MainTab.Location = new System.Drawing.Point(18, 18);
-			this._MainTab.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._MainTab.Margin = new System.Windows.Forms.Padding(4);
 			this._MainTab.Name = "_MainTab";
 			this._MainTab.SelectedIndex = 0;
 			this._MainTab.Size = new System.Drawing.Size(672, 478);
@@ -114,28 +118,32 @@
 			// 
 			// _FilePage
 			// 
-			this._FilePage.Controls.Add(this._DeduplicateBox);
-			this._FilePage.Controls.Add(this._CajSortBox);
-			this._FilePage.Controls.Add(this._NumericAwareSortBox);
-			this._FilePage.Controls.Add(this._SubFoldersBeforeFilesBox);
-			this._FilePage.Controls.Add(this._AutoBookmarkTitleBox);
-			this._FilePage.Controls.Add(this._IgnoreLeadingNumbersBox);
-			this._FilePage.Controls.Add(this._RemoveOrphanBoomarksBox);
-			this._FilePage.Controls.Add(this._KeepSourcePdfBookmarkBox);
+			this._FilePage.Controls.Add(this.groupBox3);
+			this._FilePage.Controls.Add(this.groupBox1);
 			this._FilePage.Location = new System.Drawing.Point(4, 28);
-			this._FilePage.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._FilePage.Margin = new System.Windows.Forms.Padding(4);
 			this._FilePage.Name = "_FilePage";
-			this._FilePage.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._FilePage.Padding = new System.Windows.Forms.Padding(4);
 			this._FilePage.Size = new System.Drawing.Size(664, 446);
 			this._FilePage.TabIndex = 1;
 			this._FilePage.Text = "文件";
 			this._FilePage.UseVisualStyleBackColor = true;
 			// 
+			// _DeduplicateBox
+			// 
+			this._DeduplicateBox.AutoSize = true;
+			this._DeduplicateBox.Location = new System.Drawing.Point(15, 109);
+			this._DeduplicateBox.Name = "_DeduplicateBox";
+			this._DeduplicateBox.Size = new System.Drawing.Size(385, 22);
+			this._DeduplicateBox.TabIndex = 2;
+			this._DeduplicateBox.Text = "尝试合并 PDF 文档重复数据以缩小结果文件";
+			this._DeduplicateBox.UseVisualStyleBackColor = true;
+			// 
 			// _CajSortBox
 			// 
 			this._CajSortBox.AutoSize = true;
-			this._CajSortBox.Location = new System.Drawing.Point(24, 156);
-			this._CajSortBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._CajSortBox.Location = new System.Drawing.Point(15, 161);
+			this._CajSortBox.Margin = new System.Windows.Forms.Padding(4);
 			this._CajSortBox.Name = "_CajSortBox";
 			this._CajSortBox.Size = new System.Drawing.Size(214, 22);
 			this._CajSortBox.TabIndex = 4;
@@ -145,8 +153,8 @@
 			// _NumericAwareSortBox
 			// 
 			this._NumericAwareSortBox.AutoSize = true;
-			this._NumericAwareSortBox.Location = new System.Drawing.Point(24, 123);
-			this._NumericAwareSortBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._NumericAwareSortBox.Location = new System.Drawing.Point(15, 128);
+			this._NumericAwareSortBox.Margin = new System.Windows.Forms.Padding(4);
 			this._NumericAwareSortBox.Name = "_NumericAwareSortBox";
 			this._NumericAwareSortBox.Size = new System.Drawing.Size(268, 22);
 			this._NumericAwareSortBox.TabIndex = 3;
@@ -156,8 +164,8 @@
 			// _SubFoldersBeforeFilesBox
 			// 
 			this._SubFoldersBeforeFilesBox.AutoSize = true;
-			this._SubFoldersBeforeFilesBox.Location = new System.Drawing.Point(24, 90);
-			this._SubFoldersBeforeFilesBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._SubFoldersBeforeFilesBox.Location = new System.Drawing.Point(15, 95);
+			this._SubFoldersBeforeFilesBox.Margin = new System.Windows.Forms.Padding(4);
 			this._SubFoldersBeforeFilesBox.Name = "_SubFoldersBeforeFilesBox";
 			this._SubFoldersBeforeFilesBox.Size = new System.Drawing.Size(214, 22);
 			this._SubFoldersBeforeFilesBox.TabIndex = 2;
@@ -167,44 +175,44 @@
 			// _AutoBookmarkTitleBox
 			// 
 			this._AutoBookmarkTitleBox.AutoSize = true;
-			this._AutoBookmarkTitleBox.Location = new System.Drawing.Point(24, 24);
-			this._AutoBookmarkTitleBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._AutoBookmarkTitleBox.Location = new System.Drawing.Point(15, 29);
+			this._AutoBookmarkTitleBox.Margin = new System.Windows.Forms.Padding(4);
 			this._AutoBookmarkTitleBox.Name = "_AutoBookmarkTitleBox";
-			this._AutoBookmarkTitleBox.Size = new System.Drawing.Size(358, 22);
+			this._AutoBookmarkTitleBox.Size = new System.Drawing.Size(250, 22);
 			this._AutoBookmarkTitleBox.TabIndex = 0;
-			this._AutoBookmarkTitleBox.Text = "添加项目时根据文件名自动生成书签文本";
+			this._AutoBookmarkTitleBox.Text = "添加项时自动生成书签文本";
 			this._AutoBookmarkTitleBox.UseVisualStyleBackColor = true;
 			// 
 			// _IgnoreLeadingNumbersBox
 			// 
 			this._IgnoreLeadingNumbersBox.AutoSize = true;
-			this._IgnoreLeadingNumbersBox.Location = new System.Drawing.Point(58, 57);
-			this._IgnoreLeadingNumbersBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._IgnoreLeadingNumbersBox.Location = new System.Drawing.Point(49, 62);
+			this._IgnoreLeadingNumbersBox.Margin = new System.Windows.Forms.Padding(4);
 			this._IgnoreLeadingNumbersBox.Name = "_IgnoreLeadingNumbersBox";
-			this._IgnoreLeadingNumbersBox.Size = new System.Drawing.Size(214, 22);
+			this._IgnoreLeadingNumbersBox.Size = new System.Drawing.Size(232, 22);
 			this._IgnoreLeadingNumbersBox.TabIndex = 1;
-			this._IgnoreLeadingNumbersBox.Text = "删除文件名的前导数字";
+			this._IgnoreLeadingNumbersBox.Text = "删除书签文本的前导数字";
 			this._IgnoreLeadingNumbersBox.UseVisualStyleBackColor = true;
 			// 
 			// _RemoveOrphanBoomarksBox
 			// 
 			this._RemoveOrphanBoomarksBox.AutoSize = true;
-			this._RemoveOrphanBoomarksBox.Location = new System.Drawing.Point(58, 252);
-			this._RemoveOrphanBoomarksBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._RemoveOrphanBoomarksBox.Location = new System.Drawing.Point(49, 61);
+			this._RemoveOrphanBoomarksBox.Margin = new System.Windows.Forms.Padding(4);
 			this._RemoveOrphanBoomarksBox.Name = "_RemoveOrphanBoomarksBox";
 			this._RemoveOrphanBoomarksBox.Size = new System.Drawing.Size(250, 22);
-			this._RemoveOrphanBoomarksBox.TabIndex = 6;
+			this._RemoveOrphanBoomarksBox.TabIndex = 1;
 			this._RemoveOrphanBoomarksBox.Text = "删除连接到无效页面的书签";
 			this._RemoveOrphanBoomarksBox.UseVisualStyleBackColor = true;
 			// 
 			// _KeepSourcePdfBookmarkBox
 			// 
 			this._KeepSourcePdfBookmarkBox.AutoSize = true;
-			this._KeepSourcePdfBookmarkBox.Location = new System.Drawing.Point(24, 219);
-			this._KeepSourcePdfBookmarkBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._KeepSourcePdfBookmarkBox.Location = new System.Drawing.Point(15, 28);
+			this._KeepSourcePdfBookmarkBox.Margin = new System.Windows.Forms.Padding(4);
 			this._KeepSourcePdfBookmarkBox.Name = "_KeepSourcePdfBookmarkBox";
 			this._KeepSourcePdfBookmarkBox.Size = new System.Drawing.Size(223, 22);
-			this._KeepSourcePdfBookmarkBox.TabIndex = 5;
+			this._KeepSourcePdfBookmarkBox.TabIndex = 0;
 			this._KeepSourcePdfBookmarkBox.Text = "保留源 PDF 文档的书签";
 			this._KeepSourcePdfBookmarkBox.UseVisualStyleBackColor = true;
 			// 
@@ -216,9 +224,9 @@
 			this._LayoutPage.Controls.Add(this._MarginGroupBox);
 			this._LayoutPage.Controls.Add(this._PdfGroupBox);
 			this._LayoutPage.Location = new System.Drawing.Point(4, 28);
-			this._LayoutPage.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._LayoutPage.Margin = new System.Windows.Forms.Padding(4);
 			this._LayoutPage.Name = "_LayoutPage";
-			this._LayoutPage.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._LayoutPage.Padding = new System.Windows.Forms.Padding(4);
 			this._LayoutPage.Size = new System.Drawing.Size(664, 446);
 			this._LayoutPage.TabIndex = 0;
 			this._LayoutPage.Text = "页面布局";
@@ -229,9 +237,9 @@
 			this.groupBox2.Controls.Add(this._RecompressImageBox);
 			this.groupBox2.Controls.Add(this._AutoMaskBWImageBox);
 			this.groupBox2.Location = new System.Drawing.Point(356, 208);
-			this.groupBox2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.groupBox2.Margin = new System.Windows.Forms.Padding(4);
 			this.groupBox2.Name = "groupBox2";
-			this.groupBox2.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.groupBox2.Padding = new System.Windows.Forms.Padding(4);
 			this.groupBox2.Size = new System.Drawing.Size(292, 105);
 			this.groupBox2.TabIndex = 9;
 			this.groupBox2.TabStop = false;
@@ -241,7 +249,7 @@
 			// 
 			this._RecompressImageBox.AutoSize = true;
 			this._RecompressImageBox.Location = new System.Drawing.Point(10, 64);
-			this._RecompressImageBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._RecompressImageBox.Margin = new System.Windows.Forms.Padding(4);
 			this._RecompressImageBox.Name = "_RecompressImageBox";
 			this._RecompressImageBox.Size = new System.Drawing.Size(178, 22);
 			this._RecompressImageBox.TabIndex = 2;
@@ -252,7 +260,7 @@
 			// 
 			this._AutoMaskBWImageBox.AutoSize = true;
 			this._AutoMaskBWImageBox.Location = new System.Drawing.Point(10, 32);
-			this._AutoMaskBWImageBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._AutoMaskBWImageBox.Margin = new System.Windows.Forms.Padding(4);
 			this._AutoMaskBWImageBox.Name = "_AutoMaskBWImageBox";
 			this._AutoMaskBWImageBox.Size = new System.Drawing.Size(178, 22);
 			this._AutoMaskBWImageBox.TabIndex = 1;
@@ -264,9 +272,9 @@
 			this._ImageGroupBox.Controls.Add(this._AutoScaleDownBox);
 			this._ImageGroupBox.Controls.Add(this._AutoScaleUpBox);
 			this._ImageGroupBox.Location = new System.Drawing.Point(356, 9);
-			this._ImageGroupBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._ImageGroupBox.Margin = new System.Windows.Forms.Padding(4);
 			this._ImageGroupBox.Name = "_ImageGroupBox";
-			this._ImageGroupBox.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._ImageGroupBox.Padding = new System.Windows.Forms.Padding(4);
 			this._ImageGroupBox.Size = new System.Drawing.Size(292, 72);
 			this._ImageGroupBox.TabIndex = 7;
 			this._ImageGroupBox.TabStop = false;
@@ -278,7 +286,7 @@
 			this._AutoScaleDownBox.Checked = true;
 			this._AutoScaleDownBox.CheckState = System.Windows.Forms.CheckState.Checked;
 			this._AutoScaleDownBox.Location = new System.Drawing.Point(10, 30);
-			this._AutoScaleDownBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._AutoScaleDownBox.Margin = new System.Windows.Forms.Padding(4);
 			this._AutoScaleDownBox.Name = "_AutoScaleDownBox";
 			this._AutoScaleDownBox.Size = new System.Drawing.Size(106, 22);
 			this._AutoScaleDownBox.TabIndex = 0;
@@ -289,7 +297,7 @@
 			// 
 			this._AutoScaleUpBox.AutoSize = true;
 			this._AutoScaleUpBox.Location = new System.Drawing.Point(141, 30);
-			this._AutoScaleUpBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._AutoScaleUpBox.Margin = new System.Windows.Forms.Padding(4);
 			this._AutoScaleUpBox.Name = "_AutoScaleUpBox";
 			this._AutoScaleUpBox.Size = new System.Drawing.Size(106, 22);
 			this._AutoScaleUpBox.TabIndex = 1;
@@ -312,9 +320,9 @@
 			this._LayoutGroupBox.Controls.Add(this.label5);
 			this._LayoutGroupBox.Controls.Add(this.label4);
 			this._LayoutGroupBox.Location = new System.Drawing.Point(9, 9);
-			this._LayoutGroupBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._LayoutGroupBox.Margin = new System.Windows.Forms.Padding(4);
 			this._LayoutGroupBox.Name = "_LayoutGroupBox";
-			this._LayoutGroupBox.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._LayoutGroupBox.Padding = new System.Windows.Forms.Padding(4);
 			this._LayoutGroupBox.Size = new System.Drawing.Size(338, 256);
 			this._LayoutGroupBox.TabIndex = 5;
 			this._LayoutGroupBox.TabStop = false;
@@ -328,7 +336,7 @@
             "顺时针旋转90度",
             "逆时针旋转90度"});
 			this._RotationBox.Location = new System.Drawing.Point(154, 210);
-			this._RotationBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._RotationBox.Margin = new System.Windows.Forms.Padding(4);
 			this._RotationBox.Name = "_RotationBox";
 			this._RotationBox.Size = new System.Drawing.Size(166, 26);
 			this._RotationBox.TabIndex = 11;
@@ -341,7 +349,7 @@
             "横向页面",
             "纵向页面"});
 			this._SourceOrientationBox.Location = new System.Drawing.Point(30, 210);
-			this._SourceOrientationBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._SourceOrientationBox.Margin = new System.Windows.Forms.Padding(4);
 			this._SourceOrientationBox.Name = "_SourceOrientationBox";
 			this._SourceOrientationBox.Size = new System.Drawing.Size(114, 26);
 			this._SourceOrientationBox.TabIndex = 11;
@@ -350,7 +358,7 @@
 			// 
 			this._UnifyOrientationBox.AutoSize = true;
 			this._UnifyOrientationBox.Location = new System.Drawing.Point(12, 177);
-			this._UnifyOrientationBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._UnifyOrientationBox.Margin = new System.Windows.Forms.Padding(4);
 			this._UnifyOrientationBox.Name = "_UnifyOrientationBox";
 			this._UnifyOrientationBox.Size = new System.Drawing.Size(232, 22);
 			this._UnifyOrientationBox.TabIndex = 10;
@@ -366,7 +374,7 @@
             0,
             131072});
 			this._HeightBox.Location = new System.Drawing.Point(231, 68);
-			this._HeightBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._HeightBox.Margin = new System.Windows.Forms.Padding(4);
 			this._HeightBox.Maximum = new decimal(new int[] {
             9999,
             0,
@@ -386,7 +394,7 @@
             0,
             131072});
 			this._WidthBox.Location = new System.Drawing.Point(80, 66);
-			this._WidthBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._WidthBox.Margin = new System.Windows.Forms.Padding(4);
 			this._WidthBox.Maximum = new decimal(new int[] {
             9999,
             0,
@@ -402,7 +410,7 @@
 			this._ImageVAlignBox.DisplayMember = "Key";
 			this._ImageVAlignBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this._ImageVAlignBox.Location = new System.Drawing.Point(208, 140);
-			this._ImageVAlignBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._ImageVAlignBox.Margin = new System.Windows.Forms.Padding(4);
 			this._ImageVAlignBox.Name = "_ImageVAlignBox";
 			this._ImageVAlignBox.Size = new System.Drawing.Size(112, 26);
 			this._ImageVAlignBox.TabIndex = 9;
@@ -413,7 +421,7 @@
 			this._ImageHAlignBox.DisplayMember = "Key";
 			this._ImageHAlignBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this._ImageHAlignBox.Location = new System.Drawing.Point(80, 140);
-			this._ImageHAlignBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._ImageHAlignBox.Margin = new System.Windows.Forms.Padding(4);
 			this._ImageHAlignBox.Name = "_ImageHAlignBox";
 			this._ImageHAlignBox.Size = new System.Drawing.Size(112, 26);
 			this._ImageHAlignBox.TabIndex = 8;
@@ -443,7 +451,7 @@
 			// 
 			this._PageSizeBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this._PageSizeBox.Location = new System.Drawing.Point(80, 27);
-			this._PageSizeBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._PageSizeBox.Margin = new System.Windows.Forms.Padding(4);
 			this._PageSizeBox.Name = "_PageSizeBox";
 			this._PageSizeBox.Size = new System.Drawing.Size(241, 26);
 			this._PageSizeBox.TabIndex = 1;
@@ -455,7 +463,7 @@
 			this._AutoRotateBox.Checked = true;
 			this._AutoRotateBox.CheckState = System.Windows.Forms.CheckState.Checked;
 			this._AutoRotateBox.Location = new System.Drawing.Point(30, 108);
-			this._AutoRotateBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._AutoRotateBox.Margin = new System.Windows.Forms.Padding(4);
 			this._AutoRotateBox.Name = "_AutoRotateBox";
 			this._AutoRotateBox.Size = new System.Drawing.Size(286, 22);
 			this._AutoRotateBox.TabIndex = 6;
@@ -494,9 +502,9 @@
 			this._MarginGroupBox.Controls.Add(this.label6);
 			this._MarginGroupBox.Controls.Add(this.label1);
 			this._MarginGroupBox.Location = new System.Drawing.Point(9, 274);
-			this._MarginGroupBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._MarginGroupBox.Margin = new System.Windows.Forms.Padding(4);
 			this._MarginGroupBox.Name = "_MarginGroupBox";
-			this._MarginGroupBox.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._MarginGroupBox.Padding = new System.Windows.Forms.Padding(4);
 			this._MarginGroupBox.Size = new System.Drawing.Size(338, 141);
 			this._MarginGroupBox.TabIndex = 6;
 			this._MarginGroupBox.TabStop = false;
@@ -508,7 +516,7 @@
 			this._SyncMarginsBox.Checked = true;
 			this._SyncMarginsBox.CheckState = System.Windows.Forms.CheckState.Checked;
 			this._SyncMarginsBox.Location = new System.Drawing.Point(80, 111);
-			this._SyncMarginsBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._SyncMarginsBox.Margin = new System.Windows.Forms.Padding(4);
 			this._SyncMarginsBox.Name = "_SyncMarginsBox";
 			this._SyncMarginsBox.Size = new System.Drawing.Size(178, 22);
 			this._SyncMarginsBox.TabIndex = 9;
@@ -524,7 +532,7 @@
             0,
             131072});
 			this._RightMarginBox.Location = new System.Drawing.Point(231, 70);
-			this._RightMarginBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._RightMarginBox.Margin = new System.Windows.Forms.Padding(4);
 			this._RightMarginBox.Maximum = new decimal(new int[] {
             99,
             0,
@@ -545,7 +553,7 @@
             0,
             131072});
 			this._LeftMarginBox.Location = new System.Drawing.Point(80, 70);
-			this._LeftMarginBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._LeftMarginBox.Margin = new System.Windows.Forms.Padding(4);
 			this._LeftMarginBox.Maximum = new decimal(new int[] {
             99,
             0,
@@ -566,7 +574,7 @@
             0,
             131072});
 			this._BottomMarginBox.Location = new System.Drawing.Point(231, 30);
-			this._BottomMarginBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._BottomMarginBox.Margin = new System.Windows.Forms.Padding(4);
 			this._BottomMarginBox.Maximum = new decimal(new int[] {
             99,
             0,
@@ -587,7 +595,7 @@
             0,
             131072});
 			this._TopMarginBox.Location = new System.Drawing.Point(80, 30);
-			this._TopMarginBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._TopMarginBox.Margin = new System.Windows.Forms.Padding(4);
 			this._TopMarginBox.Maximum = new decimal(new int[] {
             99,
             0,
@@ -644,9 +652,9 @@
 			this._PdfGroupBox.Controls.Add(this._ResizePdfPagesBox);
 			this._PdfGroupBox.Controls.Add(this._ScalePdfPagesBox);
 			this._PdfGroupBox.Location = new System.Drawing.Point(356, 90);
-			this._PdfGroupBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._PdfGroupBox.Margin = new System.Windows.Forms.Padding(4);
 			this._PdfGroupBox.Name = "_PdfGroupBox";
-			this._PdfGroupBox.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._PdfGroupBox.Padding = new System.Windows.Forms.Padding(4);
 			this._PdfGroupBox.Size = new System.Drawing.Size(292, 110);
 			this._PdfGroupBox.TabIndex = 8;
 			this._PdfGroupBox.TabStop = false;
@@ -656,7 +664,7 @@
 			// 
 			this._ResizePdfPagesBox.AutoSize = true;
 			this._ResizePdfPagesBox.Location = new System.Drawing.Point(10, 30);
-			this._ResizePdfPagesBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._ResizePdfPagesBox.Margin = new System.Windows.Forms.Padding(4);
 			this._ResizePdfPagesBox.Name = "_ResizePdfPagesBox";
 			this._ResizePdfPagesBox.Size = new System.Drawing.Size(159, 22);
 			this._ResizePdfPagesBox.TabIndex = 1;
@@ -668,7 +676,7 @@
 			this._ScalePdfPagesBox.AutoSize = true;
 			this._ScalePdfPagesBox.CheckAlign = System.Drawing.ContentAlignment.TopLeft;
 			this._ScalePdfPagesBox.Location = new System.Drawing.Point(10, 63);
-			this._ScalePdfPagesBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._ScalePdfPagesBox.Margin = new System.Windows.Forms.Padding(4);
 			this._ScalePdfPagesBox.Name = "_ScalePdfPagesBox";
 			this._ScalePdfPagesBox.Size = new System.Drawing.Size(177, 22);
 			this._ScalePdfPagesBox.TabIndex = 2;
@@ -680,9 +688,9 @@
 			// 
 			this._ViewerSettingsPage.Controls.Add(this._ViewerSettingsEditor);
 			this._ViewerSettingsPage.Location = new System.Drawing.Point(4, 28);
-			this._ViewerSettingsPage.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._ViewerSettingsPage.Margin = new System.Windows.Forms.Padding(4);
 			this._ViewerSettingsPage.Name = "_ViewerSettingsPage";
-			this._ViewerSettingsPage.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._ViewerSettingsPage.Padding = new System.Windows.Forms.Padding(4);
 			this._ViewerSettingsPage.Size = new System.Drawing.Size(664, 446);
 			this._ViewerSettingsPage.TabIndex = 2;
 			this._ViewerSettingsPage.Text = "阅读方式";
@@ -691,7 +699,7 @@
 			// _ViewerSettingsEditor
 			// 
 			this._ViewerSettingsEditor.Location = new System.Drawing.Point(0, 0);
-			this._ViewerSettingsEditor.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+			this._ViewerSettingsEditor.Margin = new System.Windows.Forms.Padding(6);
 			this._ViewerSettingsEditor.Name = "_ViewerSettingsEditor";
 			this._ViewerSettingsEditor.Size = new System.Drawing.Size(657, 418);
 			this._ViewerSettingsEditor.TabIndex = 1;
@@ -701,9 +709,9 @@
 			this._DocumentInfoPage.Controls.Add(this._FullCompressionBox);
 			this._DocumentInfoPage.Controls.Add(this._DocumentInfoEditor);
 			this._DocumentInfoPage.Location = new System.Drawing.Point(4, 28);
-			this._DocumentInfoPage.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._DocumentInfoPage.Margin = new System.Windows.Forms.Padding(4);
 			this._DocumentInfoPage.Name = "_DocumentInfoPage";
-			this._DocumentInfoPage.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._DocumentInfoPage.Padding = new System.Windows.Forms.Padding(4);
 			this._DocumentInfoPage.Size = new System.Drawing.Size(664, 446);
 			this._DocumentInfoPage.TabIndex = 3;
 			this._DocumentInfoPage.Text = "文档杂项";
@@ -713,7 +721,7 @@
 			// 
 			this._FullCompressionBox.AutoSize = true;
 			this._FullCompressionBox.Location = new System.Drawing.Point(22, 390);
-			this._FullCompressionBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._FullCompressionBox.Margin = new System.Windows.Forms.Padding(4);
 			this._FullCompressionBox.Name = "_FullCompressionBox";
 			this._FullCompressionBox.Size = new System.Drawing.Size(178, 22);
 			this._FullCompressionBox.TabIndex = 2;
@@ -726,7 +734,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this._DocumentInfoEditor.Location = new System.Drawing.Point(0, 0);
-			this._DocumentInfoEditor.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+			this._DocumentInfoEditor.Margin = new System.Windows.Forms.Padding(6);
 			this._DocumentInfoEditor.Name = "_DocumentInfoEditor";
 			this._DocumentInfoEditor.Size = new System.Drawing.Size(658, 441);
 			this._DocumentInfoEditor.TabIndex = 1;
@@ -735,9 +743,9 @@
 			// 
 			this._PageLabelsPage.Controls.Add(this._PageLabelEditor);
 			this._PageLabelsPage.Location = new System.Drawing.Point(4, 28);
-			this._PageLabelsPage.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._PageLabelsPage.Margin = new System.Windows.Forms.Padding(4);
 			this._PageLabelsPage.Name = "_PageLabelsPage";
-			this._PageLabelsPage.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._PageLabelsPage.Padding = new System.Windows.Forms.Padding(4);
 			this._PageLabelsPage.Size = new System.Drawing.Size(664, 446);
 			this._PageLabelsPage.TabIndex = 4;
 			this._PageLabelsPage.Text = "页码标签";
@@ -750,20 +758,42 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this._PageLabelEditor.Labels = null;
 			this._PageLabelEditor.Location = new System.Drawing.Point(-3, 0);
-			this._PageLabelEditor.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+			this._PageLabelEditor.Margin = new System.Windows.Forms.Padding(6);
 			this._PageLabelEditor.Name = "_PageLabelEditor";
 			this._PageLabelEditor.Size = new System.Drawing.Size(658, 423);
 			this._PageLabelEditor.TabIndex = 1;
 			// 
-			// _DeduplicateBox
+			// groupBox1
 			// 
-			this._DeduplicateBox.AutoSize = true;
-			this._DeduplicateBox.Location = new System.Drawing.Point(24, 300);
-			this._DeduplicateBox.Name = "_DeduplicateBox";
-			this._DeduplicateBox.Size = new System.Drawing.Size(385, 22);
-			this._DeduplicateBox.TabIndex = 7;
-			this._DeduplicateBox.Text = "尝试合并 PDF 文档重复数据以缩小合并文件";
-			this._DeduplicateBox.UseVisualStyleBackColor = true;
+			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.groupBox1.Controls.Add(this._AutoBookmarkTitleBox);
+			this.groupBox1.Controls.Add(this._CajSortBox);
+			this.groupBox1.Controls.Add(this._IgnoreLeadingNumbersBox);
+			this.groupBox1.Controls.Add(this._NumericAwareSortBox);
+			this.groupBox1.Controls.Add(this._SubFoldersBeforeFilesBox);
+			this.groupBox1.Location = new System.Drawing.Point(9, 9);
+			this.groupBox1.Margin = new System.Windows.Forms.Padding(4);
+			this.groupBox1.Name = "groupBox1";
+			this.groupBox1.Padding = new System.Windows.Forms.Padding(4);
+			this.groupBox1.Size = new System.Drawing.Size(647, 196);
+			this.groupBox1.TabIndex = 0;
+			this.groupBox1.TabStop = false;
+			this.groupBox1.Text = "文件列表行为";
+			// 
+			// groupBox3
+			// 
+			this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.groupBox3.Controls.Add(this._DeduplicateBox);
+			this.groupBox3.Controls.Add(this._KeepSourcePdfBookmarkBox);
+			this.groupBox3.Controls.Add(this._RemoveOrphanBoomarksBox);
+			this.groupBox3.Location = new System.Drawing.Point(9, 212);
+			this.groupBox3.Name = "groupBox3";
+			this.groupBox3.Size = new System.Drawing.Size(647, 199);
+			this.groupBox3.TabIndex = 1;
+			this.groupBox3.TabStop = false;
+			this.groupBox3.Text = "合并文件行为";
 			// 
 			// MergerOptionForm
 			// 
@@ -771,7 +801,7 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(711, 514);
 			this.Controls.Add(this._MainTab);
-			this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Margin = new System.Windows.Forms.Padding(4);
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "MergerOptionForm";
@@ -779,7 +809,6 @@
 			this.Text = "合并 PDF 文档选项";
 			this._MainTab.ResumeLayout(false);
 			this._FilePage.ResumeLayout(false);
-			this._FilePage.PerformLayout();
 			this._LayoutPage.ResumeLayout(false);
 			this.groupBox2.ResumeLayout(false);
 			this.groupBox2.PerformLayout();
@@ -801,6 +830,10 @@
 			this._DocumentInfoPage.ResumeLayout(false);
 			this._DocumentInfoPage.PerformLayout();
 			this._PageLabelsPage.ResumeLayout(false);
+			this.groupBox1.ResumeLayout(false);
+			this.groupBox1.PerformLayout();
+			this.groupBox3.ResumeLayout(false);
+			this.groupBox3.PerformLayout();
 			this.ResumeLayout(false);
 
 		}
@@ -858,5 +891,7 @@
 		private System.Windows.Forms.ComboBox _RotationBox;
 		private System.Windows.Forms.ComboBox _SourceOrientationBox;
 		private System.Windows.Forms.CheckBox _DeduplicateBox;
+		private System.Windows.Forms.GroupBox groupBox3;
+		private System.Windows.Forms.GroupBox groupBox1;
 	}
 }
