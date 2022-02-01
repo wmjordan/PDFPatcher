@@ -17,7 +17,7 @@ namespace PDFPatcher.Processor
 	{
 		internal static readonly string[] SupportedFileTypes = new string[] { ".pdf", ".tif", ".jpg", ".gif", ".png", ".tiff", ".bmp", ".jpeg", ".jp2", ".j2k" };
 		static readonly string[] __BuiltInImageTypes = { ".png", ".jpg", ".jpeg", ".bmp", ".jp2", ".j2k" };
-		static readonly string[] __ExtImageTypes = { ".tif", ".tiff", ".gif" };
+		static readonly string[] __MultiFrameImageTypes = { ".tif", ".tiff", ".gif" };
 		static readonly PixelFormat[] __JpgFormats = new PixelFormat[] {
 									PixelFormat.Format16bppGrayScale,
 									PixelFormat.Format16bppRgb555,
@@ -160,10 +160,19 @@ namespace PDFPatcher.Processor
 
 		private void AddImagePage(SourceItem source, BookmarkElement bookmark) {
 			var ext = source.FilePath.FileExtension.ToLowerInvariant();
+			var isBitonal = false;
 			if (__BuiltInImageTypes.Contains(ext)) {
 				iTextImage image = LoadImage(source, ext);
+				var cs = image.Additional.GetAsArray(PdfName.COLORSPACE);
+				if (cs != null && cs.Size == 4
+					&& PdfName.INDEXED.Equals(cs[0]) && PdfName.DEVICERGB.Equals(cs[1])
+					&& (cs[2] is PdfNumber n) && n.IntValue == 1
+					&& cs[3].GetBytes().Length == 6) {
+					isBitonal = true;
+					goto ADVANCED_LOAD;
+				}
 				if (ext == Constants.FileExtensions.Jpg || ext == Constants.FileExtensions.Jpeg) {
-					if (Processor.Imaging.JpgHelper.TryGetExifOrientation(source.FilePath, out var o) && o != 0) {
+					if (Imaging.JpgHelper.TryGetExifOrientation(source.FilePath, out var o) && o != 0) {
 						switch (o) {
 							case 6: image.RotationDegrees = -90; break;
 							case 3: image.RotationDegrees = 180; break;
@@ -178,8 +187,10 @@ namespace PDFPatcher.Processor
 					AddImage(image);
 					SetBookmarkAction(bookmark);
 				}
+				return;
 			}
-			else if (__ExtImageTypes.Contains(ext)) {
+			ADVANCED_LOAD:
+			if (isBitonal || __MultiFrameImageTypes.Contains(ext)) {
 				FreeImageBitmap fi = null;
 				try {
 					fi = FreeImageBitmap.FromFile(source.FilePath);
@@ -588,6 +599,9 @@ namespace PDFPatcher.Processor
 			}
 			else if (fi.ColorDepth > 16) {
 				format = FREE_IMAGE_FORMAT.FIF_PNG;
+			}
+			else if (fi.PixelFormat == PixelFormat.Format1bppIndexed && fi.ImageFormat != FREE_IMAGE_FORMAT.FIF_TIFF && recompressWithJbig2 == false) {
+				format = FREE_IMAGE_FORMAT.FIF_TIFF;
 			}
 			else {
 				format = fi.ImageFormat;
