@@ -108,6 +108,7 @@ namespace PDFPatcher.Functions.Editor
 					View.AutoBookmark.TryDispose();
 					v.Enabled = true;
 					View.ViewerToolbar.Enabled = true;
+					View.Viewer.Invalidate();
 				}
 				catch (Exception ex) {
 					FormHelper.ErrorBox(ex.Message);
@@ -115,12 +116,16 @@ namespace PDFPatcher.Functions.Editor
 				}
 			}
 			if (s == null) {
-				v.Document.TryDispose();
-				View.AutoBookmark.TryDispose();
-				Model.PdfDocument = v.Document = null;
-				v.Enabled = false;
-				View.ViewerToolbar.Enabled = false;
+				Uninitialize(v);
 			}
+		}
+
+		internal void Uninitialize(PdfViewerControl v) {
+			v.Document.TryDispose();
+			View.AutoBookmark.TryDispose();
+			Model.PdfDocument = v.Document = null;
+			v.Enabled = false;
+			View.ViewerToolbar.Enabled = false;
 		}
 
 		internal void Destroy() {
@@ -162,10 +167,6 @@ namespace PDFPatcher.Functions.Editor
 					View.MainPanel.Enabled = View.BookmarkToolbar.Enabled = false;
 					if (importMode == false) {
 						View.DocumentPath = path;
-						LoadPdfDocument();
-					}
-					if (Model.PdfDocument == null) {
-						return;
 					}
 					_loader = new BackgroundWorker();
 					_loader.RunWorkerCompleted += _LoadBookmarkWorker_RunWorkerCompleted;
@@ -203,9 +204,9 @@ namespace PDFPatcher.Functions.Editor
 					Tracker.DebugMessage("get bookmark");
 					e.Result = new object[] {
 					OutlineManager.GetBookmark (reader, new UnitConverter () { Unit = Constants.Units.Point }),
-					importMode,
-					path
-				};
+						importMode,
+						path
+					};
 					Tracker.DebugMessage("finished loading");
 				}
 				catch (iTextSharp.text.exceptions.BadPasswordException) {
@@ -222,13 +223,15 @@ namespace PDFPatcher.Functions.Editor
 			((BackgroundWorker)sender).Dispose();
 			Model.IsLoadingDocument = false;
 			View.MainPanel.Enabled = View.BookmarkToolbar.Enabled = true;
-			var r = e.Result as object[];
+			var r = e.Error == null ? e.Result as object[] : null;
 			if (r == null) {
 				// 异常终止
 				ClearBookmarks();
 				InitBookmarkEditor();
+				Uninitialize(View.Viewer);
 				return;
 			}
+			LoadPdfDocument();
 			var importMode = (bool)r[1];
 			if (importMode == false) {
 				View.DocumentPath = r[2] as string;
