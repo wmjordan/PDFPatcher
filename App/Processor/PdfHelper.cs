@@ -68,6 +68,10 @@ namespace PDFPatcher.Processor
 					}
 					password = Encoding.Default.GetBytes(f.Password);
 				}
+				catch (iTextSharp.text.exceptions.InvalidPdfException) {
+					FormHelper.ErrorBox("PDF 文档已经损坏，无法修复。");
+					throw;
+				}
 			}
 		}
 
