@@ -7,6 +7,7 @@ using System.Xml;
 using FreeImageAPI;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
+using iTextSharp.text.pdf.parser;
 using PDFPatcher.Common;
 using PDFPatcher.Model;
 using iTextImage = iTextSharp.text.Image;
@@ -158,39 +159,48 @@ namespace PDFPatcher.Processor
 			}
 		}
 
-		private void AddImagePage(SourceItem source, BookmarkElement bookmark) {
+		void AddImagePage(SourceItem source, BookmarkElement bookmark) {
 			var ext = source.FilePath.FileExtension.ToLowerInvariant();
-			var isBitonal = false;
+			var isIndexed = false;
 			if (__BuiltInImageTypes.Contains(ext)) {
-				iTextImage image = LoadImage(source, ext);
-				var cs = image.Additional.GetAsArray(PdfName.COLORSPACE);
-				if (cs != null && cs.Size == 4
-					&& PdfName.INDEXED.Equals(cs[0]) && PdfName.DEVICERGB.Equals(cs[1])
-					&& (cs[2] is PdfNumber n) && n.IntValue == 1
-					&& cs[3].GetBytes().Length == 6) {
-					isBitonal = true;
-					goto ADVANCED_LOAD;
-				}
-				if (ext == Constants.FileExtensions.Jpg || ext == Constants.FileExtensions.Jpeg) {
-					if (Imaging.JpgHelper.TryGetExifOrientation(source.FilePath, out var o) && o != 0) {
-						switch (o) {
-							case 6: image.RotationDegrees = -90; break;
-							case 3: image.RotationDegrees = 180; break;
-							case 8: image.RotationDegrees = 90; break;
+				try {
+					using (var fi = new FreeImageBitmap(source.FilePath, (FREE_IMAGE_LOAD_FLAGS)0x0800/*仅加载图像尺寸信息*/)) {
+						if (fi.HasPalette) {
+							isIndexed = true;
+							goto ADVANCED_LOAD;
 						}
 					}
 				}
+				catch (FreeImageException) {
+					Tracker.TraceMessage("无法添加文件：" + source.FilePath);
+					return;
+				}
+				var image = LoadImage(source, ext);
 				if (image == null) {
 					Tracker.TraceMessage("无法添加文件：" + source.FilePath);
+					return;
+				}
+				var cs = image.Additional?.GetAsArray(PdfName.COLORSPACE);
+				if (cs != null && cs.Size == 4 && PdfName.INDEXED.Equals(cs[0])) {
+					isIndexed = true;
 				}
 				else {
+					if (ext == Constants.FileExtensions.Jpg || ext == Constants.FileExtensions.Jpeg) {
+						if (Imaging.JpgHelper.TryGetExifOrientation(source.FilePath, out var o) && o != 0) {
+							switch (o) {
+								case 6: image.RotationDegrees = -90; break;
+								case 3: image.RotationDegrees = 180; break;
+								case 8: image.RotationDegrees = 90; break;
+							}
+						}
+					}
 					AddImage(image);
 					SetBookmarkAction(bookmark);
+					return;
 				}
-				return;
 			}
 			ADVANCED_LOAD:
-			if (isBitonal || __MultiFrameImageTypes.Contains(ext)) {
+			if (isIndexed || __MultiFrameImageTypes.Contains(ext)) {
 				FreeImageBitmap fi = null;
 				try {
 					fi = FreeImageBitmap.FromFile(source.FilePath);
@@ -213,7 +223,7 @@ namespace PDFPatcher.Processor
 
 		}
 
-		private void SetBookmarkAction(BookmarkElement bookmark) {
+		void SetBookmarkAction(BookmarkElement bookmark) {
 			if (bookmark == null) {
 				return;
 			}
@@ -222,7 +232,7 @@ namespace PDFPatcher.Processor
 			bookmark.Top = _doc.PageSize.Height;
 		}
 
-		private void AddEmptyPage() {
+		void AddEmptyPage() {
 			if (_content.SpecialSize == SpecialPaperSize.None || _content.SpecialSize == SpecialPaperSize.AsSpecificPage) {
 				// 插入空白页
 				_doc.NewPage();
@@ -233,7 +243,7 @@ namespace PDFPatcher.Processor
 			}
 		}
 
-		private void AddPdfPages(SourceItem.Pdf sourceFile, BookmarkContainer bookmark) {
+		void AddPdfPages(SourceItem.Pdf sourceFile, BookmarkContainer bookmark) {
 			var pdf = _sink.GetPdfReader(sourceFile.FilePath);
 			if (pdf.ConfirmUnethicalMode() == false) {
 				Tracker.TraceMessage("忽略了没有权限处理的文件：" + sourceFile.FilePath);
@@ -354,7 +364,7 @@ namespace PDFPatcher.Processor
 			}
 		}
 
-		private BookmarkContainer KeepBookmarks(BookmarkContainer bookmark, PdfReader pdf, int[] pageRemapper, CoordinateTranslationSettings[] cts) {
+		BookmarkContainer KeepBookmarks(BookmarkContainer bookmark, PdfReader pdf, int[] pageRemapper, CoordinateTranslationSettings[] cts) {
 			var bm = OutlineManager.GetBookmark(pdf, new UnitConverter() { Unit = Constants.Units.Point });
 			var processors = new List<IInfoDocProcessor>();
 			if (_option.ViewerPreferences.CollapseBookmark != BookmarkStatus.AsIs) {
@@ -465,7 +475,7 @@ namespace PDFPatcher.Processor
 		//    }
 		//}
 
-		private static iTextImage LoadImage(SourceItem sourceFile, string ext) {
+		static iTextImage LoadImage(SourceItem sourceFile, string ext) {
 			var imageItem = sourceFile as SourceItem.Image;
 			var cropOptions = imageItem.Cropping;
 			if (imageItem == null || cropOptions.NeedCropping == false) {
@@ -503,7 +513,7 @@ namespace PDFPatcher.Processor
 			}
 		}
 
-		private BookmarkElement CreateAutoBookmark(SourceItem sourceFile, XmlElement bookmarkContainer) {
+		BookmarkElement CreateAutoBookmark(SourceItem sourceFile, XmlElement bookmarkContainer) {
 			if (PdfBookmarks == null
 				|| sourceFile.Bookmark == null
 				|| String.IsNullOrEmpty(sourceFile.Bookmark.Title)) {
@@ -514,7 +524,7 @@ namespace PDFPatcher.Processor
 			return b;
 		}
 
-		private void AddImage(iTextImage image) {
+		void AddImage(iTextImage image) {
 			if (_option.AutoMaskBWImages && image.IsMaskCandidate()) {
 				image.MakeMask();
 			}
@@ -580,7 +590,7 @@ namespace PDFPatcher.Processor
 			_doc.NewPage();
 		}
 
-		private static Image LoadImageFrame(SourceItem.Image source, bool recompressWithJbig2, ref FreeImageBitmap fi) {
+		static Image LoadImageFrame(SourceItem.Image source, bool recompressWithJbig2, ref FreeImageBitmap fi) {
 			iTextImage image;
 			var cropOptions = source.Cropping;
 			FREE_IMAGE_FORMAT format;
