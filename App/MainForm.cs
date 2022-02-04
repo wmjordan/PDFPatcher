@@ -224,6 +224,14 @@ namespace PDFPatcher
 			InitializeComponent();
 		}
 
+		protected override void WndProc(ref Message m) {
+			base.WndProc(ref m);
+			if (m.Msg == FormHelper.ProcMsg) {
+				OpenFiles(FormHelper.GetCopyDataContent(ref m).Split('\n'));
+				Activate();
+			}
+		}
+
 		protected override void OnLoad(EventArgs e) {
 			base.OnLoad(e);
 			Processor.PdfHelper.ToggleReaderDebugMode(true); // 打开容错模式

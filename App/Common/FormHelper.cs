@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace PDFPatcher.Common
 {
 	static class FormHelper
 	{
+		public const int ProcMsg = NativeMethods.WM_COPYDATA;
+
 		public static bool IsCtrlKeyDown => (Control.ModifierKeys & Keys.Control) != 0;
 
 		public static bool IsShiftKeyDown => (Control.ModifierKeys & Keys.Shift) != 0;
@@ -272,6 +275,46 @@ namespace PDFPatcher.Common
 		public static bool ConfirmYesBox(this Control control, string text) {
 			return MessageBox.Show(text, control.Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes;
 		}
+		public static int SendCopyDataMessage(this System.Diagnostics.Process process, string text) {
+			var s = new CopyDataStruct(text);
+			var r = NativeMethods.SendMessage(process.MainWindowHandle, ProcMsg, 0, ref s);
+			s.Dispose();
+			return r;
+		}
+		public static string GetCopyDataContent(ref Message message) {
+			if (message.Msg == ProcMsg) {
+				return Marshal.PtrToStringUni(((CopyDataStruct)Marshal.PtrToStructure(message.LParam, typeof(CopyDataStruct))).lpData);
+			}
+			return null;
+		}
 
+		static class NativeMethods
+		{
+			const string User32DLL = "User32.dll";
+			internal const int WM_COPYDATA = 0x004A;
+
+			[DllImport(User32DLL, SetLastError = false, CharSet = CharSet.Unicode)]
+			public static extern int SendMessage(IntPtr hWnd, int uMsg, int wParam, ref CopyDataStruct lParam);
+			[DllImport("kernel32.dll", SetLastError = true)]
+			public static extern IntPtr LocalFree(IntPtr p);
+		}
+
+		struct CopyDataStruct : IDisposable
+		{
+			readonly IntPtr dwData;
+			readonly int cbData;
+			internal IntPtr lpData;
+
+			public CopyDataStruct(string text) {
+				cbData = (text.Length + 1) * 2;
+				dwData = (IntPtr)1;
+				lpData = Marshal.StringToBSTR(text);
+			}
+
+			public void Dispose() {
+				NativeMethods.LocalFree(lpData);
+				lpData = IntPtr.Zero;
+			}
+		}
 	}
 }
