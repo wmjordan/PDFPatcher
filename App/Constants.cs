@@ -15,7 +15,8 @@ namespace PDFPatcher
 		internal const string AppName = "PDF 补丁丁";
 		internal const string AppEngName = "PDFPatcher";
 		internal const string AppHomePage = "http://pdfpatcher.cnblogs.com";
-		internal const string AppHubPage = "https://gitee.com/wmjordan/pdfpatcher";
+		internal const string AppRepository = "https://github.com/wmjordan/pdfpatcher";
+		internal const string AppRepository2 = "https://gitee.com/wmjordan/pdfpatcher";
 		internal const string AppUpdateFile = "http://files.cnblogs.com/pdfpatcher/pdfpatcher.update.xml";
 
 		/// <summary>

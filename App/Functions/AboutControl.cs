@@ -21,7 +21,8 @@ namespace PDFPatcher
 				.Replace("$AppName", Constants.AppName)
 				.Replace("$AssemblyCopyright", AssemblyCopyright)
 				.Replace("$AppHomePage", Constants.AppHomePage)
-				.Replace("$AppHubPage", Constants.AppHubPage)
+				.Replace("$AppRepository1", Constants.AppRepository)
+				.Replace("$AppRepository2", Constants.AppRepository2)
 				.Replace("$AssemblyCompany", AssemblyCompany)
 				.Replace("$AssemblyVersion", AssemblyVersion);
 		}
