@@ -14,8 +14,9 @@ namespace PDFPatcher.Processor
 	{
 		internal static readonly int[] CompoundTypes = new int[] { PdfObject.DICTIONARY, PdfObject.ARRAY, PdfObject.STREAM };
 
-		private static readonly DualKeyDictionary<PdfName, string> __PdfNameMap;
-		private static readonly Dictionary<string, byte[]> __PdfPasswordBox = new Dictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase);
+		static readonly DualKeyDictionary<PdfName, string> __PdfNameMap;
+		static readonly Dictionary<string, byte[]> __PdfPasswordCache = new Dictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase);
+		static bool __SuppressUnethicalWarning;
 
 		/// <summary>
 		/// 切换强制读取加密文档模式。
@@ -40,7 +41,7 @@ namespace PDFPatcher.Processor
 		/// <returns><see cref="PdfReader"/> 实例。</returns>
 		internal static PdfReader OpenPdfFile(string sourceFile, bool partial, bool removeUnusedObjects) {
 			byte[] password;
-			__PdfPasswordBox.TryGetValue(sourceFile, out password);
+			__PdfPasswordCache.TryGetValue(sourceFile, out password);
 			while (true) {
 				try {
 					if (File.Exists(sourceFile) == false) {
@@ -54,7 +55,7 @@ namespace PDFPatcher.Processor
 						r = new PdfReader(sourceFile, password);
 					}
 					if (password != null && password.Length > 0) {
-						__PdfPasswordBox[sourceFile] = password;
+						__PdfPasswordCache[sourceFile] = password;
 					}
 					if (removeUnusedObjects) {
 						r.RemoveUnusedObjects();
@@ -78,15 +79,19 @@ namespace PDFPatcher.Processor
 		internal static bool ConfirmUnethicalMode(this PdfReader pdf) {
 			ToggleUnethicalMode(false);
 			var r = pdf.IsOpenedWithFullPermissions
-					|| FormHelper.YesNoBox(Messages.UserRightRequired) == System.Windows.Forms.DialogResult.Yes;
+					|| __SuppressUnethicalWarning
+					|| FormHelper.ConfirmOKBox(Messages.UserRightRequired);
 			ToggleUnethicalMode(true);
+			if (__SuppressUnethicalWarning == false && FormHelper.IsCtrlKeyDown) {
+				__SuppressUnethicalWarning = true;
+			}
 			return r;
 		}
 
 		internal static MuPdfSharp.MuDocument OpenMuDocument(string sourceFile) {
 			var d = new MuPdfSharp.MuDocument(sourceFile);
 			if (d.NeedsPassword) {
-				if (__PdfPasswordBox.TryGetValue(sourceFile, out byte[] password)) {
+				if (__PdfPasswordCache.TryGetValue(sourceFile, out byte[] password)) {
 					d.AuthenticatePassword(password != null ? Encoding.Default.GetString(password) : String.Empty);
 				}
 				while (d.IsAuthenticated == false) {
@@ -94,7 +99,7 @@ namespace PDFPatcher.Processor
 						if (f.ShowDialog() == System.Windows.Forms.DialogResult.Cancel) {
 							throw new iTextSharp.text.exceptions.BadPasswordException("密码错误，没有权限打开 PDF 文件。");
 						}
-						__PdfPasswordBox[sourceFile] = password = Encoding.Default.GetBytes(f.Password);
+						__PdfPasswordCache[sourceFile] = password = Encoding.Default.GetBytes(f.Password);
 					}
 					d.AuthenticatePassword(password != null ? Encoding.Default.GetString(password) : String.Empty);
 				}
@@ -106,7 +111,7 @@ namespace PDFPatcher.Processor
 			__PdfNameMap = InitPdfNameMap();
 		}
 
-		private static DualKeyDictionary<PdfName, string> InitPdfNameMap() {
+		static DualKeyDictionary<PdfName, string> InitPdfNameMap() {
 			var m = new DualKeyDictionary<PdfName, string> {
 				{ PdfName.PAGELAYOUT, Constants.PageLayout },
 
@@ -532,7 +537,7 @@ namespace PDFPatcher.Processor
 			}
 		}
 
-		private static void GetUnusedNode(PdfReader pdf, bool partial, PdfObject obj, bool[] hits) {
+		static void GetUnusedNode(PdfReader pdf, bool partial, PdfObject obj, bool[] hits) {
 			var state = new Stack<object>();
 			state.Push(obj);
 			int oc = pdf.XrefSize;
