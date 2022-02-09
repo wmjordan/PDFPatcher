@@ -465,10 +465,7 @@ namespace PDFPatcher
 
 		Control GetActiveFunctionControl() {
 			var t = _FunctionContainer.SelectedTab;
-			if (t == null || t.HasChildren == false) {
-				return null;
-			}
-			return t.Controls[0];
+			return t == null || t.HasChildren == false ? null : t.Controls[0];
 		}
 
 		internal void OpenFileWithEditor(string path) {
