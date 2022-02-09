@@ -269,6 +269,9 @@ namespace PDFPatcher.Common
 		internal static DialogResult YesNoCancelBox(string text) {
 			return MessageBox.Show(text, Constants.AppName, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
 		}
+		public static bool ConfirmOKBox(string text) {
+			return MessageBox.Show(text, Constants.AppName, MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK;
+		}
 		public static bool ConfirmOKBox(this Control control, string text) {
 			return MessageBox.Show(text, control.Text, MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK;
 		}

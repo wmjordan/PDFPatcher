@@ -497,7 +497,7 @@ namespace PDFPatcher
 		internal const string InfoFileNameInvalid = "信息文件的文件名无效。";
 		internal const string SourceFileEqualsTargetFile = "输入 PDF 文件和输出 PDF 文件的文件名不能相同。";
 		internal const string PasswordInvalid = "输入的密码错误，无法打开 PDF 文档。";
-		internal const string UserRightRequired = "此 PDF 文件的作者设置了修改文件的权限控制。\n如果您继续操作，您必须得到创建者对该文档进行修改的授权。\n如果您不能保证自己有权修改此文档，请按“否”键退出，否则您需要承担修改此文档带来的一切责任。";
+		internal const string UserRightRequired = "此 PDF 文件的作者设置了修改文件的权限控制。\n如果您继续操作，您必须得到创建者对该文档进行修改的授权。\n如果您不能保证自己有权修改此文档，请按“取消”键退出，否则您需要承担修改此文档带来的一切责任。\n\n按住 Ctrl 键点击“确定”按钮，在本次使用过程中将不再提示权限问题。";
 		internal const string PageRanges = "在此输入需要处理的页码范围。\n如：“1-100”表示处理第1～100页。\n如有多个页码范围，可用空格、分号或逗号分开。\n如：“1-10;12;14-20”表示处理1～10、12和14～20页。";
 		internal const string ReversePageRanges = "此外还可以输入逆序页码，如“100-1”表示从第100页开始倒序处理至第1页。";
 		internal const string ModiNotAvailable = "本机尚未安装微软文本识别组件（MODI），无法使用识别文本功能。";
