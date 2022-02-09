@@ -9,15 +9,12 @@ namespace PDFPatcher
 {
 	static class Program
 	{
-		/// <summary>
-		/// 应用程序的主入口点。
-		/// </summary>
 		[STAThread]
 		static void Main(string[] args) {
-			Application.EnableVisualStyles();
-			Application.SetCompatibleTextRenderingDefault(false);
 			using (var m = new Mutex(true, Constants.AppEngName)) {
 				if (FormHelper.IsCtrlKeyDown || m.WaitOne(100)) {
+					Application.EnableVisualStyles();
+					Application.SetCompatibleTextRenderingDefault(false);
 					Application.Run(AppContext.MainForm = new MainForm());
 				}
 				else {
