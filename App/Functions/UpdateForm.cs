@@ -20,7 +20,12 @@ namespace PDFPatcher.Functions
 				_CheckUpdateIntervalBox.Select(i == 7 ? 0 : i == 14 ? 1 : i == 30 ? 2 : 3);
 			};
 			FormClosed += (s, args) => {
-				_UpdateChecker?.Dispose();
+				var c = _UpdateChecker;
+				if (c != null) {
+					c.DownloadDataCompleted -= UpdateChecker_DownloadDataCompleted;
+					c.CancelAsync();
+					c.Dispose();
+				}
 			};
 			_HomePageButton.Click += (s, args) => {
 				CommonCommands.VisitHomePage();
@@ -44,25 +49,27 @@ namespace PDFPatcher.Functions
 		private void CheckNewVersion() {
 			_UpdateChecker = new WebClient();
 			_InfoBox.AppendLine("正在检查新版本，请稍候……");
-			_UpdateChecker.DownloadDataCompleted += (s, args) => {
-				_InfoBox.Clear();
-				if (args.Error != null) {
-					_InfoBox.AppendText("检查新版本失败：" + args.Error.Message);
-					goto Exit;
-				}
-				try {
-					var x = new XmlDocument();
-					x.Load(new System.IO.MemoryStream(args.Result));
-					CheckResult(x);
-				}
-				catch (Exception) {
-					FormHelper.ErrorBox("版本信息文件格式错误，请稍候重试。");
-				}
-			Exit:
-				_UpdateChecker.Dispose();
-				_UpdateChecker = null;
-			};
+			_UpdateChecker.DownloadDataCompleted += UpdateChecker_DownloadDataCompleted;
 			_UpdateChecker.DownloadDataAsync(new Uri(Constants.AppUpdateFile));
+		}
+
+		void UpdateChecker_DownloadDataCompleted(object sender, DownloadDataCompletedEventArgs args) {
+			_InfoBox.Clear();
+			if (args.Error != null) {
+				_InfoBox.AppendText("检查新版本失败：" + args.Error.Message);
+				goto Exit;
+			}
+			try {
+				var x = new XmlDocument();
+				x.Load(new System.IO.MemoryStream(args.Result));
+				CheckResult(x);
+			}
+			catch (Exception) {
+				FormHelper.ErrorBox("版本信息文件格式错误，请稍候重试。");
+			}
+		Exit:
+			_UpdateChecker.Dispose();
+			_UpdateChecker = null;
 		}
 
 		private void CheckResult(XmlDocument x) {
