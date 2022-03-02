@@ -22,5 +22,35 @@ namespace PDFPatcher
 		internal static void VisitHomePage() {
 			System.Diagnostics.Process.Start(Constants.AppHomePage);
 		}
+
+		internal static void RightKey(Functions.AppOptionForm appOptionForm) {
+			bool isExist = RightKeyHelper.IsExist(Constants.AppEngName);
+			var path = System.IO.Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath);
+			var exeAbsPath = FileHelper.CombinePath(path, Constants.AppEngName + ".exe");
+
+			if (isExist == true) {
+				bool isDelete = RightKeyHelper.Delete(Constants.AppEngName);
+				if (isDelete) {
+					FormHelper.InfoBox(Constants.AppEngName + "右键菜单删除成功。");
+					appOptionForm._RightKeyButton.Text = @"添加右键菜单";
+
+				}
+			}
+			else {
+				bool isAdd = RightKeyHelper.Add(Constants.AppEngName, exeAbsPath);
+				if (isAdd) {
+					FormHelper.InfoBox(Constants.AppEngName + "右键菜单创建成功。");
+					appOptionForm._RightKeyButton.Text = @"删除右键菜单";
+
+				}
+
+			}
+		}
+		internal static void RightKeyButton_Text(Functions.AppOptionForm appOptionForm) {
+			bool isExist = RightKeyHelper.IsExist(Constants.AppEngName);
+			if(isExist == true) {
+				appOptionForm._RightKeyButton.Text = @"删除右键菜单";
+			}
+		}
 	}
 }

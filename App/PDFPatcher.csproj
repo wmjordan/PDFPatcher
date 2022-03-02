@@ -96,6 +96,7 @@
     </Compile>
     <Compile Include="Commands.cs" />
     <Compile Include="CommonCommands.cs" />
+    <Compile Include="Common\RightKeyHelper.cs" />
     <Compile Include="Common\CommandRegistry.cs" />
     <Compile Include="Common\FilePath.cs" />
     <Compile Include="Common\FontHelper.cs">
@@ -468,7 +469,7 @@
     <Compile Include="Functions\Editor\SearchBookmarkForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Functions\Editor\SearchBookmarkForm.Designer.cs">
+    <4 Include="Functions\Editor\SearchBookmarkForm.Designer.cs">
       <DependentUpon>SearchBookmarkForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Functions\Editor\ShiftPageNumberEntryForm.cs">
@@ -695,8 +696,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Configuration.resx">
       <Generator>ResXFileCodeGenerator</Generator>
+
       <LastGenOutput>Configuration.Designer.cs</LastGenOutput>
 		</EmbeddedResource>
+
     <EmbeddedResource Include="Functions\DocumentOption\FontCharSubstitutionForm.resx">
       <DependentUpon>FontCharSubstitutionForm.cs</DependentUpon>
     </EmbeddedResource>
