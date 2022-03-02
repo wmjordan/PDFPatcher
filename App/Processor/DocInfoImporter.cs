@@ -71,7 +71,7 @@ namespace PDFPatcher.Processor
 			var exp = new DocInfoExporter(pdf, o);
 			Tracker.SetProgressGoal(exp.EstimateWorkload());
 			using (var ms = new MemoryStream()) {
-				using (var w = XmlWriter.Create(ms)) {
+				using (var w = XmlWriter.Create(ms, new XmlWriterSettings { CheckCharacters = false })) {
 					w.WriteStartElement(Constants.PdfInfo);
 					w.WriteAttributeString(Constants.Info.ProductVersion, Constants.InfoDocVersion);
 					exp.ExportDocument(w);
@@ -98,12 +98,10 @@ namespace PDFPatcher.Processor
 		}
 
 		internal static float GetUnitFactor(XmlElement root) {
-			var n = root.SelectSingleNode(Constants.Units.ThisName + "/@" + Constants.Units.Unit);
-			var unit = n?.Value;
-			if (string.IsNullOrEmpty(unit) == false) {
-				return ValueHelper.MapValue(unit, Constants.Units.Names, Constants.Units.Factors, 1);
-			}
-			return 1;
+			var unit = root.SelectSingleNode(Constants.Units.ThisName + "/@" + Constants.Units.Unit)?.Value;
+			return string.IsNullOrEmpty(unit)
+				? 1
+				: ValueHelper.MapValue(unit, Constants.Units.Names, Constants.Units.Factors, 1);
 		}
 
 		internal BookmarkContainer GetBookmarks() {
@@ -342,7 +340,6 @@ namespace PDFPatcher.Processor
 				}
 				acc = Array.ConvertAll(acc, a => UnitConverter.ToPoint(a, _unitFactor));
 				var region = new iTextSharp.text.Rectangle(acc[0], acc[1], acc[2], acc[3]);
-
 				var border = item.GetAttribute(Constants.PageLinkAttributes.Border);
 				var ann = new PdfAnnotation(w.Writer, region);
 				ann.Put(PdfName.TYPE, PdfName.ANNOT);
@@ -350,12 +347,13 @@ namespace PDFPatcher.Processor
 				ann.Put(PdfName.P, w.Writer.GetPageReference(pageNum));
 				var hl = item.GetAttribute(Constants.PageLinkAttributes.Style);
 				if (string.IsNullOrEmpty(hl) == false) {
-					var h = PdfName.I;
+					PdfName h;
 					switch (hl) {
 						case "无": h = PdfName.N; break;
 						case "取反内容": h = PdfName.I; break;
 						case "取反边框": h = PdfName.O; break;
 						case "按下": h = PdfName.P; break;
+						default: h = PdfName.I; break;
 					}
 					ann.Put(PdfName.H, h);
 				}
@@ -515,7 +513,7 @@ namespace PDFPatcher.Processor
 					break;
 				case Constants.ActionType.Javascript:
 					p = map.GetAttribute(Constants.DestinationAttributes.ScriptContent);
-					dict.Put(PdfName.A, string.IsNullOrEmpty(p) == false ? PdfAction.JavaScript(p, writer) : null);
+					dict.Put(PdfName.A, string.IsNullOrEmpty(p) ? null : PdfAction.JavaScript(p, writer));
 					break;
 				default:
 					Tracker.TraceMessage(Tracker.Category.Alert, string.Concat("不支持动作：", action));
@@ -697,14 +695,12 @@ namespace PDFPatcher.Processor
 		}
 
 		private static PdfDashPattern GetPdfDashPattern(int[] p) {
-			PdfDashPattern dp;
 			switch (p.Length) {
-				case 1: dp = new PdfDashPattern(p[0]); break;
-				case 2: dp = new PdfDashPattern(p[0], p[1]); break;
-				case 3: dp = new PdfDashPattern(p[0], p[1], p[2]); break;
-				default: dp = null; break;
+				case 1: return new PdfDashPattern(p[0]);
+				case 2: return new PdfDashPattern(p[0], p[1]);
+				case 3: return new PdfDashPattern(p[0], p[1], p[2]);
+				default: return null;
 			}
-			return dp;
 		}
 
 		internal void ImportViewerPreferences(PdfReader r) {
@@ -712,8 +708,7 @@ namespace PDFPatcher.Processor
 				return;
 
 			Tracker.TraceMessage("导入阅读器设置。");
-			var ps = _infoDoc.DocumentElement.SelectSingleNode(Constants.ViewerPreferences) as XmlElement;
-			if (ps == null) {
+			if (_infoDoc.DocumentElement.SelectSingleNode(Constants.ViewerPreferences) is not XmlElement ps) {
 				return;
 			}
 			PdfName n;
