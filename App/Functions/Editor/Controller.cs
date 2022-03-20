@@ -844,11 +844,6 @@ namespace PDFPatcher.Functions.Editor
 										bm = CreateNewSiblingBookmarkForParent(bm, spans);
 									}
 									var be = bm as BookmarkElement;
-									be.Title = t;
-									be.Top = h - b.Top + b.Height + dh;
-									be.Bottom = h - b.Bottom + dh;
-									be.Action = Constants.ActionType.Goto;
-									be.Page = p.PageNumber;
 									var s = style.Style;
 									if (s.IsBold || s.IsItalic) {
 										be.TextStyle = s.IsBold && s.IsItalic ? FontStyle.Bold | FontStyle.Italic
@@ -856,6 +851,11 @@ namespace PDFPatcher.Functions.Editor
 											: s.IsItalic ? FontStyle.Italic
 											: FontStyle.Regular;
 									}
+									be.Title = t;
+									be.Top = s.GoToTop ? h + dh : h - b.Top + b.Height + dh;
+									be.Bottom = h - b.Bottom + dh;
+									be.Action = Constants.ActionType.Goto;
+									be.Page = p.PageNumber;
 									if (s.IsOpened) {
 										be.IsOpen = true;
 									}

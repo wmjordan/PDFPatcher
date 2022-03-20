@@ -16,6 +16,7 @@ namespace PDFPatcher.Model
 		public bool IsBold { get; set; }
 		public bool IsItalic { get; set; }
 		public bool IsOpened { get; set; }
+		public bool GoToTop { get; set; }
 		public Color ForeColor { get; set; }
 
 		public BookmarkSettings() {
@@ -57,6 +58,7 @@ namespace PDFPatcher.Model
 			IsBold = reader.GetValue("bold", false);
 			IsItalic = reader.GetValue("italic", false);
 			IsOpened = reader.GetValue("opened", false);
+			GoToTop = reader.GetValue("goToTop", false);
 			ForeColor = Color.FromArgb(reader.GetValue("color", Color.Empty.ToArgb()));
 		}
 
@@ -66,6 +68,7 @@ namespace PDFPatcher.Model
 			writer.WriteValue("bold", IsBold, false);
 			writer.WriteValue("italic", IsItalic, false);
 			writer.WriteValue("opened", IsOpened, false);
+			writer.WriteValue("goToTop", GoToTop, false);
 			writer.WriteValue("color", ForeColor.ToArgb(), Color.Empty.ToArgb());
 			writer.WriteEndElement();
 		}

@@ -47,6 +47,10 @@ namespace PDFPatcher.Functions
 				c.AspectGetter = o => o.Style.IsOpened;
 				c.AspectPutter = (o, v) => o.Style.IsOpened = (bool)v;
 			});
+			_GoToTopColumn.AsTyped<EditModel.AutoBookmarkStyle>(c => {
+				c.AspectGetter = o => o.Style.GoToTop;
+				c.AspectPutter = (o, v) => o.Style.GoToTop = (bool)v;
+			});
 			_BookmarkConditionBox.IsSimpleDragSource = true;
 			_BookmarkConditionBox.IsSimpleDropSink = true;
 			_BookmarkConditionBox.CellClick += (s, args) => {

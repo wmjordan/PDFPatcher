@@ -36,6 +36,7 @@
 			this._RemoveButton = new System.Windows.Forms.Button();
 			this._AutoBookmarkButton = new System.Windows.Forms.Button();
 			this._MergeAdjacentTitleBox = new System.Windows.Forms.CheckBox();
+			this._GoToTopColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
 			((System.ComponentModel.ISupportInitialize)(this._BookmarkConditionBox)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -57,6 +58,7 @@
 			this._BookmarkConditionBox.AllColumns.Add(this._ItalicColumn);
 			this._BookmarkConditionBox.AllColumns.Add(this._ColorColumn);
 			this._BookmarkConditionBox.AllColumns.Add(this._OpenColumn);
+			this._BookmarkConditionBox.AllColumns.Add(this._GoToTopColumn);
 			this._BookmarkConditionBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
@@ -68,7 +70,8 @@
             this._BoldColumn,
             this._ItalicColumn,
             this._ColorColumn,
-            this._OpenColumn});
+            this._OpenColumn,
+            this._GoToTopColumn});
 			this._BookmarkConditionBox.Cursor = System.Windows.Forms.Cursors.Default;
 			this._BookmarkConditionBox.GridLines = true;
 			this._BookmarkConditionBox.HideSelection = false;
@@ -76,7 +79,7 @@
 			this._BookmarkConditionBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
 			this._BookmarkConditionBox.Name = "_BookmarkConditionBox";
 			this._BookmarkConditionBox.ShowGroups = false;
-			this._BookmarkConditionBox.Size = new System.Drawing.Size(652, 246);
+			this._BookmarkConditionBox.Size = new System.Drawing.Size(678, 213);
 			this._BookmarkConditionBox.TabIndex = 1;
 			this._BookmarkConditionBox.UseCompatibleStateImageBehavior = false;
 			this._BookmarkConditionBox.View = System.Windows.Forms.View.Details;
@@ -92,7 +95,7 @@
 			this._LevelColumn.MinimumWidth = 80;
 			this._LevelColumn.Text = "书签级别";
 			this._LevelColumn.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-			this._LevelColumn.Width = 80;
+			this._LevelColumn.Width = 89;
 			// 
 			// _BoldColumn
 			// 
@@ -114,15 +117,15 @@
 			// _OpenColumn
 			// 
 			this._OpenColumn.CheckBoxes = true;
-			this._OpenColumn.Text = "默认展开";
+			this._OpenColumn.Text = "展开";
 			this._OpenColumn.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-			this._OpenColumn.Width = 73;
+			this._OpenColumn.Width = 59;
 			// 
 			// _RemoveButton
 			// 
 			this._RemoveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this._RemoveButton.Image = global::PDFPatcher.Properties.Resources.Delete;
-			this._RemoveButton.Location = new System.Drawing.Point(403, 6);
+			this._RemoveButton.Location = new System.Drawing.Point(429, 6);
 			this._RemoveButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
 			this._RemoveButton.Name = "_RemoveButton";
 			this._RemoveButton.Size = new System.Drawing.Size(112, 35);
@@ -136,7 +139,7 @@
 			// 
 			this._AutoBookmarkButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this._AutoBookmarkButton.Image = global::PDFPatcher.Properties.Resources.AutoBookmark;
-			this._AutoBookmarkButton.Location = new System.Drawing.Point(524, 6);
+			this._AutoBookmarkButton.Location = new System.Drawing.Point(550, 6);
 			this._AutoBookmarkButton.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
 			this._AutoBookmarkButton.Name = "_AutoBookmarkButton";
 			this._AutoBookmarkButton.Size = new System.Drawing.Size(152, 35);
@@ -152,7 +155,7 @@
 			this._MergeAdjacentTitleBox.AutoSize = true;
 			this._MergeAdjacentTitleBox.Checked = true;
 			this._MergeAdjacentTitleBox.CheckState = System.Windows.Forms.CheckState.Checked;
-			this._MergeAdjacentTitleBox.Location = new System.Drawing.Point(21, 302);
+			this._MergeAdjacentTitleBox.Location = new System.Drawing.Point(21, 258);
 			this._MergeAdjacentTitleBox.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
 			this._MergeAdjacentTitleBox.Name = "_MergeAdjacentTitleBox";
 			this._MergeAdjacentTitleBox.Size = new System.Drawing.Size(250, 22);
@@ -160,12 +163,18 @@
 			this._MergeAdjacentTitleBox.Text = "合并同字体尺寸的相邻标题";
 			this._MergeAdjacentTitleBox.UseVisualStyleBackColor = true;
 			// 
+			// _GoToTopColumn
+			// 
+			this._GoToTopColumn.CheckBoxes = true;
+			this._GoToTopColumn.Text = "到页首";
+			this._GoToTopColumn.Width = 68;
+			// 
 			// AutoBookmarkForm
 			// 
 			this.AcceptButton = this._AutoBookmarkButton;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(702, 338);
+			this.ClientSize = new System.Drawing.Size(728, 293);
 			this.Controls.Add(this._MergeAdjacentTitleBox);
 			this.Controls.Add(this._AutoBookmarkButton);
 			this.Controls.Add(this._RemoveButton);
@@ -200,5 +209,6 @@
 		private BrightIdeasSoftware.OLVColumn _ColorColumn;
 		private BrightIdeasSoftware.OLVColumn _OpenColumn;
 		private System.Windows.Forms.CheckBox _MergeAdjacentTitleBox;
+		private BrightIdeasSoftware.OLVColumn _GoToTopColumn;
 	}
 }
