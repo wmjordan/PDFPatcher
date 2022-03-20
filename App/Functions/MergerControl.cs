@@ -28,7 +28,7 @@ namespace PDFPatcher.Functions
 			_bookmarkStyleButtonNames = new string[] { "_BoldStyleButton", "_BookmarkColorButton", "_ItalicStyleButton" };
 		}
 
-		private void MergerControl_Load(object sender, EventArgs args) {
+		void MergerControl_Load(object sender, EventArgs args) {
 			//this.Icon = Common.FormHelper.ToIcon (Properties.Resources.CreateDocument);
 			//_MainToolbar.ToggleEnabled (false, _bookmarkStyleButtonNames);
 			_BookmarkColorButton.SelectedColorChanged += (s, e) => { RefreshBookmarkColor(); };
@@ -114,6 +114,7 @@ namespace PDFPatcher.Functions
 					};
 				})
 				.ConfigColumn(_FolderColumn, c => c.AspectGetter = (o) => o.FolderName);
+			FileListHelper.SetupCommonPdfColumns(_FileTimeColumn);
 			_AddFilesButton.DropDownOpening += FileListHelper.OpenPdfButtonDropDownOpeningHandler;
 			_AddFilesButton.DropDownItemClicked += (s, e) => {
 				_RecentFileMenu.Hide();
@@ -142,7 +143,7 @@ namespace PDFPatcher.Functions
 		}
 
 		#region 拖放操作
-		private void ItemList_CanDropFile(object sender, OlvDropEventArgs e) {
+		void ItemList_CanDropFile(object sender, OlvDropEventArgs e) {
 			var o = e.DataObject as DataObject;
 			if (o == null) {
 				return;
@@ -168,7 +169,7 @@ namespace PDFPatcher.Functions
 			}
 		}
 
-		private void ItemList_FileDropped(object sender, OlvDropEventArgs e) {
+		void ItemList_FileDropped(object sender, OlvDropEventArgs e) {
 			var o = e.DataObject as DataObject;
 			if (o == null) {
 				return;
@@ -192,7 +193,7 @@ namespace PDFPatcher.Functions
 			CopyOrMoveElement(sl, ti, child, after, false, true);
 		}
 
-		private void ItemList_CanDropModel(object sender, ModelDropEventArgs e) {
+		void ItemList_CanDropModel(object sender, ModelDropEventArgs e) {
 			var si = e.SourceModels;
 			var ti = e.TargetModel as SourceItem;
 			if (si == null || si.Count == 0 || e.TargetModel == null) {
@@ -231,7 +232,7 @@ namespace PDFPatcher.Functions
 			e.InfoMessage = String.Concat((copy ? "复制" : "移动"), "到", (child ? "所有子项" : String.Empty), (append ? "后面" : "前面"));
 		}
 
-		private void ItemList_Dropped(object sender, ModelDropEventArgs e) {
+		void ItemList_Dropped(object sender, ModelDropEventArgs e) {
 			var t = e.TargetModel as SourceItem;
 			var si = (e.SourceListView as TreeListView).GetSelectedModels<SourceItem>();
 			if (si == null) {
@@ -330,7 +331,7 @@ namespace PDFPatcher.Functions
 			_ItemList.SelectedObjects = source;
 		}
 
-		private SourceItem GetParentSourceItem(SourceItem item) {
+		SourceItem GetParentSourceItem(SourceItem item) {
 			var p = _ItemList.GetParentModel(item);
 			if (p == null) {
 				p = _itemsContainer;
@@ -338,7 +339,7 @@ namespace PDFPatcher.Functions
 			return p;
 		}
 
-		private void AddFiles(string[] files) {
+		void AddFiles(string[] files) {
 			if (files == null || files.Length == 0) {
 				return;
 			}
@@ -352,7 +353,7 @@ namespace PDFPatcher.Functions
 			_AddDocumentWorker.RunWorkerAsync(files);
 		}
 
-		private void _AddFolder_DropDownOpening(object sender, EventArgs e) {
+		void _AddFolder_DropDownOpening(object sender, EventArgs e) {
 			var l = _AddFolderButton.DropDown.Items;
 			l.ClearDropDownItems();
 			foreach (var item in AppContext.Recent.Folders) {
@@ -362,7 +363,7 @@ namespace PDFPatcher.Functions
 			}
 		}
 
-		private void _AddFolderButton_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e) {
+		void _AddFolderButton_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e) {
 			_RecentFolderMenu.Hide();
 			var f = e.ClickedItem.ToolTipText;
 			if (System.IO.Directory.Exists(f) == false) {
@@ -372,7 +373,7 @@ namespace PDFPatcher.Functions
 			ExecuteCommand(Commands.OpenFile, f);
 		}
 
-		private void _ImportButton_Click(object sender, EventArgs e) {
+		void _ImportButton_Click(object sender, EventArgs e) {
 			var infoFile = _BookmarkControl.Text.Trim();
 			var targetPdfFile = _TargetPdfFile.Text.Trim();
 			if (String.IsNullOrEmpty(targetPdfFile) && String.IsNullOrEmpty(targetPdfFile = _TargetPdfFile.BrowseTargetFile())) {
@@ -453,18 +454,32 @@ namespace PDFPatcher.Functions
 			worker.RunWorkerAsync(new object[] { fl, targetPdfFile, infoFile, fm });
 		}
 
-		private void _SortMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e) {
+		void _SortMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e) {
+			SourceItem.SortType sortOptions;
 			switch (e.ClickedItem.Name) {
 				case "_SortByAlphaItem":
-					_ItemList.ListViewItemSorter = new ListViewItemComparer(0, false);
+					sortOptions = SourceItem.SortType.Literal;
 					break;
 				case "_SortByNaturalNumberItem":
-					_ItemList.ListViewItemSorter = new ListViewItemComparer(0, true);
+					sortOptions = SourceItem.SortType.NumericAwareSort;
 					break;
+				case "_SortByCaj":
+					sortOptions = SourceItem.SortType.CajSort;
+					break;
+				case "_SortByFileTime":
+					sortOptions = SourceItem.SortType.FileTime;
+					break;
+				case "_ReverseSort":
+					sortOptions = SourceItem.SortType.Reverse;
+					break;
+				default:
+					return;
 			}
+			_itemsContainer.SortItems(sortOptions);
+			_ItemList.Objects = _itemsContainer.Items;
 		}
 
-		private void _MainToolbar_ButtonClick(object sender, EventArgs e) {
+		void _MainToolbar_ButtonClick(object sender, EventArgs e) {
 			if (sender == _AddFilesButton) {
 				ExecuteCommand(Commands.Open);
 			}
@@ -491,7 +506,7 @@ namespace PDFPatcher.Functions
 			}
 		}
 
-		private void _MainToolbar_ItemClicked(object sender, ToolStripItemClickedEventArgs e) {
+		void _MainToolbar_ItemClicked(object sender, ToolStripItemClickedEventArgs e) {
 			ExecuteCommand(e.ClickedItem);
 		}
 
@@ -709,7 +724,7 @@ namespace PDFPatcher.Functions
 			}
 		}
 
-		private void CopySelectedItems(Converter<SourceItem, string> converter) {
+		void CopySelectedItems(Converter<SourceItem, string> converter) {
 			var bt = new StringBuilder(200);
 			foreach (SourceItem item in _ItemList.SelectedObjects) {
 				bt.AppendLine(converter(item));
@@ -719,7 +734,7 @@ namespace PDFPatcher.Functions
 			}
 		}
 
-		private void RefreshBookmarkColor() {
+		void RefreshBookmarkColor() {
 			var sc = _BookmarkColorButton.Color == Color.White
 							   ? Color.Transparent
 							   : _BookmarkColorButton.Color;
@@ -731,7 +746,7 @@ namespace PDFPatcher.Functions
 			_ItemList.RefreshObjects(_ItemList.SelectedObjects);
 		}
 
-		private void SelectItemsByType(SourceItem.ItemType type) {
+		void SelectItemsByType(SourceItem.ItemType type) {
 			var r = new List<SourceItem>();
 			SelectItemsByType(type, r, _itemsContainer);
 			if (r.Count > 0) {
@@ -742,7 +757,7 @@ namespace PDFPatcher.Functions
 			}
 		}
 
-		private void SelectItemsByType(SourceItem.ItemType type, List<SourceItem> result, SourceItem container) {
+		void SelectItemsByType(SourceItem.ItemType type, List<SourceItem> result, SourceItem container) {
 			foreach (var item in container.Items) {
 				if (item.Type == type) {
 					_ItemList.Reveal(item, false);
@@ -754,7 +769,7 @@ namespace PDFPatcher.Functions
 			}
 		}
 
-		private void _ItemList_ItemActivate(object sender, EventArgs e) {
+		void _ItemList_ItemActivate(object sender, EventArgs e) {
 			var vi = GetFocusedPdfItem();
 			if (vi != null) {
 				var pdfItem = _ItemList.GetModelObject(vi.Index) as SourceItem.Pdf;
@@ -768,7 +783,7 @@ namespace PDFPatcher.Functions
 			SetImageCropping();
 		}
 
-		private void SetImageCropping() {
+		void SetImageCropping() {
 			var items = _ItemList.SelectedObjects;
 			if (items.Count == 0) {
 				return;
@@ -810,7 +825,7 @@ namespace PDFPatcher.Functions
 			}
 		}
 
-		private ListViewItem GetFocusedPdfItem() {
+		ListViewItem GetFocusedPdfItem() {
 			var vi = _ItemList.FocusedItem;
 			if (vi == null
 				//|| vi.Selected == false
@@ -820,7 +835,7 @@ namespace PDFPatcher.Functions
 			return vi;
 		}
 
-		private void _ItemListMenu_Opening(object sender, CancelEventArgs e) {
+		void _ItemListMenu_Opening(object sender, CancelEventArgs e) {
 			var vi = _ItemList.FocusedItem;
 			if (vi == null) {
 				_ItemListMenu.ToggleEnabled(false, "_SetPdfOptions", "_RefreshFolder", "_SetCroppingOptions");
@@ -832,7 +847,7 @@ namespace PDFPatcher.Functions
 			_ItemListMenu.Items["_RefreshFolder"].Enabled = s.Type == SourceItem.ItemType.Folder;
 		}
 
-		private List<T> GetSourceItems<T>(bool selectedOnly) where T : SourceItem {
+		List<T> GetSourceItems<T>(bool selectedOnly) where T : SourceItem {
 			if (_ItemList.GetItemCount() == 0) {
 				return null;
 			}
@@ -842,7 +857,7 @@ namespace PDFPatcher.Functions
 			return items;
 		}
 
-		private static void SelectItems<T>(System.Collections.IEnumerable list, List<T> results) where T : SourceItem {
+		static void SelectItems<T>(System.Collections.IEnumerable list, List<T> results) where T : SourceItem {
 			foreach (T item in list) {
 				if (item == null) {
 					continue;
@@ -855,19 +870,19 @@ namespace PDFPatcher.Functions
 		}
 
 		#region AddDocumentWorker
-		private void _AddDocumentWorker_DoWork(object sender, DoWorkEventArgs e) {
+		void _AddDocumentWorker_DoWork(object sender, DoWorkEventArgs e) {
 			var files = e.Argument as string[];
 			Array.ForEach(files, f => {
 				((BackgroundWorker)sender).ReportProgress(0, f);
 			});
 		}
 
-		private void _AddDocumentWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
+		void _AddDocumentWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
 			AppContext.MainForm.Enabled = true;
 			//ResizeItemListColumns ();
 		}
 
-		//private void ResizeItemListColumns () {
+		//void ResizeItemListColumns () {
 		//    var c = _ItemList.Columns[0];
 		//    _ItemList.AutoResizeColumns (ColumnHeaderAutoResizeStyle.ColumnContent);
 		//    if (c.Width < 100) {
@@ -881,18 +896,18 @@ namespace PDFPatcher.Functions
 		//    }
 		//}
 
-		private void _AddDocumentWorker_ProgressChanged(object sender, ProgressChangedEventArgs e) {
+		void _AddDocumentWorker_ProgressChanged(object sender, ProgressChangedEventArgs e) {
 			AddItem(SourceItem.Create(e.UserState as string));
 		}
 
-		private void AddItem(SourceItem item) {
+		void AddItem(SourceItem item) {
 			if (item == null) {
 				return;
 			}
 			AddItems(new SourceItem[] { item });
 		}
 
-		private void AddItems(ICollection<SourceItem> items) {
+		void AddItems(ICollection<SourceItem> items) {
 			int i = _ItemList.GetLastSelectedIndex();
 			if (i == -1) {
 				i = _ItemList.FocusedItem?.Index ?? -1;
@@ -926,7 +941,7 @@ namespace PDFPatcher.Functions
 
 		#endregion
 
-		private void _ItemList_FormatRow(object sender, FormatRowEventArgs e) {
+		void _ItemList_FormatRow(object sender, FormatRowEventArgs e) {
 			var si = e.Model as SourceItem;
 			var bs = si.Bookmark;
 			if (bs == null) {

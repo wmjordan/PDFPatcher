@@ -94,6 +94,7 @@ namespace PDFPatcher.Functions
 					case "主题": SetupSubjectColumn(item); break;
 					case "关键词": SetupKeywordsColumn(item); break;
 					case "页数": SetupPageCountColumn(item); break;
+					case "修改时间": SetupFileTimeColumn(item); break;
 				}
 			}
 		}
@@ -122,9 +123,7 @@ namespace PDFPatcher.Functions
 			});
 		}
 		static void SetupPageCountColumn(OLVColumn column) {
-			column.AsTyped<SourceItem.Pdf>(c => {
-				c.AspectGetter = o => o.PageCount.ToText();
-			});
+			column.AsTyped<SourceItem.Pdf>(c => c.AspectGetter = o => o.PageCount.ToText());
 		}
 		static void SetupFileNameColumn(OLVColumn column) {
 			column.AsTyped<SourceItem.Pdf>(c => {
@@ -133,9 +132,11 @@ namespace PDFPatcher.Functions
 			});
 		}
 		static void SetupFolderNameColumn(OLVColumn column) {
-			column.AsTyped<SourceItem>(c => {
-				c.AspectGetter = o => o.Type != SourceItem.ItemType.Empty ? o.FolderName : String.Empty;
-			});
+			column.AsTyped<SourceItem>(c => c.AspectGetter = o => o.Type != SourceItem.ItemType.Empty ? o.FolderName : String.Empty);
+		}
+		static void SetupFileTimeColumn(OLVColumn column) {
+			column.AsTyped<SourceItem>(c => c.AspectGetter = o => o.FileTime);
+			column.AspectToStringConverter = o => ((DateTime)o).ToText();
 		}
 
 		public void SetupHotkeys() {

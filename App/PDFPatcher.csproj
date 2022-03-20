@@ -696,7 +696,7 @@
     <EmbeddedResource Include="Configuration.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Configuration.Designer.cs</LastGenOutput>
-		</EmbeddedResource>
+    </EmbeddedResource>
     <EmbeddedResource Include="Functions\DocumentOption\FontCharSubstitutionForm.resx">
       <DependentUpon>FontCharSubstitutionForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -885,6 +885,8 @@
     <Content Include="..\更新历史.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\clock.png" />
+    <None Include="Resources\arrow-continue-090.png" />
     <None Include="Common\app.manifest" />
     <None Include="donation.png" />
     <Content Include="Functions\AboutPage.html">

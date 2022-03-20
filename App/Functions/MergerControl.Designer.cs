@@ -48,6 +48,9 @@
 			this._FileMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this._SortByNaturalNumberItem = new System.Windows.Forms.ToolStripMenuItem();
 			this._SortByAlphaItem = new System.Windows.Forms.ToolStripMenuItem();
+			this._SortByCaj = new System.Windows.Forms.ToolStripMenuItem();
+			this._SortByFileTime = new System.Windows.Forms.ToolStripMenuItem();
+			this._ReverseSort = new System.Windows.Forms.ToolStripMenuItem();
 			this._MainToolbar = new System.Windows.Forms.ToolStrip();
 			this._AddFilesButton = new System.Windows.Forms.ToolStripSplitButton();
 			this._RecentFileMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -63,6 +66,7 @@
 			this._BookmarkColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
 			this._PageRangeColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
 			this._FolderColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+			this._FileTimeColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
 			this._ItemListMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
 			this._FileTypeList = new System.Windows.Forms.ImageList(this.components);
@@ -116,12 +120,14 @@
 			this._FileMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this._SortByNaturalNumberItem,
             this._SortByAlphaItem,
+            this._SortByCaj,
+            this._SortByFileTime,
+            this._ReverseSort,
             toolStripSeparator4,
             _LoadList,
             _SaveList});
 			this._FileMenu.Name = "_SortMenu";
-			this._FileMenu.OwnerItem = _File;
-			this._FileMenu.Size = new System.Drawing.Size(287, 130);
+			this._FileMenu.Size = new System.Drawing.Size(287, 220);
 			this._FileMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this._SortMenu_ItemClicked);
 			// 
 			// _SortByNaturalNumberItem
@@ -130,7 +136,6 @@
 			this._SortByNaturalNumberItem.Name = "_SortByNaturalNumberItem";
 			this._SortByNaturalNumberItem.Size = new System.Drawing.Size(286, 30);
 			this._SortByNaturalNumberItem.Text = "按数值和字母顺序排序(&S)";
-			this._SortByNaturalNumberItem.Visible = false;
 			// 
 			// _SortByAlphaItem
 			// 
@@ -138,13 +143,31 @@
 			this._SortByAlphaItem.Name = "_SortByAlphaItem";
 			this._SortByAlphaItem.Size = new System.Drawing.Size(286, 30);
 			this._SortByAlphaItem.Text = "按字母顺序排序(&Z)";
-			this._SortByAlphaItem.Visible = false;
+			// 
+			// _SortByCaj
+			// 
+			this._SortByCaj.Name = "_SortByCaj";
+			this._SortByCaj.Size = new System.Drawing.Size(286, 30);
+			this._SortByCaj.Text = "按CAJ文件命名规则排序";
+			// 
+			// _SortByFileTime
+			// 
+			this._SortByFileTime.Image = global::PDFPatcher.Properties.Resources.Time;
+			this._SortByFileTime.Name = "_SortByFileTime";
+			this._SortByFileTime.Size = new System.Drawing.Size(286, 30);
+			this._SortByFileTime.Text = "按修改时间先后排序";
+			// 
+			// _ReverseSort
+			// 
+			this._ReverseSort.Image = global::PDFPatcher.Properties.Resources.SortReverse;
+			this._ReverseSort.Name = "_ReverseSort";
+			this._ReverseSort.Size = new System.Drawing.Size(286, 30);
+			this._ReverseSort.Text = "反转排序";
 			// 
 			// toolStripSeparator4
 			// 
 			toolStripSeparator4.Name = "toolStripSeparator4";
 			toolStripSeparator4.Size = new System.Drawing.Size(283, 6);
-			toolStripSeparator4.Visible = false;
 			// 
 			// _LoadList
 			// 
@@ -384,6 +407,7 @@
 			this._ItemList.AllColumns.Add(this._BookmarkColumn);
 			this._ItemList.AllColumns.Add(this._PageRangeColumn);
 			this._ItemList.AllColumns.Add(this._FolderColumn);
+			this._ItemList.AllColumns.Add(this._FileTimeColumn);
 			this._ItemList.AllowDrop = true;
 			this._ItemList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
@@ -394,7 +418,8 @@
             this._NameColumn,
             this._BookmarkColumn,
             this._PageRangeColumn,
-            this._FolderColumn});
+            this._FolderColumn,
+            this._FileTimeColumn});
 			this._ItemList.ContextMenuStrip = this._ItemListMenu;
 			this._ItemList.Cursor = System.Windows.Forms.Cursors.Default;
 			this._ItemList.GridLines = true;
@@ -437,6 +462,12 @@
 			this._FolderColumn.IsEditable = false;
 			this._FolderColumn.Text = "文件夹";
 			this._FolderColumn.Width = 114;
+			// 
+			// _FileTimeColumn
+			// 
+			this._FileTimeColumn.IsEditable = false;
+			this._FileTimeColumn.Text = "修改时间";
+			this._FileTimeColumn.Width = 145;
 			// 
 			// _ItemListMenu
 			// 
@@ -492,7 +523,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this._BookmarkControl.LabelText = "P&DF 信息文件：";
 			this._BookmarkControl.Location = new System.Drawing.Point(19, 353);
-			this._BookmarkControl.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+			this._BookmarkControl.Margin = new System.Windows.Forms.Padding(6);
 			this._BookmarkControl.Name = "_BookmarkControl";
 			this._BookmarkControl.Size = new System.Drawing.Size(829, 36);
 			this._BookmarkControl.TabIndex = 1;
@@ -502,7 +533,7 @@
 			this._TargetPdfFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this._TargetPdfFile.Location = new System.Drawing.Point(19, 397);
-			this._TargetPdfFile.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+			this._TargetPdfFile.Margin = new System.Windows.Forms.Padding(6);
 			this._TargetPdfFile.Name = "_TargetPdfFile";
 			this._TargetPdfFile.Size = new System.Drawing.Size(829, 38);
 			this._TargetPdfFile.TabIndex = 2;
@@ -612,5 +643,9 @@
 		private System.Windows.Forms.Button _ConfigButton;
 		private System.Windows.Forms.ToolStripMenuItem _SortByNaturalNumberItem;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+		private BrightIdeasSoftware.OLVColumn _FileTimeColumn;
+		private System.Windows.Forms.ToolStripMenuItem _SortByCaj;
+		private System.Windows.Forms.ToolStripMenuItem _SortByFileTime;
+		private System.Windows.Forms.ToolStripMenuItem _ReverseSort;
 	}
 }

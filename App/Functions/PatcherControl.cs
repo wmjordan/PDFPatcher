@@ -66,7 +66,7 @@ namespace PDFPatcher.Functions
 			_listHelper = new FileListHelper(_ItemList);
 			_listHelper.SetupHotkeys();
 			_listHelper.SetupDragAndDrop(AddFiles);
-			FileListHelper.SetupCommonPdfColumns(_AuthorColumn, _KeywordsColumn, _SubjectColumn, _TitleColumn, _PageCountColumn, _NameColumn, _FolderColumn);
+			FileListHelper.SetupCommonPdfColumns(_AuthorColumn, _KeywordsColumn, _SubjectColumn, _TitleColumn, _PageCountColumn, _NameColumn, _FolderColumn, _FileTimeColumn);
 			_RefreshInfoButton.ButtonClick += (s, args) => _listHelper.RefreshInfo(AppContext.Encodings.DocInfoEncoding);
 			_RefreshInfoButton.DropDown = _RefreshInfoMenu;
 			foreach (var item in Constants.Encoding.EncodingNames) {
