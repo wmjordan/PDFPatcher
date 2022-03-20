@@ -456,6 +456,7 @@ namespace PDFPatcher.Functions
 
 		void _SortMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e) {
 			SourceItem.SortType sortOptions;
+			bool recursive = ModifierKeys != Keys.Control;
 			switch (e.ClickedItem.Name) {
 				case "_SortByAlphaItem":
 					sortOptions = SourceItem.SortType.Literal;
@@ -475,7 +476,7 @@ namespace PDFPatcher.Functions
 				default:
 					return;
 			}
-			_itemsContainer.SortItems(sortOptions);
+			_itemsContainer.SortItems(sortOptions, recursive);
 			_ItemList.Objects = _itemsContainer.Items;
 		}
 

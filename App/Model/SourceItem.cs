@@ -43,7 +43,7 @@ namespace PDFPatcher.Model
 			}
 		}
 
-		public void SortItems(SortType options) {
+		public void SortItems(SortType options, bool recursive) {
 			if (_Items.HasContent() == false) {
 				return;
 			}
@@ -65,6 +65,14 @@ namespace PDFPatcher.Model
 				case SortType.Reverse:
 					_Items.Reverse();
 					break;
+			}
+			if (recursive == false) {
+				return;
+			}
+			foreach (var item in _Items) {
+				if (item._Items.HasContent()) {
+					item.SortItems(options, recursive);
+				}
 			}
 		}
 
