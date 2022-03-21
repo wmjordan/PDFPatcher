@@ -713,18 +713,20 @@ namespace PDFPatcher.Functions.Editor
 			}
 			foreach (var span in textInfo.Spans) {
 				var s = textInfo.Page.GetFont(span);
-				if (s != null) {
-					bool m = false;
-					int fs = span.Size.ToInt32();
-					foreach (var item in Model.TitleStyles) {
-						if (item.InternalFontName == s.Name && item.FontSize == fs) {
-							m = true;
-							goto NEXT;
-						}
+				if (s == null) {
+					continue;
+				}
+				var fn = PdfDocumentFont.RemoveSubsetPrefix(s.Name);
+				bool m = false;
+				int fs = span.Size.ToInt32();
+				foreach (var item in Model.TitleStyles) {
+					if (item.FontSize == fs && item.FontName == fn) {
+						m = true;
+						goto NEXT;
 					}
-					if (m == false) {
-						Model.TitleStyles.Add(new EditModel.AutoBookmarkStyle(level, s.Name, fs));
-					}
+				}
+				if (m == false) {
+					Model.TitleStyles.Add(new EditModel.AutoBookmarkStyle(level, fn, fs));
 				}
 			NEXT:;
 			}
@@ -777,10 +779,10 @@ namespace PDFPatcher.Functions.Editor
 										continue;
 									}
 									var t = span.Text;
-									var b = span.Box;
 									if (t.Length == 0) {
 										continue;
 									}
+									var b = span.Box;
 									if (bl < style.Level) {
 										if (matcher?.Matches(line.Text) == false) {
 											continue;
@@ -844,7 +846,7 @@ namespace PDFPatcher.Functions.Editor
 										bm = CreateNewSiblingBookmarkForParent(bm, spans);
 									}
 									var be = bm as BookmarkElement;
-									var s = style.Style;
+									var s = style.Bookmark;
 									if (s.IsBold || s.IsItalic) {
 										be.TextStyle = s.IsBold && s.IsItalic ? FontStyle.Bold | FontStyle.Italic
 											: s.IsBold ? FontStyle.Bold

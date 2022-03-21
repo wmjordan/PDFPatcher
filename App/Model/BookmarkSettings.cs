@@ -54,6 +54,9 @@ namespace PDFPatcher.Model
 		}
 
 		public void ReadXml(XmlReader reader) {
+			if (reader.Read() == false) {
+				return;
+			}
 			Title = reader.GetAttribute("title");
 			IsBold = reader.GetValue("bold", false);
 			IsItalic = reader.GetValue("italic", false);

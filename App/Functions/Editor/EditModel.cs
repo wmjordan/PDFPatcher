@@ -71,20 +71,18 @@ namespace PDFPatcher.Functions.Editor
 		}
 		internal sealed class AutoBookmarkStyle
 		{
-			internal readonly string InternalFontName;
 			internal readonly string FontName;
 			internal readonly int FontSize;
-			internal readonly BookmarkSettings Style;
+			internal readonly BookmarkSettings Bookmark;
 			internal MatchPattern MatchPattern = null;
 
 			internal int Level;
 
-			public AutoBookmarkStyle(int level, string internalFontName, int fontSize) {
+			public AutoBookmarkStyle(int level, string fontName, int fontSize) {
 				Level = level;
-				InternalFontName = internalFontName;
-				FontName = PdfDocumentFont.RemoveSubsetPrefix(internalFontName);
+				FontName = fontName;
 				FontSize = fontSize;
-				Style = new BookmarkSettings();
+				Bookmark = new BookmarkSettings();
 			}
 		}
 	}

@@ -6,7 +6,7 @@ using PDFPatcher.Processor;
 
 namespace PDFPatcher.Model
 {
-	class PdfDocumentFont
+	static class PdfDocumentFont
 	{
 		/// <summary>
 		/// 删除字体名称的子集前缀。

@@ -25,7 +25,8 @@
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent () {
-			this.label1 = new System.Windows.Forms.Label();
+			System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AutoBookmarkForm));
 			this._BookmarkConditionBox = new BrightIdeasSoftware.ObjectListView();
 			this._ConditionColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
 			this._LevelColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
@@ -33,22 +34,17 @@
 			this._ItalicColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
 			this._ColorColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
 			this._OpenColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+			this._GoToTopColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
 			this._RemoveButton = new System.Windows.Forms.Button();
 			this._AutoBookmarkButton = new System.Windows.Forms.Button();
 			this._MergeAdjacentTitleBox = new System.Windows.Forms.CheckBox();
-			this._GoToTopColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+			this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+			this._LoadListButton = new System.Windows.Forms.ToolStripMenuItem();
+			this._SaveListButton = new System.Windows.Forms.ToolStripMenuItem();
+			toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
 			((System.ComponentModel.ISupportInitialize)(this._BookmarkConditionBox)).BeginInit();
+			this.toolStrip1.SuspendLayout();
 			this.SuspendLayout();
-			// 
-			// label1
-			// 
-			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(18, 13);
-			this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(170, 18);
-			this.label1.TabIndex = 0;
-			this.label1.Text = "书签识别条件列表：";
 			// 
 			// _BookmarkConditionBox
 			// 
@@ -121,6 +117,12 @@
 			this._OpenColumn.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
 			this._OpenColumn.Width = 59;
 			// 
+			// _GoToTopColumn
+			// 
+			this._GoToTopColumn.CheckBoxes = true;
+			this._GoToTopColumn.Text = "到页首";
+			this._GoToTopColumn.Width = 68;
+			// 
 			// _RemoveButton
 			// 
 			this._RemoveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -163,11 +165,42 @@
 			this._MergeAdjacentTitleBox.Text = "合并同字体尺寸的相邻标题";
 			this._MergeAdjacentTitleBox.UseVisualStyleBackColor = true;
 			// 
-			// _GoToTopColumn
+			// toolStrip1
 			// 
-			this._GoToTopColumn.CheckBoxes = true;
-			this._GoToTopColumn.Text = "到页首";
-			this._GoToTopColumn.Width = 68;
+			this.toolStrip1.ImageScalingSize = new System.Drawing.Size(24, 24);
+			this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            toolStripDropDownButton1});
+			this.toolStrip1.Location = new System.Drawing.Point(0, 0);
+			this.toolStrip1.Name = "toolStrip1";
+			this.toolStrip1.Size = new System.Drawing.Size(728, 33);
+			this.toolStrip1.TabIndex = 6;
+			this.toolStrip1.Text = "toolStrip1";
+			// 
+			// toolStripDropDownButton1
+			// 
+			toolStripDropDownButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this._LoadListButton,
+            this._SaveListButton});
+			toolStripDropDownButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton1.Image")));
+			toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+			toolStripDropDownButton1.Name = "toolStripDropDownButton1";
+			toolStripDropDownButton1.Size = new System.Drawing.Size(172, 28);
+			toolStripDropDownButton1.Text = "书签识别条件列表";
+			// 
+			// _LoadListButton
+			// 
+			this._LoadListButton.Image = global::PDFPatcher.Properties.Resources.OpenFile;
+			this._LoadListButton.Name = "_LoadListButton";
+			this._LoadListButton.Size = new System.Drawing.Size(270, 34);
+			this._LoadListButton.Text = "加载条件列表...";
+			// 
+			// _SaveListButton
+			// 
+			this._SaveListButton.Image = global::PDFPatcher.Properties.Resources.Save;
+			this._SaveListButton.Name = "_SaveListButton";
+			this._SaveListButton.Size = new System.Drawing.Size(270, 34);
+			this._SaveListButton.Text = "保存条件列表...";
 			// 
 			// AutoBookmarkForm
 			// 
@@ -179,7 +212,7 @@
 			this.Controls.Add(this._AutoBookmarkButton);
 			this.Controls.Add(this._RemoveButton);
 			this.Controls.Add(this._BookmarkConditionBox);
-			this.Controls.Add(this.label1);
+			this.Controls.Add(this.toolStrip1);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
 			this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
 			this.MaximizeBox = false;
@@ -191,14 +224,14 @@
 			this.Text = "自动生成书签";
 			this.Load += new System.EventHandler(this.AutoBookmarkForm_Load);
 			((System.ComponentModel.ISupportInitialize)(this._BookmarkConditionBox)).EndInit();
+			this.toolStrip1.ResumeLayout(false);
+			this.toolStrip1.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
 		}
 
 		#endregion
-
-		private System.Windows.Forms.Label label1;
 		private BrightIdeasSoftware.ObjectListView _BookmarkConditionBox;
 		private BrightIdeasSoftware.OLVColumn _ConditionColumn;
 		private System.Windows.Forms.Button _RemoveButton;
@@ -210,5 +243,8 @@
 		private BrightIdeasSoftware.OLVColumn _OpenColumn;
 		private System.Windows.Forms.CheckBox _MergeAdjacentTitleBox;
 		private BrightIdeasSoftware.OLVColumn _GoToTopColumn;
+		private System.Windows.Forms.ToolStrip toolStrip1;
+		private System.Windows.Forms.ToolStripMenuItem _LoadListButton;
+		private System.Windows.Forms.ToolStripMenuItem _SaveListButton;
 	}
 }
