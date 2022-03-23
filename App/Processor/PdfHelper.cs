@@ -196,6 +196,11 @@ namespace PDFPatcher.Processor
 			return pages;
 		}
 
+		/// <summary>获取 <see cref="PdfWriter"/> 实际写出的页数。</summary>
+		public static int GetPageCount(this PdfWriter writer) {
+			return writer.PageEmpty ? writer.CurrentPageNumber - 1 : writer.CurrentPageNumber;
+		}
+
 		/// <summary>
 		/// 解析形如“D:20111021090818+08'00'”的日期格式。
 		/// </summary>

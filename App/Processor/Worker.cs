@@ -619,11 +619,11 @@ namespace PDFPatcher.Processor
 					}
 					if (bookmarks != null && bookmarks.HasChildNodes) {
 						Tracker.TraceMessage("写入文档书签。");
-						OutlineManager.WriteOutline(w, bookmarks, w.PageEmpty ? w.CurrentPageNumber - 1 : w.CurrentPageNumber);
+						OutlineManager.WriteOutline(w, bookmarks, w.GetPageCount());
 						w.ViewerPreferences = PdfWriter.PageModeUseOutlines;
 					}
 					Tracker.TraceMessage("写入文件索引。");
-					Tracker.TraceMessage(Tracker.Category.Alert, "生成文件：<<" + targetFile.ToString() + ">>。");
+					Tracker.TraceMessage(Tracker.Category.Alert, $"合并了 {creator.InputDocumentCount.ToText()} 个文件共 {w.GetPageCount()} 页到：<<" + targetFile.ToString() + ">>。");
 					w.Close();
 				}
 			}

@@ -29,7 +29,7 @@ namespace PDFPatcher.Functions
 		}
 
 		void MergerControl_Load(object sender, EventArgs args) {
-			//this.Icon = Common.FormHelper.ToIcon (Properties.Resources.CreateDocument);
+			//this.Icon = FormHelper.ToIcon (Properties.Resources.CreateDocument);
 			//_MainToolbar.ToggleEnabled (false, _bookmarkStyleButtonNames);
 			_BookmarkColorButton.SelectedColorChanged += (s, e) => { RefreshBookmarkColor(); };
 
@@ -377,11 +377,11 @@ namespace PDFPatcher.Functions
 			var infoFile = _BookmarkControl.Text.Trim();
 			var targetPdfFile = _TargetPdfFile.Text.Trim();
 			if (String.IsNullOrEmpty(targetPdfFile) && String.IsNullOrEmpty(targetPdfFile = _TargetPdfFile.BrowseTargetFile())) {
-				Common.FormHelper.ErrorBox(Messages.TargetFileNotSpecified);
+				FormHelper.ErrorBox(Messages.TargetFileNotSpecified);
 				return;
 			}
 			if (FileHelper.IsPathValid(targetPdfFile) == false) {
-				Common.FormHelper.ErrorBox("输出文件名无效。" + (FileHelper.HasFileNameMacro(targetPdfFile) ? "\n合并 PDF 文件功能不支持替代符。" : String.Empty));
+				FormHelper.ErrorBox("输出文件名无效。" + (FileHelper.HasFileNameMacro(targetPdfFile) ? "\n合并 PDF 文件功能不支持替代符。" : String.Empty));
 				return;
 			}
 
@@ -393,7 +393,7 @@ namespace PDFPatcher.Functions
 			//}
 			var l = _ItemList.GetItemCount();
 			if (l == 0) {
-				Common.FormHelper.InfoBox("请添加用于生成 PDF 文件的图片或 PDF 源文件。");
+				FormHelper.InfoBox("请添加用于生成 PDF 文件的图片或 PDF 源文件。");
 				return;
 			}
 			//var si = new List<SourceItem> (l);
@@ -409,6 +409,7 @@ namespace PDFPatcher.Functions
 			_TargetPdfFile.FileList.AddHistoryItem();
 			var fm = _IndividualMergerModeBox.Checked;
 			var fl = fm ? new List<SourceItem>(_itemsContainer.Items.Count) : _itemsContainer.Items;
+
 			if (fm) {
 				foreach (var item in _itemsContainer.Items) {
 					if (item.HasSubItems) {
@@ -416,12 +417,13 @@ namespace PDFPatcher.Functions
 					}
 				}
 				if (fl.Count == 0) {
-					Tracker.TraceMessage(Tracker.Category.Error, "合并文件列表没有包含子项的首层项目。");
+					FormHelper.ErrorBox("合并文件列表没有包含子项的首层项目。");
+					return;
 				}
 			}
+
 			AppContext.MainForm.ResetWorker();
 			var worker = AppContext.MainForm.GetWorker();
-
 			worker.DoWork += (dummy, arg) => {
 				var args = arg.Argument as object[];
 				var items = args[0] as ICollection<SourceItem>;
@@ -803,7 +805,7 @@ namespace PDFPatcher.Functions
 				}
 				c++;
 				if (s.Cropping.Equals(image.Cropping) == false) {
-					if (Common.FormHelper.YesNoBox("选择的图片具有不同的设置，是否重置为统一的值？") == DialogResult.No) {
+					if (FormHelper.YesNoBox("选择的图片具有不同的设置，是否重置为统一的值？") == DialogResult.No) {
 						return;
 					}
 					break;

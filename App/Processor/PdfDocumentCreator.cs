@@ -76,11 +76,14 @@ namespace PDFPatcher.Processor
 		readonly bool scaleUp, scaleDown;
 		readonly bool areMarginsEqual;
 		bool _portrait;
+		int _inputDocumentCount;
 
 		/// <summary>
 		/// 在传入构造函数选项中保留链接时，获取最近处理的 PDF 文档的书签。
 		/// </summary>
 		public PdfInfoXmlDocument PdfBookmarks { get; }
+		/// <summary>获取输入的文档数量。</summary>
+		public int InputDocumentCount => _inputDocumentCount;
 
 		public PdfDocumentCreator(DocumentSink sink, MergerOptions option, ImporterOptions impOptions, Document document, PdfCopy writer) {
 			_sink = sink;
@@ -118,21 +121,22 @@ namespace PDFPatcher.Processor
 					Tracker.TraceMessage("添加空白页。");
 					AddEmptyPage();
 					SetBookmarkAction(b);
+					++_inputDocumentCount;
 					break;
 				case SourceItem.ItemType.Pdf:
 					Tracker.TraceMessage("添加文档：" + sourceFile);
 					AddPdfPages(sourceFile as SourceItem.Pdf, b);
 					Tracker.IncrementProgress(sourceFile.FileSize);
+					++_inputDocumentCount;
 					break;
 				case SourceItem.ItemType.Image:
 					Tracker.TraceMessage("添加图片：" + sourceFile);
 					AddImagePage(sourceFile, b);
 					Tracker.IncrementProgress(sourceFile.FileSize);
+					++_inputDocumentCount;
 					break;
 				case SourceItem.ItemType.Folder:
 					Tracker.TraceMessage("添加文件夹：" + sourceFile);
-					break;
-				default:
 					break;
 			}
 
@@ -181,7 +185,7 @@ namespace PDFPatcher.Processor
 					return;
 				}
 				var cs = image.Additional?.GetAsArray(PdfName.COLORSPACE);
-				if (cs != null && cs.Size == 4 && PdfName.INDEXED.Equals(cs[0])) {
+				if (cs?.Size == 4 && PdfName.INDEXED.Equals(cs[0])) {
 					isIndexed = true;
 				}
 				else {
@@ -215,9 +219,7 @@ namespace PDFPatcher.Processor
 					}
 				}
 				finally {
-					if (fi != null) {
-						fi.Dispose();
-					}
+					fi?.Dispose();
 				}
 			}
 
