@@ -54,24 +54,38 @@ namespace PDFPatcher.Functions
 			_BookmarkConditionBox.IsSimpleDragSource = true;
 			_BookmarkConditionBox.IsSimpleDropSink = true;
 			_BookmarkConditionBox.CellClick += (s, args) => {
-				var ts = args.Model as EditModel.AutoBookmarkStyle;
 				if (args.ColumnIndex == _ColorColumn.Index) {
+					var b = ((EditModel.AutoBookmarkStyle)args.Model).Bookmark;
 					this.ShowCommonDialog<ColorDialog>(
-						f => f.Color = ts.Bookmark.ForeColor == Color.Transparent ? Color.White : ts.Bookmark.ForeColor,
+						f => f.Color = b.ForeColor == Color.Transparent ? Color.White : b.ForeColor,
 						f => {
-							ts.Bookmark.ForeColor = f.Color == Color.White ? Color.Transparent : f.Color;
+							b.ForeColor = f.Color == Color.White ? Color.Transparent : f.Color;
 							_BookmarkConditionBox.RefreshItem(args.Item);
 						}
 						);
 				}
 			};
 			_BookmarkConditionBox.RowFormatter = (r) => {
-				var ts = r.RowObject as EditModel.AutoBookmarkStyle;
+				var b = ((EditModel.AutoBookmarkStyle)r.RowObject).Bookmark;
 				r.UseItemStyleForSubItems = false;
-				r.SubItems[_ColorColumn.Index].ForeColor = ts.Bookmark.ForeColor == Color.Transparent ? _BookmarkConditionBox.ForeColor : ts.Bookmark.ForeColor;
+				r.SubItems[_ColorColumn.Index].ForeColor = b.ForeColor == Color.Transparent ? _BookmarkConditionBox.ForeColor : b.ForeColor;
 			};
 			_LoadListButton.Click += _LoadListButton_Click;
 			_SaveListButton.Click += _SaveListButton_Click;
+		}
+
+		internal void SetValues(List<EditModel.AutoBookmarkStyle> list) {
+			_BookmarkConditionBox.Objects = _list = list;
+		}
+
+		void _RemoveButton_Click(object sender, EventArgs e) {
+			_BookmarkConditionBox.SelectedObjects.ForEach<EditModel.AutoBookmarkStyle>(i => _list.Remove(i));
+			_BookmarkConditionBox.RemoveObjects(_BookmarkConditionBox.SelectedObjects);
+		}
+
+		void _AutoBookmarkButton_Click(object sender, EventArgs e) {
+			SyncList();
+			_controller.AutoBookmark(_list, _MergeAdjacentTitleBox.Checked);
 		}
 
 		void _SaveListButton_Click(object sender, EventArgs e) {
@@ -92,35 +106,6 @@ namespace PDFPatcher.Functions
 			});
 		}
 
-		void _LoadListButton_Click(object sender, EventArgs e) {
-			this.ShowCommonDialog<OpenFileDialog>(d => {
-				d.Title = "请选择需要打开的自动书签格式列表";
-				d.Filter = Constants.FileExtensions.XmlFilter;
-				d.DefaultExt = Constants.FileExtensions.Xml;
-			}, d => {
-				try {
-					SetValues(Deserialize(d.FileName));
-				}
-				catch (Exception ex) {
-					this.ErrorBox("加载自动书签格式列表时出现错误", ex);
-				}
-			});
-		}
-
-		internal void SetValues(List<EditModel.AutoBookmarkStyle> list) {
-			_BookmarkConditionBox.Objects = _list = list;
-		}
-
-		void _RemoveButton_Click(object sender, EventArgs e) {
-			_BookmarkConditionBox.SelectedObjects.ForEach<EditModel.AutoBookmarkStyle>(i => _list.Remove(i));
-			_BookmarkConditionBox.RemoveObjects(_BookmarkConditionBox.SelectedObjects);
-		}
-
-		void _AutoBookmarkButton_Click(object sender, EventArgs e) {
-			SyncList();
-			_controller.AutoBookmark(_list, _MergeAdjacentTitleBox.Checked);
-		}
-
 		static void Serialize(List<EditModel.AutoBookmarkStyle> list, System.IO.StreamWriter writer) {
 			using (var x = System.Xml.XmlWriter.Create(writer)) {
 				x.WriteStartDocument();
@@ -136,6 +121,21 @@ namespace PDFPatcher.Functions
 				x.WriteEndElement();
 				x.WriteEndDocument();
 			}
+		}
+
+		void _LoadListButton_Click(object sender, EventArgs e) {
+			this.ShowCommonDialog<OpenFileDialog>(d => {
+				d.Title = "请选择需要打开的自动书签格式列表";
+				d.Filter = Constants.FileExtensions.XmlFilter;
+				d.DefaultExt = Constants.FileExtensions.Xml;
+			}, d => {
+				try {
+					SetValues(Deserialize(d.FileName));
+				}
+				catch (Exception ex) {
+					this.ErrorBox("加载自动书签格式列表时出现错误", ex);
+				}
+			});
 		}
 
 		static List<EditModel.AutoBookmarkStyle> Deserialize(FilePath path) {
