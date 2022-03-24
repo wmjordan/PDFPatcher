@@ -133,69 +133,38 @@ namespace PDFPatcher
 			}
 			switch (functionName) {
 				case Function.FrontPage:
-					__FunctionControls[functionName] = new FrontPageControl();
-					break;
+					return __FunctionControls[functionName] = new FrontPageControl();
 				case Function.Patcher:
-					__FunctionControls[functionName] = new PatcherControl();
-					break;
+					return __FunctionControls[functionName] = new PatcherControl();
 				case Function.Merger:
-					__FunctionControls[functionName] = new MergerControl();
-					break;
+					return __FunctionControls[functionName] = new MergerControl();
 				case Function.BookmarkGenerator:
-					__FunctionControls[functionName] = new AutoBookmarkControl();
-					break;
+					return __FunctionControls[functionName] = new AutoBookmarkControl();
 				case Function.InfoExchanger:
-					__FunctionControls[functionName] = new InfoExchangerControl();
-					break;
+					return __FunctionControls[functionName] = new InfoExchangerControl();
 				case Function.ExtractPages:
-					__FunctionControls[functionName] = new ExtractPageControl();
-					break;
+					return __FunctionControls[functionName] = new ExtractPageControl();
 				case Function.ExtractImages:
-					__FunctionControls[functionName] = new ExtractImageControl();
-					break;
+					return __FunctionControls[functionName] = new ExtractImageControl();
 				case Function.BookmarkEditor:
-					//__FunctionControls[functionName] = new BookmarkEditorControl ();
-					//break;
 					var b = new EditorControl();
 					b.DocumentChanged += OnDocumentChanged;
 					return b;
-				//case FormHelper.Functions.InfoFileOptions:
-				//    __FunctionControls[functionName] = new InfoFileOptionControl ();
-				//    break;
 				case Function.Ocr:
-					__FunctionControls[functionName] = new OcrControl();
-					break;
+					return __FunctionControls[functionName] = new OcrControl();
 				case Function.RenderPages:
-					__FunctionControls[functionName] = new RenderImageControl();
-					break;
-				//case Form.Functions.ImportOptions:
-				//    __FunctionControls[functionName] = new ImportOptionControl ();
-				//    break;
-				//case FormHelper.Functions.Options:
-				//    __FunctionControls[functionName] = new AppOptionControl ();
-				//    break;
+					return __FunctionControls[functionName] = new RenderImageControl();
 				case Function.About:
-					__FunctionControls[functionName] = new AboutControl();
-					break;
-				//case FormHelper.Functions.Log:
-				//    __FunctionControls[functionName] = new ReportControl ();
-				//    break;
+					return __FunctionControls[functionName] = new AboutControl();
 				case Function.Inspector:
-					//__FunctionControls[functionName] = new DocumentInspectorControl ();
-					//break;
 					var d = new DocumentInspectorControl();
 					d.DocumentChanged += OnDocumentChanged;
 					return d;
 				case Function.Rename:
-					__FunctionControls[functionName] = new RenameControl();
-					break;
+					return __FunctionControls[functionName] = new RenameControl();
 				default:
 					return null;
-					//__FunctionControls[Form.Functions.Default] = new Label ();
-					//functionName = Form.Functions.Default;
-					//break;
 			}
-			return __FunctionControls[functionName];
 		}
 
 		void OnDocumentChanged(object sender, DocumentChangedEventArgs args) {
@@ -529,13 +498,6 @@ namespace PDFPatcher
 				t.Controls.Add(c);
 				_FunctionContainer.SelectedTab = t;
 				AcceptButton = c.DefaultButton;
-
-				if (String.IsNullOrEmpty(p) == false) {
-					c.ExecuteCommand(Commands.OpenFile, p);
-				}
-
-				//c.HideOnClose = true;
-				//c.Show (this._DockPanel);
 			}
 		}
 
