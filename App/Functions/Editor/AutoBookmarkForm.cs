@@ -59,7 +59,7 @@ namespace PDFPatcher.Functions
 					this.ShowCommonDialog<ColorDialog>(
 						f => f.Color = b.ForeColor == Color.Transparent ? Color.White : b.ForeColor,
 						f => {
-							b.ForeColor = f.Color == Color.White ? Color.Transparent : f.Color;
+							b.ForeColor = f.Color == Color.White || f.Color == Color.Black ? Color.Transparent : f.Color;
 							_BookmarkConditionBox.RefreshItem(args.Item);
 						}
 						);

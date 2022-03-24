@@ -62,17 +62,18 @@ namespace PDFPatcher.Model
 			IsItalic = reader.GetValue("italic", false);
 			IsOpened = reader.GetValue("opened", false);
 			GoToTop = reader.GetValue("goToTop", false);
-			ForeColor = Color.FromArgb(reader.GetValue("color", Color.Empty.ToArgb()));
+			string c = reader.GetAttribute("color");
+			ForeColor = c is null ? Color.Transparent : Color.FromArgb(c.ToInt32());
 		}
 
 		public void WriteXml(XmlWriter writer) {
 			writer.WriteStartElement("bookmark");
-			writer.WriteAttributeString("title", Title);
+			writer.WriteValue("title", Title, null);
 			writer.WriteValue("bold", IsBold, false);
 			writer.WriteValue("italic", IsItalic, false);
 			writer.WriteValue("opened", IsOpened, false);
 			writer.WriteValue("goToTop", GoToTop, false);
-			writer.WriteValue("color", ForeColor.ToArgb(), Color.Empty.ToArgb());
+			writer.WriteValue("color", ForeColor.ToArgb(), Color.Transparent.ToArgb());
 			writer.WriteEndElement();
 		}
 
