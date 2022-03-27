@@ -110,11 +110,14 @@ namespace PDFPatcher.Processor
 			}));
 		}
 
-		static bool RotatePage(PdfDictionary page, int pageNumber, PageBoxSettings settings) {
+		static bool RotatePage(PdfDictionary page, PageBoxSettings settings) {
 			if (settings.Rotation == 0) {
 				return false;
 			}
-			var mb = GetPageBox(page);
+			var mb = page.GetPageVisibleRectangle();
+			if (mb == null) {
+				throw new PdfException("页面缺少 MediaBox。");
+			}
 			var ls = mb.Width > mb.Height; // Landscape
 			if (ls && (settings.Filter & PageFilterFlag.Portrait) == PageFilterFlag.Portrait
 				|| ls == false && (settings.Filter & PageFilterFlag.Landscape) == PageFilterFlag.Landscape) {
@@ -128,14 +131,6 @@ namespace PDFPatcher.Processor
 				page.Remove(PdfName.ROTATE);
 			}
 			return true;
-		}
-
-		static Rectangle GetPageBox(PdfDictionary page) {
-			var pb = page.GetAsArray(PdfName.CROPBOX) ?? page.GetAsArray(PdfName.MEDIABOX);
-			if (pb == null) {
-				throw new PdfException("页面缺少 MediaBox。");
-			}
-			return PdfReader.GetNormalizedRectangle(pb);
 		}
 
 		static bool FilterPageNumber(int pageNumber, PageFilterFlag filter) {
@@ -322,7 +317,7 @@ namespace PDFPatcher.Processor
 				AdjustMargins(context.Page, Settings.Margins);
 			}
 			if (Settings.Rotation != 0) {
-				RotatePage(context.Page, context.PageNumber, Settings);
+				RotatePage(context.Page, Settings);
 			}
 			context.Pdf.ResetReleasePage();
 			return true;

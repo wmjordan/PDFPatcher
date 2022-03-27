@@ -272,25 +272,20 @@ namespace PDFPatcher.Processor
 		/// <param name="page">页面字典。</param>
 		/// <returns>页面的可见边框。</returns>
 		internal static iTextSharp.text.Rectangle GetPageVisibleRectangle(this PdfDictionary page) {
-			if (page == null) {
-				return null;
-			}
 			PdfArray box;
-			var c = new float[4];
-			if ((page.Contains(PdfName.CROPBOX) && (box = page.GetAsArray(PdfName.CROPBOX)) != null && box.Size == 4)
-				|| (page.Contains(PdfName.MEDIABOX) && (box = page.GetAsArray(PdfName.MEDIABOX)) != null && box.Size == 4)) {
-				for (int i = 0; i < 4; i++) {
-					c[i] = box.GetAsNumber(i).FloatValue;
-				}
-				var rect = new iTextSharp.text.Rectangle(c[0], c[1], c[2], c[3]);
-				var r = page.GetAsNumber(PdfName.ROTATE);
-				if (r != null) {
-					return new iTextSharp.text.Rectangle(c[0], c[1], c[2], c[3], r.IntValue);
-				}
-				return rect;
-			}
-			else
+			if (page == null
+				|| ((box = page.GetAsArray(PdfName.CROPBOX)) == null || box.Size != 4)
+					&& ((box = page.GetAsArray(PdfName.MEDIABOX)) == null || box.Size != 4)) {
 				return null;
+			}
+			var c = new float[4];
+			for (int i = 0; i < 4; i++) {
+				c[i] = box.GetAsNumber(i).FloatValue;
+			}
+			var r = page.GetAsNumber(PdfName.ROTATE);
+			return r != null
+				? new iTextSharp.text.Rectangle(c[0], c[1], c[2], c[3], r.IntValue).Rotate()
+				: new iTextSharp.text.Rectangle(c[0], c[1], c[2], c[3]);
 		}
 
 		internal static void ClearPageLinks(this PdfReader r) {
