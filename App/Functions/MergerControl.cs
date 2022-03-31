@@ -29,8 +29,6 @@ namespace PDFPatcher.Functions
 		}
 
 		void MergerControl_Load(object sender, EventArgs args) {
-			//this.Icon = FormHelper.ToIcon (Properties.Resources.CreateDocument);
-			//_MainToolbar.ToggleEnabled (false, _bookmarkStyleButtonNames);
 			_BookmarkColorButton.SelectedColorChanged += (s, e) => { RefreshBookmarkColor(); };
 
 			AppContext.MainForm.SetTooltip(_BookmarkControl.FileList, "为目标 PDF 文件添加书签的信息文件（可选）");
@@ -816,15 +814,16 @@ namespace PDFPatcher.Functions
 			if (s == null) {
 				return;
 			}
-			var o = new SourceItem.Image(c > 1 ? (FilePath)(c + " 个文件") : s.FilePath);
-			s.Cropping.CopyTo(o.Cropping);
+			var o = new SourceItem.Image(c > 1 ? (FilePath)(c + " 个文件") : s.FilePath) {
+				Cropping = s.Cropping.Clone()
+			};
 			using (var f = new SourceImageOptionForm(o)) {
 				if (f.ShowDialog() == DialogResult.OK) {
 					foreach (SourceItem.Image image in items) {
 						if (image == null || image.Type == SourceItem.ItemType.Pdf) {
 							continue;
 						}
-						o.Cropping.CopyTo(image.Cropping);
+						image.Cropping = o.Cropping.Clone();
 					}
 				}
 			}

@@ -18,7 +18,7 @@ namespace PDFPatcher.Functions
 
 		public override string FunctionName => "批量修改文档";
 
-		public override System.Drawing.Bitmap IconImage => Properties.Resources.CreateDocument;
+		public override System.Drawing.Bitmap IconImage => Properties.Resources.DocumentProcessor;
 
 		public override Button DefaultButton => _ImportButton;
 
@@ -27,8 +27,6 @@ namespace PDFPatcher.Functions
 		}
 
 		void PatcherControl_OnLoad(object sender, EventArgs e) {
-			//this.Icon = Common.FormHelper.ToIcon (Properties.Resources.CreateDocument);
-
 			AppContext.MainForm.SetTooltip(_ConfigButton, "点击此处设置 PDF 文件的修改方式选项");
 			AppContext.MainForm.SetTooltip(_ActionsBox, "双击项目编辑操作选项；右键点击项目弹出上下文菜单");
 			AppContext.MainForm.SetTooltip(_ItemList, "在此添加需要补丁修改的 PDF 文件");

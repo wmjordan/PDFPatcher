@@ -224,20 +224,15 @@ namespace PDFPatcher.Model
 				return Top == i.Top && Bottom == i.Bottom && Left == i.Left && Right == i.Right &&
 					MinHeight == i.MinHeight && MinWidth == i.MinWidth;
 			}
-			public void CopyTo(CropOptions target) {
-				target.Top = Top;
-				target.Bottom = Bottom;
-				target.Left = Left;
-				target.Right = Right;
-				target.MinWidth = MinWidth;
-				target.MinHeight = MinHeight;
+			public CropOptions Clone() {
+				return (CropOptions)MemberwiseClone();
 			}
 		}
 
 		internal sealed class Image : SourceItem
 		{
-			int _FileSize = -1;
-			DateTime _FileTime;
+			readonly int _FileSize = -1;
+			readonly DateTime _FileTime;
 
 			public Image(FilePath path)
 				: base(path, 0) {
@@ -251,9 +246,9 @@ namespace PDFPatcher.Model
 			public override DateTime FileTime => _FileTime;
 
 			public override SourceItem Clone() {
-				var n = new Image(FilePath);
-				Cropping.CopyTo(n.Cropping);
-				return n;
+				return new Image(FilePath) {
+					Cropping = Cropping.Clone()
+				};
 			}
 		}
 

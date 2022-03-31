@@ -20,7 +20,6 @@ namespace PDFPatcher.Functions
 
 		public OcrControl() {
 			InitializeComponent();
-			//this.Icon = Common.FormHelper.ToIcon (Properties.Resources.Ocr);
 			_BookmarkControl.FileDialog.Filter = Constants.FileExtensions.TxtFilter + "|" + Constants.FileExtensions.XmlFilter + "|" + Constants.FileExtensions.XmlOrTxtFilter;
 
 			AppContext.MainForm.SetTooltip(_SourceFileControl.FileList, "需要识别文本的 PDF 源文件路径");

@@ -16,7 +16,6 @@ namespace PDFPatcher.Functions
 
 		public RenderImageControl() {
 			InitializeComponent();
-			//this.Icon = Common.FormHelper.ToIcon (Properties.Resources.RenderImage);
 			_SourceFileControl.BrowseSelectedFiles += (object sender, EventArgs e) => {
 				if (_AutoOutputDirBox.Checked == false) {
 					return;

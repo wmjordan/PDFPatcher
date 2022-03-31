@@ -18,14 +18,13 @@ namespace PDFPatcher.Functions
 
 		public override string FunctionName => "导出导入信息文件";
 
-		public override System.Drawing.Bitmap IconImage => Properties.Resources.CreateDocument;
+		public override System.Drawing.Bitmap IconImage => Properties.Resources.ExportInfoFile;
 
 		public InfoExchangerControl() {
 			InitializeComponent();
 		}
 
 		void PatcherControl_OnLoad(object sender, EventArgs e) {
-			//this.Icon = Common.FormHelper.ToIcon (Properties.Resources.CreateDocument);
 			_ItemList.ListViewItemSorter = new ListViewItemComparer(0);
 
 			AppContext.MainForm.SetTooltip(_BookmarkControl.FileList, "需要导出或导入的信息文件路径");

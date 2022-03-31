@@ -21,7 +21,6 @@ namespace PDFPatcher.Functions
 
 		public AutoBookmarkControl() {
 			InitializeComponent();
-			//this.Icon = FormHelper.ToIcon (Properties.Resources.ExportInfoFile);
 			AppContext.MainForm.SetTooltip(_SourceFileControl.FileList, "需要识别标题为书签的 PDF 源文件路径");
 			AppContext.MainForm.SetTooltip(_BookmarkControl.FileList, "指定识别书签后生成的信息文件或简易文本书签文件路径");
 			AppContext.MainForm.SetTooltip(_ExportBookmarkButton, "点击此按钮识别 PDF 文件的标题为信息文件");

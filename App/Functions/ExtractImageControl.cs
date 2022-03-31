@@ -15,7 +15,6 @@ namespace PDFPatcher.Functions
 
 		public ExtractImageControl() {
 			InitializeComponent();
-			//this.Icon = Common.FormHelper.ToIcon (Properties.Resources.ExtractImage);
 			_SourceFileControl.BrowseSelectedFiles += (object sender, EventArgs e) => {
 				if (_AutoOutputDirBox.Checked == false) {
 					return;

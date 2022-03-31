@@ -302,7 +302,6 @@ namespace MuPdfSharp
 
 		/// <summary>释放由 MuPdfPage 占用的资源。</summary>
 		/// <param name="disposing">是否手动释放托管资源。</param>
-		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2213:DisposableFieldsShouldBeDisposed", MessageId = "_page")]
 		void Dispose(bool disposing) {
 			if (!disposed) {
 				if (disposing) {

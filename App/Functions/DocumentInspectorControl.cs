@@ -29,13 +29,13 @@ namespace PDFPatcher.Functions
 		int[] _pdfTypeForAddObjectMenuItems;
 
 		static readonly ImageExtracterOptions _imgExpOption = new ImageExtracterOptions() {
-			OutputPath = System.IO.Path.GetTempPath(),
+			OutputPath = Path.GetTempPath(),
 			MergeImages = false
 		};
 
-		public override string FunctionName => "文档结构探查器";
+		public override string FunctionName => "结构探查器";
 
-		public override System.Drawing.Bitmap IconImage => Properties.Resources.DocumentInspector;
+		public override Bitmap IconImage => Properties.Resources.DocumentInspector;
 
 		public event EventHandler<DocumentChangedEventArgs> DocumentChanged;
 		public string DocumentPath {
@@ -52,7 +52,6 @@ namespace PDFPatcher.Functions
 
 		public DocumentInspectorControl() {
 			InitializeComponent();
-			//this.Icon = Common.FormHelper.ToIcon (Properties.Resources.DocumentInspector);
 		}
 
 		private void DocumentInspectorControl_OnLoad(object sender, EventArgs e) {

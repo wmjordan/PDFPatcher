@@ -97,7 +97,7 @@ namespace PDFPatcher.Processor
 			}
 		}
 
-		private void ExtractImageInstances(PdfDictionary source, bool includeDescendants) {
+		void ExtractImageInstances(PdfDictionary source, bool includeDescendants) {
 			if (source == null) {
 				return;
 			}
@@ -184,7 +184,7 @@ namespace PDFPatcher.Processor
 			_totalImageCount++;
 		}
 
-		private void SaveImageBytes(ImageInfo info, byte[] bytes, string fileName) {
+		void SaveImageBytes(ImageInfo info, byte[] bytes, string fileName) {
 			var vFlip = _options.VerticalFlipImages ^ info.VerticalFlip;
 			var n = fileName + info.ExtName;
 			if (PrintImageLocation) {
@@ -192,9 +192,6 @@ namespace PDFPatcher.Processor
 				Tracker.TraceMessage("导出图片：" + n);
 			}
 			if ((vFlip || _pageRotation != 0) && info.ExtName == Constants.FileExtensions.Jp2) {
-				//var ctx = MuPdfSharp.ContextHandle.Create();
-				//var pixmap = new MuPdfSharp.PixmapData(ctx, ctx.LoadJpeg2000(bytes));
-				//var b = pixmap.ToBitmap(new MuPdfSharp.ImageRendererOptions());
 				try {
 					using (var ms = new MemoryStream(bytes))
 					using (var bmp = new FreeImageBitmap(ms)) {
@@ -252,34 +249,14 @@ namespace PDFPatcher.Processor
 			info.FileName = n;
 		}
 
-		private static void SwapRedBlue(FreeImageBitmap bmp) {
+		static void SwapRedBlue(FreeImageBitmap bmp) {
 			var r = bmp.GetChannel(FREE_IMAGE_COLOR_CHANNEL.FICC_RED);
 			var b = bmp.GetChannel(FREE_IMAGE_COLOR_CHANNEL.FICC_BLUE);
 			bmp.SetChannel(b, FREE_IMAGE_COLOR_CHANNEL.FICC_RED);
 			bmp.SetChannel(r, FREE_IMAGE_COLOR_CHANNEL.FICC_BLUE);
-			return;
-			//var stride = bmp.Stride;
-			//var Scan0 = bmp.Scan0;
-
-			//unsafe {
-			//	var p = (byte*)(void*)Scan0;
-			//	var nOffset = stride - bmp.Width * 3;
-			//	byte temp;
-			//	var h = bmp.Height;
-			//	var w = bmp.Width;
-			//	for (int y = 0; y < h; ++y) {
-			//		for (int x = 0; x < w; ++x) {
-			//			temp = p[0];
-			//			p[0] = p[2];
-			//			p[2] = temp;
-			//			p += 3;
-			//		}
-			//		p += nOffset;
-			//	}
-			//}
 		}
 
-		private static void TransformJpeg(string fileName, FREE_IMAGE_JPEG_OPERATION operation) {
+		static void TransformJpeg(string fileName, FREE_IMAGE_JPEG_OPERATION operation) {
 			var tmpName = fileName + Constants.FileExtensions.Tmp;
 			if (FreeImageBitmap.JPEGTransform(fileName, tmpName, operation, true)) {
 				File.Delete(fileName);
@@ -318,7 +295,7 @@ namespace PDFPatcher.Processor
 			File.Delete(fileName);
 		}
 
-		private void SaveBitmap(ImageInfo info, byte[] bytes, string fileName) {
+		void SaveBitmap(ImageInfo info, byte[] bytes, string fileName) {
 			var vFlip = _options.VerticalFlipImages ^ info.VerticalFlip;
 			var ext = info.ExtName;
 			if (info.PixelFormat == PixelFormat.Format1bppIndexed) {
@@ -423,7 +400,7 @@ namespace PDFPatcher.Processor
 			return bmp;
 		}
 
-		private static int GetStride(ImageInfo info, byte[] bytes, bool vFlip) {
+		static int GetStride(ImageInfo info, byte[] bytes, bool vFlip) {
 			if (PdfName.COLORSPACE.Equals(info.ColorSpace)) {
 				return vFlip ? -(info.Width << 2) : (info.Width << 2);
 			}
@@ -434,14 +411,14 @@ namespace PDFPatcher.Processor
 			return vFlip ? -stride : stride;
 		}
 
-		private string GetNewImageFileName() {
+		string GetNewImageFileName() {
 			_imageCount++;
 			return String.Concat(
 				FileHelper.CombinePath(_options.OutputPath, _activePage.ToString(_fileMask)),
 				_imageCount > 1 ? "[" + _imageCount + "]" : null);
 		}
 
-		private void MergeImages() {
+		void MergeImages() {
 			var l = _imagePosList.Count;
 			for (int i = 0; i < l; i++) {
 				var imageI = _imagePosList[i];
@@ -461,9 +438,6 @@ namespace PDFPatcher.Processor
 					if (imageJ.Image.ReferenceCount < 1 // 图像已处理
 						|| imageJ.Image.Width != w // 宽度不相符
 						|| Math.Abs(Math.Round(imageJ.X - imageI.X)) > 1 // 位置相差超过 1 点
-																		 //|| imageJ.Image.PixelFormat != imageI.Image.PixelFormat // 格式不匹配
-																		 //|| imageJ.Image.ColorSpace == null
-																		 //|| imageJ.Image.ColorSpace.Equals (imageI.Image.ColorSpace) == false // Colorspace 不匹配
 						) {
 						continue;
 					}
@@ -498,9 +472,6 @@ namespace PDFPatcher.Processor
 						using (var bmp2 = FreeImageBitmap.FromFile(part.FileName)) {
 							var pl = part.PaletteEntryCount;
 							if (pl > 0 && bmp.HasPalette && bmp2.HasPalette) {
-								//var palMapSrc = new byte[pl];
-								//var palMapDest = new byte[pl];
-								//uint mi = 0;
 								for (int pi = 0; pi < pl; pi++) {
 									var p = Array.IndexOf(bmpPal, part.PaletteArray[pi], 0, palEntryCount);
 									if (p == -1) {
@@ -527,13 +498,7 @@ namespace PDFPatcher.Processor
 										p = palEntryCount;
 										++palEntryCount;
 									}
-									//if (p != pi) {
-									//	palMapSrc[mi] = (byte)pi;
-									//	palMapDest[mi] = (byte)(p);
-									//	mi++;
-									//}
 								}
-								//bmp2.ApplyPaletteIndexMapping (palMapSrc, palMapDest, mi, false);
 							}
 							else if (pl > 0 && bmp2.HasPalette) {
 								bmp2.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_24_BPP);

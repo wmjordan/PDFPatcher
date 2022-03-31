@@ -396,11 +396,12 @@ namespace PDFPatcher.Processor
 				return bookmark;
 			}
 			if (bm != null) {
-				while (bm.FirstChild != null) {
-					if (bm.FirstChild.NodeType == XmlNodeType.Element) {
-						bookmark.AppendChild(bookmark.OwnerDocument.ImportNode(bm.FirstChild, true));
+				XmlNode c;
+				while ((c = bm.FirstChild) != null) {
+					if (c.NodeType == XmlNodeType.Element) {
+						bookmark.AppendChild(bookmark.OwnerDocument.ImportNode(c, true));
 					}
-					bm.RemoveChild(bm.FirstChild);
+					bm.RemoveChild(c);
 				}
 			}
 			return bookmark;
@@ -425,16 +426,6 @@ namespace PDFPatcher.Processor
 				}
 				if (c.ParentNode == null) {
 					// 节点在处理过程中被删除
-					//while (c.HasChildNodes) {
-					//    var cc = c.FirstChild as XmlElement;
-					//    if (cc == null ||
-					//        (cc.HasAttribute (Constants.DestinationAttributes.Action) == false
-					//            && cc.HasChildNodes == false)) {
-					//        c.RemoveChild (cc);
-					//        continue;
-					//    }
-					//    item.InsertAfter (cc, r);
-					//}
 					c = r != null ? r.NextSibling : item.FirstChild;
 				}
 				else {
@@ -492,7 +483,7 @@ namespace PDFPatcher.Processor
 					) {
 					return Image.GetInstance(sourceFile.FilePath.ToString());
 				}
-				if (ext == Constants.FileExtensions.Jpg || ext == ".jpeg") {
+				if (ext == Constants.FileExtensions.Jpg || ext == Constants.FileExtensions.Jpeg) {
 					// is JPEG file
 					var t = sourceFile.FilePath.EnsureExtension(Constants.FileExtensions.Jpg);
 					if (FreeImageBitmap.JPEGCrop(sourceFile.FilePath, t, cropOptions.Left, cropOptions.Top, fi.Width - cropOptions.Right, fi.Height - cropOptions.Bottom)) {
@@ -651,8 +642,6 @@ namespace PDFPatcher.Processor
 			if (fi.HorizontalResolution != fi.VerticalResolution) {
 				image.SetDpi(fi.HorizontalResolution.ToInt32(), fi.VerticalResolution.ToInt32());
 			}
-			//image.ScaleAbsoluteHeight (fi.Height * 72 / fi.VerticalResolution);
-			//image.ScaleAbsoluteWidth (fi.Width * 72 / fi.HorizontalResolution);
 			return image;
 		}
 
