@@ -331,7 +331,7 @@ namespace PDFPatcher.Processor
 			}
 		}
 
-		string ConcatRegionText(TextRegion region) {
+		static string ConcatRegionText(TextRegion region) {
 			var ls = region.Lines;
 			if (ls.Count == 0) {
 				return String.Empty;
@@ -351,7 +351,7 @@ namespace PDFPatcher.Processor
 					return 0;
 				});
 			}
-			var sb = new System.Text.StringBuilder();
+			var sb = StringBuilderCache.Acquire();
 			sb.Append(ls[0].Text);
 			for (int i = 1; i < ls.Count; i++) {
 				var l = ls[i].Text;
@@ -368,7 +368,7 @@ namespace PDFPatcher.Processor
 				}
 				sb.Append(l);
 			}
-			return sb.ToString();
+			return StringBuilderCache.GetStringAndRelease(sb);
 		}
 
 		/// <summary>

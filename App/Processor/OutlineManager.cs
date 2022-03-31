@@ -188,8 +188,8 @@ namespace PDFPatcher.Processor
 			}
 		}
 
-		public static String EscapeBinaryString(String s) {
-			var buf = new StringBuilder();
+		public static string EscapeBinaryString(String s) {
+			var buf = StringBuilderCache.Acquire();
 			var cc = s.ToCharArray();
 			int len = cc.Length;
 			for (int k = 0; k < len; ++k) {
@@ -212,11 +212,11 @@ namespace PDFPatcher.Processor
 					buf.Append(c);
 				}
 			}
-			return buf.ToString();
+			return StringBuilderCache.GetStringAndRelease(buf);
 		}
 
-		public static String UnEscapeBinaryString(String s) {
-			var buf = new StringBuilder();
+		public static string UnEscapeBinaryString(String s) {
+			var buf = StringBuilderCache.Acquire();
 			var cc = s.ToCharArray();
 			int len = cc.Length;
 			for (int k = 0; k < len; ++k) {
@@ -250,7 +250,7 @@ namespace PDFPatcher.Processor
 					buf.Append(c);
 				}
 			}
-			return buf.ToString();
+			return StringBuilderCache.GetStringAndRelease(buf);
 		}
 
 		internal static void ImportSimpleBookmarks(TextReader source, PdfInfoXmlDocument target) {

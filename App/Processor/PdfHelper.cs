@@ -159,8 +159,6 @@ namespace PDFPatcher.Processor
 		/// <summary>
 		/// 获取友好的 PdfName 文本。
 		/// </summary>
-		/// <param name="n"></param>
-		/// <returns></returns>
 		internal static string GetPdfFriendlyName(PdfName name) {
 			return (__PdfNameMap.ContainsKey(name) ? __PdfNameMap[name] : GetPdfNameString(name));
 		}
@@ -223,15 +221,6 @@ namespace PDFPatcher.Processor
 				return DateTimeOffset.MinValue;
 			}
 		}
-
-		//internal static int GetNumber (this PdfIndirectReference indirect) {
-		//    PdfDictionary pdfObj = (PdfDictionary)PdfReader.GetPdfObjectRelease (indirect);
-		//    if (pdfObj.Contains (PdfName.TYPE) && pdfObj.Get (PdfName.TYPE).Equals (PdfName.PAGES) && pdfObj.Contains (PdfName.KIDS)) {
-		//        PdfArray kids = (PdfArray)pdfObj.Get (PdfName.KIDS);
-		//        indirect = (PdfIndirectReference)kids.ArrayList[0];
-		//    }
-		//    return indirect.Number;
-		//}
 
 		/// <summary>
 		/// 获取解码后的 PDF 名称字符串。
@@ -346,14 +335,14 @@ namespace PDFPatcher.Processor
 				marks.Add(value.Length + 1);
 			}
 			if (marks.Count > 1) {
-				var sb = new StringBuilder();
+				var sb = StringBuilderCache.Acquire();
 				for (int i = 1; i < marks.Count; i++) {
 					if (i > 1) {
 						sb.Append(' ');
 					}
 					sb.Append(value, marks[i - 1], marks[i] - 1 - marks[i - 1]);
 				}
-				return sb.ToString();
+				return StringBuilderCache.GetStringAndRelease(sb);
 			}
 			else {
 				return value;
@@ -365,7 +354,7 @@ namespace PDFPatcher.Processor
 		}
 
 		internal static string GetArrayString(ICollection<PdfObject> array) {
-			var sb = new StringBuilder();
+			var sb = StringBuilderCache.Acquire();
 			int k = 0;
 			foreach (var item in array) {
 				if (++k > 1) {
@@ -383,11 +372,11 @@ namespace PDFPatcher.Processor
 					sb.Append(item);
 				}
 			}
-			return sb.ToString();
+			return StringBuilderCache.GetStringAndRelease(sb);
 		}
 
 		internal static string GetNumericArrayString(PdfArray a, float unitFactor) {
-			var sb = new StringBuilder();
+			var sb = StringBuilderCache.Acquire();
 			for (int k = 0; k < a.ArrayList.Count; k++) {
 				if (k != 0) {
 					sb.Append(' ');
@@ -402,7 +391,7 @@ namespace PDFPatcher.Processor
 					sb.Append(o.Type == PdfObject.NUMBER ? UnitConverter.FromPoint(o.ToString(), unitFactor) : o.ToString());
 				}
 			}
-			return sb.ToString();
+			return StringBuilderCache.GetStringAndRelease(sb);
 		}
 
 		internal static void Put(this PdfDictionary dict, PdfName key, string value) {

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using PDFPatcher.Common;
 
 namespace PDFPatcher.Model
 {
@@ -104,7 +104,7 @@ namespace PDFPatcher.Model
 				}
 			}
 			var cs = GetAverageCharSize();
-			var sb = new StringBuilder();
+			var sb = StringBuilderCache.Acquire();
 			sb.Append(tl[0].Text);
 			char c;
 			for (int i = 1; i < l; i++) {
@@ -135,7 +135,7 @@ namespace PDFPatcher.Model
 				}
 				sb.Append(tl[i].Text);
 			}
-			return sb.ToString();
+			return StringBuilderCache.GetStringAndRelease(sb);
 		}
 
 		/// <summary>获取 <see cref="Texts"/> 内文字或数字的平均尺寸。</summary>

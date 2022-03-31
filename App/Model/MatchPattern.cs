@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
-using PowerJson;
+using PDFPatcher.Common;
 
 namespace PDFPatcher.Model
 {
@@ -113,11 +113,11 @@ namespace PDFPatcher.Model
 				var posCurrent = 0;
 				var lenPattern = pattern.Length;
 				var idxNext = original.IndexOf(pattern, comparisonType);
-				var result = new StringBuilder(stringBuilderInitialSize < 0 ? Math.Min(4096, original.Length) : stringBuilderInitialSize);
+				var result = StringBuilderCache.Acquire(stringBuilderInitialSize < 0 ? Math.Min(4096, original.Length) : stringBuilderInitialSize);
 
 				while (idxNext >= 0) {
-					result.Append(original, posCurrent, idxNext - posCurrent);
-					result.Append(replacement);
+					result.Append(original, posCurrent, idxNext - posCurrent)
+						.Append(replacement);
 
 					posCurrent = idxNext + lenPattern;
 
@@ -126,7 +126,7 @@ namespace PDFPatcher.Model
 
 				result.Append(original, posCurrent, original.Length - posCurrent);
 
-				return result.ToString();
+				return StringBuilderCache.GetStringAndRelease(result);
 			}
 		}
 	}

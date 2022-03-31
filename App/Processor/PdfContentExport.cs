@@ -370,7 +370,7 @@ namespace PDFPatcher.Processor
 			}
 			if (isRaw == false) {
 				if (key == "Contents" || key == "ToUnicode" || PdfName.XOBJECT.Equals(s.GetAsName(PdfName.TYPE)) && PdfName.FORM.Equals(s.GetAsName(PdfName.SUBTYPE))) {
-					var sb = new StringBuilder();
+					var sb = StringBuilderCache.Acquire();
 					byte b;
 					int l = bs.Length;
 					int p1 = 0, p2 = 0;
@@ -402,7 +402,7 @@ namespace PDFPatcher.Processor
 							sb.Append(Encoding.Default.GetString(bs, p1, p2));
 						}
 					}
-					writer.WriteCData(sb.ToString());
+					writer.WriteCData(StringBuilderCache.GetStringAndRelease(sb));
 				}
 				else if (key == "Metadata") {
 					using (var ms = new MemoryStream(bs))

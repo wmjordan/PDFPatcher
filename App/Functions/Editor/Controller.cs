@@ -352,7 +352,7 @@ namespace PDFPatcher.Functions.Editor
 			string t = null;
 			EditModel.TextSource ts;
 			if (Model.InsertBookmarkWithOcrOnly == false && lines.HasContent()) {
-				var sb = new StringBuilder();
+				var sb = StringBuilderCache.Acquire();
 				var r = lines[0].BBox;
 				foreach (var line in lines) {
 					if (sb.Length > 100) {
@@ -366,7 +366,7 @@ namespace PDFPatcher.Functions.Editor
 					}
 					sb.Append(t);
 				}
-				t = sb.ToString();
+				t = StringBuilderCache.GetStringAndRelease(sb);
 				var b = v.MuRectangleToImageRegion(pp.Page, r);
 				v.SelectionRegion = b;
 				v.PinPoint = b.Location.Round();
@@ -385,7 +385,7 @@ namespace PDFPatcher.Functions.Editor
 					if (ps) {
 						var mr = r.FindAll((i) => i.Region.IntersectWith(ib));
 						if (mr.HasContent()) {
-							var sb = new StringBuilder();
+							var sb = StringBuilderCache.Acquire();
 							b = mr[0].Region;
 							foreach (var line in mr) {
 								t = OcrProcessor.CleanUpText(line.Text, v.OcrOptions);
@@ -396,7 +396,7 @@ namespace PDFPatcher.Functions.Editor
 								}
 								sb.Append(t);
 							}
-							t = sb.ToString();
+							t = StringBuilderCache.GetStringAndRelease(sb);
 						}
 					}
 					else {

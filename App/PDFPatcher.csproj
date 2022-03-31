@@ -84,6 +84,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\StringBuilderCache.cs" />
     <Compile Include="ChineseCharMap.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

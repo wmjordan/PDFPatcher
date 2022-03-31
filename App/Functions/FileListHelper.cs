@@ -169,7 +169,7 @@ namespace PDFPatcher.Functions
 					}
 					break;
 				case "_Copy":
-					var sb = new StringBuilder();
+					var sb = StringBuilderCache.Acquire();
 					foreach (SourceItem.Pdf item in GetSourceItems<SourceItem>(true)) {
 						sb.AppendLine(String.Join("\t", new string[] {
 							item.FilePath.ToString(),
@@ -181,7 +181,10 @@ namespace PDFPatcher.Functions
 						}));
 					}
 					if (sb.Length > 0) {
-						Clipboard.SetText(sb.ToString());
+						Clipboard.SetText(StringBuilderCache.GetStringAndRelease(sb));
+					}
+					else {
+						StringBuilderCache.Release(sb);
 					}
 					break;
 				case Commands.SelectAllItems:

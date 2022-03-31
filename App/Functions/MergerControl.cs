@@ -568,7 +568,7 @@ namespace PDFPatcher.Functions
 					}
 					break;
 				case Commands.Copy:
-					var sb = new StringBuilder(200);
+					var sb = StringBuilderCache.Acquire(200);
 					var sl = GetSourceItems<SourceItem>(true);
 					if (sl.HasContent() == false) {
 						sl = GetSourceItems<SourceItem>(false);
@@ -604,6 +604,7 @@ namespace PDFPatcher.Functions
 					if (sb.Length > 0) {
 						Clipboard.SetText(sb.ToString());
 					}
+					StringBuilderCache.Release(sb);
 					break;
 				case "_InsertEmptyPage":
 					AddItem(new SourceItem.Empty());
@@ -728,13 +729,14 @@ namespace PDFPatcher.Functions
 		}
 
 		void CopySelectedItems(Converter<SourceItem, string> converter) {
-			var bt = new StringBuilder(200);
+			var bt = StringBuilderCache.Acquire(200);
 			foreach (SourceItem item in _ItemList.SelectedObjects) {
 				bt.AppendLine(converter(item));
 			}
 			if (bt.Length > 0) {
 				Clipboard.SetText(bt.ToString());
 			}
+			StringBuilderCache.Release(bt);
 		}
 
 		void RefreshBookmarkColor() {
