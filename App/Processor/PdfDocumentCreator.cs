@@ -603,13 +603,14 @@ namespace PDFPatcher.Processor
 			else if (fi.ColorDepth > 8
 				&& fi.ColorType == FREE_IMAGE_COLOR_TYPE.FIC_RGB
 				&& fi.HasPalette == false
-				&& __JpgFormats.Contains(fi.PixelFormat)) {
+				&& __JpgFormats.Contains(fi.PixelFormat)
+				&& (fi.ImageFormat != FREE_IMAGE_FORMAT.FIF_TIFF || fi.InfoHeader.biCompression != 0)) {
 				format = FREE_IMAGE_FORMAT.FIF_JPEG;
 			}
 			else if (fi.InfoHeader.biCompression == FreeImage.BI_JPEG) {
 				format = FREE_IMAGE_FORMAT.FIF_JPEG;
 			}
-			else if (fi.ColorDepth > 16) {
+			else if (fi.ColorDepth > 8) {
 				format = FREE_IMAGE_FORMAT.FIF_PNG;
 			}
 			else if (fi.PixelFormat == PixelFormat.Format1bppIndexed && fi.ImageFormat != FREE_IMAGE_FORMAT.FIF_TIFF && recompressWithJbig2 == false) {
