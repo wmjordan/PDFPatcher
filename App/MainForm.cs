@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.Windows.Forms;
 using PDFPatcher.Common;
 using PDFPatcher.Functions;
@@ -13,10 +14,11 @@ namespace PDFPatcher
 
 		ReportControl _LogControl;
 		#region 公共功能
-		private BackgroundWorker _Worker;
-		private readonly FormState _formState = new FormState();
-		private bool _FullScreen;
+		BackgroundWorker _Worker;
+		readonly FormState _formState = new FormState();
+		bool _FullScreen;
 		///<summary>获取或指定全屏显示的值。</summary>
+		[Browsable(false)]
 		public bool FullScreen {
 			get => _FullScreen;
 			set {
@@ -235,7 +237,9 @@ namespace PDFPatcher
 			_LogControl.VisibleChanged += (s, args) => _FunctionContainer.Visible = !_LogControl.Visible;
 			_OpenConfigDialog.FileName = _SaveConfigDialog.FileName = Constants.AppName + "配置文件" + Constants.FileExtensions.Json;
 			_OpenConfigDialog.Filter = _SaveConfigDialog.Filter = Constants.FileExtensions.JsonFilter;
+			_FunctionContainer.Font = new Font(SystemFonts.CaptionFont.FontFamily.Name, 9);
 			_FunctionContainer.ImageList = new ImageList();
+			_FunctionContainer.DisplayStyleProvider.SelectedTextStyle = FontStyle.Bold;
 			_FunctionContainer.AllowDrop = true;
 			_FunctionContainer.MouseClick += (s, args) => {
 				if (args.Button == MouseButtons.Middle) { ClickCloseTab(args); }
@@ -478,7 +482,7 @@ namespace PDFPatcher
 					}
 				}
 				var t = new TabPage(c.FunctionName) {
-					Font = System.Drawing.SystemFonts.SmallCaptionFont
+					Font = SystemFonts.SmallCaptionFont
 				};
 				var im = _FunctionContainer.ImageList.Images;
 				for (int i = im.Count - 1; i >= 0; i--) {

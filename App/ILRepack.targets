@@ -11,9 +11,9 @@
 			<InputAssemblies Include="$(OutputPath)HtmlRenderer.WinForms.dll" />
 			<InputAssemblies Include="$(OutputPath)itextAsian.dll" />
 			<InputAssemblies Include="$(OutputPath)itextsharp.dll" />
+			<InputAssemblies Include="$(OutputPath)JacksonSoft.CustomTabControl.dll" />
 			<InputAssemblies Include="$(OutputPath)ObjectListView.dll" />
 			<InputAssemblies Include="$(OutputPath)PowerJSON.dll" />
-			<InputAssemblies Include="$(OutputPath)TradeWright.TabControlExtra.dll" />
 		</ItemGroup>
 
 		<ILRepack KeyFile="wmjordan.snk" Parallel="true" Internalize="true" InternalizeExclude="@(DoNotInternalizeAssemblies)" InputAssemblies="@(InputAssemblies)" TargetKind="SameAsPrimaryAssembly" TargetPlatformVersion="v4" OutputFile="$(OutputPath)$(AssemblyName).exe" />

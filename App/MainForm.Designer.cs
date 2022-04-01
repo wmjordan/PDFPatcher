@@ -91,7 +91,7 @@
 			this.statusStrip1 = new System.Windows.Forms.StatusStrip();
 			this._MainStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			this._GeneralToolbar = new System.Windows.Forms.ToolStrip();
-			this._FunctionContainer = new TradeWright.UI.Forms.TabControlExtra();
+			this._FunctionContainer = new System.Windows.Forms.CustomTabControl();
 			_Select = new System.Windows.Forms.ToolStripMenuItem();
 			_Copy = new System.Windows.Forms.ToolStripMenuItem();
 			_Delete = new System.Windows.Forms.ToolStripMenuItem();
@@ -687,67 +687,10 @@
 			// 
 			// _FunctionContainer
 			// 
-			this._FunctionContainer.DisplayStyle = TradeWright.UI.Forms.TabStyle.IE8;
+			this._FunctionContainer.DisplayStyle = System.Windows.Forms.TabStyle.IE8;
 			// 
 			// 
 			// 
-			this._FunctionContainer.DisplayStyleProvider.BlendStyle = TradeWright.UI.Forms.BlendStyle.Normal;
-			this._FunctionContainer.DisplayStyleProvider.BorderColorDisabled = System.Drawing.SystemColors.ControlLight;
-			this._FunctionContainer.DisplayStyleProvider.BorderColorFocused = System.Drawing.Color.FromArgb(((int)(((byte)(127)))), ((int)(((byte)(157)))), ((int)(((byte)(185)))));
-			this._FunctionContainer.DisplayStyleProvider.BorderColorHighlighted = System.Drawing.SystemColors.ControlDark;
-			this._FunctionContainer.DisplayStyleProvider.BorderColorSelected = System.Drawing.SystemColors.ControlDark;
-			this._FunctionContainer.DisplayStyleProvider.BorderColorUnselected = System.Drawing.SystemColors.ControlDark;
-			this._FunctionContainer.DisplayStyleProvider.CloserButtonFillColorFocused = System.Drawing.Color.Empty;
-			this._FunctionContainer.DisplayStyleProvider.CloserButtonFillColorFocusedActive = System.Drawing.Color.White;
-			this._FunctionContainer.DisplayStyleProvider.CloserButtonFillColorHighlighted = System.Drawing.Color.Empty;
-			this._FunctionContainer.DisplayStyleProvider.CloserButtonFillColorHighlightedActive = System.Drawing.Color.Empty;
-			this._FunctionContainer.DisplayStyleProvider.CloserButtonFillColorSelected = System.Drawing.Color.Empty;
-			this._FunctionContainer.DisplayStyleProvider.CloserButtonFillColorSelectedActive = System.Drawing.Color.Empty;
-			this._FunctionContainer.DisplayStyleProvider.CloserButtonFillColorUnselected = System.Drawing.Color.Empty;
-			this._FunctionContainer.DisplayStyleProvider.CloserButtonOutlineColorFocused = System.Drawing.Color.Empty;
-			this._FunctionContainer.DisplayStyleProvider.CloserButtonOutlineColorFocusedActive = System.Drawing.SystemColors.ControlDark;
-			this._FunctionContainer.DisplayStyleProvider.CloserButtonOutlineColorHighlighted = System.Drawing.Color.Empty;
-			this._FunctionContainer.DisplayStyleProvider.CloserButtonOutlineColorHighlightedActive = System.Drawing.Color.Empty;
-			this._FunctionContainer.DisplayStyleProvider.CloserButtonOutlineColorSelected = System.Drawing.Color.Empty;
-			this._FunctionContainer.DisplayStyleProvider.CloserButtonOutlineColorSelectedActive = System.Drawing.Color.Empty;
-			this._FunctionContainer.DisplayStyleProvider.CloserButtonOutlineColorUnselected = System.Drawing.Color.Empty;
-			this._FunctionContainer.DisplayStyleProvider.CloserColorFocused = System.Drawing.Color.Black;
-			this._FunctionContainer.DisplayStyleProvider.CloserColorFocusedActive = System.Drawing.Color.Red;
-			this._FunctionContainer.DisplayStyleProvider.CloserColorHighlighted = System.Drawing.Color.Black;
-			this._FunctionContainer.DisplayStyleProvider.CloserColorHighlightedActive = System.Drawing.SystemColors.ControlDark;
-			this._FunctionContainer.DisplayStyleProvider.CloserColorSelected = System.Drawing.Color.Black;
-			this._FunctionContainer.DisplayStyleProvider.CloserColorSelectedActive = System.Drawing.SystemColors.ControlDark;
-			this._FunctionContainer.DisplayStyleProvider.CloserColorUnselected = System.Drawing.Color.Empty;
-			this._FunctionContainer.DisplayStyleProvider.FocusTrack = false;
-			this._FunctionContainer.DisplayStyleProvider.HotTrack = true;
-			this._FunctionContainer.DisplayStyleProvider.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-			this._FunctionContainer.DisplayStyleProvider.Opacity = 1F;
-			this._FunctionContainer.DisplayStyleProvider.Overlap = 0;
-			this._FunctionContainer.DisplayStyleProvider.Padding = new System.Drawing.Point(6, 5);
-			this._FunctionContainer.DisplayStyleProvider.PageBackgroundColorDisabled = System.Drawing.Color.FromArgb(((int)(((byte)(247)))), ((int)(((byte)(247)))), ((int)(((byte)(255)))));
-			this._FunctionContainer.DisplayStyleProvider.PageBackgroundColorFocused = System.Drawing.Color.FromArgb(((int)(((byte)(247)))), ((int)(((byte)(247)))), ((int)(((byte)(255)))));
-			this._FunctionContainer.DisplayStyleProvider.PageBackgroundColorHighlighted = System.Drawing.Color.FromArgb(((int)(((byte)(247)))), ((int)(((byte)(247)))), ((int)(((byte)(255)))));
-			this._FunctionContainer.DisplayStyleProvider.PageBackgroundColorSelected = System.Drawing.Color.FromArgb(((int)(((byte)(247)))), ((int)(((byte)(247)))), ((int)(((byte)(255)))));
-			this._FunctionContainer.DisplayStyleProvider.PageBackgroundColorUnselected = System.Drawing.Color.FromArgb(((int)(((byte)(198)))), ((int)(((byte)(223)))), ((int)(((byte)(255)))));
-			this._FunctionContainer.DisplayStyleProvider.Radius = 3;
-			this._FunctionContainer.DisplayStyleProvider.SelectedTabIsLarger = true;
-			this._FunctionContainer.DisplayStyleProvider.ShowTabCloser = true;
-			this._FunctionContainer.DisplayStyleProvider.TabColorDisabled1 = System.Drawing.Color.FromArgb(((int)(((byte)(247)))), ((int)(((byte)(247)))), ((int)(((byte)(255)))));
-			this._FunctionContainer.DisplayStyleProvider.TabColorDisabled2 = System.Drawing.Color.FromArgb(((int)(((byte)(247)))), ((int)(((byte)(247)))), ((int)(((byte)(255)))));
-			this._FunctionContainer.DisplayStyleProvider.TabColorFocused1 = System.Drawing.Color.FromArgb(((int)(((byte)(247)))), ((int)(((byte)(247)))), ((int)(((byte)(255)))));
-			this._FunctionContainer.DisplayStyleProvider.TabColorFocused2 = System.Drawing.Color.FromArgb(((int)(((byte)(198)))), ((int)(((byte)(223)))), ((int)(((byte)(255)))));
-			this._FunctionContainer.DisplayStyleProvider.TabColorHighLighted1 = System.Drawing.Color.FromArgb(((int)(((byte)(236)))), ((int)(((byte)(244)))), ((int)(((byte)(252)))));
-			this._FunctionContainer.DisplayStyleProvider.TabColorHighLighted2 = System.Drawing.Color.FromArgb(((int)(((byte)(198)))), ((int)(((byte)(223)))), ((int)(((byte)(255)))));
-			this._FunctionContainer.DisplayStyleProvider.TabColorSelected1 = System.Drawing.Color.FromArgb(((int)(((byte)(247)))), ((int)(((byte)(247)))), ((int)(((byte)(255)))));
-			this._FunctionContainer.DisplayStyleProvider.TabColorSelected2 = System.Drawing.Color.FromArgb(((int)(((byte)(198)))), ((int)(((byte)(223)))), ((int)(((byte)(255)))));
-			this._FunctionContainer.DisplayStyleProvider.TabColorUnSelected1 = System.Drawing.Color.FromArgb(((int)(((byte)(198)))), ((int)(((byte)(223)))), ((int)(((byte)(255)))));
-			this._FunctionContainer.DisplayStyleProvider.TabColorUnSelected2 = System.Drawing.Color.FromArgb(((int)(((byte)(198)))), ((int)(((byte)(223)))), ((int)(((byte)(255)))));
-			this._FunctionContainer.DisplayStyleProvider.TabPageMargin = new System.Windows.Forms.Padding(0, 4, 0, 4);
-			this._FunctionContainer.DisplayStyleProvider.TextColorDisabled = System.Drawing.SystemColors.ControlDark;
-			this._FunctionContainer.DisplayStyleProvider.TextColorFocused = System.Drawing.SystemColors.ControlText;
-			this._FunctionContainer.DisplayStyleProvider.TextColorHighlighted = System.Drawing.SystemColors.ControlText;
-			this._FunctionContainer.DisplayStyleProvider.TextColorSelected = System.Drawing.SystemColors.ControlText;
-			this._FunctionContainer.DisplayStyleProvider.TextColorUnselected = System.Drawing.SystemColors.ControlText;
 			this._FunctionContainer.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._FunctionContainer.DrawMode = System.Windows.Forms.TabDrawMode.OwnerDrawFixed;
 			this._FunctionContainer.HotTrack = true;
@@ -756,7 +699,6 @@
 			this._FunctionContainer.Name = "_FunctionContainer";
 			this._FunctionContainer.SelectedIndex = 0;
 			this._FunctionContainer.Size = new System.Drawing.Size(805, 521);
-			this._FunctionContainer.TabCloserButtonSize = 18;
 			this._FunctionContainer.TabIndex = 6;
 			// 
 			// MainForm
@@ -798,7 +740,7 @@
 		private System.Windows.Forms.StatusStrip statusStrip1;
 		private System.Windows.Forms.ToolStripMenuItem _ResetOptions;
 		private System.Windows.Forms.ToolStrip _GeneralToolbar;
-		private TradeWright.UI.Forms.TabControlExtra _FunctionContainer;
+		private System.Windows.Forms.CustomTabControl _FunctionContainer;
 		private System.Windows.Forms.ToolStripStatusLabel _MainStatusLabel;
 	}
 }

@@ -8,13 +8,15 @@ using TheArtOfDev.HtmlRenderer.Core.Entities;
 namespace PDFPatcher
 {
 	[ToolboxItem(false)]
-	sealed partial class FrontPageControl : Functions.HtmlPageControl
+	sealed partial class FrontPageControl : Functions.HtmlPageControl, ITabContent
 	{
 		readonly Regex __FrontPagePattern = new Regex("<div>(.+);(.+);(.+);(.+)</div>", RegexOptions.CultureInvariant);
 
 		public override string FunctionName => "主页";
 
 		public override System.Drawing.Bitmap IconImage => Properties.Resources.HomePage;
+
+		bool ITabContent.CanClose => false;
 
 		public override void ExecuteCommand(string commandName, params string[] parameters) {
 			if (commandName == Commands.Open) {

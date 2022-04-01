@@ -68,6 +68,9 @@
     <Reference Include="itextsharp">
       <HintPath>Lib\itextsharp.dll</HintPath>
     </Reference>
+    <Reference Include="JacksonSoft.CustomTabControl">
+      <HintPath>Lib\JacksonSoft.CustomTabControl.dll</HintPath>
+    </Reference>
     <Reference Include="ObjectListView, Version=2.9.1.1072, Culture=neutral, PublicKeyToken=b1c5bf581481bcd4, processorArchitecture=MSIL">
       <HintPath>..\packages\ObjectListView.Official.2.9.1\lib\net20\ObjectListView.dll</HintPath>
     </Reference>
@@ -79,9 +82,6 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.XML" />
-    <Reference Include="TradeWright.TabControlExtra">
-      <HintPath>Lib\TradeWright.TabControlExtra.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\StringBuilderCache.cs" />
@@ -738,6 +738,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Functions\EditorControl.resx">
       <DependentUpon>EditorControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Functions\DocumentOption\DocumentInfoEditor.resx">
       <DependentUpon>DocumentInfoEditor.cs</DependentUpon>
