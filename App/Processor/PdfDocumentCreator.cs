@@ -169,7 +169,7 @@ namespace PDFPatcher.Processor
 			if (__BuiltInImageTypes.Contains(ext)) {
 				try {
 					using (var fi = new FreeImageBitmap(source.FilePath, (FREE_IMAGE_LOAD_FLAGS)0x0800/*仅加载图像尺寸信息*/)) {
-						if (fi.HasPalette) {
+						if (fi.HasPalette && fi.ImageFormat != FREE_IMAGE_FORMAT.FIF_JPEG && fi.ImageFormat != FREE_IMAGE_FORMAT.FIF_JP2) {
 							isIndexed = true;
 							goto ADVANCED_LOAD;
 						}
@@ -598,14 +598,14 @@ namespace PDFPatcher.Processor
 				&& (fi.ImageFormat != FREE_IMAGE_FORMAT.FIF_TIFF || fi.InfoHeader.biCompression != 0)) {
 				format = FREE_IMAGE_FORMAT.FIF_JPEG;
 			}
-			else if (fi.InfoHeader.biCompression == FreeImage.BI_JPEG) {
-				format = FREE_IMAGE_FORMAT.FIF_JPEG;
+			else if (fi.PixelFormat == PixelFormat.Format1bppIndexed && fi.ImageFormat != FREE_IMAGE_FORMAT.FIF_TIFF && recompressWithJbig2 == false) {
+				format = FREE_IMAGE_FORMAT.FIF_TIFF;
 			}
 			else if (fi.ColorDepth > 8) {
 				format = FREE_IMAGE_FORMAT.FIF_PNG;
 			}
-			else if (fi.PixelFormat == PixelFormat.Format1bppIndexed && fi.ImageFormat != FREE_IMAGE_FORMAT.FIF_TIFF && recompressWithJbig2 == false) {
-				format = FREE_IMAGE_FORMAT.FIF_TIFF;
+			else if (fi.InfoHeader.biCompression == FreeImage.BI_JPEG) {
+				format = FREE_IMAGE_FORMAT.FIF_JPEG;
 			}
 			else {
 				format = fi.ImageFormat;
