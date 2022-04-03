@@ -59,7 +59,7 @@ namespace PDFPatcher.Processor.Imaging
 		/// A class for reading Exif data from a JPEG file. The file will be open for reading for as long as the class exists.
 		/// <seealso cref="http://gvsoft.homedns.org/exif/Exif-explanation.html"/>
 		/// </summary>
-		class ExifReader : IDisposable
+		sealed class ExifReader : IDisposable
 		{
 			private static readonly Regex _nullDateTimeMatcher = new Regex(@"^[\s0]{4}[:\s][\s0]{2}[:\s][\s0]{5}[:\s][\s0]{2}[:\s][\s0]{2}$");
 
@@ -766,7 +766,7 @@ namespace PDFPatcher.Processor.Imaging
 				Dispose(false);
 			}
 
-			protected virtual void Dispose(bool disposing) {
+			private void Dispose(bool disposing) {
 				if (disposing) {
 					if (_reader != null)
 						_reader.Dispose();

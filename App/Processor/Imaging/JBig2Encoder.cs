@@ -6,9 +6,9 @@ using FreeImageAPI;
 
 namespace PDFPatcher.Processor.Imaging
 {
-	class JBig2Encoder
+	static class JBig2Encoder
 	{
-		static readonly uint White = 0x00FFFFFF;
+		const uint White = 0x00FFFFFF;
 
 		internal static byte[] Encode(FreeImageBitmap fi) {
 			bool zeroIsWhite = fi.HasPalette && fi.Palette.Data[0].uintValue == White;
@@ -20,7 +20,7 @@ namespace PDFPatcher.Processor.Imaging
 			}
 		}
 
-		private static byte[] Encode(int width, int height, int stride, bool zeroIsWhite, IntPtr b) {
+		static byte[] Encode(int width, int height, int stride, bool zeroIsWhite, IntPtr b) {
 			int l = 0;
 			var r = NativeMethods.Encode(width, height, stride, zeroIsWhite, b, ref l);
 			var result = new byte[l];
@@ -29,7 +29,7 @@ namespace PDFPatcher.Processor.Imaging
 			return result;
 		}
 
-		class NativeMethods
+		static class NativeMethods
 		{
 			[DllImport(JBig2Decoder.DLL, CallingConvention = CallingConvention.Cdecl, EntryPoint = "jbig2_encode")]
 			internal static extern IntPtr Encode(int width, int height, int stride, bool zeroIsWhite, IntPtr data, ref int length);

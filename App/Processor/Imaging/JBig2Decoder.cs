@@ -40,7 +40,7 @@ namespace PDFPatcher.Processor.Imaging
 			}
 		}
 
-		class NativeMethods
+		static class NativeMethods
 		{
 			internal static IntPtr New(IntPtr globalCtx) {
 				return New(IntPtr.Zero, JBIG2_OPTIONS_EMBEDDED, globalCtx, null, IntPtr.Zero, 0, 19);

@@ -189,13 +189,13 @@ namespace PDFPatcher.Processor
 					isIndexed = true;
 				}
 				else {
-					if (ext == Constants.FileExtensions.Jpg || ext == Constants.FileExtensions.Jpeg) {
-						if (Imaging.JpgHelper.TryGetExifOrientation(source.FilePath, out var o) && o != 0) {
-							switch (o) {
-								case 6: image.RotationDegrees = -90; break;
-								case 3: image.RotationDegrees = 180; break;
-								case 8: image.RotationDegrees = 90; break;
-							}
+					if ((ext == Constants.FileExtensions.Jpg || ext == Constants.FileExtensions.Jpeg)
+						&& Imaging.JpgHelper.TryGetExifOrientation(source.FilePath, out var o)
+						&& o != 0) {
+						switch (o) {
+							case 6: image.RotationDegrees = -90; break;
+							case 3: image.RotationDegrees = 180; break;
+							case 8: image.RotationDegrees = 90; break;
 						}
 					}
 					AddImage(image);

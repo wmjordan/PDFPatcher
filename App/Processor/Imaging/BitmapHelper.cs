@@ -9,13 +9,12 @@ namespace PDFPatcher.Processor.Imaging
 {
 	static class BitmapHelper
 	{
-
 		public static ImageCodecInfo GetCodec(string codecName) {
 			var ie = ImageCodecInfo.GetImageEncoders();
-
 			for (int i = 0; i < ie.Length; i++) {
-				if (ie[i].MimeType == codecName) {
-					return ie[i];
+				var ic = ie[i];
+				if (ic.MimeType == codecName) {
+					return ic;
 				}
 			}
 			return null;
@@ -200,7 +199,7 @@ namespace PDFPatcher.Processor.Imaging
 		/// <returns>转换后的图像。</returns>
 		/// <remarks>http://www.wischik.com/lu/programmer/1bpp.html</remarks>
 		public static Bitmap ToBitonal(this Bitmap original) {
-			Bitmap source = null;
+			Bitmap source;
 
 			if (original.PixelFormat == PixelFormat.Format1bppIndexed) {
 				return (Bitmap)original.Clone();
@@ -247,11 +246,11 @@ namespace PDFPatcher.Processor.Imaging
 
 			// Create destination buffer
 			byte[] destinationBuffer = SimpleThresholdBW(
-			sourceBuffer,
-			sourceData.Width,
-			sourceData.Height,
-			sourceData.Stride,
-			destinationData.Stride);
+				sourceBuffer,
+				sourceData.Width,
+				sourceData.Height,
+				sourceData.Stride,
+				destinationData.Stride);
 
 			// Copy binary image data to destination bitmap
 			Marshal.Copy(destinationBuffer, 0, destinationData.Scan0, destinationData.Stride * sourceData.Height);
@@ -285,18 +284,21 @@ namespace PDFPatcher.Processor.Imaging
 					// Compute pixel brightness (i.e. total of Red, Green, and Blue values)
 					newPixel = sourceBuffer[i] + sourceBuffer[i + 1] + sourceBuffer[i + 2];
 
-					if (newPixel > THRESHOLD)
+					if (newPixel > THRESHOLD) {
 						pix8 |= bit;
+					}
 					if (bit == 1) {
 						destinationBuffer[j++] = pix8;
 						bit = 128;
 						pix8 = 0; // init next value with 0
 					}
-					else
+					else {
 						bit >>= 1;
+					}
 				} // line finished
-				if (bit != 128)
+				if (bit != 128) {
 					destinationBuffer[j] = pix8;
+				}
 			} // all lines finished
 			return destinationBuffer;
 		}
