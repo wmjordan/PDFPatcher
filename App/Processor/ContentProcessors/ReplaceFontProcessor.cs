@@ -320,10 +320,10 @@ namespace PDFPatcher.Processor
 							};
 							if (fs.TraditionalChineseConversion != 0) {
 								if (fs.TraditionalChineseConversion > 0) {
-									Map(nf.CharSubstitutions, ChineseCharMap.Simplified, ChineseCharMap.Traditional);
+									Map(nf.CharSubstitutions, Constants.Chinese.Simplified, Constants.Chinese.Traditional);
 								}
 								else {
-									Map(nf.CharSubstitutions, ChineseCharMap.Traditional, ChineseCharMap.Simplified);
+									Map(nf.CharSubstitutions, Constants.Chinese.Traditional, Constants.Chinese.Simplified);
 								}
 							}
 							if (fs.NumericWidthConversion != 0) {

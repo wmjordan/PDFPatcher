@@ -92,13 +92,14 @@ namespace PDFPatcher.Processor
 			}
 		}
 
+		// todo 优化转换效率：避免 ToCharArray 和无条件创建新字符串
 		static string Translate(string s, char[] source, char[] target) {
 			var cs = s.ToCharArray();
-			int p;
 			for (int i = 0; i < cs.Length; i++) {
-				p = Array.IndexOf(source, cs[i]);
+				ref char c = ref cs[i];
+				var p = Array.IndexOf(source, c);
 				if (p != -1) {
-					cs[i] = target[p];
+					c = target[p];
 				}
 			}
 			return new string(cs);
@@ -125,11 +126,11 @@ namespace PDFPatcher.Processor
 
 		static class SC2TC
 		{
-			public static readonly Converter<string, string> Convert = new StringMapper(new CharacterMapper(ChineseCharMap.Simplified, ChineseCharMap.Traditional).Map).Convert;
+			public static readonly Converter<string, string> Convert = new StringMapper(new CharacterMapper(Constants.Chinese.Simplified, Constants.Chinese.Traditional).Map).Convert;
 		}
 		static class TC2SC
 		{
-			public static readonly Converter<string, string> Convert = new StringMapper(new CharacterMapper(ChineseCharMap.Traditional, ChineseCharMap.Simplified).Map).Convert;
+			public static readonly Converter<string, string> Convert = new StringMapper(new CharacterMapper(Constants.Chinese.Traditional, Constants.Chinese.Simplified).Map).Convert;
 		}
 		static class FWP2HWP
 		{

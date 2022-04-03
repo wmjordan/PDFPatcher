@@ -85,11 +85,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\StringBuilderCache.cs" />
-    <Compile Include="ChineseCharMap.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ChineseCharMap.resx</DependentUpon>
-    </Compile>
     <Compile Include="Configuration.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -690,10 +685,6 @@
     <Compile Include="Processor\Worker.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="ChineseCharMap.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>ChineseCharMap.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
     <EmbeddedResource Include="Configuration.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Configuration.Designer.cs</LastGenOutput>
