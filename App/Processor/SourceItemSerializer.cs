@@ -14,11 +14,11 @@ namespace PDFPatcher.Processor
 		/// </summary>
 		/// <param name="list">文件列表项目。</param>
 		/// <param name="path">文件列表的保存路径。</param>
-		internal static void Serialize(IList<SourceItem> list, string path) {
+		internal static void Serialize(IList<SourceItem> list, FilePath path) {
 			var d = new PdfInfoXmlDocument();
 			var b = d.BookmarkRoot;
 			foreach (var item in list) {
-				SerializeSourceItem(d, b, item);
+				SerializeSourceItem(d, b, item, path);
 			}
 			try {
 				d.Save(path);
@@ -28,21 +28,21 @@ namespace PDFPatcher.Processor
 			}
 		}
 
-		private static void SerializeSourceItem(PdfInfoXmlDocument doc, BookmarkContainer container, SourceItem item) {
+		static void SerializeSourceItem(PdfInfoXmlDocument doc, BookmarkContainer container, SourceItem item, FilePath basePath) {
 			var e = doc.CreateBookmark(item.Bookmark ?? __EmptyBookmark);
-			e.SetValue(Constants.DestinationAttributes.Path, item.FilePath.ToString());
+			e.SetValue(Constants.DestinationAttributes.Path, basePath.GetRelativePath(item.FilePath));
 			if (item.Type == SourceItem.ItemType.Pdf) {
 				e.SetValue(Constants.PageRange, ((SourceItem.Pdf)item).PageRanges);
 			}
 			container.AppendChild(e);
 			if (item.HasSubItems) {
 				foreach (var sub in item.Items) {
-					SerializeSourceItem(doc, e, sub);
+					SerializeSourceItem(doc, e, sub, basePath);
 				}
 			}
 		}
 
-		internal static List<SourceItem> Deserialize(string path) {
+		internal static List<SourceItem> Deserialize(FilePath path) {
 			var d = new PdfInfoXmlDocument();
 			try {
 				d.Load(path);
@@ -52,16 +52,17 @@ namespace PDFPatcher.Processor
 			}
 			var bl = d.Bookmarks;
 			var l = new List<SourceItem>(bl.Count);
+			path = path.Directory;
 			foreach (BookmarkElement item in bl) {
-				DeserializeSourceItem(l, item);
+				DeserializeSourceItem(l, item, path);
 			}
 			return l;
 		}
 
-		private static void DeserializeSourceItem(List<SourceItem> list, BookmarkElement bookmark) {
+		static void DeserializeSourceItem(List<SourceItem> list, BookmarkElement bookmark, FilePath basePath) {
 			var b = new BookmarkSettings(bookmark);
 			var p = bookmark.GetValue(Constants.DestinationAttributes.Path);
-			var s = SourceItem.Create(p, false);
+			var s = SourceItem.Create(basePath.Combine(p), false);
 			if (b.Title.IsNullOrWhiteSpace() == false || b.IsOpened || b.IsBold || b.IsItalic || b.ForeColor.IsEmptyOrTransparent() == false) {
 				s.Bookmark = b;
 			}
@@ -71,7 +72,7 @@ namespace PDFPatcher.Processor
 			list.Add(s);
 			if (bookmark.HasSubBookmarks) {
 				foreach (BookmarkElement sub in bookmark.SubBookmarks) {
-					DeserializeSourceItem(s.Items, sub);
+					DeserializeSourceItem(s.Items, sub, basePath);
 				}
 			}
 		}
