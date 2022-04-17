@@ -131,6 +131,7 @@
 			this._MarkBookmarkCyan = new System.Windows.Forms.ToolStripMenuItem();
 			this._ViewerButton = new System.Windows.Forms.ToolStripDropDownButton();
 			this._OcrMenu = new System.Windows.Forms.ToolStripMenuItem();
+			this._InsertWithOcrOnly = new System.Windows.Forms.ToolStripMenuItem();
 			this._ShowAnnotations = new System.Windows.Forms.ToolStripMenuItem();
 			this._EditMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.toolStripSeparator13 = new System.Windows.Forms.ToolStripSeparator();
@@ -163,7 +164,6 @@
 			this._ViewerToolbar = new System.Windows.Forms.ToolStrip();
 			this._CurrentPageBox = new System.Windows.Forms.ToolStripTextBox();
 			this._ZoomBox = new System.Windows.Forms.ToolStripComboBox();
-			this._InsertWithOcrOnly = new System.Windows.Forms.ToolStripMenuItem();
 			_ClearPosition = new System.Windows.Forms.ToolStripMenuItem();
 			_ChangeCoordinates = new System.Windows.Forms.ToolStripMenuItem();
 			_ClearPositionX = new System.Windows.Forms.ToolStripMenuItem();
@@ -263,6 +263,7 @@
 			this._EditMenu.SuspendLayout();
 			this._RecentFileMenu.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this._BookmarkBox)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this._MainPanel)).BeginInit();
 			this._MainPanel.Panel1.SuspendLayout();
 			this._MainPanel.Panel2.SuspendLayout();
 			this._MainPanel.SuspendLayout();
@@ -280,7 +281,7 @@
             _ClearPositionXY});
 			_ClearPosition.Image = global::PDFPatcher.Properties.Resources.ScrollPosition;
 			_ClearPosition.Name = "_ClearPosition";
-			_ClearPosition.Size = new System.Drawing.Size(251, 26);
+			_ClearPosition.Size = new System.Drawing.Size(215, 26);
 			_ClearPosition.Text = "更改目标页面坐标(&Y)";
 			_ClearPosition.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this._MainToolbar_ItemClicked);
 			// 
@@ -288,43 +289,43 @@
 			// 
 			_ChangeCoordinates.Image = global::PDFPatcher.Properties.Resources.ScrollPosition;
 			_ChangeCoordinates.Name = "_ChangeCoordinates";
-			_ChangeCoordinates.Size = new System.Drawing.Size(227, 26);
+			_ChangeCoordinates.Size = new System.Drawing.Size(184, 22);
 			_ChangeCoordinates.Text = "更改坐标(&B)...";
 			// 
 			// _ClearPositionX
 			// 
 			_ClearPositionX.Name = "_ClearPositionX";
-			_ClearPositionX.Size = new System.Drawing.Size(227, 26);
+			_ClearPositionX.Size = new System.Drawing.Size(184, 22);
 			_ClearPositionX.Text = "清除横坐标";
 			// 
 			// _ClearPositionY
 			// 
 			_ClearPositionY.Name = "_ClearPositionY";
-			_ClearPositionY.Size = new System.Drawing.Size(227, 26);
+			_ClearPositionY.Size = new System.Drawing.Size(184, 22);
 			_ClearPositionY.Text = "清除纵坐标";
 			// 
 			// _ClearPositionXY
 			// 
 			_ClearPositionXY.Name = "_ClearPositionXY";
-			_ClearPositionXY.Size = new System.Drawing.Size(227, 26);
+			_ClearPositionXY.Size = new System.Drawing.Size(184, 22);
 			_ClearPositionXY.Text = "清除横坐标与纵坐标";
 			// 
 			// _ForceInternalLink
 			// 
 			_ForceInternalLink.Name = "_ForceInternalLink";
-			_ForceInternalLink.Size = new System.Drawing.Size(251, 26);
+			_ForceInternalLink.Size = new System.Drawing.Size(215, 26);
 			_ForceInternalLink.Text = "强制设置为文件内链接";
 			// 
 			// _SelectNone
 			// 
 			_SelectNone.Name = "_SelectNone";
-			_SelectNone.Size = new System.Drawing.Size(172, 26);
+			_SelectNone.Size = new System.Drawing.Size(152, 26);
 			_SelectNone.Text = "全部不选";
 			// 
 			// _InvertSelect
 			// 
 			_InvertSelect.Name = "_InvertSelect";
-			_InvertSelect.Size = new System.Drawing.Size(172, 26);
+			_InvertSelect.Size = new System.Drawing.Size(152, 26);
 			_InvertSelect.Text = "反转选择状态";
 			// 
 			// _ShiftPageNumber
@@ -335,51 +336,51 @@
             _DecrementPageNumber});
 			_ShiftPageNumber.Image = global::PDFPatcher.Properties.Resources.PageRange;
 			_ShiftPageNumber.Name = "_ShiftPageNumber";
-			_ShiftPageNumber.Size = new System.Drawing.Size(251, 26);
+			_ShiftPageNumber.Size = new System.Drawing.Size(215, 26);
 			_ShiftPageNumber.Text = "更改目标页码(&M)";
 			_ShiftPageNumber.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this._MainToolbar_ItemClicked);
 			// 
 			// _ShiftMultiPageNumber
 			// 
 			_ShiftMultiPageNumber.Name = "_ShiftMultiPageNumber";
-			_ShiftMultiPageNumber.Size = new System.Drawing.Size(194, 26);
+			_ShiftMultiPageNumber.Size = new System.Drawing.Size(157, 22);
 			_ShiftMultiPageNumber.Text = "增减指定数值...";
 			// 
 			// _IncrementPageNumber
 			// 
 			_IncrementPageNumber.Name = "_IncrementPageNumber";
-			_IncrementPageNumber.Size = new System.Drawing.Size(194, 26);
+			_IncrementPageNumber.Size = new System.Drawing.Size(157, 22);
 			_IncrementPageNumber.Text = "增加页码";
 			// 
 			// _DecrementPageNumber
 			// 
 			_DecrementPageNumber.Name = "_DecrementPageNumber";
-			_DecrementPageNumber.Size = new System.Drawing.Size(194, 26);
+			_DecrementPageNumber.Size = new System.Drawing.Size(157, 22);
 			_DecrementPageNumber.Text = "减少页码";
 			// 
 			// _MergeBookmark
 			// 
 			_MergeBookmark.Image = global::PDFPatcher.Properties.Resources.Merge;
 			_MergeBookmark.Name = "_MergeBookmark";
-			_MergeBookmark.Size = new System.Drawing.Size(251, 26);
+			_MergeBookmark.Size = new System.Drawing.Size(215, 26);
 			_MergeBookmark.Text = "合并书签(&H)";
 			// 
 			// _SelectAll
 			// 
 			_SelectAll.Image = global::PDFPatcher.Properties.Resources.SelectAll;
 			_SelectAll.Name = "_SelectAll";
-			_SelectAll.Size = new System.Drawing.Size(172, 26);
+			_SelectAll.Size = new System.Drawing.Size(152, 26);
 			_SelectAll.Text = "全部选中";
 			// 
 			// toolStripSeparator3
 			// 
 			toolStripSeparator3.Name = "toolStripSeparator3";
-			toolStripSeparator3.Size = new System.Drawing.Size(169, 6);
+			toolStripSeparator3.Size = new System.Drawing.Size(149, 6);
 			// 
 			// dummyToolStripMenuItem
 			// 
 			dummyToolStripMenuItem.Name = "dummyToolStripMenuItem";
-			dummyToolStripMenuItem.Size = new System.Drawing.Size(108, 24);
+			dummyToolStripMenuItem.Size = new System.Drawing.Size(94, 22);
 			dummyToolStripMenuItem.Text = "dummy";
 			// 
 			// _Copy
@@ -388,7 +389,7 @@
 			_Copy.Image = global::PDFPatcher.Properties.Resources.Copy;
 			_Copy.ImageTransparentColor = System.Drawing.Color.Magenta;
 			_Copy.Name = "_Copy";
-			_Copy.Size = new System.Drawing.Size(29, 24);
+			_Copy.Size = new System.Drawing.Size(23, 23);
 			_Copy.Text = "复制书签";
 			_Copy.ToolTipText = "复制书签\r\nCtrl+C";
 			// 
@@ -398,7 +399,7 @@
 			_Paste.Image = global::PDFPatcher.Properties.Resources.Paste;
 			_Paste.ImageTransparentColor = System.Drawing.Color.Magenta;
 			_Paste.Name = "_Paste";
-			_Paste.Size = new System.Drawing.Size(29, 24);
+			_Paste.Size = new System.Drawing.Size(23, 23);
 			_Paste.Text = "粘贴书签";
 			_Paste.ToolTipText = "粘贴书签\r\nCtrl+P";
 			// 
@@ -408,14 +409,14 @@
 			_DeleteBookmark.Image = global::PDFPatcher.Properties.Resources.Delete;
 			_DeleteBookmark.ImageTransparentColor = System.Drawing.Color.Magenta;
 			_DeleteBookmark.Name = "_DeleteBookmark";
-			_DeleteBookmark.Size = new System.Drawing.Size(29, 24);
+			_DeleteBookmark.Size = new System.Drawing.Size(23, 23);
 			_DeleteBookmark.Text = "删除";
 			_DeleteBookmark.ToolTipText = "删除书签项目\r\nDelete";
 			// 
 			// toolStripSeparator2
 			// 
 			toolStripSeparator2.Name = "toolStripSeparator2";
-			toolStripSeparator2.Size = new System.Drawing.Size(6, 27);
+			toolStripSeparator2.Size = new System.Drawing.Size(6, 26);
 			// 
 			// _InsertBookmark
 			// 
@@ -423,7 +424,7 @@
 			_InsertBookmark.Image = global::PDFPatcher.Properties.Resources.BookmarkFile;
 			_InsertBookmark.ImageTransparentColor = System.Drawing.Color.Magenta;
 			_InsertBookmark.Name = "_InsertBookmark";
-			_InsertBookmark.Size = new System.Drawing.Size(29, 24);
+			_InsertBookmark.Size = new System.Drawing.Size(23, 23);
 			_InsertBookmark.Text = "插入(&C)";
 			_InsertBookmark.ToolTipText = "插入书签项\r\nInsert";
 			// 
@@ -433,7 +434,7 @@
 			_LevelUp.Image = global::PDFPatcher.Properties.Resources.MoveLeft;
 			_LevelUp.ImageTransparentColor = System.Drawing.Color.Magenta;
 			_LevelUp.Name = "_LevelUp";
-			_LevelUp.Size = new System.Drawing.Size(29, 24);
+			_LevelUp.Size = new System.Drawing.Size(23, 23);
 			_LevelUp.Text = "设置为父书签";
 			_LevelUp.ToolTipText = "将选中书签向外移一级变成父级书签\r\nShift+Tab";
 			// 
@@ -443,14 +444,14 @@
 			_LevelDown.Image = global::PDFPatcher.Properties.Resources.MoveRight;
 			_LevelDown.ImageTransparentColor = System.Drawing.Color.Magenta;
 			_LevelDown.Name = "_LevelDown";
-			_LevelDown.Size = new System.Drawing.Size(29, 24);
+			_LevelDown.Size = new System.Drawing.Size(23, 23);
 			_LevelDown.Text = "设置为子书签";
 			_LevelDown.ToolTipText = "设置选中书签为其上一个同级书签的子书签\r\nTab";
 			// 
 			// toolStripSeparator7
 			// 
 			toolStripSeparator7.Name = "toolStripSeparator7";
-			toolStripSeparator7.Size = new System.Drawing.Size(248, 6);
+			toolStripSeparator7.Size = new System.Drawing.Size(212, 6);
 			// 
 			// _SelectItems
 			// 
@@ -458,7 +459,7 @@
 			_SelectItems.Image = global::PDFPatcher.Properties.Resources.SelectItem;
 			_SelectItems.ImageTransparentColor = System.Drawing.Color.Magenta;
 			_SelectItems.Name = "_SelectItems";
-			_SelectItems.Size = new System.Drawing.Size(251, 26);
+			_SelectItems.Size = new System.Drawing.Size(215, 26);
 			_SelectItems.Text = "选择书签(&S)";
 			// 
 			// _SelectionMenu
@@ -474,25 +475,25 @@
             this._ExpandAll});
 			this._SelectionMenu.Name = "_SelectionMenu";
 			this._SelectionMenu.OwnerItem = _SelectItems;
-			this._SelectionMenu.Size = new System.Drawing.Size(173, 166);
+			this._SelectionMenu.Size = new System.Drawing.Size(153, 166);
 			this._SelectionMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this._MainToolbar_ItemClicked);
 			// 
 			// _CollapseAll
 			// 
 			this._CollapseAll.Name = "_CollapseAll";
-			this._CollapseAll.Size = new System.Drawing.Size(172, 26);
+			this._CollapseAll.Size = new System.Drawing.Size(152, 26);
 			this._CollapseAll.Text = "全部折叠";
 			// 
 			// _CollapseChildren
 			// 
 			this._CollapseChildren.Name = "_CollapseChildren";
-			this._CollapseChildren.Size = new System.Drawing.Size(172, 26);
+			this._CollapseChildren.Size = new System.Drawing.Size(152, 26);
 			this._CollapseChildren.Text = "折叠子书签";
 			// 
 			// _ExpandAll
 			// 
 			this._ExpandAll.Name = "_ExpandAll";
-			this._ExpandAll.Size = new System.Drawing.Size(172, 26);
+			this._ExpandAll.Size = new System.Drawing.Size(152, 26);
 			this._ExpandAll.Text = "全部展开";
 			// 
 			// _SearchReplace
@@ -500,7 +501,7 @@
 			_SearchReplace.Image = global::PDFPatcher.Properties.Resources.SearchReplace;
 			_SearchReplace.ImageTransparentColor = System.Drawing.Color.Magenta;
 			_SearchReplace.Name = "_SearchReplace";
-			_SearchReplace.Size = new System.Drawing.Size(251, 26);
+			_SearchReplace.Size = new System.Drawing.Size(215, 26);
 			_SearchReplace.Text = "查找/替换书签文本(&W)...";
 			_SearchReplace.ToolTipText = "查找或替换书签文本\r\nCtrl+F";
 			// 
@@ -508,7 +509,7 @@
 			// 
 			_BookmarkAction.Image = global::PDFPatcher.Properties.Resources.EditItem;
 			_BookmarkAction.Name = "_BookmarkAction";
-			_BookmarkAction.Size = new System.Drawing.Size(251, 26);
+			_BookmarkAction.Size = new System.Drawing.Size(215, 26);
 			_BookmarkAction.Text = "书签动作属性(&D)...";
 			_BookmarkAction.ToolTipText = "修改点击书签后执行的动作";
 			// 
@@ -557,55 +558,55 @@
 			// toolStripMenuItem5
 			// 
 			toolStripMenuItem5.Name = "toolStripMenuItem5";
-			toolStripMenuItem5.Size = new System.Drawing.Size(182, 26);
+			toolStripMenuItem5.Size = new System.Drawing.Size(148, 22);
 			toolStripMenuItem5.Text = "红色";
 			// 
 			// toolStripMenuItem6
 			// 
 			toolStripMenuItem6.Name = "toolStripMenuItem6";
-			toolStripMenuItem6.Size = new System.Drawing.Size(182, 26);
+			toolStripMenuItem6.Size = new System.Drawing.Size(148, 22);
 			toolStripMenuItem6.Text = "黄色";
 			// 
 			// toolStripMenuItem7
 			// 
 			toolStripMenuItem7.Name = "toolStripMenuItem7";
-			toolStripMenuItem7.Size = new System.Drawing.Size(182, 26);
+			toolStripMenuItem7.Size = new System.Drawing.Size(148, 22);
 			toolStripMenuItem7.Text = "绿色";
 			// 
 			// toolStripMenuItem8
 			// 
 			this.toolStripMenuItem8.Name = "toolStripMenuItem8";
-			this.toolStripMenuItem8.Size = new System.Drawing.Size(182, 26);
+			this.toolStripMenuItem8.Size = new System.Drawing.Size(148, 22);
 			this.toolStripMenuItem8.Text = "青色";
 			// 
 			// toolStripMenuItem9
 			// 
 			toolStripMenuItem9.Name = "toolStripMenuItem9";
-			toolStripMenuItem9.Size = new System.Drawing.Size(182, 26);
+			toolStripMenuItem9.Size = new System.Drawing.Size(148, 22);
 			toolStripMenuItem9.Text = "蓝色";
 			// 
 			// toolStripMenuItem10
 			// 
 			toolStripMenuItem10.Name = "toolStripMenuItem10";
-			toolStripMenuItem10.Size = new System.Drawing.Size(182, 26);
+			toolStripMenuItem10.Size = new System.Drawing.Size(148, 22);
 			toolStripMenuItem10.Text = "紫色";
 			// 
 			// toolStripSeparator9
 			// 
 			this.toolStripSeparator9.Name = "toolStripSeparator9";
-			this.toolStripSeparator9.Size = new System.Drawing.Size(179, 6);
+			this.toolStripSeparator9.Size = new System.Drawing.Size(145, 6);
 			// 
 			// toolStripMenuItem11
 			// 
 			toolStripMenuItem11.Image = global::PDFPatcher.Properties.Resources.Unmark;
 			toolStripMenuItem11.Name = "toolStripMenuItem11";
-			toolStripMenuItem11.Size = new System.Drawing.Size(182, 26);
+			toolStripMenuItem11.Size = new System.Drawing.Size(148, 22);
 			toolStripMenuItem11.Text = "取消标记";
 			// 
 			// toolStripMenuItem12
 			// 
 			toolStripMenuItem12.Name = "toolStripMenuItem12";
-			toolStripMenuItem12.Size = new System.Drawing.Size(182, 26);
+			toolStripMenuItem12.Size = new System.Drawing.Size(148, 22);
 			toolStripMenuItem12.Text = "清除所有标记";
 			// 
 			// toolStripMenuItem13
@@ -626,37 +627,37 @@
 			// toolStripMenuItem14
 			// 
 			toolStripMenuItem14.Name = "toolStripMenuItem14";
-			toolStripMenuItem14.Size = new System.Drawing.Size(122, 26);
+			toolStripMenuItem14.Size = new System.Drawing.Size(100, 22);
 			toolStripMenuItem14.Text = "红色";
 			// 
 			// toolStripMenuItem15
 			// 
 			toolStripMenuItem15.Name = "toolStripMenuItem15";
-			toolStripMenuItem15.Size = new System.Drawing.Size(122, 26);
+			toolStripMenuItem15.Size = new System.Drawing.Size(100, 22);
 			toolStripMenuItem15.Text = "黄色";
 			// 
 			// toolStripMenuItem16
 			// 
 			toolStripMenuItem16.Name = "toolStripMenuItem16";
-			toolStripMenuItem16.Size = new System.Drawing.Size(122, 26);
+			toolStripMenuItem16.Size = new System.Drawing.Size(100, 22);
 			toolStripMenuItem16.Text = "绿色";
 			// 
 			// toolStripMenuItem17
 			// 
 			toolStripMenuItem17.Name = "toolStripMenuItem17";
-			toolStripMenuItem17.Size = new System.Drawing.Size(122, 26);
+			toolStripMenuItem17.Size = new System.Drawing.Size(100, 22);
 			toolStripMenuItem17.Text = "青色";
 			// 
 			// toolStripMenuItem18
 			// 
 			toolStripMenuItem18.Name = "toolStripMenuItem18";
-			toolStripMenuItem18.Size = new System.Drawing.Size(122, 26);
+			toolStripMenuItem18.Size = new System.Drawing.Size(100, 22);
 			toolStripMenuItem18.Text = "蓝色";
 			// 
 			// toolStripMenuItem19
 			// 
 			toolStripMenuItem19.Name = "toolStripMenuItem19";
-			toolStripMenuItem19.Size = new System.Drawing.Size(122, 26);
+			toolStripMenuItem19.Size = new System.Drawing.Size(100, 22);
 			toolStripMenuItem19.Text = "紫色";
 			// 
 			// toolStripSeparator10
@@ -670,7 +671,7 @@
 			_FirstPage.Image = global::PDFPatcher.Properties.Resources.MoveTop;
 			_FirstPage.ImageTransparentColor = System.Drawing.Color.Magenta;
 			_FirstPage.Name = "_FirstPage";
-			_FirstPage.Size = new System.Drawing.Size(29, 25);
+			_FirstPage.Size = new System.Drawing.Size(23, 22);
 			_FirstPage.Text = "转到文档第一页";
 			// 
 			// _PreviousPage
@@ -679,7 +680,7 @@
 			_PreviousPage.Image = global::PDFPatcher.Properties.Resources.MoveUp;
 			_PreviousPage.ImageTransparentColor = System.Drawing.Color.Magenta;
 			_PreviousPage.Name = "_PreviousPage";
-			_PreviousPage.Size = new System.Drawing.Size(29, 25);
+			_PreviousPage.Size = new System.Drawing.Size(23, 22);
 			_PreviousPage.Text = "转到上一页";
 			// 
 			// _NextPage
@@ -688,7 +689,7 @@
 			_NextPage.Image = global::PDFPatcher.Properties.Resources.MoveDown;
 			_NextPage.ImageTransparentColor = System.Drawing.Color.Magenta;
 			_NextPage.Name = "_NextPage";
-			_NextPage.Size = new System.Drawing.Size(29, 25);
+			_NextPage.Size = new System.Drawing.Size(23, 22);
 			_NextPage.Text = "转到下一页";
 			// 
 			// _LastPage
@@ -697,7 +698,7 @@
 			_LastPage.Image = global::PDFPatcher.Properties.Resources.MoveBottom;
 			_LastPage.ImageTransparentColor = System.Drawing.Color.Magenta;
 			_LastPage.Name = "_LastPage";
-			_LastPage.Size = new System.Drawing.Size(29, 25);
+			_LastPage.Size = new System.Drawing.Size(23, 22);
 			_LastPage.Text = "转到文档最后一页";
 			// 
 			// _MoveMode
@@ -706,7 +707,7 @@
 			_MoveMode.CheckState = System.Windows.Forms.CheckState.Checked;
 			_MoveMode.Image = global::PDFPatcher.Properties.Resources.Move;
 			_MoveMode.Name = "_MoveMode";
-			_MoveMode.Size = new System.Drawing.Size(257, 26);
+			_MoveMode.Size = new System.Drawing.Size(208, 22);
 			_MoveMode.Text = "移动页面模式(&Y)";
 			_MoveMode.ToolTipText = "使用鼠标拖动页面";
 			// 
@@ -714,14 +715,14 @@
 			// 
 			_SelectionMode.Image = global::PDFPatcher.Properties.Resources.SelectItem;
 			_SelectionMode.Name = "_SelectionMode";
-			_SelectionMode.Size = new System.Drawing.Size(257, 26);
+			_SelectionMode.Size = new System.Drawing.Size(208, 22);
 			_SelectionMode.Text = "框选模式(&K)";
 			_SelectionMode.ToolTipText = "框选文档内容，可复制所选内容、添加书签";
 			// 
 			// toolStripSeparator1
 			// 
 			toolStripSeparator1.Name = "toolStripSeparator1";
-			toolStripSeparator1.Size = new System.Drawing.Size(254, 6);
+			toolStripSeparator1.Size = new System.Drawing.Size(205, 6);
 			// 
 			// _ScrollVertical
 			// 
@@ -729,27 +730,27 @@
 			_ScrollVertical.CheckState = System.Windows.Forms.CheckState.Checked;
 			_ScrollVertical.Image = global::PDFPatcher.Properties.Resources.ScrollVertical;
 			_ScrollVertical.Name = "_ScrollVertical";
-			_ScrollVertical.Size = new System.Drawing.Size(257, 26);
+			_ScrollVertical.Size = new System.Drawing.Size(208, 22);
 			_ScrollVertical.Text = "从上到下阅读(&S)";
 			// 
 			// _ScrollHorizontal
 			// 
 			_ScrollHorizontal.Image = global::PDFPatcher.Properties.Resources.ScrollHorizontal;
 			_ScrollHorizontal.Name = "_ScrollHorizontal";
-			_ScrollHorizontal.Size = new System.Drawing.Size(257, 26);
+			_ScrollHorizontal.Size = new System.Drawing.Size(208, 22);
 			_ScrollHorizontal.Text = "从右到左阅读(&Y)";
 			// 
 			// _FullPageScroll
 			// 
 			_FullPageScroll.Name = "_FullPageScroll";
-			_FullPageScroll.Size = new System.Drawing.Size(257, 26);
+			_FullPageScroll.Size = new System.Drawing.Size(208, 22);
 			_FullPageScroll.Text = "整页翻页(&Z)";
 			_FullPageScroll.ToolTipText = "按翻页键翻页时，按整页来翻页而不是按显示窗口翻页";
 			// 
 			// toolStripSeparator6
 			// 
 			toolStripSeparator6.Name = "toolStripSeparator6";
-			toolStripSeparator6.Size = new System.Drawing.Size(254, 6);
+			toolStripSeparator6.Size = new System.Drawing.Size(205, 6);
 			// 
 			// _TrueColorSpace
 			// 
@@ -757,28 +758,28 @@
 			_TrueColorSpace.CheckState = System.Windows.Forms.CheckState.Checked;
 			_TrueColorSpace.Image = global::PDFPatcher.Properties.Resources.ColorDisplay;
 			_TrueColorSpace.Name = "_TrueColorSpace";
-			_TrueColorSpace.Size = new System.Drawing.Size(257, 26);
+			_TrueColorSpace.Size = new System.Drawing.Size(208, 22);
 			_TrueColorSpace.Text = "彩色显示(&C)";
 			// 
 			// _GrayColorSpace
 			// 
 			_GrayColorSpace.Image = global::PDFPatcher.Properties.Resources.GrayScaleDisplay;
 			_GrayColorSpace.Name = "_GrayColorSpace";
-			_GrayColorSpace.Size = new System.Drawing.Size(257, 26);
+			_GrayColorSpace.Size = new System.Drawing.Size(208, 22);
 			_GrayColorSpace.Text = "黑白显示(&H)";
 			// 
 			// _InvertColor
 			// 
 			_InvertColor.Image = global::PDFPatcher.Properties.Resources.InvertColor;
 			_InvertColor.Name = "_InvertColor";
-			_InvertColor.Size = new System.Drawing.Size(257, 26);
+			_InvertColor.Size = new System.Drawing.Size(208, 22);
 			_InvertColor.Text = "反转颜色(&F)";
 			// 
 			// _BookmarkHere
 			// 
 			_BookmarkHere.Image = global::PDFPatcher.Properties.Resources.BookmarkFile;
 			_BookmarkHere.Name = "_BookmarkHere";
-			_BookmarkHere.Size = new System.Drawing.Size(269, 26);
+			_BookmarkHere.Size = new System.Drawing.Size(229, 26);
 			_BookmarkHere.Text = "在此插入书签(&S)...";
 			_BookmarkHere.ToolTipText = "插入书签，指向当前位置";
 			// 
@@ -786,57 +787,57 @@
 			// 
 			_CopySelection.Image = global::PDFPatcher.Properties.Resources.Copy;
 			_CopySelection.Name = "_CopySelection";
-			_CopySelection.Size = new System.Drawing.Size(269, 26);
+			_CopySelection.Size = new System.Drawing.Size(229, 26);
 			_CopySelection.Text = "复制选中内容(&F)";
 			_CopySelection.ToolTipText = "复制选中部分的图像";
 			// 
 			// toolStripSeparator11
 			// 
 			toolStripSeparator11.Name = "toolStripSeparator11";
-			toolStripSeparator11.Size = new System.Drawing.Size(254, 6);
+			toolStripSeparator11.Size = new System.Drawing.Size(205, 6);
 			// 
 			// _OcrDisabled
 			// 
 			_OcrDisabled.Name = "_OcrDisabled";
-			_OcrDisabled.Size = new System.Drawing.Size(224, 26);
+			_OcrDisabled.Size = new System.Drawing.Size(164, 22);
 			_OcrDisabled.Text = "不要识别文本(&B)";
 			// 
 			// _ShowTextBorders
 			// 
 			_ShowTextBorders.Name = "_ShowTextBorders";
-			_ShowTextBorders.Size = new System.Drawing.Size(257, 26);
+			_ShowTextBorders.Size = new System.Drawing.Size(208, 22);
 			_ShowTextBorders.Text = "显示文本边框";
 			// 
 			// _DarkMode
 			// 
 			_DarkMode.Image = global::PDFPatcher.Properties.Resources.DarkMode;
 			_DarkMode.Name = "_DarkMode";
-			_DarkMode.Size = new System.Drawing.Size(257, 26);
+			_DarkMode.Size = new System.Drawing.Size(208, 22);
 			_DarkMode.Text = "暗黑阅读模式(&A)";
 			// 
 			// toolStripSeparator12
 			// 
 			toolStripSeparator12.Name = "toolStripSeparator12";
-			toolStripSeparator12.Size = new System.Drawing.Size(254, 6);
+			toolStripSeparator12.Size = new System.Drawing.Size(205, 6);
 			// 
 			// _GreenMode
 			// 
 			_GreenMode.Image = global::PDFPatcher.Properties.Resources.GreenMode;
 			_GreenMode.Name = "_GreenMode";
-			_GreenMode.Size = new System.Drawing.Size(257, 26);
+			_GreenMode.Size = new System.Drawing.Size(208, 22);
 			_GreenMode.Text = "绿色阅读模式(&L)";
 			// 
 			// _ShowBookmarks
 			// 
 			_ShowBookmarks.Name = "_ShowBookmarks";
-			_ShowBookmarks.Size = new System.Drawing.Size(257, 26);
+			_ShowBookmarks.Size = new System.Drawing.Size(208, 22);
 			_ShowBookmarks.Text = "显示书签栏(&Q)";
 			// 
 			// _InsertPageLabel
 			// 
 			_InsertPageLabel.Image = global::PDFPatcher.Properties.Resources.PageRange;
 			_InsertPageLabel.Name = "_InsertPageLabel";
-			_InsertPageLabel.Size = new System.Drawing.Size(269, 26);
+			_InsertPageLabel.Size = new System.Drawing.Size(229, 26);
 			_InsertPageLabel.Text = "插入页码标签(&Y)...";
 			_InsertPageLabel.Visible = false;
 			// 
@@ -845,45 +846,45 @@
 			_AutoBookmark.Enabled = false;
 			_AutoBookmark.Image = global::PDFPatcher.Properties.Resources.AutoBookmark;
 			_AutoBookmark.Name = "_AutoBookmark";
-			_AutoBookmark.Size = new System.Drawing.Size(269, 26);
+			_AutoBookmark.Size = new System.Drawing.Size(229, 26);
 			_AutoBookmark.Text = "设置自动书签标题格式(&Z)";
 			// 
 			// _SetOpenStatusTrue
 			// 
 			_SetOpenStatusTrue.Name = "_SetOpenStatusTrue";
-			_SetOpenStatusTrue.Size = new System.Drawing.Size(122, 26);
+			_SetOpenStatusTrue.Size = new System.Drawing.Size(100, 22);
 			_SetOpenStatusTrue.Text = "打开";
 			// 
 			// _SetOpenStatusFalse
 			// 
 			_SetOpenStatusFalse.Name = "_SetOpenStatusFalse";
-			_SetOpenStatusFalse.Size = new System.Drawing.Size(122, 26);
+			_SetOpenStatusFalse.Size = new System.Drawing.Size(100, 22);
 			_SetOpenStatusFalse.Text = "关闭";
 			// 
 			// _OcrDetectPunctuation
 			// 
 			_OcrDetectPunctuation.Name = "_OcrDetectPunctuation";
-			_OcrDetectPunctuation.Size = new System.Drawing.Size(257, 26);
+			_OcrDetectPunctuation.Size = new System.Drawing.Size(208, 22);
 			_OcrDetectPunctuation.Text = "增强识别目录页标点";
 			// 
 			// _FullScreen
 			// 
 			_FullScreen.Name = "_FullScreen";
-			_FullScreen.Size = new System.Drawing.Size(257, 26);
+			_FullScreen.Size = new System.Drawing.Size(208, 22);
 			_FullScreen.Text = "全屏显示(&Q)";
 			// 
 			// _PageProperties
 			// 
 			_PageProperties.Image = global::PDFPatcher.Properties.Resources.Property;
 			_PageProperties.Name = "_PageProperties";
-			_PageProperties.Size = new System.Drawing.Size(269, 26);
+			_PageProperties.Size = new System.Drawing.Size(229, 26);
 			_PageProperties.Text = "查看页面属性(&X)...";
 			// 
 			// _EditorOptions
 			// 
 			_EditorOptions.Image = global::PDFPatcher.Properties.Resources.PdfOptions;
 			_EditorOptions.Name = "_EditorOptions";
-			_EditorOptions.Size = new System.Drawing.Size(257, 26);
+			_EditorOptions.Size = new System.Drawing.Size(208, 22);
 			_EditorOptions.Text = "设置文件修改方式(X)...";
 			// 
 			// _MarkBookmark
@@ -900,62 +901,62 @@
             _ClearBookmarkMarks});
 			_MarkBookmark.Image = global::PDFPatcher.Properties.Resources.Mark;
 			_MarkBookmark.Name = "_MarkBookmark";
-			_MarkBookmark.Size = new System.Drawing.Size(251, 26);
+			_MarkBookmark.Size = new System.Drawing.Size(215, 26);
 			_MarkBookmark.Text = "标记书签";
 			_MarkBookmark.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this._MainToolbar_ItemClicked);
 			// 
 			// _MarkBookmarkRed
 			// 
 			_MarkBookmarkRed.Name = "_MarkBookmarkRed";
-			_MarkBookmarkRed.Size = new System.Drawing.Size(182, 26);
+			_MarkBookmarkRed.Size = new System.Drawing.Size(148, 22);
 			_MarkBookmarkRed.Text = "红色";
 			// 
 			// _MarkBookmarkYellow
 			// 
 			_MarkBookmarkYellow.Name = "_MarkBookmarkYellow";
-			_MarkBookmarkYellow.Size = new System.Drawing.Size(182, 26);
+			_MarkBookmarkYellow.Size = new System.Drawing.Size(148, 22);
 			_MarkBookmarkYellow.Text = "黄色";
 			// 
 			// _MarkBookmarkGreen
 			// 
 			_MarkBookmarkGreen.Name = "_MarkBookmarkGreen";
-			_MarkBookmarkGreen.Size = new System.Drawing.Size(182, 26);
+			_MarkBookmarkGreen.Size = new System.Drawing.Size(148, 22);
 			_MarkBookmarkGreen.Text = "绿色";
 			// 
 			// _MarkBookmarkCyan
 			// 
 			this._MarkBookmarkCyan.Name = "_MarkBookmarkCyan";
-			this._MarkBookmarkCyan.Size = new System.Drawing.Size(182, 26);
+			this._MarkBookmarkCyan.Size = new System.Drawing.Size(148, 22);
 			this._MarkBookmarkCyan.Text = "青色";
 			// 
 			// _MarkBookmarkBlue
 			// 
 			_MarkBookmarkBlue.Name = "_MarkBookmarkBlue";
-			_MarkBookmarkBlue.Size = new System.Drawing.Size(182, 26);
+			_MarkBookmarkBlue.Size = new System.Drawing.Size(148, 22);
 			_MarkBookmarkBlue.Text = "蓝色";
 			// 
 			// _MarkBookmarkPurple
 			// 
 			_MarkBookmarkPurple.Name = "_MarkBookmarkPurple";
-			_MarkBookmarkPurple.Size = new System.Drawing.Size(182, 26);
+			_MarkBookmarkPurple.Size = new System.Drawing.Size(148, 22);
 			_MarkBookmarkPurple.Text = "紫色";
 			// 
 			// toolStripSeparator5
 			// 
 			toolStripSeparator5.Name = "toolStripSeparator5";
-			toolStripSeparator5.Size = new System.Drawing.Size(179, 6);
+			toolStripSeparator5.Size = new System.Drawing.Size(145, 6);
 			// 
 			// _UnmarkBookmark
 			// 
 			_UnmarkBookmark.Image = global::PDFPatcher.Properties.Resources.Unmark;
 			_UnmarkBookmark.Name = "_UnmarkBookmark";
-			_UnmarkBookmark.Size = new System.Drawing.Size(182, 26);
+			_UnmarkBookmark.Size = new System.Drawing.Size(148, 22);
 			_UnmarkBookmark.Text = "取消标记";
 			// 
 			// _ClearBookmarkMarks
 			// 
 			_ClearBookmarkMarks.Name = "_ClearBookmarkMarks";
-			_ClearBookmarkMarks.Size = new System.Drawing.Size(182, 26);
+			_ClearBookmarkMarks.Size = new System.Drawing.Size(148, 22);
 			_ClearBookmarkMarks.Text = "清除所有标记";
 			// 
 			// _SelectMarkedBookmarks
@@ -969,50 +970,50 @@
             _SelectPurpleMarks});
 			_SelectMarkedBookmarks.Image = global::PDFPatcher.Properties.Resources.SelectMarks;
 			_SelectMarkedBookmarks.Name = "_SelectMarkedBookmarks";
-			_SelectMarkedBookmarks.Size = new System.Drawing.Size(251, 26);
+			_SelectMarkedBookmarks.Size = new System.Drawing.Size(215, 26);
 			_SelectMarkedBookmarks.Text = "选择已标记书签";
 			_SelectMarkedBookmarks.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this._MainToolbar_ItemClicked);
 			// 
 			// _SelectRedMarks
 			// 
 			_SelectRedMarks.Name = "_SelectRedMarks";
-			_SelectRedMarks.Size = new System.Drawing.Size(122, 26);
+			_SelectRedMarks.Size = new System.Drawing.Size(100, 22);
 			_SelectRedMarks.Text = "红色";
 			// 
 			// _SelectYellowMarks
 			// 
 			_SelectYellowMarks.Name = "_SelectYellowMarks";
-			_SelectYellowMarks.Size = new System.Drawing.Size(122, 26);
+			_SelectYellowMarks.Size = new System.Drawing.Size(100, 22);
 			_SelectYellowMarks.Text = "黄色";
 			// 
 			// _SelectGreenMarks
 			// 
 			_SelectGreenMarks.Name = "_SelectGreenMarks";
-			_SelectGreenMarks.Size = new System.Drawing.Size(122, 26);
+			_SelectGreenMarks.Size = new System.Drawing.Size(100, 22);
 			_SelectGreenMarks.Text = "绿色";
 			// 
 			// _SelectCyanMarks
 			// 
 			_SelectCyanMarks.Name = "_SelectCyanMarks";
-			_SelectCyanMarks.Size = new System.Drawing.Size(122, 26);
+			_SelectCyanMarks.Size = new System.Drawing.Size(100, 22);
 			_SelectCyanMarks.Text = "青色";
 			// 
 			// _SelectBlueMarks
 			// 
 			_SelectBlueMarks.Name = "_SelectBlueMarks";
-			_SelectBlueMarks.Size = new System.Drawing.Size(122, 26);
+			_SelectBlueMarks.Size = new System.Drawing.Size(100, 22);
 			_SelectBlueMarks.Text = "蓝色";
 			// 
 			// _SelectPurpleMarks
 			// 
 			_SelectPurpleMarks.Name = "_SelectPurpleMarks";
-			_SelectPurpleMarks.Size = new System.Drawing.Size(122, 26);
+			_SelectPurpleMarks.Size = new System.Drawing.Size(100, 22);
 			_SelectPurpleMarks.Text = "紫色";
 			// 
 			// toolStripSeparator14
 			// 
 			toolStripSeparator14.Name = "toolStripSeparator14";
-			toolStripSeparator14.Size = new System.Drawing.Size(254, 6);
+			toolStripSeparator14.Size = new System.Drawing.Size(205, 6);
 			// 
 			// _ViewerButton
 			// 
@@ -1044,9 +1045,9 @@
 			this._ViewerButton.Image = global::PDFPatcher.Properties.Resources.CreateDocument;
 			this._ViewerButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this._ViewerButton.Name = "_ViewerButton";
-			this._ViewerButton.Size = new System.Drawing.Size(34, 25);
+			this._ViewerButton.Size = new System.Drawing.Size(29, 22);
 			this._ViewerButton.Text = "阅读器";
-			this._ViewerButton.ToolTipText = "阅读方式";
+			this._ViewerButton.ToolTipText = "设置阅读器的操作方式";
 			this._ViewerButton.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this._MainToolbar_ItemClicked);
 			// 
 			// _OcrMenu
@@ -1055,14 +1056,20 @@
             _OcrDisabled});
 			this._OcrMenu.Image = global::PDFPatcher.Properties.Resources.Ocr;
 			this._OcrMenu.Name = "_OcrMenu";
-			this._OcrMenu.Size = new System.Drawing.Size(257, 26);
+			this._OcrMenu.Size = new System.Drawing.Size(208, 22);
 			this._OcrMenu.Text = "识别文本语言(&W)";
 			this._OcrMenu.ToolTipText = "设置插入书签、识别页面文本时的识别引擎";
+			// 
+			// _InsertWithOcrOnly
+			// 
+			this._InsertWithOcrOnly.Name = "_InsertWithOcrOnly";
+			this._InsertWithOcrOnly.Size = new System.Drawing.Size(208, 22);
+			this._InsertWithOcrOnly.Text = "插入书签仅使用识别引擎";
 			// 
 			// _ShowAnnotations
 			// 
 			this._ShowAnnotations.Name = "_ShowAnnotations";
-			this._ShowAnnotations.Size = new System.Drawing.Size(257, 26);
+			this._ShowAnnotations.Size = new System.Drawing.Size(208, 22);
 			this._ShowAnnotations.Text = "显示文档批注(&P)";
 			// 
 			// _EditMenu
@@ -1086,13 +1093,13 @@
             _MarkBookmark,
             _SelectMarkedBookmarks});
 			this._EditMenu.Name = "_EditMenu";
-			this._EditMenu.Size = new System.Drawing.Size(252, 360);
+			this._EditMenu.Size = new System.Drawing.Size(216, 360);
 			this._EditMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this._MainToolbar_ItemClicked);
 			// 
 			// toolStripSeparator13
 			// 
 			this.toolStripSeparator13.Name = "toolStripSeparator13";
-			this.toolStripSeparator13.Size = new System.Drawing.Size(248, 6);
+			this.toolStripSeparator13.Size = new System.Drawing.Size(212, 6);
 			// 
 			// _SetOpenStatus
 			// 
@@ -1101,34 +1108,34 @@
             _SetOpenStatusFalse});
 			this._SetOpenStatus.Image = global::PDFPatcher.Properties.Resources.Open;
 			this._SetOpenStatus.Name = "_SetOpenStatus";
-			this._SetOpenStatus.Size = new System.Drawing.Size(251, 26);
+			this._SetOpenStatus.Size = new System.Drawing.Size(215, 26);
 			this._SetOpenStatus.Text = "设置书签默认打开状态(&T)";
 			// 
 			// _ChangeZoomRate
 			// 
 			this._ChangeZoomRate.Image = global::PDFPatcher.Properties.Resources.Zoom;
 			this._ChangeZoomRate.Name = "_ChangeZoomRate";
-			this._ChangeZoomRate.Size = new System.Drawing.Size(251, 26);
+			this._ChangeZoomRate.Size = new System.Drawing.Size(215, 26);
 			this._ChangeZoomRate.Text = "设置目标显示方式(&X)";
 			// 
 			// _ChangeCase
 			// 
 			this._ChangeCase.Image = global::PDFPatcher.Properties.Resources.ChangeCase;
 			this._ChangeCase.Name = "_ChangeCase";
-			this._ChangeCase.Size = new System.Drawing.Size(251, 26);
+			this._ChangeCase.Size = new System.Drawing.Size(215, 26);
 			this._ChangeCase.Text = "更改书签文本大小写";
 			this._ChangeCase.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this._MainToolbar_ItemClicked);
 			// 
 			// toolStripSeparator4
 			// 
 			this.toolStripSeparator4.Name = "toolStripSeparator4";
-			this.toolStripSeparator4.Size = new System.Drawing.Size(248, 6);
+			this.toolStripSeparator4.Size = new System.Drawing.Size(212, 6);
 			// 
 			// _QuickSelect
 			// 
 			this._QuickSelect.Image = global::PDFPatcher.Properties.Resources.SelectItem;
 			this._QuickSelect.Name = "_QuickSelect";
-			this._QuickSelect.Size = new System.Drawing.Size(251, 26);
+			this._QuickSelect.Size = new System.Drawing.Size(215, 26);
 			this._QuickSelect.Text = "快速选择书签(&K)";
 			this._QuickSelect.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this._MainToolbar_ItemClicked);
 			// 
@@ -1138,9 +1145,8 @@
 			this._RecentFileMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             dummyToolStripMenuItem});
 			this._RecentFileMenu.Name = "_RecentFileMenu";
-			this._RecentFileMenu.OwnerItem = this._AddFilesButton;
 			this._RecentFileMenu.ShowImageMargin = false;
-			this._RecentFileMenu.Size = new System.Drawing.Size(109, 28);
+			this._RecentFileMenu.Size = new System.Drawing.Size(95, 26);
 			// 
 			// _AddFilesButton
 			// 
@@ -1149,7 +1155,7 @@
 			this._AddFilesButton.Image = global::PDFPatcher.Properties.Resources.OpenFile;
 			this._AddFilesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this._AddFilesButton.Name = "_AddFilesButton";
-			this._AddFilesButton.Size = new System.Drawing.Size(39, 24);
+			this._AddFilesButton.Size = new System.Drawing.Size(32, 23);
 			this._AddFilesButton.Text = "打开";
 			this._AddFilesButton.ToolTipText = "打开需要编辑的PDF文件";
 			this._AddFilesButton.ButtonClick += new System.EventHandler(this.ButtonClicked);
@@ -1160,7 +1166,6 @@
 			// 
 			this._UndoMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
 			this._UndoMenu.Name = "_UndoMenu";
-			this._UndoMenu.OwnerItem = this._UndoButton;
 			this._UndoMenu.ShowImageMargin = false;
 			this._UndoMenu.Size = new System.Drawing.Size(36, 4);
 			// 
@@ -1172,7 +1177,7 @@
 			this._UndoButton.Image = global::PDFPatcher.Properties.Resources.Undo;
 			this._UndoButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this._UndoButton.Name = "_UndoButton";
-			this._UndoButton.Size = new System.Drawing.Size(39, 24);
+			this._UndoButton.Size = new System.Drawing.Size(32, 23);
 			this._UndoButton.Text = "撤销";
 			this._UndoButton.ToolTipText = "撤销\r\nCtrl+Z";
 			this._UndoButton.ButtonClick += new System.EventHandler(this.ButtonClicked);
@@ -1181,10 +1186,9 @@
 			// 
 			this._IncludeDecendantBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this._IncludeDecendantBox.AutoSize = true;
-			this._IncludeDecendantBox.Location = new System.Drawing.Point(4, 347);
-			this._IncludeDecendantBox.Margin = new System.Windows.Forms.Padding(4);
+			this._IncludeDecendantBox.Location = new System.Drawing.Point(3, 277);
 			this._IncludeDecendantBox.Name = "_IncludeDecendantBox";
-			this._IncludeDecendantBox.Size = new System.Drawing.Size(239, 19);
+			this._IncludeDecendantBox.Size = new System.Drawing.Size(192, 16);
 			this._IncludeDecendantBox.TabIndex = 1;
 			this._IncludeDecendantBox.Text = "修改操作包含未选中的内部书签";
 			this._IncludeDecendantBox.UseVisualStyleBackColor = true;
@@ -1196,6 +1200,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this._BookmarkBox.CellEditActivation = BrightIdeasSoftware.ObjectListView.CellEditActivateMode.SingleClick;
+			this._BookmarkBox.CellEditUseWholeCell = false;
 			this._BookmarkBox.ContextMenuStrip = this._EditMenu;
 			this._BookmarkBox.CopySelectionOnControlC = false;
 			this._BookmarkBox.Cursor = System.Windows.Forms.Cursors.Default;
@@ -1205,13 +1210,12 @@
 			this._BookmarkBox.IsSimpleDragSource = true;
 			this._BookmarkBox.IsSimpleDropSink = true;
 			this._BookmarkBox.LabelEdit = true;
-			this._BookmarkBox.Location = new System.Drawing.Point(4, 4);
-			this._BookmarkBox.Margin = new System.Windows.Forms.Padding(4);
+			this._BookmarkBox.Location = new System.Drawing.Point(3, 3);
 			this._BookmarkBox.Name = "_BookmarkBox";
 			this._BookmarkBox.OperationAffectsDescendants = false;
 			this._BookmarkBox.RevealAfterExpand = false;
 			this._BookmarkBox.ShowGroups = false;
-			this._BookmarkBox.Size = new System.Drawing.Size(322, 334);
+			this._BookmarkBox.Size = new System.Drawing.Size(325, 268);
 			this._BookmarkBox.TabIndex = 0;
 			this._BookmarkBox.UseCellFormatEvents = true;
 			this._BookmarkBox.UseCompatibleStateImageBehavior = false;
@@ -1228,8 +1232,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this._MainPanel.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-			this._MainPanel.Location = new System.Drawing.Point(4, 36);
-			this._MainPanel.Margin = new System.Windows.Forms.Padding(4);
+			this._MainPanel.Location = new System.Drawing.Point(3, 29);
 			this._MainPanel.Name = "_MainPanel";
 			// 
 			// _MainPanel.Panel1
@@ -1241,9 +1244,8 @@
 			// 
 			this._MainPanel.Panel2.Controls.Add(this._PageInfoBox);
 			this._MainPanel.Panel2.Controls.Add(this._ViewerBox);
-			this._MainPanel.Size = new System.Drawing.Size(831, 370);
+			this._MainPanel.Size = new System.Drawing.Size(623, 296);
 			this._MainPanel.SplitterDistance = 332;
-			this._MainPanel.SplitterWidth = 5;
 			this._MainPanel.TabIndex = 1;
 			// 
 			// _PageInfoBox
@@ -1251,10 +1253,9 @@
 			this._PageInfoBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this._PageInfoBox.AutoEllipsis = true;
-			this._PageInfoBox.Location = new System.Drawing.Point(4, 348);
-			this._PageInfoBox.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+			this._PageInfoBox.Location = new System.Drawing.Point(3, 278);
 			this._PageInfoBox.Name = "_PageInfoBox";
-			this._PageInfoBox.Size = new System.Drawing.Size(486, 19);
+			this._PageInfoBox.Size = new System.Drawing.Size(281, 15);
 			this._PageInfoBox.TabIndex = 1;
 			this._PageInfoBox.Text = "PDF 页面信息";
 			// 
@@ -1269,12 +1270,11 @@
 			this._ViewerBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this._ViewerBox.GridDisplayMode = Cyotek.Windows.Forms.ImageBoxGridDisplayMode.None;
 			this._ViewerBox.LiteralZoom = null;
-			this._ViewerBox.Location = new System.Drawing.Point(4, 4);
-			this._ViewerBox.Margin = new System.Windows.Forms.Padding(4);
+			this._ViewerBox.Location = new System.Drawing.Point(3, 3);
 			this._ViewerBox.Name = "_ViewerBox";
 			this._ViewerBox.OcrLanguage = 2052;
 			this._ViewerBox.PinPoint = new System.Drawing.Point(0, 0);
-			this._ViewerBox.Size = new System.Drawing.Size(485, 334);
+			this._ViewerBox.Size = new System.Drawing.Size(281, 268);
 			this._ViewerBox.TabIndex = 0;
 			this._ViewerBox.TintColor = System.Drawing.Color.Transparent;
 			this._ViewerBox.VirtualMode = true;
@@ -1291,14 +1291,14 @@
             _PageProperties,
             this._SavePageImage});
 			this._ViewerMenu.Name = "_ViewerMenu";
-			this._ViewerMenu.Size = new System.Drawing.Size(270, 186);
+			this._ViewerMenu.Size = new System.Drawing.Size(230, 186);
 			this._ViewerMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this._MainToolbar_ItemClicked);
 			// 
 			// _OcrPage
 			// 
 			this._OcrPage.Image = global::PDFPatcher.Properties.Resources.Ocr;
 			this._OcrPage.Name = "_OcrPage";
-			this._OcrPage.Size = new System.Drawing.Size(269, 26);
+			this._OcrPage.Size = new System.Drawing.Size(229, 26);
 			this._OcrPage.Text = "复制本页文本识别结果(&W)...";
 			this._OcrPage.ToolTipText = "调用图像识别引擎识别选中图像内容的文本";
 			// 
@@ -1306,13 +1306,12 @@
 			// 
 			this._SavePageImage.Image = global::PDFPatcher.Properties.Resources.RenderImage;
 			this._SavePageImage.Name = "_SavePageImage";
-			this._SavePageImage.Size = new System.Drawing.Size(269, 26);
+			this._SavePageImage.Size = new System.Drawing.Size(229, 26);
 			this._SavePageImage.Text = "保存为图片(&P)...";
 			// 
 			// _BookmarkToolbar
 			// 
 			this._BookmarkToolbar.Dock = System.Windows.Forms.DockStyle.None;
-			this._BookmarkToolbar.ImageScalingSize = new System.Drawing.Size(20, 20);
 			this._BookmarkToolbar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this._AddFilesButton,
             this._SavePDF,
@@ -1330,7 +1329,7 @@
             this._BookmarkColorButton});
 			this._BookmarkToolbar.Location = new System.Drawing.Point(0, 0);
 			this._BookmarkToolbar.Name = "_BookmarkToolbar";
-			this._BookmarkToolbar.Size = new System.Drawing.Size(417, 27);
+			this._BookmarkToolbar.Size = new System.Drawing.Size(373, 26);
 			this._BookmarkToolbar.TabIndex = 2;
 			this._BookmarkToolbar.Text = "menuStrip1";
 			this._BookmarkToolbar.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this._MainToolbar_ItemClicked);
@@ -1341,7 +1340,7 @@
 			this._SavePDF.Image = global::PDFPatcher.Properties.Resources.Save;
 			this._SavePDF.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this._SavePDF.Name = "_SavePDF";
-			this._SavePDF.Size = new System.Drawing.Size(29, 24);
+			this._SavePDF.Size = new System.Drawing.Size(23, 23);
 			this._SavePDF.Text = "保存PDF文件";
 			this._SavePDF.ToolTipText = "保存PDF文件\r\nCtrl+S";
 			// 
@@ -1351,7 +1350,7 @@
 			this._SaveBookmark.Image = global::PDFPatcher.Properties.Resources.ExportInfoFile;
 			this._SaveBookmark.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this._SaveBookmark.Name = "_SaveBookmark";
-			this._SaveBookmark.Size = new System.Drawing.Size(29, 24);
+			this._SaveBookmark.Size = new System.Drawing.Size(23, 23);
 			this._SaveBookmark.Text = "保存书签文件";
 			this._SaveBookmark.ToolTipText = "保存书签文件\r\nCtrl+Q";
 			// 
@@ -1361,7 +1360,7 @@
 			this._BookmarkBoldButton.Image = global::PDFPatcher.Properties.Resources.Bold;
 			this._BookmarkBoldButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this._BookmarkBoldButton.Name = "_BookmarkBoldButton";
-			this._BookmarkBoldButton.Size = new System.Drawing.Size(29, 24);
+			this._BookmarkBoldButton.Size = new System.Drawing.Size(23, 23);
 			this._BookmarkBoldButton.Text = "粗体";
 			this._BookmarkBoldButton.ToolTipText = "切换书签文本的粗体样式\r\nCtrl+B";
 			// 
@@ -1371,13 +1370,12 @@
 			this._BookmarkItalicButton.Image = global::PDFPatcher.Properties.Resources.Italic;
 			this._BookmarkItalicButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this._BookmarkItalicButton.Name = "_BookmarkItalicButton";
-			this._BookmarkItalicButton.Size = new System.Drawing.Size(29, 24);
+			this._BookmarkItalicButton.Size = new System.Drawing.Size(23, 23);
 			this._BookmarkItalicButton.Text = "斜体";
 			this._BookmarkItalicButton.ToolTipText = "切换书签文本的斜体样式\r\nCtrl+I";
 			// 
 			// _BookmarkColorButton
 			// 
-			this._BookmarkColorButton.AutoSize = false;
 			this._BookmarkColorButton.ButtonDisplayStyle = ColorPicker.ToolStripColorPickerDisplayType.UnderLineAndImage;
 			this._BookmarkColorButton.Color = System.Drawing.Color.Black;
 			this._BookmarkColorButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -1411,7 +1409,6 @@
 			// _ViewerToolbar
 			// 
 			this._ViewerToolbar.Dock = System.Windows.Forms.DockStyle.None;
-			this._ViewerToolbar.ImageScalingSize = new System.Drawing.Size(20, 20);
 			this._ViewerToolbar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             _FirstPage,
             _PreviousPage,
@@ -1420,18 +1417,17 @@
             _LastPage,
             this._ZoomBox,
             this._ViewerButton});
-			this._ViewerToolbar.Location = new System.Drawing.Point(366, 0);
+			this._ViewerToolbar.Location = new System.Drawing.Point(342, 0);
 			this._ViewerToolbar.Name = "_ViewerToolbar";
-			this._ViewerToolbar.Size = new System.Drawing.Size(370, 28);
+			this._ViewerToolbar.Size = new System.Drawing.Size(262, 25);
 			this._ViewerToolbar.TabIndex = 4;
 			this._ViewerToolbar.Text = "toolStrip1";
 			this._ViewerToolbar.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this._MainToolbar_ItemClicked);
 			// 
 			// _CurrentPageBox
 			// 
-			this._CurrentPageBox.Font = new System.Drawing.Font("Microsoft YaHei UI", 9F);
 			this._CurrentPageBox.Name = "_CurrentPageBox";
-			this._CurrentPageBox.Size = new System.Drawing.Size(65, 28);
+			this._CurrentPageBox.Size = new System.Drawing.Size(50, 25);
 			this._CurrentPageBox.TextBoxTextAlign = System.Windows.Forms.HorizontalAlignment.Center;
 			// 
 			// _ZoomBox
@@ -1451,25 +1447,18 @@
             "300%",
             "400%"});
 			this._ZoomBox.Name = "_ZoomBox";
-			this._ZoomBox.Size = new System.Drawing.Size(99, 28);
-			// 
-			// _InsertWithOcrOnly
-			// 
-			this._InsertWithOcrOnly.Name = "_InsertWithOcrOnly";
-			this._InsertWithOcrOnly.Size = new System.Drawing.Size(257, 26);
-			this._InsertWithOcrOnly.Text = "插入书签仅使用识别引擎";
+			this._ZoomBox.Size = new System.Drawing.Size(75, 25);
 			// 
 			// EditorControl
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this._MainPanel);
 			this.Controls.Add(this._ViewerToolbar);
 			this.Controls.Add(this._BookmarkToolbar);
 			this.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			this.Margin = new System.Windows.Forms.Padding(4);
 			this.Name = "EditorControl";
-			this.Size = new System.Drawing.Size(839, 406);
+			this.Size = new System.Drawing.Size(629, 325);
 			this._SelectionMenu.ResumeLayout(false);
 			this._EditMenu.ResumeLayout(false);
 			this._RecentFileMenu.ResumeLayout(false);
@@ -1477,6 +1466,7 @@
 			this._MainPanel.Panel1.ResumeLayout(false);
 			this._MainPanel.Panel1.PerformLayout();
 			this._MainPanel.Panel2.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this._MainPanel)).EndInit();
 			this._MainPanel.ResumeLayout(false);
 			this._ViewerMenu.ResumeLayout(false);
 			this._BookmarkToolbar.ResumeLayout(false);

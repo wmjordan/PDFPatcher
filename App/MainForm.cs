@@ -222,7 +222,9 @@ namespace PDFPatcher
 			DragDrop += (s, args) => OpenFiles(args.DropFileOver(Constants.FileExtensions.Pdf));
 
 			SetupCustomizeToolbar();
-			_GeneralToolbar.Visible = AppContext.Toolbar.ShowGeneralToolbar;
+			if (_GeneralToolbar.Visible = AppContext.Toolbar.ShowGeneralToolbar) {
+				ScaleToolbar();
+			}
 
 			_OpenPdfDialog.DefaultExt = Constants.FileExtensions.Pdf;
 			_OpenPdfDialog.Filter = Constants.FileExtensions.PdfFilter;
@@ -400,7 +402,9 @@ namespace PDFPatcher
 			}
 			else if (commandName == Commands.ShowGeneralToolbar) {
 				_FunctionContainer.SuspendLayout();
-				_GeneralToolbar.Visible = AppContext.Toolbar.ShowGeneralToolbar = !AppContext.Toolbar.ShowGeneralToolbar;
+				if (_GeneralToolbar.Visible = AppContext.Toolbar.ShowGeneralToolbar = !AppContext.Toolbar.ShowGeneralToolbar) {
+					ScaleToolbar();
+				}
 				_FunctionContainer.PerformLayout();
 			}
 			else if (commandName == Commands.Exit) {
@@ -427,6 +431,11 @@ namespace PDFPatcher
 				}
 				_GeneralToolbar.Items.Add(item.CreateButton());
 			}
+		}
+
+		void ScaleToolbar() {
+			var size = (int)(this.GetDpiScale() * 16);
+			_GeneralToolbar.ScaleIcons(new Size(size, size));
 		}
 
 		DialogResult ShowDialogWindow(Form window) {
