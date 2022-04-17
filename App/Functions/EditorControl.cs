@@ -54,9 +54,9 @@ namespace PDFPatcher.Functions
 			d.Register(new Editor.BookmarkSelectionCommand(Commands.SelectAllItems), Commands.SelectAllItems);
 			d.Register(new Editor.BookmarkSelectionCommand(Commands.SelectNone), Commands.SelectNone);
 			d.Register(new Editor.BookmarkSelectionCommand(Commands.InvertSelectItem), Commands.InvertSelectItem);
-			d.Register(new Editor.BookmarkSelectionCommand("_CollapseAll"), "_CollapseAll");
-			d.Register(new Editor.BookmarkSelectionCommand("_ExpandAll"), "_ExpandAll");
-			d.Register(new Editor.BookmarkSelectionCommand("_CollapseChildren"), "_CollapseChildren");
+			d.Register(new Editor.BookmarkSelectionCommand(Commands.CollapseAll), Commands.CollapseAll);
+			d.Register(new Editor.BookmarkSelectionCommand(Commands.ExpandAll), Commands.ExpandAll);
+			d.Register(new Editor.BookmarkSelectionCommand(Commands.CollapseChildren), Commands.CollapseChildren);
 			d.Register(new Editor.OcrPageCommand(), Commands.EditorOcrPage);
 			d.Register(new Editor.PagePropertiesCommand(), Commands.EditorPageProperties);
 			d.Register(new Editor.SavePageImageCommand(), Commands.EditorSavePageImage);
@@ -93,6 +93,9 @@ namespace PDFPatcher.Functions
 			}
 			ListRecentFiles = _OpenButton_DropDownOpening;
 			RecentFileItemClicked = _OpenButton_DropDownItemClicked;
+			var size = (int)(this.GetDpiScale() * 16);
+			_BookmarkToolbar.ScaleIcons(new Size(size, size));
+			_ViewerToolbar.ScaleIcons(new Size(size, size));
 			_ViewerToolbar.Left = _BookmarkToolbar.Right;
 			//_MainToolbar.ToggleEnabled (false, _editButtonNames);
 

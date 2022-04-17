@@ -24,13 +24,13 @@ namespace PDFPatcher.Functions.Editor
 				case Commands.InvertSelectItem:
 					b.InvertSelect();
 					break;
-				case "_CollapseAll":
+				case Commands.CollapseAll:
 					b.CollapseAll();
 					break;
-				case "_ExpandAll":
+				case Commands.ExpandAll:
 					b.ExpandAll();
 					break;
-				case "_CollapseChildren":
+				case Commands.CollapseChildren:
 					foreach (var item in b.GetSelectedElements(false)) {
 						foreach (XmlNode ci in item.SubBookmarks) {
 							b.Collapse(ci);

@@ -46,6 +46,9 @@ namespace PDFPatcher
 		internal const string InvertSelectItem = "_InvertSelect";
 		internal const string SelectNone = "_SelectNone";
 		internal const string ItemTypeSeparator = "_ItemTypeSeparator";
+		internal const string ExpandAll = "_ExpandAll";
+		internal const string CollapseAll = "_CollapseAll";
+		internal const string CollapseChildren = "_CollapseChildren";
 		#endregion
 
 		#region Options menu
