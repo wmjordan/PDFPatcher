@@ -1047,6 +1047,7 @@
   </Target>
   <Target Name="CopyCustomContent" AfterTargets="BeforeBuild">
     <Copy SourceFiles="Lib\MuPDFLib.dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="Lib\FreeImage.dll" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
   </Target>
   <PropertyGroup>
     <PostBuildEvent>
