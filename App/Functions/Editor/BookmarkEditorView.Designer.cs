@@ -107,7 +107,7 @@
 			this._ActionColumn.Text = "书签动作";
 			this._ActionColumn.Width = 100;
 			// 
-			// BookmarkEditor
+			// Editor
 			// 
 			this.Name = "BookmarkEditor";
 			this.Size = new System.Drawing.Size (408, 208);

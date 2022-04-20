@@ -148,7 +148,7 @@ namespace PDFPatcher
 					return __FunctionControls[functionName] = new ExtractPageControl();
 				case Function.ExtractImages:
 					return __FunctionControls[functionName] = new ExtractImageControl();
-				case Function.BookmarkEditor:
+				case Function.Editor:
 					var b = new EditorControl();
 					b.DocumentChanged += OnDocumentChanged;
 					return b;
@@ -451,7 +451,7 @@ namespace PDFPatcher
 		}
 
 		internal void OpenFileWithEditor(string path) {
-			SelectFunctionList(Function.BookmarkEditor);
+			SelectFunctionList(Function.Editor);
 			var c = GetActiveFunctionControl() as EditorControl;
 			if (String.IsNullOrEmpty(path)) {
 				c.ExecuteCommand(Commands.Open);
@@ -510,6 +510,9 @@ namespace PDFPatcher
 				c.Dock = DockStyle.Fill;
 				t.Controls.Add(c);
 				_FunctionContainer.SelectedTab = t;
+				if (String.IsNullOrEmpty(p) == false) {
+					c.ExecuteCommand(Commands.OpenFile, p);
+				}
 				AcceptButton = c.DefaultButton;
 			}
 		}

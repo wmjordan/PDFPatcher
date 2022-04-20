@@ -7,7 +7,7 @@ namespace PDFPatcher
 {
 	internal enum Function
 	{
-		FrontPage, InfoFileOptions, InfoExchanger, ExtractPages, ExtractImages, RenderPages, EditorOptions, Patcher, PatcherOptions, Merger, MergerOptions, About, BookmarkEditor, Options, BookmarkGenerator, Ocr, Inspector, Rename, Log, Default, CustomizeToolbar
+		FrontPage, InfoFileOptions, InfoExchanger, ExtractPages, ExtractImages, RenderPages, EditorOptions, Patcher, PatcherOptions, Merger, MergerOptions, About, Editor, Options, BookmarkGenerator, Ocr, Inspector, Rename, Log, Default, CustomizeToolbar
 	}
 
 	internal static class Constants
