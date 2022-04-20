@@ -35,7 +35,9 @@ namespace PDFPatcher.Common
 		public static Point Transpose(this Point point, Point transpose) {
 			return new Point(point.X + transpose.X, point.Y + transpose.Y);
 		}
-
+		public static Size Scale(this Size size, float scale) {
+			return new Size((int)(size.Width * scale), (int)(size.Height * scale));
+		}
 		public static void SetIcon(this Form form, Bitmap bitmap) {
 			form.Icon = Icon.FromHandle(bitmap.GetHicon());
 		}
@@ -123,6 +125,21 @@ namespace PDFPatcher.Common
 					item.Enabled = enabled;
 				}
 			}
+			return toolStrip;
+		}
+
+		public static float GetDpiScale(this Control control) {
+			using (var g = control.CreateGraphics()) {
+				return g.DpiX / 96;
+			}
+		}
+
+		public static ToolStrip ScaleIcons(this ToolStrip toolStrip, Size size) {
+			toolStrip.SuspendLayout();
+			toolStrip.AutoSize = false;
+			toolStrip.ImageScalingSize = size;
+			toolStrip.ResumeLayout();
+			toolStrip.AutoSize = true;
 			return toolStrip;
 		}
 
