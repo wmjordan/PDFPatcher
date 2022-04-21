@@ -54,8 +54,9 @@ namespace PDFPatcher
 
 		public class ButtonOption
 		{
+			string _Id;
 			[XmlAttribute("ID")]
-			public string ID { get; set; }
+			public string ID { get => _Id; set => _Id = (value == "BookmarkEditor" ? "Editor" : value); }
 			[XmlAttribute("按钮名称")]
 			public string DisplayName { get; set; }
 			[XmlAttribute("显示按钮文字")]

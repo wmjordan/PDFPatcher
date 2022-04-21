@@ -5,7 +5,7 @@ namespace PDFPatcher
 	sealed class Toolkit
 	{
 		internal static readonly Toolkit[] Toolkits = {
-			new Toolkit ("编辑器","BookmarkEditor","Editor","创建或修改 PDF 文档的书签，修改 PDF 文档的设置", true),
+			new Toolkit ("编辑器","Editor","Editor","创建或修改 PDF 文档的书签，修改 PDF 文档的设置", true),
 			new Toolkit ("批量修改文档","Patcher","DocumentProcessor","根据配置批量处理 PDF 文档，生成新的文档", true),
 			new Toolkit ("合并文档","Merger","Merger","将多个图片和 PDF 文档合并为新的 PDF 文档", true),
 			new Toolkit ("识别文本","Ocr","Ocr","识别扫描 PDF 文档的文字（需微软 Office 2003或2007的光学字符识别（OCR）引擎支持）"),

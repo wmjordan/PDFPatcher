@@ -345,8 +345,7 @@ namespace PDFPatcher
 			var ci = e.ClickedItem;
 			var t = ci.Tag as string;
 			if (String.IsNullOrEmpty(t) == false) {
-				var func = (Function)Enum.Parse(typeof(Function), t);
-				SelectFunctionList(func);
+				SelectFunctionList((Function)Enum.Parse(typeof(Function), t));
 				return;
 			}
 			ci.HidePopupMenu();
