@@ -1,20 +1,21 @@
 ﻿using System;
 using System.Windows.Forms;
 using MuPdfSharp;
+using PDFPatcher.Common;
 
 namespace PDFPatcher.Functions.Editor
 {
-	public partial class DocumentInfoForm : Form
+	sealed partial class DocumentInfoForm : Form
 	{
 		internal MuDocument Document { get; set; }
 		internal Model.PdfInfoXmlDocument InfoDocument { get; set; }
 
 		public DocumentInfoForm() {
 			InitializeComponent();
+			this.OnFirstLoad(OnLoad);
 		}
 
-		protected override void OnLoad(EventArgs e) {
-			base.OnLoad(e);
+		void OnLoad() {
 			if (Document != null) {
 				var info = Document.Info;
 				_AuthorBox.Text = info.Author;

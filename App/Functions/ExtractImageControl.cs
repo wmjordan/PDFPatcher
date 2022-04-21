@@ -15,6 +15,10 @@ namespace PDFPatcher.Functions
 
 		public ExtractImageControl() {
 			InitializeComponent();
+			this.OnFirstLoad(OnLoad);
+		}
+
+		void OnLoad() {
 			_SourceFileControl.BrowseSelectedFiles += (object sender, EventArgs e) => {
 				if (_AutoOutputDirBox.Checked == false) {
 					return;
@@ -25,10 +29,6 @@ namespace PDFPatcher.Functions
 				}
 			};
 			_AutoOutputDirBox.CheckedChanged += (object sender, EventArgs e) => { AppContext.ImageExtracter.AutoOutputFolder = _AutoOutputDirBox.Checked; };
-		}
-
-		protected override void OnLoad(EventArgs e) {
-			base.OnLoad(e);
 			ShowFileMaskPreview();
 			AppContext.MainForm.SetTooltip(_SourceFileControl.FileList, "包含图片的 PDF 文件路径");
 			AppContext.MainForm.SetTooltip(_TargetBox, "放置输出图片的文件夹路径");
@@ -68,7 +68,7 @@ namespace PDFPatcher.Functions
 			_SkipRedundantImagesBox.Checked = o.SkipRedundantImages;
 		}
 
-		private void _BrowseTargetPdfButton_Click(object sender, EventArgs e) {
+		void _BrowseTargetPdfButton_Click(object sender, EventArgs e) {
 			var sourceFile = _SourceFileControl.Text;
 			if (_TargetBox.Text.Length > 0) {
 				_SaveImageBox.SelectedPath = Path.GetDirectoryName(_TargetBox.Text);
@@ -85,7 +85,7 @@ namespace PDFPatcher.Functions
 			}
 		}
 
-		private void _ExtractButton_Click(object sender, EventArgs e) {
+		void _ExtractButton_Click(object sender, EventArgs e) {
 			if (File.Exists(_SourceFileControl.FirstFile) == false) {
 				FormHelper.ErrorBox(Messages.SourceFileNotFound);
 				return;
@@ -154,11 +154,11 @@ namespace PDFPatcher.Functions
 
 		#endregion
 
-		private void _FileNameMaskBox_TextChanged(object sender, EventArgs e) {
+		void _FileNameMaskBox_TextChanged(object sender, EventArgs e) {
 			ShowFileMaskPreview();
 		}
 
-		private void ShowFileMaskPreview() {
+		void ShowFileMaskPreview() {
 			try {
 				var previews = new string[7];
 				var f = _FileNameMaskBox.Text;
@@ -176,7 +176,7 @@ namespace PDFPatcher.Functions
 			}
 		}
 
-		private void Control_Show(object sender, EventArgs e) {
+		void Control_Show(object sender, EventArgs e) {
 			if (Visible && AppContext.MainForm != null) {
 				_TargetBox.Contents = AppContext.Recent.Folders;
 			}

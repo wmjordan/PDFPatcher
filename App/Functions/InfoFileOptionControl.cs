@@ -14,7 +14,10 @@ namespace PDFPatcher.Functions
 
 		public InfoFileOptionControl() {
 			InitializeComponent();
+			this.OnFirstLoad(OnLoad);
+		}
 
+		void OnLoad() {
 			this.SetIcon(Properties.Resources.InfoFileOptions);
 			AppContext.MainForm.SetTooltip(_ExtractPageRangeBox, Messages.PageRanges);
 

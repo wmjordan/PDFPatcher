@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace PDFPatcher.Functions
 {
-	public partial class TextViewerForm : Form
+	sealed partial class TextViewerForm : Form
 	{
 		///<summary>获取或指定文本内容是否只读。</summary>
 		public bool IsTextReadOnly {

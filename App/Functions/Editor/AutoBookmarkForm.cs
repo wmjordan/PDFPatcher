@@ -8,7 +8,7 @@ using PDFPatcher.Functions.Editor;
 
 namespace PDFPatcher.Functions
 {
-	public sealed partial class AutoBookmarkForm : DraggableForm
+	sealed partial class AutoBookmarkForm : DraggableForm
 	{
 		List<EditModel.AutoBookmarkStyle> _list;
 		readonly Controller _controller;

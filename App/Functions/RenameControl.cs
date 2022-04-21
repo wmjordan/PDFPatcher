@@ -23,10 +23,18 @@ namespace PDFPatcher.Functions
 
 		public RenameControl() {
 			InitializeComponent();
+			this.OnFirstLoad(OnLoad);
 		}
 
-		private void PatcherControl_OnLoad(object sender, EventArgs e) {
-			//Icon = FormHelper.ToIcon (Properties.Resources.CreateDocument);
+		void OnLoad() {
+			var s = (int)(this.GetDpiScale() * 16);
+			var size = new System.Drawing.Size(s, s);
+			_MainToolbar.ScaleIcons(size);
+			_SortMenu.ScaleIcons(size);
+			_ItemListMenu.ScaleIcons(size);
+			_RecentFileMenu.ScaleIcons(size);
+			_RefreshInfoMenu.ScaleIcons(size);
+
 			_ItemList.ListViewItemSorter = new ListViewItemComparer(0);
 
 			AppContext.MainForm.SetTooltip(_ItemList, "在此添加需要重命名的 PDF 文件");
@@ -101,7 +109,7 @@ namespace PDFPatcher.Functions
 			_listHelper.PrepareSourceFiles();
 		}
 
-		private void _RenameButton_Click(object sender, EventArgs e) {
+		void _RenameButton_Click(object sender, EventArgs e) {
 			var targetPdfFile = _TargetPdfFile.Text.Trim();
 			if (String.IsNullOrEmpty(targetPdfFile) && String.IsNullOrEmpty(targetPdfFile = _TargetPdfFile.BrowseTargetFile())) {
 				FormHelper.ErrorBox(Messages.TargetFileNotSpecified);
@@ -125,7 +133,7 @@ namespace PDFPatcher.Functions
 			worker.RunWorkerAsync();
 		}
 
-		private void AddFiles(string[] files, bool alertInvalidFiles) {
+		void AddFiles(string[] files, bool alertInvalidFiles) {
 			if (files == null || files.Length == 0) {
 				return;
 			}
@@ -141,7 +149,7 @@ namespace PDFPatcher.Functions
 			_AddDocumentWorker.RunWorkerAsync(files);
 		}
 
-		private List<SourceItem> GetSourceItemList() {
+		List<SourceItem> GetSourceItemList() {
 			var l = _ItemList.GetItemCount();
 			var files = new List<SourceItem>(l);
 			for (int i = 0; i < l; i++) {
@@ -155,7 +163,7 @@ namespace PDFPatcher.Functions
 			return files;
 		}
 
-		private void _SortMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e) {
+		void _SortMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e) {
 			switch (e.ClickedItem.Name) {
 				case "_SortByAlphaItem":
 					_ItemList.ListViewItemSorter = new ListViewItemComparer(0, false);
@@ -166,24 +174,24 @@ namespace PDFPatcher.Functions
 			}
 		}
 
-		private void _ImageList_ColumnClick(object sender, ColumnClickEventArgs e) {
+		void _ImageList_ColumnClick(object sender, ColumnClickEventArgs e) {
 			var c = e.Column;
 			var ss = c == 0 || c == _PageCountColumn.Index;
 			var o = _ItemList.PrimarySortOrder == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
 			_ItemList.ListViewItemSorter = new ListViewItemComparer(e.Column, ss, o);
 		}
 
-		private void _MainToolbar_ButtonClick(object sender, EventArgs e) {
+		void _MainToolbar_ButtonClick(object sender, EventArgs e) {
 			if (sender == _AddFilesButton) {
 				ExecuteCommand(Commands.Open);
 			}
 		}
 
-		private void _MainToolbar_ItemClicked(object sender, ToolStripItemClickedEventArgs e) {
+		void _MainToolbar_ItemClicked(object sender, ToolStripItemClickedEventArgs e) {
 			ExecuteCommand(e.ClickedItem.Name);
 		}
 
-		private void _TestRenameButton_Click(object sender, EventArgs e) {
+		void _TestRenameButton_Click(object sender, EventArgs e) {
 			if (String.IsNullOrEmpty(_TargetPdfFile.Text)) {
 				FormHelper.ErrorBox(Messages.TargetFileNotSpecified);
 				return;
@@ -197,7 +205,7 @@ namespace PDFPatcher.Functions
 			PreviewRename(pdfs, _TargetPdfFile.Text);
 		}
 
-		private void PreviewRename(List<SourceItem.Pdf> items, string template) {
+		void PreviewRename(List<SourceItem.Pdf> items, string template) {
 			var i = 0;
 			var result = new string[items.Count];
 			var source = new string[items.Count];
@@ -233,29 +241,29 @@ namespace PDFPatcher.Functions
 		}
 
 		#region AddDocumentWorker
-		private void _AddDocumentWorker_DoWork(object sender, DoWorkEventArgs e) {
+		void _AddDocumentWorker_DoWork(object sender, DoWorkEventArgs e) {
 			var files = e.Argument as string[];
 			Array.ForEach(files, f => ((BackgroundWorker)sender).ReportProgress(0, f));
 		}
 
-		private void _AddDocumentWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
+		void _AddDocumentWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
 			AppContext.MainForm.Enabled = true;
 			//_listHelper.ResizeItemListColumns ();
 		}
 
-		private void _AddDocumentWorker_ProgressChanged(object sender, ProgressChangedEventArgs e) {
+		void _AddDocumentWorker_ProgressChanged(object sender, ProgressChangedEventArgs e) {
 			var item = e.UserState as string;
 			AddItem(SourceItem.Create(item));
 		}
 
-		private void AddItem(SourceItem item) {
+		void AddItem(SourceItem item) {
 			if (item == null) {
 				return;
 			}
 			AddItems(new SourceItem[] { item });
 		}
 
-		private void AddItems(System.Collections.ICollection items) {
+		void AddItems(System.Collections.ICollection items) {
 			var i = _ItemList.GetLastSelectedIndex();
 			_ItemList.InsertObjects(++i, items);
 			_ItemList.SelectedIndex = --i + items.Count;

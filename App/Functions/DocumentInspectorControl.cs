@@ -54,7 +54,8 @@ namespace PDFPatcher.Functions
 			InitializeComponent();
 		}
 
-		private void DocumentInspectorControl_OnLoad(object sender, EventArgs e) {
+		void DocumentInspectorControl_OnLoad(object sender, EventArgs e) {
+			_MainToolbar.ScaleIcons(16);
 			_ObjectDetailBox.EmptyListMsg = "请使用“打开”按钮加载需要检查结构的 PDF 文件，或从资源管理器拖放文件到本列表框";
 
 			if (__OpNameIcons == null || __OpNameIcons.Count == 0) {
@@ -302,7 +303,7 @@ namespace PDFPatcher.Functions
 			return base.ProcessCmdKey(ref msg, keyData);
 		}
 
-		private void RefreshReferences(DocumentObject r) {
+		void RefreshReferences(DocumentObject r) {
 			if (r.Value == null || r.Value.Type != PdfObject.INDIRECT) {
 				return;
 			}
@@ -416,7 +417,7 @@ namespace PDFPatcher.Functions
 				&& (d.Type == PdfObjectType.Normal || d.Type == PdfObjectType.Image || d.Type == PdfObjectType.Outline && d.Name == "Outlines");
 		}
 
-		private Dictionary<string, int> InitOpNameIcons() {
+		Dictionary<string, int> InitOpNameIcons() {
 			var p = new string[] { "Document", "Pages", "Page", "PageCommands", "Image", "Hidden", "GoToPage", "Outline", "Null" };
 			var n = new string[] {
 				"q", "Tm", "cm", "gs", "ri", "CS", "cs",
@@ -453,7 +454,7 @@ namespace PDFPatcher.Functions
 			}
 			return d;
 		}
-		private Dictionary<int, int> InitPdfObjectIcons() {
+		Dictionary<int, int> InitPdfObjectIcons() {
 			var n = new int[] { PdfObject.NULL, PdfObject.ARRAY, PdfObject.BOOLEAN,
 				PdfObject.DICTIONARY, PdfObject.INDIRECT, PdfObject.NAME,
 				PdfObject.NUMBER, PdfObject.STREAM, PdfObject.STRING };
@@ -464,7 +465,7 @@ namespace PDFPatcher.Functions
 			return d;
 		}
 
-		private static int GetImageKey(DocumentObject d) {
+		static int GetImageKey(DocumentObject d) {
 			if (d.Value != null) {
 				var po = d.Value;
 				if (po.Type == PdfObject.INDIRECT && d.ExtensiveObject is PdfObject) {
@@ -475,27 +476,27 @@ namespace PDFPatcher.Functions
 			return __PdfObjectIcons[PdfObject.NULL];
 		}
 
-		private void _GotoImportLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+		void _GotoImportLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
 			AppContext.MainForm.SelectFunctionList(Function.Patcher);
 		}
 
-		private void bookmarkEditor1_DragEnter(object sender, DragEventArgs e) {
+		void bookmarkEditor1_DragEnter(object sender, DragEventArgs e) {
 			e.FeedbackDragFileOver(Constants.FileExtensions.PdfAndAllBookmarkExtension);
 		}
 
-		private void ControlEvent(object sender, EventArgs e) {
+		void ControlEvent(object sender, EventArgs e) {
 			if (sender == _OpenButton) {
 				ExecuteCommand(Commands.Open);
 			}
 		}
 
-		private void LoadDocument(string path) {
-			_MainMenu.Enabled = _ObjectDetailBox.Enabled = false;
+		void LoadDocument(string path) {
+			_MainToolbar.Enabled = _ObjectDetailBox.Enabled = false;
 			_DescriptionBox.Text = "正在打开文档：" + path;
 			_LoadDocumentWorker.RunWorkerAsync(path);
 		}
 
-		private void ShowDescription(string name, string description, string type) {
+		void ShowDescription(string name, string description, string type) {
 			_DescriptionBox.Text = String.Empty;
 			if (String.IsNullOrEmpty(name)) {
 				return;
@@ -515,7 +516,7 @@ namespace PDFPatcher.Functions
 			}
 		}
 
-		private void ToolbarItemClicked(object sender, ToolStripItemClickedEventArgs e) {
+		void ToolbarItemClicked(object sender, ToolStripItemClickedEventArgs e) {
 			if (_ObjectDetailBox.FocusedItem == null) {
 				return;
 			}
@@ -638,7 +639,7 @@ namespace PDFPatcher.Functions
 			}
 		}
 
-		private void AddChildNode(DocumentObject documentObject, int objectType) {
+		void AddChildNode(DocumentObject documentObject, int objectType) {
 			using (var f = new AddPdfObjectForm()) {
 				f.PdfObjectType = objectType;
 				if (f.ShowDialog() == DialogResult.OK) {
@@ -651,7 +652,7 @@ namespace PDFPatcher.Functions
 			}
 		}
 
-		private void ExportXmlInfo(string fileName, bool exportTrailer, int[] pages) {
+		void ExportXmlInfo(string fileName, bool exportTrailer, int[] pages) {
 			using (var d = new SaveFileDialog() { AddExtension = true, FileName = fileName + Constants.FileExtensions.Xml, DefaultExt = Constants.FileExtensions.Xml, Filter = Constants.FileExtensions.XmlFilter, Title = "请选择信息文件的保存位置" }) {
 				if (d.ShowDialog() == DialogResult.OK) {
 					var exp = new PdfContentExport(new ExporterOptions() { ExtractPageDictionary = true, ExportContentOperators = true });
@@ -670,7 +671,7 @@ namespace PDFPatcher.Functions
 			}
 		}
 
-		private void ExportBinHexStream(DocumentObject n, bool decode) {
+		void ExportBinHexStream(DocumentObject n, bool decode) {
 			using (var d = new SaveFileDialog() { AddExtension = true, FileName = (n.FriendlyName ?? n.Name) + Constants.FileExtensions.Txt, DefaultExt = Constants.FileExtensions.Txt, Filter = "文本形式的二进制数据文件(*.txt)|*.txt|" + Constants.FileExtensions.AllFilter, Title = "请选择文件流的保存位置" }) {
 				if (d.ShowDialog() == DialogResult.OK) {
 					var s = n.ExtensiveObject as PRStream;
@@ -685,7 +686,7 @@ namespace PDFPatcher.Functions
 			}
 		}
 
-		private void ExportBinaryStream(DocumentObject n, bool decode) {
+		void ExportBinaryStream(DocumentObject n, bool decode) {
 			using (var d = new SaveFileDialog() { AddExtension = true, FileName = (n.FriendlyName ?? n.Name) + ".bin", DefaultExt = ".bin", Filter = "二进制数据文件(*.bin,*.dat)|*.bin;*.dat|" + Constants.FileExtensions.AllFilter, Title = "请选择文件流的保存位置" }) {
 				if (d.ShowDialog() == DialogResult.OK) {
 					var s = n.ExtensiveObject as PRStream;
@@ -700,7 +701,7 @@ namespace PDFPatcher.Functions
 			}
 		}
 
-		private void ExportToUnicode(DocumentObject n) {
+		void ExportToUnicode(DocumentObject n) {
 			using (var d = new SaveFileDialog { AddExtension = true, FileName = (n.Parent.FriendlyName ?? n.Name) + ".xml", DefaultExt = ".xml", Filter = "统一码映射信息文件(*.xml)|*.xml|" + Constants.FileExtensions.AllFilter, Title = "请选择统一码映射表的保存位置" }) {
 				if (d.ShowDialog() == DialogResult.OK) {
 					var s = n.ExtensiveObject as PRStream;
@@ -733,7 +734,7 @@ namespace PDFPatcher.Functions
 			}
 		}
 
-		private byte[] DecodeStreamBytes(DocumentObject d) {
+		byte[] DecodeStreamBytes(DocumentObject d) {
 			var s = d.Value as PRStream ?? d.ExtensiveObject as PRStream;
 			if (d.Type == PdfObjectType.Image) {
 				var info = new Processor.Imaging.ImageInfo(s);
@@ -742,7 +743,7 @@ namespace PDFPatcher.Functions
 			return PdfReader.GetStreamBytes(s);
 		}
 
-		private void SaveDocument() {
+		void SaveDocument() {
 			string path;
 			using (var d = new SaveFileDialog() {
 				DefaultExt = Constants.FileExtensions.Pdf,
@@ -795,7 +796,7 @@ namespace PDFPatcher.Functions
 			LoadDocument(path);
 		}
 
-		private void _LoadDocumentWorker_DoWork(object sender, DoWorkEventArgs e) {
+		void _LoadDocumentWorker_DoWork(object sender, DoWorkEventArgs e) {
 			var path = e.Argument as string;
 			try {
 				var d = new PdfPathDocument(path);
@@ -813,7 +814,7 @@ namespace PDFPatcher.Functions
 			}
 		}
 
-		private void _LoadDocumentWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
+		void _LoadDocumentWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
 			var path = e.Result as string;
 			_DescriptionBox.Text = String.Empty;
 			if (path != null) {
@@ -821,10 +822,10 @@ namespace PDFPatcher.Functions
 				DocumentPath = path;
 				ReloadPdf();
 			}
-			_MainMenu.Enabled = _ObjectDetailBox.Enabled = true;
+			_MainToolbar.Enabled = _ObjectDetailBox.Enabled = true;
 		}
 
-		private void ReloadPdf() {
+		void ReloadPdf() {
 			_imgExp = new Processor.ImageExtractor(_imgExpOption, _pdf.Document);
 
 			_ObjectDetailBox.ClearObjects();
@@ -834,7 +835,7 @@ namespace PDFPatcher.Functions
 			_DeleteButton.Enabled = false;
 		}
 
-		private void _ExportButton_DropDownOpening(object sender, EventArgs e) {
+		void _ExportButton_DropDownOpening(object sender, EventArgs e) {
 			var n = _ObjectDetailBox.GetModelObject(_ObjectDetailBox.FocusedItem.Index) as DocumentObject;
 			var m = _ExportButton.DropDownItems;
 			m["_ExportHexText"].Enabled
@@ -847,7 +848,7 @@ namespace PDFPatcher.Functions
 			m["_ExportToUnicode"].Visible = (n.ExtensiveObject as PRStream) != null && n.Name == "ToUnicode";
 		}
 
-		private void _AddObjectMenu_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e) {
+		void _AddObjectMenu_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e) {
 			AddChildNode(
 				_ObjectDetailBox.GetModelObject(_ObjectDetailBox.FocusedItem.Index) as DocumentObject,
 				ValueHelper.MapValue(e.ClickedItem, _addPdfObjectMenuItems, _pdfTypeForAddObjectMenuItems)

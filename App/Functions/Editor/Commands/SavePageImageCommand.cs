@@ -18,8 +18,7 @@ namespace PDFPatcher.Functions.Editor
 
 			if (_dialog.ShowDialog() == DialogResult.OK) {
 				_dialog.DefaultExt = ((FilePath)_dialog.FileName).FileExtension;
-				var bmp = v.GetPageImage(p.Page);
-				bmp.SaveAs(_dialog.FileName);
+				v.GetPageImage(p.Page).SaveAs(_dialog.FileName);
 			}
 		}
 

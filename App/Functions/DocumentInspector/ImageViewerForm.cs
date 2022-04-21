@@ -6,10 +6,12 @@ using PDFPatcher.Processor.Imaging;
 
 namespace PDFPatcher.Functions
 {
-	public sealed partial class ImageViewerForm : Form
+	sealed partial class ImageViewerForm : Form
 	{
-		internal ImageViewerForm(ImageInfo image, byte[] bytes) {
+		public ImageViewerForm() {
 			InitializeComponent();
+		}
+		internal ImageViewerForm(ImageInfo image, byte[] bytes) : this() {
 			this.SetIcon(Properties.Resources.ViewContent);
 			if (image.ExtName == Constants.FileExtensions.Png || image.ExtName == Constants.FileExtensions.Tif) {
 				using (FreeImageBitmap bmp = ImageExtractor.CreateFreeImageBitmap(image, ref bytes, false, true)) {
@@ -35,7 +37,7 @@ namespace PDFPatcher.Functions
 			base.OnClosed(e);
 		}
 
-		private void _MainToolbar_ItemClicked(object sender, ToolStripItemClickedEventArgs e) {
+		void _MainToolbar_ItemClicked(object sender, ToolStripItemClickedEventArgs e) {
 			var n = e.ClickedItem.Name;
 			switch (n) {
 				case "_Save":

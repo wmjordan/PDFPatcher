@@ -4,7 +4,7 @@ using PDFPatcher.Model;
 
 namespace PDFPatcher.Functions
 {
-	public partial class TextSizeConditionEditor : UserControl, IFilterConditionEditor
+	sealed partial class TextSizeConditionEditor : UserControl, IFilterConditionEditor
 	{
 		AutoBookmarkCondition.TextSizeCondition _condition;
 		bool _lock;
@@ -38,7 +38,7 @@ namespace PDFPatcher.Functions
 
 		#endregion
 
-		private void ControlChanged(object sender, EventArgs e) {
+		void ControlChanged(object sender, EventArgs e) {
 			ToggleControlState();
 			if (_lock) {
 				return;
@@ -52,7 +52,7 @@ namespace PDFPatcher.Functions
 			EditAdjustmentForm.UpdateFilter(this);
 		}
 
-		private void ToggleControlState() {
+		void ToggleControlState() {
 			_MinSizeBox.Enabled = _MaxSizeBox.Enabled = _SizeRangeBox.Checked;
 			_SpecificSizeBox.Enabled = _SizeBox.Checked;
 		}

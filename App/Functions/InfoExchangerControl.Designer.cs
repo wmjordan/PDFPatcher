@@ -26,7 +26,6 @@
 		/// </summary>
 		private void InitializeComponent () {
 			this.components = new System.ComponentModel.Container();
-			System.Windows.Forms.ToolStrip _MainToolbar;
 			System.Windows.Forms.ToolStripDropDownButton _Actions;
 			System.Windows.Forms.ToolStripMenuItem _DocumentActions;
 			System.Windows.Forms.ToolStripMenuItem _RemoveUsageRightsAction;
@@ -46,6 +45,7 @@
 			System.Windows.Forms.ToolStripMenuItem _SelectNoneItem;
 			System.Windows.Forms.ToolStripMenuItem _Copy;
 			System.Windows.Forms.ToolStripMenuItem _RefreshInfo;
+			this._MainToolbar = new System.Windows.Forms.ToolStrip();
 			this._AddFilesButton = new System.Windows.Forms.ToolStripSplitButton();
 			this._RecentFileMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this._SortMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -78,7 +78,6 @@
 			this._ImportButton = new EnhancedGlassButton.GlassButton();
 			this._ConfigButton = new System.Windows.Forms.Button();
 			this._InfoConfigButton = new System.Windows.Forms.Button();
-			_MainToolbar = new System.Windows.Forms.ToolStrip();
 			_Actions = new System.Windows.Forms.ToolStripDropDownButton();
 			_DocumentActions = new System.Windows.Forms.ToolStripMenuItem();
 			_RemoveUsageRightsAction = new System.Windows.Forms.ToolStripMenuItem();
@@ -98,7 +97,7 @@
 			_SelectNoneItem = new System.Windows.Forms.ToolStripMenuItem();
 			_Copy = new System.Windows.Forms.ToolStripMenuItem();
 			_RefreshInfo = new System.Windows.Forms.ToolStripMenuItem();
-			_MainToolbar.SuspendLayout();
+			this._MainToolbar.SuspendLayout();
 			this._SortMenu.SuspendLayout();
 			this._SelectionMenu.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this._ItemList)).BeginInit();
@@ -112,23 +111,21 @@
 			// 
 			// _MainToolbar
 			// 
-			_MainToolbar.AutoSize = false;
-			_MainToolbar.Dock = System.Windows.Forms.DockStyle.None;
-			_MainToolbar.GripMargin = new System.Windows.Forms.Padding(0);
-			_MainToolbar.ImageScalingSize = new System.Drawing.Size(24, 24);
-			_MainToolbar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+			this._MainToolbar.Dock = System.Windows.Forms.DockStyle.None;
+			this._MainToolbar.GripMargin = new System.Windows.Forms.Padding(0);
+			this._MainToolbar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this._AddFilesButton,
             _Actions,
             _Sort,
             _Delete,
             toolStripSeparator2,
             this._RefreshInfoButton});
-			_MainToolbar.Location = new System.Drawing.Point(0, 0);
-			_MainToolbar.Name = "_MainToolbar";
-			_MainToolbar.Padding = new System.Windows.Forms.Padding(0, 0, 3, 0);
-			_MainToolbar.Size = new System.Drawing.Size(585, 38);
-			_MainToolbar.TabIndex = 0;
-			_MainToolbar.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this._MainToolbar_ItemClicked);
+			this._MainToolbar.Location = new System.Drawing.Point(0, 0);
+			this._MainToolbar.Name = "_MainToolbar";
+			this._MainToolbar.Padding = new System.Windows.Forms.Padding(0, 0, 2, 0);
+			this._MainToolbar.Size = new System.Drawing.Size(483, 25);
+			this._MainToolbar.TabIndex = 0;
+			this._MainToolbar.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this._MainToolbar_ItemClicked);
 			// 
 			// _AddFilesButton
 			// 
@@ -136,7 +133,7 @@
 			this._AddFilesButton.Image = global::PDFPatcher.Properties.Resources.Add;
 			this._AddFilesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this._AddFilesButton.Name = "_AddFilesButton";
-			this._AddFilesButton.Size = new System.Drawing.Size(149, 33);
+			this._AddFilesButton.Size = new System.Drawing.Size(103, 22);
 			this._AddFilesButton.Text = "添加文件(&T)";
 			this._AddFilesButton.ToolTipText = "添加文件";
 			this._AddFilesButton.ButtonClick += new System.EventHandler(this._MainToolbar_ButtonClick);
@@ -158,7 +155,7 @@
 			_Actions.Image = global::PDFPatcher.Properties.Resources.Actions;
 			_Actions.ImageTransparentColor = System.Drawing.Color.Magenta;
 			_Actions.Name = "_Actions";
-			_Actions.Size = new System.Drawing.Size(124, 33);
+			_Actions.Size = new System.Drawing.Size(85, 22);
 			_Actions.Text = "补丁操作";
 			_Actions.Visible = false;
 			_Actions.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this._MainToolbar_ItemClicked);
@@ -170,20 +167,20 @@
             _ModifyMetaDataAction});
 			_DocumentActions.Image = global::PDFPatcher.Properties.Resources.DocumentProcessor;
 			_DocumentActions.Name = "_DocumentActions";
-			_DocumentActions.Size = new System.Drawing.Size(290, 34);
+			_DocumentActions.Size = new System.Drawing.Size(196, 22);
 			_DocumentActions.Text = "添加文档处理操作";
 			_DocumentActions.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this._MainToolbar_ItemClicked);
 			// 
 			// _RemoveUsageRightsAction
 			// 
 			_RemoveUsageRightsAction.Name = "_RemoveUsageRightsAction";
-			_RemoveUsageRightsAction.Size = new System.Drawing.Size(272, 34);
+			_RemoveUsageRightsAction.Size = new System.Drawing.Size(184, 22);
 			_RemoveUsageRightsAction.Text = "移除复制、打印限制";
 			// 
 			// _ModifyMetaDataAction
 			// 
 			_ModifyMetaDataAction.Name = "_ModifyMetaDataAction";
-			_ModifyMetaDataAction.Size = new System.Drawing.Size(272, 34);
+			_ModifyMetaDataAction.Size = new System.Drawing.Size(184, 22);
 			_ModifyMetaDataAction.Text = "修改元数据";
 			// 
 			// _PageActions
@@ -196,45 +193,45 @@
             _RemoveImageAction});
 			_PageActions.Image = global::PDFPatcher.Properties.Resources.PageProcessor;
 			_PageActions.Name = "_PageActions";
-			_PageActions.Size = new System.Drawing.Size(290, 34);
+			_PageActions.Size = new System.Drawing.Size(196, 22);
 			_PageActions.Text = "添加页面内容处理操作";
 			_PageActions.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this._MainToolbar_ItemClicked);
 			// 
 			// _ImageRecompressionAction
 			// 
 			_ImageRecompressionAction.Name = "_ImageRecompressionAction";
-			_ImageRecompressionAction.Size = new System.Drawing.Size(290, 34);
+			_ImageRecompressionAction.Size = new System.Drawing.Size(196, 22);
 			_ImageRecompressionAction.Text = "优化纯黑白图像压缩率";
 			// 
 			// _RemoveAnnotationAction
 			// 
 			_RemoveAnnotationAction.Name = "_RemoveAnnotationAction";
-			_RemoveAnnotationAction.Size = new System.Drawing.Size(290, 34);
+			_RemoveAnnotationAction.Size = new System.Drawing.Size(196, 22);
 			_RemoveAnnotationAction.Text = "删除批注";
 			// 
 			// _RemoveThumbnailAction
 			// 
 			_RemoveThumbnailAction.Name = "_RemoveThumbnailAction";
-			_RemoveThumbnailAction.Size = new System.Drawing.Size(290, 34);
+			_RemoveThumbnailAction.Size = new System.Drawing.Size(196, 22);
 			_RemoveThumbnailAction.Text = "删除缩略图";
 			// 
 			// _RemoveTextAction
 			// 
 			_RemoveTextAction.Name = "_RemoveTextAction";
-			_RemoveTextAction.Size = new System.Drawing.Size(290, 34);
+			_RemoveTextAction.Size = new System.Drawing.Size(196, 22);
 			_RemoveTextAction.Text = "删除文本内容";
 			// 
 			// _RemoveImageAction
 			// 
 			_RemoveImageAction.Name = "_RemoveImageAction";
-			_RemoveImageAction.Size = new System.Drawing.Size(290, 34);
+			_RemoveImageAction.Size = new System.Drawing.Size(196, 22);
 			_RemoveImageAction.Text = "删除图片";
 			// 
 			// _RemoveActions
 			// 
 			_RemoveActions.Image = global::PDFPatcher.Properties.Resources.Delete;
 			_RemoveActions.Name = "_RemoveActions";
-			_RemoveActions.Size = new System.Drawing.Size(290, 34);
+			_RemoveActions.Size = new System.Drawing.Size(196, 22);
 			_RemoveActions.Text = "删除选中的操作";
 			// 
 			// _Sort
@@ -243,7 +240,7 @@
 			_Sort.Image = global::PDFPatcher.Properties.Resources.Sort;
 			_Sort.ImageTransparentColor = System.Drawing.Color.Magenta;
 			_Sort.Name = "_Sort";
-			_Sort.Size = new System.Drawing.Size(88, 33);
+			_Sort.Size = new System.Drawing.Size(61, 22);
 			_Sort.Text = "排序";
 			_Sort.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this._SortMenu_ItemClicked);
 			// 
@@ -255,21 +252,21 @@
             this._SortByAlphaItem});
 			this._SortMenu.Name = "_SortMenu";
 			this._SortMenu.OwnerItem = _Sort;
-			this._SortMenu.Size = new System.Drawing.Size(299, 68);
+			this._SortMenu.Size = new System.Drawing.Size(225, 64);
 			this._SortMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this._SortMenu_ItemClicked);
 			// 
 			// _SortByNaturalNumberItem
 			// 
 			this._SortByNaturalNumberItem.Image = global::PDFPatcher.Properties.Resources.NaturalSort;
 			this._SortByNaturalNumberItem.Name = "_SortByNaturalNumberItem";
-			this._SortByNaturalNumberItem.Size = new System.Drawing.Size(298, 32);
+			this._SortByNaturalNumberItem.Size = new System.Drawing.Size(224, 30);
 			this._SortByNaturalNumberItem.Text = "按数值和字母顺序排序(&M)";
 			// 
 			// _SortByAlphaItem
 			// 
 			this._SortByAlphaItem.Image = global::PDFPatcher.Properties.Resources.AlphabeticSort;
 			this._SortByAlphaItem.Name = "_SortByAlphaItem";
-			this._SortByAlphaItem.Size = new System.Drawing.Size(298, 32);
+			this._SortByAlphaItem.Size = new System.Drawing.Size(224, 30);
 			this._SortByAlphaItem.Text = "按字母顺序排序(&Z)";
 			// 
 			// _Delete
@@ -277,46 +274,46 @@
 			_Delete.Image = global::PDFPatcher.Properties.Resources.Delete;
 			_Delete.ImageTransparentColor = System.Drawing.Color.Magenta;
 			_Delete.Name = "_Delete";
-			_Delete.Size = new System.Drawing.Size(110, 33);
+			_Delete.Size = new System.Drawing.Size(76, 22);
 			_Delete.Text = "删除文件";
 			// 
 			// toolStripSeparator2
 			// 
 			toolStripSeparator2.Name = "toolStripSeparator2";
-			toolStripSeparator2.Size = new System.Drawing.Size(6, 38);
+			toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
 			// 
 			// _RefreshInfoButton
 			// 
 			this._RefreshInfoButton.Image = global::PDFPatcher.Properties.Resources.Refresh;
 			this._RefreshInfoButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this._RefreshInfoButton.Name = "_RefreshInfoButton";
-			this._RefreshInfoButton.Size = new System.Drawing.Size(163, 33);
+			this._RefreshInfoButton.Size = new System.Drawing.Size(112, 22);
 			this._RefreshInfoButton.Text = "刷新文档属性";
 			// 
 			// _SelectAllItem
 			// 
 			_SelectAllItem.Image = global::PDFPatcher.Properties.Resources.SelectAll;
 			_SelectAllItem.Name = "_SelectAllItem";
-			_SelectAllItem.Size = new System.Drawing.Size(160, 32);
+			_SelectAllItem.Size = new System.Drawing.Size(132, 30);
 			_SelectAllItem.Text = "全部选中";
 			// 
 			// _InvertSelectItem
 			// 
 			_InvertSelectItem.Name = "_InvertSelectItem";
-			_InvertSelectItem.Size = new System.Drawing.Size(160, 32);
+			_InvertSelectItem.Size = new System.Drawing.Size(132, 30);
 			_InvertSelectItem.Text = "反转选择";
 			// 
 			// _SelectNoneItem
 			// 
 			_SelectNoneItem.Name = "_SelectNoneItem";
-			_SelectNoneItem.Size = new System.Drawing.Size(160, 32);
+			_SelectNoneItem.Size = new System.Drawing.Size(132, 30);
 			_SelectNoneItem.Text = "取消选择";
 			// 
 			// _Copy
 			// 
 			_Copy.Image = global::PDFPatcher.Properties.Resources.Copy;
 			_Copy.Name = "_Copy";
-			_Copy.Size = new System.Drawing.Size(196, 32);
+			_Copy.Size = new System.Drawing.Size(156, 30);
 			_Copy.Text = "复制列表内容";
 			// 
 			// _RefreshInfo
@@ -324,7 +321,7 @@
 			_RefreshInfo.DropDown = this._RefreshInfoMenu;
 			_RefreshInfo.Image = global::PDFPatcher.Properties.Resources.Refresh;
 			_RefreshInfo.Name = "_RefreshInfo";
-			_RefreshInfo.Size = new System.Drawing.Size(196, 32);
+			_RefreshInfo.Size = new System.Drawing.Size(156, 30);
 			_RefreshInfo.Text = "刷新文档属性";
 			// 
 			// _RefreshInfoMenu
@@ -343,7 +340,7 @@
             _SelectNoneItem});
 			this._SelectionMenu.Name = "_SelectionMenu";
 			this._SelectionMenu.OwnerItem = this._SelectionMenuItem;
-			this._SelectionMenu.Size = new System.Drawing.Size(161, 100);
+			this._SelectionMenu.Size = new System.Drawing.Size(133, 94);
 			this._SelectionMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this._MainToolbar_ItemClicked);
 			// 
 			// _SelectionMenuItem
@@ -351,7 +348,7 @@
 			this._SelectionMenuItem.DropDown = this._SelectionMenu;
 			this._SelectionMenuItem.Image = global::PDFPatcher.Properties.Resources.SelectItem;
 			this._SelectionMenuItem.Name = "_SelectionMenuItem";
-			this._SelectionMenuItem.Size = new System.Drawing.Size(196, 32);
+			this._SelectionMenuItem.Size = new System.Drawing.Size(156, 30);
 			this._SelectionMenuItem.Text = "选择文件";
 			// 
 			// _ItemList
@@ -383,11 +380,10 @@
 			this._ItemList.Cursor = System.Windows.Forms.Cursors.Default;
 			this._ItemList.GridLines = true;
 			this._ItemList.HideSelection = false;
-			this._ItemList.Location = new System.Drawing.Point(4, 4);
-			this._ItemList.Margin = new System.Windows.Forms.Padding(4);
+			this._ItemList.Location = new System.Drawing.Point(3, 3);
 			this._ItemList.Name = "_ItemList";
 			this._ItemList.ShowGroups = false;
-			this._ItemList.Size = new System.Drawing.Size(814, 296);
+			this._ItemList.Size = new System.Drawing.Size(544, 199);
 			this._ItemList.SmallImageList = this._FileTypeList;
 			this._ItemList.TabIndex = 0;
 			this._ItemList.UseCompatibleStateImageBehavior = false;
@@ -444,7 +440,7 @@
             _RefreshInfo,
             this._SelectionMenuItem});
 			this._ItemListMenu.Name = "_ItemListMenu";
-			this._ItemListMenu.Size = new System.Drawing.Size(197, 100);
+			this._ItemListMenu.Size = new System.Drawing.Size(157, 94);
 			this._ItemListMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this._MainToolbar_ItemClicked);
 			// 
 			// _FileTypeList
@@ -466,10 +462,9 @@
 			this._AutoClearListBox.AutoSize = true;
 			this._AutoClearListBox.Checked = true;
 			this._AutoClearListBox.CheckState = System.Windows.Forms.CheckState.Checked;
-			this._AutoClearListBox.Location = new System.Drawing.Point(653, 14);
-			this._AutoClearListBox.Margin = new System.Windows.Forms.Padding(4);
+			this._AutoClearListBox.Location = new System.Drawing.Point(434, 9);
 			this._AutoClearListBox.Name = "_AutoClearListBox";
-			this._AutoClearListBox.Size = new System.Drawing.Size(196, 22);
+			this._AutoClearListBox.Size = new System.Drawing.Size(132, 16);
 			this._AutoClearListBox.TabIndex = 4;
 			this._AutoClearListBox.Text = "添加文件前清空列表";
 			this._AutoClearListBox.UseVisualStyleBackColor = true;
@@ -486,20 +481,20 @@
 			this._BookmarkControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this._BookmarkControl.LabelText = "P&DF 信息文件：";
-			this._BookmarkControl.Location = new System.Drawing.Point(20, 352);
-			this._BookmarkControl.Margin = new System.Windows.Forms.Padding(6);
+			this._BookmarkControl.Location = new System.Drawing.Point(13, 235);
+			this._BookmarkControl.Margin = new System.Windows.Forms.Padding(4);
 			this._BookmarkControl.Name = "_BookmarkControl";
-			this._BookmarkControl.Size = new System.Drawing.Size(830, 36);
+			this._BookmarkControl.Size = new System.Drawing.Size(553, 24);
 			this._BookmarkControl.TabIndex = 6;
 			// 
 			// _TargetPdfFile
 			// 
 			this._TargetPdfFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this._TargetPdfFile.Location = new System.Drawing.Point(20, 398);
-			this._TargetPdfFile.Margin = new System.Windows.Forms.Padding(6);
+			this._TargetPdfFile.Location = new System.Drawing.Point(13, 265);
+			this._TargetPdfFile.Margin = new System.Windows.Forms.Padding(4);
 			this._TargetPdfFile.Name = "_TargetPdfFile";
-			this._TargetPdfFile.Size = new System.Drawing.Size(830, 39);
+			this._TargetPdfFile.Size = new System.Drawing.Size(553, 26);
 			this._TargetPdfFile.TabIndex = 7;
 			// 
 			// _ActionsBox
@@ -516,12 +511,11 @@
 			this._ActionsBox.GridLines = true;
 			this._ActionsBox.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
 			this._ActionsBox.HideSelection = false;
-			this._ActionsBox.Location = new System.Drawing.Point(8, 4);
-			this._ActionsBox.Margin = new System.Windows.Forms.Padding(4);
+			this._ActionsBox.Location = new System.Drawing.Point(5, 3);
 			this._ActionsBox.Name = "_ActionsBox";
 			this._ActionsBox.RowHeight = 18;
 			this._ActionsBox.ShowGroups = false;
-			this._ActionsBox.Size = new System.Drawing.Size(187, 262);
+			this._ActionsBox.Size = new System.Drawing.Size(126, 176);
 			this._ActionsBox.TabIndex = 18;
 			this._ActionsBox.UseCompatibleStateImageBehavior = false;
 			this._ActionsBox.View = System.Windows.Forms.View.Details;
@@ -537,8 +531,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this._ItemActionsContainerBox.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
-			this._ItemActionsContainerBox.Location = new System.Drawing.Point(20, 42);
-			this._ItemActionsContainerBox.Margin = new System.Windows.Forms.Padding(4);
+			this._ItemActionsContainerBox.Location = new System.Drawing.Point(13, 28);
 			this._ItemActionsContainerBox.Name = "_ItemActionsContainerBox";
 			// 
 			// _ItemActionsContainerBox.Panel1
@@ -549,19 +542,17 @@
 			// 
 			this._ItemActionsContainerBox.Panel2.Controls.Add(this._ActionsBox);
 			this._ItemActionsContainerBox.Panel2Collapsed = true;
-			this._ItemActionsContainerBox.Size = new System.Drawing.Size(825, 308);
+			this._ItemActionsContainerBox.Size = new System.Drawing.Size(550, 205);
 			this._ItemActionsContainerBox.SplitterDistance = 412;
-			this._ItemActionsContainerBox.SplitterWidth = 6;
 			this._ItemActionsContainerBox.TabIndex = 5;
 			// 
 			// _ExportBookmarkButton
 			// 
 			this._ExportBookmarkButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this._ExportBookmarkButton.Image = global::PDFPatcher.Properties.Resources.ExportInfoFile;
-			this._ExportBookmarkButton.Location = new System.Drawing.Point(27, 446);
-			this._ExportBookmarkButton.Margin = new System.Windows.Forms.Padding(4);
+			this._ExportBookmarkButton.Location = new System.Drawing.Point(18, 297);
 			this._ExportBookmarkButton.Name = "_ExportBookmarkButton";
-			this._ExportBookmarkButton.Size = new System.Drawing.Size(180, 34);
+			this._ExportBookmarkButton.Size = new System.Drawing.Size(120, 23);
 			this._ExportBookmarkButton.TabIndex = 8;
 			this._ExportBookmarkButton.Text = "导出信息文件(&C)";
 			this._ExportBookmarkButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -579,12 +570,11 @@
 			this._ImportButton.GlowColor = System.Drawing.Color.White;
 			this._ImportButton.Image = global::PDFPatcher.Properties.Resources.Save;
 			this._ImportButton.InnerBorderColor = System.Drawing.SystemColors.ControlDarkDark;
-			this._ImportButton.Location = new System.Drawing.Point(660, 446);
-			this._ImportButton.Margin = new System.Windows.Forms.Padding(4);
+			this._ImportButton.Location = new System.Drawing.Point(440, 297);
 			this._ImportButton.Name = "_ImportButton";
 			this._ImportButton.OuterBorderColor = System.Drawing.SystemColors.ControlLightLight;
 			this._ImportButton.ShowFocusBorder = true;
-			this._ImportButton.Size = new System.Drawing.Size(184, 44);
+			this._ImportButton.Size = new System.Drawing.Size(123, 29);
 			this._ImportButton.TabIndex = 13;
 			this._ImportButton.Text = "生成目标文件(&S)";
 			this._ImportButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -594,10 +584,9 @@
 			// 
 			this._ConfigButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this._ConfigButton.Image = global::PDFPatcher.Properties.Resources.PdfOptions;
-			this._ConfigButton.Location = new System.Drawing.Point(380, 446);
-			this._ConfigButton.Margin = new System.Windows.Forms.Padding(4);
+			this._ConfigButton.Location = new System.Drawing.Point(253, 297);
 			this._ConfigButton.Name = "_ConfigButton";
-			this._ConfigButton.Size = new System.Drawing.Size(272, 34);
+			this._ConfigButton.Size = new System.Drawing.Size(181, 23);
 			this._ConfigButton.TabIndex = 14;
 			this._ConfigButton.Text = "设置 P&DF 文件的修改方式";
 			this._ConfigButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -607,10 +596,9 @@
 			// 
 			this._InfoConfigButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this._InfoConfigButton.Image = global::PDFPatcher.Properties.Resources.InfoFileOptions;
-			this._InfoConfigButton.Location = new System.Drawing.Point(216, 446);
-			this._InfoConfigButton.Margin = new System.Windows.Forms.Padding(4);
+			this._InfoConfigButton.Location = new System.Drawing.Point(144, 297);
 			this._InfoConfigButton.Name = "_InfoConfigButton";
-			this._InfoConfigButton.Size = new System.Drawing.Size(154, 34);
+			this._InfoConfigButton.Size = new System.Drawing.Size(103, 23);
 			this._InfoConfigButton.TabIndex = 14;
 			this._InfoConfigButton.Text = "信息文件配置";
 			this._InfoConfigButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -619,24 +607,22 @@
 			// 
 			// InfoExchangerControl
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this._InfoConfigButton);
 			this.Controls.Add(this._ConfigButton);
 			this.Controls.Add(this._ImportButton);
-			this.Controls.Add(_MainToolbar);
+			this.Controls.Add(this._MainToolbar);
 			this.Controls.Add(this._TargetPdfFile);
 			this.Controls.Add(this._ExportBookmarkButton);
 			this.Controls.Add(this._ItemActionsContainerBox);
 			this.Controls.Add(this._AutoClearListBox);
 			this.Controls.Add(this._BookmarkControl);
 			this.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			this.Margin = new System.Windows.Forms.Padding(4);
 			this.Name = "InfoExchangerControl";
-			this.Size = new System.Drawing.Size(862, 513);
-			this.Load += new System.EventHandler(this.PatcherControl_OnLoad);
-			_MainToolbar.ResumeLayout(false);
-			_MainToolbar.PerformLayout();
+			this.Size = new System.Drawing.Size(575, 342);
+			this._MainToolbar.ResumeLayout(false);
+			this._MainToolbar.PerformLayout();
 			this._SortMenu.ResumeLayout(false);
 			this._SelectionMenu.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this._ItemList)).EndInit();
@@ -684,5 +670,6 @@
 		private System.Windows.Forms.Button _ConfigButton;
 		private System.Windows.Forms.Button _InfoConfigButton;
 		private BrightIdeasSoftware.OLVColumn _FileTimeColumn;
+		private System.Windows.Forms.ToolStrip _MainToolbar;
 	}
 }

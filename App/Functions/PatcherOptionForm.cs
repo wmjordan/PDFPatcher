@@ -18,6 +18,11 @@ namespace PDFPatcher.Functions
 
 		public PatcherOptionForm(bool editorOptions) {
 			InitializeComponent();
+			_editorOptions = editorOptions;
+			this.OnFirstLoad(OnLoad);
+		}
+
+		void OnLoad() {
 			this.SetIcon(Properties.Resources.PdfOptions);
 			_PageSizeBox.Items.AddRange(Processor.PdfDocumentCreator.PaperSizes);
 			_ImageHAlignBox.Items.Add("水平居中");
@@ -26,15 +31,11 @@ namespace PDFPatcher.Functions
 			_ImageVAlignBox.Items.Add("垂直居中");
 			_ImageVAlignBox.Items.Add("置顶");
 			_ImageVAlignBox.Items.Add("置底");
-			_editorOptions = editorOptions;
 			_ResetButton.Click += (s, args) => {
 				if (this.ConfirmYesBox("是否将选项配置还原为默认值？")) {
 					Reset();
 				}
 			};
-		}
-
-		void PatcherOptionForm_Load(object sender, EventArgs e) {
 			Reload();
 			if (_editorOptions) {
 				_MainTab.TabPages.Remove(_DocumentInfoPage);

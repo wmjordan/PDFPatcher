@@ -4,7 +4,7 @@ using PDFPatcher.Model;
 
 namespace PDFPatcher.Functions
 {
-	public partial class PageRangeConditionEditor : UserControl, IFilterConditionEditor
+	sealed partial class PageRangeConditionEditor : UserControl, IFilterConditionEditor
 	{
 		AutoBookmarkCondition.PageRangeCondition _condition;
 		bool _lock;
@@ -29,7 +29,7 @@ namespace PDFPatcher.Functions
 
 		#endregion
 
-		private void ControlChanged(object sender, EventArgs e) {
+		void ControlChanged(object sender, EventArgs e) {
 			if (_lock) {
 				return;
 			}

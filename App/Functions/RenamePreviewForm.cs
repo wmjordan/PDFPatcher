@@ -7,8 +7,10 @@ namespace PDFPatcher.Functions
 {
 	public partial class RenamePreviewForm : Form
 	{
-		public RenamePreviewForm(string[] sourceFiles, string[] targetFiles) {
+		public RenamePreviewForm() {
 			InitializeComponent();
+		}
+		public RenamePreviewForm(string[] sourceFiles, string[] targetFiles) : this() {
 			var l = sourceFiles.Length;
 			var c = _RenamePreviewBox.Items;
 			FilePath s, t;

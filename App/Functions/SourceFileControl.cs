@@ -24,7 +24,7 @@ namespace PDFPatcher
 		/// <summary>
 		/// 获取选定的 PDF 文件列表。
 		/// </summary>
-		internal string[] Files { get; private set; }
+		internal string[] Files { get; set; }
 		/// <summary>
 		/// 获取选定的 PDF 文件列表的第一项。
 		/// </summary>
@@ -50,7 +50,7 @@ namespace PDFPatcher
 		//    set { this._OpenPdfBox.Multiselect = value; }
 		//}
 
-		private void _BrowseSourcePdfButton_Click(object sender, EventArgs e) {
+		void _BrowseSourcePdfButton_Click(object sender, EventArgs e) {
 			var t = _SourcePdfBox.Text;
 			if (t.Length > 0
 				&& FileHelper.IsPathValid(t)
@@ -65,7 +65,7 @@ namespace PDFPatcher
 			}
 		}
 
-		private void SelectFiles(string[] files) {
+		void SelectFiles(string[] files) {
 			var t = _SourcePdfBox.Text;
 			if (files.Length > 1) {
 				Text = String.Concat("<选定了 ", files.Length, " 个文件>", System.IO.Path.GetDirectoryName(files[0]));
@@ -76,7 +76,7 @@ namespace PDFPatcher
 			Files = files;
 		}
 
-		private void _SourcePdfBox_TextChanged(object sender, EventArgs e) {
+		void _SourcePdfBox_TextChanged(object sender, EventArgs e) {
 			if (_controlLockDown == true) {
 				return;
 			}
@@ -85,16 +85,16 @@ namespace PDFPatcher
 			}
 		}
 
-		private void _SourcePdfBox_DragEnter(object sender, DragEventArgs e) {
+		void _SourcePdfBox_DragEnter(object sender, DragEventArgs e) {
 			FormHelper.FeedbackDragFileOver(e, Constants.FileExtensions.Pdf);
 		}
 
-		private void _SourcePdfBox_DragDrop(object sender, DragEventArgs e) {
+		void _SourcePdfBox_DragDrop(object sender, DragEventArgs e) {
 			var files = FormHelper.DropFileOver(e, Constants.FileExtensions.Pdf);
 			SelectFiles(files);
 		}
 
-		private void SourceFileControl_Show(object sender, EventArgs e) {
+		void SourceFileControl_Show(object sender, EventArgs e) {
 			_controlLockDown = true;
 			var t = Text;
 			if (Visible && AppContext.MainForm != null) {
@@ -106,14 +106,5 @@ namespace PDFPatcher
 			Text = t;
 			_controlLockDown = false;
 		}
-
-		private void label1_Click(object sender, EventArgs e) {
-
-		}
-
-		private void _SourcePdfBox_SelectedIndexChanged(object sender, EventArgs e) {
-
-		}
-
 	}
 }

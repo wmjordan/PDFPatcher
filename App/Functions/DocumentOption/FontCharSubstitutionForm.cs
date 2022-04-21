@@ -5,12 +5,13 @@ using PDFPatcher.Common;
 
 namespace PDFPatcher.Functions
 {
-	public partial class FontCharSubstitutionForm : Form
+	sealed partial class FontCharSubstitutionForm : Form
 	{
 		readonly FontSubstitution _Substitution;
-
-		public FontCharSubstitutionForm(FontSubstitution substitution) {
+		public FontCharSubstitutionForm() {
 			InitializeComponent();
+		}
+		public FontCharSubstitutionForm(FontSubstitution substitution) : this() {
 			this.SetIcon(Properties.Resources.Replace);
 			MinimumSize = Size;
 			MaximumSize = new Size(999, Size.Height);

@@ -6,7 +6,7 @@ using PDFPatcher.Model;
 namespace PDFPatcher.Functions
 {
 	[ToolboxItem(false)]
-	public partial class TextConditionEditor : UserControl, IFilterConditionEditor
+	sealed partial class TextConditionEditor : UserControl, IFilterConditionEditor
 	{
 		AutoBookmarkCondition.TextCondition _filter;
 		bool _lock;
@@ -33,7 +33,7 @@ namespace PDFPatcher.Functions
 
 		#endregion
 
-		private void ControlChanged(object sender, EventArgs e) {
+		void ControlChanged(object sender, EventArgs e) {
 			if (_lock) {
 				return;
 			}

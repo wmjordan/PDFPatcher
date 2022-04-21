@@ -9,7 +9,7 @@ using PDFPatcher.Processor;
 
 namespace PDFPatcher.Functions
 {
-	public partial class DocumentFontListForm : Form
+	sealed partial class DocumentFontListForm : Form
 	{
 		Dictionary<int, string> _fontIdNames;
 		Dictionary<string, PageFont> _pageFonts;
@@ -27,13 +27,15 @@ namespace PDFPatcher.Functions
 
 		public DocumentFontListForm() {
 			InitializeComponent();
+			this.OnFirstLoad(OnLoad);
+		}
+
+		void OnLoad() {
 			this.SetIcon(Properties.Resources.Fonts);
-			Load += (s, args) => {
-				MinimumSize = Size;
-				if (AppContext.Recent.SourcePdfFiles.HasContent()) {
-					_SourceFileBox.FileList.Text = AppContext.Recent.SourcePdfFiles[0];
-				}
-			};
+			MinimumSize = Size;
+			if (AppContext.Recent.SourcePdfFiles.HasContent()) {
+				_SourceFileBox.FileList.Text = AppContext.Recent.SourcePdfFiles[0];
+			}
 			_Worker.ProgressChanged += (s, args) => {
 				if (args.ProgressPercentage < 0) {
 					_ProgressBar.Maximum = -args.ProgressPercentage;

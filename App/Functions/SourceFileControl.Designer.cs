@@ -41,7 +41,6 @@
             this.label1.Size = new System.Drawing.Size(95, 12);
             this.label1.TabIndex = 0;
             this.label1.Text = "原始 &PDF 文件：";
-            this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
             // _BrowseSourcePdfButton
             // 
@@ -86,7 +85,6 @@
             this._SourcePdfBox.Name = "_SourcePdfBox";
             this._SourcePdfBox.Size = new System.Drawing.Size(281, 20);
             this._SourcePdfBox.TabIndex = 3;
-            this._SourcePdfBox.SelectedIndexChanged += new System.EventHandler(this._SourcePdfBox_SelectedIndexChanged);
             this._SourcePdfBox.DragDrop += new System.Windows.Forms.DragEventHandler(this._SourcePdfBox_DragDrop);
             this._SourcePdfBox.DragEnter += new System.Windows.Forms.DragEventHandler(this._SourcePdfBox_DragEnter);
             this._SourcePdfBox.TextChanged += new System.EventHandler(this._SourcePdfBox_TextChanged);

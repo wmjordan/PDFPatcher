@@ -4,7 +4,7 @@ using PDFPatcher.Common;
 
 namespace PDFPatcher.Functions.Editor
 {
-	public partial class InsertBookmarkForm : DraggableForm
+	sealed partial class InsertBookmarkForm : DraggableForm
 	{
 		public event EventHandler OkClicked;
 
@@ -36,7 +36,9 @@ namespace PDFPatcher.Functions.Editor
 
 		public InsertBookmarkForm() {
 			InitializeComponent();
-
+			this.OnFirstLoad(OnLoad);
+		}
+		void OnLoad() {
 			VisibleChanged += (s, args) => {
 				if (!Visible) {
 					return;

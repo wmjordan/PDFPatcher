@@ -8,7 +8,7 @@ using PDFPatcher.Common;
 
 namespace PDFPatcher.Functions
 {
-	public partial class FontSubstitutionsEditor : UserControl
+	sealed partial class FontSubstitutionsEditor : UserControl
 	{
 		string _copiedFont;
 
@@ -24,12 +24,15 @@ namespace PDFPatcher.Functions
 
 		public FontSubstitutionsEditor() {
 			InitializeComponent();
-			_FontSubstitutionsBox.FormatRow += (s, args) => args.Item.SubItems[0].Text = ValueHelper.ToText(args.RowIndex + 1);
+			this.OnFirstLoad(OnLoad);
+			_SubstitutionsBox = new TypedObjectListView<FontSubstitution>(_FontSubstitutionsBox);
+		}
 
+		void OnLoad() {
+			_FontSubstitutionsBox.FormatRow += (s, args) => args.Item.SubItems[0].Text = ValueHelper.ToText(args.RowIndex + 1);
 			_FontSubstitutionsBox.FullRowSelect = true;
 			_FontSubstitutionsBox.HideSelection = false;
 			_FontSubstitutionsBox.LabelEdit = false;
-			_SubstitutionsBox = new TypedObjectListView<FontSubstitution>(_FontSubstitutionsBox);
 			_FontSubstitutionsBox.CellEditStarting += (s, args) => {
 				if (args.Column == _SubstitutionColumn) {
 					EditSubstitutionItem(args);

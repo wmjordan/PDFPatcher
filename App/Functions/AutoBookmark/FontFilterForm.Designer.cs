@@ -193,7 +193,6 @@
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "添加字体筛选条件";
-			this.Load += new System.EventHandler (this.FontFilterForm_Load);
 			((System.ComponentModel.ISupportInitialize)(this._FontInfoBox)).EndInit ();
 			((System.ComponentModel.ISupportInitialize)(this._FilterBox)).EndInit ();
 			this.ResumeLayout (false);

@@ -20,6 +20,10 @@ namespace PDFPatcher.Functions
 
 		public OcrControl() {
 			InitializeComponent();
+			this.OnFirstLoad(OnLoad);
+		}
+
+		void OnLoad() {
 			_BookmarkControl.FileDialog.Filter = Constants.FileExtensions.TxtFilter + "|" + Constants.FileExtensions.XmlFilter + "|" + Constants.FileExtensions.XmlOrTxtFilter;
 
 			AppContext.MainForm.SetTooltip(_SourceFileControl.FileList, "需要识别文本的 PDF 源文件路径");
@@ -55,15 +59,13 @@ namespace PDFPatcher.Functions
 			d.CheckFileExists = false;
 			d.CheckPathExists = false;
 
-			var sd = d as SaveFileDialog;
-			if (sd != null) {
+			if (d is SaveFileDialog sd) {
 				sd.OverwritePrompt = false;
 			}
 		}
 
 		public override void SetupCommand(ToolStripItem item) {
-			var n = item.Name;
-			switch (n) {
+			switch (item.Name) {
 				case Commands.SaveBookmark:
 					item.Text = "写入PDF文件(&Q)";
 					item.ToolTipText = "将识别结果写入 PDF 文件";
@@ -110,7 +112,7 @@ namespace PDFPatcher.Functions
 			_QuantitiveFactorBox.SetValue(_options.QuantitativeFactor);
 		}
 
-		private void Button_Click(object sender, EventArgs e) {
+		void Button_Click(object sender, EventArgs e) {
 			if (File.Exists(_SourceFileControl.FirstFile) == false) {
 				FormHelper.ErrorBox(Messages.SourceFileNotFound);
 				return;
@@ -166,7 +168,7 @@ namespace PDFPatcher.Functions
 			}
 		}
 
-		private void SyncOptions() {
+		void SyncOptions() {
 			_options.CompressWhiteSpaces = _CompressWhiteSpaceBox.Checked;
 			_options.PreserveColor = !_ConvertToMonoColorBox.Checked;
 			_options.DetectColumns = _DetectColumnsBox.Checked;
@@ -223,11 +225,11 @@ namespace PDFPatcher.Functions
 			}
 		}
 
-		private void _ImportLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+		void _ImportLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
 			AppContext.MainForm.SelectFunctionList(Function.Patcher);
 		}
 
-		private void ControlEvent(object sender, EventArgs e) {
+		void ControlEvent(object sender, EventArgs e) {
 			if (sender == _WritingDirectionBox) {
 				_DetectColumnsBox.Enabled = _WritingDirectionBox.SelectedIndex != 0;
 			}

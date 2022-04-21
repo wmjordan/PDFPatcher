@@ -8,12 +8,15 @@ using MuRectangle = MuPdfSharp.Rectangle;
 
 namespace PDFPatcher.Functions.Editor
 {
-	public partial class PagePropertyForm : DraggableForm
+	sealed partial class PagePropertyForm : DraggableForm
 	{
 		public int PageNumber { get; set; }
 
 		public PagePropertyForm() {
 			InitializeComponent();
+			this.OnFirstLoad(OnLoad);
+		}
+		void OnLoad() {
 			_PageDimensionBox.SelectedIndexChanged += _PageDimensionBox_SelectedIndexChanged;
 			_CloseButton.Click += (s, args) => Hide();
 			_FontNameColumn.AsTyped<MuFontAndSize>(f => f.AspectGetter = o => o.FontName);
@@ -43,13 +46,13 @@ namespace PDFPatcher.Functions.Editor
 			PageNumber = page.PageNumber;
 		}
 
-		private void AddBox(MuPage page, MuRectangle rect, string title) {
+		void AddBox(MuPage page, MuRectangle rect, string title) {
 			if (rect.IsEmpty == false) {
 				_PageDimensionBox.Items.Add(new Box(rect, title));
 			}
 		}
 
-		private void _PageDimensionBox_SelectedIndexChanged(object sender, EventArgs args) {
+		void _PageDimensionBox_SelectedIndexChanged(object sender, EventArgs args) {
 			var v = _PageDimensionBox.SelectedItem as Box;
 			if (v == null) {
 				return;

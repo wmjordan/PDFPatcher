@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Windows.Forms;
+using PDFPatcher.Common;
 using PDFPatcher.Model;
 
 namespace PDFPatcher.Functions
 {
-	public partial class SavePdfForm : Form
+	sealed partial class SavePdfForm : Form
 	{
 		readonly PdfInfoXmlDocument _bookmarkDocument;
 		public EventHandler DoWork;
@@ -13,8 +14,10 @@ namespace PDFPatcher.Functions
 		public string SourceFilePath => _SourceFileBox.Text;
 		public string TargetFilePath => _TargetFileBox.Text;
 
-		public SavePdfForm(string sourcePath, string targetPath, PdfInfoXmlDocument bookmarkDocument) {
+		SavePdfForm() {
 			InitializeComponent();
+		}
+		public SavePdfForm(string sourcePath, string targetPath, PdfInfoXmlDocument bookmarkDocument) : this() {
 			if (String.IsNullOrEmpty(sourcePath) == false) {
 				_SourceFileBox.Text = sourcePath;
 			}
@@ -29,14 +32,14 @@ namespace PDFPatcher.Functions
 			_OverwriteBox.CheckedChanged += (s, args) => _TargetFileBox.Enabled = !_OverwriteBox.Checked;
 		}
 
-		private void ImportBookmarkForm_Load(object sender, EventArgs e) {
+		void ImportBookmarkForm_Load(object sender, EventArgs e) {
 			_TargetFileBox.FileMacroMenu.LoadStandardSourceFileMacros();
 			_ConfigButton.Click += (s, args) => {
 				AppContext.MainForm.SelectFunctionList(Function.EditorOptions);
 			};
 		}
 
-		protected void _OkButton_Click(Object source, EventArgs args) {
+		void _OkButton_Click(Object source, EventArgs args) {
 			AppContext.MainForm.ResetWorker();
 			var doc = _bookmarkDocument;
 			var s = _SourceFileBox.Text;
@@ -68,7 +71,7 @@ namespace PDFPatcher.Functions
 			Close();
 		}
 
-		protected void _CancelButton_Click(Object source, EventArgs args) {
+		void _CancelButton_Click(Object source, EventArgs args) {
 			DialogResult = DialogResult.Cancel;
 			Close();
 		}

@@ -11,7 +11,7 @@ using PDFPatcher.Model;
 
 namespace PDFPatcher.Functions
 {
-	public partial class PageSettingsEditor : UserControl
+	sealed partial class PageSettingsEditor : UserControl
 	{
 		readonly TypedObjectListView<Model.PageBoxSettings> _SettingsBox;
 		private List<Model.PageBoxSettings> _Settings;
@@ -23,6 +23,11 @@ namespace PDFPatcher.Functions
 
 		public PageSettingsEditor() {
 			InitializeComponent();
+			this.OnFirstLoad(OnLoad);
+			_SettingsBox = new TypedObjectListView<Model.PageBoxSettings>(_PageSettingsBox);
+		}
+
+		void OnLoad() {
 			_PageSettingsBox.FormatRow += (s, args) => {
 				args.Item.SubItems[0].Text = (args.RowIndex + 1).ToText();
 			};
@@ -37,7 +42,6 @@ namespace PDFPatcher.Functions
 					ShowMenuForClickedCell(args, _PageSettingsMenu);
 				}
 			};
-			_SettingsBox = new TypedObjectListView<Model.PageBoxSettings>(_PageSettingsBox);
 			_PageRangeFilterTypeMenu.Opening += (s, args) => {
 				var f = _SettingsBox.SelectedObject.Filter;
 				_AllPagesMenu.Checked = f == PageFilterFlag.All || f == PageFilterFlag.NotSpecified;

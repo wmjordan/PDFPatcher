@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using PDFPatcher.Common;
 using PDFPatcher.Model;
 
 namespace PDFPatcher.Functions
 {
-	public partial class EditAdjustmentForm : Form
+	sealed partial class EditAdjustmentForm : Form
 	{
 		internal static string[] FilterNames = new string[] { "字体名称", "文本尺寸", "文本位置", "页码范围", "文本内容" };
 		internal static string[] FilterIDs = new string[] { "_FontNameFilter", "_FontSizeFilter", "_FontPositionFilter", "_PageRangeFilter", "_TextFilter" };
@@ -14,8 +15,11 @@ namespace PDFPatcher.Functions
 		internal AutoBookmarkOptions.LevelAdjustmentOption Filter { get; private set; }
 		AutoBookmarkCondition.MultiCondition conditions;
 
-		public EditAdjustmentForm(AutoBookmarkOptions.LevelAdjustmentOption filter) {
+		public EditAdjustmentForm() {
 			InitializeComponent();
+			this.OnFirstLoad(OnLoad);
+		}
+		public EditAdjustmentForm(AutoBookmarkOptions.LevelAdjustmentOption filter) : this() {
 			int i = 0;
 			foreach (var item in FilterNames) {
 				_AddFilterMenuItem.DropDownItems.Add(item).Name = FilterIDs[i++];
@@ -41,11 +45,11 @@ namespace PDFPatcher.Functions
 			}
 		}
 
-		private void EditAdjustmentForm_Load(object sender, EventArgs e) {
-
+		void OnLoad() {
+			_MainToolbar.ScaleIcons(16);
 		}
 
-		protected void _OkButton_Click(Object source, EventArgs args) {
+		void _OkButton_Click(Object source, EventArgs args) {
 			DialogResult = DialogResult.OK;
 			conditions = new AutoBookmarkCondition.MultiCondition();
 			foreach (ListViewItem item in _FilterBox.Items) {
@@ -60,7 +64,7 @@ namespace PDFPatcher.Functions
 			Close();
 		}
 
-		protected void _CancelButton_Click(Object source, EventArgs args) {
+		void _CancelButton_Click(Object source, EventArgs args) {
 			DialogResult = DialogResult.Cancel;
 			Close();
 		}

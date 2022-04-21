@@ -8,7 +8,7 @@ using PDFPatcher.Common;
 namespace PDFPatcher.Functions
 {
 	[ToolboxItem(false)]
-	public partial class ExtractPageControl : FunctionControl, IResettableControl
+	sealed partial class ExtractPageControl : FunctionControl, IResettableControl
 	{
 		public override string FunctionName => "提取页面";
 
@@ -16,7 +16,10 @@ namespace PDFPatcher.Functions
 
 		public ExtractPageControl() {
 			InitializeComponent();
-			//Icon = FormHelper.ToIcon (Properties.Resources.ExtractPages);
+			this.OnFirstLoad(OnLoad);
+		}
+
+		void OnLoad() {
 			AppContext.MainForm.SetTooltip(_SourceFileControl.FileList, "需要提取页面的 PDF 文件路径，可选择多个文件");
 			AppContext.MainForm.SetTooltip(_ExtractPageRangeBox, "提取页面的页码范围，不指定页码范围时提取源文件的所有页");
 			AppContext.MainForm.SetTooltip(_TargetFileControl.FileList, "输出 PDF 文件的路径，右键点击插入文件名替代符");
@@ -28,9 +31,6 @@ namespace PDFPatcher.Functions
 
 			_TargetFileControl.FileMacroMenu.LoadStandardInfoMacros();
 			_TargetFileControl.FileMacroMenu.LoadStandardSourceFileMacros();
-		}
-
-		private void ExtractPageControl_Load(object sender, EventArgs e) {
 			_SeparatingModeBox.SelectedIndexChanged += (s, args) => {
 				_NumberFileNamesBox.Text = _SeparatingModeBox.SelectedIndex == 1 ? "在文件名前面添加编号" : "第一个文件名也添加编号";
 				_SeperateByPageNumberBox.Enabled = _SeparatingModeBox.SelectedIndex == 2;
@@ -38,7 +38,7 @@ namespace PDFPatcher.Functions
 			((IResettableControl)this).Reload();
 		}
 
-		private void _ExtractButton_Click(object sender, EventArgs e) {
+		void _ExtractButton_Click(object sender, EventArgs e) {
 			if (File.Exists(_SourceFileControl.FirstFile) == false) {
 				FormHelper.ErrorBox(Messages.SourceFileNotFound);
 				return;
@@ -95,7 +95,7 @@ namespace PDFPatcher.Functions
 			});
 		}
 
-		private void _ExtractPageRangeBox_TextChanged(object sender, EventArgs e) {
+		void _ExtractPageRangeBox_TextChanged(object sender, EventArgs e) {
 			AppContext.Exporter.ExtractPageRange = _ExtractPageRangeBox.Text;
 		}
 

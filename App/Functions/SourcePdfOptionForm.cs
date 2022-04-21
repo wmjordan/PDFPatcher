@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using PDFPatcher.Model;
 
@@ -13,9 +8,10 @@ namespace PDFPatcher.Functions
 	{
 		readonly SourceItem.Pdf _pdf;
 
-
-		internal SourcePdfOptionForm(SourceItem.Pdf pdf) {
+		SourcePdfOptionForm() {
 			InitializeComponent();
+		}
+		internal SourcePdfOptionForm(SourceItem.Pdf pdf) : this() {
 			_SourceFileBox.Text = pdf.FilePath.ToString();
 			_PageRangeBox.Text = pdf.PageRanges;
 			_ImportImagesOnlyBox.Checked = pdf.ImportImagesOnly;
@@ -35,7 +31,7 @@ namespace PDFPatcher.Functions
 			_pdf = pdf;
 		}
 
-		private void _OkButton_Click(Object source, EventArgs args) {
+		void _OkButton_Click(Object source, EventArgs args) {
 			DialogResult = DialogResult.OK;
 			_pdf.PageRanges = Model.PageRangeCollection.Parse(_PageRangeBox.Text, 1, _pdf.PageCount, true).ToString();
 			_pdf.ImportImagesOnly = _ImportImagesOnlyBox.Checked;
@@ -54,12 +50,12 @@ namespace PDFPatcher.Functions
 			Close();
 		}
 
-		private void _CancelButton_Click(Object source, EventArgs args) {
+		void _CancelButton_Click(Object source, EventArgs args) {
 			DialogResult = DialogResult.Cancel;
 			Close();
 		}
 
-		private void _ImportImagesOnlyBox_CheckedChanged(object sender, EventArgs e) {
+		void _ImportImagesOnlyBox_CheckedChanged(object sender, EventArgs e) {
 			_ExtractImageOptionBox.Enabled = _ImportImagesOnlyBox.Checked;
 		}
 	}

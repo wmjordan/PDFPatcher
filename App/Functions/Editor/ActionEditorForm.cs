@@ -12,7 +12,7 @@ using PDFPatcher.Processor;
 
 namespace PDFPatcher.Functions
 {
-	public partial class ActionEditorForm : System.Windows.Forms.Form
+	sealed partial class ActionEditorForm : System.Windows.Forms.Form
 	{
 		const string KeepZoomRate = "保持不变";
 		const string NoAction = "无";

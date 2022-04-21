@@ -7,7 +7,7 @@ using PDFPatcher.Processor;
 
 namespace PDFPatcher.Functions
 {
-	public sealed partial class SearchBookmarkForm : Form
+	sealed partial class SearchBookmarkForm : Form
 	{
 		static BookmarkMatcher.MatcherType _matcherType = BookmarkMatcher.MatcherType.Normal;
 		static bool _replaceInSelection = true;

@@ -14,6 +14,10 @@ namespace PDFPatcher.Functions
 
 		public MergerOptionForm() {
 			InitializeComponent();
+			this.OnFirstLoad(OnLoad);
+		}
+
+		void OnLoad() {
 			this.SetIcon(Properties.Resources.PdfOptions);
 			MinimumSize = Size;
 

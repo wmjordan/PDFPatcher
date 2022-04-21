@@ -4,7 +4,7 @@ using PDFPatcher.Common;
 
 namespace PDFPatcher.Functions
 {
-	public partial class InsertPageLabelForm : DraggableForm
+	sealed partial class InsertPageLabelForm : DraggableForm
 	{
 		public int PageNumber {
 			get => _PageNumberBox.Text.ToInt32();
@@ -15,11 +15,14 @@ namespace PDFPatcher.Functions
 
 		public InsertPageLabelForm() {
 			InitializeComponent();
+			this.OnFirstLoad(OnLoad);
+		}
+		void OnLoad() {
 			_NumericStyleBox.AddRange(Constants.PageLabelStyles.Names).Select(0);
 			_RemoveLabelButton.Enabled = false;
 		}
 
-		private void InsertPageLabelForm_Load(object sender, EventArgs e) {
+		void InsertPageLabelForm_Load(object sender, EventArgs e) {
 			_CancelButton.Click += (s, args) => {
 				DialogResult = DialogResult.Cancel;
 				Close();

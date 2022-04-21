@@ -38,8 +38,14 @@ namespace PDFPatcher.Common
 		public static Size Scale(this Size size, float scale) {
 			return new Size((int)(size.Width * scale), (int)(size.Height * scale));
 		}
+		public static void OnFirstLoad(this Form form, Action handler) {
+			new FormEventHandler(form, handler);
+		}
 		public static void SetIcon(this Form form, Bitmap bitmap) {
 			form.Icon = Icon.FromHandle(bitmap.GetHicon());
+		}
+		public static void OnFirstLoad(this UserControl control, Action handler) {
+			new UserControlLoadHandler(control, handler);
 		}
 		public static ProgressBar SetValue(this ProgressBar control, int value) {
 			control.Value = value < control.Minimum ? control.Minimum
@@ -134,6 +140,10 @@ namespace PDFPatcher.Common
 			}
 		}
 
+		public static ToolStrip ScaleIcons(this ToolStrip toolStrip, int size) {
+			size = (int)(toolStrip.GetDpiScale() * size);
+			return toolStrip.ScaleIcons(new Size(size, size));
+		}
 		public static ToolStrip ScaleIcons(this ToolStrip toolStrip, Size size) {
 			toolStrip.SuspendLayout();
 			toolStrip.AutoSize = false;
@@ -306,6 +316,37 @@ namespace PDFPatcher.Common
 				return Marshal.PtrToStringUni(((CopyDataStruct)Marshal.PtrToStructure(message.LParam, typeof(CopyDataStruct))).lpData);
 			}
 			return null;
+		}
+
+		sealed class FormEventHandler
+		{
+			readonly Form _Form;
+			readonly Action _Handler;
+
+			public FormEventHandler(Form form, Action handler) {
+				_Form = form;
+				_Handler = handler;
+				form.Load += OnLoadHandler;
+			}
+			public void OnLoadHandler(object s, EventArgs args) {
+				_Form.Load -= OnLoadHandler;
+				_Handler();
+			}
+		}
+		sealed class UserControlLoadHandler
+		{
+			readonly UserControl _Control;
+			readonly Action _Handler;
+
+			public UserControlLoadHandler(UserControl control, Action handler) {
+				_Control = control;
+				_Handler = handler;
+				control.Load += OnLoadHandler;
+			}
+			public void OnLoadHandler(object s, EventArgs args) {
+				_Control.Load -= OnLoadHandler;
+				_Handler();
+			}
 		}
 
 		static class NativeMethods

@@ -364,7 +364,6 @@
 			this.Margin = new System.Windows.Forms.Padding(4);
 			this.Name = "ExtractPageControl";
 			this.Size = new System.Drawing.Size(874, 500);
-			this.Load += new System.EventHandler(this.ExtractPageControl_Load);
 			this.tabControl1.ResumeLayout(false);
 			this.tabPage1.ResumeLayout(false);
 			this.groupBox2.ResumeLayout(false);

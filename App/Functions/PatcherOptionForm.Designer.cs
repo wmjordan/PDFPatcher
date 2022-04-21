@@ -947,7 +947,6 @@
 			this.Name = "PatcherOptionForm";
 			this.ShowInTaskbar = false;
 			this.Text = "PDF 文档选项";
-			this.Load += new System.EventHandler(this.PatcherOptionForm_Load);
 			this._PageSettingsPage.ResumeLayout(false);
 			this._MainTab.ResumeLayout(false);
 			this._PageLayoutPage.ResumeLayout(false);

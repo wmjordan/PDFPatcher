@@ -4,7 +4,7 @@ using PDFPatcher.Model;
 
 namespace PDFPatcher.Functions
 {
-	public partial class TextPositionConditionEditor : UserControl, IFilterConditionEditor
+	sealed partial class TextPositionConditionEditor : UserControl, IFilterConditionEditor
 	{
 		AutoBookmarkCondition.TextPositionCondition _condition;
 		bool _lock;
@@ -42,7 +42,7 @@ namespace PDFPatcher.Functions
 
 		#endregion
 
-		private void ControlChanged(object sender, EventArgs e) {
+		void ControlChanged(object sender, EventArgs e) {
 			ToggleControlState();
 			if (_lock) {
 				return;
@@ -59,7 +59,7 @@ namespace PDFPatcher.Functions
 			EditAdjustmentForm.UpdateFilter(this);
 		}
 
-		private void ToggleControlState() {
+		void ToggleControlState() {
 			_MinBox.Enabled = _MaxBox.Enabled = _RangeBox.Checked;
 			_SpecificValueBox.Enabled = _SpecificBox.Checked;
 		}

@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
+using PDFPatcher.Common;
 using PDFPatcher.Model;
 
 namespace PDFPatcher.Functions
 {
-	public partial class DocumentInfoEditor : UserControl
+	sealed partial class DocumentInfoEditor : UserControl
 	{
 		bool _settingsLockdown;
 		GeneralInfo _Options;
@@ -30,13 +26,10 @@ namespace PDFPatcher.Functions
 
 		public DocumentInfoEditor() {
 			InitializeComponent();
-
+			this.OnFirstLoad(OnLoad);
 		}
 
-		void DocumentInfoEditor_Load(object sender, EventArgs e) {
-			if (DesignMode) {
-				return;
-			}
+		void OnLoad() {
 			_settingsLockdown = true;
 			_TitleBox.ContextMenuStrip = _SubjectBox.ContextMenuStrip = _AuthorBox.ContextMenuStrip = _KeywordsBox.ContextMenuStrip = _PropertyMacroMenu;
 			_PropertyMacroMenu.AddInsertMacroMenuItem(Constants.FileNameMacros.FileName);

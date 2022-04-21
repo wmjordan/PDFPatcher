@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace PDFPatcher.Functions
 {
-	public partial class ZoomRateEntryForm : Form
+	sealed partial class ZoomRateEntryForm : Form
 	{
 		internal string ZoomRate => _ZoomRateBox.Text;
 
@@ -11,16 +11,12 @@ namespace PDFPatcher.Functions
 			InitializeComponent();
 		}
 
-		private void ZoomRateEntryForm_Load(object sender, EventArgs e) {
-
-		}
-
-		protected void _OkButton_Click(Object source, EventArgs args) {
+		void _OkButton_Click(Object source, EventArgs args) {
 			DialogResult = DialogResult.OK;
 			Close();
 		}
 
-		protected void _CancelButton_Click(Object source, EventArgs args) {
+		void _CancelButton_Click(Object source, EventArgs args) {
 			DialogResult = DialogResult.Cancel;
 			Close();
 		}

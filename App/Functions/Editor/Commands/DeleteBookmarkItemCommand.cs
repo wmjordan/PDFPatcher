@@ -12,7 +12,7 @@ namespace PDFPatcher.Functions.Editor
 			RemoveItems(controller, controller.View.Bookmark.GetSelectedElements(false));
 		}
 
-		private void RemoveItems(Controller controller, System.Collections.IList si) {
+		static void RemoveItems(Controller controller, System.Collections.IList si) {
 			if (si.Count == 0) {
 				return;
 			}

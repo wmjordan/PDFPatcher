@@ -26,7 +26,6 @@
 		/// </summary>
 		private void InitializeComponent () {
 			this.components = new System.ComponentModel.Container();
-			System.Windows.Forms.ToolStrip _MainToolbar;
 			System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
 			System.Windows.Forms.ToolStripDropDownButton _Sort;
 			System.Windows.Forms.ToolStripButton _Delete;
@@ -36,6 +35,7 @@
 			System.Windows.Forms.ToolStripMenuItem _SelectNone;
 			System.Windows.Forms.ToolStripMenuItem _Copy;
 			System.Windows.Forms.ToolStripMenuItem _RefreshInfo;
+			this._MainToolbar = new System.Windows.Forms.ToolStrip();
 			this._AddFilesButton = new System.Windows.Forms.ToolStripSplitButton();
 			this._RecentFileMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this._SortMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -53,6 +53,7 @@
 			this._SubjectColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
 			this._KeywordsColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
 			this._FolderColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+			this._FileTimeColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
 			this._ItemListMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this._FileTypeList = new System.Windows.Forms.ImageList(this.components);
 			this._OpenPdfBox = new System.Windows.Forms.OpenFileDialog();
@@ -62,8 +63,6 @@
 			this._TestRenameButton = new System.Windows.Forms.Button();
 			this._TargetPdfFile = new PDFPatcher.TargetFileControl();
 			this._RenameButton = new EnhancedGlassButton.GlassButton();
-			this._FileTimeColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-			_MainToolbar = new System.Windows.Forms.ToolStrip();
 			toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			_Sort = new System.Windows.Forms.ToolStripDropDownButton();
 			_Delete = new System.Windows.Forms.ToolStripButton();
@@ -73,7 +72,7 @@
 			_SelectNone = new System.Windows.Forms.ToolStripMenuItem();
 			_Copy = new System.Windows.Forms.ToolStripMenuItem();
 			_RefreshInfo = new System.Windows.Forms.ToolStripMenuItem();
-			_MainToolbar.SuspendLayout();
+			this._MainToolbar.SuspendLayout();
 			this._SortMenu.SuspendLayout();
 			this._SelectionMenu.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this._ItemList)).BeginInit();
@@ -82,22 +81,20 @@
 			// 
 			// _MainToolbar
 			// 
-			_MainToolbar.AutoSize = false;
-			_MainToolbar.GripMargin = new System.Windows.Forms.Padding(0);
-			_MainToolbar.ImageScalingSize = new System.Drawing.Size(24, 24);
-			_MainToolbar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+			this._MainToolbar.GripMargin = new System.Windows.Forms.Padding(0);
+			this._MainToolbar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this._AddFilesButton,
             toolStripSeparator1,
             _Sort,
             _Delete,
             toolStripSeparator2,
             this._RefreshInfoButton});
-			_MainToolbar.Location = new System.Drawing.Point(0, 0);
-			_MainToolbar.Name = "_MainToolbar";
-			_MainToolbar.Padding = new System.Windows.Forms.Padding(0, 0, 3, 0);
-			_MainToolbar.Size = new System.Drawing.Size(862, 38);
-			_MainToolbar.TabIndex = 0;
-			_MainToolbar.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this._MainToolbar_ItemClicked);
+			this._MainToolbar.Location = new System.Drawing.Point(0, 0);
+			this._MainToolbar.Name = "_MainToolbar";
+			this._MainToolbar.Padding = new System.Windows.Forms.Padding(0, 0, 2, 0);
+			this._MainToolbar.Size = new System.Drawing.Size(575, 25);
+			this._MainToolbar.TabIndex = 0;
+			this._MainToolbar.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this._MainToolbar_ItemClicked);
 			// 
 			// _AddFilesButton
 			// 
@@ -105,23 +102,21 @@
 			this._AddFilesButton.Image = global::PDFPatcher.Properties.Resources.Add;
 			this._AddFilesButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this._AddFilesButton.Name = "_AddFilesButton";
-			this._AddFilesButton.Size = new System.Drawing.Size(149, 33);
+			this._AddFilesButton.Size = new System.Drawing.Size(103, 22);
 			this._AddFilesButton.Text = "添加文件(&T)";
 			this._AddFilesButton.ToolTipText = "添加文件";
 			this._AddFilesButton.ButtonClick += new System.EventHandler(this._MainToolbar_ButtonClick);
 			// 
 			// _RecentFileMenu
 			// 
-			this._RecentFileMenu.ImageScalingSize = new System.Drawing.Size(24, 24);
 			this._RecentFileMenu.Name = "_RecentFileMenu";
-			this._RecentFileMenu.OwnerItem = this._AddFilesButton;
 			this._RecentFileMenu.ShowImageMargin = false;
 			this._RecentFileMenu.Size = new System.Drawing.Size(36, 4);
 			// 
 			// toolStripSeparator1
 			// 
 			toolStripSeparator1.Name = "toolStripSeparator1";
-			toolStripSeparator1.Size = new System.Drawing.Size(6, 38);
+			toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
 			// 
 			// _Sort
 			// 
@@ -130,33 +125,31 @@
 			_Sort.Image = global::PDFPatcher.Properties.Resources.Sort;
 			_Sort.ImageTransparentColor = System.Drawing.Color.Magenta;
 			_Sort.Name = "_Sort";
-			_Sort.Size = new System.Drawing.Size(42, 33);
+			_Sort.Size = new System.Drawing.Size(29, 22);
 			_Sort.Text = "排序";
 			_Sort.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this._SortMenu_ItemClicked);
 			// 
 			// _SortMenu
 			// 
-			this._SortMenu.ImageScalingSize = new System.Drawing.Size(24, 24);
 			this._SortMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this._SortByNaturalNumberItem,
             this._SortByAlphaItem});
 			this._SortMenu.Name = "_SortMenu";
-			this._SortMenu.OwnerItem = _Sort;
-			this._SortMenu.Size = new System.Drawing.Size(299, 68);
+			this._SortMenu.Size = new System.Drawing.Size(217, 48);
 			this._SortMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this._SortMenu_ItemClicked);
 			// 
 			// _SortByNaturalNumberItem
 			// 
 			this._SortByNaturalNumberItem.Image = global::PDFPatcher.Properties.Resources.NaturalSort;
 			this._SortByNaturalNumberItem.Name = "_SortByNaturalNumberItem";
-			this._SortByNaturalNumberItem.Size = new System.Drawing.Size(298, 32);
+			this._SortByNaturalNumberItem.Size = new System.Drawing.Size(216, 22);
 			this._SortByNaturalNumberItem.Text = "按数值和字母顺序排序(&M)";
 			// 
 			// _SortByAlphaItem
 			// 
 			this._SortByAlphaItem.Image = global::PDFPatcher.Properties.Resources.AlphabeticSort;
 			this._SortByAlphaItem.Name = "_SortByAlphaItem";
-			this._SortByAlphaItem.Size = new System.Drawing.Size(298, 32);
+			this._SortByAlphaItem.Size = new System.Drawing.Size(216, 22);
 			this._SortByAlphaItem.Text = "按字母顺序排序(&Z)";
 			// 
 			// _Delete
@@ -164,46 +157,46 @@
 			_Delete.Image = global::PDFPatcher.Properties.Resources.Delete;
 			_Delete.ImageTransparentColor = System.Drawing.Color.Magenta;
 			_Delete.Name = "_Delete";
-			_Delete.Size = new System.Drawing.Size(110, 33);
+			_Delete.Size = new System.Drawing.Size(76, 22);
 			_Delete.Text = "删除文件";
 			// 
 			// toolStripSeparator2
 			// 
 			toolStripSeparator2.Name = "toolStripSeparator2";
-			toolStripSeparator2.Size = new System.Drawing.Size(6, 38);
+			toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
 			// 
 			// _RefreshInfoButton
 			// 
 			this._RefreshInfoButton.Image = global::PDFPatcher.Properties.Resources.Refresh;
 			this._RefreshInfoButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this._RefreshInfoButton.Name = "_RefreshInfoButton";
-			this._RefreshInfoButton.Size = new System.Drawing.Size(163, 33);
+			this._RefreshInfoButton.Size = new System.Drawing.Size(112, 22);
 			this._RefreshInfoButton.Text = "刷新文档属性";
 			// 
 			// _SelectAll
 			// 
 			_SelectAll.Image = global::PDFPatcher.Properties.Resources.SelectAll;
 			_SelectAll.Name = "_SelectAll";
-			_SelectAll.Size = new System.Drawing.Size(160, 32);
+			_SelectAll.Size = new System.Drawing.Size(124, 22);
 			_SelectAll.Text = "全部选中";
 			// 
 			// _InvertSelect
 			// 
 			_InvertSelect.Name = "_InvertSelect";
-			_InvertSelect.Size = new System.Drawing.Size(160, 32);
+			_InvertSelect.Size = new System.Drawing.Size(124, 22);
 			_InvertSelect.Text = "反转选择";
 			// 
 			// _SelectNone
 			// 
 			_SelectNone.Name = "_SelectNone";
-			_SelectNone.Size = new System.Drawing.Size(160, 32);
+			_SelectNone.Size = new System.Drawing.Size(124, 22);
 			_SelectNone.Text = "取消选择";
 			// 
 			// _Copy
 			// 
 			_Copy.Image = global::PDFPatcher.Properties.Resources.Copy;
 			_Copy.Name = "_Copy";
-			_Copy.Size = new System.Drawing.Size(196, 32);
+			_Copy.Size = new System.Drawing.Size(148, 22);
 			_Copy.Text = "复制列表内容";
 			// 
 			// _RefreshInfo
@@ -211,26 +204,22 @@
 			_RefreshInfo.DropDown = this._RefreshInfoMenu;
 			_RefreshInfo.Image = global::PDFPatcher.Properties.Resources.Refresh;
 			_RefreshInfo.Name = "_RefreshInfo";
-			_RefreshInfo.Size = new System.Drawing.Size(196, 32);
+			_RefreshInfo.Size = new System.Drawing.Size(148, 22);
 			_RefreshInfo.Text = "刷新文档属性";
 			// 
 			// _RefreshInfoMenu
 			// 
-			this._RefreshInfoMenu.ImageScalingSize = new System.Drawing.Size(24, 24);
 			this._RefreshInfoMenu.Name = "_RefreshInfoMenu";
-			this._RefreshInfoMenu.OwnerItem = _RefreshInfo;
 			this._RefreshInfoMenu.Size = new System.Drawing.Size(61, 4);
 			// 
 			// _SelectionMenu
 			// 
-			this._SelectionMenu.ImageScalingSize = new System.Drawing.Size(24, 24);
 			this._SelectionMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             _SelectAll,
             _InvertSelect,
             _SelectNone});
 			this._SelectionMenu.Name = "_SelectionMenu";
-			this._SelectionMenu.OwnerItem = this._SelectionMenuItem;
-			this._SelectionMenu.Size = new System.Drawing.Size(161, 100);
+			this._SelectionMenu.Size = new System.Drawing.Size(125, 70);
 			this._SelectionMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this._MainToolbar_ItemClicked);
 			// 
 			// _SelectionMenuItem
@@ -238,7 +227,7 @@
 			this._SelectionMenuItem.DropDown = this._SelectionMenu;
 			this._SelectionMenuItem.Image = global::PDFPatcher.Properties.Resources.SelectItem;
 			this._SelectionMenuItem.Name = "_SelectionMenuItem";
-			this._SelectionMenuItem.Size = new System.Drawing.Size(196, 32);
+			this._SelectionMenuItem.Size = new System.Drawing.Size(148, 22);
 			this._SelectionMenuItem.Text = "选择文件";
 			// 
 			// _ItemList
@@ -270,11 +259,10 @@
 			this._ItemList.Cursor = System.Windows.Forms.Cursors.Default;
 			this._ItemList.GridLines = true;
 			this._ItemList.HideSelection = false;
-			this._ItemList.Location = new System.Drawing.Point(24, 86);
-			this._ItemList.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._ItemList.Location = new System.Drawing.Point(16, 57);
 			this._ItemList.Name = "_ItemList";
 			this._ItemList.ShowGroups = false;
-			this._ItemList.Size = new System.Drawing.Size(814, 301);
+			this._ItemList.Size = new System.Drawing.Size(544, 202);
 			this._ItemList.SmallImageList = this._FileTypeList;
 			this._ItemList.TabIndex = 0;
 			this._ItemList.UseCompatibleStateImageBehavior = false;
@@ -318,15 +306,20 @@
 			this._FolderColumn.Text = "文件夹";
 			this._FolderColumn.Width = 96;
 			// 
+			// _FileTimeColumn
+			// 
+			this._FileTimeColumn.IsEditable = false;
+			this._FileTimeColumn.Text = "修改时间";
+			this._FileTimeColumn.Width = 145;
+			// 
 			// _ItemListMenu
 			// 
-			this._ItemListMenu.ImageScalingSize = new System.Drawing.Size(24, 24);
 			this._ItemListMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             _Copy,
             _RefreshInfo,
             this._SelectionMenuItem});
 			this._ItemListMenu.Name = "_ItemListMenu";
-			this._ItemListMenu.Size = new System.Drawing.Size(197, 100);
+			this._ItemListMenu.Size = new System.Drawing.Size(149, 70);
 			this._ItemListMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this._MainToolbar_ItemClicked);
 			// 
 			// _FileTypeList
@@ -347,10 +340,9 @@
 			this._AutoClearListBox.AutoSize = true;
 			this._AutoClearListBox.Checked = true;
 			this._AutoClearListBox.CheckState = System.Windows.Forms.CheckState.Checked;
-			this._AutoClearListBox.Location = new System.Drawing.Point(24, 44);
-			this._AutoClearListBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._AutoClearListBox.Location = new System.Drawing.Point(16, 29);
 			this._AutoClearListBox.Name = "_AutoClearListBox";
-			this._AutoClearListBox.Size = new System.Drawing.Size(196, 22);
+			this._AutoClearListBox.Size = new System.Drawing.Size(132, 16);
 			this._AutoClearListBox.TabIndex = 4;
 			this._AutoClearListBox.Text = "添加文件前清空列表";
 			this._AutoClearListBox.UseVisualStyleBackColor = true;
@@ -367,10 +359,9 @@
 			this._KeepSourceFileBox.AutoSize = true;
 			this._KeepSourceFileBox.Checked = true;
 			this._KeepSourceFileBox.CheckState = System.Windows.Forms.CheckState.Checked;
-			this._KeepSourceFileBox.Location = new System.Drawing.Point(249, 44);
-			this._KeepSourceFileBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._KeepSourceFileBox.Location = new System.Drawing.Point(166, 29);
 			this._KeepSourceFileBox.Name = "_KeepSourceFileBox";
-			this._KeepSourceFileBox.Size = new System.Drawing.Size(142, 22);
+			this._KeepSourceFileBox.Size = new System.Drawing.Size(96, 16);
 			this._KeepSourceFileBox.TabIndex = 12;
 			this._KeepSourceFileBox.Text = "保留原始文件";
 			this._KeepSourceFileBox.UseVisualStyleBackColor = true;
@@ -378,10 +369,9 @@
 			// _TestRenameButton
 			// 
 			this._TestRenameButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this._TestRenameButton.Location = new System.Drawing.Point(468, 446);
-			this._TestRenameButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._TestRenameButton.Location = new System.Drawing.Point(312, 297);
 			this._TestRenameButton.Name = "_TestRenameButton";
-			this._TestRenameButton.Size = new System.Drawing.Size(178, 34);
+			this._TestRenameButton.Size = new System.Drawing.Size(119, 23);
 			this._TestRenameButton.TabIndex = 11;
 			this._TestRenameButton.Text = "测试命名模板(&C)";
 			this._TestRenameButton.UseVisualStyleBackColor = true;
@@ -392,10 +382,10 @@
 			this._TargetPdfFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this._TargetPdfFile.Label = "重命名模板(&M)：";
-			this._TargetPdfFile.Location = new System.Drawing.Point(20, 398);
-			this._TargetPdfFile.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+			this._TargetPdfFile.Location = new System.Drawing.Point(13, 265);
+			this._TargetPdfFile.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
 			this._TargetPdfFile.Name = "_TargetPdfFile";
-			this._TargetPdfFile.Size = new System.Drawing.Size(830, 39);
+			this._TargetPdfFile.Size = new System.Drawing.Size(553, 26);
 			this._TargetPdfFile.TabIndex = 7;
 			// 
 			// _RenameButton
@@ -409,41 +399,32 @@
 			this._RenameButton.GlowColor = System.Drawing.Color.White;
 			this._RenameButton.Image = global::PDFPatcher.Properties.Resources.Save;
 			this._RenameButton.InnerBorderColor = System.Drawing.SystemColors.ControlDarkDark;
-			this._RenameButton.Location = new System.Drawing.Point(660, 446);
-			this._RenameButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._RenameButton.Location = new System.Drawing.Point(440, 297);
 			this._RenameButton.Name = "_RenameButton";
 			this._RenameButton.OuterBorderColor = System.Drawing.SystemColors.ControlLightLight;
 			this._RenameButton.ShowFocusBorder = true;
-			this._RenameButton.Size = new System.Drawing.Size(184, 44);
+			this._RenameButton.Size = new System.Drawing.Size(123, 29);
 			this._RenameButton.TabIndex = 13;
 			this._RenameButton.Text = "重命名文件(&C)";
 			this._RenameButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
 			this._RenameButton.Click += new System.EventHandler(this._RenameButton_Click);
 			// 
-			// _FileTimeColumn
-			// 
-			this._FileTimeColumn.IsEditable = false;
-			this._FileTimeColumn.Text = "修改时间";
-			this._FileTimeColumn.Width = 145;
-			// 
 			// RenameControl
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this._RenameButton);
 			this.Controls.Add(this._ItemList);
-			this.Controls.Add(_MainToolbar);
+			this.Controls.Add(this._MainToolbar);
 			this.Controls.Add(this._TargetPdfFile);
 			this.Controls.Add(this._AutoClearListBox);
 			this.Controls.Add(this._TestRenameButton);
 			this.Controls.Add(this._KeepSourceFileBox);
 			this.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
 			this.Name = "RenameControl";
-			this.Size = new System.Drawing.Size(862, 513);
-			this.Load += new System.EventHandler(this.PatcherControl_OnLoad);
-			_MainToolbar.ResumeLayout(false);
-			_MainToolbar.PerformLayout();
+			this.Size = new System.Drawing.Size(575, 342);
+			this._MainToolbar.ResumeLayout(false);
+			this._MainToolbar.PerformLayout();
 			this._SortMenu.ResumeLayout(false);
 			this._SelectionMenu.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this._ItemList)).EndInit();
@@ -482,5 +463,6 @@
 		private System.Windows.Forms.ContextMenuStrip _RefreshInfoMenu;
 		private EnhancedGlassButton.GlassButton _RenameButton;
 		private BrightIdeasSoftware.OLVColumn _FileTimeColumn;
+		private System.Windows.Forms.ToolStrip _MainToolbar;
 	}
 }

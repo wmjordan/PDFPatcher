@@ -7,10 +7,11 @@ using PDFPatcher.Common;
 
 namespace PDFPatcher.Functions
 {
-	public partial class PageLabelEditor : UserControl
+	sealed partial class PageLabelEditor : UserControl
 	{
-		private readonly TypedObjectListView<Model.PageLabel> _LabelBox;
-		private List<Model.PageLabel> _Labels;
+		readonly TypedObjectListView<Model.PageLabel> _LabelBox;
+		List<Model.PageLabel> _Labels;
+
 		[Browsable(false)]
 		public List<Model.PageLabel> Labels {
 			get => _Labels;
@@ -19,6 +20,11 @@ namespace PDFPatcher.Functions
 
 		public PageLabelEditor() {
 			InitializeComponent();
+			this.OnFirstLoad(OnLoad);
+			_LabelBox = new TypedObjectListView<PDFPatcher.Model.PageLabel>(_PageLabelBox);
+		}
+
+		void OnLoad() {
 			foreach (var item in Constants.PageLabelStyles.Names) {
 				_LabelStyleMenu.Items.Add(item);
 			}
@@ -47,14 +53,13 @@ namespace PDFPatcher.Functions
 					_LabelStyleMenu.Show(_PageLabelBox, b.Left, b.Bottom);
 				}
 			};
-			_LabelBox = new TypedObjectListView<PDFPatcher.Model.PageLabel>(_PageLabelBox);
 			_LabelStyleMenu.ItemClicked += (s, args) => {
 				_LabelBox.SelectedObject.Style = args.ClickedItem.Text;
 				_PageLabelBox.RefreshObject(_PageLabelBox.SelectedObject);
 			};
 		}
 
-		private void _AddPageLabelButton_Click(object sender, EventArgs e) {
+		void _AddPageLabelButton_Click(object sender, EventArgs e) {
 			var i = 0;
 			foreach (var item in _Labels) {
 				if (item.PageNumber > i) {
@@ -66,7 +71,7 @@ namespace PDFPatcher.Functions
 			_LabelBox.Objects = _Labels;
 		}
 
-		private void _RemovePageLabelButton_Click(object sender, EventArgs e) {
+		void _RemovePageLabelButton_Click(object sender, EventArgs e) {
 			_PageLabelBox.RemoveObjects(_PageLabelBox.SelectedObjects);
 			_Labels.Clear();
 			_Labels.AddRange(_LabelBox.Objects);

@@ -22,9 +22,11 @@ namespace PDFPatcher.Functions
 
 		public InfoExchangerControl() {
 			InitializeComponent();
+			this.OnFirstLoad(OnLoad);
 		}
 
-		void PatcherControl_OnLoad(object sender, EventArgs e) {
+		void OnLoad() {
+			_MainToolbar.ScaleIcons(16);
 			_ItemList.ListViewItemSorter = new ListViewItemComparer(0);
 
 			AppContext.MainForm.SetTooltip(_BookmarkControl.FileList, "需要导出或导入的信息文件路径");

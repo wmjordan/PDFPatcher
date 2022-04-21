@@ -192,7 +192,6 @@
 			this.Controls.Add (this.label5);
 			this.Name = "DocumentInfoEditor";
 			this.Size = new System.Drawing.Size (438, 270);
-			this.Load += new System.EventHandler (this.DocumentInfoEditor_Load);
 			this.groupBox4.ResumeLayout (false);
 			this.groupBox4.PerformLayout ();
 			this._MetadataPanel.ResumeLayout (false);

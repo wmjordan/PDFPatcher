@@ -84,18 +84,21 @@ namespace PDFPatcher.Functions
 		public EditorControl() {
 			InitializeComponent();
 			_controller = new Editor.Controller(this);
+			this.OnFirstLoad(OnLoad);
 		}
 
-		protected override void OnLoad(EventArgs e) {
-			base.OnLoad(e);
-			if (DesignMode) {
-				return;
-			}
+		void OnLoad() {
 			ListRecentFiles = _OpenButton_DropDownOpening;
 			RecentFileItemClicked = _OpenButton_DropDownItemClicked;
-			var size = (int)(this.GetDpiScale() * 16);
-			_BookmarkToolbar.ScaleIcons(new Size(size, size));
-			_ViewerToolbar.ScaleIcons(new Size(size, size));
+			var s = (int)(this.GetDpiScale() * 16);
+			var size = new Size(s, s);
+			_BookmarkToolbar.ScaleIcons(size);
+			_ViewerToolbar.ScaleIcons(size);
+			_EditMenu.ScaleIcons(size);
+			_RecentFileMenu.ScaleIcons(size);
+			_SelectionMenu.ScaleIcons(size);
+			_UndoMenu.ScaleIcons(size);
+			_ViewerMenu.ScaleIcons(size);
 			_ViewerToolbar.Left = _BookmarkToolbar.Right;
 			//_MainToolbar.ToggleEnabled (false, _editButtonNames);
 

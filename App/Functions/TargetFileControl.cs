@@ -44,10 +44,8 @@ namespace PDFPatcher
 			set => label1.Text = value;
 		}
 
-		private void _BrowseTargetPdfButton_Click(object sender, EventArgs e) {
-			if (BrowseForFile != null) {
-				BrowseForFile(sender, e);
-			}
+		void _BrowseTargetPdfButton_Click(object sender, EventArgs e) {
+			BrowseForFile?.Invoke(sender, e);
 			FilePath sourceFile = (AppContext.SourceFiles != null && AppContext.SourceFiles.Length > 0) ? AppContext.SourceFiles[0] : String.Empty;
 			var t = _TargetPdfBox.Text;
 			if (t.Length > 0 && FileHelper.IsPathValid(t) && Path.GetFileName(t).Length > 0) {
@@ -69,19 +67,19 @@ namespace PDFPatcher
 			}
 		}
 
-		private void _TargetPdfBox_TextChanged(object sender, EventArgs e) {
+		void _TargetPdfBox_TextChanged(object sender, EventArgs e) {
 			AppContext.TargetFile = _TargetPdfBox.Text;
 		}
 
-		private void _TargetPdfBox_DragEnter(object sender, DragEventArgs e) {
+		void _TargetPdfBox_DragEnter(object sender, DragEventArgs e) {
 			FormHelper.FeedbackDragFileOver(e, Constants.FileExtensions.Pdf);
 		}
 
-		private void _TargetPdfBox_DragDrop(object sender, DragEventArgs e) {
+		void _TargetPdfBox_DragDrop(object sender, DragEventArgs e) {
 			FormHelper.DropFileOver((Control)sender, e, Constants.FileExtensions.Pdf);
 		}
 
-		private void TargetFileControl_Show(object sender, EventArgs e) {
+		void TargetFileControl_Show(object sender, EventArgs e) {
 			var t = Text;
 			if (Visible && AppContext.MainForm != null) {
 				_TargetPdfBox.Contents = AppContext.Recent.TargetPdfFiles;

@@ -8,7 +8,7 @@ using PDFPatcher.Model;
 
 namespace PDFPatcher.Functions
 {
-	public partial class FontFilterForm : Form
+	sealed partial class FontFilterForm : Form
 	{
 		sealed class FilterSetting
 		{
@@ -27,27 +27,23 @@ namespace PDFPatcher.Functions
 			get;
 			private set;
 		}
-		public FontFilterForm(XmlNode fontInfo) {
+		public FontFilterForm() {
 			InitializeComponent();
+			this.OnFirstLoad(OnLoad);
+		}
+		public FontFilterForm(XmlNode fontInfo) : this() {
 			_fontInfo = fontInfo as XmlElement;
+		}
 
-			var tcr = _FontInfoBox.TreeColumnRenderer as BrightIdeasSoftware.TreeListView.TreeRenderer;
+		void OnLoad() {
+			var tcr = _FontInfoBox.TreeColumnRenderer;
 			tcr.LinePen = new Pen(SystemColors.ControlDark) {
 				DashCap = System.Drawing.Drawing2D.DashCap.Round,
 				DashStyle = System.Drawing.Drawing2D.DashStyle.Dash
 			};
 
-			_FontInfoBox.CanExpandGetter = (object o) => {
-				var f = o as XmlElement;
-				return f != null && f.Name == Constants.Font.ThisName && f.HasChildNodes;
-			};
-			_FontInfoBox.ChildrenGetter = (object o) => {
-				var f = o as XmlElement;
-				if (f == null) {
-					return null;
-				}
-				return f.SelectNodes(Constants.Font.Size);
-			};
+			_FontInfoBox.CanExpandGetter = (object o) => o is XmlElement f && f.Name == Constants.Font.ThisName && f.HasChildNodes;
+			_FontInfoBox.ChildrenGetter = (object o) => o is XmlElement f ? (System.Collections.IEnumerable)f.SelectNodes(Constants.Font.Size) : null;
 			_FontInfoBox.RowFormatter = (BrightIdeasSoftware.OLVListItem o) => {
 				if (_FontInfoBox.GetParent(o.RowObject) == null) {
 					o.SubItems[0].Font = new Font(o.SubItems[0].Font, FontStyle.Bold);
@@ -85,9 +81,7 @@ namespace PDFPatcher.Functions
 				return null;
 			};
 			_ConditionColumn.AspectGetter = (object o) => o is AutoBookmarkCondition c ? c.Description : (object)null;
-		}
 
-		private void FontFilterForm_Load(object sender, EventArgs e) {
 			if (_fontInfo == null) {
 				FormHelper.ErrorBox("缺少字体信息。");
 				_OkButton.Enabled = false;
@@ -108,7 +102,7 @@ namespace PDFPatcher.Functions
 			_FontInfoBox.Sort(_CountColumn, SortOrder.Descending);
 		}
 
-		protected void _OkButton_Click(Object source, EventArgs args) {
+		void _OkButton_Click(Object source, EventArgs args) {
 			DialogResult = DialogResult.OK;
 			if (_FilterBox.Items.Count > 0) {
 				FilterConditions = new AutoBookmarkCondition[_FilterBox.Items.Count];
@@ -119,12 +113,12 @@ namespace PDFPatcher.Functions
 			Close();
 		}
 
-		protected void _CancelButton_Click(Object source, EventArgs args) {
+		void _CancelButton_Click(Object source, EventArgs args) {
 			DialogResult = DialogResult.Cancel;
 			Close();
 		}
 
-		private void _AddFilterMenu_Opening(object sender, CancelEventArgs e) {
+		void _AddFilterMenu_Opening(object sender, CancelEventArgs e) {
 			if (_FontInfoBox.FocusedItem == null) {
 				if (_FontInfoBox.SelectedItem != null) {
 					_FontInfoBox.FocusedItem = _FontInfoBox.SelectedItem;
@@ -189,7 +183,7 @@ namespace PDFPatcher.Functions
 			e.Cancel = false;
 		}
 
-		private void _AddFilterMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e) {
+		void _AddFilterMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e) {
 			var f = e.ClickedItem.Tag as FilterSetting;
 			if (f == null) {
 				return;
@@ -203,7 +197,7 @@ namespace PDFPatcher.Functions
 			_FilterBox.AddObject(fc);
 		}
 
-		private void ControlEvent(object sender, EventArgs e) {
+		void ControlEvent(object sender, EventArgs e) {
 			if (sender == _RemoveConditionButton) {
 				_FilterBox.RemoveObjects(_FilterBox.SelectedObjects);
 			}

@@ -104,7 +104,6 @@
 			this.Name = "ZoomRateEntryForm";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "输入缩放比例";
-			this.Load += new System.EventHandler(this.ZoomRateEntryForm_Load);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 

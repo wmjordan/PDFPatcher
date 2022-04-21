@@ -29,6 +29,7 @@
 			this._PageRangeBox = new System.Windows.Forms.TextBox();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.tabPage1 = new System.Windows.Forms.TabPage();
+			this._PrintOcrResultBox = new System.Windows.Forms.CheckBox();
 			this._OutputOriginalOcrResultBox = new System.Windows.Forms.CheckBox();
 			this._ConvertToMonoColorBox = new System.Windows.Forms.CheckBox();
 			this._RemoveSpaceBetweenChineseBox = new System.Windows.Forms.CheckBox();
@@ -49,7 +50,6 @@
 			this._TargetFileControl = new PDFPatcher.TargetFileControl();
 			this._ExportBookmarkButton = new System.Windows.Forms.Button();
 			this._ImportOcrResultButton = new EnhancedGlassButton.GlassButton();
-			this._PrintOcrResultBox = new System.Windows.Forms.CheckBox();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this._QuantitiveFactorBox)).BeginInit();
@@ -110,6 +110,16 @@
 			this.tabPage1.TabIndex = 0;
 			this.tabPage1.Text = "识别选项";
 			this.tabPage1.UseVisualStyleBackColor = true;
+			// 
+			// _PrintOcrResultBox
+			// 
+			this._PrintOcrResultBox.AutoSize = true;
+			this._PrintOcrResultBox.Location = new System.Drawing.Point(6, 150);
+			this._PrintOcrResultBox.Name = "_PrintOcrResultBox";
+			this._PrintOcrResultBox.Size = new System.Drawing.Size(180, 16);
+			this._PrintOcrResultBox.TabIndex = 17;
+			this._PrintOcrResultBox.Text = "在日志窗口输出识别后的文本";
+			this._PrintOcrResultBox.UseVisualStyleBackColor = true;
 			// 
 			// _OutputOriginalOcrResultBox
 			// 
@@ -337,16 +347,6 @@
 			this._ImportOcrResultButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
 			this._ImportOcrResultButton.Click += new System.EventHandler(this.Button_Click);
 			// 
-			// _PrintOcrResultBox
-			// 
-			this._PrintOcrResultBox.AutoSize = true;
-			this._PrintOcrResultBox.Location = new System.Drawing.Point(6, 150);
-			this._PrintOcrResultBox.Name = "_PrintOcrResultBox";
-			this._PrintOcrResultBox.Size = new System.Drawing.Size(180, 16);
-			this._PrintOcrResultBox.TabIndex = 17;
-			this._PrintOcrResultBox.Text = "在日志窗口输出识别后的文本";
-			this._PrintOcrResultBox.UseVisualStyleBackColor = true;
-			// 
 			// OcrControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -359,7 +359,7 @@
 			this.Controls.Add(this._BookmarkControl);
 			this.Controls.Add(this._QuantitiveFactorBox);
 			this.Controls.Add(this._ImportOcrResultButton);
-			this.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			this.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
 			this.Name = "OcrControl";
 			this.Size = new System.Drawing.Size(475, 333);
 			this.tabControl1.ResumeLayout(false);

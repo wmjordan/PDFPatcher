@@ -26,9 +26,16 @@ namespace PDFPatcher.Functions
 		public MergerControl() {
 			InitializeComponent();
 			_bookmarkStyleButtonNames = new string[] { "_BoldStyleButton", "_BookmarkColorButton", "_ItalicStyleButton" };
+			this.OnFirstLoad(OnLoad);
 		}
 
-		void MergerControl_Load(object sender, EventArgs args) {
+		void OnLoad() {
+			_MainToolbar.ScaleIcons(16);
+			_FileMenu.ScaleIcons(16);
+			_ItemListMenu.ScaleIcons(16);
+			_RecentFileMenu.ScaleIcons(16);
+			_RecentFolderMenu.ScaleIcons(16);
+
 			_BookmarkColorButton.SelectedColorChanged += (s, e) => { RefreshBookmarkColor(); };
 
 			AppContext.MainForm.SetTooltip(_BookmarkControl.FileList, "为目标 PDF 文件添加书签的信息文件（可选）");

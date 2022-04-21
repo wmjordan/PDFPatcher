@@ -26,7 +26,7 @@ namespace PDFPatcher
 				}
 				return;
 			}
-			else if (commandName == Commands.CleanUpInexistentFiles) {
+			if (commandName == Commands.CleanUpInexistentFiles) {
 				AppContext.CleanUpInexistentFiles(AppContext.Recent.SourcePdfFiles);
 				AppContext.CleanUpInexistentFiles(AppContext.Recent.InfoDocuments);
 				AppContext.CleanUpInexistentFolders(AppContext.Recent.Folders);

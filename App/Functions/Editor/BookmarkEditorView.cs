@@ -12,7 +12,7 @@ using PDFPatcher.Processor;
 
 namespace PDFPatcher.Functions
 {
-	public partial class BookmarkEditorView : TreeListView
+	sealed partial class BookmarkEditorView : TreeListView
 	{
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		internal static List<BookmarkElement> _copiedBookmarks;

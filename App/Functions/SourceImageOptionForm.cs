@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using PDFPatcher.Model;
 
@@ -13,9 +8,10 @@ namespace PDFPatcher.Functions
 	{
 		readonly SourceItem.Image _image;
 
-
-		internal SourceImageOptionForm(SourceItem.Image image) {
+		SourceImageOptionForm() {
 			InitializeComponent();
+		}
+		internal SourceImageOptionForm(SourceItem.Image image) : this() {
 			_SourceFileBox.Text = image.FilePath.ToString();
 
 			_TopMarginBox.Value = image.Cropping.Top;
@@ -28,7 +24,7 @@ namespace PDFPatcher.Functions
 			_image = image;
 		}
 
-		private void _OkButton_Click(Object source, EventArgs args) {
+		void _OkButton_Click(Object source, EventArgs args) {
 			DialogResult = DialogResult.OK;
 			_image.Cropping.Top = (int)_TopMarginBox.Value;
 			_image.Cropping.Left = (int)_LeftMarginBox.Value;
@@ -40,7 +36,7 @@ namespace PDFPatcher.Functions
 			Close();
 		}
 
-		private void _CancelButton_Click(Object source, EventArgs args) {
+		void _CancelButton_Click(Object source, EventArgs args) {
 			DialogResult = DialogResult.Cancel;
 			Close();
 		}

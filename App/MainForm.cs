@@ -193,6 +193,7 @@ namespace PDFPatcher
 
 		public MainForm() {
 			InitializeComponent();
+			this.OnFirstLoad(OnLoad);
 		}
 
 		protected override void WndProc(ref Message m) {
@@ -203,8 +204,7 @@ namespace PDFPatcher
 			}
 		}
 
-		protected override void OnLoad(EventArgs e) {
-			base.OnLoad(e);
+		void OnLoad() {
 			Processor.PdfHelper.ToggleReaderDebugMode(true); // 打开容错模式
 			Processor.PdfHelper.ToggleUnethicalMode(true); // 打开强制读取加密文档模式
 
@@ -214,6 +214,7 @@ namespace PDFPatcher
 			catch (Exception) {
 				// ignore loading exception
 			}
+			_MainMenu.ScaleIcons(16);
 			Text = Constants.AppName + " [" + Application.ProductVersion + "]";
 			MinimumSize = Size;
 			StartPosition = FormStartPosition.CenterScreen;
@@ -434,8 +435,7 @@ namespace PDFPatcher
 		}
 
 		void ScaleToolbar() {
-			var size = (int)(this.GetDpiScale() * 16);
-			_GeneralToolbar.ScaleIcons(new Size(size, size));
+			_GeneralToolbar.ScaleIcons(16);
 		}
 
 		DialogResult ShowDialogWindow(Form window) {
