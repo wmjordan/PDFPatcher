@@ -1,5 +1,9 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<job>
+<script language="JScript"><![CDATA[
+
 var op = "m:\\"; // note: Be sure to change this for you, where compressed output file is copied to
-var names = ["FreeImage.dll", "JBig2.dll", "mupdflib.dll", "PDFPatcher.exe", "PDFPatcher.exe.config", "ÊÚÈ¨Ð­Òé.txt", "¸üÐÂÀúÊ·.txt"];
+var names = ["FreeImage.dll", "JBig2.dll", "mupdflib.dll", "PDFPatcher.exe", "PDFPatcher.exe.config", "æŽˆæƒåè®®.txt", "æ›´æ–°åŽ†å².txt"];
 
 var n = WScript.Arguments(0); // assembly info file path
 var p = WScript.Arguments(1); // bin path
@@ -26,21 +30,21 @@ sh.CurrentDirectory = p;
 	s.Open();
 	s.Type = 2;
 	s.CharSet = "UTF-8";
-	s.LoadFromFile ("¸üÐÂÀúÊ·.txt");
+	s.LoadFromFile ("æ›´æ–°åŽ†å².txt");
 	t = s.ReadText ();
-	r = /\d+\.\d+\.\d+\.\d+ \d+Äê\d+ÔÂ\d+ÈÕ/;
+	r = /\d+\.\d+\.\d+\.\d+ \d+å¹´\d+æœˆ\d+æ—¥/;
 	s.Position = 0;
 	var d = new Date();
-	var dt = d.getYear() + "Äê" + (d.getMonth()+1)+"ÔÂ"+d.getDate()+"ÈÕ";
+	var dt = d.getYear() + "å¹´" + (d.getMonth()+1)+"æœˆ"+d.getDate()+"æ—¥";
 	s.WriteText (t.replace(r, v + " " + dt));
 	s.SetEOS ();
-	s.SaveToFile ("¸üÐÂÀúÊ·.txt", 2);
+	s.SaveToFile ("æ›´æ–°åŽ†å².txt", 2);
 	s.Close();
 
 	s.Open();
 	s.Type = 2;
 	s.CharSet = "UTF-8";
-	s.LoadFromFile ("¸üÐÂÀúÊ·.txt");
+	s.LoadFromFile ("æ›´æ–°åŽ†å².txt");
 	t = s.ReadText ();
 	s.Position = 0;
 	s.SetEOS ();
@@ -48,7 +52,7 @@ sh.CurrentDirectory = p;
 	s.WriteText (' version="' + v + '" date="' + dt + '"');
 	s.WriteText (' url="https://wwo.lanzouy.com/b02uobz5i"');
 	s.WriteText ('>');
-	s.WriteText ('<content><![CDATA[ÏÂÔØÃÜÂë£º8518\r\n\r\n');
+	s.WriteText ('<content><![CDATA[ä¸‹è½½å¯†ç ï¼š8518\r\n\r\n');
 	var tl = t.split("\r\n");
 	for (var i=1; i<tl.length; i++) {
 		if (tl[i].length == 0) {
@@ -56,12 +60,27 @@ sh.CurrentDirectory = p;
 		}
 		s.WriteText (tl[i]+"\r\n");
 	}
-	s.WriteText (']]></content></PDFPatcher>');
+	s.WriteText (']]]]><![CDATA[></content></PDFPatcher>');
 	s.SaveToFile (op + "pdfpatcher.update.xml", 2);
 	s.Close();
 
-var c = "..\\..\\7za.exe u "+op+"PDFPatcher."+v+".7z "+names.join(" ") + " -mx9";
-WScript.StdOut.WriteLine (c);
+	s.Open();
+	s.Type = 2;
+	s.CharSet = "UTF-8";
+	s.Position = 0;
+	s.SetEOS ();
+	var tl = t.split("\r\n");
+	for (var i=1; i<tl.length; i++) {
+		if (tl[i].length == 0) {
+			break;
+		}
+		s.WriteText (tl[i]+"\r\n");
+	}
+	s.SaveToFile (op + "CHANGELOG.txt", 2);
+	s.Close();
+
+var c = "..\\..\\7za.exe u "+op+"PDFPatcher."+v+".zip "+names.join(" ") + " -mx9";
+WScript.Echo (c);
 var z = sh.exec(c);
 var i = 0;
 while ((z.Status == 0 && i < 50) || z.StdOut.AtEndOfStream == false) {
@@ -71,3 +90,7 @@ while ((z.Status == 0 && i < 50) || z.StdOut.AtEndOfStream == false) {
 		WScript.StdOut.Write (z.StdOut.ReadAll());
 	}
 }
+
+
+]]></script>
+</job>

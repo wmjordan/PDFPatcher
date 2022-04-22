@@ -17,6 +17,6 @@
 		</ItemGroup>
 
 		<ILRepack KeyFile="wmjordan.snk" Parallel="true" Internalize="true" InternalizeExclude="@(DoNotInternalizeAssemblies)" InputAssemblies="@(InputAssemblies)" TargetKind="SameAsPrimaryAssembly" TargetPlatformVersion="v4" OutputFile="$(OutputPath)$(AssemblyName).exe" />
-		<Exec Command="if errorlevel 0 CScript.exe &quot;$(SolutionDir)CopyReleasedFiles.js&quot; &quot;$(ProjectDir)Properties\AssemblyInfo.cs&quot; &quot;$(TargetDir)&quot;" />
+		<Exec Command="if errorlevel 0 CScript.exe &quot;$(SolutionDir)CopyReleasedFiles.wsf&quot; &quot;$(ProjectDir)Properties\AssemblyInfo.cs&quot; &quot;$(TargetDir)&quot;" />
 	</Target>
 </Project>
