@@ -183,10 +183,7 @@ namespace PDFPatcher.Common
 
 		internal static string MakePathRootedAndWithExtension(string path, string basePath, string extName, bool forceExt) {
 			var p = Path.Combine(Path.GetDirectoryName(basePath), path);
-			if (Path.GetExtension(p).Length == 0 || forceExt) {
-				return new FilePath(p).EnsureExtension(extName);
-			}
-			return p;
+			return Path.GetExtension(p).Length == 0 || forceExt ? (string)new FilePath(p).EnsureExtension(extName) : p;
 		}
 
 		static FilePath AttachExtensionName(FilePath fileName, string extension) {

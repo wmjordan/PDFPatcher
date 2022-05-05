@@ -659,7 +659,7 @@ namespace PDFPatcher.Processor
 				FormHelper.ErrorBox(Messages.InfoFileNameInvalid);
 				return;
 			}
-			bookmarkFile = FileHelper.MakePathRootedAndWithExtension(bookmarkFile, sourceFile, Ext.Xml, true);
+			bookmarkFile = FileHelper.MakePathRootedAndWithExtension(bookmarkFile, sourceFile, Ext.Xml, false);
 			Tracker.TraceMessage(Tracker.Category.OutputFile, bookmarkFile);
 
 			if (options.CreateBookmarkForFirstPage) {
