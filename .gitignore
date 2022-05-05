@@ -1,5 +1,8 @@
 *.snk
 *.pld
+CopyReleasedFiles.js
+ILRepack.targets
+7za.exe
 misc/
 
 ## Ignore Visual Studio temporary files, build results, and
