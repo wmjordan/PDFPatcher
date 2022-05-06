@@ -425,7 +425,6 @@
 			this.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
 			this.Name = "DocumentInspectorControl";
 			this.Size = new System.Drawing.Size(495, 341);
-			this.Load += new System.EventHandler(this.DocumentInspectorControl_OnLoad);
 			this._Container.Panel1.ResumeLayout(false);
 			this._Container.Panel2.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this._Container)).EndInit();

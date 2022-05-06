@@ -140,6 +140,18 @@ namespace PDFPatcher.Common
 			}
 		}
 
+		public static void ScaleColumnWidths(this ListView listView, float scale) {
+			foreach (ColumnHeader column in listView.Columns) {
+				column.Width = (int)(column.Width * scale);
+			}
+		}
+		public static void ScaleColumnWidths(this ListView listView) {
+			float scale = GetDpiScale(listView);
+			foreach (ColumnHeader column in listView.Columns) {
+				column.Width = (int)(column.Width * scale);
+			}
+		}
+
 		public static ToolStrip ScaleIcons(this ToolStrip toolStrip, int size) {
 			size = (int)(toolStrip.GetDpiScale() * size);
 			return toolStrip.ScaleIcons(new Size(size, size));

@@ -459,7 +459,7 @@
 			_SelectItems.Image = global::PDFPatcher.Properties.Resources.SelectItem;
 			_SelectItems.ImageTransparentColor = System.Drawing.Color.Magenta;
 			_SelectItems.Name = "_SelectItems";
-			_SelectItems.Size = new System.Drawing.Size(215, 26);
+			_SelectItems.Size = new System.Drawing.Size(211, 22);
 			_SelectItems.Text = "选择书签(&S)";
 			// 
 			// _SelectionMenu
@@ -1072,7 +1072,6 @@
 			// 
 			// _EditMenu
 			// 
-			this._EditMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
 			this._EditMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             _BookmarkAction,
             this.toolStripSeparator13,
@@ -1091,7 +1090,7 @@
             _MarkBookmark,
             _SelectMarkedBookmarks});
 			this._EditMenu.Name = "_EditMenu";
-			this._EditMenu.Size = new System.Drawing.Size(216, 360);
+			this._EditMenu.Size = new System.Drawing.Size(212, 330);
 			this._EditMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this._MainToolbar_ItemClicked);
 			// 
 			// toolStripSeparator13
@@ -1211,7 +1210,7 @@
 			this._BookmarkBox.OperationAffectsDescendants = false;
 			this._BookmarkBox.RevealAfterExpand = false;
 			this._BookmarkBox.ShowGroups = false;
-			this._BookmarkBox.Size = new System.Drawing.Size(325, 268);
+			this._BookmarkBox.Size = new System.Drawing.Size(260, 268);
 			this._BookmarkBox.TabIndex = 0;
 			this._BookmarkBox.UseCellFormatEvents = true;
 			this._BookmarkBox.UseCompatibleStateImageBehavior = false;
@@ -1227,7 +1226,6 @@
 			this._MainPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this._MainPanel.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
 			this._MainPanel.Location = new System.Drawing.Point(3, 29);
 			this._MainPanel.Name = "_MainPanel";
 			// 
@@ -1241,7 +1239,7 @@
 			this._MainPanel.Panel2.Controls.Add(this._PageInfoBox);
 			this._MainPanel.Panel2.Controls.Add(this._ViewerBox);
 			this._MainPanel.Size = new System.Drawing.Size(623, 296);
-			this._MainPanel.SplitterDistance = 332;
+			this._MainPanel.SplitterDistance = 267;
 			this._MainPanel.TabIndex = 1;
 			// 
 			// _PageInfoBox
@@ -1251,7 +1249,7 @@
 			this._PageInfoBox.AutoEllipsis = true;
 			this._PageInfoBox.Location = new System.Drawing.Point(3, 278);
 			this._PageInfoBox.Name = "_PageInfoBox";
-			this._PageInfoBox.Size = new System.Drawing.Size(281, 15);
+			this._PageInfoBox.Size = new System.Drawing.Size(346, 15);
 			this._PageInfoBox.TabIndex = 1;
 			this._PageInfoBox.Text = "PDF 页面信息";
 			// 
@@ -1270,7 +1268,7 @@
 			this._ViewerBox.Name = "_ViewerBox";
 			this._ViewerBox.OcrLanguage = 2052;
 			this._ViewerBox.PinPoint = new System.Drawing.Point(0, 0);
-			this._ViewerBox.Size = new System.Drawing.Size(281, 268);
+			this._ViewerBox.Size = new System.Drawing.Size(346, 268);
 			this._ViewerBox.TabIndex = 0;
 			this._ViewerBox.TintColor = System.Drawing.Color.Transparent;
 			this._ViewerBox.VirtualMode = true;
@@ -1286,7 +1284,7 @@
             _PageProperties,
             this._SavePageImage});
 			this._ViewerMenu.Name = "_ViewerMenu";
-			this._ViewerMenu.Size = new System.Drawing.Size(226, 180);
+			this._ViewerMenu.Size = new System.Drawing.Size(226, 158);
 			this._ViewerMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this._MainToolbar_ItemClicked);
 			// 
 			// _OcrPage

@@ -90,8 +90,8 @@ namespace PDFPatcher.Functions
 		void OnLoad() {
 			ListRecentFiles = _OpenButton_DropDownOpening;
 			RecentFileItemClicked = _OpenButton_DropDownItemClicked;
-			var s = (int)(this.GetDpiScale() * 16);
-			var size = new Size(s, s);
+			var s = this.GetDpiScale();
+			var size = new Size((int)(s * 16), (int)(s * 16));
 			_BookmarkToolbar.ScaleIcons(size);
 			_ViewerToolbar.ScaleIcons(size);
 			_EditMenu.ScaleIcons(size);
@@ -99,7 +99,9 @@ namespace PDFPatcher.Functions
 			_SelectionMenu.ScaleIcons(size);
 			_UndoMenu.ScaleIcons(size);
 			_ViewerMenu.ScaleIcons(size);
+			_BookmarkBox.ScaleColumnWidths(s);
 			_ViewerToolbar.Left = _BookmarkToolbar.Right;
+			_MainPanel.FixedPanel = FixedPanel.Panel1;
 			//_MainToolbar.ToggleEnabled (false, _editButtonNames);
 
 			_controller.PrepareBookmarkDocument();

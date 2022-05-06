@@ -79,7 +79,7 @@
 			// 
 			this._BookmarkNameColumn.AspectName = "";
 			this._BookmarkNameColumn.Text = "书签文本";
-			this._BookmarkNameColumn.Width = 241;
+			this._BookmarkNameColumn.Width = 160;
 			// 
 			// _BookmarkOpenColumn
 			// 

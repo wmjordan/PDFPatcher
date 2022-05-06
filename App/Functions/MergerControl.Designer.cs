@@ -126,6 +126,7 @@
             _LoadList,
             _SaveList});
 			this._FileMenu.Name = "_SortMenu";
+			this._FileMenu.OwnerItem = _File;
 			this._FileMenu.Size = new System.Drawing.Size(212, 164);
 			this._FileMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this._SortMenu_ItemClicked);
 			// 
@@ -321,6 +322,7 @@
 			// _RecentFileMenu
 			// 
 			this._RecentFileMenu.Name = "_RecentFileMenu";
+			this._RecentFileMenu.OwnerItem = this._AddFilesButton;
 			this._RecentFileMenu.ShowImageMargin = false;
 			this._RecentFileMenu.Size = new System.Drawing.Size(36, 4);
 			// 
@@ -340,8 +342,9 @@
 			// _RecentFolderMenu
 			// 
 			this._RecentFolderMenu.Name = "_RecentFolderMenu";
+			this._RecentFolderMenu.OwnerItem = this._AddFolderButton;
 			this._RecentFolderMenu.ShowImageMargin = false;
-			this._RecentFolderMenu.Size = new System.Drawing.Size(156, 26);
+			this._RecentFolderMenu.Size = new System.Drawing.Size(36, 4);
 			// 
 			// _InsertEmptyPage
 			// 
@@ -436,30 +439,30 @@
 			// 
 			this._NameColumn.IsEditable = false;
 			this._NameColumn.Text = "源文件名";
-			this._NameColumn.Width = 178;
+			this._NameColumn.Width = 145;
 			// 
 			// _BookmarkColumn
 			// 
 			this._BookmarkColumn.Text = "书签文本";
-			this._BookmarkColumn.Width = 150;
+			this._BookmarkColumn.Width = 119;
 			// 
 			// _PageRangeColumn
 			// 
 			this._PageRangeColumn.AutoCompleteEditorMode = System.Windows.Forms.AutoCompleteMode.Suggest;
 			this._PageRangeColumn.Text = "页码范围";
-			this._PageRangeColumn.Width = 88;
+			this._PageRangeColumn.Width = 63;
 			// 
 			// _FolderColumn
 			// 
 			this._FolderColumn.IsEditable = false;
 			this._FolderColumn.Text = "文件夹";
-			this._FolderColumn.Width = 114;
+			this._FolderColumn.Width = 104;
 			// 
 			// _FileTimeColumn
 			// 
 			this._FileTimeColumn.IsEditable = false;
 			this._FileTimeColumn.Text = "修改时间";
-			this._FileTimeColumn.Width = 145;
+			this._FileTimeColumn.Width = 98;
 			// 
 			// _ItemListMenu
 			// 

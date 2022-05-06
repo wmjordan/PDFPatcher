@@ -23,7 +23,7 @@ namespace PDFPatcher.Functions
 		static Dictionary<int, int> __PdfObjectIcons;
 
 		PdfPathDocument _pdf;
-		Processor.ImageExtractor _imgExp;
+		ImageExtractor _imgExp;
 		string _fileName;
 		ToolStripItem[] _addPdfObjectMenuItems;
 		int[] _pdfTypeForAddObjectMenuItems;
@@ -43,19 +43,20 @@ namespace PDFPatcher.Functions
 			set {
 				if (_fileName != value) {
 					_fileName = value;
-					if (DocumentChanged != null) {
-						DocumentChanged(this, new DocumentChangedEventArgs(value));
-					}
+					DocumentChanged?.Invoke(this, new DocumentChangedEventArgs(value));
 				}
 			}
 		}
 
 		public DocumentInspectorControl() {
 			InitializeComponent();
+			this.OnFirstLoad(OnLoad);
 		}
 
-		void DocumentInspectorControl_OnLoad(object sender, EventArgs e) {
+		void OnLoad() {
 			_MainToolbar.ScaleIcons(16);
+			_ObjectDetailBox.ScaleColumnWidths();
+
 			_ObjectDetailBox.EmptyListMsg = "请使用“打开”按钮加载需要检查结构的 PDF 文件，或从资源管理器拖放文件到本列表框";
 
 			if (__OpNameIcons == null || __OpNameIcons.Count == 0) {
@@ -521,12 +522,13 @@ namespace PDFPatcher.Functions
 				return;
 			}
 			var ci = e.ClickedItem;
-			var cn = ci.Name;
-			var n = _ObjectDetailBox.GetModelObject(_ObjectDetailBox.FocusedItem.Index) as DocumentObject;
 			if (ci == _SaveButton) {
 				SaveDocument();
+				return;
 			}
-			else if (ci == _DeleteButton) {
+			var cn = ci.Name;
+			var n = _ObjectDetailBox.GetModelObject(_ObjectDetailBox.FocusedItem.Index) as DocumentObject;
+			if (ci == _DeleteButton) {
 				//if (this.ActiveControl == _DocumentTree) {
 				if (n == null || n.Parent == null) {
 					return;

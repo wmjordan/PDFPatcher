@@ -35,6 +35,7 @@ namespace PDFPatcher.Functions
 			_ItemListMenu.ScaleIcons(16);
 			_RecentFileMenu.ScaleIcons(16);
 			_RecentFolderMenu.ScaleIcons(16);
+			_ItemList.ScaleColumnWidths();
 
 			_BookmarkColorButton.SelectedColorChanged += (s, e) => { RefreshBookmarkColor(); };
 
