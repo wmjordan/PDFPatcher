@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using iTextSharp.text.pdf;
 using CharSet = System.Runtime.InteropServices.CharSet;
 using DllImport = System.Runtime.InteropServices.DllImportAttribute;
+using Microsoft.Win32;
 
 namespace PDFPatcher.Common
 {
@@ -16,40 +17,47 @@ namespace PDFPatcher.Common
 		/// <param name="includeFamilyName">是否包含字体组名称</param>
 		public static Dictionary<string, string> GetInstalledFonts(bool includeFamilyName) {
 			var d = new Dictionary<string, string>(50);
-			using (var k = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts")) {
-				foreach (var name in k.GetValueNames()) {
-					var p = k.GetValue(name) as string;
-					if (String.IsNullOrEmpty(p)) {
-						continue;
-					}
-					if (p.IndexOf('\\') == -1) {
-						p = FontDirectory + p;
-					}
-					var fp = new FilePath(p);
-					try {
-						if (fp.HasExtension(Constants.FileExtensions.Ttf)
-							|| fp.HasExtension(Constants.FileExtensions.Otf)) {
-							AddFontNames(d, p, includeFamilyName);
-						}
-						else if (fp.HasExtension(Constants.FileExtensions.Ttc)) {
-							var nl = BaseFont.EnumerateTTCNames(p).Length;
-							//Tracker.DebugMessage (p);
-							for (int i = 0; i < nl; i++) {
-								AddFontNames(d, p + "," + i.ToText(), includeFamilyName);
-							}
-						}
-					}
-					catch (System.IO.IOException) {
-						// ignore
-					}
-					catch (NullReferenceException) {
-					}
-					catch (iTextSharp.text.DocumentException) {
-						// ignore
-					}
-				}
+			using (var k = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts")) {
+				GetFontsFromRegistryKey(includeFamilyName, d, k);
+			}
+			using (var k = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts")) {
+				GetFontsFromRegistryKey(includeFamilyName, d, k);
 			}
 			return d;
+		}
+
+		static void GetFontsFromRegistryKey(bool includeFamilyName, Dictionary<string, string> d, RegistryKey k) {
+			foreach (var name in k.GetValueNames()) {
+				var p = k.GetValue(name) as string;
+				if (String.IsNullOrEmpty(p)) {
+					continue;
+				}
+				if (p.IndexOf('\\') == -1) {
+					p = FontDirectory + p;
+				}
+				var fp = new FilePath(p);
+				try {
+					if (fp.HasExtension(Constants.FileExtensions.Ttf)
+						|| fp.HasExtension(Constants.FileExtensions.Otf)) {
+						AddFontNames(d, p, includeFamilyName);
+					}
+					else if (fp.HasExtension(Constants.FileExtensions.Ttc)) {
+						var nl = BaseFont.EnumerateTTCNames(p).Length;
+						//Tracker.DebugMessage (p);
+						for (int i = 0; i < nl; i++) {
+							AddFontNames(d, p + "," + i.ToText(), includeFamilyName);
+						}
+					}
+				}
+				catch (System.IO.IOException) {
+					// ignore
+				}
+				catch (NullReferenceException) {
+				}
+				catch (iTextSharp.text.DocumentException) {
+					// ignore
+				}
+			}
 		}
 
 		static void AddFontNames(Dictionary<string, string> fontNames, string fontPath, bool includeFamilyName) {
