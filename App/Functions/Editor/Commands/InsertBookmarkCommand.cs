@@ -17,7 +17,7 @@ namespace PDFPatcher.Functions.Editor
 			BookmarkAtClientPoint(controller, v.TransposeVirtualImageToClient(v.PinPoint.X, v.PinPoint.Y));
 		}
 
-		private void BookmarkAtClientPoint(Controller controller, Point cp) {
+		static void BookmarkAtClientPoint(Controller controller, Point cp) {
 			var v = controller.View.Viewer;
 			var pp = v.TransposeClientToPagePosition(cp.X, cp.Y);
 			if (pp.Page == 0) {
@@ -28,18 +28,16 @@ namespace PDFPatcher.Functions.Editor
 				ShowInsertBookmarkDialog(controller, cp, new EditModel.Region(pp, null, EditModel.TextSource.Empty));
 				return;
 			}
-			var r = controller.CopyText(cp, pp);
-			ShowInsertBookmarkDialog(controller, cp, r);
+			ShowInsertBookmarkDialog(controller, cp, controller.CopyText(cp, pp));
 		}
 
-		private void ShowInsertBookmarkDialog(Controller controller, Point mousePoint, EditModel.Region region) {
+		static void ShowInsertBookmarkDialog(Controller controller, Point mousePoint, EditModel.Region region) {
 			var p = region.Position;
 			if (p.Page == 0) {
 				return;
 			}
 			var f = GetDialog(controller);
 			var v = controller.View.Viewer;
-			var vp = v.GetImageViewPort();
 			Point fp;
 			var sr = v.SelectionRegion;
 			if (sr != RectangleF.Empty) {
@@ -74,7 +72,7 @@ namespace PDFPatcher.Functions.Editor
 			f.TargetPageNumber = p.Page;
 		}
 
-		private InsertBookmarkForm GetDialog(Controller controller) {
+		static InsertBookmarkForm GetDialog(Controller controller) {
 			if (_dialog != null && _dialog.IsDisposed == false) {
 				_dialog.Controller = controller;
 				return _dialog;
@@ -86,7 +84,7 @@ namespace PDFPatcher.Functions.Editor
 				var f = (InsertBookmarkForm)sender;
 				var c = f.Controller;
 				var t = f.Title;
-				if (string.IsNullOrEmpty(t)) {
+				if (string.IsNullOrEmpty(t) && f.InsertMode != 0) {
 					FormHelper.ErrorBox("书签标题不能为空。");
 					return;
 				}
@@ -99,8 +97,7 @@ namespace PDFPatcher.Functions.Editor
 			};
 			_dialog.VisibleChanged += (s, args) => {
 				var f = (InsertBookmarkForm)s;
-				var c = f.Controller;
-				c.View.Viewer.ShowPinPoint = f.Visible;
+				f.Controller.View.Viewer.ShowPinPoint = f.Visible;
 			};
 			return _dialog;
 		}

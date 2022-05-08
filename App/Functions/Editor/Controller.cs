@@ -559,7 +559,9 @@ namespace PDFPatcher.Functions.Editor
 				var p = pageNumber > 0 ? pageNumber : o.Page;
 				if (type == InsertBookmarkPositionType.NoDefined) {
 					var g = new UndoActionGroup();
+					if (t.Length > 0) {
 					g.SetAttribute(o, Constants.BookmarkAttributes.Title, t);
+					}
 					g.SetAttribute(o, Constants.DestinationAttributes.Action, Constants.ActionType.Goto);
 					g.SetAttribute(o, Constants.DestinationAttributes.Page, p.ToText());
 					g.SetAttribute(o, Constants.DestinationAttributes.View, Constants.DestinationAttributes.ViewType.XYZ);
