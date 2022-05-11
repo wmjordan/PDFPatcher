@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
+using PDFPatcher.Common;
 using BO = PDFPatcher.ToolbarOptions.ButtonOption;
 
 namespace PDFPatcher.Functions
@@ -13,12 +14,12 @@ namespace PDFPatcher.Functions
 			InitializeComponent();
 		}
 
-		private void _ResetButton_Click(object sender, EventArgs e) {
+		void _ResetButton_Click(object sender, EventArgs e) {
 			AppContext.Toolbar.Reset();
 			_ItemListBox.Objects = AppContext.Toolbar.Buttons;
 		}
 
-		private void CustomizeToolbarForm_Load(object sender, EventArgs e) {
+		void CustomizeToolbarForm_Load(object sender, EventArgs e) {
 			foreach (var item in Toolkit.Toolkits) {
 				_ItemListBox.SmallImageList.Images.Add(item.Icon, Properties.Resources.ResourceManager.GetObject(item.Icon) as Image);
 			}
@@ -47,9 +48,11 @@ namespace PDFPatcher.Functions
 				CanDropOnItem = false
 			};
 			_ItemListBox.Objects = AppContext.Toolbar.Buttons;
+			_ItemListBox.FixEditControlWidth();
+			_ItemListBox.ScaleColumnWidths();
 		}
 
-		private void _OkButton_Click(object sender, EventArgs e) {
+		void _OkButton_Click(object sender, EventArgs e) {
 			var l = new List<BO>();
 			foreach (BO item in _ItemListBox.Objects) {
 				l.Add(item);

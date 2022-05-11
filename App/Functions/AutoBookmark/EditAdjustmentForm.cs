@@ -47,6 +47,7 @@ namespace PDFPatcher.Functions
 
 		void OnLoad() {
 			_MainToolbar.ScaleIcons(16);
+			_FilterBox.ScaleColumnWidths();
 		}
 
 		void _OkButton_Click(Object source, EventArgs args) {

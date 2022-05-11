@@ -68,6 +68,7 @@ namespace PDFPatcher.Functions
 			});
 
 			_ItemList.FixEditControlWidth();
+			_ItemList.ScaleColumnWidths();
 			_ItemList.ListViewItemSorter = new ListViewItemComparer(0);
 			_listHelper = new FileListHelper(_ItemList);
 			_listHelper.SetupHotkeys();
