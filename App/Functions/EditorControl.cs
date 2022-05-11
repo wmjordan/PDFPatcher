@@ -48,6 +48,7 @@ namespace PDFPatcher.Functions
 			}
 			d.Register(new Editor.BookmarkActionCommand(Constants.Coordinates.Unchanged), Constants.Coordinates.Unchanged);
 			d.Register(new Editor.BookmarkActionCommand("_ChangeCoordinates"), "_ChangeCoordinates");
+			d.Register(new Editor.BookmarkActionCommand("_SetCurrentCoordinates"), "_SetCurrentCoordinates");
 			d.Register(new Editor.BookmarkActionCommand("_BookmarkAction"), "_BookmarkAction");
 			d.Register(new Editor.SimpleBookmarkCommand<DestinationGotoTopProcessor>(), "_SetGotoTop");
 			d.Register(new Editor.SimpleBookmarkCommand<ForceInternalLinkProcessor>(), "_ForceInternalLink");

@@ -189,6 +189,7 @@
     <Compile Include="Functions\IDocumentEditor.cs" />
     <Compile Include="Options\ToolbarOptions.cs" />
     <Compile Include="Processor\Imaging\BitmapHelper.cs" />
+    <Compile Include="Processor\InfoXmlProcessors\ChangePageCoordinateProcessor.cs" />
     <Compile Include="Processor\InfoXmlProcessors\ClearDestinationOffsetProcessor.cs" />
     <Compile Include="Processor\MuPdf\MuDocumentInfo.cs" />
     <Compile Include="Processor\MuPdf\MuHandle.cs" />

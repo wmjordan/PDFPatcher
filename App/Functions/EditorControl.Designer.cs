@@ -26,7 +26,7 @@
 		/// </summary>
 		private void InitializeComponent () {
 			this.components = new System.ComponentModel.Container();
-			System.Windows.Forms.ToolStripMenuItem _ClearPosition;
+			System.Windows.Forms.ToolStripMenuItem _AlterPosition;
 			System.Windows.Forms.ToolStripMenuItem _ChangeCoordinates;
 			System.Windows.Forms.ToolStripMenuItem _ClearPositionX;
 			System.Windows.Forms.ToolStripMenuItem _ClearPositionY;
@@ -121,7 +121,10 @@
 			System.Windows.Forms.ToolStripMenuItem _SelectBlueMarks;
 			System.Windows.Forms.ToolStripMenuItem _SelectPurpleMarks;
 			System.Windows.Forms.ToolStripSeparator toolStripSeparator14;
+			System.Windows.Forms.ToolStripSeparator toolStripSeparator13;
+			System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditorControl));
+			this._SetCurrentCoordinates = new System.Windows.Forms.ToolStripMenuItem();
 			this._SelectionMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this._CollapseAll = new System.Windows.Forms.ToolStripMenuItem();
 			this._CollapseChildren = new System.Windows.Forms.ToolStripMenuItem();
@@ -134,11 +137,9 @@
 			this._InsertWithOcrOnly = new System.Windows.Forms.ToolStripMenuItem();
 			this._ShowAnnotations = new System.Windows.Forms.ToolStripMenuItem();
 			this._EditMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
-			this.toolStripSeparator13 = new System.Windows.Forms.ToolStripSeparator();
 			this._SetOpenStatus = new System.Windows.Forms.ToolStripMenuItem();
 			this._ChangeZoomRate = new System.Windows.Forms.ToolStripMenuItem();
 			this._ChangeCase = new System.Windows.Forms.ToolStripMenuItem();
-			this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
 			this._QuickSelect = new System.Windows.Forms.ToolStripMenuItem();
 			this._RecentFileMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this._AddFilesButton = new System.Windows.Forms.ToolStripSplitButton();
@@ -164,7 +165,7 @@
 			this._ViewerToolbar = new System.Windows.Forms.ToolStrip();
 			this._CurrentPageBox = new System.Windows.Forms.ToolStripTextBox();
 			this._ZoomBox = new System.Windows.Forms.ToolStripComboBox();
-			_ClearPosition = new System.Windows.Forms.ToolStripMenuItem();
+			_AlterPosition = new System.Windows.Forms.ToolStripMenuItem();
 			_ChangeCoordinates = new System.Windows.Forms.ToolStripMenuItem();
 			_ClearPositionX = new System.Windows.Forms.ToolStripMenuItem();
 			_ClearPositionY = new System.Windows.Forms.ToolStripMenuItem();
@@ -259,6 +260,8 @@
 			_SelectBlueMarks = new System.Windows.Forms.ToolStripMenuItem();
 			_SelectPurpleMarks = new System.Windows.Forms.ToolStripMenuItem();
 			toolStripSeparator14 = new System.Windows.Forms.ToolStripSeparator();
+			toolStripSeparator13 = new System.Windows.Forms.ToolStripSeparator();
+			toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
 			this._SelectionMenu.SuspendLayout();
 			this._EditMenu.SuspendLayout();
 			this._RecentFileMenu.SuspendLayout();
@@ -272,18 +275,26 @@
 			this._ViewerToolbar.SuspendLayout();
 			this.SuspendLayout();
 			// 
-			// _ClearPosition
+			// _AlterPosition
 			// 
-			_ClearPosition.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+			_AlterPosition.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             _ChangeCoordinates,
+            this._SetCurrentCoordinates,
             _ClearPositionX,
             _ClearPositionY,
             _ClearPositionXY});
-			_ClearPosition.Image = global::PDFPatcher.Properties.Resources.ScrollPosition;
-			_ClearPosition.Name = "_ClearPosition";
-			_ClearPosition.Size = new System.Drawing.Size(215, 26);
-			_ClearPosition.Text = "更改目标页面坐标(&Y)";
-			_ClearPosition.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this._MainToolbar_ItemClicked);
+			_AlterPosition.Image = global::PDFPatcher.Properties.Resources.ScrollPosition;
+			_AlterPosition.Name = "_AlterPosition";
+			_AlterPosition.Size = new System.Drawing.Size(211, 22);
+			_AlterPosition.Text = "更改目标页面坐标(&Y)";
+			_AlterPosition.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this._MainToolbar_ItemClicked);
+			// 
+			// _SetCurrentCoordinates
+			// 
+			this._SetCurrentCoordinates.Image = global::PDFPatcher.Properties.Resources.Pin;
+			this._SetCurrentCoordinates.Name = "_SetCurrentCoordinates";
+			this._SetCurrentCoordinates.Size = new System.Drawing.Size(184, 22);
+			this._SetCurrentCoordinates.Text = "设为当前页坐标(&S)";
 			// 
 			// _ChangeCoordinates
 			// 
@@ -313,7 +324,7 @@
 			// _ForceInternalLink
 			// 
 			_ForceInternalLink.Name = "_ForceInternalLink";
-			_ForceInternalLink.Size = new System.Drawing.Size(215, 26);
+			_ForceInternalLink.Size = new System.Drawing.Size(211, 22);
 			_ForceInternalLink.Text = "强制设置为文件内链接";
 			// 
 			// _SelectNone
@@ -336,7 +347,7 @@
             _DecrementPageNumber});
 			_ShiftPageNumber.Image = global::PDFPatcher.Properties.Resources.PageRange;
 			_ShiftPageNumber.Name = "_ShiftPageNumber";
-			_ShiftPageNumber.Size = new System.Drawing.Size(215, 26);
+			_ShiftPageNumber.Size = new System.Drawing.Size(211, 22);
 			_ShiftPageNumber.Text = "更改目标页码(&M)";
 			_ShiftPageNumber.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this._MainToolbar_ItemClicked);
 			// 
@@ -362,7 +373,7 @@
 			// 
 			_MergeBookmark.Image = global::PDFPatcher.Properties.Resources.Merge;
 			_MergeBookmark.Name = "_MergeBookmark";
-			_MergeBookmark.Size = new System.Drawing.Size(215, 26);
+			_MergeBookmark.Size = new System.Drawing.Size(211, 22);
 			_MergeBookmark.Text = "合并书签(&H)";
 			// 
 			// _SelectAll
@@ -451,7 +462,7 @@
 			// toolStripSeparator7
 			// 
 			toolStripSeparator7.Name = "toolStripSeparator7";
-			toolStripSeparator7.Size = new System.Drawing.Size(212, 6);
+			toolStripSeparator7.Size = new System.Drawing.Size(208, 6);
 			// 
 			// _SelectItems
 			// 
@@ -473,6 +484,7 @@
             this._CollapseChildren,
             this._ExpandAll});
 			this._SelectionMenu.Name = "_SelectionMenu";
+			this._SelectionMenu.OwnerItem = _SelectItems;
 			this._SelectionMenu.Size = new System.Drawing.Size(149, 142);
 			this._SelectionMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this._MainToolbar_ItemClicked);
 			// 
@@ -499,7 +511,7 @@
 			_SearchReplace.Image = global::PDFPatcher.Properties.Resources.SearchReplace;
 			_SearchReplace.ImageTransparentColor = System.Drawing.Color.Magenta;
 			_SearchReplace.Name = "_SearchReplace";
-			_SearchReplace.Size = new System.Drawing.Size(215, 26);
+			_SearchReplace.Size = new System.Drawing.Size(211, 22);
 			_SearchReplace.Text = "查找/替换书签文本(&W)...";
 			_SearchReplace.ToolTipText = "查找或替换书签文本\r\nCtrl+F";
 			// 
@@ -507,7 +519,7 @@
 			// 
 			_BookmarkAction.Image = global::PDFPatcher.Properties.Resources.EditItem;
 			_BookmarkAction.Name = "_BookmarkAction";
-			_BookmarkAction.Size = new System.Drawing.Size(215, 26);
+			_BookmarkAction.Size = new System.Drawing.Size(211, 22);
 			_BookmarkAction.Text = "书签动作属性(&D)...";
 			_BookmarkAction.ToolTipText = "修改点击书签后执行的动作";
 			// 
@@ -899,7 +911,7 @@
             _ClearBookmarkMarks});
 			_MarkBookmark.Image = global::PDFPatcher.Properties.Resources.Mark;
 			_MarkBookmark.Name = "_MarkBookmark";
-			_MarkBookmark.Size = new System.Drawing.Size(215, 26);
+			_MarkBookmark.Size = new System.Drawing.Size(211, 22);
 			_MarkBookmark.Text = "标记书签";
 			_MarkBookmark.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this._MainToolbar_ItemClicked);
 			// 
@@ -968,7 +980,7 @@
             _SelectPurpleMarks});
 			_SelectMarkedBookmarks.Image = global::PDFPatcher.Properties.Resources.SelectMarks;
 			_SelectMarkedBookmarks.Name = "_SelectMarkedBookmarks";
-			_SelectMarkedBookmarks.Size = new System.Drawing.Size(215, 26);
+			_SelectMarkedBookmarks.Size = new System.Drawing.Size(211, 22);
 			_SelectMarkedBookmarks.Text = "选择已标记书签";
 			_SelectMarkedBookmarks.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this._MainToolbar_ItemClicked);
 			// 
@@ -1012,6 +1024,16 @@
 			// 
 			toolStripSeparator14.Name = "toolStripSeparator14";
 			toolStripSeparator14.Size = new System.Drawing.Size(205, 6);
+			// 
+			// toolStripSeparator13
+			// 
+			toolStripSeparator13.Name = "toolStripSeparator13";
+			toolStripSeparator13.Size = new System.Drawing.Size(208, 6);
+			// 
+			// toolStripSeparator4
+			// 
+			toolStripSeparator4.Name = "toolStripSeparator4";
+			toolStripSeparator4.Size = new System.Drawing.Size(208, 6);
 			// 
 			// _ViewerButton
 			// 
@@ -1074,17 +1096,17 @@
 			// 
 			this._EditMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             _BookmarkAction,
-            this.toolStripSeparator13,
+            toolStripSeparator13,
             this._SetOpenStatus,
             _ShiftPageNumber,
-            _ClearPosition,
+            _AlterPosition,
             this._ChangeZoomRate,
             _ForceInternalLink,
             toolStripSeparator7,
             _MergeBookmark,
             this._ChangeCase,
             _SearchReplace,
-            this.toolStripSeparator4,
+            toolStripSeparator4,
             _SelectItems,
             this._QuickSelect,
             _MarkBookmark,
@@ -1093,11 +1115,6 @@
 			this._EditMenu.Size = new System.Drawing.Size(212, 330);
 			this._EditMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this._MainToolbar_ItemClicked);
 			// 
-			// toolStripSeparator13
-			// 
-			this.toolStripSeparator13.Name = "toolStripSeparator13";
-			this.toolStripSeparator13.Size = new System.Drawing.Size(212, 6);
-			// 
 			// _SetOpenStatus
 			// 
 			this._SetOpenStatus.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -1105,34 +1122,29 @@
             _SetOpenStatusFalse});
 			this._SetOpenStatus.Image = global::PDFPatcher.Properties.Resources.Open;
 			this._SetOpenStatus.Name = "_SetOpenStatus";
-			this._SetOpenStatus.Size = new System.Drawing.Size(215, 26);
+			this._SetOpenStatus.Size = new System.Drawing.Size(211, 22);
 			this._SetOpenStatus.Text = "设置书签默认打开状态(&T)";
 			// 
 			// _ChangeZoomRate
 			// 
 			this._ChangeZoomRate.Image = global::PDFPatcher.Properties.Resources.Zoom;
 			this._ChangeZoomRate.Name = "_ChangeZoomRate";
-			this._ChangeZoomRate.Size = new System.Drawing.Size(215, 26);
+			this._ChangeZoomRate.Size = new System.Drawing.Size(211, 22);
 			this._ChangeZoomRate.Text = "设置目标显示方式(&X)";
 			// 
 			// _ChangeCase
 			// 
 			this._ChangeCase.Image = global::PDFPatcher.Properties.Resources.ChangeCase;
 			this._ChangeCase.Name = "_ChangeCase";
-			this._ChangeCase.Size = new System.Drawing.Size(215, 26);
+			this._ChangeCase.Size = new System.Drawing.Size(211, 22);
 			this._ChangeCase.Text = "更改书签文本大小写";
 			this._ChangeCase.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this._MainToolbar_ItemClicked);
-			// 
-			// toolStripSeparator4
-			// 
-			this.toolStripSeparator4.Name = "toolStripSeparator4";
-			this.toolStripSeparator4.Size = new System.Drawing.Size(212, 6);
 			// 
 			// _QuickSelect
 			// 
 			this._QuickSelect.Image = global::PDFPatcher.Properties.Resources.SelectItem;
 			this._QuickSelect.Name = "_QuickSelect";
-			this._QuickSelect.Size = new System.Drawing.Size(215, 26);
+			this._QuickSelect.Size = new System.Drawing.Size(211, 22);
 			this._QuickSelect.Text = "快速选择书签(&K)";
 			this._QuickSelect.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this._MainToolbar_ItemClicked);
 			// 
@@ -1141,6 +1153,7 @@
 			this._RecentFileMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             dummyToolStripMenuItem});
 			this._RecentFileMenu.Name = "_RecentFileMenu";
+			this._RecentFileMenu.OwnerItem = this._AddFilesButton;
 			this._RecentFileMenu.ShowImageMargin = false;
 			this._RecentFileMenu.Size = new System.Drawing.Size(95, 26);
 			// 
@@ -1161,6 +1174,7 @@
 			// _UndoMenu
 			// 
 			this._UndoMenu.Name = "_UndoMenu";
+			this._UndoMenu.OwnerItem = this._UndoButton;
 			this._UndoMenu.ShowImageMargin = false;
 			this._UndoMenu.Size = new System.Drawing.Size(36, 4);
 			// 
@@ -1510,10 +1524,9 @@
 		private System.Windows.Forms.ToolStripDropDownButton _ViewerButton;
 		private System.Windows.Forms.ToolStripMenuItem _QuickSelect;
 		private System.Windows.Forms.ToolStripMenuItem _MarkBookmarkCyan;
-		private System.Windows.Forms.ToolStripSeparator toolStripSeparator13;
-		private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
 		private System.Windows.Forms.ToolStripMenuItem _SavePageImage;
 		private System.Windows.Forms.ToolStripMenuItem _ShowAnnotations;
 		private System.Windows.Forms.ToolStripMenuItem _InsertWithOcrOnly;
+		private System.Windows.Forms.ToolStripMenuItem _SetCurrentCoordinates;
 	}
 }

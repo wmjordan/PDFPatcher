@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
-using System.Xml;
 using BrightIdeasSoftware;
 using PDFPatcher.Common;
 using PDFPatcher.Processor;
@@ -47,6 +46,14 @@ namespace PDFPatcher.Functions.Editor
 							controller.ProcessBookmarks(new ChangeCoordinateProcessor(f.CoordinateName, f.AdjustmentValue, f.IsAbsolute, f.IsProportional));
 						}
 					}
+					break;
+				case "_SetCurrentCoordinates":
+					var v = controller.View.Viewer;
+					var pp = v.TransposeClientToPagePosition(v.ClientRectangle.Width, 0);
+					if (pp.Page == 0) {
+						return;
+					}
+					controller.ProcessBookmarks(new ChangePageCoordinateProcessor(Constants.Coordinates.Top, pp.Page, pp.PageX, pp.PageY));
 					break;
 				case "_BookmarkAction":
 					b.ShowBookmarkProperties(b.GetFirstSelectedModel<Model.BookmarkElement>());
