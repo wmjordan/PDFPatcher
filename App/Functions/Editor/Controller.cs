@@ -560,7 +560,7 @@ namespace PDFPatcher.Functions.Editor
 				if (type == InsertBookmarkPositionType.NoDefined) {
 					var g = new UndoActionGroup();
 					if (t.Length > 0) {
-					g.SetAttribute(o, Constants.BookmarkAttributes.Title, t);
+						g.SetAttribute(o, Constants.BookmarkAttributes.Title, t);
 					}
 					g.SetAttribute(o, Constants.DestinationAttributes.Action, Constants.ActionType.Goto);
 					g.SetAttribute(o, Constants.DestinationAttributes.Page, p.ToText());
@@ -722,7 +722,7 @@ namespace PDFPatcher.Functions.Editor
 				bool m = false;
 				int fs = span.Size.ToInt32();
 				foreach (var item in Model.TitleStyles) {
-					if (item.FontSize == fs && item.FontName == fn) {
+					if (item.FontSize == fs && item.FontName == fn && item.MatchPattern == null) {
 						m = true;
 						goto NEXT;
 					}
@@ -744,7 +744,7 @@ namespace PDFPatcher.Functions.Editor
 			f.SetValues(Model.TitleStyles);
 		}
 
-		internal void AutoBookmark(IEnumerable<EditModel.AutoBookmarkStyle> list, bool mergeAdjacentTitle) {
+		internal void AutoBookmark(IEnumerable<EditModel.AutoBookmarkStyle> list, bool mergeAdjacentTitle, bool keepExisting) {
 			View.Bookmark.CancelCellEdit();
 			var pdf = Model.PdfDocument;
 			BookmarkContainer bm = Model.Document.BookmarkRoot;
@@ -763,7 +763,9 @@ namespace PDFPatcher.Functions.Editor
 			foreach (XmlElement item in bm.SubBookmarks) {
 				ug.Add(new AddElementAction(item));
 			}
-			bm.RemoveAll();
+			if (keepExisting == false) {
+				bm.RemoveAll();
+			}
 			var spans = new List<MuPdfSharp.MuTextSpan>(3);
 			var bl = 0;
 			for (int i = 0; i < c;) {
@@ -793,7 +795,7 @@ namespace PDFPatcher.Functions.Editor
 										++bl;
 									}
 									else if (bl == style.Level) {
-										// todo+ 删除重复的文本
+										// todo 删除重复的文本
 										var cb = bm as BookmarkElement;
 										var bb = h - cb.Bottom + dh;
 										var bt = h - cb.Top;
@@ -801,7 +803,7 @@ namespace PDFPatcher.Functions.Editor
 										var lb = b.Bottom;
 										if (cb.Page == p.PageNumber
 											&& (bb >= lt && bb <= lb || bt >= lt && bt <= lb || bt < lt && bb > lb)
-											&& (mergeAdjacentTitle || spans.Count == 1 || spans[spans.Count - 1].Point.Y == span.Point.Y)) {
+											&& (mergeAdjacentTitle || spans[spans.Count - 1].Point.Y == span.Point.Y)) {
 											//var m = false;
 											//var bs = b.Size.Area();
 											//foreach (var ss in spans) {
@@ -864,7 +866,7 @@ namespace PDFPatcher.Functions.Editor
 										be.IsOpen = true;
 									}
 									be.ForeColor = s.ForeColor;
-									//todo+ 删除尾随的空格
+									//todo 删除尾随的空格
 									ug.Add(new RemoveElementAction(bm));
 									spans.Add(span);
 									break;

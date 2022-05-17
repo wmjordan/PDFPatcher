@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
+using System.Xml;
 using System.Xml.Serialization;
 using PDFPatcher.Common;
 
 namespace PDFPatcher.Model
 {
-	public sealed class MatchPattern : ICloneable
+	public sealed class MatchPattern : ICloneable, IXmlSerializable
 	{
 		[XmlAttribute("名称")]
 		public string Name { get; set; }
@@ -41,10 +40,45 @@ namespace PDFPatcher.Model
 			return new SimpleMatcher(this);
 		}
 
+		public override string ToString() {
+			return String.IsNullOrEmpty(Name)
+				? $"{(UseRegularExpression ? "正则表达式" : "文本")}{(MatchCase ? "区分大小写" : String.Empty)}匹配 {Text}"
+				: $"匹配{Name}";
+		}
+
 		#region ICloneable 成员
 
 		public object Clone() {
 			return new MatchPattern(Text, MatchCase, FullMatch, UseRegularExpression);
+		}
+
+		#endregion
+
+		#region IXmlSerializable 成员
+
+		public System.Xml.Schema.XmlSchema GetSchema() {
+			return null;
+		}
+
+		public void ReadXml(XmlReader reader) {
+			if (reader.Read() == false || reader.Name != "pattern") {
+				return;
+			}
+			Name = reader.GetAttribute("name");
+			Text = reader.GetAttribute("text");
+			MatchCase = reader.GetValue("matchCase", false);
+			FullMatch = reader.GetValue("fullMatch", false);
+			UseRegularExpression = reader.GetValue("useRegex", false);
+		}
+
+		public void WriteXml(XmlWriter writer) {
+			writer.WriteStartElement("pattern");
+			writer.WriteValue("name", Name, null);
+			writer.WriteValue("text", Text, null);
+			writer.WriteValue("matchCase", MatchCase, false);
+			writer.WriteValue("fullMatch", FullMatch, false);
+			writer.WriteValue("useRegex", UseRegularExpression, false);
+			writer.WriteEndElement();
 		}
 
 		#endregion
@@ -60,7 +94,7 @@ namespace PDFPatcher.Model
 			readonly bool _fullMatch;
 			public RegexMatcher(MatchPattern pattern) {
 				_regex = new Regex(pattern.Text,
-							 RegexOptions.Compiled | (pattern.MatchCase ? RegexOptions.None : RegexOptions.IgnoreCase));
+							 RegexOptions.Compiled | RegexOptions.CultureInvariant | (pattern.MatchCase ? RegexOptions.None : RegexOptions.IgnoreCase));
 				_fullMatch = pattern.FullMatch;
 			}
 

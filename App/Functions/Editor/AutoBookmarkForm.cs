@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using PDFPatcher.Common;
 using PDFPatcher.Functions.Editor;
+using PDFPatcher.Model;
 
 namespace PDFPatcher.Functions
 {
@@ -13,20 +14,22 @@ namespace PDFPatcher.Functions
 		List<EditModel.AutoBookmarkStyle> _list;
 		readonly Controller _controller;
 
-		internal AutoBookmarkForm(Controller controller) {
+		internal AutoBookmarkForm() {
 			InitializeComponent();
-			_controller = controller;
 		}
 
-		void AutoBookmarkForm_Load(object sender, EventArgs e) {
+		internal AutoBookmarkForm(Controller controller) : this() {
+			_controller = controller;
+			this.OnFirstLoad(OnLoad);
+		}
+
+		void OnLoad() {
 			MinimumSize = Size;
+			_Toolbar.ScaleIcons(16);
+
 			_ConditionColumn.AsTyped<EditModel.AutoBookmarkStyle>(c => {
-				c.AspectGetter = o => String.Concat("字体为", o.FontName, "且尺寸为", o.FontSize);
+				c.AspectGetter = o => $"字体为{o.FontName} 尺寸为{o.FontSize}{(o.MatchPattern != null ? o.MatchPattern.ToString() : String.Empty)}";
 			});
-			//_FontSizeColumn.AsTyped<EditModel.TitleStyle>(c => {
-			//	c.AspectGetter = o => o.FontSize;
-			//	c.AspectPutter = (o, v) => o.FontSize = Convert.ToInt32(v);
-			//});
 			_LevelColumn.CellEditUseWholeCell = true;
 			_LevelColumn.AsTyped<EditModel.AutoBookmarkStyle>(c => {
 				c.AspectGetter = o => o.Level;
@@ -51,6 +54,7 @@ namespace PDFPatcher.Functions
 				c.AspectGetter = o => o.Bookmark.GoToTop;
 				c.AspectPutter = (o, v) => o.Bookmark.GoToTop = (bool)v;
 			});
+			_BookmarkConditionBox.ScaleColumnWidths();
 			_BookmarkConditionBox.IsSimpleDragSource = true;
 			_BookmarkConditionBox.IsSimpleDropSink = true;
 			_BookmarkConditionBox.CellClick += (s, args) => {
@@ -70,8 +74,50 @@ namespace PDFPatcher.Functions
 				r.UseItemStyleForSubItems = false;
 				r.SubItems[_ColorColumn.Index].ForeColor = b.ForeColor == Color.Transparent ? _BookmarkConditionBox.ForeColor : b.ForeColor;
 			};
+			_BookmarkConditionBox.SelectionChanged += _BookmarkConditionBox_SelectionChanged;
 			_LoadListButton.Click += _LoadListButton_Click;
 			_SaveListButton.Click += _SaveListButton_Click;
+
+			QuickSelectCommand.RegisterMenuItemsWithPattern(_SetPatternMenu.DropDownItems);
+			_SetPatternMenu.DropDownItems.AddRange(new ToolStripItem[] {
+				new ToolStripSeparator(),
+				new ToolStripMenuItem("自定义文本识别模式") {
+					Tag = "CustomPattern"
+				},
+				new ToolStripMenuItem("清除文本识别模式") {
+					Tag = "ClearPattern"
+				}
+			});
+			_SetPatternMenu.DropDownItemClicked += _SetPattern_DropDownItemClicked;
+		}
+
+		void _BookmarkConditionBox_SelectionChanged(object sender, EventArgs e) {
+			_SetPatternMenu.Enabled = _RemoveButton.Enabled = _BookmarkConditionBox.SelectedItems.Count > 0;
+		}
+
+		void _SetPattern_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e) {
+			if (e.ClickedItem.Tag is MatchPattern p) {
+				SetMatchPatternToSelectedBookmarkStyles(p);
+				return;
+			}
+			if (e.ClickedItem.Tag is string s) {
+				switch (s) {
+					case "ClearPattern":
+						SetMatchPatternToSelectedBookmarkStyles(null);
+						return;
+					case "CustomPattern":
+						// todo 自定义匹配模式
+						this.ErrorBox("本功能尚未实现");
+						return;
+				}
+			}
+		}
+
+		void SetMatchPatternToSelectedBookmarkStyles(MatchPattern p) {
+			foreach (EditModel.AutoBookmarkStyle item in _BookmarkConditionBox.SelectedObjects) {
+				item.MatchPattern = p;
+			}
+			_BookmarkConditionBox.RefreshObjects(_BookmarkConditionBox.SelectedObjects);
 		}
 
 		internal void SetValues(List<EditModel.AutoBookmarkStyle> list) {
@@ -85,7 +131,7 @@ namespace PDFPatcher.Functions
 
 		void _AutoBookmarkButton_Click(object sender, EventArgs e) {
 			SyncList();
-			_controller.AutoBookmark(_list, _MergeAdjacentTitleBox.Checked);
+			_controller.AutoBookmark(_list, _MergeAdjacentTitleBox.Checked, _KeepExistingBookmarksBox.Checked);
 		}
 
 		void _SaveListButton_Click(object sender, EventArgs e) {
@@ -116,6 +162,7 @@ namespace PDFPatcher.Functions
 					x.WriteAttributeString("fontSize", item.FontSize.ToText());
 					x.WriteAttributeString("level", item.Level.ToText());
 					item.Bookmark.WriteXml(x);
+					item.MatchPattern?.WriteXml(x);
 					x.WriteEndElement();
 				}
 				x.WriteEndElement();
@@ -148,6 +195,12 @@ namespace PDFPatcher.Functions
 					item.GetValue("fontName"),
 					item.GetValue("fontSize", 0));
 				s.Bookmark.ReadXml(item.GetElement("bookmark").CreateNavigator().ReadSubtree());
+				var p = item.GetElement("pattern");
+				if (p != null) {
+					s.MatchPattern = new Model.MatchPattern();
+					s.MatchPattern.ReadXml(p.CreateNavigator().ReadSubtree());
+				}
+
 				l.Add(s);
 			}
 			return l;
