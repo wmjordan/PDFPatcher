@@ -25,7 +25,6 @@ namespace PDFPatcher.Functions
 		public void Reset() {
 			AppContext.SaveAppSettings = true;
 			AppContext.LoadPartialPdfFile = false;
-			//ContextData.PdfReaderPath = String.Empty;
 			AppContext.Encodings = new EncodingOptions();
 			Reload();
 		}
@@ -35,7 +34,6 @@ namespace PDFPatcher.Functions
 			_SaveAppSettingsBox.Checked = AppContext.SaveAppSettings;
 			_LoadPartialFileBox.Checked = AppContext.LoadPartialPdfFile;
 			_LoadEntireFileBox.Checked = !AppContext.LoadPartialPdfFile;
-			//_PdfReaderPathBox.Text = ContextData.PdfReaderPath;
 
 			InitEncodingList(_BookmarkEncodingBox, AppContext.Encodings.BookmarkEncodingName);
 			InitEncodingList(_DocInfoEncodingBox, AppContext.Encodings.DocInfoEncodingName);
@@ -45,7 +43,7 @@ namespace PDFPatcher.Functions
 			locked = false;
 		}
 
-		private static void InitEncodingList(ComboBox list, string encodingName) {
+		static void InitEncodingList(ComboBox list, string encodingName) {
 			list.Items.Clear();
 			foreach (var item in Constants.Encoding.EncodingNames) {
 				list.Items.Add(item);
@@ -83,13 +81,7 @@ namespace PDFPatcher.Functions
 			}
 		}
 
-		private void _BrowsePdfReaderPathButton_Click(object sender, EventArgs e) {
-			//if (_BrowsePdfReaderDialog.ShowDialog () == DialogResult.OK) {
-			//    ContextData.PdfReaderPath = _PdfReaderPathBox.Text = _BrowsePdfReaderDialog.FileName;
-			//}
-		}
-
-		private void _CreateShortcutButton_Click(object sender, EventArgs e) {
+		void _CreateShortcutButton_Click(object sender, EventArgs e) {
 			CommonCommands.CreateShortcut();
 		}
 
