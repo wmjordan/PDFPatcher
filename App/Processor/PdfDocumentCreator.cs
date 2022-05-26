@@ -52,7 +52,7 @@ namespace PDFPatcher.Processor
 				new PaperSize ("A1 (59.4*84.1)", 5940, 8410),
 				new PaperSize ("A2 (42.0*59.4)", 4200, 5940),
 				new PaperSize ("A3 (29.7*42.0)", 2971, 4201),
-				new PaperSize ("A4 (21.0*29.7)", 2100, 2971),
+				new PaperSize ("A4 (21.0*29.7)", 2100, 2970),
 				new PaperSize ("A5 (14.8*21.0)", 1480, 2100),
 				new PaperSize ("A6 (10.5*14.8)", 1050, 1480),
 				new PaperSize ("B0 (100.0*141.3)", 10000, 14130),
