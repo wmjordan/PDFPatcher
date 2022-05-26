@@ -208,11 +208,13 @@ namespace PDFPatcher
 			Processor.PdfHelper.ToggleReaderDebugMode(true); // 打开容错模式
 			Processor.PdfHelper.ToggleUnethicalMode(true); // 打开强制读取加密文档模式
 
+			bool firstLoad;
 			try {
-				AppContext.Load(null);
+				firstLoad = AppContext.Load(null) == false;
 			}
 			catch (Exception) {
 				// ignore loading exception
+				firstLoad = true;
 			}
 			_MainMenu.ScaleIcons(16);
 			Text = Constants.AppName + " [" + Application.ProductVersion + "]";
@@ -277,6 +279,9 @@ namespace PDFPatcher
 			}
 
 			SelectFunctionList(Function.FrontPage);
+			if (firstLoad) {
+				SelectFunctionList(Function.About);
+			}
 
 			_GeneralToolbar.ItemClicked += MenuCommand;
 			if (AppContext.CheckUpdateDate < DateTime.Today) {
