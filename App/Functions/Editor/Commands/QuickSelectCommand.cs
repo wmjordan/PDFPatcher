@@ -14,6 +14,7 @@ namespace PDFPatcher.Functions.Editor
 		const string __ND = __N + __D;
 		const string __NN = @"(?:\s*[^0-9０-９\.．一二三四五六七八九十〇]|$)";
 		const string __UC = "[A-Z]+";
+		const string __UCNS = @"[A-Z0-9\s]*";
 		const string __OD = @"(?:[0-9]+\.?)?";
 
 		static readonly MatchPattern[] __Patterns = {
@@ -26,7 +27,7 @@ namespace PDFPatcher.Functions.Editor
 			new MatchPattern ("^" + __S + "第" + __S + __N + __S + "[篇卷]|^" + __S + "(?:volume|vol)" + __S + "[0-9]", false, false, true){ Name =  "“第N篇”或“第N卷”" },
 			new MatchPattern ("^" + __S + "第" + __S + __N + __S + "章|^" + __S + "chapter" + __S + "[0-9]", false, false, true){ Name =  "“第N章”" },
 			new MatchPattern ("^" + __S + "第" + __S + __N + __S + "节|^" + __S + "section" + __S + "[0-9]", false, false, true){ Name =  "“第N节”" },
-			new MatchPattern ("^(?:" + __S + __OD + __S + __UC + __S + ")+", true, true, true){ Name =  "全英文大写" },
+			new MatchPattern ("^(?:" + __S + __OD + __S + __UC + __UCNS + ")+", true, true, true){ Name =  "全英文大写" },
 		};
 		internal static void RegisterCommands(CommandRegistry<Controller> registry) {
 			foreach (var item in __Patterns) {
