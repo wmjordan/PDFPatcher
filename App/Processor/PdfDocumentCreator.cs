@@ -64,7 +64,6 @@ namespace PDFPatcher.Processor
 				new PaperSize ("B6 (12.5*17.6)", 1250, 1760)
 			};
 		readonly MergerOptions _option;
-		readonly ImporterOptions _impOptions;
 		readonly Document _doc;
 		readonly PdfCopy _writer;
 		readonly PaperSize _content;
@@ -88,7 +87,6 @@ namespace PDFPatcher.Processor
 		public PdfDocumentCreator(DocumentSink sink, MergerOptions option, ImporterOptions impOptions, Document document, PdfCopy writer) {
 			_sink = sink;
 			_option = option;
-			_impOptions = impOptions;
 			_doc = document;
 			_writer = writer;
 			var ps = _pageSettings = option.PageSettings;

@@ -34,10 +34,7 @@ namespace PDFPatcher.Model
 		public XmlNodeList Bookmarks => DocumentElement.SelectNodes(Constants.DocumentBookmark + "[1]/" + Constants.Bookmark);
 
 		private void Init() {
-			var root = DocumentElement;
-			if (root == null) {
-				root = AppendChild(CreateElement(Constants.PdfInfo)) as XmlElement;
-			}
+			var root = DocumentElement ?? AppendChild(CreateElement(Constants.PdfInfo)) as XmlElement;
 			root.SetAttribute(Constants.Info.ProductName, System.Windows.Forms.Application.ProductName);
 			root.SetAttribute(Constants.Info.ProductVersion, Constants.InfoDocVersion);
 			root.SetAttribute(Constants.Info.ExportDate, DateTime.Now.ToString("yyyy年MM月dd日 HH:mm:ss"));

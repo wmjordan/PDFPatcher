@@ -16,9 +16,7 @@ namespace PDFPatcher.Functions
 		protected override void OnMouseDoubleClick(MouseEventArgs e) {
 			base.OnMouseDoubleClick(e);
 
-			if (DoubleClick != null) {
-				DoubleClick(this, e);
-			}
+			DoubleClick?.Invoke(this, e);
 		}
 	}
 }

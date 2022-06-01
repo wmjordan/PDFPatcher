@@ -104,12 +104,12 @@ namespace PDFPatcher.Processor
 				: ValueHelper.MapValue(unit, Constants.Units.Names, Constants.Units.Factors, 1);
 		}
 
-		internal BookmarkContainer GetBookmarks() {
+		internal BookmarkRootElement GetBookmarks() {
 			if (_infoDoc == null) {
 				return null;
 			}
 
-			BookmarkContainer be = _infoDoc.BookmarkRoot;
+			var be = _infoDoc.BookmarkRoot;
 			if (be?.HasSubBookmarks == true) {
 				if (be.GetAttribute(Constants.DestinationAttributes.FirstPageNumber).TryParse(out int bookmarkPageShift)) {
 					bookmarkPageShift--;
@@ -465,8 +465,9 @@ namespace PDFPatcher.Processor
 					if (string.IsNullOrEmpty(p = map.GetAttribute(Constants.DestinationAttributes.Named)) == false) {
 						dic.Put(PdfName.D, p.ToPdfString());
 					}
-					else if (string.IsNullOrEmpty(p = map.GetAttribute(Constants.DestinationAttributes.NamedN)) == false)
+					else if (string.IsNullOrEmpty(p = map.GetAttribute(Constants.DestinationAttributes.NamedN)) == false) {
 						dic.Put(PdfName.D, new PdfName(p));
+					}
 					else if (string.IsNullOrEmpty(p = map.GetAttribute(Constants.DestinationAttributes.Page)) == false) {
 						p.TryParse(out int pn);
 						if (pn > 0) {
@@ -552,7 +553,7 @@ namespace PDFPatcher.Processor
 					if (top == Constants.Coordinates.Unchanged) {
 						pos[0] = float.NaN;
 					}
-					else if (ValueHelper.TryParse(top, out pos[0]) == false) {
+					else if (top.TryParse(out pos[0]) == false) {
 						if (pr != null && (box = PdfHelper.GetPageVisibleRectangle(PdfReader.GetPdfObject(pr) as PdfDictionary)) != null) {
 							pos[0] = box.Top;
 						}
@@ -568,7 +569,7 @@ namespace PDFPatcher.Processor
 					if (left == Constants.Coordinates.Unchanged) {
 						pos[0] = float.NaN;
 					}
-					else if (ValueHelper.TryParse(left, out pos[0]) == false) {
+					else if (left.TryParse(out pos[0]) == false) {
 						if (pr != null && (box = PdfHelper.GetPageVisibleRectangle(PdfReader.GetPdfObject(pr) as PdfDictionary)) != null) {
 							pos[0] = box.Left;
 						}

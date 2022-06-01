@@ -49,7 +49,7 @@ namespace PDFPatcher
 			Trace.Write(DateTime.Now.ToString("HH:mm:ss.fff "));
 			Trace.WriteLine(message);
 			var worker = __Worker;
-			if (worker != null && worker.IsBusy) {
+			if (worker?.IsBusy == true) {
 				worker.ReportProgress((int)level, message);
 			}
 		}

@@ -176,12 +176,9 @@ namespace PDFPatcher.Model
 		}
 
 		internal string GetTargetPdfFileName(string targetPath) {
-			string targetFolder = null;
-			var m = FileHelper.HasFileNameMacro(targetPath);   // 包含替换符
-			if (m == false) {
-				targetFolder = Path.GetDirectoryName(targetPath);
-			}
-			return m ? targetPath : FileHelper.CombinePath(targetFolder, FilePath.FileName);
+			return FileHelper.HasFileNameMacro(targetPath)
+				? targetPath
+				: FileHelper.CombinePath(Path.GetDirectoryName(targetPath), FilePath.FileName);
 		}
 
 		internal sealed class Empty : SourceItem
