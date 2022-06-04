@@ -69,7 +69,7 @@ namespace PDFPatcher.Processor
 				}
 
 				if (OptimizeBinaryImage(item.Value as PdfIndirectReference, im, l.IntValue)
-					|| ReplaceJ2kImage(item.Value as PdfIndirectReference, im, fn)) {
+					/*|| ReplaceJ2kImage(item.Value as PdfIndirectReference, im, fn)*/) {
 				}
 			}
 			return true;
