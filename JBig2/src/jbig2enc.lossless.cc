@@ -195,10 +195,10 @@ jbig2_encode_generic(struct Pix *const bw, const bool full_headers, const int xr
 
 // see comments in .h file
 u8 *
-jbig2_encode (int width, int height, int stride, bool zeroIsWhite, uint32_t * const source, int *const length) {
+jbig2_encode (int width, int height, int stride, bool zeroIsWhite, uint8_t * const source, int *const length) {
 	u8 * ret;
 	u32 mask = zeroIsWhite ? 0x0 : 0xffffffff;
-	u8* pl = (u8*)source;
+	u8* pl = source;
 	u8* p;
 	u32* pw;
 	char a, b;
@@ -224,7 +224,7 @@ jbig2_encode (int width, int height, int stride, bool zeroIsWhite, uint32_t * co
 	Pix * pix = (Pix*)malloc(sizeof(Pix));
 	pix->w = width;
 	pix->h = height;
-	pix->data = source;
+	pix->data = (u32*)source;
 	ret = jbig2_encode_generic (pix, false, 0, 0, false, length);
 	free(pix);
 	return ret;
