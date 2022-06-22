@@ -4,6 +4,8 @@ namespace PDFPatcher
 {
 	public class ExtractPageOptions
 	{
+		[XmlAttribute("压缩文档")]
+		public bool EnableFullCompression { get; set; }
 		[XmlAttribute("保留文档属性")]
 		public bool KeepDocumentProperties { get; set; }
 		[XmlAttribute("保留文档书签")]
@@ -25,6 +27,7 @@ namespace PDFPatcher
 		public string ExcludePageRanges { get; set; }
 
 		public ExtractPageOptions() {
+			EnableFullCompression = true;
 			KeepBookmarks = true;
 			KeepDocumentProperties = true;
 			RemoveDocumentRestrictions = true;

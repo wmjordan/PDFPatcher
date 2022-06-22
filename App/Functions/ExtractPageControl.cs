@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Data;
 using System.IO;
 using System.Windows.Forms;
 using PDFPatcher.Common;
@@ -28,6 +27,7 @@ namespace PDFPatcher.Functions
 			AppContext.MainForm.SetTooltip(_SeperateByPageNumberBox, "将源 PDF 文档按页数拆分");
 			AppContext.MainForm.SetTooltip(_NumberFileNamesBox, "按书签拆分：在拆分所得的文件名前面添加“1 - ”、“2 - ”等顺序编号；其它拆分：第 1 个文件名也添加编号");
 			AppContext.MainForm.SetTooltip(_ExcludePageRangeBox, "不提取此范围内的页面");
+			AppContext.MainForm.SetTooltip(_EnableFullCompression, "去除文档中未被使用的对象，尽可能压缩输出文档");
 
 			_TargetFileControl.FileMacroMenu.LoadStandardInfoMacros();
 			_TargetFileControl.FileMacroMenu.LoadStandardSourceFileMacros();
@@ -53,6 +53,7 @@ namespace PDFPatcher.Functions
 				_TargetFileControl.FileList.AddHistoryItem();
 			}
 			var o = AppContext.ExtractPage;
+			o.EnableFullCompression = _EnableFullCompression.Checked;
 			o.KeepBookmarks = _KeepBookmarkBox.Checked;
 			o.KeepDocumentProperties = _KeepDocInfoPropertyBox.Checked;
 			o.RemoveOrphanBookmarks = _RemoveOrphanBoomarksBox.Checked;
@@ -115,6 +116,7 @@ namespace PDFPatcher.Functions
 
 		void IResettableControl.Reload() {
 			var options = AppContext.ExtractPage;
+			_EnableFullCompression.Checked = options.EnableFullCompression;
 			_KeepBookmarkBox.Checked = options.KeepBookmarks;
 			_KeepDocInfoPropertyBox.Checked = options.KeepDocumentProperties;
 			_RemoveRestrictionBox.Checked = options.RemoveDocumentRestrictions;

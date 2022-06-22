@@ -10,7 +10,7 @@ using Ext = PDFPatcher.Constants.FileExtensions;
 
 namespace PDFPatcher.Processor
 {
-	class PdfPageExtractor
+	static class PdfPageExtractor
 	{
 		internal static void ExtractPages(ExtractPageOptions options, string sourceFile, string targetFile, PdfReader pdf) {
 			var pn = pdf.NumberOfPages;
@@ -32,7 +32,7 @@ namespace PDFPatcher.Processor
 			}
 		}
 
-		private static void SeparateByPageNumber(ExtractPageOptions options, string sourceFile, string targetFile, ref PdfReader pdf) {
+		static void SeparateByPageNumber(ExtractPageOptions options, string sourceFile, string targetFile, ref PdfReader pdf) {
 			var c = 1;
 			var pn = pdf.NumberOfPages;
 			if (pn <= options.SeparateByPage) {
@@ -61,7 +61,7 @@ namespace PDFPatcher.Processor
 			}
 		}
 
-		private static void SeparateByPageRanges(ExtractPageOptions options, string sourceFile, string targetFile, ref PdfReader pdf) {
+		static void SeparateByPageRanges(ExtractPageOptions options, string sourceFile, string targetFile, ref PdfReader pdf) {
 			var rl = options.PageRanges.Split(';', '；');
 			var pn = pdf.NumberOfPages;
 			var i = 1;
@@ -88,7 +88,7 @@ namespace PDFPatcher.Processor
 			}
 		}
 
-		private static void SeparateByBookmarks(ExtractPageOptions options, string sourceFile, string targetFile, ref PdfReader pdf) {
+		static void SeparateByBookmarks(ExtractPageOptions options, string sourceFile, string targetFile, ref PdfReader pdf) {
 			var n = pdf.NumberOfPages;
 			Tracker.TraceMessage("导出文档书签。");
 			pdf.ConsolidateNamedDestinations();
@@ -129,7 +129,6 @@ namespace PDFPatcher.Processor
 			var fn = Path.GetFileNameWithoutExtension(targetFile);
 			for (int i = 0; i < l.Count; i++) {
 				int s = l[i].Key, e = i < l.Count - 1 ? l[i + 1].Key - 1 : n;
-				//var pr = String.Concat (s.ToText (), "-", e.ToText ());
 				pdf = PdfHelper.OpenPdfFile(sourceFile, AppContext.LoadPartialPdfFile, false);
 				var tf = FileHelper.CombinePath(dn, String.Concat(
 					fn, Path.DirectorySeparatorChar,
@@ -143,7 +142,7 @@ namespace PDFPatcher.Processor
 
 		}
 
-		private static void ExtractPages(ExtractPageOptions options, string sourceFile, FilePath targetFile, PdfReader pdf, PageRangeCollection ranges) {
+		static void ExtractPages(ExtractPageOptions options, string sourceFile, FilePath targetFile, PdfReader pdf, PageRangeCollection ranges) {
 			Tracker.TraceMessage(Tracker.Category.OutputFile, targetFile);
 			if (FileHelper.ComparePath(sourceFile, targetFile)) {
 				Tracker.TraceMessage(Tracker.Category.Error, "输入文件和输出文件不能相同。");
@@ -156,7 +155,7 @@ namespace PDFPatcher.Processor
 			var excludeRanges = PageRangeCollection.Parse(options.ExcludePageRanges, 1, pdf.NumberOfPages, false);
 			targetFile.CreateContainingDirectory();
 
-			using (Stream s = new FileStream(targetFile, FileMode.Create)) {
+			using (var s = new FileStream(targetFile, FileMode.Create)) {
 				var pages = new int[ranges.TotalPages];
 				var remapper = new int[pdf.NumberOfPages + 1];
 				int i = 0;
@@ -182,7 +181,7 @@ namespace PDFPatcher.Processor
 					Tracker.TraceMessage("导出原文档书签。");
 					pdf.ConsolidateNamedDestinations();
 					bm = OutlineManager.GetBookmark(pdf, new UnitConverter() { Unit = Constants.Units.Point });
-					if (bm != null && bm.HasChildNodes) {
+					if (bm?.HasChildNodes == true) {
 						var processors = new IInfoDocProcessor[]
 							{
 								new GotoDestinationProcessor () {
@@ -208,6 +207,10 @@ namespace PDFPatcher.Processor
 				}
 				w.Writer.Info.Put(PdfName.PRODUCER, new PdfString(String.Concat(Application.ProductName, " ", Application.ProductVersion)));
 				Tracker.TraceMessage("保存文件：" + targetFile);
+				if (options.EnableFullCompression) {
+					pdf.RemoveUnusedObjects();
+					w.SetFullCompression();
+				}
 				w.Close();
 				//Document doc = new Document ();
 				//PdfSmartCopy w = new PdfSmartCopy (doc, s);
@@ -227,11 +230,11 @@ namespace PDFPatcher.Processor
 				//}
 				//doc.Close ();
 				//w.Close ();
-				Tracker.TraceMessage(Tracker.Category.Alert, "成功提取文件内容到 <<" + targetFile + ">>。");
 			}
+			Tracker.TraceMessage(Tracker.Category.Alert, "成功提取文件内容到 <<" + targetFile + ">>。");
 		}
 
-		private static string RewriteTargetFileName(string sourceFile, string targetFile, PdfReader pdf) {
+		static string RewriteTargetFileName(string sourceFile, string targetFile, PdfReader pdf) {
 			DocInfoExporter.RewriteDocInfoWithEncoding(pdf, AppContext.Encodings.DocInfoEncoding);
 			targetFile = Worker.ReplaceTargetFileNameMacros(sourceFile, targetFile, pdf);
 			targetFile = FileHelper.MakePathRootedAndWithExtension(targetFile, sourceFile, Ext.Pdf, true);
