@@ -197,6 +197,7 @@ namespace PDFPatcher.Processor
 					OutlineManager.KillOutline(pdf);
 				}
 				pdf.SelectPages(pages);
+				pdf.Catalog.Remove(PdfName.PAGELABELS);
 				if (options.KeepDocumentProperties == false) {
 					pdf.Trailer.Remove(PdfName.INFO);
 					pdf.Catalog.Remove(PdfName.METADATA);
