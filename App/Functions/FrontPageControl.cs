@@ -19,19 +19,19 @@ namespace PDFPatcher
 		bool ITabContent.CanClose => false;
 
 		public override void ExecuteCommand(string commandName, params string[] parameters) {
-			if (commandName == Commands.Open) {
-				var n = AppContext.MainForm.ShowPdfFileDialog();
-				if (n != null) {
-					AppContext.MainForm.OpenFileWithEditor(n);
-				}
-				return;
-			}
-			if (commandName == Commands.CleanUpInexistentFiles) {
-				AppContext.CleanUpInexistentFiles(AppContext.Recent.SourcePdfFiles);
-				AppContext.CleanUpInexistentFiles(AppContext.Recent.InfoDocuments);
-				AppContext.CleanUpInexistentFolders(AppContext.Recent.Folders);
-				RefreshContent();
-				return;
+			switch (commandName) {
+				case Commands.Open: 
+					var n = AppContext.MainForm.ShowPdfFileDialog();
+					if (n != null) {
+						AppContext.MainForm.OpenFileWithEditor(n);
+					}
+					return;
+				case Commands.CleanUpInexistentFiles:
+					AppContext.CleanUpInexistentFiles(AppContext.Recent.SourcePdfFiles);
+					AppContext.CleanUpInexistentFiles(AppContext.Recent.InfoDocuments);
+					AppContext.CleanUpInexistentFolders(AppContext.Recent.Folders);
+					RefreshContent();
+					return;
 			}
 			base.ExecuteCommand(commandName, parameters);
 		}
@@ -40,7 +40,7 @@ namespace PDFPatcher
 			InitializeComponent();
 			Text = "主页";
 			RefreshContent();
-			RecentFileItemClicked = (s, args) => { AppContext.MainForm.OpenFileWithEditor(args.ClickedItem.ToolTipText); };
+			RecentFileItemClicked = (s, args) => AppContext.MainForm.OpenFileWithEditor(args.ClickedItem.ToolTipText);
 			AllowDrop = true;
 		}
 
@@ -68,27 +68,29 @@ namespace PDFPatcher
 			base.SetupCommand(item);
 		}
 
-		private void RefreshContent() {
+		void RefreshContent() {
+			var s = FormHelper.GetDpiScale(this);
 			_FrontPageBox.Text = __FrontPagePattern
-						 .Replace(Properties.Resources.FrontPage, @"<div><a href=""func:$2""><img src=""res:$1"" />$3</a></div>")
+						 .Replace(Properties.Resources.FrontPage, $@"<div><a href=""func:$2""><img src=""res:$1"" width=""{s * 16}px"" />$3</a></div>")
+						 .Replace("$sideBarWidth", (s * 180).ToText() + "px")
 						 .Replace("$appName", Constants.AppName)
-						 .Replace("$AppHomePage", Constants.AppHomePage)
+						 .Replace("$appHomePage", Constants.AppHomePage)
 						 .Replace("<li></li>", GetLastFileList());
 		}
 
-		private string GetLastFileList() {
+		string GetLastFileList() {
 			var i = 0;
-			return String.Concat(AppContext.Recent.SourcePdfFiles.ConvertAll((s) => FileHelper.IsPathValid(s) && System.IO.File.Exists(s)
+			return String.Concat(AppContext.Recent.SourcePdfFiles.ConvertAll((s) => FileHelper.IsPathValid(s) && new FilePath(s).ExistsFile
 				  ? String.Concat(@"<li><a href=""recent:", i++, "\">", SubstringAfter(s, '\\'), "</a></li>")
 				  : String.Concat(@"<li id=""", i++, "\">", SubstringAfter(s, '\\'), "</li>")));
 		}
 
-		private void _FrontPageBox_LinkClicked(object sender, HtmlLinkClickedEventArgs e) {
+		void _FrontPageBox_LinkClicked(object sender, HtmlLinkClickedEventArgs e) {
 			HandleLinkClicked(e.Link);
 			e.Handled = true;
 		}
 
-		private void _FrontPageBox_ImageLoad(object sender, HtmlImageLoadEventArgs e) {
+		void _FrontPageBox_ImageLoad(object sender, HtmlImageLoadEventArgs e) {
 			LoadResourceImage(e);
 		}
 
