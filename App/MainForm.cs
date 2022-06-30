@@ -219,11 +219,12 @@ namespace PDFPatcher
 			_MainMenu.ScaleIcons(16);
 			Text = Constants.AppName + " [" + Application.ProductVersion + "]";
 			MinimumSize = Size;
-			StartPosition = FormStartPosition.CenterScreen;
 			AllowDrop = true;
 			DragEnter += (s, args) => args.FeedbackDragFileOver(Constants.FileExtensions.Pdf);
 			DragDrop += (s, args) => OpenFiles(args.DropFileOver(Constants.FileExtensions.Pdf));
+			FormClosed += MainForm_FormClosed;
 
+			AppContext.WindowStatus.Position(this);
 			SetupCustomizeToolbar();
 			if (_GeneralToolbar.Visible = AppContext.Toolbar.ShowGeneralToolbar) {
 				ScaleToolbar();

@@ -729,7 +729,6 @@
 			this.Margin = new System.Windows.Forms.Padding(0, 1, 0, 1);
 			this.Name = "MainForm";
 			this.Text = "PDF 补丁丁";
-			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
 			this._MainMenu.ResumeLayout(false);
 			this._MainMenu.PerformLayout();
 			this.statusStrip1.ResumeLayout(false);

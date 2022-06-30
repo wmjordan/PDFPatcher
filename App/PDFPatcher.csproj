@@ -142,6 +142,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Options\ImageExtracterOptions.cs" />
+    <Compile Include="Options\WindowStatus.cs" />
     <Compile Include="Processor\ContentProcessors\RemoveFormProcessor.cs" />
     <Compile Include="Processor\ContentProcessors\RemoveEmptyCommandProcessor.cs" />
     <Compile Include="Processor\ContentProcessors\RemoveWrappedCommandProcessor.cs" />

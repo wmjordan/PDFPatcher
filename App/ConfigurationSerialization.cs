@@ -45,13 +45,12 @@ namespace PDFPatcher
 		public OcrOptions OcrOptions { get; set; }
 		[XmlElement("工具栏设置")]
 		public ToolbarOptions ToolbarOptions { get; set; }
+		[XmlElement("窗口设置")]
+		public WindowStatus WindowStatus { get; set; }
 
 		[JsonField("最近使用的文档")]
 		[JsonInclude]
 		[JsonSerializable]
 		internal AppContext.RecentItems Recent { get; set; }
-
-		public ConfigurationSerialization() {
-		}
 	}
 }

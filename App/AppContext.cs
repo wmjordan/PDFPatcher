@@ -46,6 +46,7 @@ namespace PDFPatcher
 			ExtractPage = new ExtractPageOptions();
 			Ocr = new OcrOptions();
 			Toolbar = new ToolbarOptions();
+			WindowStatus = new WindowStatus();
 			Recent = new RecentItems();
 		}
 		public static bool SaveAppSettings { get; set; }
@@ -98,6 +99,8 @@ namespace PDFPatcher
 		public static OcrOptions Ocr { get; internal set; }
 		///<summary>获取或指定自定义工具栏的项目。</summary>
 		public static ToolbarOptions Toolbar { get; internal set; }
+		///<summary>获取或指定窗口状态。</summary>
+		public static WindowStatus WindowStatus { get; internal set; }
 
 		public static RecentItems Recent { get; internal set; }
 
@@ -227,6 +230,9 @@ namespace PDFPatcher
 			if (conf.ToolbarOptions != null) {
 				Toolbar = conf.ToolbarOptions;
 			}
+			if (conf.WindowStatus != null) {
+				WindowStatus = conf.WindowStatus;
+			}
 			return true;
 		}
 
@@ -263,6 +269,7 @@ namespace PDFPatcher
 					ExtractPageOptions = ExtractPage,
 					OcrOptions = Ocr,
 					ToolbarOptions = Toolbar,
+					WindowStatus = new WindowStatus(MainForm),
 					Recent = saveHistoryFileList ? Recent : null
 				}
 				: new ConfigurationSerialization { SaveAppSettings = false };
