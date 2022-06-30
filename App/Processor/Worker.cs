@@ -886,6 +886,10 @@ namespace PDFPatcher.Processor
 				Tracker.TraceMessage(Tracker.Category.Error, "信息文件路径无效。");
 				return;
 			}
+			if (FileHelper.HasExtension(infoFile, Ext.Xml) == false) {
+				Tracker.TraceMessage(Tracker.Category.Error, "信息文件不是 XML 文件，只有扩展名为 XML 的识别结果文件才能写入 PDF 文档。");
+				return;
+			}
 			Tracker.TraceMessage(Tracker.Category.InputFile, sourceFile);
 			Tracker.TraceMessage(Tracker.Category.OutputFile, targetFile);
 			if (FileHelper.ComparePath(sourceFile, targetFile)) {

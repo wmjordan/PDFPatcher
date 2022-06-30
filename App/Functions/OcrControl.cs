@@ -24,7 +24,7 @@ namespace PDFPatcher.Functions
 		}
 
 		void OnLoad() {
-			_BookmarkControl.FileDialog.Filter = Constants.FileExtensions.TxtFilter + "|" + Constants.FileExtensions.XmlFilter + "|" + Constants.FileExtensions.XmlOrTxtFilter;
+			_BookmarkControl.FileDialog.Filter = Constants.FileExtensions.XmlFilter + "|" + Constants.FileExtensions.TxtFilter + "|" + Constants.FileExtensions.XmlOrTxtFilter;
 
 			AppContext.MainForm.SetTooltip(_SourceFileControl.FileList, "需要识别文本的 PDF 源文件路径");
 			AppContext.MainForm.SetTooltip(_BookmarkControl.FileList, "指定识别文本后生成的信息文件或文本文件路径，如路径为空则不输出文件");
@@ -71,8 +71,6 @@ namespace PDFPatcher.Functions
 					item.ToolTipText = "将识别结果写入 PDF 文件";
 					EnableCommand(item, true, true);
 					break;
-				default:
-					break;
 			}
 			base.SetupCommand(item);
 		}
@@ -82,8 +80,6 @@ namespace PDFPatcher.Functions
 				case Commands.SaveBookmark:
 					_ImportOcrResultButton.PerformClick();
 					return;
-				default:
-					break;
 			}
 			base.ExecuteCommand(commandName, parameters);
 		}
@@ -108,7 +104,7 @@ namespace PDFPatcher.Functions
 			_OutputOriginalOcrResultBox.Checked = _options.OutputOriginalOcrResult;
 			_PrintOcrResultBox.Checked = _options.PrintOcrResult;
 
-			_WritingDirectionBox.SelectedIndex = (int)_options.WritingDirection;
+			_WritingDirectionBox.Select((int)_options.WritingDirection);
 			_QuantitiveFactorBox.SetValue(_options.QuantitativeFactor);
 		}
 
@@ -151,7 +147,7 @@ namespace PDFPatcher.Functions
 
 			var worker = AppContext.MainForm.GetWorker();
 			if (sender != _ImportOcrResultButton) {
-				worker.DoWork += new DoWorkEventHandler(OcrExport);
+				worker.DoWork += OcrExport;
 				worker.RunWorkerAsync(new object[] {
 					AppContext.SourceFiles,
 					AppContext.BookmarkFile,
@@ -159,13 +155,21 @@ namespace PDFPatcher.Functions
 				});
 			}
 			else {
-				worker.DoWork += new DoWorkEventHandler(ImportOcr);
+				worker.DoWork += ImportOcr;
 				worker.RunWorkerAsync(new object[] {
 					AppContext.SourceFiles,
 					AppContext.BookmarkFile,
 					AppContext.TargetFile
 				});
 			}
+			worker.RunWorkerCompleted += Worker_Completed;
+		}
+
+		void Worker_Completed(object sender, RunWorkerCompletedEventArgs e) {
+			var worker = (BackgroundWorker)sender;
+			worker.RunWorkerCompleted -= Worker_Completed;
+			worker.DoWork -= OcrExport;
+			worker.DoWork -= ImportOcr;
 		}
 
 		void SyncOptions() {
@@ -174,7 +178,7 @@ namespace PDFPatcher.Functions
 			_options.DetectColumns = _DetectColumnsBox.Checked;
 			_options.DetectContentPunctuations = _DetectContentPunctuationsBox.Checked;
 			_options.PageRanges = _PageRangeBox.Text;
-			_options.OcrLangID = (int)ValueHelper.MapValue(_OcrLangBox.Text, Constants.Ocr.LangNames, Constants.Ocr.LangIDs, -1);
+			_options.OcrLangID = ValueHelper.MapValue(_OcrLangBox.Text, Constants.Ocr.LangNames, Constants.Ocr.LangIDs, -1);
 			_options.OrientPage = _OrientBox.Checked;
 			_options.OutputOriginalOcrResult = _OutputOriginalOcrResultBox.Checked;
 			_options.QuantitativeFactor = (float)_QuantitiveFactorBox.Value;
@@ -241,6 +245,5 @@ namespace PDFPatcher.Functions
 					= !_OutputOriginalOcrResultBox.Checked;
 			}
 		}
-
 	}
 }
