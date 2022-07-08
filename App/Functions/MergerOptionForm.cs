@@ -24,6 +24,7 @@ namespace PDFPatcher.Functions
 			_AutoBookmarkTitleBox.CheckedChanged += CheckBoxChanged;
 			_KeepSourcePdfBookmarkBox.CheckedChanged += CheckBoxChanged;
 			_UnifyOrientationBox.CheckedChanged += CheckBoxChanged;
+			_SubFoldersBeforeFilesBox.Checked = true;
 			_PageSizeBox.Items.AddRange(Array.FindAll(Processor.PdfDocumentCreator.PaperSizes, i => i.SpecialSize < SpecialPaperSize.AsSpecificPage));
 			_ImageHAlignBox.Items.Add("水平居中");
 			_ImageHAlignBox.Items.Add("左对齐");
@@ -70,7 +71,17 @@ namespace PDFPatcher.Functions
 			_RemoveOrphanBoomarksBox.Checked = options.RemoveOrphanBookmarks;
 			_ResizePdfPagesBox.Checked = ps.ScaleContent == false;
 			_RightMarginBox.SetValue(ps.Margins.Right / Constants.Units.CmToPoint);
-			_SubFoldersBeforeFilesBox.Checked = options.SubFolderBeforeFiles;
+			switch (options.SubFolder) {
+				case MergerOptions.SubFolderPosition.BeforeFiles:
+					_SubFoldersBeforeFilesBox.Checked = true;
+					break;
+				case MergerOptions.SubFolderPosition.WithFiles:
+					_SubFolderWithFilesBox.Checked = true;
+					break;
+				case MergerOptions.SubFolderPosition.Exclude:
+					_ExcludeSubFoldersBox.Checked = true;
+					break;
+			}
 			_ScalePdfPagesBox.Checked = ps.ScaleContent;
 			_TopMarginBox.SetValue(ps.Margins.Top / Constants.Units.CmToPoint);
 			_WidthBox.SetValue(ps.PaperSize.Width / Constants.Units.CmToPoint);
@@ -89,12 +100,6 @@ namespace PDFPatcher.Functions
 			_ViewerSettingsEditor.Options = options.ViewerPreferences;
 			_PageLabelEditor.Labels = options.PageLabels;
 
-			//if (options.CompressionLevel >= 0 && options.CompressionLevel <= 9) {
-			//    _CompressionLevelBox.SelectedIndex = 10 - options.CompressionLevel;
-			//}
-			//else {
-			//    _CompressionLevelBox.SelectedIndex = 0;
-			//}
 			_uiLockDown = false;
 		}
 
@@ -118,7 +123,9 @@ namespace PDFPatcher.Functions
 			ps.HorizontalAlign = (Model.HorizontalAlignment)_ImageHAlignBox.SelectedIndex;
 			ps.VerticalAlign = (Model.VerticalAlignment)_ImageVAlignBox.SelectedIndex;
 			ps.ScaleContent = _ScalePdfPagesBox.Checked;
-			option.SubFolderBeforeFiles = _SubFoldersBeforeFilesBox.Checked;
+			option.SubFolder = _SubFoldersBeforeFilesBox.Checked ? MergerOptions.SubFolderPosition.BeforeFiles
+				: _SubFolderWithFilesBox.Checked ? MergerOptions.SubFolderPosition.WithFiles
+				: MergerOptions.SubFolderPosition.Exclude;
 
 			option.UnifyPageOrientation = _UnifyOrientationBox.Checked;
 			option.RotateVerticalPages = _SourceOrientationBox.SelectedIndex == 1;
@@ -130,12 +137,6 @@ namespace PDFPatcher.Functions
 			option.RecompressWithJbig2 = _RecompressImageBox.Checked;
 			option.FullCompression = _FullCompressionBox.Checked;
 			option.Deduplicate = _DeduplicateBox.Checked;
-
-			//if (_CompressionLevelBox.SelectedIndex == 0) {
-			//    option.CompressionLevel = -1;
-			//}				//else {
-			//    option.CompressionLevel = 10 - _CompressionLevelBox.SelectedIndex;
-			//}
 		}
 
 		float CmToPoint(NumericUpDown box) {

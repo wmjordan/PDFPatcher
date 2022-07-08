@@ -18,7 +18,6 @@ namespace PDFPatcher
 			NumericAwareSort = true;
 			RemoveOrphanBookmarks = true;
 			PageSettings = new PageBoxSettings();
-			SubFolderBeforeFiles = true;
 		}
 
 		[XmlElement("页面布局")]
@@ -65,10 +64,6 @@ namespace PDFPatcher
 		[XmlAttribute("优化黑白图片压缩算法")]
 		public bool RecompressWithJbig2 { get; set; }
 
-		//[XmlAttribute ("压缩比")]
-		//[DefaultValue (-1)]
-		//public int CompressionLevel { get; set; }
-
 		///<summary>获取或指定是否为黑白图片自动设为透明（在阅读器中不能用图像工具选中）。</summary>
 		[XmlAttribute("黑白图片自动透明")]
 		public bool AutoMaskBWImages { get; set; }
@@ -85,9 +80,9 @@ namespace PDFPatcher
 		public bool CajSort { get; set; }
 
 		///<summary>获取或指定添加目录时是否将子目录排列在文件前面。</summary>
-		[XmlAttribute("子目录排在文件前")]
-		[DefaultValue(true)]
-		public bool SubFolderBeforeFiles { get; set; }
+		[XmlAttribute("子目录")]
+		[DefaultValue(SubFolderPosition.BeforeFiles)]
+		public SubFolderPosition SubFolder { get; set; }
 		#endregion
 
 		#region 自动生成书签选项
@@ -112,6 +107,11 @@ namespace PDFPatcher
 		public bool RemoveOrphanBookmarks { get; set; }
 		#endregion
 
-
+		public enum SubFolderPosition
+		{
+			BeforeFiles,
+			WithFiles,
+			Exclude
+		}
 	}
 }
