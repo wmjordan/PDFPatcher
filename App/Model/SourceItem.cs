@@ -347,12 +347,17 @@ namespace PDFPatcher.Model
 
 				var p = FilePath.ToString();
 				var l = Items;
-				if (AppContext.Merger.SubFolderBeforeFiles) {
-					AddSubDirectories(p, l);
-					AddFiles(p, l);
-				}
-				else {
-					AddSubDirectoriesAndFiles(p, l);
+				switch (AppContext.Merger.SubFolder) {
+					case MergerOptions.SubFolderPosition.BeforeFiles:
+						AddSubDirectories(p, l);
+						AddFiles(p, l);
+						break;
+					case MergerOptions.SubFolderPosition.WithFiles:
+						AddSubDirectoriesAndFiles(p, l);
+						break;
+					case MergerOptions.SubFolderPosition.Exclude:
+						AddFiles(p, l);
+						break;
 				}
 			}
 
