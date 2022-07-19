@@ -125,7 +125,7 @@ namespace PDFPatcher.Processor
 
 		void ExportPdfDictionaryItem(KeyValuePair<PdfName, PdfObject> item, XmlWriter writer) {
 			var key = PdfHelper.DecodeKeyName(item.Key);
-			var val = item.Value.ToString();
+			var text = item.Value.ToString();
 			var value = item.Value as PdfObject;
 			try {
 				writer.WriteStartElement(XmlConvert.VerifyNCName(key));
@@ -136,7 +136,7 @@ namespace PDFPatcher.Processor
 			}
 			_exportPath.Add(key);
 			if (value == null) {
-				writer.WriteAttributeString(PdfHelper.GetTypeName(value.Type), val);
+				writer.WriteAttributeString(PdfHelper.GetTypeName(value.Type), text);
 				goto EndElement;
 			}
 			switch (value.Type) {
@@ -146,19 +146,19 @@ namespace PDFPatcher.Processor
 						ExportColorSpaceContent(writer, a);
 					}
 					else {
-						val = PdfHelper.GetArrayString(a);
 						ExportArray(a.ArrayList, writer);
 					}
 					break;
 				case PdfObject.STRING:
-					val = (value as PdfString).ToUnicodeString();
-					if (val.StartsWith("<?xml")) {
+					text = (value as PdfString).ToUnicodeString();
+					if (text.StartsWith("<?xml")) {
 						writer.WriteStartElement(Constants.ContentPrefix, Constants.Content.Value, Constants.ContentNamespace);
-						writer.WriteCData(val);
+						writer.WriteCData(text);
 						writer.WriteEndElement();
 					}
-					else
-						writer.WriteAttributeString(PdfHelper.GetTypeName(value.Type), PdfHelper.GetValidXmlString(val));
+					else {
+						writer.WriteAttributeString(PdfHelper.GetTypeName(value.Type), PdfHelper.GetValidXmlString(text));
+					}
 					break;
 				case PdfObject.INDIRECT:
 					writer.WriteAttributeString(Constants.Content.Type, Constants.ContentNamespace, PdfHelper.GetTypeName(PdfObject.INDIRECT));
@@ -168,7 +168,7 @@ namespace PDFPatcher.Processor
 					ExportPdfDictionary(writer, value as PdfDictionary);
 					break;
 				default:
-					writer.WriteAttributeString(PdfHelper.GetTypeName(value.Type), val);
+					writer.WriteAttributeString(PdfHelper.GetTypeName(value.Type), text);
 					break;
 			}
 		EndElement:
@@ -570,11 +570,10 @@ namespace PDFPatcher.Processor
 			protected override void DisplayPdfString(PdfString str) {
 				var gs = CurrentGraphicState;
 				var font = gs.Font;
-				var chars = font.DecodeText(str).ToCharArray();
 				float totalWidth = 0;
-				foreach (var c in chars) {
+				foreach (var c in font.DecodeText(str)) {
 					float w = font.GetWidth(c) / 1000.0f;
-					float wordSpacing = (c == ' ' ? gs.WordSpacing : 0f);
+					float wordSpacing = c == ' ' ? gs.WordSpacing : 0f;
 					totalWidth += (w * gs.FontSize + gs.CharacterSpacing + wordSpacing) * gs.HorizontalScaling;
 				}
 
@@ -684,7 +683,8 @@ namespace PDFPatcher.Processor
 						Text = t,
 						Size = CurrentGraphicState.FontSize * TextMatrix[Matrix.I11],
 						Region = new Bound(TextMatrix[Matrix.I31], TextMatrix[Matrix.I32], TextMatrix[Matrix.I31] + _textWidth, 0),
-						Font = CurrentGraphicState.Font
+						// note 不要设置该属性，否则可能在文档具有大量字体时占用过高的内存
+						//Font = CurrentGraphicState.Font
 					});
 				}
 			}

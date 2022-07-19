@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using iTextSharp.text.error_messages;
 using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.parser;
+using PDFPatcher.Model;
 
 namespace PDFPatcher.Processor
 {
@@ -12,13 +13,13 @@ namespace PDFPatcher.Processor
 		readonly Stack<Model.GraphicsState> gsStack = new Stack<Model.GraphicsState>();
 		readonly Stack<MarkedContentInfo> markedContentStack = new Stack<MarkedContentInfo>();
 		readonly IDictionary<string, IContentOperator> operators = new Dictionary<string, IContentOperator>();
+		readonly Dictionary<PdfName, IXObjectDoHandler> _XObjectDoHandlers = new Dictionary<PdfName, IXObjectDoHandler>();
+		readonly Dictionary<int, FontInfoCache> _FontCache = new Dictionary<int, FontInfoCache>();
+		readonly Dictionary<int, string> _FontNameCache = new Dictionary<int, string>();
 		//IRenderListener renderListener;
 		ResourceDictionary _Resources;
 		Matrix _TextLineMatrix;
 		Matrix _TextMatrix;
-		readonly Dictionary<PdfName, IXObjectDoHandler> _XObjectDoHandlers = new Dictionary<PdfName, IXObjectDoHandler>();
-		readonly Dictionary<int, WeakReference> _FontCache = new Dictionary<int, WeakReference>();
-		readonly Dictionary<int, string> _FontNameCache = new Dictionary<int, string>();
 		public readonly static IContentOperator NopOperator = new IgnoreOperatorContentOperator();
 
 		internal PdfContentStreamProcessor() {
@@ -33,7 +34,7 @@ namespace PDFPatcher.Processor
 		protected ResourceDictionary Resource => _Resources;
 
 		protected void ApplyTextAdjust(float tj) {
-			float adjustBy = ((-tj / 1000f) * CurrentGraphicState.FontSize) * CurrentGraphicState.HorizontalScaling;
+			float adjustBy = -tj / 1000f * CurrentGraphicState.FontSize * CurrentGraphicState.HorizontalScaling;
 			_TextMatrix = new Matrix(adjustBy, 0f).Multiply(_TextMatrix);
 		}
 
@@ -48,17 +49,24 @@ namespace PDFPatcher.Processor
 		private void BeginText() {
 			//this.renderListener.BeginTextBlock ();
 		}
-		private Model.FontInfo GetFont(PRIndirectReference fontRef) {
-			WeakReference r;
-			if (_FontCache.TryGetValue(fontRef.Number, out r)) {
-				return (Model.FontInfo)(r.Target ?? (r.Target = new Model.FontInfo(fontRef)));
+		private FontInfo GetFont(PRIndirectReference fontRef) {
+			if (_FontCache.TryGetValue(fontRef.Number, out var r)) {
+				r.Access++;
+				return r.Info;
 			}
-			else {
-				var f = new Model.FontInfo(fontRef);
-				_FontCache.Add(fontRef.Number, new WeakReference(f));
-				_FontNameCache.Add(fontRef.Number, f.FontName);
-				return f;
+			var f = new FontInfo(fontRef);
+			_FontCache.Add(fontRef.Number, new FontInfoCache(f));
+			_FontNameCache.Add(fontRef.Number, f.FontName);
+			if (_FontCache.Count > 53) {
+				var l = new List<KeyValuePair<int, FontInfoCache>>(_FontCache);
+				l.Sort((x, y) => x.Value.Access - y.Value.Access);
+				for (int i = 0; i < 10; i++) {
+					int k = l[i].Key;
+					_FontCache.Remove(k);
+					_FontNameCache.Remove(k);
+				}
 			}
+			return f;
 		}
 
 		protected virtual void DisplayPdfString(PdfString str) {
@@ -158,6 +166,7 @@ namespace PDFPatcher.Processor
 					InvokeOperator(oper, operands);
 				}
 			}
+			tokenizer.Close();
 			_Resources.Pop();
 		}
 
@@ -166,7 +175,7 @@ namespace PDFPatcher.Processor
 				operators.Remove(operatorString);
 				return null;
 			}
-			return (operators[operatorString] = oper);
+			return operators[operatorString] = oper;
 		}
 
 		internal IXObjectDoHandler RegisterXObjectDoHandler(PdfName xobjectSubType, IXObjectDoHandler handler) {
@@ -449,17 +458,16 @@ namespace PDFPatcher.Processor
 				float size = ((PdfNumber)operands[1]).FloatValue;
 				var f = processor._Resources.GetAsDict(PdfName.FONT).Get(fontResourceName);
 				var g = processor.CurrentGraphicState;
-				var fref = f as PRIndirectReference;
-				if (fref == null) {
-					Tracker.DebugMessage("字体（" + fontResourceName + "）不为引用。");
-					var fd = f as PdfDictionary;
-					g.FontID = 0;
-					g.Font = new Model.FontInfo(fd, 0);
-				}
-				else {
+				if (f is PRIndirectReference fref) {
 					var font = processor.GetFont(fref);
 					g.FontID = fref.Number;
 					g.Font = font;
+				}
+				else {
+					Tracker.DebugMessage("字体（" + fontResourceName + "）不为引用。");
+					var fd = f as PdfDictionary;
+					g.FontID = 0;
+					g.Font = new FontInfo(fd, 0);
 				}
 				g.FontSize = size;
 			}
@@ -717,9 +725,9 @@ namespace PDFPatcher.Processor
 			 * @throws IOException if anything goes wring with the parsing
 			 * @throws InlineImageParseException if parsing of the inline image failed due to issues specific to inline image processing
 			 */
-			public static PDFPatcher.Model.PdfImageData ParseInlineImage(PdfContentParser ps, PdfDictionary colorSpaceDic) {
+			public static PdfImageData ParseInlineImage(PdfContentParser ps, PdfDictionary colorSpaceDic) {
 				var d = ParseInlineImageDictionary(ps);
-				return new PDFPatcher.Model.PdfImageData(d, ParseInlineImageSamples(d, colorSpaceDic, ps));
+				return new PdfImageData(d, ParseInlineImageSamples(d, colorSpaceDic, ps));
 			}
 
 			/**
@@ -759,14 +767,12 @@ namespace PDFPatcher.Processor
 			 */
 			private static PdfObject GetAlternateValue(PdfName key, PdfObject value) {
 				if (key == PdfName.FILTER) {
-					if (value is PdfName) {
-						PdfName altValue;
-						inlineImageFilterAbbreviationMap.TryGetValue((PdfName)value, out altValue);
-						if (altValue != null)
-							return altValue;
+					if (value is PdfName pdfName
+						&& inlineImageFilterAbbreviationMap.TryGetValue(pdfName, out PdfName altValue)
+						&& altValue != null) {
+						return altValue;
 					}
-					else if (value is PdfArray) {
-						var array = ((PdfArray)value);
+					else if (value is PdfArray array) {
 						var altArray = new PdfArray();
 						int count = array.Size;
 						for (int i = 0; i < count; i++) {
@@ -776,11 +782,10 @@ namespace PDFPatcher.Processor
 					}
 				}
 				else if (key == PdfName.COLORSPACE) {
-					if (value is PdfName) {
-						PdfName altValue;
-						inlineImageColorSpaceAbbreviationMap.TryGetValue((PdfName)value, out altValue);
-						if (altValue != null)
-							return altValue;
+					if (value is PdfName pdfName
+						&& inlineImageColorSpaceAbbreviationMap.TryGetValue(pdfName, out PdfName altValue)
+						&& altValue != null) {
+						return altValue;
 					}
 				}
 
@@ -803,10 +808,8 @@ namespace PDFPatcher.Processor
 
 				if (colorSpaceDic != null) {
 					var colorSpace = colorSpaceDic.GetAsArray(colorSpaceName);
-					if (colorSpace != null) {
-						if (PdfName.INDEXED.Equals(colorSpace.GetAsName(0))) {
-							return 1;
-						}
+					if (colorSpace != null && PdfName.INDEXED.Equals(colorSpace.GetAsName(0))) {
+						return 1;
 					}
 				}
 
@@ -824,14 +827,9 @@ namespace PDFPatcher.Processor
 				var wObj = imageDictionary.GetAsNumber(PdfName.WIDTH);
 				var bpcObj = imageDictionary.GetAsNumber(PdfName.BITSPERCOMPONENT);
 				int cpp = GetComponentsPerPixel(imageDictionary.GetAsName(PdfName.COLORSPACE), colorSpaceDic);
-
 				int w = wObj.IntValue;
 				int bpc = bpcObj?.IntValue ?? 1;
-
-
-				int bytesPerRow = (w * bpc * cpp + 7) / 8;
-
-				return bytesPerRow;
+				return (w * bpc * cpp + 7) / 8;
 			}
 
 			/**
@@ -943,6 +941,16 @@ namespace PDFPatcher.Processor
 					}
 				}
 				throw new InlineImageParseException("Could not find image data or EI");
+			}
+		}
+
+		sealed class FontInfoCache
+		{
+			public readonly FontInfo Info;
+			public int Access;
+
+			public FontInfoCache(FontInfo info) {
+				Info = info;
 			}
 		}
 	}
