@@ -176,13 +176,30 @@ namespace PDFPatcher.Functions
 				ScrollToSelectedBookmarkLocation();
 			};
 			_CurrentPageBox.KeyUp += (s, args) => {
-				if (args.KeyCode != Keys.Enter) {
+				int d;
+				switch (args.KeyCode) {
+					case Keys.Enter:
+						d = 0;
+						break;
+					case Keys.Up:
+					case Keys.OemMinus:
+						d = -1;
+						break;
+					case Keys.Down:
+					case Keys.Add:
+						d = 1;
+						break;
+					case Keys.Home:
+						_ViewerBox.CurrentPageNumber = 1;
 					return;
+					case Keys.End:
+						_ViewerBox.CurrentPageNumber = -1;
+						return;
+					default:
+						return;
 				}
-				int p;
-				if (_CurrentPageBox.Text.TryParse(out p)) {
-					_ViewerBox.CurrentPageNumber = p;
-					_CurrentPageBox.Text = p.ToText();
+				if (_CurrentPageBox.Text.TryParse(out int p)) {
+					_ViewerBox.CurrentPageNumber = p + d;
 				}
 			};
 			_ViewerButton.DropDownOpening += (s, args) => {
@@ -210,17 +227,9 @@ namespace PDFPatcher.Functions
 				_ViewerBox.LiteralZoom = _ZoomBox.Text;
 			};
 			_ViewerBox.Enabled = false;
-			_ViewerBox.DocumentLoaded += (s, args) => {
-				_CurrentPageBox.ToolTipText = "文档共" + _ViewerBox.Document.PageCount + "页";
-			};
-			_ViewerBox.ZoomChanged += (s, args) => {
-				_ZoomBox.ToolTipText = "当前显示比例：" + (_ViewerBox.ZoomFactor * 100).ToInt32() + "%";
-			};
-			_ViewerBox.PageChanged += (s, args) => {
-				_CurrentPageBox.Text = _ViewerBox.CurrentPageNumber.ToText();
-				//var b = _ViewerBox.PageBound;
-				//_PageInfoBox.Text = string.Concat ("尺寸：", Math.Round (b.Width, 1).ToText (), " * ", Math.Round (b.Height, 1).ToText ());
-			};
+			_ViewerBox.DocumentLoaded += (s, args) => _CurrentPageBox.ToolTipText = "文档共" + _ViewerBox.Document.PageCount + "页\nHome：转到第一页\nEnd：转到最后一页";
+			_ViewerBox.ZoomChanged += (s, args) => _ZoomBox.ToolTipText = "当前显示比例：" + (_ViewerBox.ZoomFactor * 100).ToInt32() + "%";
+			_ViewerBox.PageChanged += (s, args) => _CurrentPageBox.Text = _ViewerBox.CurrentPageNumber.ToText();
 			//_ViewerBox.SelectionChanged += (s, args) =>
 			//{
 			//	var t = args.Selection.SelectedText;
