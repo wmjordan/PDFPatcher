@@ -363,7 +363,7 @@ namespace PDFPatcher.Processor.Imaging
 				case 4: pf = PixelFormat.Format4bppIndexed; break;
 				case 8:
 					switch (components) {
-						case 0:
+						case 0: // 兼容异常图片（github：#119）
 							Trace.WriteLine("Warning: Not enough bytes.");
 							goto case 1;
 						case 1:
