@@ -208,7 +208,7 @@ namespace PDFPatcher.Processor.Imaging
 			return decodedBytes;
 		}
 
-		private static void InvertBits(byte[] outBuf) {
+		static void InvertBits(byte[] outBuf) {
 			int len = outBuf.Length;
 			for (int t = 0; t < len; ++t) {
 				outBuf[t] ^= 0xff;
@@ -235,7 +235,7 @@ namespace PDFPatcher.Processor.Imaging
 			}
 		}
 
-		private void CreatePalette(FreeImageBitmap bmp) {
+		void CreatePalette(FreeImageBitmap bmp) {
 			//if (PaletteColorSpace == null) {
 			//	//todo++ 缺少色域信息的图片不一定是灰度图像
 			//	if (bmp.HasPalette) {
@@ -286,7 +286,7 @@ namespace PDFPatcher.Processor.Imaging
 			PaletteArray = pal.AsArray;
 		}
 
-		private static bool IsDecodeParamInverted(PdfDictionary data, bool blackIs1) {
+		static bool IsDecodeParamInverted(PdfDictionary data, bool blackIs1) {
 			var a = data.GetAsArray(PdfName.DECODE);
 			if (a?.Size == 2 && a[0].Type == PdfObject.NUMBER) {
 				blackIs1 = ((PdfNumber)a[0]).IntValue == (blackIs1 ? 0 : 1);
@@ -294,7 +294,7 @@ namespace PDFPatcher.Processor.Imaging
 			return blackIs1;
 		}
 
-		private static byte[] DecodeStreamContent(PdfImageData data, IList<PdfObject> filters) {
+		static byte[] DecodeStreamContent(PdfImageData data, IList<PdfObject> filters) {
 			var buffer = data.RawBytes;
 			if (filters.Count == 0) {
 				return buffer;
@@ -351,7 +351,7 @@ namespace PDFPatcher.Processor.Imaging
 			return buffer;
 		}
 
-		private static PixelFormat GetPixelFormat(int byteLength, ImageInfo info) {
+		static PixelFormat GetPixelFormat(int byteLength, ImageInfo info) {
 			var pf = PixelFormat.Undefined;
 			var components = byteLength / info.Width / info.Height;
 			switch (info.BitsPerComponent) {
@@ -363,6 +363,9 @@ namespace PDFPatcher.Processor.Imaging
 				case 4: pf = PixelFormat.Format4bppIndexed; break;
 				case 8:
 					switch (components) {
+						case 0:
+							Trace.WriteLine("Warning: Not enough bytes.");
+							goto case 1;
 						case 1:
 							pf = PixelFormat.Format8bppIndexed;
 							break;
@@ -402,7 +405,7 @@ namespace PDFPatcher.Processor.Imaging
 			return pf;
 		}
 
-		private static void ExportColorspace(PdfObject cs, ImageInfo info) {
+		static void ExportColorspace(PdfObject cs, ImageInfo info) {
 			if (cs == null) {
 				return;
 			}
