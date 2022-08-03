@@ -77,8 +77,14 @@ namespace PDFPatcher.Processor
 			}
 
 			if (EnclosingCommand.IsEndingCommand(o)) {
-				_commandStack.Pop();
-				_currentCommand = _commandStack.Count > 0 ? _commandStack.Peek() : null;
+				// 兼容结构异常的 PDF 文档（github: #121）
+				if (_commandStack.Count > 0) {
+					_commandStack.Pop();
+					_currentCommand = _commandStack.Count > 0 ? _commandStack.Peek() : null;
+				}
+				else {
+					_currentCommand = null;
+				}
 				return;
 			}
 			if (_currentCommand != null) {

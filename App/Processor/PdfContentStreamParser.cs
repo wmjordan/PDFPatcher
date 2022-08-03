@@ -378,7 +378,12 @@ namespace PDFPatcher.Processor
 		{
 			// Methods
 			public void Invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
-				processor.gsStack.Pop();
+				try {
+					processor.gsStack.Pop();
+				}
+				catch (InvalidOperationException) {
+					Tracker.DebugMessage("绘图状态堆栈为空。");
+				}
 			}
 		}
 
