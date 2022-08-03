@@ -422,7 +422,7 @@ namespace PDFPatcher.Common
 				stack[++p] = (char)(c + (i == 0 ? 26 : i));
 				value = --value / 26;
 			}
-			return new string(stack, 0, p);
+			return new string(stack, 0, ++p);
 		}
 		public static string ToHexBinString(this byte value, bool upperCaseHex) {
 			return HexBinByteToString.ToString(value, upperCaseHex);
