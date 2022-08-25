@@ -124,10 +124,7 @@ namespace PDFPatcher.Model
 				try {
 					var reader = Processor.PdfHelper.OpenPdfFile(path.ToString(), true, false);
 					var c = reader.NumberOfPages;
-					string r = null;
-					if (refresh) {
-						r = new PageRange(1, c).ToString();
-					}
+					string r = refresh ? new PageRange(1, c).ToString() : null;
 					var info = Processor.DocInfoExporter.RewriteDocInfoWithEncoding(reader, AppContext.Encodings.DocInfoEncoding);
 					reader.Close();
 					return new Pdf(path, r, c, info);
@@ -136,10 +133,10 @@ namespace PDFPatcher.Model
 					FormHelper.ErrorBox(String.Concat("找不到文件：“", path, "”。"));
 				}
 				catch (Exception) {
-					FormHelper.ErrorBox(String.Concat("打开 PDF 文件时“", path, "”出错。"));
+					FormHelper.ErrorBox(String.Concat("打开 PDF 文件“", path, "”时出错。"));
 					// ignore corrupted 
 				}
-				return null;
+				return Create();
 			}
 			if (path.HasExtension(Constants.FileExtensions.AllSupportedImageExtension)) {
 				return new Image(path);
@@ -155,7 +152,7 @@ namespace PDFPatcher.Model
 				//}
 			}
 			FormHelper.ErrorBox(String.Concat("不支持文件“", path, "”。"));
-			return null;
+			return Create();
 		}
 
 		internal string GetInfoFileName() {

@@ -30,9 +30,15 @@ namespace PDFPatcher.Processor
 
 		static void SerializeSourceItem(PdfInfoXmlDocument doc, BookmarkContainer container, SourceItem item, FilePath basePath) {
 			var e = doc.CreateBookmark(item.Bookmark ?? __EmptyBookmark);
-			e.SetValue(Constants.DestinationAttributes.Path, basePath.GetRelativePath(item.FilePath));
-			if (item.Type == SourceItem.ItemType.Pdf) {
-				e.SetValue(Constants.PageRange, ((SourceItem.Pdf)item).PageRanges);
+			switch (item.Type) {
+				case SourceItem.ItemType.Empty:
+					break;
+				case SourceItem.ItemType.Pdf:
+					e.SetValue(Constants.PageRange, ((SourceItem.Pdf)item).PageRanges);
+					goto default;
+				default:
+					e.SetValue(Constants.DestinationAttributes.Path, basePath.GetRelativePath(item.FilePath));
+					break;
 			}
 			container.AppendChild(e);
 			if (item.HasSubItems) {
@@ -62,7 +68,7 @@ namespace PDFPatcher.Processor
 		static void DeserializeSourceItem(List<SourceItem> list, BookmarkElement bookmark, FilePath basePath) {
 			var b = new BookmarkSettings(bookmark);
 			var p = bookmark.GetValue(Constants.DestinationAttributes.Path);
-			var s = SourceItem.Create(basePath.Combine(p), false);
+			var s = String.IsNullOrEmpty(p) ? SourceItem.Create() : SourceItem.Create(basePath.Combine(p), false);
 			if (b.Title.IsNullOrWhiteSpace() == false || b.IsOpened || b.IsBold || b.IsItalic || b.ForeColor.IsEmptyOrTransparent() == false) {
 				s.Bookmark = b;
 			}
