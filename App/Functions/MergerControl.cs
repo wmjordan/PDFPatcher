@@ -584,7 +584,9 @@ namespace PDFPatcher.Functions
 					}
 					foreach (var item in sl) {
 						if (item.Type == SourceItem.ItemType.Empty) {
-							continue;
+							if (String.IsNullOrEmpty(item.Bookmark?.Title) == false) {
+								sb.Append('\t').Append(item.Bookmark.Title).Append('\t').Append('-').AppendLine();
+							}
 						}
 						else if (item.Type == SourceItem.ItemType.Pdf) {
 							var pi = item as SourceItem.Pdf;
@@ -916,10 +918,11 @@ namespace PDFPatcher.Functions
 			if (item == null) {
 				return;
 			}
+			_ItemList.Focus();
 			AddItems(new SourceItem[] { item });
 		}
 
-		void AddItems(ICollection<SourceItem> items) {
+		void AddItems(SourceItem[] items) {
 			int i = _ItemList.GetLastSelectedIndex();
 			if (i == -1) {
 				i = _ItemList.FocusedItem?.Index ?? -1;
@@ -927,8 +930,7 @@ namespace PDFPatcher.Functions
 			if (i == -1) {
 				_itemsContainer.Items.AddRange(items);
 				_ItemList.Objects = _itemsContainer.Items;
-				_ItemList.SelectedObjects = new List<SourceItem>(items);
-				return;
+				goto SELECT;
 			}
 			var m = _ItemList.GetModelObject(i) as SourceItem;
 			var p = _ItemList.GetParentModel(m);
@@ -936,14 +938,15 @@ namespace PDFPatcher.Functions
 				i = _itemsContainer.Items.IndexOf(m);
 				_itemsContainer.Items.InsertRange(++i, items);
 				_ItemList.Objects = _itemsContainer.Items;
-				_ItemList.SelectedObjects = new List<SourceItem>(items);
 				_ItemList.RebuildAll(true);
-				return;
+				goto SELECT;
 			}
 			i = p.Items.IndexOf(m);
 			p.Items.InsertRange(++i, items);
 			_ItemList.RefreshObject(p);
-			_ItemList.SelectedObjects = new List<SourceItem>(items);
+			SELECT:
+			_ItemList.SelectedObjects = items;
+			_ItemList.FocusedObject = items[0];
 		}
 		#endregion
 
