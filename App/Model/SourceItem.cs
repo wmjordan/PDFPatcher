@@ -180,10 +180,12 @@ namespace PDFPatcher.Model
 
 		internal sealed class Empty : SourceItem
 		{
+			readonly DateTime _Time = DateTime.Now;
+
 			public override ItemType Type => ItemType.Empty;
 
 			public override int FileSize => 0;
-			public override DateTime FileTime => DateTime.Now;
+			public override DateTime FileTime => _Time;
 
 			public void SetPageCount(int pageCount) {
 				PageCount = pageCount;
