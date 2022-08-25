@@ -272,7 +272,7 @@ namespace PDFPatcher.Processor
 				c[i] = box.GetAsNumber(i).FloatValue;
 			}
 			var r = page.GetAsNumber(PdfName.ROTATE);
-			return r != null
+			return r != null && r.IntValue != 0 && r.IntValue != 180
 				? new iTextSharp.text.Rectangle(c[0], c[1], c[2], c[3], r.IntValue).Rotate()
 				: new iTextSharp.text.Rectangle(c[0], c[1], c[2], c[3]);
 		}
