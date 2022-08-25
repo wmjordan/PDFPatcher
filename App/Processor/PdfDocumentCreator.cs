@@ -233,13 +233,21 @@ namespace PDFPatcher.Processor
 		}
 
 		void AddEmptyPage() {
-			if (_content.SpecialSize == SpecialPaperSize.None || _content.SpecialSize == SpecialPaperSize.AsSpecificPage) {
-				// 插入空白页
-				_doc.NewPage();
-				_writer.PageEmpty = false;
-			}
-			else {
-				Tracker.TraceMessage("没有指定页面尺寸，无法插入空白页。");
+			switch (_content.SpecialSize) {
+				case SpecialPaperSize.None:
+				case SpecialPaperSize.AsSpecificPage:
+					// 插入空白页
+					_doc.NewPage();
+					_writer.PageEmpty = false;
+					break;
+				case SpecialPaperSize.AsPageSize:
+					if (_doc.PageSize.Width > 0) {
+						goto case SpecialPaperSize.AsSpecificPage;
+					}
+					break;
+				default:
+					Tracker.TraceMessage("没有指定页面尺寸，无法插入空白页。");
+					break;
 			}
 		}
 
@@ -354,7 +362,7 @@ namespace PDFPatcher.Processor
 					Tracker.IncrementProgress(1);
 				}
 			}
-
+			_doc.SetPageSize(pdf.GetPageNRelease(ranges[ranges.Count - 1].EndValue).GetPageVisibleRectangle());
 			if (_option.KeepBookmarks) {
 				bookmark = KeepBookmarks(bookmark, pdf, pageRemapper, cts);
 			}
