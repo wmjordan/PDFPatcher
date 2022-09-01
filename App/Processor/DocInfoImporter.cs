@@ -48,10 +48,10 @@ namespace PDFPatcher.Processor
 			_options = options;
 		}
 
-		internal DocInfoImporter(ImporterOptions importerOptions, PdfReader pdf, PatcherOptions patcherOptions, BookmarkRootElement bookmarkRoot) {
+		internal DocInfoImporter(ImporterOptions importerOptions, PdfReader pdf, PatcherOptions patcherOptions, PdfInfoXmlDocument infoDoc) {
 			var v = patcherOptions.ViewerPreferences;
 			var o = new ExporterOptions() {
-				ExportBookmarks = bookmarkRoot == null
+				ExportBookmarks = infoDoc.BookmarkRoot == null
 					&& (v.RemoveZoomRate
 						|| v.CollapseBookmark != BookmarkStatus.AsIs
 						|| v.ForceInternalLink
@@ -70,31 +70,10 @@ namespace PDFPatcher.Processor
 			o.UnitConverter.Unit = Constants.Units.Point;
 			var exp = new DocInfoExporter(pdf, o);
 			Tracker.SetProgressGoal(exp.EstimateWorkload());
-			using (var ms = new MemoryStream()) {
-				using (var w = XmlWriter.Create(ms, new XmlWriterSettings { CheckCharacters = false })) {
-					w.WriteStartElement(Constants.PdfInfo);
-					w.WriteAttributeString(Constants.Info.ProductVersion, Constants.InfoDocVersion);
-					exp.ExportDocument(w);
-					if (bookmarkRoot != null) {
-						var bookmark = bookmarkRoot.CreateNavigator();
-						bookmark.WriteSubtree(w);
-						//if (bookmark.MoveToFirstChild()) {
-						//	bookmark.WriteSubtree(w);
-						//}
-						//while (bookmark.MoveToNext()) {
-						//	bookmark.WriteSubtree(w);
-						//}
-					}
-					w.WriteEndElement();
-				}
-				ms.Flush();
-				ms.Position = 0;
-				var x = new PdfInfoXmlDocument();
-				x.Load(ms);
-				_options = importerOptions;
-				_unitFactor = 1;
-				_infoDoc = x;
-			}
+
+			_options = importerOptions;
+			_unitFactor = 1;
+			_infoDoc = infoDoc;
 		}
 
 		internal static float GetUnitFactor(XmlElement root) {

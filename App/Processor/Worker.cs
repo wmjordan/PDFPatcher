@@ -268,7 +268,7 @@ namespace PDFPatcher.Processor
 				var xInfoDoc = infoDoc as PdfInfoXmlDocument;
 				var docPath = infoDoc as string;
 				if (xInfoDoc != null) {
-					import = new DocInfoImporter(options, pdf, pdfSettings, xInfoDoc.BookmarkRoot);
+					import = new DocInfoImporter(options, pdf, pdfSettings, xInfoDoc);
 				}
 				else if (String.IsNullOrEmpty(docPath)) {
 					Tracker.TraceMessage("没有指定信息文件，将按程序界面的设置执行补丁。");
