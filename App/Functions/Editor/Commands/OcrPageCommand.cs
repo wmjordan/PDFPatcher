@@ -17,7 +17,7 @@ namespace PDFPatcher.Functions.Editor
 				return;
 			}
 			var or = v.OcrPage(pp.Page, true);
-			if (or != null) {
+			if (or.HasContent()) {
 				Clipboard.SetText(String.Join(Environment.NewLine, v.CleanUpOcrResult(or)));
 			}
 			else {
