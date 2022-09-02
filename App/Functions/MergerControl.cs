@@ -124,7 +124,14 @@ namespace PDFPatcher.Functions
 			_AddFilesButton.DropDownOpening += FileListHelper.OpenPdfButtonDropDownOpeningHandler;
 			_AddFilesButton.DropDownItemClicked += (s, e) => {
 				_RecentFileMenu.Hide();
-				ExecuteCommand(Commands.OpenFile, e.ClickedItem.ToolTipText);
+				FilePath file = e.ClickedItem.ToolTipText;
+				if (file.ExistsFile) {
+					ExecuteCommand(Commands.OpenFile, file);
+					AppContext.RecentItems.AddHistoryItem(AppContext.Recent.SourcePdfFiles, file);
+				}
+				else {
+					FormHelper.ErrorBox("找不到文件：" + file);
+				}
 			};
 		}
 
@@ -373,7 +380,7 @@ namespace PDFPatcher.Functions
 			_RecentFolderMenu.Hide();
 			var f = e.ClickedItem.ToolTipText;
 			if (System.IO.Directory.Exists(f) == false) {
-				FormHelper.ErrorBox("文件夹不存在。");
+				FormHelper.ErrorBox("找不到文件夹：" + f);
 				return;
 			}
 			ExecuteCommand(Commands.OpenFile, f);
@@ -524,6 +531,11 @@ namespace PDFPatcher.Functions
 				case Commands.Open:
 					if (_OpenImageBox.ShowDialog() == DialogResult.OK) {
 						ExecuteCommand(Commands.OpenFile, _OpenImageBox.FileNames);
+						foreach (FilePath item in _OpenImageBox.FileNames) {
+							if (item.HasExtension(Constants.FileExtensions.Pdf)) {
+								AppContext.RecentItems.AddHistoryItem(AppContext.Recent.SourcePdfFiles, item);
+							}
+						}
 					}
 					break;
 				case Commands.OpenFile:
