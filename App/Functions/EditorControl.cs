@@ -243,8 +243,8 @@ namespace PDFPatcher.Functions
 					return;
 				}
 				var ti = _ViewerBox.FindTextLines(p);
-				var t = ti.TextLines != null ? ti.TextLines[0].Text : String.Empty;
-				_PageInfoBox.Text = string.Concat("页面：", p.Page, "; 位置：", Math.Round(p.PageX, 2), " * ", Math.Round(p.PageY, 2), ti.Spans.HasContent() ? String.Concat("; 字体：", ti.Page.GetFont(ti.Spans[0]).Name, " ", ti.Spans[0].Size) : null, t.Length > 0 ? "; 文本：" : null, t);
+				var t = ti.ToString();
+				_PageInfoBox.Text = string.Concat("页面：", p.Page, "; 位置：", Math.Round(p.PageX, 2), " * ", Math.Round(p.PageY, 2), ti.Spans.HasContent() ? String.Concat("; 字体：", String.Join(";", ti.GetFontNames()), " ", ti.Spans[0].Size) : null, t != null ? "; 文本：" : null, t);
 			};
 			_ViewerBox.MouseClick += _ViewBox_MouseClick;
 			_ViewerToolbar.Enabled = false;

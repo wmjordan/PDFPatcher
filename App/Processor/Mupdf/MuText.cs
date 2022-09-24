@@ -5,6 +5,16 @@ using System.Diagnostics;
 #pragma warning disable 649, 169
 namespace MuPdfSharp
 {
+	public interface IMuTextLines
+	{
+		IEnumerable<MuTextLine> Lines { get; }
+	}
+
+	public interface IMuTextSpans
+	{
+		IEnumerable<MuTextSpan> Spans { get; }
+	}
+
 	[DebuggerDisplay("Name={Name}")]
 	public sealed class MuFont
 	{
@@ -182,7 +192,7 @@ namespace MuPdfSharp
 		public override ContentBlockType Type => ContentBlockType.Image;
 	}
 
-	public sealed class MuTextBlock : MuContentBlock, IMuBoundedElement
+	public sealed class MuTextBlock : MuContentBlock, IMuBoundedElement, IMuTextLines
 	{
 		readonly Rectangle _BBox;
 		readonly IntPtr _FirstLine, _LastLine;
@@ -200,7 +210,7 @@ namespace MuPdfSharp
 	}
 
 	[DebuggerDisplay("Text={Text},BBox={BBox}")]
-	public sealed class MuTextLine : IMuBoundedElement
+	public sealed class MuTextLine : IMuBoundedElement, IMuTextSpans
 	{
 		NativeTextLine _textLine;
 		string _Text;
@@ -215,6 +225,8 @@ namespace MuPdfSharp
 		MuTextLine(IntPtr textLine) {
 			_textLine = textLine.MarshalAs<NativeTextLine>();
 		}
+
+		IEnumerable<MuTextSpan> IMuTextSpans.Spans => Spans;
 
 		string GetText() {
 			var sb = new System.Text.StringBuilder(50);

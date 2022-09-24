@@ -336,6 +336,15 @@ namespace MuPdfSharp
 				);
 		}
 
+		public bool IsHorizontalNeighbor(Rectangle other) {
+			if (IsEmpty || other.IsInfinite || other.IsEmpty || IsInfinite || other.Top > Bottom || other.Bottom < Top) {
+				return false;
+			}
+
+			var h = Height / other.Height;
+			return h > 0.4 && h < 2.5;
+		}
+
 		internal static Rectangle FromArray(MuPdfObject array) {
 			var r = array.AsArray();
 			var a = r[0].FloatValue;

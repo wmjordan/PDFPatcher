@@ -348,7 +348,7 @@ namespace PDFPatcher.Functions.Editor
 		internal EditModel.Region CopyText(Point cp, PagePosition pp) {
 			var v = View.Viewer;
 			var ps = v.IsClientPointInSelection(cp);
-			var lines = ps ? v.FindTextLines(v.GetSelectionPageRegion()) : v.FindTextLines(pp).TextLines;
+			var lines = ps ? v.FindTextLines(v.GetSelectionPageRegion()) : v.FindTextLines(pp).Lines;
 			string t = null;
 			EditModel.TextSource ts;
 			if (Model.InsertBookmarkWithOcrOnly == false && lines.HasContent()) {

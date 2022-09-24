@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
+using PDFPatcher.Common;
 using MuPdfSharp;
 using DrawingPoint = System.Drawing.Point;
 
@@ -83,23 +84,77 @@ namespace PDFPatcher.Functions.Editor
 		}
 	}
 
-	public readonly struct TextInfo
+	public readonly struct TextInfo : IMuTextLines, IMuTextSpans, IMuBoundedElement
 	{
 		public readonly MuPage Page;
 
 		/// <summary>获取文本字符的位置边框。</summary>
-		public readonly MuPdfSharp.Rectangle CharBBox;
+		public readonly MuPdfSharp.Rectangle TextBBox;
 		/// <summary>获取文本位置以下的文本行。</summary>
-		public readonly List<MuTextLine> TextLines;
+		public readonly List<MuTextLine> Lines;
 		public readonly List<MuTextSpan> Spans;
 
 		public TextInfo(MuPage page, MuPdfSharp.Rectangle bbox, List<MuTextLine> textLines, List<MuTextSpan> spans) {
 			Page = page;
-			CharBBox = bbox;
-			TextLines = textLines;
+			TextBBox = bbox;
+			Lines = textLines;
 			Spans = spans;
 		}
 
+		IEnumerable<MuTextLine> IMuTextLines.Lines => Lines;
+
+		public MuPdfSharp.Rectangle BBox => TextBBox;
+
+		IEnumerable<MuTextSpan> IMuTextSpans.Spans => Spans;
+
+		public IEnumerable<MuFont> GetFonts() {
+			if (Spans.HasContent() == false) {
+				yield break;
+			}
+			HashSet<IntPtr> fonts = new HashSet<IntPtr>();
+			foreach (var span in Spans) {
+				if (fonts.Add(span.FontID)) {
+					yield return Page.GetFont(span);
+				}
+			}
+		}
+
+		public IEnumerable<string> GetFontNames() {
+			if (Spans.HasContent() == false) {
+				yield break;
+			}
+			HashSet<string> fonts = new HashSet<string>();
+			foreach (var span in Spans) {
+				var f = Page.GetFont(span);
+				if (fonts.Add(f.Name)) {
+					yield return f.Name;
+				}
+			}
+		}
+
+		public override string ToString() {
+			if (Lines == null) {
+				return null;
+			}
+			var c = Lines.Count;
+			if (c == 1) {
+				return Lines[0].Text;
+			}
+			var sb = new StringBuilder();
+			var b = Lines[0].BBox;
+			foreach (var line in Lines) {
+				if (line.BBox.IsHorizontalNeighbor(b)) {
+					sb.Append(line.Text);
+					b = b.Union(line.BBox);
+				}
+				else {
+					b = line.BBox;
+					sb.AppendLine();
+					sb.Append(line.Text);
+				}
+			}
+			return sb.ToString();
+		}
 	}
 
 	public readonly struct Selection

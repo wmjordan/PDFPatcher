@@ -717,7 +717,7 @@ namespace PDFPatcher.Functions
 							r.Add(l);
 						}
 						else {
-							if (line.BBox.Top - l.BBox.Bottom > line.BBox.Height) {
+							if (line.BBox.IsHorizontalNeighbor(rect) == false) {
 								break;
 							}
 							// 获取具有相同样式的邻接文本行
@@ -728,6 +728,7 @@ namespace PDFPatcher.Functions
 									goto NEXT;
 								}
 							}
+							rect = rect.Union(line.BBox);
 						}
 					NEXT:;
 					}
