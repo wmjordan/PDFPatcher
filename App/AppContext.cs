@@ -241,16 +241,20 @@ namespace PDFPatcher
 		/// </summary>
 		/// <param name="path">保存路径。路径为空时，保存到默认位置。</param>
 		/// <param name="saveHistoryFileList">是否保存历史文件列表。</param>
-		internal static void Save(string path, bool saveHistoryFileList) {
+		/// <param name="skipReadonly">是否跳过只读文件。</param>
+		internal static void Save(string path, bool saveHistoryFileList, bool skipReadonly) {
 			try {
-				SaveJson(path ?? AppConfigFilePath, saveHistoryFileList);
+				SaveJson(path ?? AppConfigFilePath, saveHistoryFileList, skipReadonly);
 			}
 			catch (Exception ex) {
 				FormHelper.ErrorBox("在保存程序设置时出错" + ex.Message);
 			}
 		}
 
-		static void SaveJson(string path, bool saveHistoryFileList) {
+		static void SaveJson(FilePath path, bool saveHistoryFileList, bool skipReadonly) {
+			if (skipReadonly && path.ExistsFile && (path.ToFileInfo().Attributes & FileAttributes.ReadOnly) > 0) {
+				return;
+			}
 			var s = SaveAppSettings
 				? new ConfigurationSerialization {
 					SaveAppSettings = true,
@@ -273,7 +277,7 @@ namespace PDFPatcher
 					Recent = saveHistoryFileList ? Recent : null
 				}
 				: new ConfigurationSerialization { SaveAppSettings = false };
-			File.WriteAllText(path, Json.ToJson(s, JsonSm), Encoding.UTF8);
+			path.WriteAllText(false, Encoding.UTF8, Json.ToJson(s, JsonSm));
 		}
 
 		private static void WriteRecentFiles(XmlWriter writer, IList<string> list, string name) {

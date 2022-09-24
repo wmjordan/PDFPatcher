@@ -382,7 +382,7 @@ namespace PDFPatcher
 				SetupCustomizeToolbar();
 			}
 			else if (commandName == Commands.SaveOptions && _SaveConfigDialog.ShowDialog() == DialogResult.OK) {
-				AppContext.Save(_SaveConfigDialog.FileName, false);
+				AppContext.Save(_SaveConfigDialog.FileName, false, false);
 			}
 			else if (commandName == Commands.LogWindow) {
 				ShowLogControl();
@@ -544,12 +544,7 @@ namespace PDFPatcher
 		}
 
 		void MainForm_FormClosed(object sender, FormClosedEventArgs e) {
-			try {
-				AppContext.Save(null, true);
-			}
-			catch (Exception) {
-				// ignore error
-			}
+			AppContext.Save(null, true, true);
 		}
 
 		void HideLogControl() {
