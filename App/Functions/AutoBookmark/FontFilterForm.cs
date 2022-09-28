@@ -98,8 +98,10 @@ namespace PDFPatcher.Functions
 			foreach (XmlElement item in _FontInfoBox.Roots) {
 				_FontInfoBox.Expand(item);
 			}
-			_FontInfoBox.EnsureVisible(0);
-			_FontInfoBox.Sort(_CountColumn, SortOrder.Descending);
+			if (_FontInfoBox.GetItemCount() > 0) {
+				_FontInfoBox.EnsureVisible(0);
+				_FontInfoBox.Sort(_CountColumn, SortOrder.Descending);
+			}
 		}
 
 		void _OkButton_Click(Object source, EventArgs args) {
