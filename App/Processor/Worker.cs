@@ -379,8 +379,10 @@ namespace PDFPatcher.Processor
 					if (options.ImportPageLinks || pdfSettings.UnifiedPageSettings.PaperSize.PaperName != PaperSize.AsPageSize/* sc*/) {
 						import.ImportPageLinks(pdf, st);
 					}
-					PdfDocumentCreator.ProcessInfoItem(import.InfoDoc.DocumentElement.SelectSingleNode(Constants.PageLink) as XmlElement, processors);
-					PdfDocumentCreator.ProcessInfoItem(import.InfoDoc.DocumentElement.SelectSingleNode(Constants.NamedDestination) as XmlElement, processors);
+					if (import.InfoDoc != null) {
+						PdfDocumentCreator.ProcessInfoItem(import.InfoDoc.DocumentElement.SelectSingleNode(Constants.PageLink) as XmlElement, processors);
+						PdfDocumentCreator.ProcessInfoItem(import.InfoDoc.DocumentElement.SelectSingleNode(Constants.NamedDestination) as XmlElement, processors);
+					}
 					XmlElement bookmarks = null;
 					if (options.ImportBookmarks && pdfSettings.RemoveBookmarks == false || xInfoDoc != null) {
 						Tracker.TraceMessage("导入书签。");

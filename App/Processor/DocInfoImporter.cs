@@ -51,7 +51,7 @@ namespace PDFPatcher.Processor
 		internal DocInfoImporter(ImporterOptions importerOptions, PdfReader pdf, PatcherOptions patcherOptions, PdfInfoXmlDocument infoDoc) {
 			var v = patcherOptions.ViewerPreferences;
 			var o = new ExporterOptions() {
-				ExportBookmarks = infoDoc.BookmarkRoot == null
+				ExportBookmarks = infoDoc?.BookmarkRoot == null
 					&& (v.RemoveZoomRate
 						|| v.CollapseBookmark != BookmarkStatus.AsIs
 						|| v.ForceInternalLink
