@@ -754,9 +754,12 @@ namespace PDFPatcher.Functions.Editor
 				return;
 			}
 			bs.Sort((x, y) => x.Level - y.Level);
-			var mp = new MatchPattern.IMatcher[bs.Count];
+			var mp = new Func<string, bool>[bs.Count];
 			for (var i = 0; i < bs.Count; i++) {
-				mp[i] = bs[i].MatchPattern?.CreateMatcher();
+				var m = bs[i].MatchPattern?.CreateMatcher();
+				if (m != null) {
+					mp[i] = m.Matches;
+				}
 			}
 			var ug = new UndoActionGroup();
 			Model.Undo.AddUndo("自动生成书签", ug);
@@ -788,7 +791,7 @@ namespace PDFPatcher.Functions.Editor
 									}
 									var b = span.Box;
 									if (bl < style.Level) {
-										if (matcher?.Matches(line.Text) == false) {
+										if (matcher?.Invoke(line.Text) == false) {
 											continue;
 										}
 										bm = CreateNewSiblingBookmark(bm, spans);
@@ -804,21 +807,6 @@ namespace PDFPatcher.Functions.Editor
 										if (cb.Page == p.PageNumber
 											&& (bb >= lt && bb <= lb || bt >= lt && bt <= lb || bt < lt && bb > lb)
 											&& (mergeAdjacentTitle || spans[spans.Count - 1].Point.Y == span.Point.Y)) {
-											//var m = false;
-											//var bs = b.Size.Area();
-											//foreach (var ss in spans) {
-											//	var a = ss.Box.Intersect(b).Size.Area();
-											//	var ov = a / bs;
-											//	if (0.5 < ov && ov <= 1) {
-											//		m = true;
-											//		break;
-											//	}
-											//	ov = a / ss.Box.Size.Area();
-											//	if (0.5 < ov && ov <= 1) {
-											//		m = true;
-											//		break;
-											//	}
-											//}
 											if (/*m == false &&*/ t.Length > 0) {
 												// 保留英文和数字文本之间的空格
 												var ct = cb.Title;
@@ -834,7 +822,7 @@ namespace PDFPatcher.Functions.Editor
 											}
 											continue;
 										}
-										if (matcher?.Matches(line.Text) == false) {
+										if (matcher?.Invoke(line.Text) == false) {
 											continue;
 										}
 										bm = CreateNewSiblingBookmarkForParent(bm, spans);
@@ -844,7 +832,7 @@ namespace PDFPatcher.Functions.Editor
 											bm = bm.ParentBookmark;
 											--bl;
 										}
-										if (matcher?.Matches(line.Text) == false) {
+										if (matcher?.Invoke(line.Text) == false) {
 											continue;
 										}
 										bm = CreateNewSiblingBookmarkForParent(bm, spans);

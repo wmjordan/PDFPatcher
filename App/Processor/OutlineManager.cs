@@ -215,7 +215,7 @@ namespace PDFPatcher.Processor
 			return StringBuilderCache.GetStringAndRelease(buf);
 		}
 
-		public static string UnEscapeBinaryString(String s) {
+		public static string UnescapeBinaryString(String s) {
 			var buf = StringBuilderCache.Acquire();
 			var cc = s.ToCharArray();
 			int len = cc.Length;
@@ -230,25 +230,22 @@ namespace PDFPatcher.Processor
 					break;
 				}
 				c = cc[k];
-				if (c >= '0' && c <= '7') {
-					int n = c - '0';
-					++k;
-					for (int j = 0; j < 2 && k < len; ++j) {
-						c = cc[k];
-						if (c >= '0' && c <= '7') {
-							++k;
-							n = n * 8 + c - '0';
-						}
-						else {
-							break;
-						}
-					}
-					--k;
-					buf.Append((char)n);
-				}
-				else {
+				if (c < '0' || c > '7') {
 					buf.Append(c);
+					continue;
 				}
+				int n = c - '0';
+				++k;
+				for (int j = 0; j < 2 && k < len; ++j) {
+					c = cc[k];
+					if (c < '0' || c > '7') {
+						break;
+					}
+					++k;
+					n = n * 8 + c - '0';
+				}
+				--k;
+				buf.Append((char)n);
 			}
 			return StringBuilderCache.GetStringAndRelease(buf);
 		}
