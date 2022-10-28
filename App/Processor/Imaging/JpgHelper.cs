@@ -43,6 +43,15 @@ namespace PDFPatcher.Processor.Imaging
 			//}
 		}
 
+		internal static void Save(this System.Drawing.Image bmp, Stream stream, int quality) {
+			using (var p = GetEncoderParameters(quality)) {
+				bmp.Save(stream, _jpgCodec, p);
+				foreach (var item in p.Param) {
+					item.Dispose();
+				}
+			}
+		}
+
 		internal static bool TryGetExifOrientation(string fileName, out ushort b) {
 			try {
 				using (var r = new ExifReader(fileName)) {

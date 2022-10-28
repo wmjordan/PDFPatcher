@@ -127,6 +127,24 @@ namespace PDFPatcher.Processor.Imaging
 					goto case ".PNG";
 			}
 		}
+		public static void SaveAs(this Image image, string extension, System.IO.Stream stream) {
+			switch (extension) {
+				case ".PNG":
+					image.Save(stream, ImageFormat.Png); return;
+				case ".BMP":
+					image.Save(stream, ImageFormat.Bmp); return;
+				case ".JPG":
+				case ".JPEG":
+					image.Save(stream, 75); return;
+				case ".TIF":
+				case ".TIFF":
+					TiffHelper.SaveBinaryImage(image, stream); return;
+				case ".GIF":
+					image.Save(stream, ImageFormat.Gif); return;
+				default:
+					goto case ".PNG";
+			}
+		}
 		/// <summary>
 		/// 将 <paramref name="tint"/> 颜色染色到 <paramref name="color"/> 上。
 		/// </summary>

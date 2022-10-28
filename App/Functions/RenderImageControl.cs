@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.IO;
 using System.Windows.Forms;
+using iTextSharp.text.pdf;
 using MuPdfSharp;
 using PDFPatcher.Common;
 
@@ -128,7 +129,27 @@ namespace PDFPatcher.Functions
 				var a = arg.Argument as object[];
 				var files = a[0] as string[];
 				var options = a[1] as ImageRendererOptions;
-				options.ExtractImagePath = new FilePath(options.ExtractImagePath).Normalize();
+				FilePath target = new FilePath(options.ExtractImagePath).Normalize();
+				options.ExtractImagePath = target;
+				if (target.HasExtension(Constants.FileExtensions.Pdf)) {
+					using (var f = target.OpenFileWriter(true)) {
+						var doc = new iTextSharp.text.Document();
+						using (var w = PdfWriter.GetInstance(doc, f)) {
+							doc.Open();
+							doc.AddCreator(Application.ProductName + " " + Application.ProductVersion);
+							doc.SetMargins(0, 0, 0, 0);
+							foreach (var file in files) {
+								Processor.Worker.RenderPagesToPdf(file, options, doc);
+								Tracker.IncrementTotalProgress();
+								if (AppContext.Abort) {
+									return;
+								}
+							}
+							doc.Close();
+						}
+					}
+					return;
+				}
 				if (files.Length > 1) {
 					var ep = options.ExtractImagePath;
 					foreach (var file in files) {

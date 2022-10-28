@@ -159,6 +159,81 @@ namespace PDFPatcher.Processor
 			}
 		}
 
+		internal static void RenderPagesToPdf(string sourceFile, ImageRendererOptions options, Document doc) {
+			const int loadDocProgressWeight = 10;
+			Tracker.TraceMessage(Tracker.Category.InputFile, sourceFile);
+			Tracker.TraceMessage(Tracker.Category.OutputFile, options.ExtractImagePath);
+			options.TintColor = System.Drawing.Color.Transparent;
+			((FilePath)options.ExtractImagePath).CreateContainingDirectory();
+			MuDocument mupdf = null;
+			try {
+				mupdf = PdfHelper.OpenMuDocument(sourceFile);
+				var ranges = PageRangeCollection.Parse(options.ExtractPageRange, 1, mupdf.PageCount, true);
+				int loadCount = loadDocProgressWeight + ranges.TotalPages;
+				Tracker.SetProgressGoal(loadCount);
+				Tracker.TraceMessage("正在转换图片。");
+				Tracker.TrackProgress(loadDocProgressWeight);
+				MemoryStream ms = new MemoryStream();
+				var fn = options.FileFormatExtension;
+				foreach (var range in ranges) {
+					foreach (var i in range) {
+						ms.Position = 0;
+						using (var p = mupdf.LoadPage(i))
+						using (var bmp = p.RenderBitmapPage(options.ImageWidth, 0, options)) {
+							if (bmp == null) {
+								Tracker.TraceMessage(Tracker.Category.Error, "页面" + i + "的尺寸为空。");
+							}
+							else if (options.FileFormat == ImageFormat.Tiff) {
+								using (var b = Imaging.BitmapHelper.ToBitonal(bmp)) {
+									Imaging.BitmapHelper.SaveAs(b, fn, ms);
+								}
+							}
+							else {
+								var uc = Imaging.BitmapHelper.GetPalette(bmp);
+								if (uc.Length > 256 && options.Quantize) {
+									using (var b = Imaging.WuQuantizer.QuantizeImage(bmp)) {
+										Imaging.BitmapHelper.SaveAs(b, fn, ms);
+									}
+								}
+								else if (uc.Length <= 256 && Imaging.BitmapHelper.IsIndexed(bmp) == false) {
+									using (var b = Imaging.BitmapHelper.ToIndexImage(bmp, uc)) {
+										Imaging.BitmapHelper.SaveAs(b, fn, ms);
+									}
+								}
+								else if (options.FileFormat == ImageFormat.Jpeg) {
+									Imaging.JpgHelper.Save(bmp, ms, options.JpegQuality);
+								}
+								else {
+									Imaging.BitmapHelper.SaveAs(bmp, fn, ms);
+								}
+							}
+
+							doc.SetPageSize((options.Rotation % 180) == 0
+								? new iTextSharp.text.Rectangle(p.Bound.Width, p.Bound.Height)
+								: new iTextSharp.text.Rectangle(p.Bound.Height, p.Bound.Width));
+							doc.NewPage();
+						}
+						var image = Image.GetInstance(ms.ToArray(), true);
+						image.ScalePercent(72f / image.DpiX.SubstituteDefault(72) * 100f, 72f / image.DpiY.SubstituteDefault(72) * 100f);
+						doc.Add(image);
+						Tracker.IncrementProgress(1);
+					}
+				}
+				Tracker.TrackProgress(loadCount);
+				Tracker.TraceMessage(Tracker.Category.Alert, "成功转换图片文件，存放位置为：<<" + options.ExtractImagePath + ">>。");
+			}
+			catch (OperationCanceledException) {
+				Tracker.TraceMessage(Tracker.Category.ImportantMessage, OperationCanceled);
+			}
+			catch (Exception ex) {
+				Tracker.TraceMessage(ex);
+				FormHelper.ErrorBox("在转换图片时遇到错误：\n" + ex.Message);
+			}
+			finally {
+				mupdf?.Dispose();
+			}
+		}
+
 		internal static void ExportInfo(FilePath sourceFile, FilePath targetFile) {
 			Tracker.TraceMessage(Tracker.Category.InputFile, sourceFile);
 			Tracker.TraceMessage(Tracker.Category.OutputFile, targetFile);

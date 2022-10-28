@@ -39,6 +39,14 @@ namespace PDFPatcher.Processor.Imaging
 				bmp.Save(fileName, ImageFormat.Tiff);
 			}
 		}
+		internal static void SaveBinaryImage(this System.Drawing.Image bmp, System.IO.Stream stream) {
+			if (bmp.PixelFormat == PixelFormat.Format1bppIndexed) {
+				bmp.Save(stream, _tiffCodec, _encoderParameters);
+			}
+			else {
+				bmp.Save(stream, ImageFormat.Tiff);
+			}
+		}
 
 		internal static byte[] Decode(ImageInfo info, byte[] bytes, int k, bool endOfLine, bool encodedByteAlign, bool endOfBlock, bool blackIs1) {
 			using (var s = new MuPdfSharp.MuStream(bytes))
