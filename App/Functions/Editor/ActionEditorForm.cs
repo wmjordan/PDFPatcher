@@ -96,6 +96,7 @@ namespace PDFPatcher.Functions
 				}
 				return null;
 			};
+			_AttributesBox.ScaleColumnWidths();
 			_AttributesBox.SetObjects(element.Attributes);
 		}
 

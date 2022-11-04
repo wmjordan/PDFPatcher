@@ -94,7 +94,7 @@
 			// 
 			this._SubstitutionColumn.AspectName = "";
 			this._SubstitutionColumn.Text = "替换字体";
-			this._SubstitutionColumn.Width = 200;
+			this._SubstitutionColumn.Width = 160;
 			// 
 			// _CharSubstitutionColumn
 			// 

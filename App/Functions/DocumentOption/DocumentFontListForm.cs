@@ -85,6 +85,7 @@ namespace PDFPatcher.Functions
 					FormHelper.ErrorBox(ex.Message);
 				}
 			};
+			_FontListBox.ScaleColumnWidths();
 			_FontListBox.PersistentCheckBoxes = true;
 			new TypedColumn<PageFont>(_NameColumn) {
 				AspectGetter = (o) => o.Name

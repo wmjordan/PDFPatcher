@@ -25,12 +25,47 @@ namespace PDFPatcher.Functions
 			InitializeComponent();
 			this.OnFirstLoad(OnLoad);
 			_SettingsBox = new TypedObjectListView<Model.PageBoxSettings>(_PageSettingsBox);
-		}
-
-		void OnLoad() {
+			new TypedColumn<Model.PageBoxSettings>(_PageFilterColumn) {
+				AspectGetter = (o) => {
+					var f = o.Filter;
+					var eo = f & (PageFilterFlag.Even | PageFilterFlag.Odd);
+					var pl = f & (PageFilterFlag.Landscape | PageFilterFlag.Portrait);
+					return f == PageFilterFlag.NotSpecified ? "所有页面"
+						: String.Concat(
+							eo == PageFilterFlag.Odd ? "单数"
+							: eo == PageFilterFlag.Even ? "双数"
+							: String.Empty,
+							pl == PageFilterFlag.Landscape ? "横向"
+							: pl == PageFilterFlag.Portrait ? "纵向"
+							: String.Empty,
+							"页");
+				}
+			};
+			new TypedColumn<PageBoxSettings>(_SettingsColumn) {
+				AspectGetter = (o) => {
+					var r = o.Rotation;
+					return String.Concat(
+							r == 0 ? Constants.Content.RotationDirections.Zero
+							: r == 90 ? Constants.Content.RotationDirections.Right
+							: r == 180 ? Constants.Content.RotationDirections.HalfClock
+							: r == 270 ? Constants.Content.RotationDirections.Left
+							: Constants.Content.RotationDirections.Zero
+						);
+				}
+			};
+			new TypedColumn<Model.PageBoxSettings>(_PageRangeColumn) {
+				AspectGetter = (o) => { return String.IsNullOrEmpty(o.PageRanges) ? Constants.PageFilterTypes.AllPages : o.PageRanges; },
+				AspectPutter = (o, v) => {
+					var s = v as string;
+					o.PageRanges = s != Constants.PageFilterTypes.AllPages ? s : null;
+				}
+			};
 			_PageSettingsBox.FormatRow += (s, args) => {
 				args.Item.SubItems[0].Text = (args.RowIndex + 1).ToText();
 			};
+		}
+
+		void OnLoad() {
 			_PageSettingsBox.FixEditControlWidth();
 			_PageSettingsBox.ScaleColumnWidths();
 			_PageSettingsBox.FullRowSelect = true;
@@ -78,22 +113,6 @@ namespace PDFPatcher.Functions
 				}
 				_PageSettingsBox.RefreshObject(_PageSettingsBox.SelectedObject);
 			};
-			new TypedColumn<Model.PageBoxSettings>(_PageFilterColumn) {
-				AspectGetter = (o) => {
-					var f = o.Filter;
-					var eo = f & (PageFilterFlag.Even | PageFilterFlag.Odd);
-					var pl = f & (PageFilterFlag.Landscape | PageFilterFlag.Portrait);
-					return f == PageFilterFlag.NotSpecified ? "所有页面"
-						: String.Concat(
-							eo == PageFilterFlag.Odd ? "单数"
-							: eo == PageFilterFlag.Even ? "双数"
-							: String.Empty,
-							pl == PageFilterFlag.Landscape ? "横向"
-							: pl == PageFilterFlag.Portrait ? "纵向"
-							: String.Empty,
-							"页");
-				}
-			};
 			_RotateMenu.DropDownOpening += (s, args) => {
 				var r = _SettingsBox.SelectedObject.Rotation;
 				foreach (ToolStripMenuItem item in _RotateMenu.DropDownItems) {
@@ -123,25 +142,6 @@ namespace PDFPatcher.Functions
 					o.Rotation = 180;
 				}
 				_PageSettingsBox.RefreshObject(o);
-			};
-			new TypedColumn<PageBoxSettings>(_SettingsColumn) {
-				AspectGetter = (o) => {
-					var r = o.Rotation;
-					return String.Concat(
-							r == 0 ? Constants.Content.RotationDirections.Zero
-							: r == 90 ? Constants.Content.RotationDirections.Right
-							: r == 180 ? Constants.Content.RotationDirections.HalfClock
-							: r == 270 ? Constants.Content.RotationDirections.Left
-							: Constants.Content.RotationDirections.Zero
-						);
-				}
-			};
-			new TypedColumn<Model.PageBoxSettings>(_PageRangeColumn) {
-				AspectGetter = (o) => { return String.IsNullOrEmpty(o.PageRanges) ? Constants.PageFilterTypes.AllPages : o.PageRanges; },
-				AspectPutter = (o, v) => {
-					var s = v as string;
-					o.PageRanges = s != Constants.PageFilterTypes.AllPages ? s : null;
-				}
 			};
 		}
 

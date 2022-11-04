@@ -22,12 +22,7 @@ namespace PDFPatcher.Functions
 			InitializeComponent();
 			this.OnFirstLoad(OnLoad);
 			_LabelBox = new TypedObjectListView<PDFPatcher.Model.PageLabel>(_PageLabelBox);
-		}
-
-		void OnLoad() {
-			foreach (var item in Constants.PageLabelStyles.Names) {
-				_LabelStyleMenu.Items.Add(item);
-			}
+			_PageLabelBox.FormatRow += (s, args) => args.Item.SubItems[0].Text = (args.RowIndex + 1).ToText();
 			new TypedColumn<Model.PageLabel>(_PageNumColumn) {
 				AspectGetter = (o) => o.PageNumber,
 				AspectPutter = (o, v) => { int i = v.ToString().ToInt32(); o.PageNumber = i > 0 ? i : 1; }
@@ -43,7 +38,12 @@ namespace PDFPatcher.Functions
 				AspectGetter = (o) => o.Prefix,
 				AspectPutter = (o, v) => o.Prefix = v as string
 			};
-			_PageLabelBox.FormatRow += (s, args) => args.Item.SubItems[0].Text = (args.RowIndex + 1).ToText();
+		}
+
+		void OnLoad() {
+			foreach (var item in Constants.PageLabelStyles.Names) {
+				_LabelStyleMenu.Items.Add(item);
+			}
 			_PageLabelBox.FixEditControlWidth();
 			_PageLabelBox.ScaleColumnWidths();
 			_PageLabelBox.FullRowSelect = true;

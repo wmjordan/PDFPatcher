@@ -26,10 +26,23 @@ namespace PDFPatcher.Functions
 			InitializeComponent();
 			this.OnFirstLoad(OnLoad);
 			_SubstitutionsBox = new TypedObjectListView<FontSubstitution>(_FontSubstitutionsBox);
+			_FontSubstitutionsBox.FormatRow += (s, args) => args.Item.SubItems[0].Text = ValueHelper.ToText(args.RowIndex + 1);
+			new TypedColumn<FontSubstitution>(_OriginalFontColumn) {
+				AspectGetter = (o) => o.OriginalFont,
+				AspectPutter = (o, v) => o.OriginalFont = v as string
+			};
+			new TypedColumn<FontSubstitution>(_SubstitutionColumn) {
+				AspectGetter = (o) => o.Substitution,
+				AspectPutter = (o, v) => o.Substitution = v as string
+			};
+			new TypedColumn<FontSubstitution>(_CharSubstitutionColumn) {
+				AspectGetter = (o) => String.IsNullOrEmpty(o.OriginalCharacters) ? "添加" : "修改"
+			};
 		}
 
 		void OnLoad() {
-			_FontSubstitutionsBox.FormatRow += (s, args) => args.Item.SubItems[0].Text = ValueHelper.ToText(args.RowIndex + 1);
+			_FontSubstitutionsBox.FixEditControlWidth();
+			_FontSubstitutionsBox.ScaleColumnWidths();
 			_FontSubstitutionsBox.FullRowSelect = true;
 			_FontSubstitutionsBox.HideSelection = false;
 			_FontSubstitutionsBox.LabelEdit = false;
@@ -51,17 +64,6 @@ namespace PDFPatcher.Functions
 						args.NewValue = c.Text;
 					}
 				}
-			};
-			new TypedColumn<FontSubstitution>(_OriginalFontColumn) {
-				AspectGetter = (o) => o.OriginalFont,
-				AspectPutter = (o, v) => o.OriginalFont = v as string
-			};
-			new TypedColumn<FontSubstitution>(_SubstitutionColumn) {
-				AspectGetter = (o) => o.Substitution,
-				AspectPutter = (o, v) => o.Substitution = v as string
-			};
-			new TypedColumn<FontSubstitution>(_CharSubstitutionColumn) {
-				AspectGetter = (o) => String.IsNullOrEmpty(o.OriginalCharacters) ? "添加" : "修改"
 			};
 		}
 
