@@ -437,7 +437,7 @@
 			_InsertBookmark.Name = "_InsertBookmark";
 			_InsertBookmark.Size = new System.Drawing.Size(23, 22);
 			_InsertBookmark.Text = "插入(&C)";
-			_InsertBookmark.ToolTipText = "插入书签项\r\nInsert";
+			_InsertBookmark.ToolTipText = "插入书签项（按住 Shift 向上插入）\r\nInsert";
 			// 
 			// _LevelUp
 			// 

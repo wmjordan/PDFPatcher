@@ -531,7 +531,7 @@ namespace PDFPatcher.Functions.Editor
 				if (pt < p) {
 					p = pt;
 				}
-				InsertBookmark(null, pn, p, InsertBookmarkPositionType.AfterCurrent);
+				InsertBookmark(null, pn, p, (Control.ModifierKeys & Keys.Shift) > 0 ? InsertBookmarkPositionType.BeforeCurrent : InsertBookmarkPositionType.AfterCurrent);
 			}
 			else {
 				InsertBookmark(null, 0, 0, InsertBookmarkPositionType.AfterCurrent);
