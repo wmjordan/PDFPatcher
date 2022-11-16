@@ -87,16 +87,17 @@ namespace MuPdfSharp
 			var n = pageNumber - FromPageNumber + (StartAt < 1 ? 0 : StartAt - 1);
 			switch (NumericStyle) {
 				case PageLabelStyle.Default:
+					return Prefix;
 				case PageLabelStyle.Digit:
 					return String.Concat(Prefix, n.ToText());
 				case PageLabelStyle.UpperRoman:
-					return String.Concat(Prefix, ValueHelper.ToRoman(n));
+					return String.Concat(Prefix, n.ToRoman());
 				case PageLabelStyle.LowerRoman:
-					return String.Concat(Prefix, ValueHelper.ToRoman(n)).ToLowerInvariant();
+					return String.Concat(Prefix, n.ToRoman()).ToLowerInvariant();
 				case PageLabelStyle.UpperAlphabetic:
-					return String.Concat(Prefix, ValueHelper.ToAlphabet(n, true));
+					return String.Concat(Prefix, n.ToAlphabet(true));
 				case PageLabelStyle.LowerAlphabetic:
-					return String.Concat(Prefix, ValueHelper.ToAlphabet(n, false));
+					return String.Concat(Prefix, n.ToAlphabet(false));
 				default:
 					goto case PageLabelStyle.Digit;
 			}
@@ -105,7 +106,7 @@ namespace MuPdfSharp
 
 	public enum PageLabelStyle : byte
 	{
-		Default = 0,
+		Default = (byte)'-',
 		Digit = (byte)'d',
 		UpperRoman = (byte)'R',
 		LowerRoman = (byte)'r',

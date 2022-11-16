@@ -15,9 +15,6 @@ namespace PDFPatcher.Functions
 
 		public InsertPageLabelForm() {
 			InitializeComponent();
-			this.OnFirstLoad(OnLoad);
-		}
-		void OnLoad() {
 			_NumericStyleBox.AddRange(Constants.PageLabelStyles.Names).Select(0);
 			_RemoveLabelButton.Enabled = false;
 		}

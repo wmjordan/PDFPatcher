@@ -233,13 +233,17 @@ namespace PDFPatcher
 		internal const string PageLabels = "页码样式";
 		internal static class PageLabelStyles
 		{
-			internal static readonly string[] Names = { "数字", "大写罗马数字", "小写罗马数字", "大写英文字母", "小写英文字母" };
-			internal static readonly char[] PdfValues = { 'D', 'R', 'r', 'A', 'a' };
-			internal static readonly char[] SimpleInfoIdentifiers = { '0', 'I', 'i', 'A', 'a' };
-			internal static readonly int[] Values = { PdfPageLabels.DECIMAL_ARABIC_NUMERALS,
-											 PdfPageLabels.UPPERCASE_ROMAN_NUMERALS, PdfPageLabels.LOWERCASE_ROMAN_NUMERALS,
-											 PdfPageLabels.UPPERCASE_LETTERS, PdfPageLabels.LOWERCASE_LETTERS
-										 };
+			internal static readonly string[] Names = { "数字", "大写罗马数字", "小写罗马数字", "大写英文字母", "小写英文字母", "无" };
+			internal static readonly char[] PdfValues = { 'D', 'R', 'r', 'A', 'a', '-' };
+			internal static readonly char[] SimpleInfoIdentifiers = { '0', 'I', 'i', 'A', 'a', '-' };
+			internal static readonly int[] Values = {
+				PdfPageLabels.DECIMAL_ARABIC_NUMERALS,
+				PdfPageLabels.UPPERCASE_ROMAN_NUMERALS,
+				PdfPageLabels.LOWERCASE_ROMAN_NUMERALS,
+				PdfPageLabels.UPPERCASE_LETTERS,
+				PdfPageLabels.LOWERCASE_LETTERS,
+				PdfPageLabels.EMPTY,
+			};
 		}
 		internal static class PageLabelsAttributes
 		{

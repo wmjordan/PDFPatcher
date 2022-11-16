@@ -20,7 +20,7 @@ namespace MuPdfSharp
 					var sp = d["St"].IntegerValue;
 					var p = d["P"].StringValue;
 					var s = d["S"].NameValue;
-					pl.Add(new PageLabel(n, sp, p, s.Length == 0 ? PageLabelStyle.Digit : (PageLabelStyle)(byte)s[0]));
+					pl.Add(new PageLabel(n, sp, p, s.Length == 0 ? PageLabelStyle.Default : (PageLabelStyle)(byte)s[0]));
 				}
 				pl.Sort();
 			}
