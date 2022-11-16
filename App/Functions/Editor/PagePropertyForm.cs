@@ -21,6 +21,7 @@ namespace PDFPatcher.Functions.Editor
 			_CloseButton.Click += (s, args) => Hide();
 			_FontNameColumn.AsTyped<MuFontAndSize>(f => f.AspectGetter = o => o.FontName);
 			_SizeColumn.AsTyped<MuFontAndSize>(f => f.AspectGetter = o => o.Size);
+			_TextStyleBox.ScaleColumnWidths();
 		}
 
 		public void LoadPage(MuPage page) {

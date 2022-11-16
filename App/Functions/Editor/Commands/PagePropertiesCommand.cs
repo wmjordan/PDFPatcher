@@ -15,9 +15,9 @@ namespace PDFPatcher.Functions.Editor
 			var p = v.TransposeVirtualImageToPagePosition(l.X, l.Y);
 			var f = GetDialog();
 			using (var page = controller.Model.PdfDocument.LoadPage(p.Page)) {
-				f.LoadPage(page);
 				f.Location = v.PointToScreen(v.TransposeVirtualImageToClient(l.X, l.Y));
 				f.Show();
+				f.LoadPage(page);
 			}
 		}
 
