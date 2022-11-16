@@ -611,7 +611,7 @@ namespace PDFPatcher.Functions.Editor
 				b.EnsureItemsVisible(new BookmarkElement[] { c });
 				b.SelectedObjects = new BookmarkElement[] { c };
 				b.FocusedObject = c;
-				//_BookmarkBox.ModelToItem (c).BeginEdit ();
+				b.ModelToItem (c).BeginEdit ();
 			}
 		}
 
