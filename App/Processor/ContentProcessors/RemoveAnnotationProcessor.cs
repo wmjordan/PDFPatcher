@@ -54,7 +54,6 @@ namespace PDFPatcher.Processor
 				context.Page.Remove(PdfName.ANNOTS);
 			}
 			if (removed) {
-				context.IsPageContentModified = true;
 				_processedPageCount++;
 			}
 			return removed;
