@@ -252,7 +252,7 @@ namespace PDFPatcher.Common
 			var ps = p2[0];
 			bool p2r;
 			if ((p2r = IsDirectorySeparator(ps)) && rootAsRelative == false // note 不能调转 && 参数的顺序，p2r 在后面有用
-				|| p2.Length > 1 && p2[1] == Path.VolumeSeparatorChar) {
+				|| p2.Length > 1 && (p2[1] == Path.VolumeSeparatorChar || p2[1] == ps)) {
 				return path;
 			}
 
@@ -503,6 +503,9 @@ namespace PDFPatcher.Common
 					// 保留第一个根目录引用
 					if (i == 0) {
 						r = true;
+						++v;
+					}
+					else if (i == 1 && r) {
 						++v;
 					}
 					continue;

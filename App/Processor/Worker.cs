@@ -48,15 +48,15 @@ namespace PDFPatcher.Processor
 			}
 
 			var targetPath = options.OutputPath;
-			if (Directory.Exists(targetPath) == false) {
-				Directory.CreateDirectory(targetPath);
-			}
 			var ranges = PageRangeCollection.Parse(options.PageRange, 1, pdf.NumberOfPages, true);
 			var loadCount = loadDocProgressWeight + ranges.TotalPages;
 			Tracker.SetProgressGoal(loadCount);
 			var op = targetPath;
 			var om = options.FileMask;
 			try {
+				if (Directory.Exists(targetPath) == false) {
+					Directory.CreateDirectory(targetPath);
+				}
 				Tracker.TraceMessage("正在导出图片。");
 				Tracker.TrackProgress(loadDocProgressWeight);
 				if (FileHelper.HasFileNameMacro(op)) {
