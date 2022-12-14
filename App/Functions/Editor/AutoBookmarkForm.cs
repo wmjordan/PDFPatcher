@@ -81,11 +81,12 @@ namespace PDFPatcher.Functions
 			QuickSelectCommand.RegisterMenuItemsWithPattern(_SetPatternMenu.DropDownItems);
 			_SetPatternMenu.DropDownItems.AddRange(new ToolStripItem[] {
 				new ToolStripSeparator(),
-				new ToolStripMenuItem("自定义文本识别模式") {
+				new ToolStripMenuItem("自定义文本匹配模式...") {
 					Tag = "CustomPattern"
 				},
-				new ToolStripMenuItem("清除文本识别模式") {
-					Tag = "ClearPattern"
+				new ToolStripMenuItem("清除文本匹配模式") {
+					Tag = "ClearPattern",
+					Image = Properties.Resources.Delete
 				}
 			});
 			_SetPatternMenu.DropDownItemClicked += _SetPattern_DropDownItemClicked;
@@ -106,8 +107,16 @@ namespace PDFPatcher.Functions
 						SetMatchPatternToSelectedBookmarkStyles(null);
 						return;
 					case "CustomPattern":
-						// todo 自定义匹配模式
-						this.ErrorBox("本功能尚未实现");
+						p = (_BookmarkConditionBox.SelectedObject as EditModel.AutoBookmarkStyle)?.MatchPattern;
+						this.ShowDialog<CustomPatternForm>(f => {
+							if (p != null) {
+								f.Pattern = p.Text;
+								f.MatchCase = p.MatchCase;
+								f.FullMatch = p.FullMatch;
+							}
+						}, f => {
+							SetMatchPatternToSelectedBookmarkStyles(f.Pattern.Length != 0 ? new MatchPattern(f.Pattern, f.MatchCase, f.FullMatch, true) : null);
+						});
 						return;
 				}
 			}

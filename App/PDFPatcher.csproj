@@ -130,6 +130,12 @@
     <Compile Include="Functions\Editor\Commands\LoadDocumentCommand.cs" />
     <Compile Include="Functions\Editor\Commands\SimpleBookmarkCommand.cs" />
     <Compile Include="Functions\Editor\Commands\ViewerCommand.cs" />
+    <Compile Include="Functions\Editor\CustomPatternForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Functions\Editor\CustomPatternForm.Designer.cs">
+      <DependentUpon>CustomPatternForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Functions\Editor\IEditorCommand.cs" />
     <Compile Include="Functions\Editor\PagePropertyForm.cs">
       <SubType>Form</SubType>
@@ -693,6 +699,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Functions\Editor\AutoBookmarkForm.resx">
       <DependentUpon>AutoBookmarkForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\Editor\CustomPatternForm.resx">
+      <DependentUpon>CustomPatternForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Functions\Editor\DocumentInfoForm.resx">
       <DependentUpon>DocumentInfoForm.cs</DependentUpon>
