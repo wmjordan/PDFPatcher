@@ -271,10 +271,9 @@ namespace PDFPatcher.Functions
 		}
 
 		void AddItem(SourceItem item) {
-			if (item == null) {
-				return;
+			if (item is SourceItem.Pdf) {
+				AddItems(new SourceItem[] { item });
 			}
-			AddItems(new SourceItem[] { item });
 		}
 
 		void AddItems(System.Collections.ICollection items) {
