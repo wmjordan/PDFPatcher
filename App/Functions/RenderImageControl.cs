@@ -169,7 +169,9 @@ namespace PDFPatcher.Functions
 			var option = AppContext.ImageRenderer;
 			option.ColorSpace = _ColorSpaceRgbBox.Checked ? ColorSpace.Rgb : ColorSpace.Gray;
 			option.ExtractPageRange = _ExtractPageRangeBox.Text;
-			option.ExtractImagePath = _TargetBox.Text;
+			option.ExtractImagePath = _RenderToPdfBox.Checked
+				? GetRenderedPdfFileName(_TargetBox.Text)
+				: _TargetBox.Text;
 			option.FileMask = _FileNameMaskBox.Text;
 			option.HideAnnotations = _HideAnnotationsBox.Checked;
 			option.HorizontalFlipImages = _HorizontalFlipImageBox.Checked;
@@ -191,6 +193,19 @@ namespace PDFPatcher.Functions
 			});
 			option = null;
 
+		}
+
+		static string GetRenderedPdfFileName(string target) {
+			var p = new FilePath(target).Normalize();
+			if (p.HasExtension(Constants.FileExtensions.Pdf) == false) {
+				target = p.Combine(new FilePath(AppContext.SourceFiles[0]).FileName);
+			}
+			foreach (var f in AppContext.SourceFiles) {
+				if (new FilePath(f).Equals(target)) {
+					return FileHelper.GetNewFileNameFromSourceFile(target, Constants.FileExtensions.Pdf);
+				}
+			}
+			return target;
 		}
 
 		#region IDefaultButtonControl 成员
