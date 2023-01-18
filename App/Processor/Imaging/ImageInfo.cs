@@ -26,8 +26,7 @@ namespace PDFPatcher.Processor.Imaging
 		public PdfName PaletteColorSpace { get; private set; }
 		public byte[] PaletteBytes { get; private set; }
 		public byte[] ICCProfile { get; private set; }
-		public Size MaskSize { get; private set; }
-		public byte[] MaskBytes { get; private set; }
+		public FreeImageBitmap Mask { get; private set; }
 		public int PaletteEntryCount { get; private set; }
 		public RGBQUAD[] PaletteArray { get; private set; }
 		public PdfImageData InlineImage { get; private set; }
@@ -200,9 +199,8 @@ namespace PDFPatcher.Processor.Imaging
 				) {
 				var mi = new ImageInfo(sm);
 				var mask = DecodeImage(mi, new ImageExtracterOptions() { InvertBlackAndWhiteImages = !options.InvertSoftMask });
-				if (mask != null && mi.BitsPerComponent == 1) {
-					info.MaskBytes = mask;
-					info.MaskSize = new Size(mi.Width, mi.Height);
+				if (mask != null) {
+					info.Mask = ImageExtractor.CreateFreeImageBitmap(mi, ref mask, options.VerticalFlipImages, false);
 				}
 			}
 			return decodedBytes;

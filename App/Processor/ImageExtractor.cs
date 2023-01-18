@@ -164,21 +164,16 @@ namespace PDFPatcher.Processor
 			var fileName = GetNewImageFileName();
 			if (info.ExtName == Constants.FileExtensions.Png
 				|| info.ExtName == Constants.FileExtensions.Tif
-				//|| info.MaskBytes != null
 				) {
 				SaveBitmap(info, bytes, fileName);
 			}
 			else {
 				SaveImageBytes(info, bytes, fileName);
 			}
-			if (info.MaskBytes != null) {
-				using (var m = new FreeImageBitmap(
-					info.MaskSize.Width, info.MaskSize.Height,
-					(info.MaskSize.Width + 7) / 8, PixelFormat.Format1bppIndexed,
-					info.MaskBytes)) {
-					//var r = bmp.Composite (false, null, m);
+			if (info.Mask != null) {
+				using (var m = info.Mask) {
 					m.Palette.CreateGrayscalePalette();
-					m.Save(fileName + "[mask]" + Constants.FileExtensions.Tif);
+					m.Save($"{fileName}[mask]{(info.Mask.PixelFormat == PixelFormat.Format1bppIndexed ? Constants.FileExtensions.Tif : Constants.FileExtensions.Png)}");
 				}
 			}
 			_totalImageCount++;
