@@ -96,6 +96,8 @@ namespace PDFPatcher.Functions
 			_DeduplicateBox.Checked = options.Deduplicate;
 			_RecompressImageBox.Checked = options.RecompressWithJbig2;
 			_FullCompressionBox.Checked = options.FullCompression;
+			_DpiXBox.SetValue(options.DpiX);
+			_DpiYBox.SetValue(options.DpiY);
 			_DocumentInfoEditor.Options = options.MetaData;
 			_ViewerSettingsEditor.Options = options.ViewerPreferences;
 			_PageLabelEditor.Labels = options.PageLabels;
@@ -136,6 +138,8 @@ namespace PDFPatcher.Functions
 
 			option.RecompressWithJbig2 = _RecompressImageBox.Checked;
 			option.FullCompression = _FullCompressionBox.Checked;
+			option.DpiX = (int)_DpiXBox.Value;
+			option.DpiY = (int)_DpiYBox.Value;
 			option.Deduplicate = _DeduplicateBox.Checked;
 		}
 

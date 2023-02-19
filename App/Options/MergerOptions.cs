@@ -58,6 +58,12 @@ namespace PDFPatcher
 			}
 		}
 
+		[XmlAttribute("水平DPI")]
+		public int DpiX { get; set; }
+
+		[XmlAttribute("垂直DPI")]
+		public int DpiY { get; set; }
+
 		[XmlAttribute("校正图片旋转角度")]
 		public bool DeskewImages { get; set; }
 

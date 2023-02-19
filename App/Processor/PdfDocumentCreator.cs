@@ -182,6 +182,9 @@ namespace PDFPatcher.Processor
 					Tracker.TraceMessage("无法添加文件：" + source.FilePath);
 					return;
 				}
+				if (_option.DpiX > 0 || _option.DpiY > 0) {
+					image.SetDpi(_option.DpiX.SubstituteDefault(image.DpiX), _option.DpiY.SubstituteDefault(image.DpiY));
+				}
 				var cs = image.Additional?.GetAsArray(PdfName.COLORSPACE);
 				if (cs?.Size == 4 && PdfName.INDEXED.Equals(cs[0])) {
 					isIndexed = true;
@@ -210,6 +213,9 @@ namespace PDFPatcher.Processor
 					for (int i = 0; i < c; i++) {
 						fi.SelectActiveFrame(i);
 						var img = LoadImageFrame(source as SourceItem.Image, _option.RecompressWithJbig2, ref fi);
+						if (_option.DpiX > 0 || _option.DpiY > 0) {
+							img.SetDpi(_option.DpiX.SubstituteDefault(img.DpiX), _option.DpiY.SubstituteDefault(img.DpiY));
+						}
 						AddImage(img);
 						if (i == 0) {
 							SetBookmarkAction(bookmark);

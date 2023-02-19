@@ -81,6 +81,11 @@
 			this._DocumentInfoEditor = new PDFPatcher.Functions.DocumentInfoEditor();
 			this._PageLabelsPage = new System.Windows.Forms.TabPage();
 			this._PageLabelEditor = new PDFPatcher.Functions.PageLabelEditor();
+			this.label10 = new System.Windows.Forms.Label();
+			this._DpiYBox = new System.Windows.Forms.NumericUpDown();
+			this._DpiXBox = new System.Windows.Forms.NumericUpDown();
+			this.label11 = new System.Windows.Forms.Label();
+			this.label12 = new System.Windows.Forms.Label();
 			this._MainTab.SuspendLayout();
 			this._FilePage.SuspendLayout();
 			this.groupBox3.SuspendLayout();
@@ -100,6 +105,8 @@
 			this._ViewerSettingsPage.SuspendLayout();
 			this._DocumentInfoPage.SuspendLayout();
 			this._PageLabelsPage.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this._DpiYBox)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this._DpiXBox)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// _MainTab
@@ -202,7 +209,7 @@
 			this._SubFolderWithFilesBox.Location = new System.Drawing.Point(177, 63);
 			this._SubFolderWithFilesBox.Name = "_SubFolderWithFilesBox";
 			this._SubFolderWithFilesBox.Size = new System.Drawing.Size(107, 16);
-			this._SubFolderWithFilesBox.TabIndex = 7;
+			this._SubFolderWithFilesBox.TabIndex = 4;
 			this._SubFolderWithFilesBox.TabStop = true;
 			this._SubFolderWithFilesBox.Text = "和文件一起排序";
 			this._SubFolderWithFilesBox.UseVisualStyleBackColor = true;
@@ -213,7 +220,7 @@
 			this._ExcludeSubFoldersBox.Location = new System.Drawing.Point(290, 63);
 			this._ExcludeSubFoldersBox.Name = "_ExcludeSubFoldersBox";
 			this._ExcludeSubFoldersBox.Size = new System.Drawing.Size(71, 16);
-			this._ExcludeSubFoldersBox.TabIndex = 6;
+			this._ExcludeSubFoldersBox.TabIndex = 5;
 			this._ExcludeSubFoldersBox.TabStop = true;
 			this._ExcludeSubFoldersBox.Text = "不要导入";
 			this._ExcludeSubFoldersBox.UseVisualStyleBackColor = true;
@@ -224,7 +231,7 @@
 			this.label9.Location = new System.Drawing.Point(8, 65);
 			this.label9.Name = "label9";
 			this.label9.Size = new System.Drawing.Size(65, 12);
-			this.label9.TabIndex = 5;
+			this.label9.TabIndex = 2;
 			this.label9.Text = "子文件夹：";
 			// 
 			// _AutoBookmarkTitleBox
@@ -243,7 +250,7 @@
 			this._CajSortBox.Location = new System.Drawing.Point(10, 107);
 			this._CajSortBox.Name = "_CajSortBox";
 			this._CajSortBox.Size = new System.Drawing.Size(144, 16);
-			this._CajSortBox.TabIndex = 4;
+			this._CajSortBox.TabIndex = 7;
 			this._CajSortBox.Text = "使用超星命名规则排序";
 			this._CajSortBox.UseVisualStyleBackColor = true;
 			// 
@@ -263,7 +270,7 @@
 			this._NumericAwareSortBox.Location = new System.Drawing.Point(10, 85);
 			this._NumericAwareSortBox.Name = "_NumericAwareSortBox";
 			this._NumericAwareSortBox.Size = new System.Drawing.Size(180, 16);
-			this._NumericAwareSortBox.TabIndex = 3;
+			this._NumericAwareSortBox.TabIndex = 6;
 			this._NumericAwareSortBox.Text = "文件名分别按数值和文本排序";
 			this._NumericAwareSortBox.UseVisualStyleBackColor = true;
 			// 
@@ -273,7 +280,7 @@
 			this._SubFoldersBeforeFilesBox.Location = new System.Drawing.Point(76, 63);
 			this._SubFoldersBeforeFilesBox.Name = "_SubFoldersBeforeFilesBox";
 			this._SubFoldersBeforeFilesBox.Size = new System.Drawing.Size(95, 16);
-			this._SubFoldersBeforeFilesBox.TabIndex = 2;
+			this._SubFoldersBeforeFilesBox.TabIndex = 3;
 			this._SubFoldersBeforeFilesBox.Text = "排在文件前面";
 			this._SubFoldersBeforeFilesBox.UseVisualStyleBackColor = true;
 			// 
@@ -294,12 +301,17 @@
 			// 
 			// groupBox2
 			// 
+			this.groupBox2.Controls.Add(this._DpiYBox);
+			this.groupBox2.Controls.Add(this._DpiXBox);
+			this.groupBox2.Controls.Add(this.label10);
+			this.groupBox2.Controls.Add(this.label11);
 			this.groupBox2.Controls.Add(this._RecompressImageBox);
+			this.groupBox2.Controls.Add(this.label12);
 			this.groupBox2.Controls.Add(this._AutoMaskBWImageBox);
 			this.groupBox2.Location = new System.Drawing.Point(237, 139);
 			this.groupBox2.Name = "groupBox2";
-			this.groupBox2.Size = new System.Drawing.Size(195, 70);
-			this.groupBox2.TabIndex = 9;
+			this.groupBox2.Size = new System.Drawing.Size(195, 138);
+			this.groupBox2.TabIndex = 4;
 			this.groupBox2.TabStop = false;
 			this.groupBox2.Text = "图片";
 			// 
@@ -309,7 +321,7 @@
 			this._RecompressImageBox.Location = new System.Drawing.Point(7, 43);
 			this._RecompressImageBox.Name = "_RecompressImageBox";
 			this._RecompressImageBox.Size = new System.Drawing.Size(120, 16);
-			this._RecompressImageBox.TabIndex = 2;
+			this._RecompressImageBox.TabIndex = 1;
 			this._RecompressImageBox.Text = "优化压缩黑白图片";
 			this._RecompressImageBox.UseVisualStyleBackColor = true;
 			// 
@@ -319,7 +331,7 @@
 			this._AutoMaskBWImageBox.Location = new System.Drawing.Point(7, 21);
 			this._AutoMaskBWImageBox.Name = "_AutoMaskBWImageBox";
 			this._AutoMaskBWImageBox.Size = new System.Drawing.Size(120, 16);
-			this._AutoMaskBWImageBox.TabIndex = 1;
+			this._AutoMaskBWImageBox.TabIndex = 0;
 			this._AutoMaskBWImageBox.Text = "黑白图片设为透明";
 			this._AutoMaskBWImageBox.UseVisualStyleBackColor = true;
 			// 
@@ -330,7 +342,7 @@
 			this._ImageGroupBox.Location = new System.Drawing.Point(237, 6);
 			this._ImageGroupBox.Name = "_ImageGroupBox";
 			this._ImageGroupBox.Size = new System.Drawing.Size(195, 48);
-			this._ImageGroupBox.TabIndex = 7;
+			this._ImageGroupBox.TabIndex = 2;
 			this._ImageGroupBox.TabStop = false;
 			this._ImageGroupBox.Text = "缩放原始内容适应页面";
 			// 
@@ -374,7 +386,7 @@
 			this._LayoutGroupBox.Location = new System.Drawing.Point(6, 6);
 			this._LayoutGroupBox.Name = "_LayoutGroupBox";
 			this._LayoutGroupBox.Size = new System.Drawing.Size(225, 171);
-			this._LayoutGroupBox.TabIndex = 5;
+			this._LayoutGroupBox.TabIndex = 0;
 			this._LayoutGroupBox.TabStop = false;
 			this._LayoutGroupBox.Text = "默认页面布局及尺寸（单位：厘米）";
 			// 
@@ -388,7 +400,7 @@
 			this._RotationBox.Location = new System.Drawing.Point(103, 140);
 			this._RotationBox.Name = "_RotationBox";
 			this._RotationBox.Size = new System.Drawing.Size(112, 20);
-			this._RotationBox.TabIndex = 11;
+			this._RotationBox.TabIndex = 12;
 			// 
 			// _SourceOrientationBox
 			// 
@@ -541,7 +553,7 @@
 			this._MarginGroupBox.Location = new System.Drawing.Point(6, 183);
 			this._MarginGroupBox.Name = "_MarginGroupBox";
 			this._MarginGroupBox.Size = new System.Drawing.Size(225, 94);
-			this._MarginGroupBox.TabIndex = 6;
+			this._MarginGroupBox.TabIndex = 1;
 			this._MarginGroupBox.TabStop = false;
 			this._MarginGroupBox.Text = "页边留白（单位：厘米）";
 			// 
@@ -633,7 +645,7 @@
             0});
 			this._TopMarginBox.Name = "_TopMarginBox";
 			this._TopMarginBox.Size = new System.Drawing.Size(61, 21);
-			this._TopMarginBox.TabIndex = 2;
+			this._TopMarginBox.TabIndex = 1;
 			this._TopMarginBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			this._TopMarginBox.ValueChanged += new System.EventHandler(this.MarginBox_ValueChanged);
 			// 
@@ -670,7 +682,7 @@
 			this.label1.Location = new System.Drawing.Point(18, 23);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(29, 12);
-			this.label1.TabIndex = 1;
+			this.label1.TabIndex = 0;
 			this.label1.Text = "上：";
 			// 
 			// _PdfGroupBox
@@ -680,7 +692,7 @@
 			this._PdfGroupBox.Location = new System.Drawing.Point(237, 60);
 			this._PdfGroupBox.Name = "_PdfGroupBox";
 			this._PdfGroupBox.Size = new System.Drawing.Size(195, 73);
-			this._PdfGroupBox.TabIndex = 8;
+			this._PdfGroupBox.TabIndex = 3;
 			this._PdfGroupBox.TabStop = false;
 			this._PdfGroupBox.Text = "源 PDF 页面尺寸";
 			// 
@@ -781,6 +793,59 @@
 			this._PageLabelEditor.Size = new System.Drawing.Size(439, 282);
 			this._PageLabelEditor.TabIndex = 1;
 			// 
+			// label10
+			// 
+			this.label10.AutoSize = true;
+			this.label10.Location = new System.Drawing.Point(6, 66);
+			this.label10.Name = "label10";
+			this.label10.Size = new System.Drawing.Size(179, 12);
+			this.label10.TabIndex = 2;
+			this.label10.Text = "指定导入分辨率（0：保持原图）";
+			// 
+			// _DpiYBox
+			// 
+			this._DpiYBox.Location = new System.Drawing.Point(55, 111);
+			this._DpiYBox.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+			this._DpiYBox.Name = "_DpiYBox";
+			this._DpiYBox.Size = new System.Drawing.Size(61, 21);
+			this._DpiYBox.TabIndex = 6;
+			this._DpiYBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			// 
+			// _DpiXBox
+			// 
+			this._DpiXBox.Location = new System.Drawing.Point(55, 84);
+			this._DpiXBox.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+			this._DpiXBox.Name = "_DpiXBox";
+			this._DpiXBox.Size = new System.Drawing.Size(61, 21);
+			this._DpiXBox.TabIndex = 4;
+			this._DpiXBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			// 
+			// label11
+			// 
+			this.label11.AutoSize = true;
+			this.label11.Location = new System.Drawing.Point(8, 113);
+			this.label11.Name = "label11";
+			this.label11.Size = new System.Drawing.Size(41, 12);
+			this.label11.TabIndex = 5;
+			this.label11.Text = "垂直：";
+			// 
+			// label12
+			// 
+			this.label12.AutoSize = true;
+			this.label12.Location = new System.Drawing.Point(8, 87);
+			this.label12.Name = "label12";
+			this.label12.Size = new System.Drawing.Size(41, 12);
+			this.label12.TabIndex = 3;
+			this.label12.Text = "水平：";
+			// 
 			// MergerOptionForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -819,6 +884,8 @@
 			this._DocumentInfoPage.ResumeLayout(false);
 			this._DocumentInfoPage.PerformLayout();
 			this._PageLabelsPage.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this._DpiYBox)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this._DpiXBox)).EndInit();
 			this.ResumeLayout(false);
 
 		}
@@ -881,5 +948,10 @@
 		private System.Windows.Forms.RadioButton _ExcludeSubFoldersBox;
 		private System.Windows.Forms.Label label9;
 		private System.Windows.Forms.RadioButton _SubFolderWithFilesBox;
+		private System.Windows.Forms.NumericUpDown _DpiYBox;
+		private System.Windows.Forms.NumericUpDown _DpiXBox;
+		private System.Windows.Forms.Label label10;
+		private System.Windows.Forms.Label label11;
+		private System.Windows.Forms.Label label12;
 	}
 }
