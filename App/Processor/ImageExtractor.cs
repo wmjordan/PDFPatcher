@@ -339,9 +339,6 @@ namespace PDFPatcher.Processor
 					if (ext == Constants.FileExtensions.Tif) {
 						TiffHelper.Save(bmp, n);
 					}
-					//else if (info.MaskBytes != null) {
-					//    bmp.Save (fileName + Constants.FileExtensions.Png);
-					//}
 					else {
 						try {
 							bmp.Save(n, FREE_IMAGE_FORMAT.FIF_PNG);
