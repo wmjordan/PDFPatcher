@@ -103,7 +103,6 @@
 			System.Windows.Forms.ToolStripMenuItem _OcrDetectPunctuation;
 			System.Windows.Forms.ToolStripMenuItem _FullScreen;
 			System.Windows.Forms.ToolStripMenuItem _PageProperties;
-			System.Windows.Forms.ToolStripMenuItem _EditorOptions;
 			System.Windows.Forms.ToolStripMenuItem _MarkBookmark;
 			System.Windows.Forms.ToolStripMenuItem _MarkBookmarkRed;
 			System.Windows.Forms.ToolStripMenuItem _MarkBookmarkYellow;
@@ -123,6 +122,7 @@
 			System.Windows.Forms.ToolStripSeparator toolStripSeparator14;
 			System.Windows.Forms.ToolStripSeparator toolStripSeparator13;
 			System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+			System.Windows.Forms.ToolStripButton _EditorOptions;
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditorControl));
 			this._SetCurrentCoordinates = new System.Windows.Forms.ToolStripMenuItem();
 			this._SelectionMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -242,7 +242,6 @@
 			_OcrDetectPunctuation = new System.Windows.Forms.ToolStripMenuItem();
 			_FullScreen = new System.Windows.Forms.ToolStripMenuItem();
 			_PageProperties = new System.Windows.Forms.ToolStripMenuItem();
-			_EditorOptions = new System.Windows.Forms.ToolStripMenuItem();
 			_MarkBookmark = new System.Windows.Forms.ToolStripMenuItem();
 			_MarkBookmarkRed = new System.Windows.Forms.ToolStripMenuItem();
 			_MarkBookmarkYellow = new System.Windows.Forms.ToolStripMenuItem();
@@ -262,6 +261,7 @@
 			toolStripSeparator14 = new System.Windows.Forms.ToolStripSeparator();
 			toolStripSeparator13 = new System.Windows.Forms.ToolStripSeparator();
 			toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+			_EditorOptions = new System.Windows.Forms.ToolStripButton();
 			this._SelectionMenu.SuspendLayout();
 			this._EditMenu.SuspendLayout();
 			this._RecentFileMenu.SuspendLayout();
@@ -289,19 +289,19 @@
 			_AlterPosition.Text = "更改目标页面坐标(&Y)";
 			_AlterPosition.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this._MainToolbar_ItemClicked);
 			// 
-			// _SetCurrentCoordinates
-			// 
-			this._SetCurrentCoordinates.Image = global::PDFPatcher.Properties.Resources.Pin;
-			this._SetCurrentCoordinates.Name = "_SetCurrentCoordinates";
-			this._SetCurrentCoordinates.Size = new System.Drawing.Size(184, 22);
-			this._SetCurrentCoordinates.Text = "设为当前页坐标(&S)";
-			// 
 			// _ChangeCoordinates
 			// 
 			_ChangeCoordinates.Image = global::PDFPatcher.Properties.Resources.ScrollPosition;
 			_ChangeCoordinates.Name = "_ChangeCoordinates";
 			_ChangeCoordinates.Size = new System.Drawing.Size(184, 22);
 			_ChangeCoordinates.Text = "更改坐标(&B)...";
+			// 
+			// _SetCurrentCoordinates
+			// 
+			this._SetCurrentCoordinates.Image = global::PDFPatcher.Properties.Resources.Pin;
+			this._SetCurrentCoordinates.Name = "_SetCurrentCoordinates";
+			this._SetCurrentCoordinates.Size = new System.Drawing.Size(184, 22);
+			this._SetCurrentCoordinates.Text = "设为当前页坐标(&S)";
 			// 
 			// _ClearPositionX
 			// 
@@ -890,13 +890,6 @@
 			_PageProperties.Size = new System.Drawing.Size(225, 22);
 			_PageProperties.Text = "查看页面属性(&X)...";
 			// 
-			// _EditorOptions
-			// 
-			_EditorOptions.Image = global::PDFPatcher.Properties.Resources.PdfOptions;
-			_EditorOptions.Name = "_EditorOptions";
-			_EditorOptions.Size = new System.Drawing.Size(208, 22);
-			_EditorOptions.Text = "设置文件修改方式(X)...";
-			// 
 			// _MarkBookmark
 			// 
 			_MarkBookmark.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -1035,11 +1028,18 @@
 			toolStripSeparator4.Name = "toolStripSeparator4";
 			toolStripSeparator4.Size = new System.Drawing.Size(208, 6);
 			// 
+			// _EditorOptions
+			// 
+			_EditorOptions.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			_EditorOptions.Image = global::PDFPatcher.Properties.Resources.PdfOptions;
+			_EditorOptions.Name = "_EditorOptions";
+			_EditorOptions.Size = new System.Drawing.Size(23, 22);
+			_EditorOptions.Text = "设置文件修改方式(X)...";
+			// 
 			// _ViewerButton
 			// 
 			this._ViewerButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			this._ViewerButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            _EditorOptions,
             _MoveMode,
             _SelectionMode,
             toolStripSeparator11,
@@ -1112,7 +1112,7 @@
             _MarkBookmark,
             _SelectMarkedBookmarks});
 			this._EditMenu.Name = "_EditMenu";
-			this._EditMenu.Size = new System.Drawing.Size(212, 330);
+			this._EditMenu.Size = new System.Drawing.Size(212, 308);
 			this._EditMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this._MainToolbar_ItemClicked);
 			// 
 			// _SetOpenStatus
@@ -1195,7 +1195,7 @@
 			// 
 			this._IncludeDecendantBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this._IncludeDecendantBox.AutoSize = true;
-			this._IncludeDecendantBox.Location = new System.Drawing.Point(3, 277);
+			this._IncludeDecendantBox.Location = new System.Drawing.Point(3, 275);
 			this._IncludeDecendantBox.Name = "_IncludeDecendantBox";
 			this._IncludeDecendantBox.Size = new System.Drawing.Size(192, 16);
 			this._IncludeDecendantBox.TabIndex = 1;
@@ -1224,7 +1224,7 @@
 			this._BookmarkBox.OperationAffectsDescendants = false;
 			this._BookmarkBox.RevealAfterExpand = false;
 			this._BookmarkBox.ShowGroups = false;
-			this._BookmarkBox.Size = new System.Drawing.Size(260, 268);
+			this._BookmarkBox.Size = new System.Drawing.Size(261, 266);
 			this._BookmarkBox.TabIndex = 0;
 			this._BookmarkBox.UseCellFormatEvents = true;
 			this._BookmarkBox.UseCompatibleStateImageBehavior = false;
@@ -1252,8 +1252,8 @@
 			// 
 			this._MainPanel.Panel2.Controls.Add(this._PageInfoBox);
 			this._MainPanel.Panel2.Controls.Add(this._ViewerBox);
-			this._MainPanel.Size = new System.Drawing.Size(623, 296);
-			this._MainPanel.SplitterDistance = 267;
+			this._MainPanel.Size = new System.Drawing.Size(627, 294);
+			this._MainPanel.SplitterDistance = 268;
 			this._MainPanel.TabIndex = 1;
 			// 
 			// _PageInfoBox
@@ -1261,9 +1261,9 @@
 			this._PageInfoBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this._PageInfoBox.AutoEllipsis = true;
-			this._PageInfoBox.Location = new System.Drawing.Point(3, 278);
+			this._PageInfoBox.Location = new System.Drawing.Point(3, 276);
 			this._PageInfoBox.Name = "_PageInfoBox";
-			this._PageInfoBox.Size = new System.Drawing.Size(346, 15);
+			this._PageInfoBox.Size = new System.Drawing.Size(349, 15);
 			this._PageInfoBox.TabIndex = 1;
 			this._PageInfoBox.Text = "PDF 页面信息";
 			// 
@@ -1282,7 +1282,7 @@
 			this._ViewerBox.Name = "_ViewerBox";
 			this._ViewerBox.OcrLanguage = 2052;
 			this._ViewerBox.PinPoint = new System.Drawing.Point(0, 0);
-			this._ViewerBox.Size = new System.Drawing.Size(346, 268);
+			this._ViewerBox.Size = new System.Drawing.Size(349, 266);
 			this._ViewerBox.TabIndex = 0;
 			this._ViewerBox.TintColor = System.Drawing.Color.Transparent;
 			this._ViewerBox.VirtualMode = true;
@@ -1423,10 +1423,11 @@
             _NextPage,
             _LastPage,
             this._ZoomBox,
-            this._ViewerButton});
+            this._ViewerButton,
+            _EditorOptions});
 			this._ViewerToolbar.Location = new System.Drawing.Point(342, 0);
 			this._ViewerToolbar.Name = "_ViewerToolbar";
-			this._ViewerToolbar.Size = new System.Drawing.Size(262, 25);
+			this._ViewerToolbar.Size = new System.Drawing.Size(285, 25);
 			this._ViewerToolbar.TabIndex = 4;
 			this._ViewerToolbar.Text = "toolStrip1";
 			this._ViewerToolbar.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this._MainToolbar_ItemClicked);
@@ -1465,7 +1466,7 @@
 			this.Controls.Add(this._BookmarkToolbar);
 			this.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
 			this.Name = "EditorControl";
-			this.Size = new System.Drawing.Size(629, 325);
+			this.Size = new System.Drawing.Size(633, 323);
 			this._SelectionMenu.ResumeLayout(false);
 			this._EditMenu.ResumeLayout(false);
 			this._RecentFileMenu.ResumeLayout(false);
