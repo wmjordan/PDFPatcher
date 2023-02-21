@@ -128,7 +128,7 @@ namespace PDFPatcher.Processor
 					}
 					foreach (var fri in fr) {
 						stream = PdfReader.GetPdfObject(fri.Value) as PRStream;
-						if (stream != null && _Refs.Add(fri.Value) == false) {
+						if (stream != null && _Refs.Add(fri.Value)) {
 							subType = stream.GetAsName(PdfName.SUBTYPE);
 							if (PdfName.IMAGE.Equals(subType)) {
 								_imageInfoList.Add(new ImageInfo(fri.Value as PRIndirectReference));
