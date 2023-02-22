@@ -258,7 +258,7 @@ namespace PDFPatcher.Functions
 		}
 
 		void AddItem(SourceItem item) {
-			if (item == null) {
+			if (item == null || item.Type != SourceItem.ItemType.Pdf) {
 				return;
 			}
 			AddItems(new SourceItem[] { item });
