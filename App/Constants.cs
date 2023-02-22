@@ -96,6 +96,7 @@ namespace PDFPatcher
 			internal const string AuthorProperty = "<" + Info.Author + ">";
 			internal const string SubjectProperty = "<" + Info.Subject + ">";
 			internal const string KeywordsProperty = "<" + Info.Keywords + ">";
+			internal const string PageCount = "<页数>";
 		}
 		#endregion
 

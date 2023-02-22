@@ -40,7 +40,8 @@ namespace PDFPatcher.Functions
 				new ToolStripMenuItem (InsertText + Constants.FileNameMacros.TitleProperty),
 				new ToolStripMenuItem (InsertText + Constants.FileNameMacros.AuthorProperty),
 				new ToolStripMenuItem (InsertText + Constants.FileNameMacros.SubjectProperty),
-				new ToolStripMenuItem (InsertText + Constants.FileNameMacros.KeywordsProperty)
+				new ToolStripMenuItem (InsertText + Constants.FileNameMacros.KeywordsProperty),
+				new ToolStripMenuItem (InsertText + Constants.FileNameMacros.PageCount),
 			});
 		}
 

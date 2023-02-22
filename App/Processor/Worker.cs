@@ -535,10 +535,10 @@ namespace PDFPatcher.Processor
 
 		internal static string ReplaceTargetFileNameMacros(string sourceFile, string targetFile, PdfReader pdf) {
 			try {
-				return ReplaceTargetFileNameMacros(sourceFile, targetFile, pdf.Trailer.GetAsDict(PdfName.INFO));
+				return ReplaceTargetFileNameMacros(sourceFile, targetFile, pdf.Trailer.GetAsDict(PdfName.INFO), pdf.NumberOfPages);
 			}
 			catch (IOException) {
-				return ReplaceTargetFileNameMacros(sourceFile, targetFile, null as PdfDictionary);
+				return ReplaceTargetFileNameMacros(sourceFile, targetFile, null as PdfDictionary, 0);
 			}
 		}
 		/// <summary>
@@ -547,8 +547,9 @@ namespace PDFPatcher.Processor
 		/// <param name="sourceFile">用于替换的源文件名。</param>
 		/// <param name="targetFile">包含替代符的目标文件名。</param>
 		/// <param name="info">源文件的元数据属性。</param>
+		/// <param name="pageCount">源文件的页数。</param>
 		/// <returns>替换目标文件名后的文件名。</returns>
-		internal static string ReplaceTargetFileNameMacros(string sourceFile, string targetFile, PdfDictionary info) {
+		internal static string ReplaceTargetFileNameMacros(string sourceFile, string targetFile, PdfDictionary info, int pageCount) {
 			string p = null; // 文档属性
 			if (info != null) {
 				if (info.Contains(PdfName.TITLE)) {
@@ -574,7 +575,8 @@ namespace PDFPatcher.Processor
 			return targetFile
 				.Replace(Constants.FileNameMacros.FileName, Path.GetFileNameWithoutExtension(sourceFile))
 				.Replace(Constants.FileNameMacros.FolderName, Path.GetFileName(Path.GetDirectoryName(sourceFile)))
-				.Replace(Constants.FileNameMacros.PathName, FileHelper.CombinePath(sourceFile.Substring(0, sourceFile.LastIndexOf(Path.DirectorySeparatorChar)), String.Empty));
+				.Replace(Constants.FileNameMacros.PathName, FileHelper.CombinePath(sourceFile.Substring(0, sourceFile.LastIndexOf(Path.DirectorySeparatorChar)), String.Empty))
+				.Replace(Constants.FileNameMacros.PageCount, pageCount.ToText());
 		}
 
 		private static bool VerifyInfoDocument(XmlDocument infoDoc) {
@@ -879,7 +881,7 @@ namespace PDFPatcher.Processor
 			DocInfoImporter.UpdateInfoValue(d, PdfName.AUTHOR, item.DocInfo.Author, s);
 			DocInfoImporter.UpdateInfoValue(d, PdfName.SUBJECT, item.DocInfo.Subject, s);
 			DocInfoImporter.UpdateInfoValue(d, PdfName.KEYWORDS, item.DocInfo.Keywords, s);
-			t = ReplaceTargetFileNameMacros(s.ToString(), template, d);
+			t = ReplaceTargetFileNameMacros(s.ToString(), template, d, item.PageCount);
 			if (FileHelper.IsPathValid(t) == false) {
 				return t;
 			}
