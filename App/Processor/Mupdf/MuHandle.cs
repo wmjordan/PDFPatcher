@@ -219,6 +219,7 @@ namespace MuPdfSharp
 			readonly IntPtr /*fz_page_separations_fn*/ GetSeparations;
 			readonly IntPtr /*fz_page_uses_overprint_fn*/ GetOverprint;
 			readonly IntPtr /*fz_page_create_link_fn*/ CreateLink;
+			readonly IntPtr /*fz_page_delete_link_fn*/ DeleteLink;
 			readonly IntPtr /*fz_page ** prev, *next*/ Prev, Next;
 		}
 #pragma warning restore 649, 169
