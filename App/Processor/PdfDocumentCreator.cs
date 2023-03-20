@@ -552,7 +552,7 @@ namespace PDFPatcher.Processor
 								|| image.ScaledHeight > image.ScaledWidth && _portrait == false)
 						||
 						// 图片较小，可以还原为原始的页面方向
-						(_portrait != _option.ContentHeight > _option.ContentWidth
+						(_portrait != image.Height > image.Width
 							&& image.ScaledHeight <= _content.Height && image.ScaledWidth <= _content.Width
 							&& image.ScaledHeight <= _content.Width && image.ScaledWidth <= _content.Height)
 					)
