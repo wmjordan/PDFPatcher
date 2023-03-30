@@ -224,7 +224,7 @@ namespace PDFPatcher.Functions
 		}
 
 		private void _IgnorePatternsBox_CellContentClick(object sender, DataGridViewCellEventArgs e) {
-			if (e.ColumnIndex == _RemovePatternColumn.Index) {
+			if (e.ColumnIndex == _RemovePatternColumn.Index && e.RowIndex >= 0) {
 				_IgnorePatternsBox.Rows.RemoveAt(e.RowIndex);
 			}
 		}
