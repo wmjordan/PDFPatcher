@@ -83,7 +83,7 @@ namespace PDFPatcher.Functions
 					f.FilterBeforeMergeTitle = value is bool b && b;
 				}
 			};
-
+			_IgnorePatternsBox.AutoResizeRowHeadersWidth(DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders);
 			Reload();
 
 			var d = _BookmarkControl.FileDialog;

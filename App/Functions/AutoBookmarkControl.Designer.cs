@@ -471,7 +471,6 @@
 			this._IgnorePatternsBox.Location = new System.Drawing.Point(8, 35);
 			this._IgnorePatternsBox.Name = "_IgnorePatternsBox";
 			this._IgnorePatternsBox.RowHeadersVisible = false;
-			this._IgnorePatternsBox.RowTemplate.Height = 23;
 			this._IgnorePatternsBox.Size = new System.Drawing.Size(441, 130);
 			this._IgnorePatternsBox.TabIndex = 1;
 			this._IgnorePatternsBox.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this._IgnorePatternsBox_CellContentClick);
