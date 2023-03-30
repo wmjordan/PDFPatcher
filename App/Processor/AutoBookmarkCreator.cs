@@ -24,14 +24,14 @@ namespace PDFPatcher.Processor
 				FirstInstance = instance.Length > 50 ? instance.Substring(0, 50) : instance;
 			}
 		}
-		sealed class FontOccurance
+		sealed class FontOccurrence
 		{
 			readonly Dictionary<string, List<SizeOccurrence>> oc = new Dictionary<string, List<SizeOccurrence>>();
-			internal List<SizeOccurrence> GetOccurance(string fontName) {
+			internal List<SizeOccurrence> GetOccurrence(string fontName) {
 				return oc.TryGetValue(fontName, out List<SizeOccurrence> s) ? s : null;
 			}
 
-			internal void AddOccurance(string fontName, float size, int page, string instance) {
+			internal void AddOccurrence(string fontName, float size, int page, string instance) {
 				if (oc.ContainsKey(fontName) == false) {
 					oc.Add(fontName, new List<SizeOccurrence>() { new SizeOccurrence(size, page, instance) });
 				}
@@ -86,7 +86,7 @@ namespace PDFPatcher.Processor
 			int level = 0;
 			const string indentString = "　　　　　　　　　　";
 			List<MatchPattern.IMatcher> ig;
-			var fontOccurances = new FontOccurance();
+			var fontOccurrences = new FontOccurrence();
 			if (options.IgnorePatterns.Count == 0) {
 				ig = null;
 			}
@@ -232,9 +232,8 @@ namespace PDFPatcher.Processor
 							be.SetAttribute(Constants.Font.Size, s.ToText());
 							if (f != null) {
 								be.SetAttribute(Constants.Font.ThisName, f.FontID.ToText());
-								//fontOccurances.AddOccurance (f.FontID, s, i, t);
 							}
-							CountFontOccuranceInRegion(fontOccurances, i, item);
+							CountFontOccurrenceInRegion(fontOccurrences, i, item);
 #if DEBUG
 							Tracker.TraceMessage(String.Concat(item.Direction.ToString()[0], ':', level < 11 ? indentString.Substring(0, level) : indentString, t, " .... ", i.ToText()));
 #else
@@ -251,7 +250,7 @@ namespace PDFPatcher.Processor
 				writer = oldWriter;
 			}
 
-			WriteDocumentFontOccurances(writer, options, p, fontOccurances);
+			WriteDocumentFontOccurrences(writer, options, p, fontOccurrences);
 			SetGoToTop(options, doc);
 			writer.WriteStartElement(Constants.DocumentBookmark);
 			if (options.CreateBookmarkForFirstPage && String.IsNullOrEmpty(options.FirstPageTitle) == false) {
@@ -274,13 +273,13 @@ namespace PDFPatcher.Processor
 			}
 		}
 
-		static void WriteDocumentFontOccurances(XmlWriter writer, AutoBookmarkOptions options, TextToBookmarkProcessor p, FontOccurance fontOccurances) {
+		static void WriteDocumentFontOccurrences(XmlWriter writer, AutoBookmarkOptions options, TextToBookmarkProcessor p, FontOccurrence fontOccurrences) {
 			writer.WriteStartElement(Constants.Font.DocumentFont);
 			Tracker.TraceMessage("\n文档所用的字体");
 			var dl = new List<String>();
 			foreach (var item in p.FontList) {
 				var fo = "0";
-				var sl = fontOccurances.GetOccurance(item.Value);
+				var sl = fontOccurrences.GetOccurrence(item.Value);
 				if (sl != null) {
 					if (dl.Contains(item.Value) == false) {
 						int o = 0;
@@ -300,14 +299,14 @@ namespace PDFPatcher.Processor
 				writer.WriteStartElement(Constants.Font.ThisName);
 				writer.WriteAttributeString(Constants.Font.ID, item.Key.ToText());
 				writer.WriteAttributeString(Constants.Font.Name, item.Value);
-				writer.WriteAttributeString(Constants.FontOccurance.Count, fo);
+				writer.WriteAttributeString(Constants.FontOccurrence.Count, fo);
 				if (sl != null) {
 					foreach (var s in sl) {
 						writer.WriteStartElement(Constants.Font.Size);
 						writer.WriteAttributeString(Constants.Font.Size, s.Size.ToText());
-						writer.WriteAttributeString(Constants.FontOccurance.Count, s.Occurrence.ToText());
-						writer.WriteAttributeString(Constants.FontOccurance.FirstText, s.FirstInstance);
-						writer.WriteAttributeString(Constants.FontOccurance.FirstPage, s.FirstPage.ToText());
+						writer.WriteAttributeString(Constants.FontOccurrence.Count, s.Occurrence.ToText());
+						writer.WriteAttributeString(Constants.FontOccurrence.FirstText, s.FirstInstance);
+						writer.WriteAttributeString(Constants.FontOccurrence.FirstPage, s.FirstPage.ToText());
 						if (options.DisplayFontStatistics && (s.Occurrence > 0 || options.DisplayAllFonts)) {
 							Tracker.TraceMessage(String.Concat("\t尺寸：", s.Size.ToText(), "\t出现次数：", s.Occurrence.ToText(), "\t首次出现于第", s.FirstPage.ToText(), "页（", s.FirstInstance, "）"));
 						}
@@ -319,12 +318,12 @@ namespace PDFPatcher.Processor
 			writer.WriteEndElement();
 		}
 
-		static void CountFontOccuranceInRegion(FontOccurance fontOccurances, int i, TextRegion item) {
+		static void CountFontOccurrenceInRegion(FontOccurrence fontOccurrences, int i, TextRegion item) {
 			FontInfo f = null;
 			foreach (var il in item.Lines) {
 				foreach (var ii in il.Texts) {
 					if (ii.Font != null && (f == null || ii.Font.FontID != f.FontID)) {
-						fontOccurances.AddOccurance(ii.Font.FontName, ii.Size, i, il.Text);
+						fontOccurrences.AddOccurrence(ii.Font.FontName, ii.Size, i, il.Text);
 						f = ii.Font;
 					}
 				}

@@ -61,21 +61,21 @@ namespace PDFPatcher.Functions
 				}
 				else if (f.ParentNode?.Name == Constants.Font.ThisName) {
 					f.GetAttribute(Constants.Font.Size).TryParse(out float p);
-					var t = f.GetAttribute(Constants.FontOccurance.FirstText);
+					var t = f.GetAttribute(Constants.FontOccurrence.FirstText);
 					return String.Concat(p.ToText(), "(", t, ")");
 				}
 				return null;
 			};
 			_CountColumn.AspectGetter = (object o) => {
 				if (o is XmlElement f) {
-					f.GetAttribute(Constants.FontOccurance.Count).TryParse(out int p);
+					f.GetAttribute(Constants.FontOccurrence.Count).TryParse(out int p);
 					return p;
 				}
 				return null;
 			};
 			_FirstPageColumn.AspectGetter = (object o) => {
 				if (o is XmlElement f) {
-					f.GetAttribute(Constants.FontOccurance.FirstPage).TryParse(out int p);
+					f.GetAttribute(Constants.FontOccurrence.FirstPage).TryParse(out int p);
 					return p;
 				}
 				return null;

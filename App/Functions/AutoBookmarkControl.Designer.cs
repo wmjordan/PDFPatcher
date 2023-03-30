@@ -44,7 +44,7 @@
 			this.label6 = new System.Windows.Forms.Label();
 			this.label5 = new System.Windows.Forms.Label();
 			this._WritingDirectionBox = new System.Windows.Forms.ComboBox();
-			this._AutoHierarchicleArrangementBox = new System.Windows.Forms.CheckBox();
+			this._AutoHierarchicalArrangementBox = new System.Windows.Forms.CheckBox();
 			this.label11 = new System.Windows.Forms.Label();
 			this._MaxDistanceBetweenLinesBox = new System.Windows.Forms.NumericUpDown();
 			this._GoToPageTopLevelBox = new System.Windows.Forms.NumericUpDown();
@@ -198,7 +198,7 @@
 			this.tabPage1.Controls.Add(this.label6);
 			this.tabPage1.Controls.Add(this.label5);
 			this.tabPage1.Controls.Add(this._WritingDirectionBox);
-			this.tabPage1.Controls.Add(this._AutoHierarchicleArrangementBox);
+			this.tabPage1.Controls.Add(this._AutoHierarchicalArrangementBox);
 			this.tabPage1.Controls.Add(this.label11);
 			this.tabPage1.Controls.Add(this._MaxDistanceBetweenLinesBox);
 			this.tabPage1.Controls.Add(this._GoToPageTopLevelBox);
@@ -283,15 +283,15 @@
 			this._WritingDirectionBox.Size = new System.Drawing.Size(76, 20);
 			this._WritingDirectionBox.TabIndex = 9;
 			// 
-			// _AutoHierarchicleArrangementBox
+			// _AutoHierarchicalArrangementBox
 			// 
-			this._AutoHierarchicleArrangementBox.AutoSize = true;
-			this._AutoHierarchicleArrangementBox.Location = new System.Drawing.Point(6, 63);
-			this._AutoHierarchicleArrangementBox.Name = "_AutoHierarchicleArrangementBox";
-			this._AutoHierarchicleArrangementBox.Size = new System.Drawing.Size(120, 16);
-			this._AutoHierarchicleArrangementBox.TabIndex = 7;
-			this._AutoHierarchicleArrangementBox.Text = "自动组织标题层次";
-			this._AutoHierarchicleArrangementBox.UseVisualStyleBackColor = true;
+			this._AutoHierarchicalArrangementBox.AutoSize = true;
+			this._AutoHierarchicalArrangementBox.Location = new System.Drawing.Point(6, 63);
+			this._AutoHierarchicalArrangementBox.Name = "_AutoHierarchicalArrangementBox";
+			this._AutoHierarchicalArrangementBox.Size = new System.Drawing.Size(120, 16);
+			this._AutoHierarchicalArrangementBox.TabIndex = 7;
+			this._AutoHierarchicalArrangementBox.Text = "自动组织标题层次";
+			this._AutoHierarchicalArrangementBox.UseVisualStyleBackColor = true;
 			// 
 			// label11
 			// 
@@ -817,7 +817,7 @@
 		private System.Windows.Forms.TabPage tabPage3;
 		private System.Windows.Forms.Label label12;
 		private System.Windows.Forms.Button _ClearTextFiltersButton;
-		private System.Windows.Forms.CheckBox _AutoHierarchicleArrangementBox;
+		private System.Windows.Forms.CheckBox _AutoHierarchicalArrangementBox;
 		private BrightIdeasSoftware.ObjectListView _LevelAdjustmentBox;
 		private BrightIdeasSoftware.OLVColumn _AdvancedFilterColumn;
 		private BrightIdeasSoftware.OLVColumn _AdjustmentLevelColumn;

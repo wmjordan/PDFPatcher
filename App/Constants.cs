@@ -449,7 +449,7 @@ namespace PDFPatcher
 			internal const string Name = "名称";
 			internal const string Size = "文本尺寸";
 		}
-		internal static class FontOccurance
+		internal static class FontOccurrence
 		{
 			internal const string Count = "出现次数";
 			internal const string FirstText = "首次出现文本";

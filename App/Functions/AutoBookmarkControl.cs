@@ -31,7 +31,7 @@ namespace PDFPatcher.Functions
 			AppContext.MainForm.SetTooltip(_BookmarkControl.FileList, "指定识别书签后生成的信息文件或简易文本书签文件路径");
 			AppContext.MainForm.SetTooltip(_ExportBookmarkButton, "点击此按钮识别 PDF 文件的标题为信息文件");
 			AppContext.MainForm.SetTooltip(_TitleSizeThresholdBox, "指定标题文本的最小尺寸，小于此尺寸的文本将被忽略");
-			AppContext.MainForm.SetTooltip(_AutoHierarchicleArrangementBox, "根据标题文本的尺寸级别生成多层次的书签");
+			AppContext.MainForm.SetTooltip(_AutoHierarchicalArrangementBox, "根据标题文本的尺寸级别生成多层次的书签");
 			AppContext.MainForm.SetTooltip(_YOffsetBox, "将标题的定位位置向上偏移的行距");
 			AppContext.MainForm.SetTooltip(_MergeAdjacentTitlesBox, "将连续出现的标题合并为一个标题");
 			AppContext.MainForm.SetTooltip(_MergeDifferentSizeTitlesBox, "合并不同尺寸的相邻标题");
@@ -106,7 +106,7 @@ namespace PDFPatcher.Functions
 			_CreateBookmarkForFirstPageBox.Checked = _options.CreateBookmarkForFirstPage;
 			_MergeAdjacentTitlesBox.Checked = _options.MergeAdjacentTitles;
 			_MergeDifferentSizeTitlesBox.Checked = _options.MergeDifferentSizeTitles;
-			_AutoHierarchicleArrangementBox.Checked = _options.AutoHierarchicalArrangement;
+			_AutoHierarchicalArrangementBox.Checked = _options.AutoHierarchicalArrangement;
 			_IgnoreNumericTitleBox.Checked = _options.IgnoreNumericTitle;
 			_IgnoreOverlappedTextBox.Checked = _options.IgnoreOverlappedText;
 			_IgnoreSingleCharacterTitleBox.Checked = _options.IgnoreSingleCharacterTitle;
@@ -174,7 +174,7 @@ namespace PDFPatcher.Functions
 			_options.YOffset = (float)_YOffsetBox.Value;
 			_options.ExportTextCoordinates = _ExportTextCoordinateBox.Checked;
 			_options.PageTopForLevel = (int)_GoToPageTopLevelBox.Value;
-			_options.AutoHierarchicalArrangement = _AutoHierarchicleArrangementBox.Checked;
+			_options.AutoHierarchicalArrangement = _AutoHierarchicalArrangementBox.Checked;
 			_options.DisplayFontStatistics = _DisplayFontStatisticsBox.Checked;
 			_options.DisplayAllFonts = _ShowAllFontsBox.Checked;
 			_options.WritingDirection = (WritingDirection)_WritingDirectionBox.SelectedIndex;
