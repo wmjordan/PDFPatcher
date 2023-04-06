@@ -205,35 +205,17 @@ namespace PDFPatcher.Processor
 				else if (pdf.Catalog == pdf.Trailer.GetAsDict(PdfName.INFO)) {
 					FixIncorrectTrailerInfo(pdf);
 				}
+				if (options.EnableFullCompression) {
+					pdf.RemoveUnusedObjects();
+					w.SetFullCompression();
+				}
 				if (bm != null) {
 					pdf.Catalog.Put(PdfName.OUTLINES, OutlineManager.WriteOutline(w.Writer, bm, ranges.TotalPages));
 					w.ViewerPreferences = PdfWriter.PageModeUseOutlines;
 				}
 				w.Writer.Info.Put(PdfName.PRODUCER, new PdfString(String.Concat(Application.ProductName, " ", Application.ProductVersion)));
 				Tracker.TraceMessage("保存文件：" + targetFile);
-				if (options.EnableFullCompression) {
-					pdf.RemoveUnusedObjects();
-					w.SetFullCompression();
-				}
 				w.Close();
-				//Document doc = new Document ();
-				//PdfSmartCopy w = new PdfSmartCopy (doc, s);
-				//if (impOptions.ImportDocProperties) {
-				//    w.Info.Merge (info ?? new PdfDictionary ());
-				//}
-				//w.Info.Put (PdfName.CREATOR, new PdfString (String.Concat (Application.ProductName, " ", Application.ProductVersion)));
-				//doc.Open ();
-				//var creator = new PdfDocumentCreator (options, impOptions, doc, w);
-				//creator.ProcessFile (options.SourceItems[0]);
-				//Tracker.TraceMessage ("保存文件：" + targetFile);
-				//var bm = creator.PdfBookmarks;
-				//if (bm != null && bm.DocumentElement != null && bm.DocumentElement.HasChildNodes) {
-				//    Tracker.TraceMessage ("自动生成文档书签。");
-				//    PdfBookmarkUtility.WriteOutline (w, bm.DocumentElement, w.PageEmpty ? w.CurrentPageNumber - 1 : w.CurrentPageNumber);
-				//    w.ViewerPreferences = PdfWriter.PageModeUseOutlines;
-				//}
-				//doc.Close ();
-				//w.Close ();
 			}
 			Tracker.TraceMessage(Tracker.Category.Alert, "成功提取文件内容到 <<" + targetFile + ">>。");
 		}
