@@ -69,11 +69,6 @@
 			this.UseHyperlinks = true;
 			this.View = System.Windows.Forms.View.Details;
 			this.VirtualMode = true;
-			this.BeforeLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.BookmarkEditorView_BeforeLabelEdit);
-			this.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler (this._BookmarkBox_AfterLabelEdit);
-			this.FormatRow += new System.EventHandler<BrightIdeasSoftware.FormatRowEventArgs> (this._BookmarkBox_FormatRow);
-			this.HyperlinkClicked += new System.EventHandler<BrightIdeasSoftware.HyperlinkClickedEventArgs>(BookmarkEditor_CellClick);
-			this.HotItemChanged += new System.EventHandler<BrightIdeasSoftware.HotItemChangedEventArgs> (BookmarkEditor_HotItemChanged);
 			// 
 			// _BookmarkNameColumn
 			// 

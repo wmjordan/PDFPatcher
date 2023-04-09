@@ -28,13 +28,14 @@ namespace PDFPatcher.Functions
 		public bool IsLabelEditing { get; private set; }
 
 		readonly Dictionary<BookmarkElement, Color> _markers = new Dictionary<BookmarkElement, Color>();
+		AutoResizingTextBox _LabelEditBox;
 
 		public BookmarkEditorView() {
 			InitializeComponent();
 			InitEditorBox();
 		}
 
-		private void InitEditorBox() {
+		void InitEditorBox() {
 			if (IsDesignMode) {
 				return;
 			}
@@ -112,6 +113,7 @@ namespace PDFPatcher.Functions
 				return a;
 			};
 		}
+
 		protected override void OnBeforeSorting(BeforeSortingEventArgs e) {
 			e.Canceled = true; // 禁止排序
 			base.OnBeforeSorting(e);
@@ -327,7 +329,7 @@ namespace PDFPatcher.Functions
 		/// <summary>
 		/// 检查 <paramref name="source"/> 是否为 <paramref name="target"/> 的先代元素。
 		/// </summary>
-		private static bool IsAncestorOrSelf(XmlElement source, XmlElement target) {
+		static bool IsAncestorOrSelf(XmlElement source, XmlElement target) {
 			do {
 				if (source == target) {
 					return true;
@@ -456,7 +458,7 @@ namespace PDFPatcher.Functions
 
 		internal List<BookmarkElement> GetSelectedElements() { return GetSelectedElements(this, true); }
 		internal List<BookmarkElement> GetSelectedElements(bool selectChildren) { return GetSelectedElements(this, selectChildren); }
-		private static List<BookmarkElement> GetSelectedElements(TreeListView treeList, bool selectChildren) {
+		static List<BookmarkElement> GetSelectedElements(TreeListView treeList, bool selectChildren) {
 			if (treeList == null) {
 				return null;
 			}
@@ -480,11 +482,15 @@ namespace PDFPatcher.Functions
 			return el;
 		}
 
-		private void BookmarkEditorView_BeforeLabelEdit(object sender, LabelEditEventArgs e) {
+		protected override void OnBeforeLabelEdit(LabelEditEventArgs e) {
+			base.OnBeforeLabelEdit(e);
 			IsLabelEditing = true;
+			e.CancelEdit = true;
+			EditSubItem(GetItem(e.Item), 0);
 		}
 
-		private void _BookmarkBox_AfterLabelEdit(object sender, LabelEditEventArgs e) {
+		protected override void OnAfterLabelEdit(LabelEditEventArgs e) {
+			base.OnAfterLabelEdit(e);
 			IsLabelEditing = false;
 			var o = GetModelObject(e.Item) as XmlElement;
 			if (o == null || String.IsNullOrEmpty(e.Label)) {
@@ -503,7 +509,40 @@ namespace PDFPatcher.Functions
 			RefreshItem(i);
 		}
 
-		private void BookmarkEditor_CellClick(object sender, HyperlinkClickedEventArgs e) {
+		protected override void OnCellEditStarting(CellEditEventArgs e) {
+			base.OnCellEditStarting(e);
+			if (e.Column == _BookmarkNameColumn) {
+				e.Control = new AutoResizingTextBox(e.CellBounds, e.Value as string);
+			}
+		}
+
+		protected override void OnCellEditFinishing(CellEditEventArgs e) {
+			base.OnCellEditFinishing(e);
+			if (e.Column == _BookmarkNameColumn) {
+				string newTitle = e.NewValue as string;
+				if (String.IsNullOrEmpty(newTitle) || newTitle == e.Value as string) {
+					e.Cancel = true;
+					return;
+				}
+			}
+		}
+
+		protected override void OnCellEditFinished(CellEditEventArgs e) {
+			base.OnCellEditFinished(e);
+			if (e.Column == _BookmarkNameColumn && e.Cancel == false) {
+				var i = GetItem(e.ListViewItem.Index);
+				var o = e.RowObject as XmlElement;
+				if (o.HasChildNodes && FormHelper.IsCtrlKeyDown == false) {
+					Expand(o);
+				}
+				if (e.Value as string != Constants.Bookmark && i.Index < Items.Count - 1) {
+					GetItem(i.Index + 1).BeginEdit();
+				}
+			}
+		}
+
+		protected override void OnHyperlinkClicked(HyperlinkClickedEventArgs e) {
+			base.OnHyperlinkClicked(e);
 			if (e.Column != _ActionColumn) {
 				return;
 			}
@@ -511,7 +550,47 @@ namespace PDFPatcher.Functions
 			ShowBookmarkProperties(e.Model as BookmarkElement);
 		}
 
-		public void ShowBookmarkProperties(BookmarkElement bookmark) {
+		protected override void OnHotItemChanged(HotItemChangedEventArgs e) {
+			if ((e.HotColumnIndex == _ActionColumn.Index || e.OldHotColumnIndex == _ActionColumn.Index)
+				//&& (e.HotRowIndex != e.OldHotRowIndex || e.HotColumnIndex != e.OldHotColumnIndex)
+				) {
+				// e.handled = false;
+				return;
+			}
+			e.Handled = true;
+			base.OnHotItemChanged(e);
+		}
+
+		protected override void OnFormatRow(FormatRowEventArgs args) {
+			base.OnFormatRow(args);
+			var b = args.Model as BookmarkElement;
+			if (b == null) {
+				return;
+			}
+			args.Item.UseItemStyleForSubItems = false;
+			args.UseCellFormatEvents = false;
+			Color c;
+			if (b.MarkerColor != 0) {
+				args.Item.BackColor = Color.FromArgb(b.MarkerColor);
+			}
+			c = b.ForeColor;
+			if (c != Color.Transparent) {
+				args.Item.ForeColor = c;
+			}
+
+			if (b.Title.IndexOf('\n') >= 0) {
+				args.Item.GetSubItem(0).Decoration = new TextDecoration("…", ContentAlignment.BottomRight) { Font = Font };
+			}
+			var ts = b.TextStyle;
+			if (ts != FontStyle.Regular) {
+				args.Item.Font = new Font(args.Item.Font, ts);
+			}
+			if (_ActionColumn.Index != -1) {
+				args.Item.SubItems[_ActionColumn.Index].ForeColor = Color.Blue;
+			}
+		}
+
+		internal void ShowBookmarkProperties(BookmarkElement bookmark) {
 			if (bookmark == null) {
 				return;
 			}
@@ -520,40 +599,6 @@ namespace PDFPatcher.Functions
 					Undo?.AddUndo("更改书签动作属性", form.UndoActions);
 					RefreshObject(bookmark);
 				}
-			}
-		}
-
-		void BookmarkEditor_HotItemChanged(object sender, BrightIdeasSoftware.HotItemChangedEventArgs e) {
-			if ((e.HotColumnIndex == _ActionColumn.Index || e.OldHotColumnIndex == _ActionColumn.Index)
-				//&& (e.HotRowIndex != e.OldHotRowIndex || e.HotColumnIndex != e.OldHotColumnIndex)
-				) {
-				// e.handled = false;
-				return;
-			}
-			e.Handled = true;
-		}
-
-		private void _BookmarkBox_FormatRow(object sender, FormatRowEventArgs e) {
-			var b = e.Model as BookmarkElement;
-			if (b == null) {
-				return;
-			}
-			e.Item.UseItemStyleForSubItems = false;
-			e.UseCellFormatEvents = false;
-			Color c;
-			if (b.MarkerColor != 0) {
-				e.Item.BackColor = Color.FromArgb(b.MarkerColor);
-			}
-			c = b.ForeColor;
-			if (c != Color.Transparent) {
-				e.Item.ForeColor = c;
-			}
-			var ts = b.TextStyle;
-			if (ts != FontStyle.Regular) {
-				e.Item.Font = new Font(e.Item.Font, ts);
-			}
-			if (_ActionColumn.Index != -1) {
-				e.Item.SubItems[_ActionColumn.Index].ForeColor = Color.Blue;
 			}
 		}
 
@@ -598,7 +643,7 @@ namespace PDFPatcher.Functions
 			return matches;
 		}
 
-		private void SearchBookmarks(BookmarkMatcher matcher, List<BookmarkElement> matches, BookmarkElement item) {
+		void SearchBookmarks(BookmarkMatcher matcher, List<BookmarkElement> matches, BookmarkElement item) {
 			if (item.HasChildNodes) {
 				foreach (BookmarkElement c in item.SelectNodes(Constants.Bookmark)) {
 					SearchBookmarks(matcher, matches, c);
@@ -610,6 +655,42 @@ namespace PDFPatcher.Functions
 			}
 		}
 
+		sealed class AutoResizingTextBox : TextBox
+		{
+			readonly int _MinHeight, _MaxHeight, _Width;
 
+			public AutoResizingTextBox(Rectangle bound, string text) {
+				Bounds = bound;
+				_Width = bound.Width;
+				_MinHeight = bound.Height;
+				_MaxHeight = bound.Height * 8;
+				MaximumSize = new Size(_Width, _MaxHeight);
+				Multiline = true;
+				Text = text;
+			}
+
+			void ResizeForText(string value) {
+				Size = new Size(_Width, Math.Min(Math.Max((int)PreferredSize.Height, _MinHeight), _MaxHeight));
+			}
+
+			protected override void OnTextChanged(EventArgs e) {
+				base.OnTextChanged(e);
+				ResizeForText(Text);
+			}
+
+			protected override void OnKeyDown(KeyEventArgs e) {
+				if (e.KeyData == (Keys.Control | Keys.Enter)) {
+					AcceptsReturn = true;
+					// hack: The following line can throw ObjectDisposedException
+					//ScrollBars = ScrollBars.Vertical;
+					this.SelectedText = Environment.NewLine;
+					ResizeForText(Text);
+					e.Handled = true;
+					e.SuppressKeyPress = true;
+					return;
+				}
+				base.OnKeyUp(e);
+			}
+		}
 	}
 }
