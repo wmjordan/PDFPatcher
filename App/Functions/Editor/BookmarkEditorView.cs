@@ -25,7 +25,6 @@ namespace PDFPatcher.Functions
 		public OLVColumn BookmarkNameColumn => _BookmarkNameColumn;
 		public OLVColumn BookmarkPageColumn => _BookmarkPageColumn;
 		public bool HasMarker => _markers.Count > 0;
-		public bool IsLabelEditing { get; private set; }
 
 		readonly Dictionary<BookmarkElement, Color> _markers = new Dictionary<BookmarkElement, Color>();
 		AutoResizingTextBox _LabelEditBox;
@@ -484,29 +483,8 @@ namespace PDFPatcher.Functions
 
 		protected override void OnBeforeLabelEdit(LabelEditEventArgs e) {
 			base.OnBeforeLabelEdit(e);
-			IsLabelEditing = true;
 			e.CancelEdit = true;
 			EditSubItem(GetItem(e.Item), 0);
-		}
-
-		protected override void OnAfterLabelEdit(LabelEditEventArgs e) {
-			base.OnAfterLabelEdit(e);
-			IsLabelEditing = false;
-			var o = GetModelObject(e.Item) as XmlElement;
-			if (o == null || String.IsNullOrEmpty(e.Label)) {
-				e.CancelEdit = true;
-				return;
-			}
-			var p = new ReplaceTitleTextProcessor(e.Label);
-			Undo?.AddUndo("编辑书签文本", p.Process(o));
-			var i = GetItem(e.Item);
-			if (o.HasChildNodes && FormHelper.IsCtrlKeyDown == false) {
-				Expand(o);
-			}
-			if (i.Index < Items.Count - 1) {
-				GetItem(i.Index + 1).BeginEdit();
-			}
-			RefreshItem(i);
 		}
 
 		protected override void OnCellEditStarting(CellEditEventArgs e) {
@@ -667,6 +645,7 @@ namespace PDFPatcher.Functions
 				MaximumSize = new Size(_Width, _MaxHeight);
 				Multiline = true;
 				Text = text;
+				AcceptsReturn = text.IndexOf('\n') >= 0;
 			}
 
 			void ResizeForText(string value) {
@@ -679,7 +658,7 @@ namespace PDFPatcher.Functions
 			}
 
 			protected override void OnKeyDown(KeyEventArgs e) {
-				if (e.KeyData == (Keys.Control | Keys.Enter)) {
+				if (e.KeyData == (Keys.Shift | Keys.Enter)) {
 					AcceptsReturn = true;
 					// hack: The following line can throw ObjectDisposedException
 					//ScrollBars = ScrollBars.Vertical;
@@ -689,7 +668,10 @@ namespace PDFPatcher.Functions
 					e.SuppressKeyPress = true;
 					return;
 				}
-				base.OnKeyUp(e);
+				//else if (e.KeyData == (Keys.Control | Keys.Enter)) {
+				//	AcceptsReturn = false;
+				//}
+				base.OnKeyDown(e);
 			}
 		}
 	}

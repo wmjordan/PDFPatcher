@@ -485,7 +485,7 @@ namespace PDFPatcher.Functions
 
 		[SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
 		protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
-			if (_BookmarkBox.IsCellEditing || _BookmarkBox.IsLabelEditing || _CurrentPageBox.Focused) {
+			if (_BookmarkBox.IsCellEditing || _CurrentPageBox.Focused) {
 				return base.ProcessCmdKey(ref msg, keyData);
 			}
 			switch (keyData ^ Keys.Control) {
