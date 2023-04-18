@@ -1254,6 +1254,7 @@
 			this._MainPanel.Panel2.Controls.Add(this._ViewerBox);
 			this._MainPanel.Size = new System.Drawing.Size(627, 294);
 			this._MainPanel.SplitterDistance = 268;
+			this._MainPanel.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
 			this._MainPanel.TabIndex = 1;
 			// 
 			// _PageInfoBox

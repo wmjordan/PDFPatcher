@@ -102,6 +102,7 @@ namespace PDFPatcher.Functions
 			_ViewerMenu.ScaleIcons(size);
 			_BookmarkBox.ScaleColumnWidths(s);
 			_ViewerToolbar.Left = _BookmarkToolbar.Right;
+			_MainPanel.SplitterDistance = (int)(_MainPanel.SplitterDistance * FormHelper.GetDpiScale(this));
 			_MainPanel.FixedPanel = FixedPanel.Panel1;
 			//_MainToolbar.ToggleEnabled (false, _editButtonNames);
 
