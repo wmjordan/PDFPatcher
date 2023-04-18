@@ -9,7 +9,7 @@ namespace MuPdfSharp
 	static partial class NativeMethods
 	{
 		const string DLL = "mupdflib.dll";
-		const string FZ_VERSION = "1.21.1";
+		const string FZ_VERSION = "1.22.0";
 
 		const uint FZ_STORE_DEFAULT = 256 << 20;
 
