@@ -8,45 +8,25 @@ namespace PDFPatcher
 {
 	public class ExporterOptions
 	{
-		private bool _ExportDocProperties = true;
 		///<summary>获取或指定是否导出文档属性。</summary>
 		[XmlAttribute("导出文档属性")]
-		public bool ExportDocProperties {
-			get => _ExportDocProperties;
-			set => _ExportDocProperties = value;
-		}
+		public bool ExportDocProperties { get; set; } = true;
 
-		private bool _ExportBookmarks = true;
 		///<summary>获取或指定是否导出书签。</summary>
 		[XmlAttribute("导出文档书签")]
-		public bool ExportBookmarks {
-			get => _ExportBookmarks;
-			set => _ExportBookmarks = value;
-		}
+		public bool ExportBookmarks { get; set; } = true;
 
-		private bool _ExtractPageLinks = true;
 		///<summary>获取或指定是否导出页面内的连接。</summary>
 		[XmlAttribute("导出页面链接")]
-		public bool ExtractPageLinks {
-			get => _ExtractPageLinks;
-			set => _ExtractPageLinks = value;
-		}
+		public bool ExtractPageLinks { get; set; } = true;
 
-		private bool _ExportViewerPreferences = true;
 		///<summary>获取或指定是否导出阅读器设置。</summary>
 		[XmlAttribute("导出阅读器设置")]
-		public bool ExportViewerPreferences {
-			get => _ExportViewerPreferences;
-			set => _ExportViewerPreferences = value;
-		}
+		public bool ExportViewerPreferences { get; set; } = true;
 
-		private bool _ExtractPageSettings = true;
 		///<summary>获取或指定是否导出页面的阅读设置。</summary>
 		[XmlAttribute("导出页面设置")]
-		public bool ExtractPageSettings {
-			get => _ExtractPageSettings;
-			set => _ExtractPageSettings = value;
-		}
+		public bool ExtractPageSettings { get; set; } = true;
 
 		///<summary>获取或指定是否导出文档编录信息。</summary>
 		[XmlAttribute("导出编录信息")]
@@ -76,29 +56,20 @@ namespace PDFPatcher
 		[XmlAttribute("导出命令操作符")]
 		public bool ExportContentOperators { get; set; }
 
-		private int _ExportBinaryStream = 200;
 		///<summary>获取或指定导出二进制流的字节数。</summary>
 		[XmlAttribute("导出二进制流")]
-		public int ExportBinaryStream {
-			get => _ExportBinaryStream;
-			set => _ExportBinaryStream = value;
-		}
+		public bool ExportBinaryStream { get; set; }
 
 		///<summary>获取或指定导出前是否解析命名位置。</summary>
 		[XmlAttribute("解析命名位置")]
 		public bool ConsolidateNamedDestinations { get; set; }
 
-		private readonly ImageExtracterOptions _Images = new ImageExtracterOptions();
 		///<summary>获取导出图像的选项。</summary>
 		[XmlIgnore]
-		public ImageExtracterOptions Images => _Images;
+		public ImageExtracterOptions Images { get; } = new ImageExtracterOptions();
 
-		private UnitConverter _UnitConverter = new UnitConverter();
 		[XmlElement("导出尺寸单位")]
-		public UnitConverter UnitConverter {
-			get => _UnitConverter;
-			set => _UnitConverter = value;
-		}
+		public UnitConverter UnitConverter { get; set; } = new UnitConverter();
 
 		private Encoding _Encoding = E.Default;
 		private string _EncodingName;
