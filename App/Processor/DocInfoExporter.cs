@@ -15,21 +15,25 @@ namespace PDFPatcher.Processor
 		const int OpenDocWorkload = 10;
 		const int BookmarkWorkload = 30;
 
-		static internal XmlWriterSettings GetWriterSettings() {
-			return new XmlWriterSettings() {
-				Encoding = AppContext.Exporter.GetEncoding(),
-				Indent = true,
-				IndentChars = "\t",
-				CheckCharacters = false
-			};
-		}
-
 		readonly PdfReader _reader;
 		readonly ExporterOptions _options;
 		readonly PdfContentExport _contentExport;
 		readonly PdfActionExporter _actionExport;
 		Dictionary<int, int> _pageReferenceMapper;
-		private Dictionary<int, int> PageReferenceMapper {
+
+		public DocInfoExporter(PdfReader reader, ExporterOptions options) {
+			_reader = reader;
+			_options = options;
+			_contentExport = new PdfContentExport(options);
+			_actionExport = new PdfActionExporter(options.UnitConverter);
+		}
+
+		public FilePath BinaryStreamPath {
+			get => _contentExport.BinaryStreamPath;
+			set => _contentExport.BinaryStreamPath = value;
+		}
+
+		Dictionary<int, int> PageReferenceMapper {
 			get {
 				if (_pageReferenceMapper == null) {
 					_pageReferenceMapper = _reader.GetPageRefMapper();
@@ -38,11 +42,13 @@ namespace PDFPatcher.Processor
 			}
 		}
 
-		public DocInfoExporter(PdfReader reader, ExporterOptions options) {
-			_reader = reader;
-			_options = options;
-			_contentExport = new PdfContentExport(options);
-			_actionExport = new PdfActionExporter(options.UnitConverter);
+		static internal XmlWriterSettings GetWriterSettings() {
+			return new XmlWriterSettings() {
+				Encoding = AppContext.Exporter.GetEncoding(),
+				Indent = true,
+				IndentChars = "\t",
+				CheckCharacters = false
+			};
 		}
 
 		internal int EstimateWorkload() {

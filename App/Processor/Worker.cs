@@ -249,8 +249,11 @@ namespace PDFPatcher.Processor
 			targetFile = FileHelper.MakePathRootedAndWithExtension(targetFile, sourceFile, Ext.Xml, false);
 			targetFile.CreateContainingDirectory();
 			var export = new DocInfoExporter(r, AppContext.Exporter);
+			if (AppContext.Exporter.ExportBinaryStream) {
+				export.BinaryStreamPath = targetFile.Directory.Combine(targetFile.FileNameWithoutExtension).Combine("数据流");
+			}
 			if (AppContext.Exporter.ExtractImages) {
-				AppContext.Exporter.Images.OutputPath = FileHelper.CombinePath(targetFile.Directory, targetFile.FileNameWithoutExtension + "图片文件\\");
+				AppContext.Exporter.Images.OutputPath = FileHelper.CombinePath(targetFile.Directory, targetFile.FileNameWithoutExtension + "\\图片文件\\");
 			}
 
 			try {

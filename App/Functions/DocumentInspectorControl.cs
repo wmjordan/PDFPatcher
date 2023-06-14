@@ -666,7 +666,7 @@ namespace PDFPatcher.Functions
 						if (exportTrailer) {
 							exp.ExportTrailer(w, _pdf.Document);
 						}
-						exp.ExtractPage(_pdf.Document, w, pages);
+						exp.ExportPage(_pdf.Document, w, pages);
 						w.WriteEndElement();
 					}
 				}

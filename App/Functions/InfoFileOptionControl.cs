@@ -27,7 +27,7 @@ namespace PDFPatcher.Functions
 
 			_ConsolidateNamedDestBox.CheckedChanged += OptionChanged;
 			_EncodingBox.Leave += _EncodingBox_Leave;
-			_ExportBinaryStreamBox.ValueChanged += OptionChanged;
+			_ExportBinaryStreamBox.CheckedChanged += OptionChanged;
 			_ExportBookmarksBox.CheckedChanged += OptionChanged;
 			_ExportCatalogBox.CheckedChanged += OptionChanged;
 			_ExportDocPropertiesBox.CheckedChanged += OptionChanged;
@@ -63,7 +63,7 @@ namespace PDFPatcher.Functions
 
 			_ConsolidateNamedDestBox.Checked = _expOptions.ConsolidateNamedDestinations;
 			_EncodingBox.Text = _expOptions.Encoding;
-			_ExportBinaryStreamBox.Value = _expOptions.ExportBinaryStream;
+			_ExportBinaryStreamBox.Checked = _expOptions.ExportBinaryStream;
 			_ExportBookmarksBox.Checked = _expOptions.ExportBookmarks;
 			_ExportCatalogBox.Checked = _expOptions.ExportCatalog;
 			_ExportContentOperatorsBox.Checked = _expOptions.ExportContentOperators;
@@ -128,7 +128,7 @@ namespace PDFPatcher.Functions
 				_expOptions.ExportContentOperators = _ExportContentOperatorsBox.Checked;
 			}
 			else if (sender == _ExportBinaryStreamBox) {
-				AppContext.Exporter.ExportBinaryStream = (int)_ExportBinaryStreamBox.Value;
+				AppContext.Exporter.ExportBinaryStream = _ExportBinaryStreamBox.Checked;
 			}
 			else if (sender == _ExportCatalogBox) {
 				AppContext.Exporter.ExportCatalog = _ExportCatalogBox.Checked;
@@ -166,9 +166,6 @@ namespace PDFPatcher.Functions
 
 		void _ExtractPageRangeBox_Leave(object sender, EventArgs e) {
 			_expOptions.ExtractPageRange = _ExtractPageRangeBox.Text.Trim();
-			if (_expOptions.ExtractPageRange.Length > 0) {
-				_ExtractPageContentBox.Checked = true;
-			}
 		}
 
 		private void ExportOptionControl_VisibleChanged(object sender, EventArgs e) {

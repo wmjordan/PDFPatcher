@@ -15,8 +15,22 @@ namespace PDFPatcher.Processor
 	{
 		readonly ExporterOptions _options;
 		readonly Dictionary<string, string> _resolvedReferences = new Dictionary<string, string>();
-		readonly List<string> _exportPath = new List<string>();
+		readonly Stack<string> _tags = new Stack<string>();
+		bool _streamFolderExists;
 		ImageExtractor _imageExporter;
+		FilePath _exportStreamPath;
+
+		public PdfContentExport(ExporterOptions options) {
+			_options = options;
+		}
+
+		public FilePath BinaryStreamPath {
+			get => _exportStreamPath;
+			set {
+				_exportStreamPath = value;
+				_streamFolderExists = value.ExistsDirectory;
+			}
+		}
 
 		bool AddReferenceRecord(PdfIndirectReference r, string type) {
 			var k = String.Concat(r.Number, ' ', r.Generation);
@@ -26,11 +40,6 @@ namespace PDFPatcher.Processor
 
 			_resolvedReferences.Add(k, type);
 			return true;
-		}
-
-
-		public PdfContentExport(ExporterOptions options) {
-			_options = options;
 		}
 
 		internal void ExportTrailer(XmlWriter writer, PdfReader reader) {
@@ -69,18 +78,16 @@ namespace PDFPatcher.Processor
 			}
 			writer.WriteStartElement(Constants.Body);
 			writer.WriteAttributeString(Constants.ContentPrefix, "http://www.w3.org/2000/xmlns/", Constants.ContentNamespace);
-
-			var ranges = PageRangeCollection.Parse(_options.ExtractPageRange, 1, reader.NumberOfPages, true);
-			ExtractPages(reader, ranges, writer);
+			ExportPages(reader, PageRangeCollection.Parse(_options.ExtractPageRange, 1, reader.NumberOfPages, true), writer);
 			writer.WriteEndElement();
 		}
 
-		void ExtractPages(PdfReader reader, PageRangeCollection ranges, XmlWriter writer) {
+		void ExportPages(PdfReader reader, PageRangeCollection ranges, XmlWriter writer) {
 			var p = new ExportProcessor(this, writer, _options);
 			foreach (PageRange r in ranges) {
 				foreach (var i in r) {
 					Tracker.TraceMessage(String.Concat("导出第 ", i, " 页。"));
-					ExtractPage(i, reader, writer, p);
+					ExportPage(i, reader, writer, p);
 					Tracker.IncrementProgress(1);
 				}
 			}
@@ -125,8 +132,7 @@ namespace PDFPatcher.Processor
 
 		void ExportPdfDictionaryItem(KeyValuePair<PdfName, PdfObject> item, XmlWriter writer) {
 			var key = PdfHelper.DecodeKeyName(item.Key);
-			var text = item.Value.ToString();
-			var value = item.Value as PdfObject;
+			var value = item.Value;
 			try {
 				writer.WriteStartElement(XmlConvert.VerifyNCName(key));
 			}
@@ -134,9 +140,9 @@ namespace PDFPatcher.Processor
 				writer.WriteStartElement(Constants.Content.Item, Constants.ContentNamespace);
 				writer.WriteAttributeString(Constants.Content.Name, Constants.ContentNamespace, key);
 			}
-			_exportPath.Add(key);
+			_tags.Push(key);
 			if (value == null) {
-				writer.WriteAttributeString(PdfHelper.GetTypeName(value.Type), text);
+				writer.WriteAttributeString(PdfHelper.GetTypeName(value.Type), "null");
 				goto EndElement;
 			}
 			switch (value.Type) {
@@ -150,7 +156,7 @@ namespace PDFPatcher.Processor
 					}
 					break;
 				case PdfObject.STRING:
-					text = (value as PdfString).ToUnicodeString();
+					var text = (value as PdfString).ToUnicodeString();
 					if (text.StartsWith("<?xml")) {
 						writer.WriteStartElement(Constants.ContentPrefix, Constants.Content.Value, Constants.ContentNamespace);
 						writer.WriteCData(text);
@@ -168,12 +174,12 @@ namespace PDFPatcher.Processor
 					ExportPdfDictionary(writer, value as PdfDictionary);
 					break;
 				default:
-					writer.WriteAttributeString(PdfHelper.GetTypeName(value.Type), text);
+					writer.WriteAttributeString(PdfHelper.GetTypeName(value.Type), value.ToString());
 					break;
 			}
 		EndElement:
 			writer.WriteEndElement();
-			_exportPath.RemoveAt(_exportPath.Count - 1);
+			_tags.Pop();
 		}
 
 		void ExportColorSpaceContent(XmlWriter writer, PdfArray a) {
@@ -305,14 +311,14 @@ namespace PDFPatcher.Processor
 		}
 
 		void ExportIndirectReference(PdfIndirectReference r, XmlWriter writer, string key) {
-			var i = PdfReader.GetPdfObjectRelease(r);
+			var obj = PdfReader.GetPdfObjectRelease(r);
 			writer.WriteAttributeString(Constants.Content.ResourceID, Constants.ContentNamespace, r.ToString());
-			if (AddReferenceRecord(r, key) == false || i == null) {
+			if (AddReferenceRecord(r, key) == false || obj == null) {
 				return;
 			}
-			switch (i.Type) {
+			switch (obj.Type) {
 				case PdfObject.DICTIONARY:
-					var type = (i as PdfDictionary).GetAsName(PdfName.TYPE);
+					var type = (obj as PdfDictionary).GetAsName(PdfName.TYPE);
 					if (type != null) {
 						var n = PdfHelper.GetPdfNameString(type);
 						writer.WriteAttributeString(Constants.Content.RefType, Constants.ContentNamespace, n);
@@ -327,15 +333,15 @@ namespace PDFPatcher.Processor
 								break;
 						}
 					}
-					ExportPdfDictionary(writer, i as PdfDictionary);
+					ExportPdfDictionary(writer, obj as PdfDictionary);
 					break;
 				case PdfObject.ARRAY:
-					ExportArray((i as PdfArray).ArrayList, writer);
+					ExportArray((obj as PdfArray).ArrayList, writer);
 					break;
 				case PdfObject.STREAM:
-					var s = i as PdfStream;
-					ExportPdfDictionary(writer, i as PdfDictionary);
-					if (_imageExporter != null && PdfName.IMAGE.Equals((i as PdfDictionary).GetAsName(PdfName.SUBTYPE))) {
+					var s = obj as PdfStream;
+					ExportPdfDictionary(writer, s);
+					if (_imageExporter != null && PdfName.IMAGE.Equals(s.GetAsName(PdfName.SUBTYPE))) {
 						writer.WriteStartElement(Constants.ContentPrefix, "image", Constants.ContentNamespace);
 						var info = _imageExporter.InfoList.Find(ii => ii.InlineImage.PdfRef == r);
 						if (info != null) {
@@ -344,22 +350,23 @@ namespace PDFPatcher.Processor
 						writer.WriteEndElement();
 						break;
 					}
-					ExportStreamContent(writer, s);
+					ExportStreamContent(writer, s, r);
 					break;
 				default:
-					writer.WriteAttributeString(PdfHelper.GetTypeName(i.Type), Constants.ContentNamespace, i.ToString());
+					writer.WriteAttributeString(PdfHelper.GetTypeName(obj.Type), Constants.ContentNamespace, obj.ToString());
 					break;
 			}
 		}
 
-		void ExportStreamContent(XmlWriter writer, PdfStream s) {
-			if (s is not PRStream prs || writer is NullXmlWriter) {
+		void ExportStreamContent(XmlWriter writer, PdfStream s, PdfIndirectReference pdfIndirect) {
+			if (s is not PRStream prs || writer is NullXmlWriter || _exportStreamPath.IsEmpty) {
 				return;
 			}
-			var key = _exportPath[_exportPath.Count - 1];
+			var key = _tags.Peek();
 			writer.WriteStartElement(Constants.ContentPrefix, "stream", Constants.ContentNamespace);
 			byte[] bs;
 			bool isRaw = false;
+			var isForm = PdfName.XOBJECT.Equals(s.GetAsName(PdfName.TYPE)) && PdfName.FORM.Equals(s.GetAsName(PdfName.SUBTYPE));
 			try {
 				bs = PdfReader.GetStreamBytes(prs);
 			}
@@ -368,8 +375,40 @@ namespace PDFPatcher.Processor
 				isRaw = true;
 				writer.WriteAttributeString(Constants.Content.Raw, Constants.Boolean.True);
 			}
+
+			if (pdfIndirect != null) {
+				writer.WriteAttributeString(Constants.Content.Length, bs.Length.ToText());
+				if (bs.Length != 0) {
+					if (_streamFolderExists == false) {
+						_exportStreamPath.CreateDirectory();
+						_streamFolderExists = true;
+					}
+					string extName;
+					switch (key) {
+						case "ToUnicode":
+						case "Contents":
+							extName = Constants.FileExtensions.Txt;
+							break;
+						case "Metadata":
+							extName = Constants.FileExtensions.Xml;
+							break;
+						default:
+							extName = isForm ? Constants.FileExtensions.Txt : Constants.FileExtensions.Dat;
+							break;
+					}
+					var fileName = _exportStreamPath.Combine(key + "." + pdfIndirect.Number + (pdfIndirect.Generation != 0 ? ("[" + pdfIndirect.ToString() + "]") : null) + extName);
+					using (FileStream f = new FileStream(fileName, FileMode.Create)) {
+						f.Write(bs, 0, bs.Length);
+					}
+					writer.WriteAttributeString("file", fileName.FileName);
+					if (isRaw) {
+						writer.WriteAttributeString("isRaw", "True");
+					}
+				}
+			}
+
 			if (isRaw == false) {
-				if (key == "Contents" || key == "ToUnicode" || PdfName.XOBJECT.Equals(s.GetAsName(PdfName.TYPE)) && PdfName.FORM.Equals(s.GetAsName(PdfName.SUBTYPE))) {
+				if (key == "Contents" || key == "ToUnicode" || isForm) {
 					var sb = StringBuilderCache.Acquire();
 					byte b;
 					int l = bs.Length;
@@ -411,34 +450,8 @@ namespace PDFPatcher.Processor
 						writer.WriteCData(sr.ReadToEnd().Replace("\uFFFE", "&#xFFFE;").Replace("\uFEFF", "&#xFEFF;"));
 					}
 				}
-				else {
-					ExportRawStreamContent(writer, bs);
-				}
-			}
-			else {
-				//_streamID++;
-				//string fileName = String.Concat (_options.ExtractImagePath, (_options.ExtractImagePath.EndsWith ("\\") ? String.Empty : "\\"), (_activePage != 0 ? _activePage.ToString () + "-" : String.Empty), _streamID, ".bin");
-				//using (FileStream f = new FileStream (fileName, FileMode.Create)) {
-				//    f.Write (bs, 0, bs.Length);
-				//}
-				//writer.WriteAttributeString ("path", Path.GetFileName (fileName));
-
-				ExportRawStreamContent(writer, bs);
 			}
 			writer.WriteEndElement();
-		}
-
-		void ExportRawStreamContent(XmlWriter writer, byte[] bs) {
-			writer.WriteAttributeString(Constants.Content.Length, bs.Length.ToText());
-			if (_options.ExportBinaryStream == 0) {
-				writer.WriteBinHex(bs, 0, bs.Length);
-			}
-			else {
-				writer.WriteBinHex(bs, 0, bs.Length < _options.ExportBinaryStream ? bs.Length : _options.ExportBinaryStream);
-				if (bs.Length > _options.ExportBinaryStream) {
-					writer.WriteString("....");
-				}
-			}
 		}
 
 		static void ExportStreamTextContent(byte[] bs, StringBuilder sb, int p1, int p2) {
@@ -494,16 +507,16 @@ namespace PDFPatcher.Processor
 			}
 		}
 
-		internal void ExtractPage(PdfReader reader, XmlWriter writer, params int[] pageNumbers) {
+		internal void ExportPage(PdfReader reader, XmlWriter writer, params int[] pageNumbers) {
 			var p = new ExportProcessor(this, writer, _options);
 			foreach (var pageNum in pageNumbers) {
-				ExtractPage(pageNum, reader, writer, p);
+				ExportPage(pageNum, reader, writer, p);
 			}
 		}
 
-		void ExtractPage(int pageNum, PdfReader reader, XmlWriter writer, ExportProcessor exportProcessor) {
+		void ExportPage(int pageNum, PdfReader reader, XmlWriter writer, ExportProcessor exportProcessor) {
 			writer.WriteStartElement(Constants.Content.Page);
-			_exportPath.Add(Constants.Content.Page);
+			_tags.Push(Constants.Content.Page);
 			writer.WriteAttributeString(Constants.Content.PageNumber, pageNum.ToText());
 			writer.WriteAttributeString(Constants.Content.ResourceID, reader.GetPageOrigRef(pageNum).ToString());
 			_imageExporter?.ExtractPageImages(reader, pageNum);
@@ -533,7 +546,7 @@ namespace PDFPatcher.Processor
 			//    writer.WriteEndElement ();
 			//}
 			writer.WriteEndElement();
-			_exportPath.RemoveAt(_exportPath.Count - 1);
+			_tags.Pop();
 		}
 
 		sealed class ExportProcessor : PdfContentStreamProcessor
@@ -662,7 +675,9 @@ namespace PDFPatcher.Processor
 						_writer.WriteEndElement();
 						if (o == "BI") {
 							_writer.WriteStartElement(Constants.Content.Raw);
-							_export.ExportRawStreamContent(_writer, (operands[0] as PdfImageData).RawBytes);
+							var bs = (operands[0] as PdfImageData).RawBytes;
+							_writer.WriteAttributeString(Constants.Content.Length, bs.Length.ToText());
+							_writer.WriteBinHex(bs, 0, bs.Length);
 							_writer.WriteEndElement();
 						}
 					}
