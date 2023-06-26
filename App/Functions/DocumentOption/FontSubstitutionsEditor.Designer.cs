@@ -34,8 +34,8 @@
 			this._FontSubstitutionMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this._CopySubstitutionFont = new System.Windows.Forms.ToolStripMenuItem();
 			this._PasteSubstitutionFont = new System.Windows.Forms.ToolStripMenuItem();
-			this._RemovePageLabelButton = new System.Windows.Forms.Button();
-			this._AddPageLabelButton = new System.Windows.Forms.Button();
+			this._RemoveSubstitutionButton = new System.Windows.Forms.Button();
+			this._AddSubstitutionButton = new System.Windows.Forms.Button();
 			this._ListDocumentFontButton = new System.Windows.Forms.Button();
 			this._EmbedLegacyCjkFontsBox = new System.Windows.Forms.CheckBox();
 			this._EnableFontSubstitutionsBox = new System.Windows.Forms.CheckBox();
@@ -126,40 +126,39 @@
 			this._PasteSubstitutionFont.Size = new System.Drawing.Size(191, 26);
 			this._PasteSubstitutionFont.Text = "粘贴替换字体(&Z)";
 			// 
-			// _RemovePageLabelButton
+			// _RemoveSubstitutionButton
 			// 
-			this._RemovePageLabelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this._RemovePageLabelButton.Enabled = false;
-			this._RemovePageLabelButton.Image = global::PDFPatcher.Properties.Resources.Delete;
-			this._RemovePageLabelButton.Location = new System.Drawing.Point(509, 4);
-			this._RemovePageLabelButton.Margin = new System.Windows.Forms.Padding(4);
-			this._RemovePageLabelButton.Name = "_RemovePageLabelButton";
-			this._RemovePageLabelButton.Size = new System.Drawing.Size(71, 29);
-			this._RemovePageLabelButton.TabIndex = 4;
-			this._RemovePageLabelButton.Text = "删除";
-			this._RemovePageLabelButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-			this._RemovePageLabelButton.UseVisualStyleBackColor = true;
-			this._RemovePageLabelButton.Click += new System.EventHandler(this._RemovePageLabelButton_Click);
+			this._RemoveSubstitutionButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this._RemoveSubstitutionButton.Enabled = false;
+			this._RemoveSubstitutionButton.Image = global::PDFPatcher.Properties.Resources.Delete;
+			this._RemoveSubstitutionButton.Location = new System.Drawing.Point(509, 4);
+			this._RemoveSubstitutionButton.Margin = new System.Windows.Forms.Padding(4);
+			this._RemoveSubstitutionButton.Name = "_RemoveSubstitutionButton";
+			this._RemoveSubstitutionButton.Size = new System.Drawing.Size(71, 29);
+			this._RemoveSubstitutionButton.TabIndex = 4;
+			this._RemoveSubstitutionButton.Text = "删除";
+			this._RemoveSubstitutionButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+			this._RemoveSubstitutionButton.UseVisualStyleBackColor = true;
+			this._RemoveSubstitutionButton.Click += new System.EventHandler(this._RemoveSubstitutionButton_Click);
 			// 
-			// _AddPageLabelButton
+			// _AddSubstitutionButton
 			// 
-			this._AddPageLabelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this._AddPageLabelButton.Enabled = false;
-			this._AddPageLabelButton.Image = global::PDFPatcher.Properties.Resources.Add;
-			this._AddPageLabelButton.Location = new System.Drawing.Point(431, 4);
-			this._AddPageLabelButton.Margin = new System.Windows.Forms.Padding(4);
-			this._AddPageLabelButton.Name = "_AddPageLabelButton";
-			this._AddPageLabelButton.Size = new System.Drawing.Size(71, 29);
-			this._AddPageLabelButton.TabIndex = 3;
-			this._AddPageLabelButton.Text = "添加";
-			this._AddPageLabelButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-			this._AddPageLabelButton.UseVisualStyleBackColor = true;
-			this._AddPageLabelButton.Click += new System.EventHandler(this._AddPageLabelButton_Click);
+			this._AddSubstitutionButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this._AddSubstitutionButton.Enabled = false;
+			this._AddSubstitutionButton.Image = global::PDFPatcher.Properties.Resources.Add;
+			this._AddSubstitutionButton.Location = new System.Drawing.Point(431, 4);
+			this._AddSubstitutionButton.Margin = new System.Windows.Forms.Padding(4);
+			this._AddSubstitutionButton.Name = "_AddSubstitutionButton";
+			this._AddSubstitutionButton.Size = new System.Drawing.Size(71, 29);
+			this._AddSubstitutionButton.TabIndex = 3;
+			this._AddSubstitutionButton.Text = "添加";
+			this._AddSubstitutionButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+			this._AddSubstitutionButton.UseVisualStyleBackColor = true;
+			this._AddSubstitutionButton.Click += new System.EventHandler(this._AddSubstitutionButton_Click);
 			// 
 			// _ListDocumentFontButton
 			// 
 			this._ListDocumentFontButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this._ListDocumentFontButton.Enabled = false;
 			this._ListDocumentFontButton.Location = new System.Drawing.Point(276, 4);
 			this._ListDocumentFontButton.Margin = new System.Windows.Forms.Padding(4);
 			this._ListDocumentFontButton.Name = "_ListDocumentFontButton";
@@ -196,9 +195,9 @@
 			this.panel1.Controls.Add(this._TrimTrailingWhiteSpaceBox);
 			this.panel1.Controls.Add(this._FontSubstitutionsBox);
 			this.panel1.Controls.Add(this._EnableFontSubstitutionsBox);
-			this.panel1.Controls.Add(this._AddPageLabelButton);
+			this.panel1.Controls.Add(this._AddSubstitutionButton);
 			this.panel1.Controls.Add(this._EmbedLegacyCjkFontsBox);
-			this.panel1.Controls.Add(this._RemovePageLabelButton);
+			this.panel1.Controls.Add(this._RemoveSubstitutionButton);
 			this.panel1.Controls.Add(this._ListDocumentFontButton);
 			this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.panel1.Location = new System.Drawing.Point(0, 0);
@@ -236,8 +235,8 @@
 
 		#endregion
 
-		private System.Windows.Forms.Button _RemovePageLabelButton;
-		private System.Windows.Forms.Button _AddPageLabelButton;
+		private System.Windows.Forms.Button _RemoveSubstitutionButton;
+		private System.Windows.Forms.Button _AddSubstitutionButton;
 		private BrightIdeasSoftware.ObjectListView _FontSubstitutionsBox;
 		private BrightIdeasSoftware.OLVColumn _OriginalFontColumn;
 		private BrightIdeasSoftware.OLVColumn _SubstitutionColumn;

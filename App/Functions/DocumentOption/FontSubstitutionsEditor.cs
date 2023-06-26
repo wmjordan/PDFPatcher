@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using PDFPatcher.Common;
@@ -113,9 +112,8 @@ namespace PDFPatcher.Functions
 			_TrimTrailingWhiteSpaceBox.Checked = Options.TrimTrailingWhiteSpace;
 			_TrimTrailingWhiteSpaceBox.CheckedChanged += (s, args) => Options.TrimTrailingWhiteSpace = _TrimTrailingWhiteSpaceBox.Checked;
 			_EnableFontSubstitutionsBox.CheckedChanged += (s, args) => {
-				_ListDocumentFontButton.Enabled
-					= _AddPageLabelButton.Enabled
-					= _RemovePageLabelButton.Enabled
+				_AddSubstitutionButton.Enabled
+					= _RemoveSubstitutionButton.Enabled
 					= _FontSubstitutionsBox.Enabled
 					= _TrimTrailingWhiteSpaceBox.Enabled
 					= Options.EnableFontSubstitutions
@@ -125,14 +123,14 @@ namespace PDFPatcher.Functions
 			_FontSubstitutionMenu.Invalidate();
 		}
 
-		void _AddPageLabelButton_Click(object sender, EventArgs e) {
+		void _AddSubstitutionButton_Click(object sender, EventArgs e) {
 			var s = new FontSubstitution { OriginalFont = "请输入原字体名称" };
 			_Substitutions.Add(s);
 			_FontSubstitutionsBox.AddObject(s);
 			_FontSubstitutionsBox.EditSubItem(_FontSubstitutionsBox.GetLastItemInDisplayOrder(), 1);
 		}
 
-		void _RemovePageLabelButton_Click(object sender, EventArgs e) {
+		void _RemoveSubstitutionButton_Click(object sender, EventArgs e) {
 			_FontSubstitutionsBox.RemoveObjects(_FontSubstitutionsBox.SelectedObjects);
 			_Substitutions.Clear();
 			_Substitutions.AddRange(_SubstitutionsBox.Objects);
@@ -157,6 +155,7 @@ namespace PDFPatcher.Functions
 				_Substitutions.Add(new FontSubstitution() { OriginalFont = item });
 			}
 			_SubstitutionsBox.Objects = _Substitutions;
+			_EnableFontSubstitutionsBox.Checked = true;
 		}
 
 		void _FontSubstitutionMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e) {
