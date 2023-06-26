@@ -202,6 +202,7 @@ namespace PDFPatcher.Processor
 							File.Delete(n);
 							bmp.Save(new FilePath(n).ChangeExtension(Constants.FileExtensions.Png));
 						}
+						SaveMaskedImage(info, bmp, fileName);
 					}
 				}
 				catch (FreeImageException ex) {
@@ -222,6 +223,7 @@ namespace PDFPatcher.Processor
 						n = fileName + Constants.FileExtensions.Tif;
 						bmp.Save(n, FREE_IMAGE_FORMAT.FIF_TIFF, FREE_IMAGE_SAVE_FLAGS.TIFF_CMYK | FREE_IMAGE_SAVE_FLAGS.TIFF_DEFLATE);
 					}
+					SaveMaskedImage(info, bmp, fileName);
 					if (PrintImageLocation) {
 						Tracker.TraceMessage("导出图片：" + n);
 					}
@@ -232,6 +234,11 @@ namespace PDFPatcher.Processor
 					f.Write(bytes, 0, bytes.Length);
 				}
 				if (info.ExtName == Constants.FileExtensions.Jpg) {
+					if (info.Mask != null) {
+						using (var bmp = new FreeImageBitmap(new MemoryStream(bytes), FREE_IMAGE_FORMAT.FIF_JPEG)) {
+							SaveMaskedImage(info, bmp, fileName);
+						}
+					}
 					if (vFlip) {
 						TransformJpeg(n, FREE_IMAGE_JPEG_OPERATION.FIJPEG_OP_FLIP_V);
 					}
@@ -328,6 +335,7 @@ namespace PDFPatcher.Processor
 							FREE_IMAGE_FORMAT.FIF_TIFF,
 							FREE_IMAGE_SAVE_FLAGS.TIFF_CMYK | FREE_IMAGE_SAVE_FLAGS.TIFF_DEFLATE);
 					}
+					SaveMaskedImage(info, bmp, fileName);
 				}
 			}
 			else {
@@ -354,6 +362,7 @@ namespace PDFPatcher.Processor
 						catch (System.Runtime.InteropServices.SEHException) {
 							Tracker.TraceMessage(Tracker.Category.Error, "保存图片时出现错误，请联系程序开发者：" + n);
 						}
+						SaveMaskedImage(info, bmp, fileName);
 					}
 				}
 			}
@@ -590,6 +599,19 @@ namespace PDFPatcher.Processor
 				}
 			}
 			_totalImageCount += _imageCount;
+		}
+
+		static void SaveMaskedImage(ImageInfo info, FreeImageBitmap bmp, string fileName) {
+			if (info.Mask != null
+				&& info.Mask.Size == bmp.Size
+				&& (bmp.PixelFormat == PixelFormat.Format32bppArgb
+					|| bmp.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_32_BPP))) {
+				var m = (FreeImageBitmap)info.Mask.Clone();
+				if ((m.PixelFormat == PixelFormat.Format8bppIndexed || m.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_08_BPP | FREE_IMAGE_COLOR_DEPTH.FICD_FORCE_GREYSCALE))
+					&& bmp.SetChannel(m, FREE_IMAGE_COLOR_CHANNEL.FICC_ALPHA)) {
+					bmp.Save($"{fileName}[merged]{Constants.FileExtensions.Png}");
+				}
+			}
 		}
 
 		sealed class PdfPageImageProcessor : PdfContentStreamProcessor
