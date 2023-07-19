@@ -185,6 +185,7 @@ namespace PDFPatcher.Processor
 							}
 							else if (options.FileFormat == ImageFormat.Tiff) {
 								using (var b = Imaging.BitmapHelper.ToBitonal(bmp)) {
+									b.SetResolution(options.Dpi, options.Dpi);
 									Imaging.BitmapHelper.SaveAs(b, fn, ms);
 								}
 							}
@@ -192,11 +193,13 @@ namespace PDFPatcher.Processor
 								var uc = Imaging.BitmapHelper.GetPalette(bmp);
 								if (uc.Length > 256 && options.Quantize) {
 									using (var b = Imaging.WuQuantizer.QuantizeImage(bmp)) {
+										b.SetResolution(options.Dpi, options.Dpi);
 										Imaging.BitmapHelper.SaveAs(b, fn, ms);
 									}
 								}
 								else if (uc.Length <= 256 && Imaging.BitmapHelper.IsIndexed(bmp) == false) {
 									using (var b = Imaging.BitmapHelper.ToIndexImage(bmp, uc)) {
+										b.SetResolution(options.Dpi, options.Dpi);
 										Imaging.BitmapHelper.SaveAs(b, fn, ms);
 									}
 								}

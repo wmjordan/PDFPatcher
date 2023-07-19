@@ -72,7 +72,7 @@ namespace PDFPatcher.Functions
 			_ImageFormatBox.SelectedIndex = ValueHelper.MapValue(o.FileFormat, new ImageFormat[] { ImageFormat.Png, ImageFormat.Jpeg, ImageFormat.Tiff }, new int[] { 0, 1, 2 }, 0);
 			_InvertColorBox.Checked = o.InvertColor;
 			if (o.JpegQuality > 0 && o.JpegQuality <= 100) {
-				_JpegQualityBox.Text = ValueHelper.ToText(o.JpegQuality);
+				_JpegQualityBox.Text = o.JpegQuality.ToText();
 			}
 			else {
 				o.JpegQuality = 75;

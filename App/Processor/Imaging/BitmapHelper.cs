@@ -138,7 +138,7 @@ namespace PDFPatcher.Processor.Imaging
 					image.Save(stream, 75); return;
 				case ".TIF":
 				case ".TIFF":
-					TiffHelper.SaveBinaryImage(image, stream); return;
+					image.SaveBinaryImage(stream); return;
 				case ".GIF":
 					image.Save(stream, ImageFormat.Gif); return;
 				default:
