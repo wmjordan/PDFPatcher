@@ -465,8 +465,7 @@ namespace PDFPatcher
 					return;
 				}
 			}
-			SelectFunctionList(Function.Editor);
-			c = GetActiveFunctionControl() as EditorControl;
+			c = SelectFunctionList(Function.Editor) as EditorControl;
 			if (String.IsNullOrEmpty(path)) {
 				c.ExecuteCommand(Commands.Open);
 			}
@@ -483,7 +482,7 @@ namespace PDFPatcher
 			}
 		}
 
-		internal void SelectFunctionList(Function func) {
+		internal Control SelectFunctionList(Function func) {
 			if (func == Function.PatcherOptions) {
 				ShowDialogWindow(new PatcherOptionForm(false) { Options = AppContext.Patcher });
 			}
@@ -509,7 +508,7 @@ namespace PDFPatcher
 						if (String.IsNullOrEmpty(p) == false) {
 							c.ExecuteCommand(Commands.OpenFile, p);
 						}
-						return;
+						return c;
 					}
 				}
 				var t = new TabPage(c.FunctionName) {
@@ -532,11 +531,13 @@ namespace PDFPatcher
 				c.Dock = DockStyle.Fill;
 				t.Controls.Add(c);
 				_FunctionContainer.SelectedTab = t;
-				if (String.IsNullOrEmpty(p) == false) {
+				if (func == Function.Inspector && String.IsNullOrEmpty(p) == false) {
 					c.ExecuteCommand(Commands.OpenFile, p);
 				}
 				AcceptButton = c.DefaultButton;
+				return c;
 			}
+			return null;
 		}
 
 		void FunctionDeselected(object sender, TabControlEventArgs args) {
