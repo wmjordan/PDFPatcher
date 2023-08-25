@@ -47,7 +47,7 @@ namespace PDFPatcher.Functions
 
 		readonly BackgroundWorker _renderWorker;
 		readonly Timer _refreshTimer;
-		bool _cancelRendering;
+		bool _cancelRendering, _disposed;
 		bool _lockDown;
 		MuDocument _mupdf;
 		readonly ImageRendererOptions _renderOptions;
@@ -342,12 +342,13 @@ namespace PDFPatcher.Functions
 				Interval = 200
 			};
 			_refreshTimer.Tick += (s, args) => {
-				for (int i = _DisplayRange.StartValue; i <= _DisplayRange.EndValue; i++) {
+				var r = _DisplayRange;
+				for (int i = r.StartValue; i <= r.EndValue; i++) {
 					bool v;
 					lock (_cache.SyncObj) {
 						v = _cache.GetBitmap(i) != null;
 					}
-					if (v == false && _renderWorker.IsBusy == false) {
+					if (v == false && _disposed == false && _renderWorker.IsBusy == false) {
 						_renderWorker.RunWorkerAsync();
 						return;
 					}
@@ -358,9 +359,13 @@ namespace PDFPatcher.Functions
 				WorkerSupportsCancellation = true
 			};
 			_renderWorker.DoWork += (s, args) => {
-				Tracker.DebugMessage("started prerender job: " + _DisplayRange);
+				var r = _DisplayRange;
+				Tracker.DebugMessage("started prerender job: " + r);
 				_refreshTimer.Stop();
-				for (int i = _DisplayRange.StartValue; i >= _DisplayRange.StartValue && i < _DisplayRange.EndValue + 2; i++) {
+				if (_disposed) {
+					return;
+				}
+				for (int i = r.StartValue; i >= r.StartValue && i < r.EndValue + 2; i++) {
 					if (i < 1 || i > _mupdf.PageCount) {
 						continue;
 					}
@@ -375,7 +380,7 @@ namespace PDFPatcher.Functions
 							Tracker.DebugMessage("load page " + i);
 							var z = GetZoomFactorForPage(pb);
 							RenderPage(i, (pb.Width * z).ToInt32(), (pb.Height * z).ToInt32());
-							if (_DisplayRange.Contains(i)) {
+							if (r.Contains(i)) {
 								Invalidate();
 							}
 						}
@@ -383,7 +388,7 @@ namespace PDFPatcher.Functions
 				}
 			};
 			_renderWorker.RunWorkerCompleted += (s, args) => {
-				if (_cancelRendering == false) {
+				if (_cancelRendering == false && _disposed == false) {
 					_refreshTimer.Start();
 				}
 			};
@@ -946,7 +951,7 @@ namespace PDFPatcher.Functions
 
 		void UpdateDisplay() { UpdateDisplay(false); }
 		void UpdateDisplay(bool resized) {
-			if (DesignMode) {
+			if (DesignMode || _disposed) {
 				return;
 			}
 			_refreshTimer.Stop();
@@ -1236,10 +1241,11 @@ namespace PDFPatcher.Functions
 			base.Dispose(disposing);
 			Tracker.DebugMessage("PDF Viewer control destroyed.");
 			_cancelRendering = true;
+			_disposed = true;
 			_mupdf?.AbortAsync();
 			_refreshTimer.Stop();
+			_renderWorker.CancelAsync();
 			if (_cache != null) {
-				_renderWorker.CancelAsync();
 				lock (_cache.SyncObj) {
 					_cache.Dispose();
 				}
