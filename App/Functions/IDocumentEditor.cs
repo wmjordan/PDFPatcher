@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace PDFPatcher.Functions
 {
 	interface IDocumentEditor
 	{
-		event EventHandler<DocumentChangedEventArgs> DocumentChanged;
 		string DocumentPath { get; }
+		bool IsBusy { get; }
+		event EventHandler<DocumentChangedEventArgs> DocumentChanged;
 		void CloseDocument();
 		void Reopen();
 	}

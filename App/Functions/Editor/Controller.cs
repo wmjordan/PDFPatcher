@@ -28,6 +28,7 @@ namespace PDFPatcher.Functions.Editor
 			Model.Undo.OnAddUndo += (UndoManager u, IUndoAction a) => View.UndoButton.Enabled = true;
 			View.Bookmark.Undo = Model.Undo;
 		}
+		public bool IsBusy => _loader?.IsBusy == true;
 
 		internal IEnumerable<XmlNode> ProcessBookmarks(IPdfInfoXmlProcessor processor) {
 			return ProcessBookmarks(View.AffectsDescendantBookmarks, true, processor);

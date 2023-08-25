@@ -47,6 +47,7 @@ namespace PDFPatcher.Functions
 				}
 			}
 		}
+		public bool IsBusy => _LoadDocumentWorker.IsBusy;
 
 		public DocumentInspectorControl() {
 			InitializeComponent();
@@ -409,7 +410,7 @@ namespace PDFPatcher.Functions
 			}
 			var i = Model.PdfStructInfo.GetInfo(d.Parent.GetContextName(), d.Name);
 			string t = null;
-			var o = (d.ExtensiveObject as PdfObject ?? d.Value);
+			var o = d.ExtensiveObject as PdfObject ?? d.Value;
 			if (o != null) {
 				t = PdfHelper.GetTypeName(o.Type);
 			}

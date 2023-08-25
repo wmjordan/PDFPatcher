@@ -455,14 +455,31 @@ namespace PDFPatcher
 			return t == null || t.HasChildren == false ? null : t.Controls[0];
 		}
 
-		internal void OpenFileWithEditor(string path) {
+		internal void OpenFileWithEditor(FilePath path) {
+			path = path.ToFullPath();
+			EditorControl c;
+			foreach (var editor in GetOpenedDocumentEditors()) {
+				if ((c = editor as EditorControl) != null && path.Equals(c.DocumentPath)) {
+					_FunctionContainer.SelectedTab = (TabPage)c.Parent;
+					_FunctionContainer.Invalidate();
+					return;
+				}
+			}
 			SelectFunctionList(Function.Editor);
-			var c = GetActiveFunctionControl() as EditorControl;
+			c = GetActiveFunctionControl() as EditorControl;
 			if (String.IsNullOrEmpty(path)) {
 				c.ExecuteCommand(Commands.Open);
 			}
 			else {
 				c.ExecuteCommand(Commands.OpenFile, path);
+			}
+		}
+
+		IEnumerable<IDocumentEditor> GetOpenedDocumentEditors() {
+			foreach (TabPage item in _FunctionContainer.TabPages) {
+				if (item.Controls.Count != 0 && item.Controls[0] is IDocumentEditor editor) {
+					yield return editor;
+				}
 			}
 		}
 

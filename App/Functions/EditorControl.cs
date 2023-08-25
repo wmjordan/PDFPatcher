@@ -14,8 +14,6 @@ namespace PDFPatcher.Functions
 		static readonly Color __DarkModeColor = Color.DarkGray;
 		static readonly Color __GreenModeColor = Color.FromArgb(0xCC, 0xFF, 0xCC);
 
-		public event EventHandler<DocumentChangedEventArgs> DocumentChanged;
-
 		static readonly CommandRegistry<Editor.Controller> __Commands = InitCommands();
 
 		static CommandRegistry<Editor.Controller> InitCommands() {
@@ -70,6 +68,12 @@ namespace PDFPatcher.Functions
 		AutoBookmarkForm _autoBookmarkForm;
 		readonly Editor.Controller _controller;
 
+		public EditorControl() {
+			InitializeComponent();
+			_controller = new Editor.Controller(this);
+			this.OnFirstLoad(OnLoad);
+		}
+
 		public override string FunctionName => "文档编辑器";
 
 		public override Bitmap IconImage => Properties.Resources.Editor;
@@ -81,12 +85,9 @@ namespace PDFPatcher.Functions
 				DocumentChanged?.Invoke(this, new DocumentChangedEventArgs(value));
 			}
 		}
+		public bool IsBusy => _controller.IsBusy;
 
-		public EditorControl() {
-			InitializeComponent();
-			_controller = new Editor.Controller(this);
-			this.OnFirstLoad(OnLoad);
-		}
+		public event EventHandler<DocumentChangedEventArgs> DocumentChanged;
 
 		void OnLoad() {
 			ListRecentFiles = _OpenButton_DropDownOpening;
