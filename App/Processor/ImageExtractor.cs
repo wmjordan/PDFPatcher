@@ -189,25 +189,32 @@ namespace PDFPatcher.Processor
 				Tracker.TraceMessage(Tracker.Category.OutputFile, n);
 				Tracker.TraceMessage("导出图片：" + n);
 			}
-			if ((vFlip || _pageRotation != 0) && info.ExtName == Constants.FileExtensions.Jp2) {
-				try {
-					using (var ms = new MemoryStream(bytes))
-					using (var bmp = new FreeImageBitmap(ms)) {
-						RotateBitmap(bmp, _pageRotation, vFlip);
-						info.CreatePaletteAndIccProfile(bmp);
-						try {
-							bmp.Save(n);
+			if (info.ExtName == Constants.FileExtensions.Jp2) {
+				if (vFlip || _pageRotation != 0) {
+					try {
+						using (var ms = new MemoryStream(bytes))
+						using (var bmp = new FreeImageBitmap(ms)) {
+							RotateBitmap(bmp, _pageRotation, vFlip);
+							info.CreatePaletteAndIccProfile(bmp);
+							try {
+								bmp.Save(n);
+							}
+							catch (FreeImageException) {
+								File.Delete(n);
+								bmp.Save(new FilePath(n).ChangeExtension(Constants.FileExtensions.Png));
+							}
+							SaveMaskedImage(info, bmp, fileName);
 						}
-						catch (FreeImageException) {
-							File.Delete(n);
-							bmp.Save(new FilePath(n).ChangeExtension(Constants.FileExtensions.Png));
-						}
-						SaveMaskedImage(info, bmp, fileName);
+					}
+					catch (FreeImageException ex) {
+						Tracker.TraceMessage(ex);
+						bytes.DumpBytes(n);
 					}
 				}
-				catch (FreeImageException ex) {
-					Tracker.TraceMessage(ex);
-					bytes.DumpBytes(n);
+				else {
+					using (FileStream f = new FileStream(n, FileMode.Create)) {
+						f.Write(bytes, 0, bytes.Length);
+					}
 				}
 			}
 			else if (PdfName.DEVICECMYK.Equals(info.ColorSpace)) {
