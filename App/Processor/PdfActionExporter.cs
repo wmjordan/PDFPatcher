@@ -182,7 +182,7 @@ namespace PDFPatcher.Processor
 		}
 
 		private static int GetNumber(PdfIndirectReference indirect) {
-			var pdfObj = (PdfDictionary)PdfReader.GetPdfObjectRelease(indirect);
+			var pdfObj = PdfReader.GetPdfObjectRelease(indirect) as PdfDictionary;
 			if (pdfObj == null) {
 				return 0;
 			}
