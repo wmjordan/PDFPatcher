@@ -268,13 +268,14 @@ namespace PDFPatcher.Processor
 			}
 			var ranges = PageRangeCollection.Parse(sourceFile.PageRanges, 1, pdf.NumberOfPages, true);
 			var pageRemapper = new int[pdf.NumberOfPages + 1];
+			Rectangle r;
 			// 统一页面旋转角度
 			if (_option.UnifyPageOrientation) {
 				var rv = _option.RotateVerticalPages;
 				var a = _option.RotateAntiClockwise ? -90 : 90;
 				for (int i = pdf.NumberOfPages; i > 0; i--) {
 					var p = pdf.GetPageN(i);
-					var r = PdfHelper.GetPageVisibleRectangle(p);
+					r = PdfHelper.GetPageVisibleRectangle(p);
 					if (rv && r.Width < r.Height
 						|| rv == false && r.Width > r.Height) {
 						p.Put(PdfName.ROTATE, (r.Rotation + a) % 360);
@@ -288,9 +289,9 @@ namespace PDFPatcher.Processor
 				}
 				bookmark.SetAttribute(Constants.DestinationAttributes.Page, n.ToText());
 				bookmark.SetAttribute(Constants.DestinationAttributes.View, Constants.DestinationAttributes.ViewType.XYZ);
-				var r = PdfHelper.GetPageVisibleRectangle(pdf.GetPageN(ranges[0].StartValue));
+				r = PdfHelper.GetPageVisibleRectangle(pdf.GetPageN(ranges[0].StartValue));
 				float t = 0;
-				switch ((r.Rotation % 360) / 90) {
+				switch (r.Rotation % 360 / 90) {
 					case 0: t = r.Top; break;
 					case 1: t = r.Right; break;
 					case 2: t = r.Bottom; break;
@@ -310,8 +311,8 @@ namespace PDFPatcher.Processor
 			}
 			var pp = new byte[pdf.NumberOfPages + 1]; // 已处理过的页面
 			var cts = _pageSettings.PaperSize.SpecialSize != SpecialPaperSize.AsPageSize ? new CoordinateTranslationSettings[pdf.NumberOfPages + 1] : null; // 页面的位置偏移量
-			foreach (var r in ranges) {
-				foreach (var i in r) {
+			foreach (var range in ranges) {
+				foreach (var i in range) {
 					if (i < 1 || i > pn) {
 						goto Exit;
 					}
@@ -368,7 +369,11 @@ namespace PDFPatcher.Processor
 					Tracker.IncrementProgress(1);
 				}
 			}
-			_doc.SetPageSize(pdf.GetPageNRelease(ranges[ranges.Count - 1].EndValue).GetPageVisibleRectangle());
+			r = pdf.GetPageNRelease(ranges[ranges.Count - 1].EndValue).GetPageVisibleRectangle();
+			_doc.SetPageSize(r);
+			_portrait = r.Height > r.Width;
+			_content.Width = r.Width;
+			_content.Height = r.Height;
 			if (_option.KeepBookmarks) {
 				bookmark = KeepBookmarks(bookmark, pdf, pageRemapper, cts);
 			}
