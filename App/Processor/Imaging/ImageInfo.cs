@@ -29,7 +29,8 @@ namespace PDFPatcher.Processor.Imaging
 		public FreeImageBitmap Mask { get; private set; }
 		public int PaletteEntryCount { get; private set; }
 		public RGBQUAD[] PaletteArray { get; private set; }
-		public PdfImageData InlineImage { get; private set; }
+		public PdfImageData InlineImage { get; }
+		public bool IsPageImage { get; }
 
 		internal ImageInfo() { }
 		internal ImageInfo(PdfImageData image) {
@@ -37,6 +38,10 @@ namespace PDFPatcher.Processor.Imaging
 		}
 		internal ImageInfo(PdfIndirectReference pdfIndirect) {
 			InlineImage = new PdfImageData(pdfIndirect);
+		}
+		internal ImageInfo(PdfIndirectReference pdfIndirect, bool isPageImage) {
+			InlineImage = new PdfImageData(pdfIndirect);
+			IsPageImage = IsPageImage;
 		}
 		internal ImageInfo(PRStream stream) {
 			InlineImage = new PdfImageData(stream);

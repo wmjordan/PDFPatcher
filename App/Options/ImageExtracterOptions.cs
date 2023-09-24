@@ -12,6 +12,9 @@ namespace PDFPatcher
 		[XmlAttribute("避免重复导出图片")]
 		public bool SkipRedundantImages { get; set; }
 
+		[XmlAttribute("仅导出页面内的图片")]
+		public bool ExtractInPageImagesOnly { get; set; }
+
 		///<summary>获取或指定是否合并相同页面、相同宽度的图片。</summary>
 		[XmlAttribute("合并图片")]
 		public bool MergeImages { get; set; }

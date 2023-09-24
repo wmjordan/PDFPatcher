@@ -22,7 +22,7 @@ namespace PDFPatcher.Processor
 		int _pageRotation;
 		readonly ImageExtracterOptions _options;
 		readonly List<ImageInfo> _imageInfoList = new List<ImageInfo>();
-		readonly HashSet<PdfObject> _Refs = new HashSet<PdfObject>();
+		readonly HashSet<PdfObject> _exportedImages = new HashSet<PdfObject>();
 
 		internal List<ImageInfo> InfoList => _imageInfoList;
 
@@ -50,10 +50,18 @@ namespace PDFPatcher.Processor
 				return;
 			}
 
-			// 收集页面上的图片
+			// 收集页面字典引用的图片
 			var pp = o.Locate<PdfDictionary>(PdfName.RESOURCES, PdfName.XOBJECT);
 			if (pp != null) {
 				ExtractImageInstances(pp, false);
+				// 收集页面指令引用的图片
+				_parser.ProcessContent(reader.GetPageContent(pageNum), o.Locate<PdfDictionary>(PdfName.RESOURCES));
+				_imagePosList.Sort();
+
+				// 删除页面字典中没有在渲染指令中出现的图片
+				if (_options.ExtractInPageImagesOnly) {
+					_imageInfoList.RemoveAll(IsOutOfPage);
+				}
 			}
 			// 收集批注中的图片
 			if (_options.ExtractAnnotationImages) {
@@ -64,12 +72,11 @@ namespace PDFPatcher.Processor
 					}
 				}
 			}
-			_pageRotation = PdfHelper.GetPageRotation(o);
 			if (_imageInfoList.Count == 0) {
 				return;
 			}
-			_parser.ProcessContent(reader.GetPageContent(pageNum), o.Locate<PdfDictionary>(PdfName.RESOURCES));
-			_imagePosList.Sort();
+			_pageRotation = PdfHelper.GetPageRotation(o);
+
 			_imageInfoList.Sort((x, y) => {
 				var xi = _imagePosList.Find((info) => info.Image == x);
 				var yi = _imagePosList.Find((info) => info.Image == y);
@@ -97,17 +104,32 @@ namespace PDFPatcher.Processor
 			}
 		}
 
-		void ExtractImageInstances(PdfDictionary source, bool includeDescendants) {
+		bool IsOutOfPage(ImageInfo image) {
+			if (image.IsPageImage == false) {
+				return false;
+			}
+			var r = image.InlineImage.PdfRef;
+			foreach (var item in _imagePosList) {
+				var ir = item.Image.InlineImage?.PdfRef;
+				if (ir == null || (ir.Number == r.Number && ir.Generation == r.Generation)) {
+					return false;
+				}
+			}
+			return true;
+		}
+
+		void ExtractImageInstances(PdfDictionary source, bool recursive) {
 			if (source == null) {
 				return;
 			}
+			PdfDictionary obj;
 			foreach (var item in source) {
-				if (_options.SkipRedundantImages && _Refs.Add(item.Value) == false
-					|| PdfName.SMASK.Equals(item.Key)
-					|| PdfName.MASK.Equals(item.Key)) {
+				if (PdfName.SMASK.Equals(item.Key)
+					|| PdfName.MASK.Equals(item.Key)
+					|| _options.SkipRedundantImages && _exportedImages.Contains(item.Value)
+					|| (obj = PdfReader.GetPdfObject(item.Value) as PdfDictionary) == null) {
 					continue;
 				}
-				var obj = PdfReader.GetPdfObject(item.Value);
 				var stream = obj as PRStream;
 				if (stream == null) {
 					goto NEXT;
@@ -115,44 +137,49 @@ namespace PDFPatcher.Processor
 				PdfName subType = stream.GetAsName(PdfName.SUBTYPE);
 				if (PdfName.IMAGE.Equals(subType)) {
 					try {
-						_imageInfoList.Add(new ImageInfo(item.Value as PRIndirectReference));
+						_imageInfoList.Add(new ImageInfo(item.Value as PRIndirectReference, !recursive));
 					}
 					catch (NullReferenceException) {
 						Debug.WriteLine(item.Value);
 					}
+					continue;
 				}
-				else if (PdfName.FORM.Equals(subType)) {
+				if (PdfName.FORM.Equals(subType)) {
 					var fr = stream.Locate<PdfDictionary>(PdfName.RESOURCES, PdfName.XOBJECT);
 					if (fr == null) {
 						continue;
 					}
 					foreach (var fri in fr) {
-						if (_Refs.Add(fri.Value) == false) {
+						if (_exportedImages.Contains(fri.Value)) {
 							continue;
 						}
 						stream = PdfReader.GetPdfObject(fri.Value) as PRStream;
 						if (stream != null) {
 							subType = stream.GetAsName(PdfName.SUBTYPE);
 							if (PdfName.IMAGE.Equals(subType)) {
-								_imageInfoList.Add(new ImageInfo(fri.Value as PRIndirectReference));
+								_imageInfoList.Add(new ImageInfo(fri.Value as PRIndirectReference, false));
 							}
-							else if (includeDescendants || PdfName.FORM.Equals(subType)) {
+							else if (recursive || PdfName.FORM.Equals(subType)) {
 								ExtractImageInstances(stream, true);
 							}
 						}
-						else if (includeDescendants) {
+						else if (recursive) {
 							ExtractImageInstances(stream, true);
 						}
 					}
 				}
 			NEXT:
-				if ((obj.Type == PdfObject.DICTIONARY || obj.Type == PdfObject.STREAM) && includeDescendants) {
-					ExtractImageInstances(obj as PdfDictionary, true);
+				if (recursive) {
+					ExtractImageInstances(obj, true);
 				}
 			}
 		}
 
 		internal void ExtractImage(ImageInfo info) {
+			if (_options.SkipRedundantImages
+				&& _exportedImages.Add(info.InlineImage.PdfRef) == false) {
+				return;
+			}
 			if (_totalImageCount == 0 && Directory.Exists(_options.OutputPath) == false) {
 				Directory.CreateDirectory(_options.OutputPath);
 			}
