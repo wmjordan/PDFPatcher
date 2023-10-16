@@ -370,6 +370,7 @@ namespace PDFPatcher.Processor
 				}
 			}
 			r = pdf.GetPageNRelease(ranges[ranges.Count - 1].EndValue).GetPageVisibleRectangle();
+			r.Normalize();
 			_doc.SetPageSize(r);
 			_portrait = r.Height > r.Width;
 			_content.Width = r.Width;
