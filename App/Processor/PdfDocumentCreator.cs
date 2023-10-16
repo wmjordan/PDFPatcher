@@ -226,7 +226,6 @@ namespace PDFPatcher.Processor
 					fi?.Dispose();
 				}
 			}
-
 		}
 
 		void SetBookmarkAction(BookmarkElement bookmark) {
@@ -275,7 +274,7 @@ namespace PDFPatcher.Processor
 				var a = _option.RotateAntiClockwise ? -90 : 90;
 				for (int i = pdf.NumberOfPages; i > 0; i--) {
 					var p = pdf.GetPageN(i);
-					r = PdfHelper.GetPageVisibleRectangle(p);
+					r = p.GetPageVisibleRectangle();
 					if (rv && r.Width < r.Height
 						|| rv == false && r.Width > r.Height) {
 						p.Put(PdfName.ROTATE, (r.Rotation + a) % 360);
@@ -289,7 +288,7 @@ namespace PDFPatcher.Processor
 				}
 				bookmark.SetAttribute(Constants.DestinationAttributes.Page, n.ToText());
 				bookmark.SetAttribute(Constants.DestinationAttributes.View, Constants.DestinationAttributes.ViewType.XYZ);
-				r = PdfHelper.GetPageVisibleRectangle(pdf.GetPageN(ranges[0].StartValue));
+				r = pdf.GetPageN(ranges[0].StartValue).GetPageVisibleRectangle();
 				float t = 0;
 				switch (r.Rotation % 360 / 90) {
 					case 0: t = r.Top; break;
@@ -299,12 +298,11 @@ namespace PDFPatcher.Processor
 				}
 				bookmark.SetAttribute(Constants.Coordinates.Top, t.ToText());
 			}
-			var pdfItem = (sourceFile as SourceItem.Pdf);
-			bool importImagesOnly = pdfItem.ImportImagesOnly;
+			bool importImagesOnly = sourceFile.ImportImagesOnly;
 			int pn = pdf.NumberOfPages;
 			ImageExtractor imgExp = null;
 			if (importImagesOnly) {
-				imgExp = new ImageExtractor(pdfItem.ExtractImageOptions, pdf);
+				imgExp = new ImageExtractor(sourceFile.ExtractImageOptions, pdf);
 			}
 			if (_option.KeepBookmarks) {
 				pdf.ConsolidateNamedDestinations();
@@ -662,6 +660,5 @@ namespace PDFPatcher.Processor
 			}
 			return image;
 		}
-
 	}
 }

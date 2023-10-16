@@ -25,7 +25,7 @@ namespace PDFPatcher.Functions
 
 		public MergerControl() {
 			InitializeComponent();
-			_bookmarkStyleButtonNames = new string[] { "_BoldStyleButton", "_BookmarkColorButton", "_ItalicStyleButton" };
+			_bookmarkStyleButtonNames = new [] { "_BoldStyleButton", "_BookmarkColorButton", "_ItalicStyleButton" };
 			this.OnFirstLoad(OnLoad);
 		}
 
@@ -46,7 +46,7 @@ namespace PDFPatcher.Functions
 			_ItemList.EmptyListMsg = "请使用“添加文件”按钮添加需要合并的文件，或从资源管理器拖放文件到本列表框";
 
 			var fi = _FileTypeList.Images;
-			fi.AddRange(new Image[] {
+			fi.AddRange(new [] {
 				Properties.Resources.EmptyPage,
 				Properties.Resources.OriginalPdfFile,
 				Properties.Resources.Image,
@@ -169,14 +169,14 @@ namespace PDFPatcher.Functions
 				if (System.IO.Directory.Exists(item)) {
 					e.Handled = true;
 					e.Effect = DragDropEffects.Copy;
-					e.InfoMessage = String.Concat("添加目录", item, "到", (child ? "所有子项" : String.Empty), (after ? "后面" : "前面"));
+					e.InfoMessage = $"添加目录{item}到{(child ? "所有子项" : String.Empty)}{(after ? "后面" : "前面")}";
 					return;
 				}
 				var ext = System.IO.Path.GetExtension(item).ToLowerInvariant();
 				if (ext == Constants.FileExtensions.Pdf || Constants.FileExtensions.AllSupportedImageExtension.Contains(ext)) {
 					e.Handled = true;
 					e.Effect = DragDropEffects.Copy;
-					e.InfoMessage = String.Concat("添加文件", item, "到", (child ? "所有子项" : String.Empty), (after ? "后面" : "前面"));
+					e.InfoMessage = $"添加文件{item}到{(child ? "所有子项" : String.Empty)}{(after ? "后面" : "前面")}";
 					return;
 				}
 			}
@@ -203,7 +203,7 @@ namespace PDFPatcher.Functions
 			var d = e.DropTargetItem;
 			var child = d != null && e.MouseLocation.X > d.Position.X + d.GetBounds(ItemBoundsPortion.ItemOnly).Width / 2;
 			var after = d != null && e.MouseLocation.Y > d.Position.Y + d.Bounds.Height / 2;
-			CopyOrMoveElement(sl, ti, child, after, false, true);
+			CopyOrMoveElement(sl, ti, child, after, false);
 		}
 
 		void ItemList_CanDropModel(object sender, ModelDropEventArgs e) {
@@ -242,7 +242,7 @@ namespace PDFPatcher.Functions
 				}
 			}
 			e.Effect = copy ? DragDropEffects.Copy : DragDropEffects.Move;
-			e.InfoMessage = String.Concat((copy ? "复制" : "移动"), "到", (child ? "所有子项" : String.Empty), (append ? "后面" : "前面"));
+			e.InfoMessage = $"{(copy ? "复制" : "移动")}到{(child ? "所有子项" : String.Empty)}{(append ? "后面" : "前面")}";
 		}
 
 		void ItemList_Dropped(object sender, ModelDropEventArgs e) {
@@ -255,10 +255,10 @@ namespace PDFPatcher.Functions
 			var d = e.DropTargetItem;
 			var child = e.MouseLocation.X > d.Position.X + d.GetBounds(ItemBoundsPortion.ItemOnly).Width / 2;
 			var after = e.MouseLocation.Y > d.Position.Y + d.Bounds.Height / 2;
-			var copy = (Control.ModifierKeys & Keys.Control) != Keys.None;
-			var deepCopy = copy && ((Control.ModifierKeys & Keys.Shift) != Keys.None);
+			var copy = (ModifierKeys & Keys.Control) != Keys.None;
+			var deepCopy = copy && ((ModifierKeys & Keys.Shift) != Keys.None);
 			var tii = _ItemList.TopItemIndex;
-			CopyOrMoveElement(si, ti, child, after, copy, deepCopy);
+			CopyOrMoveElement(si, ti, child, after, copy);
 			e.RefreshObjects();
 			_ItemList.TopItemIndex = tii;
 		}
@@ -293,8 +293,7 @@ namespace PDFPatcher.Functions
 		/// <param name="child">是否复制为子节点。</param>
 		/// <param name="after">是否复制到后面。</param>
 		/// <param name="copy">是否复制书签。</param>
-		/// <param name="deepCopy">是否深度复制书签。</param>
-		internal void CopyOrMoveElement(List<SourceItem> source, SourceItem target, bool child, bool after, bool copy, bool deepCopy) {
+		internal void CopyOrMoveElement(List<SourceItem> source, SourceItem target, bool child, bool after, bool copy) {
 			if (copy) {
 				var clones = new List<SourceItem>(source.Count);
 				foreach (SourceItem item in source) {
@@ -304,7 +303,6 @@ namespace PDFPatcher.Functions
 			}
 			else {
 				foreach (var item in source) {
-					//_ItemList.Collapse (item);
 					GetParentSourceItem(item).Items.Remove(item);
 				}
 				_ItemList.RemoveObjects(source);
@@ -394,7 +392,7 @@ namespace PDFPatcher.Functions
 				return;
 			}
 			if (FileHelper.IsPathValid(targetPdfFile) == false) {
-				FormHelper.ErrorBox("输出文件名无效。" + (FileHelper.HasFileNameMacro(targetPdfFile) ? "\n合并 PDF 文件功能不支持替代符。" : String.Empty));
+				FormHelper.ErrorBox($"输出文件名无效。{(FileHelper.HasFileNameMacro(targetPdfFile) ? "\n合并 PDF 文件功能不支持替代符。" : String.Empty)}");
 				return;
 			}
 
@@ -602,7 +600,7 @@ namespace PDFPatcher.Functions
 						}
 						else if (item.Type == SourceItem.ItemType.Pdf) {
 							var pi = item as SourceItem.Pdf;
-							sb.AppendLine(String.Join("\t", new string[] {
+							sb.AppendLine(String.Join("\t", new[] {
 								pi.FilePath.ToString(),
 								item.Bookmark != null ? item.Bookmark.Title : String.Empty,
 								pi.PageRanges,
@@ -666,7 +664,7 @@ namespace PDFPatcher.Functions
 				case "_BoldStyleButton":
 					var cb = !_BoldStyleButton.Checked;
 					foreach (SourceItem item in _ItemList.SelectedObjects) {
-						if (item != null && item.Bookmark != null) {
+						if (item?.Bookmark != null) {
 							item.Bookmark.IsBold = cb;
 						}
 					}
@@ -674,7 +672,7 @@ namespace PDFPatcher.Functions
 				case "_ItalicStyleButton":
 					var ci = !_ItalicStyleButton.Checked;
 					foreach (SourceItem item in _ItemList.SelectedObjects) {
-						if (item != null && item.Bookmark != null) {
+						if (item?.Bookmark != null) {
 							item.Bookmark.IsItalic = ci;
 						}
 					}
@@ -700,8 +698,7 @@ namespace PDFPatcher.Functions
 							i = 0;
 						}
 						while (i <= li && sr.Peek() != -1) {
-							var b = _ItemList.GetModelObject(i) as SourceItem;
-							if (b != null) {
+							if (_ItemList.GetModelObject(i) is SourceItem b) {
 								if (b.Bookmark == null) {
 									b.Bookmark = new BookmarkSettings(sr.ReadLine());
 								}
@@ -721,7 +718,7 @@ namespace PDFPatcher.Functions
 					break;
 				case "_ClearBookmarkTitle":
 					foreach (SourceItem item in _ItemList.SelectedObjects) {
-						if (item != null && item.Bookmark != null) {
+						if (item?.Bookmark != null) {
 							item.Bookmark = null;
 						}
 					}
@@ -764,7 +761,7 @@ namespace PDFPatcher.Functions
 							   ? Color.Transparent
 							   : _BookmarkColorButton.Color;
 			foreach (SourceItem item in _ItemList.SelectedObjects) {
-				if (item != null && item.Bookmark != null) {
+				if (item?.Bookmark != null) {
 					item.Bookmark.ForeColor = sc;
 				}
 			}
@@ -774,12 +771,7 @@ namespace PDFPatcher.Functions
 		void SelectItemsByType(SourceItem.ItemType type) {
 			var r = new List<SourceItem>();
 			SelectItemsByType(type, r, _itemsContainer);
-			if (r.Count > 0) {
-				_ItemList.SelectedObjects = r;
-			}
-			else {
-				_ItemList.SelectedObjects = null;
-			}
+			_ItemList.SelectedObjects = r.Count > 0 ? r : null;
 		}
 
 		void SelectItemsByType(SourceItem.ItemType type, List<SourceItem> result, SourceItem container) {
@@ -898,9 +890,7 @@ namespace PDFPatcher.Functions
 		#region AddDocumentWorker
 		void _AddDocumentWorker_DoWork(object sender, DoWorkEventArgs e) {
 			var files = e.Argument as string[];
-			Array.ForEach(files, f => {
-				((BackgroundWorker)sender).ReportProgress(0, f);
-			});
+			Array.ForEach(files, f => ((BackgroundWorker)sender).ReportProgress(0, f));
 		}
 
 		void _AddDocumentWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
@@ -931,7 +921,7 @@ namespace PDFPatcher.Functions
 				return;
 			}
 			_ItemList.Focus();
-			AddItems(new SourceItem[] { item });
+			AddItems(new[] { item });
 		}
 
 		void AddItems(SourceItem[] items) {
@@ -982,6 +972,5 @@ namespace PDFPatcher.Functions
 				c.Font = new Font(c.Font, (bs.IsBold ? FontStyle.Bold : FontStyle.Regular) | (bs.IsItalic ? FontStyle.Italic : FontStyle.Regular));
 			}
 		}
-
 	}
 }
