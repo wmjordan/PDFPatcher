@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using iTextSharp.text.pdf;
-using PDFPatcher.Model;
 
 namespace PDFPatcher.Processor
 {
@@ -27,6 +24,19 @@ namespace PDFPatcher.Processor
 				if (_options.RemoveUsageRights) {
 					Tracker.TraceMessage("删除权限控制。");
 					pdf.RemoveUsageRights();
+					var form = pdf.Catalog.GetAsDict(PdfName.ACROFORM);
+					if (form != null) {
+						form.Remove(PdfName.SIGFLAGS);
+						var fields = form.GetAsArray(PdfName.FIELDS);
+						if (fields != null) {
+							for (int i = fields.Size - 1; i >= 0; i--) {
+								var f = fields.GetAsDict(i);
+								if (f != null && PdfName.SIG.Equals(f.GetAsName(PdfName.FT))) {
+									fields.Remove(i);
+								}
+							}
+						}
+					}
 				}
 				if (_options.RemoveXmlMetadata) {
 					Tracker.TraceMessage("删除 XML 元数据。");
