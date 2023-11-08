@@ -438,7 +438,9 @@ namespace PDFPatcher.Processor.Imaging
 				// As with all TIFF offsets, it will be relative to the first byte of the TIFF header.
 				uint offset;
 				if (!GetTagValue(_ifd0Catalogue, 0x8769, out offset))
-					throw new ExifLibException("Unable to locate Exif data");
+					// throw new ExifLibException("Unable to locate Exif data");
+					// DO NOT throw exception, not all has data
+					return;
 
 				// Jump to the exif SubIFD
 				_stream.Position = offset + _tiffHeaderStart;
