@@ -16,6 +16,7 @@ namespace PDFPatcher.Processor
 		readonly ExporterOptions _options;
 		readonly Dictionary<string, string> _resolvedReferences = new Dictionary<string, string>();
 		readonly Stack<string> _tags = new Stack<string>();
+		readonly Stack<PdfDictionary> _dictionaries = new Stack<PdfDictionary>();
 		bool _streamFolderExists;
 		ImageExtractor _imageExporter;
 		FilePath _exportStreamPath;
@@ -125,9 +126,11 @@ namespace PDFPatcher.Processor
 		/// <param name="writer"></param>
 		/// <param name="dict"></param>
 		void ExportPdfDictionary(XmlWriter writer, PdfDictionary dict) {
+			_dictionaries.Push(dict);
 			foreach (var item in dict) {
 				ExportPdfDictionaryItem(item, writer);
 			}
+			_dictionaries.Pop();
 		}
 
 		void ExportPdfDictionaryItem(KeyValuePair<PdfName, PdfObject> item, XmlWriter writer) {
@@ -363,6 +366,7 @@ namespace PDFPatcher.Processor
 				return;
 			}
 			var key = _tags.Peek();
+			var dict = _dictionaries.Peek();
 			writer.WriteStartElement(Constants.ContentPrefix, "stream", Constants.ContentNamespace);
 			byte[] bs;
 			bool isRaw = false;
@@ -391,6 +395,19 @@ namespace PDFPatcher.Processor
 							break;
 						case "Metadata":
 							extName = Constants.FileExtensions.Xml;
+							break;
+						case "FontFile2":
+							extName = Constants.FileExtensions.Ttf;
+							var ff = dict.GetAsString(PdfName.FONTFAMILY);
+							if (ff != null) {
+								key += "." + ff;
+							}
+							else {
+								var fn = dict.GetAsName(PdfName.FONTNAME);
+								if (fn != null) {
+									key += "." + fn.ToString().Substring(1);
+								}
+							}
 							break;
 						default:
 							extName = isForm ? Constants.FileExtensions.Txt : Constants.FileExtensions.Dat;
