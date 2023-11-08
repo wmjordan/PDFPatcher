@@ -231,7 +231,7 @@ namespace MuPdfSharp
 		string GetText() {
 			var sb = new System.Text.StringBuilder(50);
 			foreach (var ch in Characters) {
-				sb.Append(char.ConvertFromUtf32(ch.Unicode));
+				sb.Append(char.IsSurrogate((char)ch.Unicode) == false ? char.ConvertFromUtf32(ch.Unicode) : "?");
 			}
 			return sb.ToString();
 		}
