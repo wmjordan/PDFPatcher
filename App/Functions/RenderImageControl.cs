@@ -9,7 +9,7 @@ using PDFPatcher.Common;
 namespace PDFPatcher.Functions
 {
 	[ToolboxItem(false)]
-	public partial class RenderImageControl : FunctionControl, IResettableControl
+	public partial class RenderImageControl : FunctionControl, IResettableControl, IDocumentSource
 	{
 		public override string FunctionName => "转换页面为图片";
 
@@ -19,6 +19,8 @@ namespace PDFPatcher.Functions
 			InitializeComponent();
 			this.OnFirstLoad(OnLoad);
 		}
+
+		public string DocumentPath => _SourceFileControl.Text;
 
 		void OnLoad() {
 			_SourceFileControl.BrowseSelectedFiles += (object sender, EventArgs e) => {
@@ -55,6 +57,17 @@ namespace PDFPatcher.Functions
 			AppContext.MainForm.SetTooltip(_SpecificRatioBox, "指定输出图片的放大倍数");
 			AppContext.MainForm.SetTooltip(_ExtractPageImageWidthBox, "指定输出图片的宽度（单位为像素，图片的高度将按比例缩放），宽度为 0 时相当于按 1：1 比例输出");
 			Reload();
+		}
+
+		public override void ExecuteCommand(string commandName, params string[] parameters) {
+			switch (commandName) {
+				case Commands.Open:
+					_SourceFileControl.BrowseFile();
+					break;
+				default:
+					base.ExecuteCommand(commandName, parameters);
+					break;
+			}
 		}
 
 		public void Reset() {

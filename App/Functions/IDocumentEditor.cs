@@ -2,9 +2,13 @@
 
 namespace PDFPatcher.Functions
 {
-	interface IDocumentEditor
+	interface IDocumentSource
 	{
 		string DocumentPath { get; }
+	}
+
+	interface IDocumentEditor : IDocumentSource
+	{
 		bool IsBusy { get; }
 		event EventHandler<DocumentChangedEventArgs> DocumentChanged;
 		void CloseDocument();

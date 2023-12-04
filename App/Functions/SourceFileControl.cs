@@ -50,6 +50,10 @@ namespace PDFPatcher
 		//    set { this._OpenPdfBox.Multiselect = value; }
 		//}
 
+		public void BrowseFile() {
+			_BrowseSourcePdfButton.PerformClick();
+		}
+
 		void _BrowseSourcePdfButton_Click(object sender, EventArgs e) {
 			var t = _SourcePdfBox.Text;
 			if (t.Length > 0
@@ -77,7 +81,7 @@ namespace PDFPatcher
 		}
 
 		void _SourcePdfBox_TextChanged(object sender, EventArgs e) {
-			if (_controlLockDown == true) {
+			if (_controlLockDown) {
 				return;
 			}
 			if (FileHelper.HasFileNameMacro(_SourcePdfBox.Text) == false) {

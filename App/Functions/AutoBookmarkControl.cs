@@ -8,10 +8,15 @@ using PDFPatcher.Model;
 namespace PDFPatcher.Functions
 {
 	[ToolboxItem(false)]
-	public partial class AutoBookmarkControl : FunctionControl, IResettableControl
+	public partial class AutoBookmarkControl : FunctionControl, IResettableControl, IDocumentSource
 	{
 		AutoBookmarkOptions _options;
 		static AutoBookmarkOptions.LevelAdjustmentOption[] _copiedLevelAdjustments;
+
+		public AutoBookmarkControl() {
+			InitializeComponent();
+			this.OnFirstLoad(OnLoad);
+		}
 
 		public override string FunctionName => "自动生成书签";
 
@@ -19,10 +24,7 @@ namespace PDFPatcher.Functions
 
 		public override Button DefaultButton => _ExportBookmarkButton;
 
-		public AutoBookmarkControl() {
-			InitializeComponent();
-			this.OnFirstLoad(OnLoad);
-		}
+		public string DocumentPath => _SourceFileControl.Text;
 
 		void OnLoad() {
 			_FilterToolbar.ScaleIcons(16);

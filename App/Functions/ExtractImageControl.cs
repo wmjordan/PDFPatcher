@@ -7,7 +7,7 @@ using PDFPatcher.Common;
 namespace PDFPatcher.Functions
 {
 	[ToolboxItem(false)]
-	public partial class ExtractImageControl : FunctionControl, IResettableControl
+	public partial class ExtractImageControl : FunctionControl, IResettableControl, IDocumentSource
 	{
 		public override string FunctionName => "提取图片";
 
@@ -17,6 +17,8 @@ namespace PDFPatcher.Functions
 			InitializeComponent();
 			this.OnFirstLoad(OnLoad);
 		}
+
+		public string DocumentPath => _SourceFileControl.Text;
 
 		void OnLoad() {
 			_SourceFileControl.BrowseSelectedFiles += (object sender, EventArgs e) => {
@@ -44,6 +46,17 @@ namespace PDFPatcher.Functions
 			AppContext.MainForm.SetTooltip(_SkipRedundantImagesBox, "避免导出 PDF 内部引用值一致的图片");
 			AppContext.MainForm.SetTooltip(_ExtractOnlyInPageBox, "仅导出页面渲染指令引用过的图片和批注图片");
 			Reload();
+		}
+
+		public override void ExecuteCommand(string commandName, params string[] parameters) {
+			switch (commandName) {
+				case Commands.Open:
+					_SourceFileControl.BrowseFile();
+					break;
+				default:
+					base.ExecuteCommand(commandName, parameters);
+					break;
+			}
 		}
 
 		public void Reset() {

@@ -7,7 +7,7 @@ using PDFPatcher.Common;
 namespace PDFPatcher.Functions
 {
 	[ToolboxItem(false)]
-	sealed partial class ExtractPageControl : FunctionControl, IResettableControl
+	sealed partial class ExtractPageControl : FunctionControl, IResettableControl, IDocumentSource
 	{
 		public override string FunctionName => "提取页面";
 
@@ -17,6 +17,8 @@ namespace PDFPatcher.Functions
 			InitializeComponent();
 			this.OnFirstLoad(OnLoad);
 		}
+
+		public string DocumentPath => _SourceFileControl.Text;
 
 		void OnLoad() {
 			AppContext.MainForm.SetTooltip(_SourceFileControl.FileList, "需要提取页面的 PDF 文件路径，可选择多个文件");
@@ -36,6 +38,17 @@ namespace PDFPatcher.Functions
 				_SeperateByPageNumberBox.Enabled = _SeparatingModeBox.SelectedIndex == 2;
 			};
 			((IResettableControl)this).Reload();
+		}
+
+		public override void ExecuteCommand(string commandName, params string[] parameters) {
+			switch (commandName) {
+				case Commands.Open:
+					_SourceFileControl.BrowseFile();
+					break;
+				default:
+					base.ExecuteCommand(commandName, parameters);
+					break;
+			}
 		}
 
 		void _ExtractButton_Click(object sender, EventArgs e) {

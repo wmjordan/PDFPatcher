@@ -500,12 +500,14 @@ namespace PDFPatcher
 			}
 			else {
 				HideLogControl();
-				var p = (GetActiveFunctionControl() as IDocumentEditor)?.DocumentPath;
+				var p = (GetActiveFunctionControl() as IDocumentSource)?.DocumentPath;
 				var c = GetFunctionControl(func);
 				foreach (TabPage item in _FunctionContainer.TabPages) {
 					if (item.Controls.Count > 0 && item.Controls[0] == c) {
 						_FunctionContainer.SelectedTab = item;
-						if (String.IsNullOrEmpty(p) == false) {
+						if (String.IsNullOrEmpty(p) == false
+							&& c is IDocumentSource tc
+							&& String.IsNullOrEmpty(tc.DocumentPath)) {
 							c.ExecuteCommand(Commands.OpenFile, p);
 						}
 						return c;
@@ -531,7 +533,7 @@ namespace PDFPatcher
 				c.Dock = DockStyle.Fill;
 				t.Controls.Add(c);
 				_FunctionContainer.SelectedTab = t;
-				if (func == Function.Inspector && String.IsNullOrEmpty(p) == false) {
+				if (func != Function.Editor && String.IsNullOrEmpty(p) == false) {
 					c.ExecuteCommand(Commands.OpenFile, p);
 				}
 				AcceptButton = c.DefaultButton;
