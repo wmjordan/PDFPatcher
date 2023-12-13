@@ -9,11 +9,11 @@ namespace PDFPatcher
 		[XmlAttribute("自动指定输出位置")]
 		public bool AutoOutputFolder { get; set; }
 
-		[XmlAttribute("避免重复导出图片")]
-		public bool SkipRedundantImages { get; set; }
+		[XmlAttribute("允许重复导出图片")]
+		public bool AllowRedundantImages { get; set; }
 
-		[XmlAttribute("仅导出页面内的图片")]
-		public bool ExtractInPageImagesOnly { get; set; }
+		[XmlAttribute("导出页面外的图片")]
+		public bool ExtractOutOfPageImages { get; set; }
 
 		///<summary>获取或指定是否合并相同页面、相同宽度的图片。</summary>
 		[XmlAttribute("合并图片")]

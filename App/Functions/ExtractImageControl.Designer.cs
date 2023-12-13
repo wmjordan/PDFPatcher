@@ -45,7 +45,7 @@
 			this.label9 = new System.Windows.Forms.Label();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.tabPage1 = new System.Windows.Forms.TabPage();
-			this._SkipRedundantImagesBox = new System.Windows.Forms.CheckBox();
+			this._AllowRedundantImagesBox = new System.Windows.Forms.CheckBox();
 			this._MonoPngBox = new System.Windows.Forms.RadioButton();
 			this._MonoTiffBox = new System.Windows.Forms.RadioButton();
 			this.label1 = new System.Windows.Forms.Label();
@@ -61,7 +61,7 @@
 			this._TargetBox = new PDFPatcher.HistoryComboBox();
 			this._SourceFileControl = new PDFPatcher.SourceFileControl();
 			this._ExtractButton = new EnhancedGlassButton.GlassButton();
-			this._ExtractOnlyInPageBox = new System.Windows.Forms.CheckBox();
+			this._ExtractOutOfPageImagesBox = new System.Windows.Forms.CheckBox();
 			((System.ComponentModel.ISupportInitialize)(this._MinWidthBox)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this._MinHeightBox)).BeginInit();
 			this.tabControl1.SuspendLayout();
@@ -262,8 +262,8 @@
 			// 
 			// tabPage1
 			// 
-			this.tabPage1.Controls.Add(this._ExtractOnlyInPageBox);
-			this.tabPage1.Controls.Add(this._SkipRedundantImagesBox);
+			this.tabPage1.Controls.Add(this._ExtractOutOfPageImagesBox);
+			this.tabPage1.Controls.Add(this._AllowRedundantImagesBox);
 			this.tabPage1.Controls.Add(this._MonoPngBox);
 			this.tabPage1.Controls.Add(this._MonoTiffBox);
 			this.tabPage1.Controls.Add(this.label1);
@@ -291,14 +291,14 @@
 			// 
 			// _SkipRedundantImagesBox
 			// 
-			this._SkipRedundantImagesBox.AutoSize = true;
-			this._SkipRedundantImagesBox.Location = new System.Drawing.Point(8, 146);
-			this._SkipRedundantImagesBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-			this._SkipRedundantImagesBox.Name = "_SkipRedundantImagesBox";
-			this._SkipRedundantImagesBox.Size = new System.Drawing.Size(132, 16);
-			this._SkipRedundantImagesBox.TabIndex = 18;
-			this._SkipRedundantImagesBox.Text = "避免导出相同的图片";
-			this._SkipRedundantImagesBox.UseVisualStyleBackColor = true;
+			this._AllowRedundantImagesBox.AutoSize = true;
+			this._AllowRedundantImagesBox.Location = new System.Drawing.Point(8, 146);
+			this._AllowRedundantImagesBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this._AllowRedundantImagesBox.Name = "_SkipRedundantImagesBox";
+			this._AllowRedundantImagesBox.Size = new System.Drawing.Size(132, 16);
+			this._AllowRedundantImagesBox.TabIndex = 18;
+			this._AllowRedundantImagesBox.Text = "允许导出相同的图片";
+			this._AllowRedundantImagesBox.UseVisualStyleBackColor = true;
 			// 
 			// _MonoPngBox
 			// 
@@ -475,13 +475,13 @@
 			// 
 			// _ExtractOnlyInPageBox
 			// 
-			this._ExtractOnlyInPageBox.AutoSize = true;
-			this._ExtractOnlyInPageBox.Location = new System.Drawing.Point(8, 167);
-			this._ExtractOnlyInPageBox.Name = "_ExtractOnlyInPageBox";
-			this._ExtractOnlyInPageBox.Size = new System.Drawing.Size(120, 16);
-			this._ExtractOnlyInPageBox.TabIndex = 19;
-			this._ExtractOnlyInPageBox.Text = "仅导出可见的图片";
-			this._ExtractOnlyInPageBox.UseVisualStyleBackColor = true;
+			this._ExtractOutOfPageImagesBox.AutoSize = true;
+			this._ExtractOutOfPageImagesBox.Location = new System.Drawing.Point(8, 167);
+			this._ExtractOutOfPageImagesBox.Name = "_ExtractOnlyInPageBox";
+			this._ExtractOutOfPageImagesBox.Size = new System.Drawing.Size(120, 16);
+			this._ExtractOutOfPageImagesBox.TabIndex = 19;
+			this._ExtractOutOfPageImagesBox.Text = "允许导出隐藏图片";
+			this._ExtractOutOfPageImagesBox.UseVisualStyleBackColor = true;
 			// 
 			// ExtractImageControl
 			// 
@@ -550,7 +550,7 @@
 		private System.Windows.Forms.TabPage tabPage3;
 		private System.Windows.Forms.TextBox textBox1;
 		private System.Windows.Forms.Label label6;
-		private System.Windows.Forms.CheckBox _SkipRedundantImagesBox;
-		private System.Windows.Forms.CheckBox _ExtractOnlyInPageBox;
+		private System.Windows.Forms.CheckBox _AllowRedundantImagesBox;
+		private System.Windows.Forms.CheckBox _ExtractOutOfPageImagesBox;
 	}
 }

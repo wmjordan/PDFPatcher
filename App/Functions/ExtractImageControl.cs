@@ -43,8 +43,8 @@ namespace PDFPatcher.Functions
 			AppContext.MainForm.SetTooltip(_MinWidthBox, "忽略宽度小于此处指定值的图片");
 			AppContext.MainForm.SetTooltip(_MergeJpgToPngBox, "在合并图片时，将使用有损压缩的 JPEG 图片合并为无损压缩的 PNG 图片");
 			AppContext.MainForm.SetTooltip(_ExtractButton, "点击此按钮，将 PDF 文件的图片提取到指定的目录");
-			AppContext.MainForm.SetTooltip(_SkipRedundantImagesBox, "避免导出 PDF 内部引用值一致的图片");
-			AppContext.MainForm.SetTooltip(_ExtractOnlyInPageBox, "仅导出页面渲染指令引用过的图片和批注图片");
+			AppContext.MainForm.SetTooltip(_AllowRedundantImagesBox, "允许重复导出 PDF 内部引用值一致的图片");
+			AppContext.MainForm.SetTooltip(_ExtractOutOfPageImagesBox, "导出页面渲染指令未引用过的隐藏图片");
 			Reload();
 		}
 
@@ -79,8 +79,8 @@ namespace PDFPatcher.Functions
 			_ExportSoftMaskBox.Checked = o.ExtractSoftMask;
 			_InvertSoftMaskBox.Checked = o.InvertSoftMask;
 			_MonoPngBox.Checked = o.MonoPng;
-			_SkipRedundantImagesBox.Checked = o.SkipRedundantImages;
-			_ExtractOnlyInPageBox.Checked = o.ExtractInPageImagesOnly;
+			_AllowRedundantImagesBox.Checked = o.AllowRedundantImages;
+			_ExtractOutOfPageImagesBox.Checked = o.ExtractOutOfPageImages;
 		}
 
 		void _BrowseTargetPdfButton_Click(object sender, EventArgs e) {
@@ -156,8 +156,8 @@ namespace PDFPatcher.Functions
 			option.MinWidth = (int)_MinWidthBox.Value;
 			option.ExtractSoftMask = _ExportSoftMaskBox.Checked;
 			option.InvertSoftMask = _InvertSoftMaskBox.Checked;
-			option.SkipRedundantImages = _SkipRedundantImagesBox.Checked;
-			option.ExtractInPageImagesOnly = _ExtractOnlyInPageBox.Checked;
+			option.AllowRedundantImages = _AllowRedundantImagesBox.Checked;
+			option.ExtractOutOfPageImages = _ExtractOutOfPageImagesBox.Checked;
 			worker.RunWorkerAsync(
 				new object[] {
 				AppContext.SourceFiles, option

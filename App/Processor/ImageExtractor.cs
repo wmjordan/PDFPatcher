@@ -59,7 +59,7 @@ namespace PDFPatcher.Processor
 				_imagePosList.Sort();
 
 				// 删除页面字典中没有在渲染指令中出现的图片
-				if (_options.ExtractInPageImagesOnly) {
+				if (_options.ExtractOutOfPageImages == false) {
 					_imageInfoList.RemoveAll(IsOutOfPage);
 				}
 			}
@@ -126,7 +126,7 @@ namespace PDFPatcher.Processor
 			foreach (var item in source) {
 				if (PdfName.SMASK.Equals(item.Key)
 					|| PdfName.MASK.Equals(item.Key)
-					|| _options.SkipRedundantImages && _exportedImages.Contains(item.Value)
+					|| _options.AllowRedundantImages == false && _exportedImages.Contains(item.Value)
 					|| (obj = PdfReader.GetPdfObject(item.Value) as PdfDictionary) == null) {
 					continue;
 				}
@@ -176,7 +176,7 @@ namespace PDFPatcher.Processor
 		}
 
 		internal void ExtractImage(ImageInfo info) {
-			if (_options.SkipRedundantImages
+			if (_options.AllowRedundantImages == false
 				&& _exportedImages.Add(info.InlineImage.PdfRef) == false) {
 				return;
 			}
