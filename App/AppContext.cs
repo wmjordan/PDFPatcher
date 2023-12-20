@@ -247,7 +247,7 @@ namespace PDFPatcher
 				SaveJson(path ?? AppConfigFilePath, saveHistoryFileList, skipReadonly);
 			}
 			catch (Exception ex) {
-				FormHelper.ErrorBox("在保存程序设置时出错" + ex.Message);
+				AppContext.MainForm.ErrorBox("保存程序设置时出错", ex);
 			}
 		}
 

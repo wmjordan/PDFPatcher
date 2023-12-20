@@ -611,7 +611,7 @@ namespace PDFPatcher.Functions
 				}
 			}
 			catch (Exception ex) {
-				FormHelper.ErrorBox("在匹配文本时出现错误：" + ex.Message);
+				AppContext.MainForm.ErrorBox("匹配文本时出现错误", ex);
 			}
 			Unfreeze();
 			if (matches.Count > 0) {

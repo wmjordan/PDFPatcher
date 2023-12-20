@@ -309,8 +309,8 @@ namespace PDFPatcher.Model
 						}
 					}
 				}
-				catch (Exception) {
-					FormHelper.ErrorBox(String.Concat("打开 PDF 文件时“", path, "”出错。"));
+				catch (Exception ex) {
+					AppContext.MainForm.ErrorBox($"打开 PDF 文件“{path}”时出错", ex);
 					// ignore corrupted 
 				}
 			}

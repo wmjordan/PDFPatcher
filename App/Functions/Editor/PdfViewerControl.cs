@@ -1112,7 +1112,7 @@ namespace PDFPatcher.Functions
 				}
 			}
 			catch (Exception ex) {
-				FormHelper.ErrorBox(ex.Message);
+				AppContext.MainForm.ErrorBox($"显示页面 {pageNumber.ToText()} 时出错", ex);
 				return false;
 			}
 			//if (PageChanged != null) {

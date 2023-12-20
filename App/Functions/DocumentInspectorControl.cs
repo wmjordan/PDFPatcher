@@ -683,7 +683,7 @@ namespace PDFPatcher.Functions
 						sb.DumpHexBinBytes(d.FileName);
 					}
 					catch (Exception ex) {
-						FormHelper.ErrorBox("在导出流数据时出错：" + ex.Message);
+						AppContext.MainForm.ErrorBox("导出流数据时出错", ex);
 					}
 				}
 			}
@@ -698,7 +698,7 @@ namespace PDFPatcher.Functions
 						sb.DumpBytes(d.FileName);
 					}
 					catch (Exception ex) {
-						FormHelper.ErrorBox("在导出流数据时出错：" + ex.Message);
+						AppContext.MainForm.ErrorBox("导出流数据时出错", ex);
 					}
 				}
 			}
@@ -731,7 +731,7 @@ namespace PDFPatcher.Functions
 						}
 					}
 					catch (Exception ex) {
-						FormHelper.ErrorBox("在导出统一码映射表数据时出错：" + ex.Message);
+						AppContext.MainForm.ErrorBox("导出统一码映射表数据时出错", ex);
 					}
 				}
 			}
@@ -784,13 +784,13 @@ namespace PDFPatcher.Functions
 				}
 			}
 			catch (Exception ex) {
-				FormHelper.ErrorBox("保存文件时出错：" + ex.Message);
+				AppContext.MainForm.ErrorBox("保存文件时出错", ex);
 				if (o && File.Exists(n)) {
 					try {
 						File.Delete(n);
 					}
-					catch (Exception) {
-						FormHelper.ErrorBox("无法删除临时文件：" + n);
+					catch (Exception e2) {
+						AppContext.MainForm.ErrorBox("无法删除临时文件：" + n, e2);
 					}
 				}
 				LoadDocument(_fileName);
@@ -813,7 +813,7 @@ namespace PDFPatcher.Functions
 				FormHelper.ErrorBox(Messages.PasswordInvalid);
 			}
 			catch (Exception ex) {
-				FormHelper.ErrorBox("在打开 PDF 文件时遇到错误：\n" + ex.Message);
+				AppContext.MainForm.ErrorBox("打开 PDF 文件时遇到错误", ex);
 			}
 		}
 

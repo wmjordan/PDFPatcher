@@ -57,10 +57,10 @@ namespace PDFPatcher.Functions
 				_ListFontsButton.Enabled = true;
 			};
 			_Worker.DoWork += (s, args) => {
+				_fontIdNames = new Dictionary<int, string>();
+				_pageFonts = new Dictionary<string, PageFont>();
+				_FontListBox.ClearObjects();
 				try {
-					_fontIdNames = new Dictionary<int, string>();
-					_pageFonts = new Dictionary<string, PageFont>();
-					_FontListBox.ClearObjects();
 					using (var p = PdfHelper.OpenPdfFile(_SourceFileBox.FirstFile, false, false)) {
 						var r = PageRangeCollection.Parse(_PageRangeBox.Text, 1, p.NumberOfPages, true);
 						var pp = new int[p.NumberOfPages + 1];
@@ -82,7 +82,7 @@ namespace PDFPatcher.Functions
 					}
 				}
 				catch (Exception ex) {
-					FormHelper.ErrorBox(ex.Message);
+					AppContext.MainForm.ErrorBox("读取字体信息时出错", ex);
 				}
 			};
 			_FontListBox.ScaleColumnWidths();

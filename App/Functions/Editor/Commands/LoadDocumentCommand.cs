@@ -29,7 +29,7 @@ namespace PDFPatcher.Functions.Editor
 				controller.LoadDocument(parameters[0], _importBookmark);
 			}
 			catch (Exception ex) {
-				FormHelper.ErrorBox("在加载信息文件时出现错误：" + ex.Message);
+				AppContext.MainForm.ErrorBox("加载信息文件时出现错误", ex);
 			}
 		}
 	}

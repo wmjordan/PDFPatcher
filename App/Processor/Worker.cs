@@ -31,7 +31,7 @@ namespace PDFPatcher.Processor
 				return null;
 			}
 			catch (Exception ex) {
-				FormHelper.ErrorBox("在打开 PDF 文件时遇到错误：\n" + ex.Message);
+				AppContext.MainForm.ErrorBox("打开 PDF 文件时遇到错误", ex);
 #if DEBUG
 				Tracker.TraceMessage(ex);
 #endif
@@ -83,7 +83,7 @@ namespace PDFPatcher.Processor
 			}
 			catch (Exception ex) {
 				Tracker.TraceMessage(ex);
-				FormHelper.ErrorBox("在导出图片时遇到错误：\n" + ex.Message);
+				AppContext.MainForm.ErrorBox("导出图片时遇到错误", ex);
 			}
 			finally {
 				options.OutputPath = op;
@@ -152,7 +152,7 @@ namespace PDFPatcher.Processor
 			}
 			catch (Exception ex) {
 				Tracker.TraceMessage(ex);
-				FormHelper.ErrorBox("在转换图片时遇到错误：\n" + ex.Message);
+				AppContext.MainForm.ErrorBox("转换图片时遇到错误", ex);
 			}
 			finally {
 				mupdf?.Dispose();
@@ -230,7 +230,7 @@ namespace PDFPatcher.Processor
 			}
 			catch (Exception ex) {
 				Tracker.TraceMessage(ex);
-				FormHelper.ErrorBox("在转换图片时遇到错误：\n" + ex.Message);
+				AppContext.MainForm.ErrorBox("转换图片时遇到错误", ex);
 			}
 			finally {
 				mupdf?.Dispose();
@@ -323,7 +323,7 @@ namespace PDFPatcher.Processor
 			}
 			catch (Exception ex) {
 				Tracker.TraceMessage(ex);
-				FormHelper.ErrorBox("在转换书签文件时发生错误：\n" + ex.Message);
+				AppContext.MainForm.ErrorBox("转换书签文件时发生错误", ex);
 			}
 		}
 
@@ -511,7 +511,7 @@ namespace PDFPatcher.Processor
 			}
 			catch (Exception ex) {
 				Tracker.TraceMessage(ex);
-				FormHelper.ErrorBox("在导入信息时发生错误：\n" + ex.Message);
+				AppContext.MainForm.ErrorBox("导入信息时发生错误", ex);
 				return;
 			}
 			finally {
@@ -592,7 +592,7 @@ namespace PDFPatcher.Processor
 					// 使用中文的书签
 					var v = root.GetAttribute(Constants.Info.ProductVersion);
 					if (v != Constants.InfoDocVersion
-						&& FormHelper.YesNoBox(String.Concat("信息文件不是用这个版本的程序生成的，可能会导入不成功，是否继续？\n当前程序的版本是：", Application.ProductVersion, "\n信息文件的导出程序版本是：", v)) == DialogResult.No) {
+						&& FormHelper.YesNoBox($"信息文件不是用这个版本的程序生成的，可能会导入不成功，是否继续？\n当前程序的版本是：{Application.ProductVersion}\n信息文件的导出程序版本是：{v}") == DialogResult.No) {
 						return false;
 					}
 					break;
@@ -621,7 +621,7 @@ namespace PDFPatcher.Processor
 			}
 			catch (Exception ex) {
 				Tracker.TraceMessage(ex);
-				FormHelper.ErrorBox("在导出页面内容时出错：\n" + ex.Message);
+				AppContext.MainForm.ErrorBox("导出页面内容时出错", ex);
 			}
 			finally {
 				if (r != null) {
@@ -717,7 +717,7 @@ namespace PDFPatcher.Processor
 			}
 			catch (Exception ex) {
 				Tracker.TraceMessage(ex);
-				FormHelper.ErrorBox("在生成文档时出错：\n" + ex.Message);
+				AppContext.MainForm.ErrorBox("生成文档时出错", ex);
 			}
 			finally {
 				if (doc != null) {
@@ -1008,7 +1008,7 @@ namespace PDFPatcher.Processor
 			}
 			catch (Exception ex) {
 				Tracker.TraceMessage(ex);
-				FormHelper.ErrorBox("在导入信息时发生错误：\n" + ex.Message);
+				AppContext.MainForm.ErrorBox("导入信息时发生错误", ex);
 			}
 			finally {
 				if (pdf != null) {

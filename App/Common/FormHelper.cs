@@ -293,8 +293,11 @@ namespace PDFPatcher.Common
 		}
 		public static void ErrorBox(this Control control, string title, Exception exception) {
 			var s = new System.Text.StringBuilder(title);
-			s.AppendLine();
+			s.AppendLine().AppendLine();
 			s.AppendLine(exception.Message);
+#if DEBUG
+			s.AppendLine(exception.StackTrace);
+#endif
 			while ((exception = exception.InnerException) != null) {
 				s.AppendLine();
 				s.Append(exception.Message);

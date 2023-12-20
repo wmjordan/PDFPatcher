@@ -283,7 +283,7 @@ namespace PDFPatcher.Functions
 					fontInfo = doc.SelectSingleNode(Constants.PdfInfo + "/" + Constants.Font.DocumentFont);
 				}
 				catch (Exception ex) {
-					FormHelper.ErrorBox("无法从信息文件加载字体信息。" + ex.Message);
+					AppContext.MainForm.ErrorBox("无法从信息文件加载字体信息", ex);
 					return;
 				}
 				if (fontInfo == null) {

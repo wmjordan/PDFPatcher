@@ -112,7 +112,7 @@ namespace PDFPatcher.Functions.Editor
 					View.Viewer.Invalidate();
 				}
 				catch (Exception ex) {
-					FormHelper.ErrorBox(ex.Message);
+					AppContext.MainForm.ErrorBox("加载文件时出错", ex);
 					s = null;
 				}
 			}
@@ -215,7 +215,7 @@ namespace PDFPatcher.Functions.Editor
 					Tracker.TraceMessage(Tracker.Category.Error, Messages.PasswordInvalid);
 				}
 				catch (Exception ex) {
-					FormHelper.ErrorBox("在打开 PDF 文件时遇到错误：\n" + ex.Message);
+					AppContext.MainForm.ErrorBox("在打开 PDF 文件时遇到错误", ex);
 				}
 			}
 		}

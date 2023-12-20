@@ -25,7 +25,7 @@ namespace PDFPatcher.Functions.Editor
 				new Regex(Pattern);
 			}
 			catch (Exception ex) {
-				this.ErrorBox("正则表达式格式错误：" + ex);
+				this.ErrorBox("正则表达式格式错误", ex);
 				return;
 			}
 			DialogResult = DialogResult.OK;

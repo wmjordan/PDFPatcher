@@ -24,7 +24,7 @@ namespace PDFPatcher.Processor
 				d.Save(path);
 			}
 			catch (Exception ex) {
-				FormHelper.ErrorBox("在保存文件列表时遇到错误：" + ex.Message);
+				AppContext.MainForm.ErrorBox("保存文件列表时遇到错误", ex);
 			}
 		}
 
@@ -54,7 +54,7 @@ namespace PDFPatcher.Processor
 				d.Load(path);
 			}
 			catch (Exception ex) {
-				FormHelper.ErrorBox("在加载文件列表时遇到错误：" + ex.Message);
+				AppContext.MainForm.ErrorBox("在加载文件列表时遇到错误", ex);
 			}
 			var bl = d.Bookmarks;
 			var l = new List<SourceItem>(bl.Count);
