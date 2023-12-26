@@ -534,7 +534,7 @@ namespace PDFPatcher.Processor
 		}
 
 		void AddImage(iTextImage image) {
-			if (_option.AutoMaskBWImages && image.IsMaskCandidate()) {
+			if (_option.AutoMaskBWImages && image.Bpc == 1 && image.IsMaskCandidate()) {
 				image.MakeMask();
 			}
 			image.ScalePercent(72f / image.DpiX.SubstituteDefault(72) * 100f, 72f / image.DpiY.SubstituteDefault(72) * 100f);
