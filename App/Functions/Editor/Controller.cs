@@ -201,7 +201,12 @@ namespace PDFPatcher.Functions.Editor
 			using (var reader = PdfHelper.OpenPdfFile(path, AppContext.LoadPartialPdfFile, false)) {
 				try {
 					Tracker.DebugMessage("consolidate");
-					reader.ConsolidateNamedDestinations();
+					try {
+						reader.ConsolidateNamedDestinations();
+					}
+					catch (Exception ex) {
+						Tracker.TraceMessage(ex);
+					}
 					Tracker.DebugMessage("get bookmark");
 					e.Result = new object[] {
 					OutlineManager.GetBookmark (reader, new UnitConverter () { Unit = Constants.Units.Point }),
