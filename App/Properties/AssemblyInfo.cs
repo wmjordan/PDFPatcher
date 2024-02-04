@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("wmjordan@163.com")]
 [assembly: AssemblyProduct(PDFPatcher.Constants.AppEngName)]
-[assembly: AssemblyCopyright("著作权所有 © WMJordan 2009～2023")]
+[assembly: AssemblyCopyright("著作权所有 © WMJordan 2009～2024")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -23,4 +23,4 @@ using System.Runtime.InteropServices;
 [assembly: Guid("e8969c5f-a5fe-4dce-a08b-555686483732")]
 
 [assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.4203")]
+[assembly: AssemblyFileVersion("1.0.1.4220")]
