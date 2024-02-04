@@ -360,36 +360,39 @@ namespace PDFPatcher.Processor
 		}
 
 		internal static void ImportColor(XmlElement item, PdfDictionary dict) {
+			PdfArray components;
 			if (item.HasAttribute(Constants.Color)) {
 				var s = item.GetAttribute(Constants.Color);
 				if (s == Constants.Colors.Transparent) {
-					dict.Put(PdfName.C, new PdfArray());
+					components = new PdfArray();
 				}
-				var c = System.Drawing.Color.FromName(s);
-				dict.Put(PdfName.C, new PdfArray(new float[] {
-					c.R / 255f,
-					c.G / 255f,
-					c.B / 255f
-				}));
+				else {
+					var c = Int32.TryParse(s, out var v) ? System.Drawing.Color.FromArgb(v) : System.Drawing.Color.FromName(s);
+					components = new PdfArray(new float[] { c.R / 255f, c.G / 255f, c.B / 255f });
+				}
 			}
 			else if (item.HasAttribute(Constants.Colors.Red) || item.HasAttribute(Constants.Colors.Green) || item.HasAttribute(Constants.Colors.Blue)) {
-				dict.Put(PdfName.C, new PdfArray(new float[] {
+				components = new PdfArray(new float[] {
 					item.GetValue(Constants.Colors.Red, 0f),
 					item.GetValue(Constants.Colors.Green, 0f),
 					item.GetValue(Constants.Colors.Blue, 0f)
-				}));
+				});
 			}
 			else if (item.HasAttribute(Constants.Colors.Gray)) {
-				dict.Put(PdfName.C, new PdfArray(new float[] { item.GetValue(Constants.Colors.Gray, 0f) }));
+				components = new PdfArray(new float[] { item.GetValue(Constants.Colors.Gray, 0f) });
 			}
 			else if (item.HasAttribute(Constants.Colors.Black) || item.HasAttribute(Constants.Colors.Cyan) || item.HasAttribute(Constants.Colors.Magenta) || item.HasAttribute(Constants.Colors.Yellow)) {
-				dict.Put(PdfName.C, new PdfArray(new float[] {
+				components = new PdfArray(new float[] {
 					item.GetValue(Constants.Colors.Cyan, 0f),
 					item.GetValue(Constants.Colors.Magenta, 0f),
 					item.GetValue(Constants.Colors.Yellow, 0f),
 					item.GetValue(Constants.Colors.Black, 0f)
-				}));
+				});
 			}
+			else {
+				return;
+			}
+			dict.Put(PdfName.C, components);
 		}
 
 		private static void ImportBorder(string border, PdfAnnotation ann) {
