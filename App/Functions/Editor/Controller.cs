@@ -782,8 +782,14 @@ namespace PDFPatcher.Functions.Editor
 					var h = p.VisualBound.Height;
 					var dh = p.VisualBound.Bottom - h;
 					foreach (var block in p.TextPage.Blocks) {
+						string jointBlockText = null;
+						bool hasJointText = false;
 						foreach (var line in block.Lines) {
+							var matchLine = false;
 							foreach (var span in line.Spans) {
+								if (matchLine) {
+									break;
+								}
 								for (var si = 0; si < bs.Count; si++) {
 									var style = bs[si];
 									var matcher = mp[si];
@@ -797,8 +803,13 @@ namespace PDFPatcher.Functions.Editor
 									}
 									var b = span.Box;
 									if (bl < style.Level) {
-										if (matcher?.Invoke(line.Text) == false) {
-											continue;
+										if (matcher != null) {
+											if (jointBlockText == null) {
+												jointBlockText = GetLineText(line, block, out hasJointText);
+											}
+											if ((matchLine = matcher(jointBlockText)) == false) {
+												continue;
+											}
 										}
 										bm = CreateNewSiblingBookmark(bm, spans);
 										++bl;
@@ -812,7 +823,7 @@ namespace PDFPatcher.Functions.Editor
 										var lb = b.Bottom;
 										if (cb.Page == p.PageNumber
 											&& (bb >= lt && bb <= lb || bt >= lt && bt <= lb || bt < lt && bb > lb)
-											&& (mergeAdjacentTitle || spans[spans.Count - 1].Point.Y == span.Point.Y)) {
+											&& (mergeAdjacentTitle || spans[spans.Count - 1].Box.IsHorizontalNeighbor(span.Box))) {
 											if (/*m == false &&*/ t.Length > 0) {
 												// 保留英文和数字文本之间的空格
 												var ct = cb.Title;
@@ -828,8 +839,13 @@ namespace PDFPatcher.Functions.Editor
 											}
 											continue;
 										}
-										if (matcher?.Invoke(line.Text) == false) {
-											continue;
+										if (matcher != null) {
+											if (jointBlockText == null) {
+												jointBlockText = GetLineText(line, block, out hasJointText);
+											}
+											if ((matchLine = matcher(jointBlockText)) == false) {
+												continue;
+											}
 										}
 										bm = CreateNewSiblingBookmarkForParent(bm, spans);
 									}
@@ -838,8 +854,13 @@ namespace PDFPatcher.Functions.Editor
 											bm = bm.ParentBookmark;
 											--bl;
 										}
-										if (matcher?.Invoke(line.Text) == false) {
-											continue;
+										if (matcher != null) {
+											if (jointBlockText == null) {
+												jointBlockText = GetLineText(line, block, out hasJointText);
+											}
+											if ((matchLine = matcher(jointBlockText)) == false) {
+												continue;
+											}
 										}
 										bm = CreateNewSiblingBookmarkForParent(bm, spans);
 									}
@@ -851,7 +872,7 @@ namespace PDFPatcher.Functions.Editor
 											: s.IsItalic ? FontStyle.Italic
 											: FontStyle.Regular;
 									}
-									be.Title = t;
+									be.Title = matchLine ? jointBlockText : t;
 									be.Top = s.GoToTop ? h + dh : h - b.Top + b.Height + dh;
 									be.Bottom = h - b.Bottom + dh;
 									be.Action = Constants.ActionType.Goto;
@@ -866,7 +887,14 @@ namespace PDFPatcher.Functions.Editor
 									break;
 								}
 							}
+							if (matchLine) {
+								if (hasJointText) {
+									goto NEXT_BLOCK;
+								}
+								break;
+							}
 						}
+					NEXT_BLOCK:;
 					}
 				}
 			}
@@ -881,10 +909,25 @@ namespace PDFPatcher.Functions.Editor
 			return bm;
 		}
 
+		static string GetLineText(MuPdfSharp.MuTextLine line, MuPdfSharp.MuTextBlock block, out bool jointLines) {
+			string t = null;
+			jointLines = false;
+			foreach (var item in block.Lines) {
+				if (line == item) {
+					t += item.Text;
+				}
+				else if (line.BBox.IsHorizontalNeighbor(item.BBox)) {
+					jointLines = true;
+					t += item.Text;
+				}
+			}
+			return t;
+		}
+
 		static void TrimBookmarkText(BookmarkContainer bm) {
 			if (bm is BookmarkElement b) {
 				var t = b.Title;
-				var t2 = b.Title.Trim();
+				var t2 = t.Trim();
 				if (t2 != t) {
 					b.Title = t2;
 				}
