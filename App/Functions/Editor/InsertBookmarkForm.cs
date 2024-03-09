@@ -65,10 +65,14 @@ namespace PDFPatcher.Functions.Editor
 			_OkButton.PerformClick();
 		}
 
+		protected override void OnActivated(EventArgs e) {
+			base.OnActivated(e);
+			_TitleBox.Focus();
+		}
+
 		protected override void OnDeactivate(EventArgs e) {
 			Hide();
 			base.OnDeactivate(e);
 		}
-
 	}
 }
