@@ -734,7 +734,7 @@ namespace PDFPatcher.Functions.Editor
 					}
 				}
 				if (m == false) {
-					Model.TitleStyles.Add(new EditModel.AutoBookmarkStyle(level, fn, fs));
+					Model.TitleStyles.Add(new EditModel.AutoBookmarkSettings(level, fn, fs));
 				}
 			NEXT:;
 			}
@@ -750,12 +750,12 @@ namespace PDFPatcher.Functions.Editor
 			f.SetValues(Model.TitleStyles);
 		}
 
-		internal void AutoBookmark(IEnumerable<EditModel.AutoBookmarkStyle> list, bool mergeAdjacentTitle, bool keepExisting) {
+		internal void AutoBookmark(IEnumerable<EditModel.AutoBookmarkSettings> list, bool mergeAdjacentTitle, bool keepExisting) {
 			View.Bookmark.CancelCellEdit();
 			var pdf = Model.PdfDocument;
 			BookmarkContainer bm = Model.Document.BookmarkRoot;
 			var c = pdf.PageCount;
-			var bs = new List<EditModel.AutoBookmarkStyle>(list);
+			var bs = new List<EditModel.AutoBookmarkSettings>(list);
 			if (bs.Count == 0) {
 				return;
 			}

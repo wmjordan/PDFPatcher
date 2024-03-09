@@ -11,7 +11,7 @@ namespace PDFPatcher.Functions
 {
 	sealed partial class AutoBookmarkForm : DraggableForm
 	{
-		List<EditModel.AutoBookmarkStyle> _list;
+		List<EditModel.AutoBookmarkSettings> _list;
 		readonly Controller _controller;
 
 		internal AutoBookmarkForm() {
@@ -27,30 +27,30 @@ namespace PDFPatcher.Functions
 			MinimumSize = Size;
 			_Toolbar.ScaleIcons(16);
 
-			_ConditionColumn.AsTyped<EditModel.AutoBookmarkStyle>(c => {
+			_ConditionColumn.AsTyped<EditModel.AutoBookmarkSettings>(c => {
 				c.AspectGetter = o => $"字体为{o.FontName} 尺寸为{o.FontSize}{(o.MatchPattern != null ? o.MatchPattern.ToString() : String.Empty)}";
 			});
 			_LevelColumn.CellEditUseWholeCell = true;
-			_LevelColumn.AsTyped<EditModel.AutoBookmarkStyle>(c => {
+			_LevelColumn.AsTyped<EditModel.AutoBookmarkSettings>(c => {
 				c.AspectGetter = o => o.Level;
 				c.AspectPutter = (o, v) => o.Level = Convert.ToInt32(v).LimitInRange(1, 10);
 			});
-			_BoldColumn.AsTyped<EditModel.AutoBookmarkStyle>(c => {
+			_BoldColumn.AsTyped<EditModel.AutoBookmarkSettings>(c => {
 				c.AspectGetter = o => o.Bookmark.IsBold;
 				c.AspectPutter = (o, v) => o.Bookmark.IsBold = (bool)v;
 			});
-			_ItalicColumn.AsTyped<EditModel.AutoBookmarkStyle>(c => {
+			_ItalicColumn.AsTyped<EditModel.AutoBookmarkSettings>(c => {
 				c.AspectGetter = o => o.Bookmark.IsItalic;
 				c.AspectPutter = (o, v) => o.Bookmark.IsItalic = (bool)v;
 			});
-			_ColorColumn.AsTyped<EditModel.AutoBookmarkStyle>(c => {
+			_ColorColumn.AsTyped<EditModel.AutoBookmarkSettings>(c => {
 				c.AspectGetter = o => "点击设置颜色";
 			});
-			_OpenColumn.AsTyped<EditModel.AutoBookmarkStyle>(c => {
+			_OpenColumn.AsTyped<EditModel.AutoBookmarkSettings>(c => {
 				c.AspectGetter = o => o.Bookmark.IsOpened;
 				c.AspectPutter = (o, v) => o.Bookmark.IsOpened = (bool)v;
 			});
-			_GoToTopColumn.AsTyped<EditModel.AutoBookmarkStyle>(c => {
+			_GoToTopColumn.AsTyped<EditModel.AutoBookmarkSettings>(c => {
 				c.AspectGetter = o => o.Bookmark.GoToTop;
 				c.AspectPutter = (o, v) => o.Bookmark.GoToTop = (bool)v;
 			});
@@ -59,7 +59,7 @@ namespace PDFPatcher.Functions
 			_BookmarkConditionBox.IsSimpleDropSink = true;
 			_BookmarkConditionBox.CellClick += (s, args) => {
 				if (args.ColumnIndex == _ColorColumn.Index) {
-					var b = ((EditModel.AutoBookmarkStyle)args.Model).Bookmark;
+					var b = ((EditModel.AutoBookmarkSettings)args.Model).Bookmark;
 					this.ShowCommonDialog<ColorDialog>(
 						f => f.Color = b.ForeColor == Color.Transparent ? Color.White : b.ForeColor,
 						f => {
@@ -70,7 +70,7 @@ namespace PDFPatcher.Functions
 				}
 			};
 			_BookmarkConditionBox.RowFormatter = (r) => {
-				var b = ((EditModel.AutoBookmarkStyle)r.RowObject).Bookmark;
+				var b = ((EditModel.AutoBookmarkSettings)r.RowObject).Bookmark;
 				r.UseItemStyleForSubItems = false;
 				r.SubItems[_ColorColumn.Index].ForeColor = b.ForeColor == Color.Transparent ? _BookmarkConditionBox.ForeColor : b.ForeColor;
 			};
@@ -107,7 +107,7 @@ namespace PDFPatcher.Functions
 						SetMatchPatternToSelectedBookmarkStyles(null);
 						return;
 					case "CustomPattern":
-						p = (_BookmarkConditionBox.SelectedObject as EditModel.AutoBookmarkStyle)?.MatchPattern;
+						p = (_BookmarkConditionBox.SelectedObject as EditModel.AutoBookmarkSettings)?.MatchPattern;
 						this.ShowDialog<CustomPatternForm>(f => {
 							if (p != null) {
 								f.Pattern = p.Text;
@@ -123,18 +123,18 @@ namespace PDFPatcher.Functions
 		}
 
 		void SetMatchPatternToSelectedBookmarkStyles(MatchPattern p) {
-			foreach (EditModel.AutoBookmarkStyle item in _BookmarkConditionBox.SelectedObjects) {
+			foreach (EditModel.AutoBookmarkSettings item in _BookmarkConditionBox.SelectedObjects) {
 				item.MatchPattern = p;
 			}
 			_BookmarkConditionBox.RefreshObjects(_BookmarkConditionBox.SelectedObjects);
 		}
 
-		internal void SetValues(List<EditModel.AutoBookmarkStyle> list) {
+		internal void SetValues(List<EditModel.AutoBookmarkSettings> list) {
 			_BookmarkConditionBox.Objects = _list = list;
 		}
 
 		void _RemoveButton_Click(object sender, EventArgs e) {
-			_BookmarkConditionBox.SelectedObjects.ForEach<EditModel.AutoBookmarkStyle>(i => _list.Remove(i));
+			_BookmarkConditionBox.SelectedObjects.ForEach<EditModel.AutoBookmarkSettings>(i => _list.Remove(i));
 			_BookmarkConditionBox.RemoveObjects(_BookmarkConditionBox.SelectedObjects);
 		}
 
@@ -161,7 +161,7 @@ namespace PDFPatcher.Functions
 			});
 		}
 
-		static void Serialize(List<EditModel.AutoBookmarkStyle> list, System.IO.StreamWriter writer) {
+		static void Serialize(List<EditModel.AutoBookmarkSettings> list, System.IO.StreamWriter writer) {
 			using (var x = System.Xml.XmlWriter.Create(writer)) {
 				x.WriteStartDocument();
 				x.WriteStartElement("autoBookmark");
@@ -194,12 +194,12 @@ namespace PDFPatcher.Functions
 			});
 		}
 
-		static List<EditModel.AutoBookmarkStyle> Deserialize(FilePath path) {
+		static List<EditModel.AutoBookmarkSettings> Deserialize(FilePath path) {
 			var doc = new System.Xml.XmlDocument();
 			doc.Load(path);
-			var l = new List<EditModel.AutoBookmarkStyle>();
+			var l = new List<EditModel.AutoBookmarkSettings>();
 			foreach (System.Xml.XmlElement item in doc.DocumentElement.GetElementsByTagName("style")) {
-				var s = new EditModel.AutoBookmarkStyle(
+				var s = new EditModel.AutoBookmarkSettings(
 					item.GetValue("level", 1),
 					item.GetValue("fontName"),
 					item.GetValue("fontSize", 0));
@@ -217,7 +217,7 @@ namespace PDFPatcher.Functions
 
 		void SyncList() {
 			_list.Clear();
-			_list.AddRange(new TypedObjectListView<EditModel.AutoBookmarkStyle>(_BookmarkConditionBox).Objects);
+			_list.AddRange(new TypedObjectListView<EditModel.AutoBookmarkSettings>(_BookmarkConditionBox).Objects);
 		}
 	}
 }

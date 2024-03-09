@@ -20,7 +20,7 @@ namespace PDFPatcher.Functions.Editor
 		int _TargetPageNumber;
 		public int TargetPageNumber {
 			get => _TargetPageNumber;
-			set { _TargetPageNumber = value; _PageLabel.Text = "第" + value.ToText() + "页"; }
+			set { _TargetPageNumber = value; _PageLabel.Text = $"第{value.ToText()}页"; }
 		}
 		/// <summary>
 		/// 获取新书签的插入位置（当前书签后：1；子书签：2；父书签后：3；当前书签前：4）

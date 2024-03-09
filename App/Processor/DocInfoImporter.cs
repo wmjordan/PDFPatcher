@@ -536,7 +536,7 @@ namespace PDFPatcher.Processor
 						pos[0] = float.NaN;
 					}
 					else if (top.TryParse(out pos[0]) == false) {
-						if (pr != null && (box = PdfHelper.GetPageVisibleRectangle(PdfReader.GetPdfObject(pr) as PdfDictionary)) != null) {
+						if (pr != null && (box = (PdfReader.GetPdfObject(pr) as PdfDictionary).GetPageVisibleRectangle()) != null) {
 							pos[0] = box.Top;
 						}
 						else {
@@ -552,7 +552,7 @@ namespace PDFPatcher.Processor
 						pos[0] = float.NaN;
 					}
 					else if (left.TryParse(out pos[0]) == false) {
-						if (pr != null && (box = PdfHelper.GetPageVisibleRectangle(PdfReader.GetPdfObject(pr) as PdfDictionary)) != null) {
+						if (pr != null && (box = (PdfReader.GetPdfObject(pr) as PdfDictionary).GetPageVisibleRectangle()) != null) {
 							pos[0] = box.Left;
 						}
 						else {
@@ -810,9 +810,7 @@ namespace PDFPatcher.Processor
 				//    ps = UnitConverter.ConvertUnit (ps, this._unitFactor);
 				//    prop.Add (ps);
 				//}
-				PdfObject a;
-				if (pdfDs.TryGetValue(item.Key, out a)) {
-					var sourceD = a as PdfArray;
+				if (pdfDs.TryGetValue(item.Key, out var a) && a is PdfArray sourceD) {
 					sourceD.ArrayList.Clear();
 					sourceD.ArrayList.AddRange(prop.ArrayList);
 				}

@@ -16,6 +16,7 @@ namespace PDFPatcher.Functions
 
 		static readonly CommandRegistry<Editor.Controller> __Commands = InitCommands();
 
+		// 在此注册编辑器的命令和对应的命令标识符
 		static CommandRegistry<Editor.Controller> InitCommands() {
 			var d = new CommandRegistry<Editor.Controller>();
 			d.Register(new Editor.LoadDocumentCommand(true, false), Commands.Open);

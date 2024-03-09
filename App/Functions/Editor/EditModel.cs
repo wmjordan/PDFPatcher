@@ -11,7 +11,7 @@ namespace PDFPatcher.Functions.Editor
 	{
 		public EditModel() {
 			Undo = new UndoManager();
-			TitleStyles = new List<AutoBookmarkStyle>();
+			TitleStyles = new List<AutoBookmarkSettings>();
 		}
 
 		internal bool IsLoadingDocument { get; set; }
@@ -22,7 +22,7 @@ namespace PDFPatcher.Functions.Editor
 		internal string DocumentPath { get; set; }
 		internal string LastSavedPdfPath { get; set; }
 		internal MuPdfSharp.MuDocument PdfDocument { get; set; }
-		internal List<AutoBookmarkStyle> TitleStyles { get; }
+		internal List<AutoBookmarkSettings> TitleStyles { get; }
 		internal string GetPdfFilePath() {
 			if (DocumentPath == null) {
 				return null;
@@ -69,7 +69,7 @@ namespace PDFPatcher.Functions.Editor
 		{
 			Empty, Text, OcrText, OcrError
 		}
-		internal sealed class AutoBookmarkStyle
+		internal sealed class AutoBookmarkSettings
 		{
 			internal readonly string FontName;
 			internal readonly int FontSize;
@@ -78,7 +78,7 @@ namespace PDFPatcher.Functions.Editor
 
 			internal int Level;
 
-			public AutoBookmarkStyle(int level, string fontName, int fontSize) {
+			public AutoBookmarkSettings(int level, string fontName, int fontSize) {
 				Level = level;
 				FontName = fontName;
 				FontSize = fontSize;
