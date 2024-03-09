@@ -44,6 +44,9 @@
 			// 
 			// _PatternBox
 			// 
+			this._PatternBox.AutoSize = true;
+			this._PatternBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+			this._PatternBox.Multiline = true;
 			this._PatternBox.Location = new System.Drawing.Point(134, 12);
 			this._PatternBox.Name = "_PatternBox";
 			this._PatternBox.Size = new System.Drawing.Size(364, 28);
@@ -51,6 +54,7 @@
 			// 
 			// _MatchCaseBox
 			// 
+			this._MatchCaseBox.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
 			this._MatchCaseBox.AutoSize = true;
 			this._MatchCaseBox.Location = new System.Drawing.Point(134, 46);
 			this._MatchCaseBox.Name = "_MatchCaseBox";
@@ -61,6 +65,7 @@
 			// 
 			// _FullMatchBox
 			// 
+			this._FullMatchBox.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
 			this._FullMatchBox.AutoSize = true;
 			this._FullMatchBox.Location = new System.Drawing.Point(374, 46);
 			this._FullMatchBox.Name = "_FullMatchBox";
@@ -71,6 +76,7 @@
 			// 
 			// _OkButton
 			// 
+			this._OkButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
 			this._OkButton.Location = new System.Drawing.Point(134, 74);
 			this._OkButton.Name = "_OkButton";
 			this._OkButton.Size = new System.Drawing.Size(124, 30);
@@ -81,6 +87,7 @@
 			// 
 			// _CancelButton
 			// 
+			this._CancelButton.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
 			this._CancelButton.Location = new System.Drawing.Point(264, 74);
 			this._CancelButton.Name = "_CancelButton";
 			this._CancelButton.Size = new System.Drawing.Size(124, 30);
