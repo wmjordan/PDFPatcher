@@ -252,7 +252,7 @@ namespace PDFPatcher.Common
 			var ps = p2[0];
 			bool p2r;
 			if ((p2r = IsDirectorySeparator(ps)) && rootAsRelative == false // note 不能调转 && 参数的顺序，p2r 在后面有用
-				|| p2.Length > 1 && (p2[1] == Path.VolumeSeparatorChar || p2[1] == ps)) {
+				|| p2.Length > 1 && (p2[1] == Path.VolumeSeparatorChar || ps == Path.DirectorySeparatorChar && p2[1] == ps)) {
 				return path;
 			}
 
