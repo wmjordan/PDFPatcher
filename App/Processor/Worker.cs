@@ -407,6 +407,9 @@ namespace PDFPatcher.Processor
 
 				using (Stream s = new FileStream(targetFile, FileMode.Create)) {
 					var st = new PdfStamper(pdf, s);
+					if (String.IsNullOrWhiteSpace(info.CreationDate) == false) {
+						st.Writer.Info.Put(PdfName.CREATIONDATE, new PdfString(info.CreationDate));
+					}
 					pdfEngine.ProcessDocument(st.Writer);
 					#region 处理信息文件
 					var processors = new List<IInfoDocProcessor>();
