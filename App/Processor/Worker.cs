@@ -340,6 +340,7 @@ namespace PDFPatcher.Processor
 			Tracker.TraceMessage(Tracker.Category.InputFile, sourcePath);
 			Tracker.TraceMessage(Tracker.Category.OutputFile, targetFile);
 			bool overwriteSource = false;
+			DateTime sourceCreationTime = DateTime.Now;
 			var pdf = OpenPdf(sourcePath, AppContext.LoadPartialPdfFile, true);
 			if (pdf == null) {
 				return;
@@ -397,6 +398,7 @@ namespace PDFPatcher.Processor
 						return;
 					}
 					overwriteSource = true;
+					sourceCreationTime = sourceFile.FilePath.ToFileInfo().CreationTime;
 					targetFile = sourceFile.FilePath.ChangeExtension(Ext.Tmp).ToString();
 				}
 				else if (FileHelper.CheckOverwrite(targetFile) == false) {
@@ -503,7 +505,7 @@ namespace PDFPatcher.Processor
 						pdf.Trailer.Locate<PdfDictionary>(PdfName.ROOT).Remove(PdfName.ACROFORM);
 					}
 					Tracker.IncrementProgress(10);
-					Tracker.TraceMessage("保存文件：" + targetFile);
+					Tracker.TraceMessage($"保存文件：{targetFile}");
 					st.Close();
 					Tracker.TrackProgress(workload);
 				}
@@ -534,12 +536,13 @@ namespace PDFPatcher.Processor
 					File.Delete(sourcePath);
 					File.Move(targetFile, sourcePath);
 					targetFile = sourcePath;
+					targetFile.ToFileInfo().CreationTime = sourceCreationTime;
 				}
 				catch (Exception) {
-					FormHelper.ErrorBox("无法覆盖输入文件。\n请手工将“" + Ext.Tmp + "”后缀的临时文件更名为输入文件。");
+					FormHelper.ErrorBox($"无法覆盖输入文件。\n请手工将“{Ext.Tmp}”后缀的临时文件更名为输入文件。");
 				}
 			}
-			Tracker.TraceMessage(Tracker.Category.Alert, "成功导入信息到 <<" + targetFile + ">>。");
+			Tracker.TraceMessage(Tracker.Category.Alert, $"成功导入信息到 <<{targetFile}>>。");
 		}
 
 		internal static string ReplaceTargetFileNameMacros(string sourceFile, string targetFile, PdfReader pdf) {
