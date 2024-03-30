@@ -319,47 +319,7 @@ namespace PDFPatcher.Processor
 								DescendantFontRef = context.Pdf.AddPdfObject(new PdfArray())
 							};
 							if (fs != null) {
-								if (fs.TraditionalChineseConversion != 0) {
-									if (fs.TraditionalChineseConversion > 0) {
-										Map(nf.CharSubstitutions, Constants.Chinese.Simplified, Constants.Chinese.Traditional);
-									}
-									else {
-										Map(nf.CharSubstitutions, Constants.Chinese.Traditional, Constants.Chinese.Simplified);
-									}
-								}
-								if (fs.NumericWidthConversion != 0) {
-									if (fs.NumericWidthConversion > 0) {
-										Map(nf.CharSubstitutions, HalfWidthNumbers, FullWidthNumbers);
-									}
-									else {
-										Map(nf.CharSubstitutions, FullWidthNumbers, HalfWidthNumbers);
-									}
-								}
-								if (fs.AlphabeticWidthConversion != 0) {
-									if (fs.AlphabeticWidthConversion > 0) {
-										Map(nf.CharSubstitutions, HalfWidthLetters, FullWidthLetters);
-									}
-									else {
-										Map(nf.CharSubstitutions, FullWidthLetters, HalfWidthLetters);
-									}
-								}
-								if (fs.PunctuationWidthConversion != 0) {
-									if (fs.PunctuationWidthConversion > 0) {
-										Map(nf.CharSubstitutions, SetCaseProcessor.HalfWidthPunctuations, SetCaseProcessor.FullWidthPunctuations);
-									}
-									else {
-										Map(nf.CharSubstitutions, SetCaseProcessor.FullWidthPunctuations, SetCaseProcessor.HalfWidthPunctuations);
-									}
-								}
-								if (fs.OriginalCharacters != null && fs.SubstituteCharacters != null) {
-									var sl = fs.SubstituteCharacters.Length;
-									for (int i = 0; i < fs.OriginalCharacters.Length; i++) {
-										if (i >= sl) {
-											break;
-										}
-										nf.CharSubstitutions[fs.OriginalCharacters[i]] = fs.SubstituteCharacters[i];
-									}
-								}
+								SetupFontSubstitutionMaps(nf, fs);
 							}
 							if (sn == null && p != -1 && nf.Font.BaseFont == null) {
 								nf.Font = _fontFactory.GetFont(__AlternativeFonts[p], BaseFont.IDENTITY_H);
@@ -397,6 +357,50 @@ namespace PDFPatcher.Processor
 			}
 			if (r.Count > 0) {
 				_fontDictMap[fonts] = r;
+			}
+		}
+
+		static void SetupFontSubstitutionMaps(NewFont nf, FontSubstitution fs) {
+			if (fs.TraditionalChineseConversion != 0) {
+				if (fs.TraditionalChineseConversion > 0) {
+					Map(nf.CharSubstitutions, Constants.Chinese.Simplified, Constants.Chinese.Traditional);
+				}
+				else {
+					Map(nf.CharSubstitutions, Constants.Chinese.Traditional, Constants.Chinese.Simplified);
+				}
+			}
+			if (fs.NumericWidthConversion != 0) {
+				if (fs.NumericWidthConversion > 0) {
+					Map(nf.CharSubstitutions, HalfWidthNumbers, FullWidthNumbers);
+				}
+				else {
+					Map(nf.CharSubstitutions, FullWidthNumbers, HalfWidthNumbers);
+				}
+			}
+			if (fs.AlphabeticWidthConversion != 0) {
+				if (fs.AlphabeticWidthConversion > 0) {
+					Map(nf.CharSubstitutions, HalfWidthLetters, FullWidthLetters);
+				}
+				else {
+					Map(nf.CharSubstitutions, FullWidthLetters, HalfWidthLetters);
+				}
+			}
+			if (fs.PunctuationWidthConversion != 0) {
+				if (fs.PunctuationWidthConversion > 0) {
+					Map(nf.CharSubstitutions, SetCaseProcessor.HalfWidthPunctuations, SetCaseProcessor.FullWidthPunctuations);
+				}
+				else {
+					Map(nf.CharSubstitutions, SetCaseProcessor.FullWidthPunctuations, SetCaseProcessor.HalfWidthPunctuations);
+				}
+			}
+			if (fs.OriginalCharacters != null && fs.SubstituteCharacters != null) {
+				var sl = fs.SubstituteCharacters.Length;
+				for (int i = 0; i < fs.OriginalCharacters.Length; i++) {
+					if (i >= sl) {
+						break;
+					}
+					nf.CharSubstitutions[fs.OriginalCharacters[i]] = fs.SubstituteCharacters[i];
+				}
 			}
 		}
 
@@ -556,9 +560,9 @@ namespace PDFPatcher.Processor
 		void SubSetFontData(PdfReader pdf) {
 			foreach (var font in _newFonts) {
 				var newFont = font.Value;
-				Tracker.TraceMessage("嵌入字体：" + newFont.Font.Familyname + "(" + newFont.UsedCidMap.Count + "字)");
+				Tracker.TraceMessage($"嵌入字体：{newFont.Font.Familyname}({newFont.UsedCidMap.Count}字)");
 				if (newFont.AbsentChars.Count > 0) {
-					Tracker.TraceMessage(Tracker.Category.ImportantMessage, String.Concat("丢失", newFont.AbsentChars.Count, "字：", new String(newFont.AbsentChars.ToArray())));
+					Tracker.TraceMessage(Tracker.Category.ImportantMessage, $"丢失{newFont.AbsentChars.Count}字：{String.Concat(newFont.AbsentChars)}");
 				}
 				ChangeLegacyFontDictionary(pdf, newFont);
 
