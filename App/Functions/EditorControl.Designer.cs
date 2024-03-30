@@ -437,7 +437,7 @@
 			_InsertBookmark.Name = "_InsertBookmark";
 			_InsertBookmark.Size = new System.Drawing.Size(23, 22);
 			_InsertBookmark.Text = "插入(&C)";
-			_InsertBookmark.ToolTipText = "插入书签项（按住 Shift 向上插入）\r\nInsert";
+			_InsertBookmark.ToolTipText = "插入书签项\r\nCtrl+↓或Insert：插入到后面\r\nCtrl+↑或Shift+Insert：插入到前面\r\nCtrl+←：插入到上级书签后面\r\nCtrl+→：插入下级书签";
 			// 
 			// _LevelUp
 			// 
@@ -683,6 +683,7 @@
 			_FirstPage.Name = "_FirstPage";
 			_FirstPage.Size = new System.Drawing.Size(23, 22);
 			_FirstPage.Text = "转到文档第一页";
+			_FirstPage.ToolTipText = "转到文档第一页\r\nHome 键";
 			// 
 			// _PreviousPage
 			// 
@@ -692,6 +693,7 @@
 			_PreviousPage.Name = "_PreviousPage";
 			_PreviousPage.Size = new System.Drawing.Size(23, 22);
 			_PreviousPage.Text = "转到上一页";
+			_PreviousPage.ToolTipText = "转到上一页\r\n[ 键";
 			// 
 			// _NextPage
 			// 
@@ -701,6 +703,7 @@
 			_NextPage.Name = "_NextPage";
 			_NextPage.Size = new System.Drawing.Size(23, 22);
 			_NextPage.Text = "转到下一页";
+			_NextPage.ToolTipText = "转到下一页\r\n] 键";
 			// 
 			// _LastPage
 			// 
@@ -710,6 +713,7 @@
 			_LastPage.Name = "_LastPage";
 			_LastPage.Size = new System.Drawing.Size(23, 22);
 			_LastPage.Text = "转到文档最后一页";
+			_LastPage.ToolTipText = "转到文档最后一页\r\nEnd 键";
 			// 
 			// _MoveMode
 			// 

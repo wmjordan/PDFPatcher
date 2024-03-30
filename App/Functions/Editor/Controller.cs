@@ -529,7 +529,10 @@ namespace PDFPatcher.Functions.Editor
 			View.Viewer.Invalidate();
 		}
 
-		internal void InsertBookmark() {
+		internal void InsertBookmark(InsertBookmarkPositionType position = InsertBookmarkPositionType.NoDefined) {
+			if (position == InsertBookmarkPositionType.NoDefined) {
+				position = (Control.ModifierKeys & Keys.Shift) > 0 ? InsertBookmarkPositionType.BeforeCurrent : InsertBookmarkPositionType.AfterCurrent;
+			}
 			if (Model.PdfDocument != null) {
 				var pn = View.Viewer.CurrentPageNumber;
 				var p = View.Viewer.TransposeClientToPagePosition(0, 0).PageY;
@@ -537,10 +540,10 @@ namespace PDFPatcher.Functions.Editor
 				if (pt < p) {
 					p = pt;
 				}
-				InsertBookmark(null, pn, p, (Control.ModifierKeys & Keys.Shift) > 0 ? InsertBookmarkPositionType.BeforeCurrent : InsertBookmarkPositionType.AfterCurrent);
+				InsertBookmark(null, pn, p, position);
 			}
 			else {
-				InsertBookmark(null, 0, 0, InsertBookmarkPositionType.AfterCurrent);
+				InsertBookmark(null, 0, 0, position);
 			}
 		}
 

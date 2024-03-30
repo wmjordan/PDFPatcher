@@ -511,6 +511,18 @@ namespace PDFPatcher.Functions
 					ExecuteCommand(Commands.Copy); return true;
 				case Keys.V:
 					ExecuteCommand(Commands.Paste); return true;
+				case Keys.Down:
+					_controller.InsertBookmark(InsertBookmarkPositionType.AfterCurrent);
+					break;
+				case Keys.Up:
+					_controller.InsertBookmark(InsertBookmarkPositionType.BeforeCurrent);
+					break;
+				case Keys.Right:
+					_controller.InsertBookmark(InsertBookmarkPositionType.AsChild);
+					break;
+				case Keys.Left:
+					_controller.InsertBookmark(InsertBookmarkPositionType.AfterParent);
+					break;
 			}
 			switch (keyData ^ Keys.Shift) {
 				case Keys.Tab:
@@ -545,6 +557,18 @@ namespace PDFPatcher.Functions
 						_ViewerBox.CurrentPageNumber = (_BookmarkBox.FocusedObject as BookmarkElement).Page;
 					}
 					return true;
+				case Keys.ProcessKey:
+					if (msg.Msg == 256) {
+						switch ((int)msg.LParam) {
+							case 0x001A0001:
+								ExecuteCommand("_PreviousPage");
+								return true;
+							case 0x001B0001:
+								ExecuteCommand("_NextPage");
+								return true;
+						}
+					}
+					break;
 			}
 
 			return base.ProcessCmdKey(ref msg, keyData);
