@@ -318,45 +318,47 @@ namespace PDFPatcher.Processor
 								FontRef = context.Pdf.AddPdfObject(new PdfDictionary()),
 								DescendantFontRef = context.Pdf.AddPdfObject(new PdfArray())
 							};
-							if (fs.TraditionalChineseConversion != 0) {
-								if (fs.TraditionalChineseConversion > 0) {
-									Map(nf.CharSubstitutions, Constants.Chinese.Simplified, Constants.Chinese.Traditional);
-								}
-								else {
-									Map(nf.CharSubstitutions, Constants.Chinese.Traditional, Constants.Chinese.Simplified);
-								}
-							}
-							if (fs.NumericWidthConversion != 0) {
-								if (fs.NumericWidthConversion > 0) {
-									Map(nf.CharSubstitutions, HalfWidthNumbers, FullWidthNumbers);
-								}
-								else {
-									Map(nf.CharSubstitutions, FullWidthNumbers, HalfWidthNumbers);
-								}
-							}
-							if (fs.AlphabeticWidthConversion != 0) {
-								if (fs.AlphabeticWidthConversion > 0) {
-									Map(nf.CharSubstitutions, HalfWidthLetters, FullWidthLetters);
-								}
-								else {
-									Map(nf.CharSubstitutions, FullWidthLetters, HalfWidthLetters);
-								}
-							}
-							if (fs.PunctuationWidthConversion != 0) {
-								if (fs.PunctuationWidthConversion > 0) {
-									Map(nf.CharSubstitutions, SetCaseProcessor.HalfWidthPunctuations, SetCaseProcessor.FullWidthPunctuations);
-								}
-								else {
-									Map(nf.CharSubstitutions, SetCaseProcessor.FullWidthPunctuations, SetCaseProcessor.HalfWidthPunctuations);
-								}
-							}
-							if (fs?.OriginalCharacters != null && fs.SubstituteCharacters != null) {
-								var sl = fs.SubstituteCharacters.Length;
-								for (int i = 0; i < fs.OriginalCharacters.Length; i++) {
-									if (i >= sl) {
-										break;
+							if (fs != null) {
+								if (fs.TraditionalChineseConversion != 0) {
+									if (fs.TraditionalChineseConversion > 0) {
+										Map(nf.CharSubstitutions, Constants.Chinese.Simplified, Constants.Chinese.Traditional);
 									}
-									nf.CharSubstitutions[fs.OriginalCharacters[i]] = fs.SubstituteCharacters[i];
+									else {
+										Map(nf.CharSubstitutions, Constants.Chinese.Traditional, Constants.Chinese.Simplified);
+									}
+								}
+								if (fs.NumericWidthConversion != 0) {
+									if (fs.NumericWidthConversion > 0) {
+										Map(nf.CharSubstitutions, HalfWidthNumbers, FullWidthNumbers);
+									}
+									else {
+										Map(nf.CharSubstitutions, FullWidthNumbers, HalfWidthNumbers);
+									}
+								}
+								if (fs.AlphabeticWidthConversion != 0) {
+									if (fs.AlphabeticWidthConversion > 0) {
+										Map(nf.CharSubstitutions, HalfWidthLetters, FullWidthLetters);
+									}
+									else {
+										Map(nf.CharSubstitutions, FullWidthLetters, HalfWidthLetters);
+									}
+								}
+								if (fs.PunctuationWidthConversion != 0) {
+									if (fs.PunctuationWidthConversion > 0) {
+										Map(nf.CharSubstitutions, SetCaseProcessor.HalfWidthPunctuations, SetCaseProcessor.FullWidthPunctuations);
+									}
+									else {
+										Map(nf.CharSubstitutions, SetCaseProcessor.FullWidthPunctuations, SetCaseProcessor.HalfWidthPunctuations);
+									}
+								}
+								if (fs.OriginalCharacters != null && fs.SubstituteCharacters != null) {
+									var sl = fs.SubstituteCharacters.Length;
+									for (int i = 0; i < fs.OriginalCharacters.Length; i++) {
+										if (i >= sl) {
+											break;
+										}
+										nf.CharSubstitutions[fs.OriginalCharacters[i]] = fs.SubstituteCharacters[i];
+									}
 								}
 							}
 							if (sn == null && p != -1 && nf.Font.BaseFont == null) {
