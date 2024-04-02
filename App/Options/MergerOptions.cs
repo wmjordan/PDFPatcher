@@ -111,6 +111,10 @@ namespace PDFPatcher
 		[XmlAttribute("删除失效书签")]
 		[DefaultValue(true)]
 		public bool RemoveOrphanBookmarks { get; set; }
+
+		///<summary>获取或指定是否在单页PDF源文档后附加一页空白页使之成为双数页（以便双面打印）。</summary>
+		[XmlAttribute("单页PDF附加空白页")]
+		public bool ExtraEmptyPageForOddPdf { get; set; }
 		#endregion
 
 		public enum SubFolderPosition

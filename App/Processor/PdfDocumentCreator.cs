@@ -373,6 +373,9 @@ namespace PDFPatcher.Processor
 			_portrait = r.Height > r.Width;
 			_content.Width = r.Width;
 			_content.Height = r.Height;
+			if (_option.ExtraEmptyPageForOddPdf && imgExp == null && ranges.TotalPages % 2 == 1) {
+				_writer.AddPage(new Rectangle(r.Width, r.Height, 0), 0);
+			}
 			if (_option.KeepBookmarks) {
 				bookmark = KeepBookmarks(bookmark, pdf, pageRemapper, cts);
 			}

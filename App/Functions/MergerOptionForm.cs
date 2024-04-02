@@ -70,6 +70,7 @@ namespace PDFPatcher.Functions
 			_NumericAwareSortBox.Checked = options.NumericAwareSort;
 			_RemoveOrphanBoomarksBox.Checked = options.RemoveOrphanBookmarks;
 			_ResizePdfPagesBox.Checked = ps.ScaleContent == false;
+			_ExtraEmptyPageBox.Checked = options.ExtraEmptyPageForOddPdf;
 			_RightMarginBox.SetValue(ps.Margins.Right / Constants.Units.CmToPoint);
 			switch (options.SubFolder) {
 				case MergerOptions.SubFolderPosition.BeforeFiles:
@@ -135,6 +136,7 @@ namespace PDFPatcher.Functions
 			option.IgnoreLeadingNumbers = _IgnoreLeadingNumbersBox.Checked;
 			option.KeepBookmarks = _KeepSourcePdfBookmarkBox.Checked;
 			option.RemoveOrphanBookmarks = _RemoveOrphanBoomarksBox.Checked;
+			option.ExtraEmptyPageForOddPdf = _ExtraEmptyPageBox.Checked;
 
 			option.RecompressWithJbig2 = _RecompressImageBox.Checked;
 			option.FullCompression = _FullCompressionBox.Checked;
