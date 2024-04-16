@@ -18,8 +18,8 @@ namespace MuPdfSharp
 		}
 
 		public MuPage LoadPage(int pageNumber) {
-			if (_buffer.ContainsKey(pageNumber)) {
-				return _buffer[pageNumber].Page;
+			if (_buffer.TryGetValue(pageNumber, out var r)) {
+				return r.Page;
 			}
 			var p = _document.LoadPage(pageNumber);
 			_buffer.Add(pageNumber, new RenderResult(p));
