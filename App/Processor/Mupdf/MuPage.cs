@@ -261,7 +261,7 @@ namespace MuPdfSharp
 				h = b.Height * options.ScaleRatio * options.Dpi / 72;
 			}
 
-			var ctm = Matrix.Scale(w / b.Width, h / b.Height).RotateTo(options.Rotation);
+			var ctm = Matrix.Translate(-b.Left, -b.Top).ScaleTo(w / b.Width, h / b.Height).RotateTo(options.Rotation);
 			if (options.VerticalFlipImages) {
 				ctm = Matrix.Concat(ctm, Matrix.VerticalFlip);
 			}

@@ -127,13 +127,11 @@ namespace MuPdfSharp
 		public Point(float x, float y) {
 			X = x; Y = y;
 		}
-		/// <summary>
-		/// 将 PDF 页面坐标点转换为渲染页面坐标点。
-		/// </summary>
-		/// <param name="pageVisualBound">页面的可视区域。</param>
-		/// <returns>转换为页面坐标的点。</returns>
-		public Point ToPageCoordinate(Rectangle pageVisualBound) {
-			return new Point((X - pageVisualBound.Left), pageVisualBound.Height - (Y - pageVisualBound.Top));
+		public Point OffsetBy(float offsetX, float offsetY) {
+			return new Point(X + offsetX, Y + offsetY);
+		}
+		public void Deconstruct(out float x, out float y) {
+			x = X; y = Y;
 		}
 		public static explicit operator System.Drawing.Point(Point point) {
 			return new System.Drawing.Point(point.X.ToInt32(), point.Y.ToInt32());
@@ -256,6 +254,7 @@ namespace MuPdfSharp
 		public bool IsInfinite => Left > Right || Top > Bottom;
 		public float Width => Right - Left;
 		public float Height => Bottom - Top;
+		public float Area => Math.Abs(Width) * Math.Abs(Height);
 		public BBox Round => new BBox(
 					SafeInt(Math.Floor(Left + 0.001)),
 					SafeInt(Math.Floor(Top + 0.001)),
@@ -383,15 +382,6 @@ namespace MuPdfSharp
 			}
 			var u = r1.Union(r1);
 			return (i.Height * i.Width) / (u.Height * u.Width);
-		}
-
-		internal Rectangle ToPageCoordinate(Rectangle pageVisualBound) {
-			return new Rectangle(
-				Left - pageVisualBound.Left,
-				pageVisualBound.Height - (Top - pageVisualBound.Top),
-				Right - pageVisualBound.Left,
-				pageVisualBound.Height - (Bottom - pageVisualBound.Top)
-			);
 		}
 
 		public override bool Equals(object obj) {

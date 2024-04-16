@@ -176,6 +176,7 @@ namespace MuPdfSharp
 		}
 	}
 
+	[DebuggerDisplay("BBox={_BBox}")]
 	public sealed class MuImageBlock : MuContentBlock, IMuBoundedElement
 	{
 		readonly Rectangle _BBox;
@@ -192,6 +193,7 @@ namespace MuPdfSharp
 		public override ContentBlockType Type => ContentBlockType.Image;
 	}
 
+	[DebuggerDisplay("BBox={_BBox}")]
 	public sealed class MuTextBlock : MuContentBlock, IMuBoundedElement, IMuTextLines
 	{
 		readonly Rectangle _BBox;

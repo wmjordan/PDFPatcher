@@ -5,6 +5,8 @@ using System.Text;
 using PDFPatcher.Common;
 using MuPdfSharp;
 using DrawingPoint = System.Drawing.Point;
+using MuPoint = MuPdfSharp.Point;
+using MuRectangle = MuPdfSharp.Rectangle;
 
 namespace PDFPatcher.Functions.Editor
 {
@@ -63,6 +65,11 @@ namespace PDFPatcher.Functions.Editor
 			ImageY = imageY;
 			IsInPage = isInPage;
 		}
+
+		public MuPoint ToPageCoordinate(MuPage page) {
+			var pb = page.VisualBound;
+			return new MuPoint(PageX, pb.Bottom - (PageY - pb.Top));
+		}
 	}
 
 	public readonly struct PageRegion
@@ -81,6 +88,15 @@ namespace PDFPatcher.Functions.Editor
 				Page = p1.Page;
 				Region = new MuPdfSharp.Rectangle(p1.PageX, p1.PageY, p2.PageX, p2.PageY);
 			}
+		}
+
+		public MuRectangle ToPageCoordinate(MuPage page) {
+			var r = Region;
+			var pb = page.VisualBound;
+			return new MuRectangle(r.Left,
+				pb.Bottom - (r.Top - pb.Top),
+				r.Right,
+				pb.Bottom - (r.Bottom - pb.Top));
 		}
 	}
 

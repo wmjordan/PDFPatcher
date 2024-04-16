@@ -782,8 +782,10 @@ namespace PDFPatcher.Functions.Editor
 			var bl = 0;
 			for (int i = 0; i < c;) {
 				using (var p = pdf.LoadPage(++i)) {
-					var h = p.VisualBound.Height;
-					var dh = p.VisualBound.Bottom - h;
+					var pb = p.VisualBound;
+					var h = pb.Height;
+					var dh = pb.Bottom - h;
+					var pt = pb.Top;
 					foreach (var block in p.TextPage.Blocks) {
 						string jointBlockText = null;
 						bool hasJointText = false;
@@ -837,7 +839,7 @@ namespace PDFPatcher.Functions.Editor
 														? ct + ' ' + t
 														: ct + t;
 												}
-												cb.Bottom = h - lb;
+												cb.Bottom = h - lb + pt;
 												spans.Add(span);
 											}
 											continue;
@@ -876,8 +878,8 @@ namespace PDFPatcher.Functions.Editor
 											: FontStyle.Regular;
 									}
 									be.Title = matchLine ? jointBlockText : t;
-									be.Top = s.GoToTop ? h + dh : h - b.Top + b.Height + dh;
-									be.Bottom = h - b.Bottom + dh;
+									be.Top = (s.GoToTop ? h + dh : h - b.Top + b.Height + dh) + pt;
+									be.Bottom = h - b.Bottom + dh + pt;
 									be.Action = Constants.ActionType.Goto;
 									be.Page = p.PageNumber;
 									if (s.IsOpened) {

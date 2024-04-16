@@ -625,14 +625,15 @@ namespace PDFPatcher.Functions
 			}
 			lock (_mupdf.SyncObj) {
 				var p = _cache.LoadPage(pageNumber);
-				var z = GetZoomFactorForPage(p.VisualBound);
+				var b = p.VisualBound;
+				var z = GetZoomFactorForPage(b);
 				var o = GetVirtualImageOffset(pageNumber);
 				using (var spanPen = new Pen(Color.LightGray, 1))
 				using (var blockPen = new Pen(Color.Gray, 1)) {
 					blockPen.DashStyle
 						= spanPen.DashStyle
 						= System.Drawing.Drawing2D.DashStyle.Dash;
-					using (var m = new System.Drawing.Drawing2D.Matrix(z, 0, 0, z, offset.X + o.X, offset.Y + o.Y)) {
+					using (var m = new System.Drawing.Drawing2D.Matrix(z, 0, 0, z, offset.X + o.X - z * b.Left, offset.Y + o.Y - z * b.Top)) {
 						g.MultiplyTransform(m);
 					}
 					foreach (var block in p.TextPage.Blocks) {
@@ -695,7 +696,7 @@ namespace PDFPatcher.Functions
 			}
 			lock (_mupdf.SyncObj) {
 				var page = _cache.LoadPage(position.Page);
-				var point = position.Location.ToPageCoordinate(page.VisualBound);
+				var point = position.ToPageCoordinate(page);
 				if (page.Bound.Contains(point) == false
 					|| page.TextPage.BBox.Contains(point) == false) {
 					return ti;
@@ -760,7 +761,7 @@ namespace PDFPatcher.Functions
 			}
 			lock (_mupdf.SyncObj) {
 				var page = _cache.LoadPage(region.Page);
-				var pr = region.Region.ToPageCoordinate(page.VisualBound);
+				var pr = region.ToPageCoordinate(page);
 				if (pr.Intersect(page.VisualBound).IsEmpty) {
 					return null;
 				}
@@ -982,13 +983,17 @@ namespace PDFPatcher.Functions
 		internal RectangleF MuRectangleToImageRegion(int pageNumber, MuRectangle box) {
 			var rtl = HorizontalFlow;
 			var o = _pageOffsets[pageNumber];
+			var b = _pageBounds[pageNumber];
 			var z = _zoomFactor;
+			var l = (box.Left - b.Left) * z + __pageMargin;
+			var t = (box.Top - b.Top) * z + __pageMargin;
 			if (rtl) {
-				return new RectangleF(o + __pageMargin + box.Left * z, box.Top * z + __pageMargin, box.Width * z, box.Height * z);
+				l += o;
 			}
 			else {
-				return new RectangleF(box.Left * z + __pageMargin, box.Top * z + __pageMargin + o, box.Width * z, box.Height * z);
+				t += o;
 			}
+			return new RectangleF(l, t, box.Width * z, box.Height * z);
 		}
 		/// <summary>
 		/// 将屏幕客户区域的位置转换为页面坐标。
@@ -1123,12 +1128,19 @@ namespace PDFPatcher.Functions
 
 		internal void ScrollToPosition(Editor.PagePosition position) {
 			var op = GetVirtualImageOffset(position.Page);
-			var l = position.Location.ToPageCoordinate(_pageBounds[position.Page]);
-			var z = GetZoomFactorForPage(_pageBounds[position.Page]);
+			var bound = _pageBounds[position.Page];
+			position.Location.Deconstruct(out var px, out var py);
+			if (px != 0) {
+				px -= bound.Left;
+			}
+			if (py != 0) {
+				py = bound.Height - (py - bound.Top);
+			}
+			var z = GetZoomFactorForPage(bound);
 			var h = HorizontalFlow;
 			ScrollTo(
-				(position.PageX == 0 && h == false) ? HorizontalScroll.Value : (l.X * z).ToInt32() + op.X,
-				(position.PageY == 0 && h) ? VerticalScroll.Value : (position.Location.Y == 0 ? 0 : (l.Y * z).ToInt32()) + op.Y
+				(position.PageX == 0 && h == false) ? HorizontalScroll.Value : (px * z).ToInt32() + op.X,
+				(position.PageY == 0 && h) ? VerticalScroll.Value : (position.Location.Y == 0 ? 0 : (py * z).ToInt32()) + op.Y
 				);
 		}
 

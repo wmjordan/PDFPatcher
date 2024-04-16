@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Linq;
 using System.Security.Permissions;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
@@ -433,8 +434,15 @@ namespace PDFPatcher.Functions
 				case "_CopySelection":
 					var sel = _ViewerBox.GetSelection();
 					if (sel.Page > 0) {
-						using (var b = sel.GetSelectedBitmap()) {
-							Clipboard.SetImage(b);
+						var r = _ViewerBox.GetSelectionPageRegion();
+						var lines = _ViewerBox.FindTextLines(r);
+						if (lines != null) {
+							Clipboard.SetText(String.Join(Environment.NewLine, lines.Select(i => i.Text)));
+						}
+						else {
+							using (var b = sel.GetSelectedBitmap()) {
+								Clipboard.SetImage(b);
+							}
 						}
 					}
 					break;
