@@ -210,7 +210,7 @@ namespace PDFPatcher.Functions
 		/// </summary>
 		[DefaultValue(Editor.MouseMode.Move)]
 		public Editor.MouseMode MouseMode {
-			get => PanMode != ImageBoxPanMode.None ? Editor.MouseMode.Move : Editor.MouseMode.Selection;
+			get => SelectionMode != ImageBoxSelectionMode.Rectangle ? Editor.MouseMode.Move : Editor.MouseMode.Selection;
 			set {
 				if (value == Editor.MouseMode.Move) {
 					PanMode = ImageBoxPanMode.Both;
