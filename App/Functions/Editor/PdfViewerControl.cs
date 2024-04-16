@@ -759,6 +759,7 @@ namespace PDFPatcher.Functions
 			if (_mupdf.IsDocumentOpened == false) {
 				return null;
 			}
+			List<MuTextLine> r = null;
 			lock (_mupdf.SyncObj) {
 				var page = _cache.LoadPage(region.Page);
 				var pr = region.ToPageCoordinate(page);
@@ -773,16 +774,17 @@ namespace PDFPatcher.Functions
 						continue;
 					}
 					var s = new HashSet<int>();
-					var r = new List<MuTextLine>();
+					if (r == null) {
+						r = new List<MuTextLine>();
+					}
 					foreach (var line in block.Lines) {
-						if (pr.Intersect(line.BBox).IsEmpty == false) {
+						if (pr.Intersect(line.BBox).Area > line.BBox.Area * 0.618f) {
 							r.Add(line);
 						}
 					}
-					return r;
 				}
 			}
-			return null;
+			return r;
 		}
 
 		float GetZoomFactorForPage(MuRectangle bound) {
