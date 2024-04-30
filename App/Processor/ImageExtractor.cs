@@ -508,10 +508,14 @@ namespace PDFPatcher.Processor
 					var bmpPal = bmp.HasPalette ? bmp.Palette.AsArray : null;
 					foreach (var part in imageParts) {
 						using (var bmp2 = FreeImageBitmap.FromFile(part.FileName)) {
+							if (bmp2.HasPalette == false) {
+								goto Paste;
+							}
 							var pl = part.PaletteEntryCount;
-							if (pl > 0 && bmp.HasPalette && bmp2.HasPalette) {
+							if (pl > 0 && bmp.HasPalette) {
+								var pal2 = bmp2.Palette.AsArray;
 								for (int pi = 0; pi < pl; pi++) {
-									var p = Array.IndexOf(bmpPal, part.PaletteArray[pi], 0, palEntryCount);
+									var p = Array.IndexOf(bmpPal, pal2[pi], 0, palEntryCount);
 									if (p == -1) {
 										if (palEntryCount == 255) {
 											if (bmpPal != null) {
@@ -532,38 +536,38 @@ namespace PDFPatcher.Processor
 											bmp.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_08_BPP);
 											Array.Resize(ref bmpPal, 256);
 										}
-										bmpPal[palEntryCount] = part.PaletteArray[pi];
+										bmpPal[palEntryCount] = pal2[pi];
 										p = palEntryCount;
 										++palEntryCount;
 									}
 								}
 							}
-							else if (pl > 0 && bmp2.HasPalette) {
+							else if (pl > 0) {
 								bmp2.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_24_BPP);
 							}
 						Paste:
 							if (bmpPal != null) {
 								bmp.Palette.AsArray = bmpPal;
 							}
-							if (bmp.HasPalette && bmp2.HasPalette) {
-								var a1 = bmp.Palette.AsArray;
-								var a2 = bmp2.Palette.AsArray;
-								var sp = new byte[palEntryCount];
-								var dp = new byte[palEntryCount];
-								var di = 0;
-								for (int ai = 0; ai < a2.Length; ai++) {
-									var p = Array.IndexOf(a1, a2[ai], 0, palEntryCount);
-									if (p != ai && p > -1) {
-										sp[di] = (byte)ai;
-										dp[di] = (byte)p;
-										++di;
-									}
-								}
-								//todo: 两幅图像调色板不一致时需调换颜色再复制数据
-								//if (di > 0) {
-								//	bmp2.ApplyPaletteIndexMapping(sp, dp, (uint)di, true);
-								//}
-							}
+							//if (bmp.HasPalette && bmp2.HasPalette) {
+							//	var a1 = bmp.Palette.AsArray;
+							//	var a2 = bmp2.Palette.AsArray;
+							//	var sp = new byte[palEntryCount];
+							//	var dp = new byte[palEntryCount];
+							//	var di = 0;
+							//	for (int ai = 0; ai < a2.Length; ai++) {
+							//		var p = Array.IndexOf(a1, a2[ai], 0, palEntryCount);
+							//		if (p != ai && p > -1) {
+							//			sp[di] = (byte)ai;
+							//			dp[di] = (byte)p;
+							//			++di;
+							//		}
+							//	}
+							//todo: 两幅图像调色板不一致时需调换颜色再复制数据
+							//	if (di > 0) {
+							//		bmp2.ApplyPaletteIndexMapping(sp, dp, (uint)di, true);
+							//	}
+							//}
 							if (bmp.Paste(bmp2, 0, h, Int32.MaxValue) == false) {
 								if (bmp.HasPalette && bmp2.HasPalette == false) {
 									bmp.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_24_BPP);

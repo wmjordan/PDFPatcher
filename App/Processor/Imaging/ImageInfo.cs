@@ -28,7 +28,6 @@ namespace PDFPatcher.Processor.Imaging
 		public byte[] ICCProfile { get; private set; }
 		public FreeImageBitmap Mask { get; private set; }
 		public int PaletteEntryCount { get; private set; }
-		public RGBQUAD[] PaletteArray { get; private set; }
 		public PdfImageData InlineImage { get; }
 		public bool IsPageImage { get; }
 
@@ -275,18 +274,19 @@ namespace PDFPatcher.Processor.Imaging
 				var pattern = PaletteBytes;
 				if (pattern == null) {
 					bmp.Palette.CreateGrayscalePalette();
-					return;
+					PaletteEntryCount = bmp.Palette.Count;
 				}
-				var i = 0;
-				var l = pattern.Length;
-				var l2 = pal.Count;
-				for (int pi = 0; pi < l && i < l2; pi++) {
-					pal.SetValue(new RGBQUAD(Color.FromArgb(pattern[pi++], pi < l ? pattern[pi++] : 0, pi < l ? pattern[pi] : 0)), i);
-					i++;
+				else {
+					var i = 0;
+					var l = pattern.Length;
+					var l2 = pal.Count;
+					for (int pi = 0; pi < l && i < l2; pi++) {
+						pal.SetValue(new RGBQUAD(Color.FromArgb(pattern[pi++], pi < l ? pattern[pi++] : 0, pi < l ? pattern[pi] : 0)), i);
+						i++;
+					}
+					PaletteEntryCount = i;
 				}
-				PaletteEntryCount = i;
 			}
-			PaletteArray = pal.AsArray;
 		}
 
 		static bool IsDecodeParamInverted(PdfDictionary data, bool blackIs1) {
