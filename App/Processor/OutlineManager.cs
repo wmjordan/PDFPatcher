@@ -20,7 +20,7 @@ namespace PDFPatcher.Processor
 		static readonly char[] __cmdIdentifiers = new char[] { '=', '﹦', '＝', ':', '：' };
 		static readonly char[] __pageLabelSeparators = new char[] { ';', '；', ',', '，', ' ' };
 
-		private static void BookmarkDepth(PdfReader reader, PdfActionExporter exporter, PdfDictionary outline, Dictionary<int, int> pageRefMap, XmlWriter target) {
+		static void BookmarkDepth(PdfReader reader, Dictionary<string, PdfObject> names, PdfActionExporter exporter, PdfDictionary outline, Dictionary<int, int> pageRefMap, XmlWriter target) {
 			while (outline != null) {
 				target.WriteStartElement(Constants.Bookmark);
 
@@ -46,14 +46,14 @@ namespace PDFPatcher.Processor
 
 				var dest = outline.Locate<PdfObject>(PdfName.DEST);
 				if (dest != null) {
-					exporter.ExportGotoAction(dest, target, pageRefMap);
+					exporter.ExportGotoAction(dest, names, target, pageRefMap);
 				}
 				else {
-					exporter.ExportAction(outline.Locate<PdfDictionary>(PdfName.A), pageRefMap, target);
+					exporter.ExportAction(outline.Locate<PdfDictionary>(PdfName.A), names, pageRefMap, target);
 				}
 				var first = outline.Locate<PdfDictionary>(PdfName.FIRST);
 				if (first != null) {
-					BookmarkDepth(reader, exporter, first, pageRefMap, target);
+					BookmarkDepth(reader, names, exporter, first, pageRefMap, target);
 				}
 				outline = outline.Locate<PdfDictionary>(PdfName.NEXT);
 				target.WriteEndElement();
@@ -74,10 +74,12 @@ namespace PDFPatcher.Processor
 			var pages = reader.GetPageRefMapper();
 			var doc = new XmlDocument();
 			doc.AppendElement(Constants.DocumentBookmark);
+			var names = reader.GetNamedDestinations();
 			using (var w = doc.DocumentElement.CreateNavigator().AppendChild()) {
 				var a = new PdfActionExporter(unitConverter);
 				BookmarkDepth(
 					reader,
+					names,
 					a,
 					(PdfDictionary)PdfReader.GetPdfObjectRelease(outlines.Get(PdfName.FIRST)),
 					pages,

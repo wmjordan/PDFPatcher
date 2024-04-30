@@ -20,6 +20,7 @@ namespace PDFPatcher.Processor
 		readonly PdfContentExport _contentExport;
 		readonly PdfActionExporter _actionExport;
 		Dictionary<int, int> _pageReferenceMapper;
+		Dictionary<string, PdfObject> _namedDestinations;
 
 		public DocInfoExporter(PdfReader reader, ExporterOptions options) {
 			_reader = reader;
@@ -383,17 +384,21 @@ namespace PDFPatcher.Processor
 		}
 
 		internal void ExportNamedDestinations(XmlWriter w) {
-			var nds = _reader.GetNamedDestination();
+			var nds = LoadNamedDestinations();
 			if (nds != null && nds.Count > 0) {
 				w.WriteStartElement(Constants.NamedDestination);
 				foreach (var item in nds) {
 					w.WriteStartElement("位置");
-					w.WriteAttributeString(Constants.DestinationAttributes.Name, StringHelper.ReplaceControlAndBomCharacters(item.Key.ToString()));
-					_actionExport.ExportGotoAction(item.Value as PdfObject, w, PageReferenceMapper);
+					w.WriteAttributeString(Constants.DestinationAttributes.Name, StringHelper.ReplaceControlAndBomCharacters(item.Key));
+					_actionExport.ExportGotoAction(item.Value as PdfObject, nds, w, PageReferenceMapper);
 					w.WriteEndElement();
 				}
 				w.WriteEndElement();
 			}
+		}
+
+		Dictionary<string, PdfObject> LoadNamedDestinations() {
+			return _namedDestinations ?? (_namedDestinations = _reader.GetNamedDestinations());
 		}
 
 		internal void ExportBookmarks(XmlElement bookmarks, TextWriter w, int level, bool isOpen) {
@@ -611,14 +616,14 @@ namespace PDFPatcher.Processor
 		/// <param name="w"></param>
 		void ExportLinkAction(PdfDictionary link, XmlWriter w) {
 			var dest = PdfReader.GetPdfObjectRelease(link.Get(PdfName.DEST));
-
+			var names = LoadNamedDestinations();
 			w.WriteStartElement(Constants.PageLinkAttributes.LinkAction);
 
 			if (dest != null) {
-				_actionExport.ExportGotoAction(dest, w, PageReferenceMapper);
+				_actionExport.ExportGotoAction(dest, names, w, PageReferenceMapper);
 			}
 			else {
-				_actionExport.ExportAction((PdfDictionary)PdfReader.GetPdfObjectRelease(link.Get(PdfName.A)), PageReferenceMapper, w);
+				_actionExport.ExportAction((PdfDictionary)PdfReader.GetPdfObjectRelease(link.Get(PdfName.A)), names, PageReferenceMapper, w);
 			}
 			w.WriteEndElement();
 		}

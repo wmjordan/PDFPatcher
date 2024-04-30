@@ -172,13 +172,18 @@ namespace PDFPatcher.Processor
 		}
 
 		internal static string DecodeKeyName(object name) {
-			if (name is PdfName) {
-				return PdfName.DecodeName(name.ToString());
-			}
-			else
-				return name.ToString();
+			return name is PdfName ? PdfName.DecodeName(name.ToString()) : name.ToString();
 		}
 
+		public static Dictionary<string, PdfObject> GetNamedDestinations(this PdfReader pdf) {
+			var d = pdf.GetNamedDestinationFromStrings();
+			foreach (var item in pdf.GetNamedDestinationFromNames(false)) {
+				if (item.Key is string name) {
+					d[name] = item.Value;
+				}
+			}
+			return d;
+		}
 		/// <summary>
 		/// 获取 PDF 页面引用与页数的映射关系表。
 		/// </summary>
