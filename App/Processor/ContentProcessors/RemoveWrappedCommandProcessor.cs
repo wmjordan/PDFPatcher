@@ -47,13 +47,13 @@ namespace PDFPatcher.Processor
 		bool ProcessCommands(IList<PdfPageCommand> parent) {
 			var r = false;
 			if (_RemoveLeading > 0) {
-				for (int i = _RemoveLeading - 1; i >= 0 && parent.Count > 0; i--) {
+				for (int i = Math.Min(_RemoveLeading, parent.Count) - 1; i >= 0; i--) {
 					parent.RemoveAt(i);
 				}
 				r = true;
 			}
 			if (_RemoveTrailing > 0) {
-				for (int i = _RemoveTrailing - 1; i >= 0 && parent.Count > 0; i--) {
+				for (int i = Math.Min(_RemoveTrailing, parent.Count); i > 0; i--) {
 					parent.RemoveAt(parent.Count - 1);
 				}
 				r = true;
