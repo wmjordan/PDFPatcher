@@ -94,7 +94,8 @@
       <DependentUpon>Configuration.resx</DependentUpon>
     </Compile>
     <Compile Include="Commands.cs" />
-    <Compile Include="CommonCommands.cs" />
+    <Compile Include="Functions\PatcherOptionsControl.cs">
+    <Compile Include="ShellHelper.cs" />
     <Compile Include="Common\CommandRegistry.cs" />
     <Compile Include="Common\FilePath.cs" />
     <Compile Include="Common\FontHelper.cs">

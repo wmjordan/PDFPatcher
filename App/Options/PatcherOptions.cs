@@ -8,6 +8,8 @@ namespace PDFPatcher
 	[XmlRoot("文档设置")]
 	public class PatcherOptions : DocumentOptions
 	{
+		[XmlAttribute("默认覆盖文档")]
+		public bool DefaultOverwriteDocument { get; set; }
 		[XmlAttribute("嵌入字库")]
 		public bool EmbedFonts { get; set; }
 		[XmlAttribute("删除文本尾随空白")]

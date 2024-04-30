@@ -388,10 +388,10 @@ namespace PDFPatcher
 				ShowLogControl();
 			}
 			else if (commandName == Commands.CreateShortcut) {
-				CommonCommands.CreateShortcut();
+				ShellHelper.CreateShortcut();
 			}
 			else if (commandName == Commands.VisitHomePage) {
-				CommonCommands.VisitHomePage();
+				ShellHelper.VisitHomePage();
 			}
 			else if (commandName == Commands.CheckUpdate) {
 				ShowDialogWindow(new UpdateForm());

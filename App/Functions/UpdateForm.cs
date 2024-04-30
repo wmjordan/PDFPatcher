@@ -28,7 +28,7 @@ namespace PDFPatcher.Functions
 				}
 			};
 			_HomePageButton.Click += (s, args) => {
-				CommonCommands.VisitHomePage();
+				ShellHelper.VisitHomePage();
 			};
 			_DownloadButton.Click += (s, args) => {
 				System.Diagnostics.Process.Start(_DownloadButton.Tag.ToString());

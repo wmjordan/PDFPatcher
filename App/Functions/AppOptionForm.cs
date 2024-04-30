@@ -20,6 +20,8 @@ namespace PDFPatcher.Functions
 			_FontNameEncodingBox.SelectedIndexChanged += ControlChanged;
 			_SaveAppSettingsBox.CheckedChanged += ControlChanged;
 			_LoadEntireFileBox.CheckedChanged += ControlChanged;
+			_DefaultOverwritePdfFileBox.CheckedChanged += ControlChanged;
+			_AddContextMenuBox.CheckedChanged += ControlChanged;
 		}
 
 		public void Reset() {
@@ -34,6 +36,8 @@ namespace PDFPatcher.Functions
 			_SaveAppSettingsBox.Checked = AppContext.SaveAppSettings;
 			_LoadPartialFileBox.Checked = AppContext.LoadPartialPdfFile;
 			_LoadEntireFileBox.Checked = !AppContext.LoadPartialPdfFile;
+			_DefaultOverwritePdfFileBox.Checked = AppContext.Editor.DefaultOverwriteDocument;
+			_AddContextMenuBox.Checked = ShellHelper.CheckPdfOpenWithAssociation();
 
 			InitEncodingList(_BookmarkEncodingBox, AppContext.Encodings.BookmarkEncodingName);
 			InitEncodingList(_DocInfoEncodingBox, AppContext.Encodings.DocInfoEncodingName);
@@ -79,11 +83,21 @@ namespace PDFPatcher.Functions
 			else if (sender == _LoadEntireFileBox) {
 				AppContext.LoadPartialPdfFile = _LoadPartialFileBox.Checked;
 			}
+			else if (sender == _DefaultOverwritePdfFileBox) {
+				AppContext.Editor.DefaultOverwriteDocument = _DefaultOverwritePdfFileBox.Checked;
+			}
+			else if (sender == _AddContextMenuBox) {
+				if (_AddContextMenuBox.Checked) {
+					ShellHelper.AddPdfOpenWithAssociation();
+				}
+				else {
+					ShellHelper.RemovePdfOpenWithAssociation();
+				}
+			}
 		}
 
 		void _CreateShortcutButton_Click(object sender, EventArgs e) {
-			CommonCommands.CreateShortcut();
+			ShellHelper.CreateShortcut();
 		}
-
 	}
 }
