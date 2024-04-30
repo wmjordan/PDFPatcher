@@ -95,6 +95,11 @@
     </Compile>
     <Compile Include="Commands.cs" />
     <Compile Include="Functions\PatcherOptionsControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Functions\PatcherOptionsControl.Designer.cs">
+      <DependentUpon>PatcherOptionsControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="ShellHelper.cs" />
     <Compile Include="Common\CommandRegistry.cs" />
     <Compile Include="Common\FilePath.cs" />
@@ -749,6 +754,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Functions\InfoExchangerControl.resx">
       <DependentUpon>InfoExchangerControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\PatcherOptionsControl.resx">
+      <DependentUpon>PatcherOptionsControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Functions\RenameControl.resx">
       <DependentUpon>RenameControl.cs</DependentUpon>

@@ -323,7 +323,7 @@ namespace PDFPatcher
 					if (String.IsNullOrEmpty(u) == false
 						&& new Version(ProductVersion) < new Version(r.GetAttribute("version"))
 						&& this.ConfirmOKBox("发现新版本，是否前往下载？")) {
-						ShowDialogWindow(new UpdateForm());
+						this.ShowDialog<UpdateForm>();
 					}
 				}
 				catch (Exception) {
@@ -394,7 +394,7 @@ namespace PDFPatcher
 				ShellHelper.VisitHomePage();
 			}
 			else if (commandName == Commands.CheckUpdate) {
-				ShowDialogWindow(new UpdateForm());
+				this.ShowDialog<UpdateForm>();
 			}
 			else if (commandName == Commands.Close) {
 				if (_FunctionContainer.SelectedTab.Tag.CastOrDefault<Function>() == Function.FrontPage) {
@@ -403,7 +403,7 @@ namespace PDFPatcher
 				_FunctionContainer.SelectedTab.Dispose();
 			}
 			else if (commandName == Commands.CustomizeToolbar || commandName == "_CustomizeToolbarCommand") {
-				ShowDialogWindow(new CustomizeToolbarForm());
+				this.ShowDialog<CustomizeToolbarForm>();
 				SetupCustomizeToolbar();
 			}
 			else if (commandName == Commands.ShowGeneralToolbar) {
@@ -484,19 +484,16 @@ namespace PDFPatcher
 
 		internal Control SelectFunctionList(Function func) {
 			if (func == Function.PatcherOptions) {
-				ShowDialogWindow(new PatcherOptionForm(false) { Options = AppContext.Patcher });
+				this.ShowDialog<PatcherOptionForm>();
 			}
 			else if (func == Function.MergerOptions) {
-				ShowDialogWindow(new MergerOptionForm());
+				this.ShowDialog<MergerOptionForm>();
 			}
 			else if (func == Function.InfoFileOptions) {
-				ShowDialogWindow(new InfoFileOptionControl());
-			}
-			else if (func == Function.EditorOptions) {
-				ShowDialogWindow(new PatcherOptionForm(true) { Options = AppContext.Editor });
+				this.ShowDialog<InfoFileOptionControl>();
 			}
 			else if (func == Function.Options) {
-				ShowDialogWindow(new AppOptionForm());
+				this.ShowDialog<AppOptionForm>();
 			}
 			else {
 				HideLogControl();

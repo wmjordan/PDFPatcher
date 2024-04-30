@@ -56,9 +56,6 @@ namespace PDFPatcher.Functions.Editor
 				DialogResult = DialogResult.Cancel;
 				Close();
 			};
-			_ConfigButton.Click += (s, args) => {
-				AppContext.MainForm.SelectFunctionList(Function.EditorOptions);
-			};
 		}
 
 		static void SetText(Control control, string value) {

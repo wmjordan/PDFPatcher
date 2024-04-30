@@ -27,8 +27,7 @@ namespace PDFPatcher.Functions.Editor
 			"_ShowBookmarks",
 			"_ShowAnnotations",
 			"_OcrDetectPunctuation",
-			"_FullScreen",
-			"_EditorOptions"
+			"_FullScreen"
 		};
 		internal static void RegisterCommands(CommandRegistry<Controller> registry) {
 			foreach (var item in __commands) {
@@ -64,7 +63,6 @@ namespace PDFPatcher.Functions.Editor
 				case "_ShowBookmarks": controller.View.MainPanel.Panel1Collapsed = !controller.View.MainPanel.Panel1Collapsed; break;
 				case "_OcrDetectPunctuation": v.OcrOptions.DetectContentPunctuations = !v.OcrOptions.DetectContentPunctuations; break;
 				case "_FullScreen": AppContext.MainForm.FullScreen = !AppContext.MainForm.FullScreen; break;
-				case "_EditorOptions": AppContext.MainForm.SelectFunctionList(Function.EditorOptions); break;
 			}
 		}
 

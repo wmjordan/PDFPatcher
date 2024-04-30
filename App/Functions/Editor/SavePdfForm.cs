@@ -16,7 +16,10 @@ namespace PDFPatcher.Functions
 
 		SavePdfForm() {
 			InitializeComponent();
+			_OptionsBox.Options = AppContext.Editor;
+			_OptionsBox.ForEditor = true;
 		}
+
 		public SavePdfForm(string sourcePath, string targetPath, PdfInfoXmlDocument bookmarkDocument) : this() {
 			if (String.IsNullOrEmpty(sourcePath) == false) {
 				_SourceFileBox.Text = sourcePath;
@@ -30,16 +33,18 @@ namespace PDFPatcher.Functions
 			}
 
 			_OverwriteBox.CheckedChanged += (s, args) => _TargetFileBox.Enabled = !_OverwriteBox.Checked;
+			if (AppContext.Editor.DefaultOverwriteDocument) {
+				_OverwriteBox.Checked = true;
+			}
 		}
 
 		void ImportBookmarkForm_Load(object sender, EventArgs e) {
 			_TargetFileBox.FileMacroMenu.LoadStandardSourceFileMacros();
-			_ConfigButton.Click += (s, args) => {
-				AppContext.MainForm.SelectFunctionList(Function.EditorOptions);
-			};
+			_OptionsBox.OnLoad();
 		}
 
 		void _OkButton_Click(Object source, EventArgs args) {
+			_OptionsBox.Apply();
 			AppContext.MainForm.ResetWorker();
 			var doc = _bookmarkDocument;
 			var s = _SourceFileBox.Text;
@@ -60,9 +65,7 @@ namespace PDFPatcher.Functions
 				DoWork?.Invoke(this, null);
 				Processor.Worker.PatchDocument(new SourceItem.Pdf(s), t, _bookmarkDocument, AppContext.Importer, AppContext.Editor);
 			};
-			worker.RunWorkerCompleted += (dummy, arg) => {
-				Finished?.Invoke(this, arg);
-			};
+			worker.RunWorkerCompleted += (dummy, arg) => Finished?.Invoke(this, arg);
 			worker.RunWorkerAsync();
 
 			DialogResult = DialogResult.OK;
@@ -71,6 +74,7 @@ namespace PDFPatcher.Functions
 
 		void _CancelButton_Click(Object source, EventArgs args) {
 			DialogResult = DialogResult.Cancel;
+			_OptionsBox.Apply();
 			Close();
 		}
 	}

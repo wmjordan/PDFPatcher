@@ -346,12 +346,6 @@ namespace PDFPatcher.Functions
 				case Commands.ItemTypeSeparator:
 					EnableCommand(item, false, false);
 					break;
-				case Commands.Options:
-					item.Text = "设置文件修改方式(&X)...";
-					item.ToolTipText = "设置在编辑器修改 PDF 文档的选项";
-					EnableCommand(item, true, true);
-					item.Tag = nameof(Function.EditorOptions);
-					break;
 				case Commands.ResetOptions:
 					// keep disabled
 					break;

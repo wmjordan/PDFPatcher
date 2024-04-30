@@ -30,14 +30,14 @@
 			this._MessageLabel = new System.Windows.Forms.Label();
 			this._SourceFileBox = new PDFPatcher.SourceFileControl();
 			this._TargetFileBox = new PDFPatcher.TargetFileControl();
-			this._ConfigButton = new System.Windows.Forms.Button();
 			this._OverwriteBox = new System.Windows.Forms.CheckBox();
+			this._OptionsBox = new PDFPatcher.Functions.PatcherOptionsControl();
 			this.SuspendLayout();
 			// 
 			// _OkButton
 			// 
 			this._OkButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this._OkButton.Location = new System.Drawing.Point(322, 132);
+			this._OkButton.Location = new System.Drawing.Point(322, 443);
 			this._OkButton.Name = "_OkButton";
 			this._OkButton.Size = new System.Drawing.Size(75, 23);
 			this._OkButton.TabIndex = 0;
@@ -49,7 +49,7 @@
 			// 
 			this._CancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this._CancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this._CancelButton.Location = new System.Drawing.Point(403, 132);
+			this._CancelButton.Location = new System.Drawing.Point(403, 443);
 			this._CancelButton.Name = "_CancelButton";
 			this._CancelButton.Size = new System.Drawing.Size(75, 23);
 			this._CancelButton.TabIndex = 1;
@@ -60,7 +60,7 @@
 			// _MessageLabel
 			// 
 			this._MessageLabel.AutoSize = true;
-			this._MessageLabel.Location = new System.Drawing.Point(113, 100);
+			this._MessageLabel.Location = new System.Drawing.Point(12, 421);
 			this._MessageLabel.Name = "_MessageLabel";
 			this._MessageLabel.Size = new System.Drawing.Size(347, 12);
 			this._MessageLabel.TabIndex = 2;
@@ -80,18 +80,6 @@
 			this._TargetFileBox.Size = new System.Drawing.Size(469, 25);
 			this._TargetFileBox.TabIndex = 4;
 			// 
-			// _ConfigButton
-			// 
-			this._ConfigButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this._ConfigButton.Image = global::PDFPatcher.Properties.Resources.PdfOptions;
-			this._ConfigButton.Location = new System.Drawing.Point(12, 132);
-			this._ConfigButton.Name = "_ConfigButton";
-			this._ConfigButton.Size = new System.Drawing.Size(181, 23);
-			this._ConfigButton.TabIndex = 12;
-			this._ConfigButton.Text = "设置 P&DF 文件的修改方式";
-			this._ConfigButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-			this._ConfigButton.UseVisualStyleBackColor = true;
-			// 
 			// _OverwriteBox
 			// 
 			this._OverwriteBox.AutoSize = true;
@@ -102,15 +90,27 @@
 			this._OverwriteBox.Text = "覆盖原始 PDF 文件";
 			this._OverwriteBox.UseVisualStyleBackColor = true;
 			// 
+			// _OptionsBox
+			// 
+			this._OptionsBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this._OptionsBox.ForEditor = false;
+			this._OptionsBox.Location = new System.Drawing.Point(12, 97);
+			this._OptionsBox.Name = "_OptionsBox";
+			this._OptionsBox.Options = null;
+			this._OptionsBox.Size = new System.Drawing.Size(466, 321);
+			this._OptionsBox.TabIndex = 14;
+			// 
 			// SavePdfForm
 			// 
 			this.AcceptButton = this._OkButton;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this._CancelButton;
-			this.ClientSize = new System.Drawing.Size(490, 167);
+			this.ClientSize = new System.Drawing.Size(490, 478);
+			this.Controls.Add(this._OptionsBox);
 			this.Controls.Add(this._OverwriteBox);
-			this.Controls.Add(this._ConfigButton);
 			this.Controls.Add(this._TargetFileBox);
 			this.Controls.Add(this._SourceFileBox);
 			this.Controls.Add(this._MessageLabel);
@@ -135,8 +135,8 @@
 		private System.Windows.Forms.Label _MessageLabel;
 		private SourceFileControl _SourceFileBox;
 		private TargetFileControl _TargetFileBox;
-		private System.Windows.Forms.Button _ConfigButton;
 		private System.Windows.Forms.CheckBox _OverwriteBox;
+		private PatcherOptionsControl _OptionsBox;
 	}
 }
 

@@ -122,7 +122,6 @@
 			System.Windows.Forms.ToolStripSeparator toolStripSeparator14;
 			System.Windows.Forms.ToolStripSeparator toolStripSeparator13;
 			System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
-			System.Windows.Forms.ToolStripButton _EditorOptions;
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditorControl));
 			this._SetCurrentCoordinates = new System.Windows.Forms.ToolStripMenuItem();
 			this._SelectionMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -261,7 +260,6 @@
 			toolStripSeparator14 = new System.Windows.Forms.ToolStripSeparator();
 			toolStripSeparator13 = new System.Windows.Forms.ToolStripSeparator();
 			toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
-			_EditorOptions = new System.Windows.Forms.ToolStripButton();
 			this._SelectionMenu.SuspendLayout();
 			this._EditMenu.SuspendLayout();
 			this._RecentFileMenu.SuspendLayout();
@@ -437,7 +435,8 @@
 			_InsertBookmark.Name = "_InsertBookmark";
 			_InsertBookmark.Size = new System.Drawing.Size(23, 22);
 			_InsertBookmark.Text = "插入(&C)";
-			_InsertBookmark.ToolTipText = "插入书签项\r\nCtrl+↓或Insert：插入到后面\r\nCtrl+↑或Shift+Insert：插入到前面\r\nCtrl+←：插入到上级书签后面\r\nCtrl+→：插入下级书签";
+			_InsertBookmark.ToolTipText = "插入书签项\r\nCtrl+↓或Insert：插入到后面\r\nCtrl+↑或Shift+Insert：插入到前面\r\nCtrl+←：插入到上级书签后面\r\nCtrl+→：插" +
+    "入下级书签";
 			// 
 			// _LevelUp
 			// 
@@ -1032,14 +1031,6 @@
 			toolStripSeparator4.Name = "toolStripSeparator4";
 			toolStripSeparator4.Size = new System.Drawing.Size(208, 6);
 			// 
-			// _EditorOptions
-			// 
-			_EditorOptions.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			_EditorOptions.Image = global::PDFPatcher.Properties.Resources.PdfOptions;
-			_EditorOptions.Name = "_EditorOptions";
-			_EditorOptions.Size = new System.Drawing.Size(23, 22);
-			_EditorOptions.Text = "设置文件修改方式(X)...";
-			// 
 			// _ViewerButton
 			// 
 			this._ViewerButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -1244,6 +1235,7 @@
 			this._MainPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+			this._MainPanel.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
 			this._MainPanel.Location = new System.Drawing.Point(3, 29);
 			this._MainPanel.Name = "_MainPanel";
 			// 
@@ -1258,7 +1250,6 @@
 			this._MainPanel.Panel2.Controls.Add(this._ViewerBox);
 			this._MainPanel.Size = new System.Drawing.Size(627, 294);
 			this._MainPanel.SplitterDistance = 268;
-			this._MainPanel.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
 			this._MainPanel.TabIndex = 1;
 			// 
 			// _PageInfoBox
@@ -1428,11 +1419,10 @@
             _NextPage,
             _LastPage,
             this._ZoomBox,
-            this._ViewerButton,
-            _EditorOptions});
+            this._ViewerButton});
 			this._ViewerToolbar.Location = new System.Drawing.Point(342, 0);
 			this._ViewerToolbar.Name = "_ViewerToolbar";
-			this._ViewerToolbar.Size = new System.Drawing.Size(285, 25);
+			this._ViewerToolbar.Size = new System.Drawing.Size(293, 25);
 			this._ViewerToolbar.TabIndex = 4;
 			this._ViewerToolbar.Text = "toolStrip1";
 			this._ViewerToolbar.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this._MainToolbar_ItemClicked);
