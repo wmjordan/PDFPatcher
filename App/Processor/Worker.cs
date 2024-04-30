@@ -418,9 +418,11 @@ namespace PDFPatcher.Processor
 					if (pdfSettings.ViewerPreferences.RemoveZoomRate) {
 						processors.Add(new RemoveZoomRateProcessor());
 					}
-					if (pdfEngine.ExtraData.ContainsKey(DocProcessorContext.CoordinateTransition) && pdfSettings.UnifiedPageSettings.ScaleContent) {
+					if (pdfSettings.UnifiedPageSettings.ScaleContent
+						&& pdfEngine.ExtraData.TryGetValue(DocProcessorContext.CoordinateTransition, out var o)
+						&& o is CoordinateTranslationSettings[] cts) {
 						processors.Add(new GotoDestinationProcessor() {
-							TransitionMapper = pdfEngine.ExtraData[DocProcessorContext.CoordinateTransition] as CoordinateTranslationSettings[]
+							TransitionMapper = cts
 						});
 					}
 					if (pdfSettings.ViewerPreferences.ForceInternalLink) {
