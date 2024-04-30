@@ -254,6 +254,7 @@ namespace PDFPatcher.Common
 		}
 		public static DialogResult ShowDialog<TForm>(this IWin32Window form) where TForm : Form, new() {
 			using (var f = new TForm()) {
+				f.StartPosition = FormStartPosition.CenterParent;
 				return f.ShowDialog(form);
 			}
 		}
