@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using FreeImageAPI;
 using iTextSharp.text.pdf;
 using PDFPatcher.Common;
@@ -503,86 +504,13 @@ namespace PDFPatcher.Processor
 				}
 				var f = GetNewImageFileName();
 				using (FreeImageBitmap bmp = new FreeImageBitmap(w, h, imageI.Image.PixelFormat)) {
-					h = 0;
-					byte palEntryCount = 0;
-					var bmpPal = bmp.HasPalette ? bmp.Palette.AsArray : null;
+					var mi = new ImageMerger(bmp);
 					foreach (var part in imageParts) {
 						using (var bmp2 = FreeImageBitmap.FromFile(part.FileName)) {
-							if (bmp2.HasPalette == false) {
-								goto Paste;
-							}
-							var pl = part.PaletteEntryCount;
-							if (pl > 0 && bmp.HasPalette) {
-								var pal2 = bmp2.Palette.AsArray;
-								for (int pi = 0; pi < pl; pi++) {
-									var p = Array.IndexOf(bmpPal, pal2[pi], 0, palEntryCount);
-									if (p == -1) {
-										if (palEntryCount == 255) {
-											if (bmpPal != null) {
-												bmp.Palette.AsArray = bmpPal;
-											}
-											// 调色板不足以存放合并后的图片颜色
-											if (bmp.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_24_BPP)
-												&& bmp2.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_24_BPP)) {
-												ext = Constants.FileExtensions.Png;
-												bmpPal = null;
-												goto Paste;
-											}
-											else {
-												throw new OverflowException("调色板溢出，无法合并图片。");
-											}
-										}
-										if (palEntryCount >= bmpPal.Length && palEntryCount < 129) {
-											bmp.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_08_BPP);
-											Array.Resize(ref bmpPal, 256);
-										}
-										bmpPal[palEntryCount] = pal2[pi];
-										p = palEntryCount;
-										++palEntryCount;
-									}
-								}
-							}
-							else if (pl > 0) {
-								bmp2.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_24_BPP);
-							}
-						Paste:
-							if (bmpPal != null) {
-								bmp.Palette.AsArray = bmpPal;
-							}
-							//if (bmp.HasPalette && bmp2.HasPalette) {
-							//	var a1 = bmp.Palette.AsArray;
-							//	var a2 = bmp2.Palette.AsArray;
-							//	var sp = new byte[palEntryCount];
-							//	var dp = new byte[palEntryCount];
-							//	var di = 0;
-							//	for (int ai = 0; ai < a2.Length; ai++) {
-							//		var p = Array.IndexOf(a1, a2[ai], 0, palEntryCount);
-							//		if (p != ai && p > -1) {
-							//			sp[di] = (byte)ai;
-							//			dp[di] = (byte)p;
-							//			++di;
-							//		}
-							//	}
-							//todo: 两幅图像调色板不一致时需调换颜色再复制数据
-							//	if (di > 0) {
-							//		bmp2.ApplyPaletteIndexMapping(sp, dp, (uint)di, true);
-							//	}
-							//}
-							if (bmp.Paste(bmp2, 0, h, Int32.MaxValue) == false) {
-								if (bmp.HasPalette && bmp2.HasPalette == false) {
-									bmp.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_24_BPP);
-									if (bmp.Paste(bmp2, 0, h, Int32.MaxValue) == false) {
-										Tracker.TraceMessage("合并图片失败");
-									}
-									bmpPal = null;
-								}
-							}
-							h += bmp2.Height;
+							mi.MergeImage(bmp2);
 						}
 					}
-					if (bmpPal != null) {
-						bmp.Palette.AsArray = bmpPal;
-					}
+					mi.TryReduceColor();
 					if (ext == Constants.FileExtensions.Jpg && _options.MergeJpgToPng) {
 						ext = Constants.FileExtensions.Png;
 					}
@@ -610,12 +538,7 @@ namespace PDFPatcher.Processor
 					_imagePosList.Add(new ImageDisposition(_imagePosList[i].Ctm, mii));
 				}
 			}
-			foreach (var item in _imageInfoList) {
-				if (item.ReferenceCount < 1) {
-					File.Delete(item.FileName);
-					item.FileName = null;
-				}
-			}
+			DeleteIntermediateFiles();
 			_imageInfoList.Sort((ImageInfo x, ImageInfo y) => string.Compare(x.FileName, y.FileName, StringComparison.OrdinalIgnoreCase));
 			_totalImageCount -= _imageCount;
 			_imageCount = 0;
@@ -639,6 +562,15 @@ namespace PDFPatcher.Processor
 			_totalImageCount += _imageCount;
 		}
 
+		void DeleteIntermediateFiles() {
+			foreach (var item in _imageInfoList) {
+				if (item.ReferenceCount < 1) {
+					File.Delete(item.FileName);
+					item.FileName = null;
+				}
+			}
+		}
+
 		static void SaveMaskedImage(ImageInfo info, FreeImageBitmap bmp, string fileName) {
 			if (info.Mask != null
 				&& info.Mask.Size == bmp.Size
@@ -650,6 +582,139 @@ namespace PDFPatcher.Processor
 					bmp.Save($"{fileName}[merged]{Constants.FileExtensions.Png}");
 				}
 			}
+		}
+
+		sealed class ImageMerger
+		{
+			readonly FreeImageBitmap _Image;
+			ColorType _ColorType;
+			RGBQUAD[] _Colors;
+			int _Height;
+
+			public ImageMerger(FreeImageBitmap image) {
+				_Image = image;
+				if (image.HasPalette == false) {
+					_ColorType = ColorType.FullColor;
+				}
+			}
+
+			public void MergeImage(FreeImageBitmap bmp) {
+				if (_Height == 0) {
+					PasteFirstImage(bmp);
+					return;
+				}
+				if (_ColorType == ColorType.FullColor) {
+					PasteIntoFullColor(bmp);
+					return;
+				}
+				if (bmp.HasPalette == false) {
+					ExpandColorSpaceAndPaste(bmp);
+					return;
+				}
+				var p = bmp.Palette.ToArray();
+				if (p.SequenceEqual(_Colors)) {
+					PasteAndIncrementHeight(bmp);
+					return;
+				}
+				switch (_ColorType) {
+					case ColorType.BlackAndWhite:
+						if (p[0].Color == Color.White
+							&& p[1].Color == Color.Black
+							&& bmp.Invert()) {
+							PasteAndIncrementHeight(bmp);
+							return;
+						}
+						break;
+					case ColorType.WhiteAndBlack:
+						if (p[0].Color == Color.Black
+							&& p[1].Color == Color.White
+							&& bmp.Invert()) {
+							PasteAndIncrementHeight(bmp);
+							return;
+						}
+						break;
+				}
+				TryExpandColorDepth(_Image);
+				TryExpandColorDepth(bmp);
+				PasteAndIncrementHeight(bmp);
+				_Colors = null;
+				_ColorType = ColorType.FullColor;
+			}
+
+			public bool TryReduceColor() {
+				if (_ColorType != ColorType.FullColor) {
+					return false;
+				}
+				var c = _Image.UniqueColors;
+				if (c > 256) {
+					return false;
+				}
+				if (c < 3) {
+					if (_Image.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_01_BPP)) {
+						_ColorType = ColorType.BlackAndWhite;
+						return true;
+					}
+					return false;
+				}
+				if (_Image.ConvertColorDepth(c < 17 ? FREE_IMAGE_COLOR_DEPTH.FICD_04_BPP : FREE_IMAGE_COLOR_DEPTH.FICD_08_BPP)) {
+					_ColorType = ColorType.IndexedColor;
+					return true;
+				}
+				return false;
+			}
+
+			void PasteFirstImage(FreeImageBitmap bmp) {
+				if (bmp.HasPalette) {
+					_Colors = new RGBQUAD[bmp.ColorsUsed];
+					_Image.Palette.AsArray = bmp.Palette.AsArray;
+					bmp.Palette.CopyTo(_Colors, 0);
+					_ColorType = GetWhiteBlackType(_Colors);
+				}
+				_Image.Paste(bmp, 0, 0, Int32.MaxValue);
+				_Height = bmp.Height;
+			}
+
+			static ColorType GetWhiteBlackType(RGBQUAD[] colors) {
+				var c0 = colors[0].Color;
+				var c1 = colors[1].Color;
+				return c0 == Color.Black && c1 == Color.White ? ColorType.BlackAndWhite
+					: c0 == Color.White && c1 == Color.Black ? ColorType.WhiteAndBlack
+					: ColorType.IndexedColor;
+			}
+
+			void PasteIntoFullColor(FreeImageBitmap bmp) {
+				if (bmp.HasPalette) {
+					TryExpandColorDepth(bmp);
+				}
+				PasteAndIncrementHeight(bmp);
+			}
+
+			static void TryExpandColorDepth(FreeImageBitmap bmp) {
+				if (bmp.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_24_BPP) == false) {
+					throw new InvalidOperationException("合并图片失败：无法转换图片颜色");
+				}
+			}
+
+			void PasteAndIncrementHeight(FreeImageBitmap bmp) {
+				if (_Image.Paste(bmp, 0, _Height, Int32.MaxValue) == false) {
+					throw new InvalidOperationException("合并图片失败：粘贴操作出错");
+				}
+				_Height += bmp.Height;
+			}
+
+			void ExpandColorSpaceAndPaste(FreeImageBitmap bmp) {
+				TryExpandColorDepth(_Image);
+				PasteIntoFullColor(bmp);
+			}
+		}
+
+		enum ColorType
+		{
+			Undefined,
+			BlackAndWhite,
+			WhiteAndBlack,
+			IndexedColor,
+			FullColor,
 		}
 
 		sealed class PdfPageImageProcessor : PdfContentStreamProcessor
@@ -689,6 +754,5 @@ namespace PDFPatcher.Processor
 				}
 			}
 		}
-
 	}
 }

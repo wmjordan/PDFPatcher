@@ -1,4 +1,5 @@
-﻿using System.Drawing.Imaging;
+﻿using System.Drawing;
+using System.Drawing.Imaging;
 using FreeImageAPI;
 
 namespace PDFPatcher.Processor.Imaging
@@ -13,9 +14,19 @@ namespace PDFPatcher.Processor.Imaging
 		internal static void Save(FreeImageBitmap bmp, string fileName) {
 			// 使用 .NET 的 TIFF 保存方式，文件尺寸较小
 			if (_tiffCodec != null) {
-				if (bmp.ColorType == FREE_IMAGE_COLOR_TYPE.FIC_MINISWHITE) {
-					// HACK: TIFF编码黑色为1，解决 .NET TIFF 编码器无法正常保存双色图片的问题
-					bmp.Invert();
+				if (bmp.HasPalette) {
+					// HACK: TIFF编码与调色板不符，解决 .NET TIFF 编码器无法正常保存双色图片的问题
+					var color0 = bmp.Palette[0].Color;
+					if (bmp.ColorType == FREE_IMAGE_COLOR_TYPE.FIC_MINISWHITE) {
+						if (color0 != Color.White) {
+							bmp.Invert();
+						}
+					}
+					else if (bmp.ColorType == FREE_IMAGE_COLOR_TYPE.FIC_MINISBLACK) {
+						if (color0 != Color.Black) {
+							bmp.Invert();
+						}
+					}
 				}
 				using (var b = bmp.ToBitmap()) {
 					b.Save(fileName, _tiffCodec, _encoderParameters);
