@@ -67,7 +67,7 @@ namespace PDFPatcher.Functions.Editor
 				t = t.EnsureExtension(Constants.FileExtensions.Xml);
 				using (var writer = System.Xml.XmlWriter.Create(t, DocInfoExporter.GetWriterSettings())) {
 					if (mudoc != null) {
-						idoc.PdfDocumentPath = mudoc.FilePath;
+						idoc.PdfDocumentPath = t.GetRelativePath(mudoc.FilePath);
 					}
 					idoc.WriteContentTo(writer);
 				}
