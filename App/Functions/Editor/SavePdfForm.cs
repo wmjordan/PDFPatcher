@@ -23,9 +23,18 @@ namespace PDFPatcher.Functions
 		public SavePdfForm(string sourcePath, string targetPath, PdfInfoXmlDocument bookmarkDocument) : this() {
 			if (String.IsNullOrEmpty(sourcePath) == false) {
 				_SourceFileBox.Text = sourcePath;
+				_SourceFileBox.Enabled = false;
 			}
 			if (String.IsNullOrEmpty(targetPath) == false) {
 				_TargetFileBox.Text = targetPath;
+			}
+			else {
+				targetPath = sourcePath;
+			}
+			if (targetPath.IsNullOrWhiteSpace() == false) {
+				var p = new FilePath(targetPath);
+				_TargetFileBox.FileDialog.FileName = p.FileName;
+				_TargetFileBox.FileDialog.InitialDirectory = p.Directory;
 			}
 			_bookmarkDocument = new PdfInfoXmlDocument();
 			using (var r = bookmarkDocument.CreateNavigator().ReadSubtree()) {
