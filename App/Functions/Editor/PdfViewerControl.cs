@@ -14,27 +14,24 @@ using MuRectangle = MuPdfSharp.Rectangle;
 
 namespace PDFPatcher.Functions
 {
-	internal sealed class PdfViewerControl : ImageBoxEx
-	{
-		enum ZoomMode
-		{
+	internal sealed class PdfViewerControl : ImageBoxEx {
+		enum ZoomMode {
 			Custom, FitPage = -1, FitHorizontal = -2, FitVertical = -3
 		}
 
 		public event EventHandler DocumentLoaded;
 		public new event EventHandler ZoomChanged;
+		public event EventHandler ContentDirectionChanged;
 		public event EventHandler<PageChangedEventArgs> PageChanged;
 		public event EventHandler<SelectionChangedEventArgs> SelectionChanged;
 
-		internal sealed class PageChangedEventArgs : EventArgs
-		{
+		internal sealed class PageChangedEventArgs : EventArgs {
 			public int PageNumber { get; }
 			public PageChangedEventArgs(int pageNumber) {
 				PageNumber = pageNumber;
 			}
 		}
-		internal sealed class SelectionChangedEventArgs : EventArgs
-		{
+		internal sealed class SelectionChangedEventArgs : EventArgs {
 			public Editor.Selection Selection { get; }
 			public SelectionChangedEventArgs(Editor.Selection selection) {
 				Selection = selection;
@@ -127,10 +124,9 @@ namespace PDFPatcher.Functions
 				if (value == _contentFlow) {
 					return;
 				}
-				var pp = Editor.PagePosition.Empty;
-				if (HorizontalScroll.Value != 0 || VerticalScroll.Value != 0) {
-					pp = TransposeVirtualImageToPagePosition(HorizontalScroll.Value, VerticalScroll.Value);
-				}
+				Editor.PagePosition pp = _mupdf != null
+					? TransposeVirtualImageToPagePosition(HorizontalScroll.Value, VerticalScroll.Value)
+					: Editor.PagePosition.Empty;
 				var s = GetSelection();
 				_contentFlow = value;
 				UpdateDisplay(true);
@@ -140,14 +136,13 @@ namespace PDFPatcher.Functions
 					r = new RectangleF(p.X + r.Left, p.Y + r.Top, r.Width, r.Height);
 					SelectionRegion = r;
 				}
-				if (pp.Page > 0) {
-					if (_zoomMode == ZoomMode.FitPage) {
-						ShowPage(pp.Page);
-					}
-					else {
-						ScrollToPosition(pp);
-					}
+				if (_zoomMode == ZoomMode.FitPage) {
+					ShowPage(pp.Page);
 				}
+				else {
+					ScrollToPosition(pp);
+				}
+				ContentDirectionChanged?.Invoke(this, EventArgs.Empty);
 			}
 		}
 		public bool HorizontalFlow => _contentFlow != Editor.ContentDirection.TopToDown;
@@ -935,6 +930,9 @@ namespace PDFPatcher.Functions
 					break;
 				default:
 					int f;
+					if (zoomMode == null) {
+						return false;
+					}
 					if (zoomMode.EndsWith("%", StringComparison.Ordinal) && zoomMode.Length > 2) {
 						f = zoomMode.Substring(0, zoomMode.Length - 1).ToInt32();
 					}
@@ -954,7 +952,7 @@ namespace PDFPatcher.Functions
 
 		void UpdateDisplay() { UpdateDisplay(false); }
 		void UpdateDisplay(bool resized) {
-			if (DesignMode || _disposed) {
+			if (DesignMode || _disposed || _mupdf == null) {
 				return;
 			}
 			_refreshTimer.Stop();
@@ -1129,6 +1127,9 @@ namespace PDFPatcher.Functions
 		}
 
 		internal void ScrollToPosition(Editor.PagePosition position) {
+			if (_mupdf == null) {
+				return;
+			}
 			var op = GetVirtualImageOffset(position.Page);
 			var bound = _pageBounds[position.Page];
 			position.Location.Deconstruct(out var px, out var py);

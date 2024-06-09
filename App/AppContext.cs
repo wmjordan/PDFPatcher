@@ -39,6 +39,7 @@ namespace PDFPatcher
 			Merger = new MergerOptions();
 			Patcher = new PatcherOptions();
 			Editor = new PatcherOptions();
+			Reader = new ReaderOptions();
 			AutoBookmarker = new AutoBookmarkOptions();
 			Encodings = new EncodingOptions();
 			ImageExtracter = new ImageExtracterOptions();
@@ -85,6 +86,8 @@ namespace PDFPatcher
 		public static PatcherOptions Patcher { get; internal set; }
 		///<summary>获取文档编辑器的设置。</summary>
 		public static PatcherOptions Editor { get; internal set; }
+		///<summary>获取阅读器的设置。</summary>
+		public static ReaderOptions Reader { get; internal set; }
 		///<summary>获取自动生成书签的设置。</summary>
 		public static AutoBookmarkOptions AutoBookmarker { get; internal set; }
 		///<summary>获取应用程序设置。</summary>
@@ -209,6 +212,9 @@ namespace PDFPatcher
 			if (conf.EditorOptions != null) {
 				Editor = conf.EditorOptions;
 			}
+			if (conf.ReaderOptions != null) {
+				Reader = conf.ReaderOptions;
+			}
 			if (conf.AutoBookmarkOptions != null) {
 				AutoBookmarker = conf.AutoBookmarkOptions;
 			}
@@ -266,6 +272,7 @@ namespace PDFPatcher
 					ImporterOptions = Importer,
 					PatcherOptions = Patcher,
 					EditorOptions = Editor,
+					ReaderOptions = Reader,
 					AutoBookmarkOptions = AutoBookmarker,
 					Encodings = Encodings,
 					ImageExporterOptions = ImageExtracter,

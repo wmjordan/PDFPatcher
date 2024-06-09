@@ -222,12 +222,16 @@ namespace PDFPatcher.Functions
 					item.Checked = _ViewerBox.OcrLanguage == (int)(item.Tag ?? 0);
 				}
 			};
-			_ZoomBox.Text = Constants.DestinationAttributes.ViewType.FitH;
+			_ZoomBox.Enabled = false;
 			_ZoomBox.TextChanged += (s, args) => _ViewerBox.LiteralZoom = _ZoomBox.Text;
 			_ViewerBox.Enabled = false;
-			_ViewerBox.DocumentLoaded += (s, args) => _CurrentPageBox.ToolTipText = "文档共" + _ViewerBox.Document.PageCount + "页\nHome：转到第一页\nEnd：转到最后一页";
-			_ViewerBox.ZoomChanged += (s, args) => _ZoomBox.ToolTipText = "当前显示比例：" + (_ViewerBox.ZoomFactor * 100).ToInt32() + "%";
+			_ViewerBox.DocumentLoaded += _ViewerBoxInitializeAfterDocumentLoad;
+			_ViewerBox.ZoomChanged += (s, args) => {
+				_ZoomBox.ToolTipText = "当前显示比例：" + (_ViewerBox.ZoomFactor * 100).ToInt32() + "%";
+				AppContext.Reader.Zoom = _ViewerBox.LiteralZoom;
+			};
 			_ViewerBox.PageChanged += (s, args) => _CurrentPageBox.Text = _ViewerBox.CurrentPageNumber.ToText();
+			_ViewerBox.ContentDirectionChanged += (s, args) => AppContext.Reader.ContentDirection = _ViewerBox.ContentDirection;
 			//_ViewerBox.SelectionChanged += (s, args) =>
 			//{
 			//	var t = args.Selection.SelectedText;
@@ -254,6 +258,13 @@ namespace PDFPatcher.Functions
 			_ViewerToolbar.Enabled = false;
 
 			Disposed += (s, args) => _controller.Destroy();
+		}
+
+		void _ViewerBoxInitializeAfterDocumentLoad(object sender, EventArgs e) {
+			_ViewerBox.ContentDirection = AppContext.Reader.ContentDirection;
+			_CurrentPageBox.ToolTipText = "文档共" + _ViewerBox.Document.PageCount + "页\nHome：转到第一页\nEnd：转到最后一页";
+			_ZoomBox.Text = _ViewerBox.LiteralZoom = AppContext.Reader.Zoom.SubstituteDefault(Constants.DestinationAttributes.ViewType.FitH);
+			_ZoomBox.Enabled = true;
 		}
 
 		void ScrollToSelectedBookmarkLocation() {

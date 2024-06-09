@@ -33,6 +33,8 @@ namespace PDFPatcher
 		public PatcherOptions PatcherOptions { get; set; }
 		[XmlElement("PDF编辑器设置")]
 		public PatcherOptions EditorOptions { get; set; }
+		[XmlElement("PDF阅读器设置")]
+		public ReaderOptions ReaderOptions { get; set; }
 		[XmlElement("自动生成书签设置")]
 		public AutoBookmarkOptions AutoBookmarkOptions { get; set; }
 		[XmlElement("导出图像设置")]
