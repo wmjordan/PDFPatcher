@@ -6,7 +6,7 @@ namespace PDFPatcher.Model
 {
 	public enum InsertBookmarkPositionType
 	{
-		NoDefined,
+		Undefined,
 		AfterCurrent,
 		AsChild,
 		AfterParent,

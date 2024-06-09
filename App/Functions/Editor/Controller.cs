@@ -529,8 +529,8 @@ namespace PDFPatcher.Functions.Editor
 			View.Viewer.Invalidate();
 		}
 
-		internal void InsertBookmark(InsertBookmarkPositionType position = InsertBookmarkPositionType.NoDefined) {
-			if (position == InsertBookmarkPositionType.NoDefined) {
+		internal void InsertBookmark(InsertBookmarkPositionType position = InsertBookmarkPositionType.Undefined) {
+			if (position == InsertBookmarkPositionType.Undefined) {
 				position = (Control.ModifierKeys & Keys.Shift) > 0 ? InsertBookmarkPositionType.BeforeCurrent : InsertBookmarkPositionType.AfterCurrent;
 			}
 			if (Model.PdfDocument != null) {
@@ -566,7 +566,7 @@ namespace PDFPatcher.Functions.Editor
 				var o = b.GetModelObject(i != -1 ? i : b.GetItemCount() - 1) as BookmarkElement;
 				var t = title ?? Constants.Bookmark;
 				var p = pageNumber > 0 ? pageNumber : o.Page;
-				if (type == InsertBookmarkPositionType.NoDefined) {
+				if (type == InsertBookmarkPositionType.Undefined) {
 					var g = new UndoActionGroup();
 					if (t.Length > 0) {
 						g.SetAttribute(o, Constants.BookmarkAttributes.Title, t);

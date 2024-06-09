@@ -10,6 +10,7 @@ namespace PDFPatcher.Functions.Editor
 	sealed class InsertBookmarkCommand : IEditorCommand
 	{
 		static readonly Regex __RemoveOcrWhiteSpace = new Regex(@"\s{2,}", RegexOptions.Compiled);
+		static readonly Regex __FirstChildPatterns = new Regex(@"^ *[（\(\<【〖]?(?:第一[篇章节部]|一[、\.，\)） 】〗]|1[\)）、])", RegexOptions.Compiled);
 		static InsertBookmarkForm _dialog;
 
 		public void Process(Controller controller, params string[] parameters) {
@@ -66,6 +67,9 @@ namespace PDFPatcher.Functions.Editor
 			f.TargetPosition = p.PageY;
 			if (String.IsNullOrEmpty(region.Text) == false) {
 				f.Title = __RemoveOcrWhiteSpace.Replace(region.Text, " ").Trim();
+				if (__FirstChildPatterns.IsMatch(f.Title)) {
+					f.SetInsertMode(InsertBookmarkPositionType.AsChild);
+				}
 			}
 			f.Comment = region.LiteralTextSource;
 			f.Show();
@@ -89,7 +93,7 @@ namespace PDFPatcher.Functions.Editor
 					return;
 				}
 				c.Model.LockDownViewer = true;
-				c.InsertBookmark(t, f.TargetPageNumber, f.TargetPosition, (InsertBookmarkPositionType)f.InsertMode);
+				c.InsertBookmark(t, f.TargetPageNumber, f.TargetPosition, f.InsertMode);
 				c.Model.LockDownViewer = false;
 			};
 			_dialog.Deactivate += (s, args) => {

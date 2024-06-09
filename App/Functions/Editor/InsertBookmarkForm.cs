@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using PDFPatcher.Common;
+using PDFPatcher.Model;
 
 namespace PDFPatcher.Functions.Editor
 {
@@ -25,11 +26,11 @@ namespace PDFPatcher.Functions.Editor
 		/// <summary>
 		/// 获取新书签的插入位置（当前书签后：1；子书签：2；父书签后：3；当前书签前：4）
 		/// </summary>
-		public int InsertMode => _AfterCurrentBox.Checked ? 1
-					: _AsChildBox.Checked ? 2
-					: _AfterParentBox.Checked ? 3
-					: _BeforeCurrentBox.Checked ? 4
-					: 0;
+		public InsertBookmarkPositionType InsertMode => _AfterCurrentBox.Checked ? InsertBookmarkPositionType.AfterCurrent
+					: _AsChildBox.Checked ? InsertBookmarkPositionType.AsChild
+					: _AfterParentBox.Checked ? InsertBookmarkPositionType.AfterParent
+					: _BeforeCurrentBox.Checked ? InsertBookmarkPositionType.BeforeCurrent
+					: InsertBookmarkPositionType.Undefined;
 
 		[Browsable(false)]
 		internal Controller Controller { get; set; }
@@ -37,6 +38,14 @@ namespace PDFPatcher.Functions.Editor
 		public InsertBookmarkForm() {
 			InitializeComponent();
 			this.OnFirstLoad(OnLoad);
+		}
+		public void SetInsertMode(InsertBookmarkPositionType positionType) {
+			switch (positionType) {
+				case InsertBookmarkPositionType.AfterCurrent: _AfterCurrentBox.Checked = true; return;
+				case InsertBookmarkPositionType.AsChild: _AsChildBox.Checked = true; return;
+				case InsertBookmarkPositionType.AfterParent: _AfterParentBox.Checked = true; return;
+				case InsertBookmarkPositionType.BeforeCurrent: _BeforeCurrentBox.Checked = true; return;
+			}
 		}
 		void OnLoad() {
 			VisibleChanged += (s, args) => {
@@ -53,7 +62,7 @@ namespace PDFPatcher.Functions.Editor
 			_ReplaceBookmarkBox.DoubleClick += InsertModeBox_DoubleClick;
 			_OkButton.Click += (s, args) => {
 				OkClicked?.Invoke(this, args);
-				if (_AsChildBox.Checked || _AfterParentBox.Checked) {
+				if (_AsChildBox.Checked || _AfterParentBox.Checked || _ReplaceBookmarkBox.Checked) {
 					_AfterCurrentBox.Checked = true;
 				}
 				Hide();
