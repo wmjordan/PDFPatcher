@@ -10,7 +10,7 @@ namespace PDFPatcher.Functions.Editor
 	sealed class InsertBookmarkCommand : IEditorCommand
 	{
 		static readonly Regex __RemoveOcrWhiteSpace = new Regex(@"\s{2,}", RegexOptions.Compiled);
-		static readonly Regex __FirstChildPatterns = new Regex(@"^ *[（\(\<【〖]?(?:第一[篇章节部]|一[、\.，\)） 】〗]|1[\)）、])", RegexOptions.Compiled);
+		static readonly Regex __FirstChildPatterns = new Regex(@"^ *[（\(\<【〖]?(?:第一[篇章节部節]|一[、\.，\)） 】〗]|1[\)）、])", RegexOptions.Compiled);
 		static InsertBookmarkForm _dialog;
 
 		public void Process(Controller controller, params string[] parameters) {
