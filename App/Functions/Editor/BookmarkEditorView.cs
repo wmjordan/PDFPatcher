@@ -293,8 +293,8 @@ namespace PDFPatcher.Functions
 			}
 			else {
 				var p = target.ParentNode;
+				tpr = p.Name == Constants.DocumentBookmark;
 				if (after) {
-					tpr = p.Name == Constants.DocumentBookmark;
 					source.Reverse();
 					foreach (XmlElement item in source) {
 						if (!copy) {
