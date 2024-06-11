@@ -64,7 +64,7 @@
 			// _OkButton
 			// 
 			this._OkButton.Image = global::PDFPatcher.Properties.Resources.ImportInfoFile;
-			this._OkButton.Location = new System.Drawing.Point(262, 61);
+			this._OkButton.Location = new System.Drawing.Point(14, 156);
 			this._OkButton.Name = "_OkButton";
 			this._OkButton.Size = new System.Drawing.Size(96, 23);
 			this._OkButton.TabIndex = 14;
@@ -84,7 +84,7 @@
 			// _CancelButton
 			// 
 			this._CancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this._CancelButton.Location = new System.Drawing.Point(262, 90);
+			this._CancelButton.Location = new System.Drawing.Point(153, 156);
 			this._CancelButton.Name = "_CancelButton";
 			this._CancelButton.Size = new System.Drawing.Size(96, 23);
 			this._CancelButton.TabIndex = 15;
@@ -94,7 +94,7 @@
 			// label3
 			// 
 			this.label3.AutoSize = true;
-			this.label3.Location = new System.Drawing.Point(12, 156);
+			this.label3.Location = new System.Drawing.Point(281, 53);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(65, 12);
 			this.label3.TabIndex = 10;
@@ -103,7 +103,7 @@
 			// _PositionBox
 			// 
 			this._PositionBox.DecimalPlaces = 2;
-			this._PositionBox.Location = new System.Drawing.Point(283, 154);
+			this._PositionBox.Location = new System.Drawing.Point(283, 107);
 			this._PositionBox.Maximum = new decimal(new int[] {
             9999,
             0,
@@ -121,7 +121,7 @@
 			// _PageLabel
 			// 
 			this._PageLabel.AutoSize = true;
-			this._PageLabel.Location = new System.Drawing.Point(83, 156);
+			this._PageLabel.Location = new System.Drawing.Point(281, 72);
 			this._PageLabel.Name = "_PageLabel";
 			this._PageLabel.Size = new System.Drawing.Size(35, 12);
 			this._PageLabel.TabIndex = 11;
@@ -130,7 +130,7 @@
 			// _DirectionBox
 			// 
 			this._DirectionBox.AutoSize = true;
-			this._DirectionBox.Location = new System.Drawing.Point(236, 156);
+			this._DirectionBox.Location = new System.Drawing.Point(281, 92);
 			this._DirectionBox.Name = "_DirectionBox";
 			this._DirectionBox.Size = new System.Drawing.Size(41, 12);
 			this._DirectionBox.TabIndex = 12;
