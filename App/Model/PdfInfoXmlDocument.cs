@@ -127,6 +127,7 @@ namespace PDFPatcher.Model
 
 		public BookmarkElement ParentBookmark => ParentNode as BookmarkElement;
 		public BookmarkContainer Parent => ParentNode as BookmarkContainer;
+		public BookmarkContainer BookmarkRoot => (OwnerDocument as PdfInfoXmlDocument).BookmarkRoot;
 
 		/// <summary>创建新的下级书签并返回该书签。</summary>
 		public BookmarkElement AppendBookmark() {

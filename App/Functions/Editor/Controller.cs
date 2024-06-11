@@ -598,6 +598,17 @@ namespace PDFPatcher.Functions.Editor
 						case InsertBookmarkPositionType.BeforeCurrent:
 							o.ParentNode.InsertBefore(c, o);
 							break;
+						case InsertBookmarkPositionType.AfterGrandParent:
+							if (o.ParentBookmark?.ParentBookmark != null) {
+								o.ParentBookmark.ParentBookmark.ParentNode.InsertAfter(c, o.ParentBookmark.ParentBookmark);
+							}
+							else {
+								goto case InsertBookmarkPositionType.AfterParent;
+							}
+							break;
+						case InsertBookmarkPositionType.LastRoot:
+							o.BookmarkRoot.AppendChild(c);
+							break;
 						default:
 							o.ParentNode.InsertAfter(c, o);
 							break;

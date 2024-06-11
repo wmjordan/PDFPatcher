@@ -25,47 +25,49 @@
 		/// 使用代码编辑器修改此方法的内容。
 		/// </summary>
 		private void InitializeComponent () {
-			this.label1 = new System.Windows.Forms.Label ();
-			this._TitleBox = new System.Windows.Forms.TextBox ();
-			this._OkButton = new System.Windows.Forms.Button ();
-			this.label2 = new System.Windows.Forms.Label ();
-			this._CancelButton = new System.Windows.Forms.Button ();
-			this.label3 = new System.Windows.Forms.Label ();
-			this._PositionBox = new System.Windows.Forms.NumericUpDown ();
-			this._PageLabel = new System.Windows.Forms.Label ();
-			this._DirectionBox = new System.Windows.Forms.Label ();
-			this._CommentBox = new System.Windows.Forms.Label ();
-			this._AfterParentBox = new PDFPatcher.Functions.DoubleClickableRadioButton ();
-			this._BeforeCurrentBox = new PDFPatcher.Functions.DoubleClickableRadioButton ();
-			this._AsChildBox = new PDFPatcher.Functions.DoubleClickableRadioButton ();
-			this._AfterCurrentBox = new PDFPatcher.Functions.DoubleClickableRadioButton ();
-			this._ReplaceBookmarkBox = new PDFPatcher.Functions.DoubleClickableRadioButton ();
-			((System.ComponentModel.ISupportInitialize)(this._PositionBox)).BeginInit ();
-			this.SuspendLayout ();
+			this.label1 = new System.Windows.Forms.Label();
+			this._TitleBox = new System.Windows.Forms.TextBox();
+			this._OkButton = new System.Windows.Forms.Button();
+			this.label2 = new System.Windows.Forms.Label();
+			this._CancelButton = new System.Windows.Forms.Button();
+			this.label3 = new System.Windows.Forms.Label();
+			this._PositionBox = new System.Windows.Forms.NumericUpDown();
+			this._PageLabel = new System.Windows.Forms.Label();
+			this._DirectionBox = new System.Windows.Forms.Label();
+			this._CommentBox = new System.Windows.Forms.Label();
+			this._AfterParentBox = new PDFPatcher.Functions.DoubleClickableRadioButton();
+			this._BeforeCurrentBox = new PDFPatcher.Functions.DoubleClickableRadioButton();
+			this._AsChildBox = new PDFPatcher.Functions.DoubleClickableRadioButton();
+			this._AfterCurrentBox = new PDFPatcher.Functions.DoubleClickableRadioButton();
+			this._ReplaceBookmarkBox = new PDFPatcher.Functions.DoubleClickableRadioButton();
+			this._AfterGrandParentBox = new PDFPatcher.Functions.DoubleClickableRadioButton();
+			this._AfterLastRootBox = new PDFPatcher.Functions.DoubleClickableRadioButton();
+			((System.ComponentModel.ISupportInitialize)(this._PositionBox)).BeginInit();
+			this.SuspendLayout();
 			// 
 			// label1
 			// 
 			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point (12, 15);
+			this.label1.Location = new System.Drawing.Point(12, 15);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size (65, 12);
+			this.label1.Size = new System.Drawing.Size(65, 12);
 			this.label1.TabIndex = 0;
 			this.label1.Text = "书签文本：";
 			// 
 			// _TitleBox
 			// 
-			this._TitleBox.Location = new System.Drawing.Point (83, 12);
+			this._TitleBox.Location = new System.Drawing.Point(83, 12);
 			this._TitleBox.Name = "_TitleBox";
-			this._TitleBox.Size = new System.Drawing.Size (275, 21);
+			this._TitleBox.Size = new System.Drawing.Size(275, 21);
 			this._TitleBox.TabIndex = 1;
 			// 
 			// _OkButton
 			// 
 			this._OkButton.Image = global::PDFPatcher.Properties.Resources.ImportInfoFile;
-			this._OkButton.Location = new System.Drawing.Point (283, 61);
+			this._OkButton.Location = new System.Drawing.Point(262, 61);
 			this._OkButton.Name = "_OkButton";
-			this._OkButton.Size = new System.Drawing.Size (75, 23);
-			this._OkButton.TabIndex = 12;
+			this._OkButton.Size = new System.Drawing.Size(96, 23);
+			this._OkButton.TabIndex = 14;
 			this._OkButton.Text = "插入(&C)";
 			this._OkButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
 			this._OkButton.UseVisualStyleBackColor = true;
@@ -73,81 +75,81 @@
 			// label2
 			// 
 			this.label2.AutoSize = true;
-			this.label2.Location = new System.Drawing.Point (12, 53);
+			this.label2.Location = new System.Drawing.Point(12, 53);
 			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size (101, 12);
+			this.label2.Size = new System.Drawing.Size(101, 12);
 			this.label2.TabIndex = 2;
 			this.label2.Text = "插入到当前书签：";
 			// 
 			// _CancelButton
 			// 
 			this._CancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this._CancelButton.Location = new System.Drawing.Point (283, 90);
+			this._CancelButton.Location = new System.Drawing.Point(262, 90);
 			this._CancelButton.Name = "_CancelButton";
-			this._CancelButton.Size = new System.Drawing.Size (75, 23);
-			this._CancelButton.TabIndex = 13;
+			this._CancelButton.Size = new System.Drawing.Size(96, 23);
+			this._CancelButton.TabIndex = 15;
 			this._CancelButton.Text = "取消(&X)";
 			this._CancelButton.UseVisualStyleBackColor = true;
 			// 
 			// label3
 			// 
 			this.label3.AutoSize = true;
-			this.label3.Location = new System.Drawing.Point (12, 141);
+			this.label3.Location = new System.Drawing.Point(12, 156);
 			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size (65, 12);
-			this.label3.TabIndex = 8;
+			this.label3.Size = new System.Drawing.Size(65, 12);
+			this.label3.TabIndex = 10;
 			this.label3.Text = "目标位置：";
 			// 
 			// _PositionBox
 			// 
 			this._PositionBox.DecimalPlaces = 2;
-			this._PositionBox.Location = new System.Drawing.Point (212, 139);
-			this._PositionBox.Maximum = new decimal (new int[] {
+			this._PositionBox.Location = new System.Drawing.Point(283, 154);
+			this._PositionBox.Maximum = new decimal(new int[] {
             9999,
             0,
             0,
             0});
-			this._PositionBox.Minimum = new decimal (new int[] {
+			this._PositionBox.Minimum = new decimal(new int[] {
             9999,
             0,
             0,
             -2147483648});
 			this._PositionBox.Name = "_PositionBox";
-			this._PositionBox.Size = new System.Drawing.Size (68, 21);
-			this._PositionBox.TabIndex = 11;
+			this._PositionBox.Size = new System.Drawing.Size(75, 21);
+			this._PositionBox.TabIndex = 13;
 			// 
 			// _PageLabel
 			// 
 			this._PageLabel.AutoSize = true;
-			this._PageLabel.Location = new System.Drawing.Point (83, 141);
+			this._PageLabel.Location = new System.Drawing.Point(83, 156);
 			this._PageLabel.Name = "_PageLabel";
-			this._PageLabel.Size = new System.Drawing.Size (35, 12);
-			this._PageLabel.TabIndex = 9;
+			this._PageLabel.Size = new System.Drawing.Size(35, 12);
+			this._PageLabel.TabIndex = 11;
 			this._PageLabel.Text = "第N页";
 			// 
 			// _DirectionBox
 			// 
 			this._DirectionBox.AutoSize = true;
-			this._DirectionBox.Location = new System.Drawing.Point (165, 141);
+			this._DirectionBox.Location = new System.Drawing.Point(236, 156);
 			this._DirectionBox.Name = "_DirectionBox";
-			this._DirectionBox.Size = new System.Drawing.Size (41, 12);
-			this._DirectionBox.TabIndex = 10;
+			this._DirectionBox.Size = new System.Drawing.Size(41, 12);
+			this._DirectionBox.TabIndex = 12;
 			this._DirectionBox.Text = "方位：";
 			// 
 			// _CommentBox
 			// 
 			this._CommentBox.ForeColor = System.Drawing.SystemColors.GrayText;
-			this._CommentBox.Location = new System.Drawing.Point (83, 36);
+			this._CommentBox.Location = new System.Drawing.Point(83, 36);
 			this._CommentBox.Name = "_CommentBox";
-			this._CommentBox.Size = new System.Drawing.Size (275, 12);
-			this._CommentBox.TabIndex = 14;
+			this._CommentBox.Size = new System.Drawing.Size(275, 12);
+			this._CommentBox.TabIndex = 16;
 			// 
 			// _AfterParentBox
 			// 
 			this._AfterParentBox.AutoSize = true;
-			this._AfterParentBox.Location = new System.Drawing.Point (119, 90);
+			this._AfterParentBox.Location = new System.Drawing.Point(153, 90);
 			this._AfterParentBox.Name = "_AfterParentBox";
-			this._AfterParentBox.Size = new System.Drawing.Size (101, 16);
+			this._AfterParentBox.Size = new System.Drawing.Size(101, 16);
 			this._AfterParentBox.TabIndex = 6;
 			this._AfterParentBox.Text = "上级书签后(&S)";
 			this._AfterParentBox.UseVisualStyleBackColor = true;
@@ -155,9 +157,9 @@
 			// _BeforeCurrentBox
 			// 
 			this._BeforeCurrentBox.AutoSize = true;
-			this._BeforeCurrentBox.Location = new System.Drawing.Point (34, 68);
+			this._BeforeCurrentBox.Location = new System.Drawing.Point(34, 68);
 			this._BeforeCurrentBox.Name = "_BeforeCurrentBox";
-			this._BeforeCurrentBox.Size = new System.Drawing.Size (65, 16);
+			this._BeforeCurrentBox.Size = new System.Drawing.Size(65, 16);
 			this._BeforeCurrentBox.TabIndex = 3;
 			this._BeforeCurrentBox.Text = "前面(&Q)";
 			this._BeforeCurrentBox.UseVisualStyleBackColor = true;
@@ -165,9 +167,9 @@
 			// _AsChildBox
 			// 
 			this._AsChildBox.AutoSize = true;
-			this._AsChildBox.Location = new System.Drawing.Point (34, 90);
+			this._AsChildBox.Location = new System.Drawing.Point(34, 90);
 			this._AsChildBox.Name = "_AsChildBox";
-			this._AsChildBox.Size = new System.Drawing.Size (77, 16);
+			this._AsChildBox.Size = new System.Drawing.Size(77, 16);
 			this._AsChildBox.TabIndex = 5;
 			this._AsChildBox.Text = "子书签(&Z)";
 			this._AsChildBox.UseVisualStyleBackColor = true;
@@ -176,9 +178,9 @@
 			// 
 			this._AfterCurrentBox.AutoSize = true;
 			this._AfterCurrentBox.Checked = true;
-			this._AfterCurrentBox.Location = new System.Drawing.Point (119, 68);
+			this._AfterCurrentBox.Location = new System.Drawing.Point(153, 68);
 			this._AfterCurrentBox.Name = "_AfterCurrentBox";
-			this._AfterCurrentBox.Size = new System.Drawing.Size (65, 16);
+			this._AfterCurrentBox.Size = new System.Drawing.Size(65, 16);
 			this._AfterCurrentBox.TabIndex = 4;
 			this._AfterCurrentBox.TabStop = true;
 			this._AfterCurrentBox.Text = "后面(&H)";
@@ -187,45 +189,67 @@
 			// _ReplaceBookmarkBox
 			// 
 			this._ReplaceBookmarkBox.AutoSize = true;
-			this._ReplaceBookmarkBox.Location = new System.Drawing.Point (14, 112);
+			this._ReplaceBookmarkBox.Location = new System.Drawing.Point(14, 134);
 			this._ReplaceBookmarkBox.Name = "_ReplaceBookmarkBox";
-			this._ReplaceBookmarkBox.Size = new System.Drawing.Size (113, 16);
-			this._ReplaceBookmarkBox.TabIndex = 7;
+			this._ReplaceBookmarkBox.Size = new System.Drawing.Size(113, 16);
+			this._ReplaceBookmarkBox.TabIndex = 9;
 			this._ReplaceBookmarkBox.TabStop = true;
 			this._ReplaceBookmarkBox.Text = "替换当前书签(&T)";
 			this._ReplaceBookmarkBox.UseVisualStyleBackColor = true;
 			// 
+			// _AfterGrandParentBox
+			// 
+			this._AfterGrandParentBox.AutoSize = true;
+			this._AfterGrandParentBox.Location = new System.Drawing.Point(34, 112);
+			this._AfterGrandParentBox.Name = "_AfterGrandParentBox";
+			this._AfterGrandParentBox.Size = new System.Drawing.Size(113, 16);
+			this._AfterGrandParentBox.TabIndex = 7;
+			this._AfterGrandParentBox.Text = "上两级书签后(&L)";
+			this._AfterGrandParentBox.UseVisualStyleBackColor = true;
+			// 
+			// _AfterLastRootBox
+			// 
+			this._AfterLastRootBox.AutoSize = true;
+			this._AfterLastRootBox.Location = new System.Drawing.Point(153, 112);
+			this._AfterLastRootBox.Name = "_AfterLastRootBox";
+			this._AfterLastRootBox.Size = new System.Drawing.Size(101, 16);
+			this._AfterLastRootBox.TabIndex = 8;
+			this._AfterLastRootBox.Text = "根书签最后(&G)";
+			this._AfterLastRootBox.UseVisualStyleBackColor = true;
+			// 
 			// InsertBookmarkForm
 			// 
 			this.AcceptButton = this._OkButton;
-			this.AutoScaleDimensions = new System.Drawing.SizeF (6F, 12F);
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this._CancelButton;
-			this.ClientSize = new System.Drawing.Size (375, 171);
-			this.Controls.Add (this._ReplaceBookmarkBox);
-			this.Controls.Add (this._CommentBox);
-			this.Controls.Add (this._DirectionBox);
-			this.Controls.Add (this._PageLabel);
-			this.Controls.Add (this._PositionBox);
-			this.Controls.Add (this.label3);
-			this.Controls.Add (this._CancelButton);
-			this.Controls.Add (this._AfterParentBox);
-			this.Controls.Add (this._BeforeCurrentBox);
-			this.Controls.Add (this._AsChildBox);
-			this.Controls.Add (this.label2);
-			this.Controls.Add (this._AfterCurrentBox);
-			this.Controls.Add (this._OkButton);
-			this.Controls.Add (this._TitleBox);
-			this.Controls.Add (this.label1);
+			this.ClientSize = new System.Drawing.Size(375, 185);
+			this.Controls.Add(this._AfterLastRootBox);
+			this.Controls.Add(this._AfterGrandParentBox);
+			this.Controls.Add(this._ReplaceBookmarkBox);
+			this.Controls.Add(this._CommentBox);
+			this.Controls.Add(this._DirectionBox);
+			this.Controls.Add(this._PageLabel);
+			this.Controls.Add(this._PositionBox);
+			this.Controls.Add(this.label3);
+			this.Controls.Add(this._CancelButton);
+			this.Controls.Add(this._AfterParentBox);
+			this.Controls.Add(this._BeforeCurrentBox);
+			this.Controls.Add(this._AsChildBox);
+			this.Controls.Add(this.label2);
+			this.Controls.Add(this._AfterCurrentBox);
+			this.Controls.Add(this._OkButton);
+			this.Controls.Add(this._TitleBox);
+			this.Controls.Add(this.label1);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
 			this.Name = "InsertBookmarkForm";
 			this.ShowInTaskbar = false;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
 			this.Text = "插入书签";
 			this.TopMost = true;
-			((System.ComponentModel.ISupportInitialize)(this._PositionBox)).EndInit ();
-			this.ResumeLayout (false);
-			this.PerformLayout ();
+			((System.ComponentModel.ISupportInitialize)(this._PositionBox)).EndInit();
+			this.ResumeLayout(false);
+			this.PerformLayout();
 
 		}
 
@@ -246,5 +270,7 @@
 		private System.Windows.Forms.Label _DirectionBox;
 		private System.Windows.Forms.Label _CommentBox;
 		private DoubleClickableRadioButton _ReplaceBookmarkBox;
+		private DoubleClickableRadioButton _AfterGrandParentBox;
+		private DoubleClickableRadioButton _AfterLastRootBox;
 	}
 }

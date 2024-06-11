@@ -24,12 +24,14 @@ namespace PDFPatcher.Functions.Editor
 			set { _TargetPageNumber = value; _PageLabel.Text = $"第{value.ToText()}页"; }
 		}
 		/// <summary>
-		/// 获取新书签的插入位置（当前书签后：1；子书签：2；父书签后：3；当前书签前：4）
+		/// 获取新书签的插入位置。
 		/// </summary>
 		public InsertBookmarkPositionType InsertMode => _AfterCurrentBox.Checked ? InsertBookmarkPositionType.AfterCurrent
 					: _AsChildBox.Checked ? InsertBookmarkPositionType.AsChild
 					: _AfterParentBox.Checked ? InsertBookmarkPositionType.AfterParent
 					: _BeforeCurrentBox.Checked ? InsertBookmarkPositionType.BeforeCurrent
+					: _AfterGrandParentBox.Checked ? InsertBookmarkPositionType.AfterGrandParent
+					: _AfterLastRootBox.Checked ? InsertBookmarkPositionType.LastRoot
 					: InsertBookmarkPositionType.Undefined;
 
 		[Browsable(false)]
@@ -45,6 +47,8 @@ namespace PDFPatcher.Functions.Editor
 				case InsertBookmarkPositionType.AsChild: _AsChildBox.Checked = true; return;
 				case InsertBookmarkPositionType.AfterParent: _AfterParentBox.Checked = true; return;
 				case InsertBookmarkPositionType.BeforeCurrent: _BeforeCurrentBox.Checked = true; return;
+				case InsertBookmarkPositionType.AfterGrandParent: _AfterGrandParentBox.Checked = true; return;
+				case InsertBookmarkPositionType.LastRoot: _AfterLastRootBox.Checked = true; return;
 			}
 		}
 		void OnLoad() {
@@ -60,9 +64,11 @@ namespace PDFPatcher.Functions.Editor
 			_AsChildBox.DoubleClick += InsertModeBox_DoubleClick;
 			_BeforeCurrentBox.DoubleClick += InsertModeBox_DoubleClick;
 			_ReplaceBookmarkBox.DoubleClick += InsertModeBox_DoubleClick;
+			_AfterGrandParentBox.DoubleClick += InsertModeBox_DoubleClick;
+			_AfterLastRootBox.DoubleClick += InsertModeBox_DoubleClick;
 			_OkButton.Click += (s, args) => {
 				OkClicked?.Invoke(this, args);
-				if (_AsChildBox.Checked || _AfterParentBox.Checked || _ReplaceBookmarkBox.Checked) {
+				if (_AfterCurrentBox.Checked == false) {
 					_AfterCurrentBox.Checked = true;
 				}
 				Hide();

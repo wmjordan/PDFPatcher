@@ -10,6 +10,8 @@ namespace PDFPatcher.Model
 		AfterCurrent,
 		AsChild,
 		AfterParent,
-		BeforeCurrent
+		BeforeCurrent,
+		AfterGrandParent,
+		LastRoot
 	}
 }
