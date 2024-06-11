@@ -231,7 +231,8 @@ namespace PDFPatcher.Functions
 				AppContext.Reader.Zoom = _ViewerBox.LiteralZoom;
 			};
 			_ViewerBox.PageChanged += (s, args) => _CurrentPageBox.Text = _ViewerBox.CurrentPageNumber.ToText();
-			_ViewerBox.ContentDirectionChanged += (s, args) => AppContext.Reader.ContentDirection = _ViewerBox.ContentDirection;
+			_ViewerBox.ContentDirectionChanged += (s, args) => AppContext.Reader.ContentDirection = ((PdfViewerControl)s).ContentDirection;
+			_ViewerBox.PageScrollModeChanged += (s, args) => AppContext.Reader.FullPageScroll = ((PdfViewerControl)s).FullPageScroll;
 			//_ViewerBox.SelectionChanged += (s, args) =>
 			//{
 			//	var t = args.Selection.SelectedText;
@@ -262,6 +263,7 @@ namespace PDFPatcher.Functions
 
 		void _ViewerBoxInitializeAfterDocumentLoad(object sender, EventArgs e) {
 			_ViewerBox.ContentDirection = AppContext.Reader.ContentDirection;
+			_ViewerBox.FullPageScroll = AppContext.Reader.FullPageScroll;
 			_CurrentPageBox.ToolTipText = "文档共" + _ViewerBox.Document.PageCount + "页\nHome：转到第一页\nEnd：转到最后一页";
 			_ZoomBox.Text = _ViewerBox.LiteralZoom = AppContext.Reader.Zoom.SubstituteDefault(Constants.DestinationAttributes.ViewType.FitH);
 			_ZoomBox.Enabled = true;

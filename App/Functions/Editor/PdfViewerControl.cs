@@ -22,6 +22,7 @@ namespace PDFPatcher.Functions
 		public event EventHandler DocumentLoaded;
 		public new event EventHandler ZoomChanged;
 		public event EventHandler ContentDirectionChanged;
+		public event EventHandler PageScrollModeChanged;
 		public event EventHandler<PageChangedEventArgs> PageChanged;
 		public event EventHandler<SelectionChangedEventArgs> SelectionChanged;
 
@@ -221,8 +222,17 @@ namespace PDFPatcher.Functions
 			}
 		}
 
+		bool _FullPageScroll;
 		[DefaultValue(false)]
-		public bool FullPageScroll { get; set; }
+		public bool FullPageScroll {
+			get => _FullPageScroll;
+			set {
+				if (_FullPageScroll != value) {
+					_FullPageScroll = value;
+					PageScrollModeChanged?.Invoke(this, EventArgs.Empty);
+				}
+			}
+		}
 
 		DrawingPoint _PinPoint;
 		[Description("指定鼠标定位点")]
