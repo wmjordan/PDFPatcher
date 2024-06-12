@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using PDFPatcher.Common;
 
 namespace PDFPatcher.Functions
 {
@@ -13,6 +14,12 @@ namespace PDFPatcher.Functions
 		public NewCoordinateEntryForm() {
 			InitializeComponent();
 			_CoordinateBox.SelectedIndex = 0;
+			this.OnFirstLoad(OnLoad);
+		}
+
+		void OnLoad() {
+			_AdjustmentAmountBox.Select();
+			_AdjustmentAmountBox.Focus();
 		}
 
 		void _OkButton_Click(object sender, EventArgs e) {

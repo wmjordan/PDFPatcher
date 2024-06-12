@@ -44,6 +44,23 @@ namespace BrightIdeasSoftware
 				view.Expand(item);
 			}
 		}
+		public static void Expand(this TreeListView view, System.Collections.IEnumerable items, bool recursive) {
+			foreach (var item in items) {
+				view.Expand(item);
+				if (recursive) {
+					view.Expand(view.GetChildren(item), true);
+				}
+			}
+		}
+		public static void Collapse(this TreeListView view, System.Collections.IEnumerable items, bool recursive) {
+			foreach (var item in items) {
+				if (recursive && view.IsExpanded(item)) {
+					view.Collapse(view.GetChildren(item), true);
+				}
+				view.Collapse(item);
+			}
+		}
+
 		public static TypedObjectListView<T> AsTyped<T>(this ObjectListView view) where T : class {
 			return view.AsTyped<T>(null);
 		}

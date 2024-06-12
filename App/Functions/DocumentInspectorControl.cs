@@ -283,7 +283,7 @@ namespace PDFPatcher.Functions
 				case Commands.SelectNone:
 					_ObjectDetailBox.SelectedObjects = null;
 					break;
-				case Commands.InvertSelectItem:
+				case Commands.InvertSelection:
 					_ObjectDetailBox.InvertSelect();
 					break;
 				default:

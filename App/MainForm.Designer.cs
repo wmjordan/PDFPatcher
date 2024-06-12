@@ -36,7 +36,7 @@
 			System.Windows.Forms.ToolStripMenuItem _SelectAllFolders;
 			System.Windows.Forms.ToolStripSeparator _ItemTypeSeparator;
 			System.Windows.Forms.ToolStripMenuItem _SelectAll;
-			System.Windows.Forms.ToolStripMenuItem _InvertSelect;
+			System.Windows.Forms.ToolStripMenuItem _InvertSelection;
 			System.Windows.Forms.ToolStripMenuItem _SelectNone;
 			System.Windows.Forms.ToolStripMenuItem _ToolBox;
 			System.Windows.Forms.ToolStripMenuItem toolStripMenuItem23;
@@ -101,7 +101,7 @@
 			_SelectAllFolders = new System.Windows.Forms.ToolStripMenuItem();
 			_ItemTypeSeparator = new System.Windows.Forms.ToolStripSeparator();
 			_SelectAll = new System.Windows.Forms.ToolStripMenuItem();
-			_InvertSelect = new System.Windows.Forms.ToolStripMenuItem();
+			_InvertSelection = new System.Windows.Forms.ToolStripMenuItem();
 			_SelectNone = new System.Windows.Forms.ToolStripMenuItem();
 			_ToolBox = new System.Windows.Forms.ToolStripMenuItem();
 			toolStripMenuItem23 = new System.Windows.Forms.ToolStripMenuItem();
@@ -161,7 +161,7 @@
             _SelectAllFolders,
             _ItemTypeSeparator,
             _SelectAll,
-            _InvertSelect,
+            _InvertSelection,
             _SelectNone});
 			_Select.Image = ((System.Drawing.Image)(resources.GetObject("_Select.Image")));
 			_Select.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -229,9 +229,9 @@
 			// 
 			// _InvertSelect
 			// 
-			_InvertSelect.Name = "_InvertSelect";
-			_InvertSelect.Size = new System.Drawing.Size(185, 26);
-			_InvertSelect.Text = "反转选择";
+			_InvertSelection.Name = "_InvertSelection";
+			_InvertSelection.Size = new System.Drawing.Size(185, 26);
+			_InvertSelection.Text = "反转选择";
 			// 
 			// _SelectNone
 			// 

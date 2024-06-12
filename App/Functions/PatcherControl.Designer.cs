@@ -30,7 +30,7 @@
 			System.Windows.Forms.ToolStripButton _Delete;
 			System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
 			System.Windows.Forms.ToolStripMenuItem _SelectAll;
-			System.Windows.Forms.ToolStripMenuItem _InvertSelect;
+			System.Windows.Forms.ToolStripMenuItem _InvertSelection;
 			System.Windows.Forms.ToolStripMenuItem _SelectNone;
 			System.Windows.Forms.ToolStripMenuItem _Copy;
 			System.Windows.Forms.ToolStripMenuItem _RefreshInfo;
@@ -68,7 +68,7 @@
 			_Delete = new System.Windows.Forms.ToolStripButton();
 			toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
 			_SelectAll = new System.Windows.Forms.ToolStripMenuItem();
-			_InvertSelect = new System.Windows.Forms.ToolStripMenuItem();
+			_InvertSelection = new System.Windows.Forms.ToolStripMenuItem();
 			_SelectNone = new System.Windows.Forms.ToolStripMenuItem();
 			_Copy = new System.Windows.Forms.ToolStripMenuItem();
 			_RefreshInfo = new System.Windows.Forms.ToolStripMenuItem();
@@ -137,11 +137,11 @@
 			_SelectAll.Size = new System.Drawing.Size(124, 22);
 			_SelectAll.Text = "全部选中";
 			// 
-			// _InvertSelect
+			// _InvertSelection
 			// 
-			_InvertSelect.Name = "_InvertSelect";
-			_InvertSelect.Size = new System.Drawing.Size(124, 22);
-			_InvertSelect.Text = "反转选择";
+			_InvertSelection.Name = "_InvertSelection";
+			_InvertSelection.Size = new System.Drawing.Size(124, 22);
+			_InvertSelection.Text = "反转选择";
 			// 
 			// _SelectNone
 			// 
@@ -214,7 +214,7 @@
 			// 
 			this._SelectionMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             _SelectAll,
-            _InvertSelect,
+            _InvertSelection,
             _SelectNone});
 			this._SelectionMenu.Name = "_SelectionMenu";
 			this._SelectionMenu.Size = new System.Drawing.Size(125, 70);

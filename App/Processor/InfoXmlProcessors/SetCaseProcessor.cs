@@ -15,11 +15,11 @@ namespace PDFPatcher.Processor
 		internal const string HalfWidthPunctuations = "!\"#$%&'()*+,-./;:<=>?@[\\]^_`{|}~";
 
 		internal static string[] CaseNames = new string[]{
-			"首字母大写", "英文大写", "英文小写",
-			"全角数字", "全角字母", "全角标点",
-			"半角数字", "半角字母", "半角标点",
-			"中文数字", "大写中文数字",
-			"繁体汉字转简体", "简体汉字转繁体"
+			"首字母大写(&S)", "英文大写(&Y)", "英文小写(&X)",
+			"全角数字(&Z)", "全角字母(&Q)", "全角标点(&B)",
+			"半角数字(&N)", "半角字母(&M)", "半角标点(&D)",
+			"中文数字(&W)", "大写中文数字(&H)",
+			"繁体汉字转简体(&J)", "简体汉字转繁体(&F)"
 		};
 
 		public enum LetterCase

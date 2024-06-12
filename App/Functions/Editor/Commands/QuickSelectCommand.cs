@@ -35,8 +35,9 @@ namespace PDFPatcher.Functions.Editor
 			}
 		}
 		internal static void RegisterMenuItems(ToolStripItemCollection container) {
-			foreach (var item in __Patterns) {
-				container.Add(new ToolStripMenuItem(item.Name) { Name = item.Name });
+			for (int i = 0; i < __Patterns.Length; i++) {
+				var item = __Patterns[i];
+				container.Add(new ToolStripMenuItem($"(&{i}) {item.Name}") { Name = item.Name });
 			}
 		}
 		internal static void RegisterMenuItemsWithPattern(ToolStripItemCollection container) {

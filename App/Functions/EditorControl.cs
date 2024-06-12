@@ -54,9 +54,11 @@ namespace PDFPatcher.Functions
 			d.Register(new Editor.SimpleBookmarkCommand<ForceInternalLinkProcessor>(), "_ForceInternalLink");
 			d.Register(new Editor.BookmarkSelectionCommand(Commands.SelectAllItems), Commands.SelectAllItems);
 			d.Register(new Editor.BookmarkSelectionCommand(Commands.SelectNone), Commands.SelectNone);
-			d.Register(new Editor.BookmarkSelectionCommand(Commands.InvertSelectItem), Commands.InvertSelectItem);
-			d.Register(new Editor.BookmarkSelectionCommand(Commands.CollapseAll), Commands.CollapseAll);
+			d.Register(new Editor.BookmarkSelectionCommand(Commands.InvertSelection), Commands.InvertSelection);
 			d.Register(new Editor.BookmarkSelectionCommand(Commands.ExpandAll), Commands.ExpandAll);
+			d.Register(new Editor.BookmarkSelectionCommand(Commands.CollapseAll), Commands.CollapseAll);
+			d.Register(new Editor.BookmarkSelectionCommand(Commands.ExpandSelection), Commands.ExpandSelection);
+			d.Register(new Editor.BookmarkSelectionCommand(Commands.CollapseSelection), Commands.CollapseSelection);
 			d.Register(new Editor.BookmarkSelectionCommand(Commands.CollapseChildren), Commands.CollapseChildren);
 			d.Register(new Editor.OcrPageCommand(), Commands.EditorOcrPage);
 			d.Register(new Editor.PagePropertiesCommand(), Commands.EditorPageProperties);
@@ -111,11 +113,8 @@ namespace PDFPatcher.Functions
 
 			_controller.PrepareBookmarkDocument();
 
-			var di = _ChangeZoomRate.DropDownItems;
-			di.AddRange(Array.ConvertAll(Constants.DestinationAttributes.ViewType.Names, n => new ToolStripMenuItem { Name = n, Text = n }));
-			di.RemoveByKey(Constants.DestinationAttributes.ViewType.FitR);
-			di[0].Text += "...";
-			di.Insert(0, new ToolStripMenuItem { Name = Constants.Coordinates.Unchanged, Text = Constants.Coordinates.Unchanged });
+			CreateChangeZoomRateItems();
+
 			_ChangeZoomRate.DropDownItemClicked += _MainToolbar_ItemClicked;
 			_ChangeCase.DropDownItemClicked += (object s, ToolStripItemClickedEventArgs args) => {
 				args.ClickedItem.HidePopupMenu();
@@ -134,15 +133,14 @@ namespace PDFPatcher.Functions
 			_IncludeDecendantBox.CheckedChanged += (s, args) => _BookmarkBox.OperationAffectsDescendants = _IncludeDecendantBox.Checked;
 
 			_UndoButton.DropDownOpening += (object s, EventArgs args) => {
-				var i = _UndoMenu.Items;
-				i.Clear();
+				var mi = _UndoMenu.Items;
+				mi.Clear();
 				foreach (var item in _controller.Model.Undo.GetActionNames(16)) {
-					i.Add(item);
+					mi.Add(item);
 				}
 			};
 			_UndoButton.DropDownItemClicked += (object s, ToolStripItemClickedEventArgs args) => {
-				var i = args.ClickedItem.Owner.Items.IndexOf(args.ClickedItem) + 1;
-				_controller.Undo(i);
+				_controller.Undo(args.ClickedItem.Owner.Items.IndexOf(args.ClickedItem) + 1);
 			};
 			Editor.QuickSelectCommand.RegisterMenuItems(_QuickSelect.DropDownItems);
 			_BookmarkBox.CellClick += (s, args) => {
@@ -259,6 +257,17 @@ namespace PDFPatcher.Functions
 			_ViewerToolbar.Enabled = false;
 
 			Disposed += (s, args) => _controller.Destroy();
+		}
+
+		private void CreateChangeZoomRateItems() {
+			var di = _ChangeZoomRate.DropDownItems;
+			di.AddRange(Array.ConvertAll(Constants.DestinationAttributes.ViewType.Names, n => new ToolStripMenuItem { Name = n, Text = n }));
+			di.RemoveByKey(Constants.DestinationAttributes.ViewType.FitR);
+			di[0].Text += "...";
+			di.Insert(0, new ToolStripMenuItem { Name = Constants.Coordinates.Unchanged, Text = Constants.Coordinates.Unchanged });
+			for (int i = 0; i < di.Count; i++) {
+				di[i].Text += $"(&{i})";
+			}
 		}
 
 		void _ViewerBoxInitializeAfterDocumentLoad(object sender, EventArgs e) {
@@ -528,16 +537,16 @@ namespace PDFPatcher.Functions
 					ExecuteCommand(Commands.Paste); return true;
 				case Keys.Down:
 					_controller.InsertBookmark(InsertBookmarkPositionType.AfterCurrent);
-					break;
+					return true;
 				case Keys.Up:
 					_controller.InsertBookmark(InsertBookmarkPositionType.BeforeCurrent);
-					break;
+					return true;
 				case Keys.Right:
 					_controller.InsertBookmark(InsertBookmarkPositionType.AsChild);
-					break;
+					return true;
 				case Keys.Left:
 					_controller.InsertBookmark(InsertBookmarkPositionType.AfterParent);
-					break;
+					return true;
 			}
 			switch (keyData ^ Keys.Shift) {
 				case Keys.Tab:
@@ -549,8 +558,10 @@ namespace PDFPatcher.Functions
 				case Keys.Delete:
 					ExecuteCommand(Commands.Delete); return true;
 				case Keys.Add:
+				case Keys.Oemplus:
 					ExecuteCommand("_IncrementPageNumber"); return true;
 				case Keys.Subtract:
+				case Keys.OemMinus:
 					ExecuteCommand("_DecrementPageNumber"); return true;
 				case Keys.P:
 					if (_BookmarkBox.FocusedItem != null) {

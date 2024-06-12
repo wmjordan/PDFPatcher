@@ -97,6 +97,7 @@
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "ShiftPageNumberEntryForm";
+			this.ShowInTaskbar = false;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "增加或减少页码";
 			((System.ComponentModel.ISupportInitialize)(this._ShiftNumberBox)).EndInit();

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using PDFPatcher.Common;
 
 namespace PDFPatcher.Functions
 {
@@ -9,6 +10,12 @@ namespace PDFPatcher.Functions
 
 		public ZoomRateEntryForm() {
 			InitializeComponent();
+			this.OnFirstLoad(OnLoad);
+		}
+
+		void OnLoad() {
+			_ZoomRateBox.Select();
+			_ZoomRateBox.Focus();
 		}
 
 		void _OkButton_Click(Object source, EventArgs args) {

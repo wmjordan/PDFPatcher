@@ -43,12 +43,14 @@ namespace PDFPatcher
 		internal const string SelectAllImages = "_SelectAllImages";
 		internal const string SelectAllFolders = "_SelectAllFolders";
 		internal const string SelectAllItems = "_SelectAll";
-		internal const string InvertSelectItem = "_InvertSelect";
+		internal const string InvertSelection = "_InvertSelection";
 		internal const string SelectNone = "_SelectNone";
 		internal const string ItemTypeSeparator = "_ItemTypeSeparator";
 		internal const string ExpandAll = "_ExpandAll";
+		internal const string ExpandSelection = "_ExpandSelection";
 		internal const string CollapseAll = "_CollapseAll";
 		internal const string CollapseChildren = "_CollapseChildren";
+		internal const string CollapseSelection = "_CollapseSelection";
 		#endregion
 
 		#region Options menu
@@ -80,10 +82,10 @@ namespace PDFPatcher
 		internal const string EditorSavePageImage = "_SavePageImage";
 		#endregion
 		internal static readonly string[] TopMenuItems = { File, Tools, Selection };
-		internal static readonly string[] CommonSelectionCommands = { SelectAllItems, SelectNone, InvertSelectItem };
+		internal static readonly string[] CommonSelectionCommands = { SelectAllItems, SelectNone, InvertSelection };
 		internal static readonly HashSet<string> DefaultDisabledItems = new HashSet<string>(
 			new string[] {
-				SelectAllItems, InvertSelectItem, SelectNone,
+				SelectAllItems, InvertSelection, SelectNone,
 				Copy, Delete,
 				Options
 			});

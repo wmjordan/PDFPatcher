@@ -16,25 +16,31 @@ namespace PDFPatcher.Functions
 	{
 		const string KeepZoomRate = "保持不变";
 		const string NoAction = "无";
+
 		public BookmarkElement Action { get; private set; }
 		internal UndoActionGroup UndoActions { get; private set; }
 
 		public ActionEditorForm(BookmarkElement element) {
 			InitializeComponent();
 			Action = element;
+			this.OnFirstLoad(OnLoad);
+		}
+
+		void OnLoad() {
 			_ActionBox.Items.AddRange(Constants.ActionType.Names);
 			_ActionBox.Items.Add(NoAction);
 			_ZoomRateBox.Items.AddRange(Constants.DestinationAttributes.ViewType.Names);
 			_ZoomRateBox.Items.AddRange(new string[] { "————————", "4", "3", "2", "1.5", "1.3", "1.2", "1", "0", "0.9", "0.8", "0.5", "0.3" });
 
-			int i = Array.IndexOf(Constants.ActionType.Names, element.GetAttribute(Constants.DestinationAttributes.Action));
+			var action = Action;
+			int i = Array.IndexOf(Constants.ActionType.Names, action.GetAttribute(Constants.DestinationAttributes.Action));
 			_ActionBox.SelectedIndex = (i != -1 ? i : 0);
-			if (_ActionBox.SelectedIndex == 0 && element.HasAttribute(Constants.DestinationAttributes.Page) == false && element.HasAttribute(Constants.DestinationAttributes.Named) == false) {
+			if (_ActionBox.SelectedIndex == 0 && action.HasAttribute(Constants.DestinationAttributes.Page) == false && action.HasAttribute(Constants.DestinationAttributes.Named) == false) {
 				_ActionBox.SelectedItem = NoAction;
 				_DestinationPanel.Enabled = false;
 			}
-			_DefaultOpenBox.Checked = element.IsOpen;
-			i = Array.IndexOf(Constants.DestinationAttributes.ViewType.Names, element.GetAttribute(Constants.DestinationAttributes.View));
+			_DefaultOpenBox.Checked = action.IsOpen;
+			i = Array.IndexOf(Constants.DestinationAttributes.ViewType.Names, action.GetAttribute(Constants.DestinationAttributes.View));
 			_ZoomRateBox.SelectedIndex = (i != -1 ? i : 0);
 			i = _ZoomRateBox.FindString(Constants.DestinationAttributes.ViewType.XYZ);
 			if (i != -1) {
@@ -42,23 +48,23 @@ namespace PDFPatcher.Functions
 			}
 
 			if (_ZoomRateBox.Text == Constants.DestinationAttributes.ViewType.XYZ
-				&& element.GetAttribute(Constants.Coordinates.ScaleFactor).TryParse(out float f)) {
+				&& action.GetAttribute(Constants.Coordinates.ScaleFactor).TryParse(out float f)) {
 				_ZoomRateBox.SelectedIndex = -1;
 				_ZoomRateBox.Text = f.ToText();
 			}
-			_TitleBox.Text = element.GetAttribute(Constants.BookmarkAttributes.Title);
-			_PathBox.Text = element.GetAttribute(Constants.DestinationAttributes.Path);
-			_NewWindowBox.Checked = element.GetAttribute(Constants.DestinationAttributes.NewWindow) == Constants.Boolean.True;
-			_NamedBox.Text = element.GetAttribute(Constants.DestinationAttributes.Named);
+			_TitleBox.Text = action.GetAttribute(Constants.BookmarkAttributes.Title);
+			_PathBox.Text = action.GetAttribute(Constants.DestinationAttributes.Path);
+			_NewWindowBox.Checked = action.GetAttribute(Constants.DestinationAttributes.NewWindow) == Constants.Boolean.True;
+			_NamedBox.Text = action.GetAttribute(Constants.DestinationAttributes.Named);
 			_GotoNamedDestBox.Checked = String.IsNullOrEmpty(_NamedBox.Text) == false;
-			_GotoLocationBox.Checked = element.HasAttribute(Constants.DestinationAttributes.Named) == false
-				&& element.HasAttribute(Constants.DestinationAttributes.NamedN) == false;
+			_GotoLocationBox.Checked = action.HasAttribute(Constants.DestinationAttributes.Named) == false
+				&& action.HasAttribute(Constants.DestinationAttributes.NamedN) == false;
 
-			InitCoordinateValue(element, Constants.DestinationAttributes.Page, _PageBox, null);
-			InitCoordinateValue(element, Constants.Coordinates.Left, _LeftBox, _KeepXBox);
-			InitCoordinateValue(element, Constants.Coordinates.Top, _TopBox, _KeepYBox);
-			InitCoordinateValue(element, Constants.Coordinates.Right, _WidthBox, null);
-			_ScriptContentBox.Text = element.GetAttribute(Constants.DestinationAttributes.ScriptContent);
+			InitCoordinateValue(action, Constants.DestinationAttributes.Page, _PageBox, null);
+			InitCoordinateValue(action, Constants.Coordinates.Left, _LeftBox, _KeepXBox);
+			InitCoordinateValue(action, Constants.Coordinates.Top, _TopBox, _KeepYBox);
+			InitCoordinateValue(action, Constants.Coordinates.Right, _WidthBox, null);
+			_ScriptContentBox.Text = action.GetAttribute(Constants.DestinationAttributes.ScriptContent);
 			if (_WidthBox.Enabled) {
 				var v = _WidthBox.Value - _LeftBox.Value;
 				if (v > _WidthBox.Maximum) {
@@ -69,7 +75,7 @@ namespace PDFPatcher.Functions
 				}
 				_WidthBox.Value = v;
 			}
-			InitCoordinateValue(element, Constants.Coordinates.Bottom, _HeightBox, null);
+			InitCoordinateValue(action, Constants.Coordinates.Bottom, _HeightBox, null);
 			if (_HeightBox.Enabled) {
 				var v = _TopBox.Value - _HeightBox.Value;
 				if (v > _HeightBox.Maximum) {
@@ -85,8 +91,7 @@ namespace PDFPatcher.Functions
 				if (o is XmlAttribute attr) {
 					if (attr.Name == Constants.Font.ThisName && attr.Value.TryParse(out int fid)) {
 						var n = attr.OwnerDocument.DocumentElement.SelectSingleNode(
-							String.Concat(Constants.Font.DocumentFont, "/", Constants.Font.ThisName,
-							"[@", Constants.Font.ID, "='", attr.Value, "']/@", Constants.Font.Name)
+							$"{Constants.Font.DocumentFont}/{Constants.Font.ThisName}[@{Constants.Font.ID}='{attr.Value}']/@{Constants.Font.Name}"
 							);
 						if (n != null) {
 							return String.Concat(attr.Value, " (", n.Value, ")");
@@ -97,7 +102,10 @@ namespace PDFPatcher.Functions
 				return null;
 			};
 			_AttributesBox.ScaleColumnWidths();
-			_AttributesBox.SetObjects(element.Attributes);
+			_AttributesBox.SetObjects(action.Attributes);
+
+			_TitleBox.Select();
+			_TitleBox.Focus();
 		}
 
 		void InitCoordinateValue(XmlElement element, string name, NumericUpDown control, CheckBox check) {

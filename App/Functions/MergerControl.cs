@@ -633,7 +633,7 @@ namespace PDFPatcher.Functions
 				case Commands.SelectNone:
 					_ItemList.SelectObjects(null);
 					break;
-				case Commands.InvertSelectItem:
+				case Commands.InvertSelection:
 					_ItemList.InvertSelect();
 					break;
 				case Commands.SelectAllImages:

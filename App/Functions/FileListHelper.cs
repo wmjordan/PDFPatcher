@@ -190,7 +190,7 @@ namespace PDFPatcher.Functions
 				case Commands.SelectAllItems:
 					_fileList.SelectAll();
 					break;
-				case Commands.InvertSelectItem:
+				case Commands.InvertSelection:
 					foreach (ListViewItem item in _fileList.Items) {
 						item.Selected = !item.Selected;
 					}

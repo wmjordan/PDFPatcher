@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom;
 using System.Xml;
 using BrightIdeasSoftware;
 
@@ -21,7 +22,7 @@ namespace PDFPatcher.Functions.Editor
 				case Commands.SelectNone:
 					b.DeselectAll();
 					break;
-				case Commands.InvertSelectItem:
+				case Commands.InvertSelection:
 					b.InvertSelect();
 					break;
 				case Commands.CollapseAll:
@@ -36,6 +37,12 @@ namespace PDFPatcher.Functions.Editor
 							b.Collapse(ci);
 						}
 					}
+					break;
+				case Commands.ExpandSelection:
+					b.Expand(b.SelectedObjects, true);
+					break;
+				case Commands.CollapseSelection:
+					b.Collapse(b.SelectedObjects, true);
 					break;
 			}
 		}

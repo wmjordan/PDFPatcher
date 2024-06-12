@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Xml;
+using PDFPatcher.Common;
 using PDFPatcher.Processor;
 
 namespace PDFPatcher.Functions
@@ -17,6 +18,12 @@ namespace PDFPatcher.Functions
 		internal SearchBookmarkForm(Editor.Controller controller) {
 			InitializeComponent();
 			_controller = controller;
+			this.OnFirstLoad(OnLoad);
+		}
+
+		void OnLoad() {
+			_SearchTextBox.Select();
+			_SearchTextBox.Focus();
 		}
 
 		void _SearchTextBox_TextChanged(object sender, EventArgs e) {
