@@ -185,58 +185,58 @@
 			_Delete.ImageTransparentColor = System.Drawing.Color.Magenta;
 			_Delete.Name = "_Delete";
 			_Delete.ShortcutKeyDisplayString = "Delete";
-			_Delete.Size = new System.Drawing.Size(185, 26);
+			_Delete.Size = new System.Drawing.Size(181, 22);
 			_Delete.Text = "删除选中项";
 			// 
 			// toolStripSeparator3
 			// 
 			toolStripSeparator3.Name = "toolStripSeparator3";
-			toolStripSeparator3.Size = new System.Drawing.Size(182, 6);
+			toolStripSeparator3.Size = new System.Drawing.Size(178, 6);
 			// 
 			// _SelectAllPdfFiles
 			// 
 			_SelectAllPdfFiles.Image = ((System.Drawing.Image)(resources.GetObject("_SelectAllPdfFiles.Image")));
 			_SelectAllPdfFiles.Name = "_SelectAllPdfFiles";
-			_SelectAllPdfFiles.Size = new System.Drawing.Size(185, 26);
+			_SelectAllPdfFiles.Size = new System.Drawing.Size(181, 22);
 			_SelectAllPdfFiles.Text = "选中所有 PDF 文件";
 			// 
 			// _SelectAllImages
 			// 
 			_SelectAllImages.Image = ((System.Drawing.Image)(resources.GetObject("_SelectAllImages.Image")));
 			_SelectAllImages.Name = "_SelectAllImages";
-			_SelectAllImages.Size = new System.Drawing.Size(185, 26);
+			_SelectAllImages.Size = new System.Drawing.Size(181, 22);
 			_SelectAllImages.Text = "选中所有图片";
 			// 
 			// _SelectAllFolders
 			// 
 			_SelectAllFolders.Image = ((System.Drawing.Image)(resources.GetObject("_SelectAllFolders.Image")));
 			_SelectAllFolders.Name = "_SelectAllFolders";
-			_SelectAllFolders.Size = new System.Drawing.Size(185, 26);
+			_SelectAllFolders.Size = new System.Drawing.Size(181, 22);
 			_SelectAllFolders.Text = "选中所有文件夹";
 			// 
 			// _ItemTypeSeparator
 			// 
 			_ItemTypeSeparator.Name = "_ItemTypeSeparator";
-			_ItemTypeSeparator.Size = new System.Drawing.Size(182, 6);
+			_ItemTypeSeparator.Size = new System.Drawing.Size(178, 6);
 			// 
 			// _SelectAll
 			// 
 			_SelectAll.Image = ((System.Drawing.Image)(resources.GetObject("_SelectAll.Image")));
 			_SelectAll.Name = "_SelectAll";
 			_SelectAll.ShortcutKeyDisplayString = "Ctrl+A";
-			_SelectAll.Size = new System.Drawing.Size(185, 26);
+			_SelectAll.Size = new System.Drawing.Size(181, 22);
 			_SelectAll.Text = "全部选中";
 			// 
-			// _InvertSelect
+			// _InvertSelection
 			// 
 			_InvertSelection.Name = "_InvertSelection";
-			_InvertSelection.Size = new System.Drawing.Size(185, 26);
+			_InvertSelection.Size = new System.Drawing.Size(181, 22);
 			_InvertSelection.Text = "反转选择";
 			// 
 			// _SelectNone
 			// 
 			_SelectNone.Name = "_SelectNone";
-			_SelectNone.Size = new System.Drawing.Size(185, 26);
+			_SelectNone.Size = new System.Drawing.Size(181, 22);
 			_SelectNone.Text = "取消选择";
 			// 
 			// _ToolBox
@@ -269,7 +269,7 @@
             _GenerateBookmark,
             _InfoExchanger});
 			toolStripMenuItem23.Name = "toolStripMenuItem23";
-			toolStripMenuItem23.Size = new System.Drawing.Size(202, 26);
+			toolStripMenuItem23.Size = new System.Drawing.Size(198, 22);
 			toolStripMenuItem23.Text = "处理PDF文件(&C)";
 			toolStripMenuItem23.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.MenuCommand);
 			// 
@@ -330,7 +330,7 @@
             _ExtractImages,
             _RenderPages});
 			_Imaging.Name = "_Imaging";
-			_Imaging.Size = new System.Drawing.Size(202, 26);
+			_Imaging.Size = new System.Drawing.Size(198, 22);
 			_Imaging.Text = "提取文档内容(&T)";
 			_Imaging.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.MenuCommand);
 			// 
@@ -362,7 +362,7 @@
 			// 
 			_Explorer.Image = ((System.Drawing.Image)(resources.GetObject("_Explorer.Image")));
 			_Explorer.Name = "_Explorer";
-			_Explorer.Size = new System.Drawing.Size(202, 26);
+			_Explorer.Size = new System.Drawing.Size(198, 22);
 			_Explorer.Tag = "Inspector";
 			_Explorer.Text = "文档结构探查器(&W)...";
 			// 
@@ -370,33 +370,33 @@
 			// 
 			_ExportInfoFile.Image = ((System.Drawing.Image)(resources.GetObject("_ExportInfoFile.Image")));
 			_ExportInfoFile.Name = "_ExportInfoFile";
-			_ExportInfoFile.Size = new System.Drawing.Size(202, 26);
+			_ExportInfoFile.Size = new System.Drawing.Size(198, 22);
 			_ExportInfoFile.Tag = "InfoExchanger";
 			_ExportInfoFile.Text = "导出导入信息文件(&D)...";
 			// 
 			// toolStripSeparator5
 			// 
 			toolStripSeparator5.Name = "toolStripSeparator5";
-			toolStripSeparator5.Size = new System.Drawing.Size(199, 6);
+			toolStripSeparator5.Size = new System.Drawing.Size(195, 6);
 			// 
 			// _ShowGeneralToolbar
 			// 
 			_ShowGeneralToolbar.Name = "_ShowGeneralToolbar";
-			_ShowGeneralToolbar.Size = new System.Drawing.Size(202, 26);
+			_ShowGeneralToolbar.Size = new System.Drawing.Size(198, 22);
 			_ShowGeneralToolbar.Text = "显示常用工具栏(&G)";
 			// 
 			// _CustomizeToolbarCommand
 			// 
 			_CustomizeToolbarCommand.Image = ((System.Drawing.Image)(resources.GetObject("_CustomizeToolbarCommand.Image")));
 			_CustomizeToolbarCommand.Name = "_CustomizeToolbarCommand";
-			_CustomizeToolbarCommand.Size = new System.Drawing.Size(202, 26);
+			_CustomizeToolbarCommand.Size = new System.Drawing.Size(198, 22);
 			_CustomizeToolbarCommand.Text = "自定义常用工具栏(&Z)...";
 			// 
 			// _LogWindow
 			// 
 			_LogWindow.Image = ((System.Drawing.Image)(resources.GetObject("_LogWindow.Image")));
 			_LogWindow.Name = "_LogWindow";
-			_LogWindow.Size = new System.Drawing.Size(202, 26);
+			_LogWindow.Size = new System.Drawing.Size(198, 22);
 			_LogWindow.Tag = "";
 			_LogWindow.Text = "程序输出信息(&S)...";
 			// 
@@ -417,33 +417,33 @@
 			// 
 			_CreateShortcut.Image = ((System.Drawing.Image)(resources.GetObject("_CreateShortcut.Image")));
 			_CreateShortcut.Name = "_CreateShortcut";
-			_CreateShortcut.Size = new System.Drawing.Size(202, 26);
+			_CreateShortcut.Size = new System.Drawing.Size(198, 22);
 			_CreateShortcut.Text = "创建桌面快捷方式(&C)";
 			// 
 			// toolStripSeparator14
 			// 
 			this.toolStripSeparator14.Name = "toolStripSeparator14";
-			this.toolStripSeparator14.Size = new System.Drawing.Size(199, 6);
+			this.toolStripSeparator14.Size = new System.Drawing.Size(195, 6);
 			// 
 			// _CheckUpdate
 			// 
 			_CheckUpdate.Image = ((System.Drawing.Image)(resources.GetObject("_CheckUpdate.Image")));
 			_CheckUpdate.Name = "_CheckUpdate";
-			_CheckUpdate.Size = new System.Drawing.Size(202, 26);
+			_CheckUpdate.Size = new System.Drawing.Size(198, 22);
 			_CheckUpdate.Text = "检查新的版本(&X)...";
 			// 
 			// _VisitHomePage
 			// 
 			_VisitHomePage.Image = ((System.Drawing.Image)(resources.GetObject("_VisitHomePage.Image")));
 			_VisitHomePage.Name = "_VisitHomePage";
-			_VisitHomePage.Size = new System.Drawing.Size(202, 26);
+			_VisitHomePage.Size = new System.Drawing.Size(198, 22);
 			_VisitHomePage.Text = "访问程序主页(&Z)...";
 			// 
 			// _About
 			// 
 			_About.Image = ((System.Drawing.Image)(resources.GetObject("_About.Image")));
 			_About.Name = "_About";
-			_About.Size = new System.Drawing.Size(202, 26);
+			_About.Size = new System.Drawing.Size(198, 22);
 			_About.Tag = "About";
 			_About.Text = "关于本程序及作者(&G)...";
 			// 
@@ -452,7 +452,7 @@
 			_Open.Image = ((System.Drawing.Image)(resources.GetObject("_Open.Image")));
 			_Open.Name = "_Open";
 			_Open.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D)));
-			_Open.Size = new System.Drawing.Size(227, 26);
+			_Open.Size = new System.Drawing.Size(223, 22);
 			_Open.Text = "打开文件...";
 			// 
 			// dummyToolStripMenuItem
@@ -467,21 +467,21 @@
 			_ImportBookmark.Image = ((System.Drawing.Image)(resources.GetObject("_ImportBookmark.Image")));
 			_ImportBookmark.Name = "_ImportBookmark";
 			_ImportBookmark.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
-			_ImportBookmark.Size = new System.Drawing.Size(227, 26);
+			_ImportBookmark.Size = new System.Drawing.Size(223, 22);
 			_ImportBookmark.Text = "导入书签(&D)...";
 			_ImportBookmark.ToolTipText = "从其它文件导入书签到当前文档";
 			// 
 			// toolStripSeparator2
 			// 
 			toolStripSeparator2.Name = "toolStripSeparator2";
-			toolStripSeparator2.Size = new System.Drawing.Size(224, 6);
+			toolStripSeparator2.Size = new System.Drawing.Size(220, 6);
 			// 
 			// _Action
 			// 
 			_Action.Image = global::PDFPatcher.Properties.Resources.Save;
 			_Action.Name = "_Action";
 			_Action.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-			_Action.Size = new System.Drawing.Size(227, 26);
+			_Action.Size = new System.Drawing.Size(223, 22);
 			_Action.Text = "保存 PDF 文件(&C)...";
 			// 
 			// _SaveBookmark
@@ -489,7 +489,7 @@
 			_SaveBookmark.Image = global::PDFPatcher.Properties.Resources.ExportInfoFile;
 			_SaveBookmark.Name = "_SaveBookmark";
 			_SaveBookmark.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Q)));
-			_SaveBookmark.Size = new System.Drawing.Size(227, 26);
+			_SaveBookmark.Size = new System.Drawing.Size(223, 22);
 			_SaveBookmark.Text = "保存书签文件(&Q)";
 			_SaveBookmark.ToolTipText = "将书签保存为 XML 格式的信息文件，可用于迁移书签";
 			// 
@@ -497,44 +497,44 @@
 			// 
 			_SaveAsInfoFile.Image = ((System.Drawing.Image)(resources.GetObject("_SaveAsInfoFile.Image")));
 			_SaveAsInfoFile.Name = "_SaveAsInfoFile";
-			_SaveAsInfoFile.Size = new System.Drawing.Size(227, 26);
+			_SaveAsInfoFile.Size = new System.Drawing.Size(223, 22);
 			_SaveAsInfoFile.Text = "换名保存书签文件(&H)...";
 			// 
 			// _configSeparator
 			// 
 			_configSeparator.Name = "_configSeparator";
-			_configSeparator.Size = new System.Drawing.Size(224, 6);
+			_configSeparator.Size = new System.Drawing.Size(220, 6);
 			// 
 			// _AppOptions
 			// 
 			_AppOptions.Image = ((System.Drawing.Image)(resources.GetObject("_AppOptions.Image")));
 			_AppOptions.Name = "_AppOptions";
-			_AppOptions.Size = new System.Drawing.Size(227, 26);
+			_AppOptions.Size = new System.Drawing.Size(223, 22);
 			_AppOptions.Tag = "Options";
 			_AppOptions.Text = "程序配置(&P)...";
 			// 
 			// _RestoreOptions
 			// 
 			_RestoreOptions.Name = "_RestoreOptions";
-			_RestoreOptions.Size = new System.Drawing.Size(227, 26);
+			_RestoreOptions.Size = new System.Drawing.Size(223, 22);
 			_RestoreOptions.Text = "加载程序配置(&J)...";
 			// 
 			// _SaveOptions
 			// 
 			_SaveOptions.Name = "_SaveOptions";
-			_SaveOptions.Size = new System.Drawing.Size(227, 26);
+			_SaveOptions.Size = new System.Drawing.Size(223, 22);
 			_SaveOptions.Text = "保存程序配置(&B)...";
 			// 
 			// toolStripSeparator11
 			// 
 			toolStripSeparator11.Name = "toolStripSeparator11";
-			toolStripSeparator11.Size = new System.Drawing.Size(224, 6);
+			toolStripSeparator11.Size = new System.Drawing.Size(220, 6);
 			// 
 			// _Exit
 			// 
 			_Exit.Name = "_Exit";
 			_Exit.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
-			_Exit.Size = new System.Drawing.Size(227, 26);
+			_Exit.Size = new System.Drawing.Size(223, 22);
 			_Exit.Text = "退出程序(&T)";
 			// 
 			// _Close
@@ -542,20 +542,20 @@
 			_Close.Image = global::PDFPatcher.Properties.Resources.Close;
 			_Close.Name = "_Close";
 			_Close.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F4)));
-			_Close.Size = new System.Drawing.Size(227, 26);
+			_Close.Size = new System.Drawing.Size(223, 22);
 			_Close.Text = "关闭当前功能(&G)";
 			// 
 			// toolStripSeparator1
 			// 
 			toolStripSeparator1.Name = "toolStripSeparator1";
-			toolStripSeparator1.Size = new System.Drawing.Size(224, 6);
+			toolStripSeparator1.Size = new System.Drawing.Size(220, 6);
 			// 
 			// _Options
 			// 
 			_Options.Image = ((System.Drawing.Image)(resources.GetObject("_Options.Image")));
 			_Options.Name = "_Options";
 			_Options.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.G)));
-			_Options.Size = new System.Drawing.Size(227, 26);
+			_Options.Size = new System.Drawing.Size(223, 22);
 			_Options.Tag = "PatcherOptions";
 			_Options.Text = "功能设置(&S)...";
 			// 
@@ -565,14 +565,14 @@
 			_CustomizeToolbar.Image = ((System.Drawing.Image)(resources.GetObject("_CustomizeToolbar.Image")));
 			_CustomizeToolbar.ImageTransparentColor = System.Drawing.Color.Magenta;
 			_CustomizeToolbar.Name = "_CustomizeToolbar";
-			_CustomizeToolbar.Size = new System.Drawing.Size(24, 24);
+			_CustomizeToolbar.Size = new System.Drawing.Size(23, 22);
 			_CustomizeToolbar.Text = "修改常用工具栏按钮";
 			// 
 			// _Properties
 			// 
 			_Properties.Image = global::PDFPatcher.Properties.Resources.Property;
 			_Properties.Name = "_Properties";
-			_Properties.Size = new System.Drawing.Size(227, 26);
+			_Properties.Size = new System.Drawing.Size(223, 22);
 			_Properties.Text = "文档属性(&X)...";
 			_Properties.ToolTipText = "查看并编辑当前文档的元数据属性";
 			// 
@@ -639,7 +639,7 @@
 			this._RecentFiles.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             dummyToolStripMenuItem});
 			this._RecentFiles.Name = "_RecentFiles";
-			this._RecentFiles.Size = new System.Drawing.Size(227, 26);
+			this._RecentFiles.Size = new System.Drawing.Size(223, 22);
 			this._RecentFiles.Text = "最近打开的文件";
 			this._RecentFiles.DropDownOpening += new System.EventHandler(this.RecentFileMenuOpening);
 			this._RecentFiles.DropDownItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.MenuCommand);
@@ -648,7 +648,7 @@
 			// 
 			this._ResetOptions.Image = ((System.Drawing.Image)(resources.GetObject("_ResetOptions.Image")));
 			this._ResetOptions.Name = "_ResetOptions";
-			this._ResetOptions.Size = new System.Drawing.Size(227, 26);
+			this._ResetOptions.Size = new System.Drawing.Size(223, 22);
 			this._ResetOptions.Text = "重置当前功能(&Z)...";
 			// 
 			// _OpenPdfDialog
@@ -679,7 +679,7 @@
 			this._GeneralToolbar.Name = "_GeneralToolbar";
 			this._GeneralToolbar.Padding = new System.Windows.Forms.Padding(0);
 			this._GeneralToolbar.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-			this._GeneralToolbar.Size = new System.Drawing.Size(604, 27);
+			this._GeneralToolbar.Size = new System.Drawing.Size(604, 25);
 			this._GeneralToolbar.TabIndex = 1;
 			// 
 			// _FunctionContainer
@@ -708,11 +708,11 @@
 			this._FunctionContainer.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._FunctionContainer.DrawMode = System.Windows.Forms.TabDrawMode.OwnerDrawFixed;
 			this._FunctionContainer.HotTrack = true;
-			this._FunctionContainer.Location = new System.Drawing.Point(0, 51);
+			this._FunctionContainer.Location = new System.Drawing.Point(0, 49);
 			this._FunctionContainer.Margin = new System.Windows.Forms.Padding(0, 1, 0, 1);
 			this._FunctionContainer.Name = "_FunctionContainer";
 			this._FunctionContainer.SelectedIndex = 0;
-			this._FunctionContainer.Size = new System.Drawing.Size(604, 402);
+			this._FunctionContainer.Size = new System.Drawing.Size(604, 404);
 			this._FunctionContainer.TabIndex = 2;
 			// 
 			// MainForm

@@ -12,7 +12,7 @@
     <AssemblyName>PDFPatcher</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <ApplicationIcon>pdf_icon.ico</ApplicationIcon>
+    <ApplicationIcon>PDFPatcher.ico</ApplicationIcon>
     <SignAssembly>true</SignAssembly>
     <IsWebBootstrapper>true</IsWebBootstrapper>
     <AssemblyOriginatorKeyFile Condition=" '$(Configuration)' == 'Release' and Exists('wmjordan.snk')">wmjordan.snk</AssemblyOriginatorKeyFile>
@@ -761,9 +761,11 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Functions\RenameControl.resx">
       <DependentUpon>RenameControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Functions\PatcherControl.resx">
       <DependentUpon>PatcherControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Functions\BookmarkControl.resx">
       <DependentUpon>BookmarkControl.cs</DependentUpon>
@@ -945,6 +947,7 @@
       <DependentUpon>UpdateForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Model\PDFStructInfo.xml" />
+    <Content Include="PDFPatcher.ico" />
     <Content Include="pdf_icon.ico" />
     <None Include="Resources\096.png" />
     <None Include="Resources\107.png" />
