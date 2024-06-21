@@ -23,7 +23,10 @@ namespace PDFPatcher.Processor
 		public IUndoAction Process(System.Xml.XmlElement item) {
 			int p;
 			var a = item.GetAttribute(Constants.DestinationAttributes.Action);
-			if ((String.IsNullOrEmpty(a) && SkipZero == false || a == Constants.ActionType.Goto || a == Constants.ActionType.GotoR) == false && item.HasAttribute(Constants.DestinationAttributes.Page) == false) {
+			if ((String.IsNullOrEmpty(a) && SkipZero == false
+					|| a == Constants.ActionType.Goto
+					|| a == Constants.ActionType.GotoR) == false
+				&& item.HasAttribute(Constants.DestinationAttributes.Page) == false) {
 				return null;
 			}
 			if (item.GetAttribute(Constants.DestinationAttributes.Page).TryParse(out p)) {
