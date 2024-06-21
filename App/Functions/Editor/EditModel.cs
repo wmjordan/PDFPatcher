@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Windows.Forms;
 using PDFPatcher.Common;
 using PDFPatcher.Model;
 using PDFPatcher.Processor;
@@ -85,19 +84,6 @@ namespace PDFPatcher.Functions.Editor
 				Bookmark = new BookmarkSettings();
 			}
 		}
-	}
-
-	internal interface IEditView
-	{
-		bool AffectsDescendantBookmarks { get; }
-		ToolStripSplitButton UndoButton { get; }
-		AutoBookmarkForm AutoBookmark { get; }
-		BookmarkEditorView Bookmark { get; }
-		PdfViewerControl Viewer { get; }
-		ToolStrip ViewerToolbar { get; }
-		ToolStrip BookmarkToolbar { get; }
-		SplitContainer MainPanel { get; }
-		string DocumentPath { get; set; }
 	}
 
 }

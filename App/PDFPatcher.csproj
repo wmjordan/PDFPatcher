@@ -94,6 +94,7 @@
       <DependentUpon>Configuration.resx</DependentUpon>
     </Compile>
     <Compile Include="Commands.cs" />
+    <Compile Include="Functions\Editor\IEditView.cs" />
     <Compile Include="Functions\PatcherOptionsControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
