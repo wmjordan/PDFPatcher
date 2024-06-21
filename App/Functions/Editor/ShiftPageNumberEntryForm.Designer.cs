@@ -67,16 +67,6 @@
 			// _ShiftNumberBox
 			// 
 			this._ShiftNumberBox.Location = new System.Drawing.Point(215, 27);
-			this._ShiftNumberBox.Maximum = new decimal(new int[] {
-            999,
-            0,
-            0,
-            0});
-			this._ShiftNumberBox.Minimum = new decimal(new int[] {
-            999,
-            0,
-            0,
-            -2147483648});
 			this._ShiftNumberBox.Name = "_ShiftNumberBox";
 			this._ShiftNumberBox.Size = new System.Drawing.Size(68, 21);
 			this._ShiftNumberBox.TabIndex = 3;
