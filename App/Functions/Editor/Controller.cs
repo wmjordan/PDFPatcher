@@ -130,10 +130,6 @@ namespace PDFPatcher.Functions.Editor
 		}
 
 		internal void Destroy() {
-			//if (_view.InsertBookmarkForm != null) {
-			//	_view.InsertBookmarkForm.Dispose ();
-			//	_view.InsertBookmarkForm = null;
-			//}
 			if (_loader != null) {
 				_loader.RunWorkerCompleted -= _LoadBookmarkWorker_RunWorkerCompleted;
 				_loader.Dispose();
@@ -189,8 +185,6 @@ namespace PDFPatcher.Functions.Editor
 					return;
 			}
 			RecentFileMenuHelper.AddRecentHistoryFile(path);
-			//// 书签编辑器窗口需要重画表头
-			//this._BookmarkBox.HeaderControl.Invalidate ();
 		}
 
 		void _LoadBookmarkWorker_DoWork(object sender, DoWorkEventArgs e) {
@@ -259,11 +253,7 @@ namespace PDFPatcher.Functions.Editor
 				}
 				ClearBookmarks();
 				InitBookmarkEditor();
-				//if (_currentFilePath != null) {
-				//	Common.FormHelper.InfoBox ("文档不包含书签。");
-				//}
 			}
-			//_viewer = new PdfViewer (this._FilePathBox.Text, _doc.DocumentElement);
 		}
 
 		internal void LoadInfoDocument(PdfInfoXmlDocument document, bool importMode) {
@@ -329,27 +319,6 @@ namespace PDFPatcher.Functions.Editor
 			editView.SelectedObjects = il;
 			Model.Undo.AddUndo("导入书签", g);
 		}
-
-		//internal void HideInsertBookmarkForm () {
-		//	if (_view.InsertBookmarkForm != null) {
-		//		_view.InsertBookmarkForm.Visible = false;
-		//	}
-		//}
-
-		//internal void BookmarkAtClientPoint (Point cp) {
-		//	var v = _view.Viewer;
-		//	var pp = v.TransposeClientToPagePosition (cp.X, cp.Y);
-		//	if (pp.Page == 0) {
-		//		return;
-		//	}
-		//	if (Control.ModifierKeys == Keys.Control) {
-		//		v.PinPoint = v.PointToImage (cp);
-		//		ShowInsertBookmarkDialog (cp, new EditModel.Region (pp, null, EditModel.TextSource.Empty));
-		//		return;
-		//	}
-		//	var r = CopyText (cp, pp);
-		//	ShowInsertBookmarkDialog (cp, r);
-		//}
 
 		internal EditModel.Region CopyText(Point cp, PagePosition pp) {
 			var v = View.Viewer;
@@ -434,56 +403,6 @@ namespace PDFPatcher.Functions.Editor
 			}
 			return new EditModel.Region(pp, t, ts);
 		}
-
-		//void ShowInsertBookmarkDialog (Point mousePoint, EditModel.Region region) {
-		//	var p = region.Position;
-		//	if (p.Page == 0) {
-		//		return;
-		//	}
-		//	if (_view.InsertBookmarkForm == null) {
-		//		_view.InsertBookmarkForm = new InsertBookmarkForm ();
-		//		_view.InsertBookmarkForm.OkClicked += _insertBookmarkForm_OkClicked;
-		//		_view.InsertBookmarkForm.VisibleChanged += (s, args) => {
-		//			_view.Viewer.ShowPinPoint = (s as Form).Visible;
-		//		};
-		//	}
-		//	var f = _view.InsertBookmarkForm;
-		//	var v = _view.Viewer;
-		//	var vp = v.GetImageViewPort ();
-		//	Point fp;
-		//	var sr = v.SelectionRegion;
-		//	if (sr != RectangleF.Empty) {
-		//		fp = v.TransposeVirtualImageToClient (sr.Left, sr.Top);
-		//		if (v.HorizontalFlow) {
-		//			fp.X += sr.Width.ToInt32 () + 20;
-		//		}
-		//		else {
-		//			fp.Y -= f.Height + 20;
-		//		}
-		//	}
-		//	else {
-		//		fp = new Point (mousePoint.X + 20, mousePoint.Y - f.Height);
-		//	}
-		//	var l = v.PointToScreen (fp);
-		//	if (l.Y < 0) {
-		//		l.Y = l.Y + (int)sr.Height + f.Height + 40;
-		//		if (l.Y + f.Height > Screen.PrimaryScreen.WorkingArea.Height) {
-		//			l.Y = Screen.PrimaryScreen.WorkingArea.Height - f.Height;
-		//		}
-		//	}
-		//	if (l.X < v.PointToScreen (Point.Empty).X) {
-		//		l.X = v.PointToScreen (Point.Empty).X;
-		//	}
-		//	f.Location = l;
-		//	f.TargetPosition = p.PageY;
-		//	if (String.IsNullOrEmpty (region.Text) == false) {
-		//		f.Title = __RemoveOcrWhiteSpace.Replace (region.Text, " ").Trim ();
-		//	}
-		//	f.Comment = region.LiteralTextSource;
-		//	f.Show ();
-		//	f.TargetPageNumber = p.Page;
-		//	f.FormClosed += (s1, a1) => { _view.InsertBookmarkForm = null; };
-		//}
 
 		internal void LabelAtPage(Editor.PagePosition position) {
 			if (position.Page == 0) {
@@ -673,10 +592,6 @@ namespace PDFPatcher.Functions.Editor
 			}
 			var p = es[0].ParentNode;
 			for (int i = 1; i < l; i++) {
-				//if (es[i].SelectSingleNode (Constants.Bookmark) != null) {
-				//    Common.Form.ErrorBox ("合并的书签不能有子书签。");
-				//    return;
-				//}
 				if (es[i].ParentNode != p && es[i].ParentNode != es[0]) {
 					FormHelper.ErrorBox("合并的书签必须有相同的上级书签。");
 					return;
