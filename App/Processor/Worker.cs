@@ -409,6 +409,7 @@ namespace PDFPatcher.Processor
 
 				using (Stream s = new FileStream(targetFile, FileMode.Create)) {
 					var st = new PdfStamper(pdf, s);
+					pdf.Catalog.Put(new PdfName(Application.ProductName), Application.ProductVersion);
 					if (String.IsNullOrWhiteSpace(info.CreationDate) == false) {
 						st.Writer.Info.Put(PdfName.CREATIONDATE, new PdfString(info.CreationDate));
 					}
@@ -687,6 +688,7 @@ namespace PDFPatcher.Processor
 						ps.Margins.Left, ps.Margins.Right, ps.Margins.Top, ps.Margins.Bottom
 						);
 					PdfCopy w = option.Deduplicate ? new PdfSmartCopy(doc, s) : new PdfCopy(doc, s);
+					w.Info.Put(PdfName.PRODUCER, new PdfString($"{Application.ProductName} {Application.ProductVersion}"));
 					if (option.FullCompression) {
 						w.SetFullCompression();
 					}
