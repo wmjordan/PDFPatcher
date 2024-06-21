@@ -22,6 +22,7 @@ namespace PDFPatcher.Processor
 
 		public IUndoAction Process(System.Xml.XmlElement item) {
 			var undo = new UndoActionGroup();
+			undo.SetAttribute(item, Constants.DestinationAttributes.Action, Constants.ActionType.Goto);
 			undo.Add(new ChangePageNumberProcessor(PageNumber, true, true).Process(item));
 			undo.Add(new ChangeCoordinateProcessor(CoordinateName, Y, true, false).Process(item));
 			return undo;
