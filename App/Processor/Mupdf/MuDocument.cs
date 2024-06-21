@@ -104,6 +104,7 @@ namespace MuPdfSharp
 		/// </summary>
 		public void Reopen() {
 			lock (_SyncObj) {
+				_trailer = null;
 				ReleaseFile();
 				LoadPdf(FilePath, null);
 			}
