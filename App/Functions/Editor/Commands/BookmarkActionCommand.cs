@@ -47,7 +47,7 @@ namespace PDFPatcher.Functions.Editor
 						}
 					}
 					break;
-				case "_SetCurrentCoordinates":
+				case Commands.EditorBookmarkSetCurrentCoordinates:
 					var v = controller.View.Viewer;
 					var pp = v.TransposeClientToPagePosition(v.ClientRectangle.Width, 0);
 					if (pp.Page == 0) {

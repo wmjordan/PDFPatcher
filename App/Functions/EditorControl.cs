@@ -48,12 +48,13 @@ namespace PDFPatcher.Functions
 			}
 			d.Register(new Editor.BookmarkActionCommand(Constants.Coordinates.Unchanged), Constants.Coordinates.Unchanged);
 			d.Register(new Editor.BookmarkActionCommand("_ChangeCoordinates"), "_ChangeCoordinates");
-			d.Register(new Editor.BookmarkActionCommand("_SetCurrentCoordinates"), "_SetCurrentCoordinates");
+			d.Register(new Editor.BookmarkActionCommand(Commands.EditorBookmarkSetCurrentCoordinates), Commands.EditorBookmarkSetCurrentCoordinates);
 			d.Register(new Editor.BookmarkActionCommand("_BookmarkAction"), "_BookmarkAction");
 			d.Register(new Editor.SimpleBookmarkCommand<DestinationGotoTopProcessor>(), "_SetGotoTop");
 			d.Register(new Editor.SimpleBookmarkCommand<ForceInternalLinkProcessor>(), "_ForceInternalLink");
 			d.Register(new Editor.BookmarkSelectionCommand(Commands.SelectAllItems), Commands.SelectAllItems);
 			d.Register(new Editor.BookmarkSelectionCommand(Commands.SelectNone), Commands.SelectNone);
+			d.Register(new Editor.BookmarkSelectionCommand(Commands.SelectChildren), Commands.SelectChildren);
 			d.Register(new Editor.BookmarkSelectionCommand(Commands.InvertSelection), Commands.InvertSelection);
 			d.Register(new Editor.BookmarkSelectionCommand(Commands.ExpandAll), Commands.ExpandAll);
 			d.Register(new Editor.BookmarkSelectionCommand(Commands.CollapseAll), Commands.CollapseAll);
@@ -535,6 +536,8 @@ namespace PDFPatcher.Functions
 					ExecuteCommand(Commands.Copy); return true;
 				case Keys.V:
 					ExecuteCommand(Commands.Paste); return true;
+				case Keys.W:
+					ExecuteCommand(Commands.EditorBookmarkSetCurrentCoordinates); return true;
 				case Keys.Down:
 					_controller.InsertBookmark(InsertBookmarkPositionType.AfterCurrent);
 					return true;

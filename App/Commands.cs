@@ -45,6 +45,7 @@ namespace PDFPatcher
 		internal const string SelectAllItems = "_SelectAll";
 		internal const string InvertSelection = "_InvertSelection";
 		internal const string SelectNone = "_SelectNone";
+		internal const string SelectChildren = "_SelectChildren";
 		internal const string ItemTypeSeparator = "_ItemTypeSeparator";
 		internal const string ExpandAll = "_ExpandAll";
 		internal const string ExpandSelection = "_ExpandSelection";
@@ -77,6 +78,7 @@ namespace PDFPatcher
 		internal const string EditorBookmarkPageNumberIncrement = "_IncrementPageNumber";
 		internal const string EditorBookmarkPageNumberDecrement = "_DecrementPageNumber";
 		internal const string EditorBookmarkPageNumberShift = "_ShiftMultiPageNumber";
+		internal const string EditorBookmarkSetCurrentCoordinates = "_SetCurrentCoordinates";
 		internal const string EditorOcrPage = "_OcrPage";
 		internal const string EditorPageProperties = "_PageProperties";
 		internal const string EditorSavePageImage = "_SavePageImage";

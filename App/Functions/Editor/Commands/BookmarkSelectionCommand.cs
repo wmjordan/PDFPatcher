@@ -1,5 +1,6 @@
 ﻿using System;
 using System.CodeDom;
+using System.Linq;
 using System.Xml;
 using BrightIdeasSoftware;
 
@@ -21,6 +22,13 @@ namespace PDFPatcher.Functions.Editor
 					break;
 				case Commands.SelectNone:
 					b.DeselectAll();
+					break;
+				case Commands.SelectChildren:
+					var s = b.GetSelectedElements(false);
+					foreach (var item in s) {
+						b.Expand(item);
+					}
+					b.SelectedObjects = s.SelectMany(i => i.SubBookmarks.Cast<Model.BookmarkElement>()).ToList();
 					break;
 				case Commands.InvertSelection:
 					b.InvertSelect();
