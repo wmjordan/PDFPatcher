@@ -23,20 +23,15 @@ namespace MuPdfSharp
 		}
 
 		/// <summary>返回对象的类型。</summary>
-		public MuPdfObjectKind Kind => Pointer == IntPtr.Zero ? MuPdfObjectKind.PDF_NULL : (MuPdfObjectKind)NativePointer->_kind;
+		public MuPdfObjectKind Kind => Pointer == IntPtr.Zero ? MuPdfObjectKind.PDF_NULL : (MuPdfObjectKind)NativePointer->Kind;
 
 		/// <summary>返回对象的引用数量。</summary>
-		internal int ReferenceCount => Pointer == IntPtr.Zero ? 0 : NativePointer->_referenceCount;
+		internal int ReferenceCount => Pointer == IntPtr.Zero ? 0 : NativePointer->ReferenceCount;
 
 		/// <summary>
 		/// 返回对象的类型（如对象为引用，则返回其解除引用后的类型）。
 		/// </summary>
-		public MuPdfObjectKind UnderlyingKind {
-			get {
-				var obj = new MuPdfObject(_context, NativeMethods.ResolveIndirect(_context, _object));
-				return obj.Kind;
-			}
-		}
+		public MuPdfObjectKind UnderlyingKind => new MuPdfObject(_context, NativeMethods.ResolveIndirect(_context, _object)).Kind;
 
 		public bool BooleanValue => NativeMethods.ToBoolean(_context, _object) != 0;
 		public int IntegerValue => NativeMethods.ToInteger(_context, _object);
@@ -62,14 +57,17 @@ namespace MuPdfSharp
 		protected struct NativeObject
 		{
 #pragma warning disable 649, 169
-			internal short _referenceCount;
-			internal byte _kind;
-			internal byte _flags;
+			short _referenceCount;
+			byte _kind;
+			byte _flags;
 #pragma warning restore 649, 169
+
+			public short ReferenceCount => _referenceCount;
+			public byte Kind => _kind;
 		}
 	}
 
-	public struct MuIndirectReference
+	public readonly struct MuIndirectReference : IEquatable<MuIndirectReference>
 	{
 		public readonly int Number, Generation;
 		public static readonly MuIndirectReference Empty;
@@ -77,6 +75,30 @@ namespace MuPdfSharp
 		public MuIndirectReference(int number, int generation) {
 			Number = number;
 			Generation = generation;
+		}
+
+		public override bool Equals(object obj) {
+			return obj is MuIndirectReference reference && Equals(reference);
+		}
+
+		public bool Equals(MuIndirectReference other) {
+			return Number == other.Number &&
+				   Generation == other.Generation;
+		}
+
+		public override int GetHashCode() {
+			int hashCode = 1713845143;
+			hashCode = hashCode * -1521134295 + Number.GetHashCode();
+			hashCode = hashCode * -1521134295 + Generation.GetHashCode();
+			return hashCode;
+		}
+
+		public static bool operator ==(MuIndirectReference left, MuIndirectReference right) {
+			return left.Equals(right);
+		}
+
+		public static bool operator !=(MuIndirectReference left, MuIndirectReference right) {
+			return !(left == right);
 		}
 	}
 
@@ -101,12 +123,12 @@ namespace MuPdfSharp
 			: base(context, obj) {
 		}
 
-		public int Capacity => Pointer == IntPtr.Zero ? 0 : NativePointer->_capacity;
+		public int Capacity => Pointer == IntPtr.Zero ? 0 : NativePointer->Capacity;
 
 		/// <summary>
 		/// 获取字典中的项目数量。
 		/// </summary>
-		public int Count => Pointer == IntPtr.Zero ? 0 : NativePointer->_length;
+		public int Count => Pointer == IntPtr.Zero ? 0 : NativePointer->Length;
 
 		public KeyValuePair<string, MuPdfObject> this[int index] => new KeyValuePair<string, MuPdfObject>(
 					new MuPdfObject(Context, NativeMethods.GetKey(Context, Pointer, index)).NameValue,
@@ -139,13 +161,16 @@ namespace MuPdfSharp
 		struct NativeDict
 		{
 #pragma warning disable 649
-			internal NativeObject _nativeObject;
-			internal IntPtr _document;
-			internal int _parentNum;
-			internal int _length;
-			internal int _capacity;
-			internal IntPtr _items;
+			NativeObject _nativeObject;
+			IntPtr _document;
+			int _parentNum;
+			int _length;
+			int _capacity;
+			IntPtr _items;
 #pragma warning restore 649
+
+			public int Length => _length;
+			public int Capacity => _capacity;
 		}
 	}
 
