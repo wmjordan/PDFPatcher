@@ -10,7 +10,7 @@ using PDFPatcher.Model;
 
 namespace PDFPatcher.Processor.Imaging
 {
-	[DebuggerDisplay("REF = {PdfRef}({ReferenceCount}); Size = {Width} * {Height}")]
+	[DebuggerDisplay("REF = {ReferenceCount}; Size = {Width} * {Height}; {PixelFormat}")]
 	internal sealed class ImageInfo
 	{
 		public string FileName { get; set; }
