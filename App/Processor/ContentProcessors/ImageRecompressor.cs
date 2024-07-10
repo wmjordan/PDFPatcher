@@ -39,43 +39,53 @@ namespace PDFPatcher.Processor
 
 		public bool Process(PageProcessorContext context) {
 			Tracker.IncrementProgress(10);
-			var _imgExp = new ImageExtractor(_imgExpOption, context.Pdf);
-			var images = context.Page.Locate<PdfDictionary>(PdfName.RESOURCES, PdfName.XOBJECT);
-			if (images == null) {
+			return IterateObjects(context.Page);
+		}
+
+		bool IterateObjects(PdfDictionary container) {
+			var items = container.Locate<PdfDictionary>(PdfName.RESOURCES, PdfName.XOBJECT);
+			if (items == null) {
 				return false;
 			}
-			foreach (var item in images) {
-				var im = PdfReader.GetPdfObject(item.Value) as PRStream;
-				if (im == null
-					|| PdfName.IMAGE.Equals(im.GetAsName(PdfName.SUBTYPE)) == false) {
-					continue;
-				}
-				_processedImageCount++;
-				var l = im.GetAsNumber(PdfName.LENGTH);
-				if (l == null || l.IntValue < 400 /*忽略小图片*/) {
-					continue;
-				}
-				var f = im.Get(PdfName.FILTER);
-				PdfName fn = null;
-				if (f.Type == PdfObject.ARRAY) {
-					var fl = f as PdfArray;
-					fn = fl.GetAsName(fl.Size - 1);
-				}
-				else if (f.Type == PdfObject.NAME) {
-					fn = f as PdfName;
-				}
-				if (fn != null && __IgnoreFilters.Contains(fn)) {
-					continue;
-				}
-
-				if (OptimizeBinaryImage(item.Value as PdfIndirectReference, im, l.IntValue)
-					/*|| ReplaceJ2kImage(item.Value as PdfIndirectReference, im, fn)*/) {
+			foreach (var item in items) {
+				if (item.Value is PdfIndirectReference pdfRef
+					&& PdfReader.GetPdfObject(pdfRef) is PRStream im) {
+					var subType = im.GetAsName(PdfName.SUBTYPE);
+					if (PdfName.IMAGE.Equals(subType)) {
+						CompressImage(pdfRef, im);
+					}
+					else if (PdfName.FORM.Equals(subType)) {
+						IterateObjects(im);
+					}
 				}
 			}
 			return true;
 		}
 
-		private bool OptimizeBinaryImage(PdfIndirectReference imgRef, PRStream imgStream, int length) {
+		void CompressImage(PdfIndirectReference pdfRef, PRStream img) {
+			_processedImageCount++;
+			var l = img.GetAsNumber(PdfName.LENGTH);
+			if (l == null || l.IntValue < 400 /*忽略小图片*/) {
+				return;
+			}
+			var f = img.Get(PdfName.FILTER);
+			PdfName fn = null;
+			if (f.Type == PdfObject.ARRAY) {
+				var fl = f as PdfArray;
+				fn = fl.GetAsName(fl.Size - 1);
+			}
+			else if (f.Type == PdfObject.NAME) {
+				fn = f as PdfName;
+			}
+			if (fn == null || !__IgnoreFilters.Contains(fn)) {
+				if (OptimizeBinaryImage(pdfRef, img, l.IntValue)
+					/*|| ReplaceJ2kImage(pdfRef, im, fn)*/) {
+					_optimizedImageCount++;
+				}
+			}
+		}
+
+		static bool OptimizeBinaryImage(PdfIndirectReference imgRef, PRStream imgStream, int length) {
 			var bpc = imgStream.GetAsNumber(PdfName.BITSPERCOMPONENT);
 			var mask = imgStream.GetAsBoolean(PdfName.IMAGEMASK);
 			if (bpc == null && (mask == null || mask.BooleanValue == false)
@@ -110,12 +120,11 @@ namespace PDFPatcher.Processor
 				imgStream.Remove(PdfName.EARLYCHANGE);
 				imgStream.Remove(PdfName.DECODEPARMS);
 				imgStream.Remove(PdfName.DECODE);
-				_optimizedImageCount++;
 			}
 			return true;
 		}
 
-		private bool ReplaceJ2kImage(PdfIndirectReference imgRef, PRStream imgStream, PdfName filter) {
+		static bool ReplaceJ2kImage(PdfIndirectReference imgRef, PRStream imgStream, PdfName filter) {
 			if (PdfName.JPXDECODE.Equals(filter) == false) {
 				return false;
 			}
@@ -131,7 +140,6 @@ namespace PDFPatcher.Processor
 			imgStream.SetData(jpg, false);
 			imgStream.Put(PdfName.FILTER, PdfName.DCTDECODE);
 			imgStream.Put(PdfName.LENGTH, new PdfNumber(jpg.Length));
-			_optimizedImageCount++;
 			return true;
 		}
 
