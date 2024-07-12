@@ -528,11 +528,28 @@ namespace PDFPatcher.Functions
 
 		protected override void OnMouseWheel(MouseEventArgs e) {
 			base.OnMouseWheel(e);
-			if (HorizontalFlow) {
-				ScrollTo(HorizontalScroll.Value + e.Delta, VerticalScroll.Value);
+			if (ModifierKeys == Keys.Control) {
+				var zoom = _zoomFactor * 100 / _renderOptions.Dpi * 72f;
+				if (e.Delta < 0) {
+					if (zoom > 10) {
+						zoom -= 10;
+					}
+				}
+				else {
+					zoom += 10;
+					if (zoom > 400) {
+						zoom = 400;
+					}
+				}
+				LiteralZoom = zoom.ToInt32().ToText() + "%";
 			}
 			else {
-				ScrollTo(HorizontalScroll.Value, VerticalScroll.Value - e.Delta);
+				if (HorizontalFlow) {
+					ScrollTo(HorizontalScroll.Value + e.Delta, VerticalScroll.Value);
+				}
+				else {
+					ScrollTo(HorizontalScroll.Value, VerticalScroll.Value - e.Delta);
+				}
 			}
 		}
 		internal void CloseFile() {

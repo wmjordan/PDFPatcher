@@ -228,6 +228,7 @@ namespace PDFPatcher.Functions
 			_ViewerBox.ZoomChanged += (s, args) => {
 				_ZoomBox.ToolTipText = "当前显示比例：" + (_ViewerBox.ZoomFactor * 100).ToInt32() + "%";
 				AppContext.Reader.Zoom = _ViewerBox.LiteralZoom;
+				_ZoomBox.Text = _ViewerBox.LiteralZoom;
 			};
 			_ViewerBox.PageChanged += (s, args) => _CurrentPageBox.Text = _ViewerBox.CurrentPageNumber.ToText();
 			_ViewerBox.ContentDirectionChanged += (s, args) => AppContext.Reader.ContentDirection = ((PdfViewerControl)s).ContentDirection;
