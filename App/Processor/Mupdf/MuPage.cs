@@ -184,7 +184,11 @@ namespace MuPdfSharp
 			var ctm = CalculateMatrix(width, height, options);
 			var bbox = width > 0 && height > 0 ? new BBox(0, 0, width, height) : ctm.Transform(b).Round;
 
-			var pix = _context.CreatePixmap(options.ColorSpace, bbox);
+			PixmapHandle pix = _context.CreatePixmap(options.ColorSpace, bbox);
+			if (pix.IsInvalid) {
+				_context.ThrowExceptionIfError();
+				throw new MuPdfException("无法渲染页面：" + PageNumber);
+			}
 			try {
 				NativeMethods.ClearPixmap(_context, pix, 0xFF);
 				using (var dev = new DeviceHandle(_context, pix, Matrix.Identity)) {

@@ -78,14 +78,26 @@ namespace MuPdfSharp
 			}
 			try {
 				_sourceStream = new StreamHandle(_context, fileName);
+				if (_sourceStream.IsInvalid) {
+					_context.ThrowExceptionIfError();
+				}
 				_document = new DocumentHandle(_context, _sourceStream);
+				if (_document.IsInvalid) {
+					_context.ThrowExceptionIfError();
+				}
 				FilePath = fileName;
 				return InitPdf(password);
 			}
-			catch (AccessViolationException) {
+			catch (Exception) {
 				_sourceStream.DisposeHandle();
 				_document.DisposeHandle();
 				throw new IOException("PDF 文件无效：" + fileName);
+			}
+		}
+
+		public void SaveAs(string fileName, MuPdfWriterOptions options) {
+			if (NativeMethods.PdfSaveDocument(_context, _document, fileName, options) == false) {
+				_context.ThrowExceptionIfError();
 			}
 		}
 
@@ -161,8 +173,7 @@ namespace MuPdfSharp
 
 		int InitPdf(string password) {
 			AuthenticatePassword(password);
-			PageCount = NativeMethods.CountPages(_context, _document);
-			return PageCount;
+			return PageCount = NativeMethods.CountPages(_context, _document);
 		}
 
 		#region 实现 IDisposable 接口的属性和方法

@@ -36,11 +36,21 @@ namespace MuPdfSharp
 			return true;
 		}
 
+		internal unsafe void ThrowExceptionIfError() {
+			var s = NativeMethods.ConvertError(handle, out var code);
+			if (code != 0) {
+				throw new MuPdfException(new string(s));
+			}
+		}
+
 		internal PixmapHandle CreatePixmap(ColorSpace colorspace, int width, int height) {
 			return new PixmapHandle(this, FindDeviceColorSpace(colorspace), width, height);
 		}
 
 		internal PixmapHandle CreatePixmap(ColorSpace colorspace, BBox box) {
+			if ((long)box.Width * box.Height > Int32.MaxValue) {
+				throw new MuPdfException("图片尺寸太大");
+			}
 			return new PixmapHandle(this, FindDeviceColorSpace(colorspace), box);
 		}
 		internal DisplayListHandle CreateDisplayList(Rectangle mediaBox) {

@@ -27,6 +27,9 @@ namespace MuPdfSharp
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_drop_context")]
 		internal static extern void DropContext(IntPtr ctx);
 
+		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_convert_error")]
+		internal static unsafe extern sbyte* ConvertError(IntPtr ctx, out int code);
+
 		#region Colorspace
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_device_gray")]
 		internal static extern IntPtr GetGrayColorSpace(ContextHandle ctx);
@@ -41,7 +44,7 @@ namespace MuPdfSharp
 		#endregion
 
 		#region Document and file stream
-		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_open_document_with_stream")]
+		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "OpenPdfDocumentStream")]
 		internal static extern IntPtr OpenPdfDocumentStream(ContextHandle ctx, StreamHandle stm);
 
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_drop_document")]
@@ -98,7 +101,7 @@ namespace MuPdfSharp
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_new_pixmap")]
 		internal static extern IntPtr NewPixmap(ContextHandle ctx, IntPtr colorspace, int width, int height, IntPtr separations, int alpha);
 
-		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_new_pixmap_with_bbox")]
+		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "NewPixmapWithBBox")]
 		internal static extern IntPtr NewPixmap(ContextHandle ctx, IntPtr colorspace, BBox bbox, IntPtr separations, int alpha);
 
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_drop_pixmap")]
@@ -211,6 +214,20 @@ namespace MuPdfSharp
 
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_run_page_widgets")]
 		public static extern void RunPageWidgets(ContextHandle context, PageHandle page, DeviceHandle dev, Matrix transform, ref MuCookie cookie);
+		#endregion
+
+		#region 文档写入器
+		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_new_pdf_writer", CharSet = CharSet.Unicode)]
+		public static extern IntPtr NewPdfWriter(ContextHandle context, string path, string option);
+
+		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "CloseDocumentWriter")]
+		public static extern bool CloseDocumentWriter(ContextHandle context, IntPtr writer);
+
+		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "PdfSaveDocument", CharSet = CharSet.Unicode)]
+		public static extern bool PdfSaveDocument(ContextHandle context, DocumentHandle document, string filePath, MuPdfWriterOptions options);
+
+		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_drop_document_writer")]
+		public static extern IntPtr DropDocumentWriter(ContextHandle context, IntPtr writer);
 		#endregion
 	}
 }

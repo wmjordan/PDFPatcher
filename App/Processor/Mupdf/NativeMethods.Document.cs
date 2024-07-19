@@ -154,7 +154,7 @@ namespace MuPdfSharp
 		/// <param name="ctx">MuPDF 上下文指针。</param>
 		/// <param name="fileName">要打开的文件名。</param>
 		/// <returns>指向 fz_stream 的指针</returns>
-		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_open_file_w", CharSet = CharSet.Unicode)]
+		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "OpenFile", CharSet = CharSet.Unicode)]
 		internal static extern IntPtr OpenFile(ContextHandle ctx, string fileName);
 
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_open_memory")]
