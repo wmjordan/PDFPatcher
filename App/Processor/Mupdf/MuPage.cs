@@ -174,7 +174,6 @@ namespace MuPdfSharp
 				text.DisposeHandle();
 				throw;
 			}
-			return;
 		}
 
 		private PixmapData InternalRenderPage(int width, int height, ImageRendererOptions options) {

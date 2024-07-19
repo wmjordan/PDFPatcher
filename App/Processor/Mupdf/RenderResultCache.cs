@@ -27,24 +27,23 @@ namespace MuPdfSharp
 		}
 
 		public Bitmap GetBitmap(int pageNumber) {
-			if (_buffer == null || _document.IsDisposed) {
+			if (_buffer == null
+				|| _document.IsDisposed
+				|| _buffer.TryGetValue(pageNumber, out var result) == false) {
 				return null;
 			}
-			RenderResult result;
-			_buffer.TryGetValue(pageNumber, out result);
-			return result?.Image;
+			return result.Image;
 		}
 
 		public void AddBitmap(int pageNumber, Bitmap bmp) {
-			if (_buffer.ContainsKey(pageNumber)) {
-				var i = _buffer[pageNumber];
-				i.Image?.Dispose();
+			if (_buffer.TryGetValue(pageNumber, out var image)) {
+				image.Image?.Dispose();
 			}
 			_buffer[pageNumber].Image = bmp;
 			TrimBitmapBuffer(pageNumber);
 		}
 
-		private void TrimBitmapBuffer(int pageNumber) {
+		void TrimBitmapBuffer(int pageNumber) {
 			if (__bufferSize >= _buffer.Count) {
 				return;
 			}
@@ -59,7 +58,6 @@ namespace MuPdfSharp
 			}
 			_buffer[i].Dispose();
 			_buffer.Remove(i);
-			//Tracker.DebugMessage ("removed buffered result " + i);
 		}
 
 		public void Clear() {
@@ -67,7 +65,6 @@ namespace MuPdfSharp
 				return;
 			}
 			foreach (var item in _buffer) {
-				//Tracker.DebugMessage ("Disposing page " + item.Key + " result.");
 				item.Value.Dispose();
 			}
 			_buffer.Clear();

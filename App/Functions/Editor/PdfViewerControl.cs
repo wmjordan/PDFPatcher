@@ -9,7 +9,6 @@ using MuPdfSharp;
 using PDFPatcher.Common;
 using DrawingPoint = System.Drawing.Point;
 using DrawingRectangle = System.Drawing.Rectangle;
-using MuPoint = MuPdfSharp.Point;
 using MuRectangle = MuPdfSharp.Rectangle;
 
 namespace PDFPatcher.Functions
@@ -374,7 +373,9 @@ namespace PDFPatcher.Functions
 					if (i < 1 || i > _mupdf.PageCount) {
 						continue;
 					}
-					if (_cancelRendering || _renderWorker.CancellationPending || _mupdf.IsDocumentOpened == false) {
+					if (_cancelRendering
+						|| _renderWorker.CancellationPending
+						|| _mupdf.IsDocumentOpened == false) {
 						_cancelRendering = false;
 						args.Cancel = true;
 						return;
