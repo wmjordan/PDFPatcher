@@ -12,17 +12,14 @@ namespace MuPdfSharp
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_new_null")]
 		internal static extern IntPtr NewNull(ContextHandle ctx, DocumentHandle doc);
 
-		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_new_bool")]
-		internal static extern IntPtr NewBoolean(ContextHandle ctx, DocumentHandle doc, int boolean);
-
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_new_int")]
-		internal static extern IntPtr NewInteger(ContextHandle ctx, DocumentHandle doc, int value);
+		internal static extern IntPtr NewInteger(ContextHandle ctx, int value);
 
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_new_real")]
-		internal static extern IntPtr NewFloat(ContextHandle ctx, DocumentHandle doc, float value);
+		internal static extern IntPtr NewFloat(ContextHandle ctx, float value);
 
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_new_string", BestFitMapping = false)]
-		internal static extern IntPtr NewString(ContextHandle ctx, DocumentHandle doc, [MarshalAs(UnmanagedType.LPStr)] string value, int len);
+		internal static extern IntPtr NewString(ContextHandle ctx, [MarshalAs(UnmanagedType.LPStr)] string value, int len);
 
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "pdf_new_name", BestFitMapping = false)]
 		internal static extern IntPtr NewName(ContextHandle ctx, DocumentHandle doc, [MarshalAs(UnmanagedType.LPStr)] string name);

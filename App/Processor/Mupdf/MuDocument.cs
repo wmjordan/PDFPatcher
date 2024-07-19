@@ -208,17 +208,14 @@ namespace MuPdfSharp
 		#endregion
 
 		#region 生成对象
-		public MuPdfObject Create(bool value) {
-			return new MuPdfObject(_context, NativeMethods.NewBoolean(_context, _document, value ? 1 : 0));
-		}
 		public MuPdfObject Create(int value) {
-			return new MuPdfObject(_context, NativeMethods.NewInteger(_context, _document, value));
+			return new MuPdfObject(_context, NativeMethods.NewInteger(_context, value));
 		}
 		public MuPdfObject Create(float value) {
-			return new MuPdfObject(_context, NativeMethods.NewFloat(_context, _document, value));
+			return new MuPdfObject(_context, NativeMethods.NewFloat(_context, value));
 		}
 		public MuPdfObject Create(string value) {
-			return new MuPdfObject(_context, NativeMethods.NewString(_context, _document, value, value.Length));
+			return new MuPdfObject(_context, NativeMethods.NewString(_context, value));
 		}
 		public MuPdfObject CreateName(string value) {
 			return new MuPdfObject(_context, NativeMethods.NewName(_context, _document, value));

@@ -332,6 +332,7 @@ namespace MuPdfSharp
 		{
 			//int c;
 			internal int _Unicode;
+			internal int _Bidi;
 			// color
 			internal int _Color; // sRGB hex value
 								 //fz_point origin;
