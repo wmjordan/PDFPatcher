@@ -249,7 +249,6 @@ namespace PDFPatcher.Functions
 
 		void _AddDocumentWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
 			AppContext.MainForm.Enabled = true;
-			//_listHelper.ResizeItemListColumns ();
 		}
 
 		void _AddDocumentWorker_ProgressChanged(object sender, ProgressChangedEventArgs e) {

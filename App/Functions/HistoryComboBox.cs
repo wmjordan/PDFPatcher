@@ -33,7 +33,6 @@ namespace PDFPatcher
 			if (i == 0) {
 				return;
 			}
-			//Trace.WriteLine ("add history item:" + text);
 			if (i != -1) {
 				RemoveAt(i);
 			}
@@ -55,8 +54,6 @@ namespace PDFPatcher
 		}
 
 		private void RemoveAt(int i) {
-			//Trace.WriteLine ("remove item:" + i);
-
 			var l = Contents;
 			if (l != null) {
 				l.RemoveAt(i);
@@ -67,7 +64,6 @@ namespace PDFPatcher
 		}
 
 		private void Insert(int i, string o) {
-			//Trace.WriteLine ("insert item:" + i + ":" + o);
 			var l = Contents;
 			if (l != null) {
 				l.Insert(i, o);

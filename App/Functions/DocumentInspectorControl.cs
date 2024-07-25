@@ -530,7 +530,6 @@ namespace PDFPatcher.Functions
 			var cn = ci.Name;
 			var n = _ObjectDetailBox.GetModelObject(_ObjectDetailBox.FocusedItem.Index) as DocumentObject;
 			if (ci == _DeleteButton) {
-				//if (this.ActiveControl == _DocumentTree) {
 				if (n == null || n.Parent == null) {
 					return;
 				}
@@ -546,7 +545,6 @@ namespace PDFPatcher.Functions
 						_ObjectDetailBox.RefreshObject(n.Parent);
 					}
 				}
-				//}
 			}
 			else if (ci == _ViewButton) {
 				if (n == null) {
@@ -575,11 +573,6 @@ namespace PDFPatcher.Functions
 					using (var r = new StreamReader(ms))
 					using (var f = new TextViewerForm(r.ReadToEnd(), true)) {
 						f.ShowDialog(FindForm());
-						//_DescriptionBox.Text = String.Empty;
-						//while (r.Peek () != -1) {
-						//    _DescriptionBox.AppendText (r.ReadLine ());
-						//    _DescriptionBox.AppendText (Environment.NewLine);
-						//}
 					}
 				}
 			}
@@ -806,8 +799,6 @@ namespace PDFPatcher.Functions
 				_pdf?.Close();
 				_pdf = d;
 				e.Result = path;
-				//Common.Form.Action ev = delegate () { _FilePathBox.Text = path; };
-				//_FilePathBox.Invoke (ev);
 			}
 			catch (iTextSharp.text.exceptions.BadPasswordException) {
 				FormHelper.ErrorBox(Messages.PasswordInvalid);
@@ -845,10 +836,10 @@ namespace PDFPatcher.Functions
 				= m["_ExportBinary"].Enabled
 				= m["_ExportUncompressedHexText"].Enabled
 				= m["_ExportUncompressedBinary"].Enabled
-				= (n.ExtensiveObject as PRStream) != null;
+				= n.ExtensiveObject is PRStream;
 			m["_ExportXml"].Enabled
 				= __XmlExportableTypes.Contains(n.Type);
-			m["_ExportToUnicode"].Visible = (n.ExtensiveObject as PRStream) != null && n.Name == "ToUnicode";
+			m["_ExportToUnicode"].Visible = n.ExtensiveObject is PRStream && n.Name == "ToUnicode";
 		}
 
 		void _AddObjectMenu_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e) {

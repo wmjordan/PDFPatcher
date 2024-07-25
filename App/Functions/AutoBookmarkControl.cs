@@ -254,13 +254,6 @@ namespace PDFPatcher.Functions
 				}
 			}
 			else if (sender == _PasteButton) {
-				//var s = Clipboard.GetText ();
-				//if (String.IsNullOrEmpty (s) == false && s.Length < 100) {
-				//    _LevelAdjustmentBox.AddObject (new AutoBookmarkOptions.LevelAdjustmentOption () {
-				//        Condition = new AutoBookmarkCondition.FontNameCondition (s, false)
-				//    });
-				//    return;
-				//}
 				if (_copiedLevelAdjustments.HasContent() == false) {
 					return;
 				}

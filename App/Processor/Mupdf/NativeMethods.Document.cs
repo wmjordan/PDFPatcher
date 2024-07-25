@@ -92,19 +92,12 @@ namespace MuPdfSharp
 			var f = TryLoadCompatibleFont(name);
 			if (f != null) {
 				return LoadFontFromFile(ctx, null, f, 0, 0);
-				//unsafe {
-				//	MuFontFlags* flags = (MuFontFlags*)GetFontFlags(p);
-				//	var n = GetFontName(ctx, p);
-				//	var f = p.MarshalAs<FzFont>();
-				//}
 			}
-			//var p = LoadFontFromFile(ctx, name, @"C:\Windows\Fonts\simsun.ttc", 1, 1);
 			return IntPtr.Zero;
 		}
 		static IntPtr RequestSystemCjkFont(IntPtr ctx, string name, int registry, int serifDesired) {
 			System.Diagnostics.Debug.WriteLine("Requesting system CJK font: " + name);
 			var ff = TryLoadCompatibleFont(name);
-			// todo: load fallback font
 			return ff != null ? LoadFontFromFile(ctx, name, ff, 0, 1) : IntPtr.Zero;
 		}
 

@@ -140,7 +140,5 @@ namespace PDFPatcher.Functions
 		}
 
 		#endregion
-
-
 	}
 }

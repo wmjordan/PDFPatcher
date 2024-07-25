@@ -123,10 +123,6 @@ namespace PDFPatcher.Functions
 					return;
 				}
 			}
-			//else if (String.IsNullOrEmpty (_BookmarkControl.Text)) {
-			//    Common.Form.ErrorBox (Messages.InfoDocNotSpecified);
-			//    return;
-			//}
 
 			AppContext.SourceFiles = _SourceFileControl.Files;
 			AppContext.BookmarkFile = _BookmarkControl.Text;

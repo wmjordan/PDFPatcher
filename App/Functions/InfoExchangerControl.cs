@@ -67,15 +67,6 @@ namespace PDFPatcher.Functions
 			fi.AddRange(new System.Drawing.Image[] {
 				Properties.Resources.OriginalPdfFile
 			});
-			//_ItemList.SelectedIndexChanged += (s, args) => {
-			//	if (_ItemList.SelectedIndex != -1 && _TargetPdfFile.Text.Trim ().Length > 0) {
-			//		var f = _ItemList.GetModelObject (_ItemList.SelectedIndex) as SourceItem;
-			//		AppContext.MainForm.StatusText = "输出文件：" + f.GetTargetPdfFileName (_TargetPdfFile.Text.Trim ());
-			//	}
-			//	else {
-			//		AppContext.MainForm.StatusText = String.Empty;
-			//	}
-			//};
 			_ItemList.FixEditControlWidth();
 			_ItemList.ScaleColumnWidths();
 			_listHelper = new FileListHelper(_ItemList);
@@ -160,11 +151,6 @@ namespace PDFPatcher.Functions
 				FormHelper.ErrorBox(Messages.TargetFileNotSpecified);
 				return;
 			}
-			//if (_mode == ProcessMode.Merge && Common.FileHelper.IsPathValid (targetPdfFile) == false) {
-			//    Common.FormHelper.ErrorBox ("输出文件名无效。" + (Common.FileUtility.HasFileNameMacro (targetPdfFile) ? "\n制作 PDF 文件功能不支持替代符。" : String.Empty));
-			//    return;
-			//}
-
 			var l = _ItemList.GetItemCount();
 			if (l == 0) {
 				FormHelper.InfoBox("请添加需要处理的 PDF 文件。");

@@ -36,20 +36,6 @@ namespace PDFPatcher
 			set => _SourcePdfBox.Text = value;
 		}
 
-		/////<summary>获取或指定文本标签的值。</summary>
-		//[Description ("文本标签的值")]
-		//public string Label {
-		//    get { return this.label1.Text; }
-		//    set { this.label1.Text = value; }
-		//}
-
-		/////<summary>获取或指定是否可多选文件。</summary>
-		//[Description ("是否可多选文件")]
-		//public bool MultiSelect {
-		//    get { return this._OpenPdfBox.Multiselect; }
-		//    set { this._OpenPdfBox.Multiselect = value; }
-		//}
-
 		public void BrowseFile() {
 			_BrowseSourcePdfButton.PerformClick();
 		}

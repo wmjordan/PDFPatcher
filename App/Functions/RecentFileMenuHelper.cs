@@ -11,7 +11,6 @@ namespace PDFPatcher.Functions
 				case Constants.FileExtensions.Pdf:
 					AppContext.RecentItems.AddHistoryItem(AppContext.Recent.SourcePdfFiles, path);
 					break;
-				//case Constants.FileExtensions.Txt:
 				case Constants.FileExtensions.Xml:
 					AppContext.RecentItems.AddHistoryItem(AppContext.Recent.InfoDocuments, path);
 					break;

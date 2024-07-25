@@ -9,7 +9,6 @@ namespace PDFPatcher.Processor
 	{
 		int _processedItemCount;
 
-		#region IPageProcessor 成员
 		public string Name => "删除缩略图";
 		public void BeginProcess(DocProcessorContext context) {
 			_processedItemCount = 0;
@@ -32,7 +31,5 @@ namespace PDFPatcher.Processor
 			_processedItemCount++;
 			return true;
 		}
-
-		#endregion
 	}
 }

@@ -101,7 +101,7 @@ namespace PDFPatcher.Functions
 			_ExtractPageRatioBox.SetValue(o.ScaleRatio);
 		}
 
-		private void _BrowseTargetPdfButton_Click(object sender, EventArgs e) {
+		void _BrowseTargetPdfButton_Click(object sender, EventArgs e) {
 			var sourceFile = _SourceFileControl.Text;
 			if (_TargetBox.Text.Length > 0) {
 				_SaveImageBox.SelectedPath = Path.GetDirectoryName(_TargetBox.Text);
@@ -110,15 +110,11 @@ namespace PDFPatcher.Functions
 				_SaveImageBox.SelectedPath = Path.GetDirectoryName(sourceFile);
 			}
 			if (_SaveImageBox.ShowDialog() == DialogResult.OK) {
-				_TargetBox.Text =
-					_SaveImageBox.SelectedPath
-					//+ (_SaveImageBox.SelectedPath.EndsWith ("\\") ? String.Empty : "\\")
-					//+ Path.GetFileNameWithoutExtension (sourceFile)
-					;
+				_TargetBox.Text = _SaveImageBox.SelectedPath;
 			}
 		}
 
-		private void _ExtractButton_Click(object sender, EventArgs e) {
+		void _ExtractButton_Click(object sender, EventArgs e) {
 			if (File.Exists(_SourceFileControl.FirstFile) == false) {
 				Common.FormHelper.ErrorBox(Messages.SourceFileNotFound);
 				return;
@@ -227,15 +223,15 @@ namespace PDFPatcher.Functions
 
 		#endregion
 
-		private void _GoToImportImageLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+		void _GoToImportImageLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
 			AppContext.MainForm.SelectFunctionList(Function.Patcher);
 		}
 
-		private void _FileNameMaskBox_TextChanged(object sender, EventArgs e) {
+		void _FileNameMaskBox_TextChanged(object sender, EventArgs e) {
 			ShowFileMaskPreview();
 		}
 
-		private void ShowFileMaskPreview() {
+		void ShowFileMaskPreview() {
 			try {
 				var previews = new string[7];
 				var f = _FileNameMaskBox.Text;
@@ -253,14 +249,10 @@ namespace PDFPatcher.Functions
 			}
 		}
 
-		private void Control_Show(object sender, EventArgs e) {
+		void Control_Show(object sender, EventArgs e) {
 			if (Visible && AppContext.MainForm != null) {
 				_TargetBox.Contents = AppContext.Recent.Folders;
 			}
-			//else if (this.Visible == false) {
-			//    this._TargetBox.DataSource = null;
-			//}
 		}
-
 	}
 }

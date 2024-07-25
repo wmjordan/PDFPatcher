@@ -335,9 +335,6 @@ namespace PDFPatcher.Functions
 				if (p == _itemsContainer) {
 					_ItemList.SetObjects(_itemsContainer.Items);
 				}
-				else {
-					//_ItemList.RefreshObject (p);
-				}
 			}
 			_ItemList.SelectedObjects = source;
 		}
@@ -396,26 +393,11 @@ namespace PDFPatcher.Functions
 				return;
 			}
 
-			//for (int i = _ItemList.GetItemCount () - 1; i >= 0; i--) {
-			//    var f = _ItemList.GetModelObject (i) as SourceItem;
-			//    if (f.Type == SourceItem.ItemType.Pdf) {
-			//        AppContext.Recent.AddHistoryItem (AppContext.Recent.SourcePdfFiles, f.FilePath);
-			//    }
-			//}
 			var l = _ItemList.GetItemCount();
 			if (l == 0) {
 				FormHelper.InfoBox("请添加用于生成 PDF 文件的图片或 PDF 源文件。");
 				return;
 			}
-			//var si = new List<SourceItem> (l);
-			//for (int i = 0; i < l; i++) {
-			//    var item = _ItemList.GetModelObject (_ItemList.GetNthItemInDisplayOrder (i).Index) as SourceItem;
-			//    //if (item.Type == SourceFileItem.ItemType.Pdf && item.Path.EndsWith (Constants.FileExtensions.Pdf, StringComparison.OrdinalIgnoreCase)) {
-			//    //    ContextData.Recent.AddHistoryItem (ContextData.Recent.SourcePdfFiles, item.Path);
-			//    //}
-			//    si.Add (item);
-			//}
-
 			_BookmarkControl.FileList.AddHistoryItem();
 			_TargetPdfFile.FileList.AddHistoryItem();
 			var fm = _IndividualMergerModeBox.Checked;
@@ -846,7 +828,6 @@ namespace PDFPatcher.Functions
 		ListViewItem GetFocusedPdfItem() {
 			var vi = _ItemList.FocusedItem;
 			if (vi == null
-				//|| vi.Selected == false
 				|| vi.Text.EndsWith(Constants.FileExtensions.Pdf, StringComparison.OrdinalIgnoreCase) == false) {
 				return null;
 			}
@@ -895,22 +876,7 @@ namespace PDFPatcher.Functions
 
 		void _AddDocumentWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
 			AppContext.MainForm.Enabled = true;
-			//ResizeItemListColumns ();
 		}
-
-		//void ResizeItemListColumns () {
-		//    var c = _ItemList.Columns[0];
-		//    _ItemList.AutoResizeColumns (ColumnHeaderAutoResizeStyle.ColumnContent);
-		//    if (c.Width < 100) {
-		//        c.Width = 100;
-		//    }
-		//    for (int i = 1; i < _ItemList.Columns.Count; i++) {
-		//        c = _ItemList.Columns[i];
-		//        if (c.Width < 50) {
-		//            c.Width = 50;
-		//        }
-		//    }
-		//}
 
 		void _AddDocumentWorker_ProgressChanged(object sender, ProgressChangedEventArgs e) {
 			AddItem(SourceItem.Create(e.UserState as string));

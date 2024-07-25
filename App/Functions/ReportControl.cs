@@ -18,7 +18,7 @@ namespace PDFPatcher.Functions
 			}
 		}
 
-		private void _CancelButton_Click(object sender, EventArgs e) {
+		void _CancelButton_Click(object sender, EventArgs e) {
 			if (AppContext.MainForm.IsWorkerBusy == false) {
 				Hide();
 			}
@@ -29,15 +29,6 @@ namespace PDFPatcher.Functions
 				}
 			}
 		}
-
-
-		#region IDefaultButtonControl 成员
-
-		//public override Button DefaultButton {
-		//	get { return _CancelButton; }
-		//}
-
-		#endregion
 
 		internal void SetGoal(int goalValue) {
 			_ProgressBar.Value = 0;
@@ -111,7 +102,7 @@ namespace PDFPatcher.Functions
 			_CancelButton.Image = Properties.Resources.Return;
 		}
 
-		private void _LogBox_LinkClicked(object sender, LinkClickedEventArgs e) {
+		void _LogBox_LinkClicked(object sender, LinkClickedEventArgs e) {
 			var f = e.LinkText;
 			if (File.Exists(f) || Directory.Exists(f)) {
 				try {
@@ -122,6 +113,5 @@ namespace PDFPatcher.Functions
 				}
 			}
 		}
-
 	}
 }

@@ -248,6 +248,5 @@ namespace PDFPatcher.Functions
 				}
 			}
 		}
-
 	}
 }

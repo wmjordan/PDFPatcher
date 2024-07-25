@@ -144,10 +144,6 @@ namespace PDFPatcher.Functions
 				Common.FormHelper.ErrorBox(Messages.TargetFileNotSpecified);
 				return;
 			}
-			//if (_mode == ProcessMode.Merge && Common.FileHelper.IsPathValid (targetPdfFile) == false) {
-			//    Common.FormHelper.ErrorBox ("输出文件名无效。" + (Common.FileUtility.HasFileNameMacro (targetPdfFile) ? "\n制作 PDF 文件功能不支持替代符。" : String.Empty));
-			//    return;
-			//}
 
 			var l = _ItemList.GetItemCount();
 			if (l == 0) {

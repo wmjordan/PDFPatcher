@@ -92,11 +92,7 @@ namespace PDFPatcher.Functions
 				_SaveImageBox.SelectedPath = Path.GetDirectoryName(sourceFile);
 			}
 			if (_SaveImageBox.ShowDialog() == DialogResult.OK) {
-				_TargetBox.Text =
-					_SaveImageBox.SelectedPath
-					//+ (_SaveImageBox.SelectedPath.EndsWith ("\\") ? String.Empty : "\\")
-					//+ Path.GetFileNameWithoutExtension (sourceFile)
-					;
+				_TargetBox.Text = _SaveImageBox.SelectedPath;
 			}
 		}
 
@@ -196,10 +192,6 @@ namespace PDFPatcher.Functions
 			if (Visible && AppContext.MainForm != null) {
 				_TargetBox.Contents = AppContext.Recent.Folders;
 			}
-			//else if (this.Visible == false) {
-			//    this._TargetBox.DataSource = null;
-			//}
 		}
-
 	}
 }

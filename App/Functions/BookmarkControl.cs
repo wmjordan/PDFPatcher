@@ -7,13 +7,10 @@ namespace PDFPatcher
 {
 	public partial class BookmarkControl : UserControl
 	{
-		//readonly string[] xmlBookmarkType = new string[] { ".xml" };
-		//private string[] supportedBookmarkTypes;
 		internal event EventHandler<EventArgs> BrowseForFile;
 
 		public BookmarkControl() {
 			InitializeComponent();
-			//supportedBookmarkTypes = defaultBookmarkTypes;
 		}
 
 		///<summary>获取或指定书签文件路径的下拉列表框。</summary>
@@ -41,7 +38,6 @@ namespace PDFPatcher
 		public bool UseForBookmarkExport {
 			get => _UseForBookmarkExport;
 			set =>
-				//supportedBookmarkTypes = value ? xmlBookmarkType : defaultBookmarkTypes;
 				_UseForBookmarkExport = value;
 		}
 
@@ -72,12 +68,10 @@ namespace PDFPatcher
 		}
 
 		private void _BookmarkBox_DragEnter(object sender, DragEventArgs e) {
-			//Common.Form.FeedbackDragFileOver (e, supportedBookmarkTypes);
 			e.FeedbackDragFileOver(Constants.FileExtensions.AllBookmarkExtension);
 		}
 
 		private void _BookmarkBox_DragDrop(object sender, DragEventArgs e) {
-			//Common.Form.DropFileOver ((Control)sender, e, supportedBookmarkTypes);
 			((Control)sender).DropFileOver(e, Constants.FileExtensions.AllBookmarkExtension);
 		}
 
@@ -88,7 +82,6 @@ namespace PDFPatcher
 		private void BookmarkControl_Show(object sender, EventArgs e) {
 			var t = _BookmarkBox.Text;
 			if (Visible && AppContext.MainForm != null) {
-				// _BookmarkBox.DataSource = new BindingList<string> (_UseForBookmarkExport ? ContextData.Recent.SavedInfoDocuments : ContextData.Recent.InfoDocuments);
 				_BookmarkBox.Contents = AppContext.Recent.InfoDocuments;
 			}
 			else if (Visible == false) {

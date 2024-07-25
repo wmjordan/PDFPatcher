@@ -149,25 +149,6 @@ namespace PDFPatcher.Functions
 					return;
 				}
 				ScrollToSelectedBookmarkLocation();
-				//var bs = el.GetAttribute (Constants.BookmarkAttributes.Style);
-				//switch (bs) {
-				//    case Constants.BookmarkAttributes.StyleType.Bold:
-				//        _BookmarkBoldButton.Checked = true;
-				//        _BookmarkItalicButton.Checked = false;
-				//        break;
-				//    case Constants.BookmarkAttributes.StyleType.BoldItalic:
-				//        _BookmarkBoldButton.Checked = true;
-				//        _BookmarkItalicButton.Checked = true;
-				//        break;
-				//    case Constants.BookmarkAttributes.StyleType.Italic:
-				//        _BookmarkBoldButton.Checked = false;
-				//        _BookmarkItalicButton.Checked = true;
-				//        break;
-				//    default:
-				//        _BookmarkBoldButton.Checked = false;
-				//        _BookmarkItalicButton.Checked = false;
-				//        break;
-				//}
 			};
 			_BookmarkBox.CellEditStarting += (s, args) => {
 				if (args.Column.Index == 0) {
@@ -613,7 +594,6 @@ namespace PDFPatcher.Functions
 				_controller.LoadDocument(Text, false);
 			}
 		}
-
 
 		#region Editor.IEditView
 		bool Editor.IEditView.AffectsDescendantBookmarks => _IncludeDecendantBox.Checked || ModifierKeys == Keys.Shift;
