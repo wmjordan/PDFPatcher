@@ -42,6 +42,7 @@ namespace PDFPatcher.Functions
 			ps.ScaleContent = _ScalePdfPagesBox.Checked;
 			settings.RecompressWithJbig2 = _RecompressWithJbig2Box.Checked;
 			settings.RemoveAnnotations = _RemoveAnnotationsBox.Checked;
+			settings.RemoveAttachments = _RemoveAttachmentsBox.Checked;
 			settings.RemoveBookmarks = _RemoveBookmarksBox.Checked;
 			settings.RemoveLeadingCommandCount = (int)_RemoveLeadingCommandCountBox.Value;
 			settings.RemoveUsageRights = _RemoveUsageRightsBox.Checked;
@@ -82,6 +83,7 @@ namespace PDFPatcher.Functions
 			_FixContentBox.Checked = settings.FixContents;
 			_RecompressWithJbig2Box.Checked = settings.RecompressWithJbig2;
 			_RemoveAnnotationsBox.Checked = settings.RemoveAnnotations;
+			_RemoveAttachmentsBox.Checked = settings.RemoveAttachments;
 			_RemoveBookmarksBox.Checked = settings.RemoveBookmarks;
 			_RemoveDocAutoActionsBox.Checked = settings.RemoveDocAutoActions;
 			_RemoveLeadingCommandCountBox.SetValue(settings.RemoveLeadingCommandCount);

@@ -54,7 +54,6 @@
 			this.label5 = new System.Windows.Forms.Label();
 			this.label4 = new System.Windows.Forms.Label();
 			this._ViewerSettingsPage = new System.Windows.Forms.TabPage();
-			this._ViewerSettingsEditor = new PDFPatcher.Functions.ViewerPreferenceEditor();
 			this._CleanerPage = new System.Windows.Forms.TabPage();
 			this.groupBox4 = new System.Windows.Forms.GroupBox();
 			this.label12 = new System.Windows.Forms.Label();
@@ -79,18 +78,20 @@
 			this._RecompressWithJbig2Box = new System.Windows.Forms.CheckBox();
 			this._FullCompressionBox = new System.Windows.Forms.CheckBox();
 			this._DocumentInfoPage = new System.Windows.Forms.TabPage();
-			this._DocumentInfoEditor = new PDFPatcher.Functions.DocumentInfoEditor();
 			this._PageLabelsPage = new System.Windows.Forms.TabPage();
-			this._PageLabelEditor = new PDFPatcher.Functions.PageLabelEditor();
 			this._PageSettingsPage = new System.Windows.Forms.TabPage();
-			this._PageSettingsEditor = new PDFPatcher.Functions.PageSettingsEditor();
 			this._FontSubstitutionsPage = new System.Windows.Forms.TabPage();
-			this._FontSubstitutionsEditor = new PDFPatcher.Functions.FontSubstitutionsEditor();
 			this._ConfigPage = new System.Windows.Forms.TabPage();
 			this._ResetButton = new System.Windows.Forms.Button();
 			this._ImportButton = new System.Windows.Forms.Button();
 			this._ExportButton = new System.Windows.Forms.Button();
 			this.panel1 = new System.Windows.Forms.Panel();
+			this._RemoveAttachmentsBox = new System.Windows.Forms.CheckBox();
+			this._ViewerSettingsEditor = new PDFPatcher.Functions.ViewerPreferenceEditor();
+			this._DocumentInfoEditor = new PDFPatcher.Functions.DocumentInfoEditor();
+			this._PageLabelEditor = new PDFPatcher.Functions.PageLabelEditor();
+			this._PageSettingsEditor = new PDFPatcher.Functions.PageSettingsEditor();
+			this._FontSubstitutionsEditor = new PDFPatcher.Functions.FontSubstitutionsEditor();
 			this._MainTab.SuspendLayout();
 			this._PageLayoutPage.SuspendLayout();
 			this._MarginGroupBox.SuspendLayout();
@@ -504,18 +505,10 @@
 			this._ViewerSettingsPage.Location = new System.Drawing.Point(4, 22);
 			this._ViewerSettingsPage.Name = "_ViewerSettingsPage";
 			this._ViewerSettingsPage.Padding = new System.Windows.Forms.Padding(3);
-			this._ViewerSettingsPage.Size = new System.Drawing.Size(444, 295);
+			this._ViewerSettingsPage.Size = new System.Drawing.Size(438, 289);
 			this._ViewerSettingsPage.TabIndex = 4;
 			this._ViewerSettingsPage.Text = "阅读方式";
 			this._ViewerSettingsPage.UseVisualStyleBackColor = true;
-			// 
-			// _ViewerSettingsEditor
-			// 
-			this._ViewerSettingsEditor.Location = new System.Drawing.Point(0, 0);
-			this._ViewerSettingsEditor.Margin = new System.Windows.Forms.Padding(4);
-			this._ViewerSettingsEditor.Name = "_ViewerSettingsEditor";
-			this._ViewerSettingsEditor.Size = new System.Drawing.Size(438, 279);
-			this._ViewerSettingsEditor.TabIndex = 0;
 			// 
 			// _CleanerPage
 			// 
@@ -525,7 +518,7 @@
 			this._CleanerPage.Location = new System.Drawing.Point(4, 22);
 			this._CleanerPage.Name = "_CleanerPage";
 			this._CleanerPage.Padding = new System.Windows.Forms.Padding(3);
-			this._CleanerPage.Size = new System.Drawing.Size(444, 295);
+			this._CleanerPage.Size = new System.Drawing.Size(438, 289);
 			this._CleanerPage.TabIndex = 5;
 			this._CleanerPage.Text = "压缩清理";
 			this._CleanerPage.UseVisualStyleBackColor = true;
@@ -544,9 +537,9 @@
 			this.groupBox4.Controls.Add(this._RemoveAnnotationsBox);
 			this.groupBox4.Controls.Add(this._RemovePageAutoActionsBox);
 			this.groupBox4.Controls.Add(this._RemovePageMetaDataBox);
-			this.groupBox4.Location = new System.Drawing.Point(6, 105);
+			this.groupBox4.Location = new System.Drawing.Point(6, 102);
 			this.groupBox4.Name = "groupBox4";
-			this.groupBox4.Size = new System.Drawing.Size(432, 133);
+			this.groupBox4.Size = new System.Drawing.Size(432, 136);
 			this.groupBox4.TabIndex = 1;
 			this.groupBox4.TabStop = false;
 			this.groupBox4.Text = "源文档页面";
@@ -554,7 +547,7 @@
 			// label12
 			// 
 			this.label12.AutoSize = true;
-			this.label12.Location = new System.Drawing.Point(222, 107);
+			this.label12.Location = new System.Drawing.Point(222, 111);
 			this.label12.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
 			this.label12.Name = "label12";
 			this.label12.Size = new System.Drawing.Size(41, 12);
@@ -564,7 +557,7 @@
 			// label11
 			// 
 			this.label11.AutoSize = true;
-			this.label11.Location = new System.Drawing.Point(142, 107);
+			this.label11.Location = new System.Drawing.Point(142, 111);
 			this.label11.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
 			this.label11.Name = "label11";
 			this.label11.Size = new System.Drawing.Size(29, 12);
@@ -573,7 +566,7 @@
 			// 
 			// _RemoveTrailingCommandCountBox
 			// 
-			this._RemoveTrailingCommandCountBox.Location = new System.Drawing.Point(175, 106);
+			this._RemoveTrailingCommandCountBox.Location = new System.Drawing.Point(175, 110);
 			this._RemoveTrailingCommandCountBox.Margin = new System.Windows.Forms.Padding(2);
 			this._RemoveTrailingCommandCountBox.Name = "_RemoveTrailingCommandCountBox";
 			this._RemoveTrailingCommandCountBox.Size = new System.Drawing.Size(38, 21);
@@ -581,7 +574,7 @@
 			// 
 			// _RemoveLeadingCommandCountBox
 			// 
-			this._RemoveLeadingCommandCountBox.Location = new System.Drawing.Point(88, 106);
+			this._RemoveLeadingCommandCountBox.Location = new System.Drawing.Point(88, 110);
 			this._RemoveLeadingCommandCountBox.Margin = new System.Windows.Forms.Padding(2);
 			this._RemoveLeadingCommandCountBox.Name = "_RemoveLeadingCommandCountBox";
 			this._RemoveLeadingCommandCountBox.Size = new System.Drawing.Size(38, 21);
@@ -590,7 +583,7 @@
 			// label10
 			// 
 			this.label10.AutoSize = true;
-			this.label10.Location = new System.Drawing.Point(5, 107);
+			this.label10.Location = new System.Drawing.Point(5, 111);
 			this.label10.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
 			this.label10.Name = "label10";
 			this.label10.Size = new System.Drawing.Size(83, 12);
@@ -621,7 +614,7 @@
 			// _RemovePageTextBlocksBox
 			// 
 			this._RemovePageTextBlocksBox.AutoSize = true;
-			this._RemovePageTextBlocksBox.Location = new System.Drawing.Point(6, 85);
+			this._RemovePageTextBlocksBox.Location = new System.Drawing.Point(6, 86);
 			this._RemovePageTextBlocksBox.Name = "_RemovePageTextBlocksBox";
 			this._RemovePageTextBlocksBox.Size = new System.Drawing.Size(120, 16);
 			this._RemovePageTextBlocksBox.TabIndex = 6;
@@ -631,7 +624,7 @@
 			// _RemovePageLinksBox
 			// 
 			this._RemovePageLinksBox.AutoSize = true;
-			this._RemovePageLinksBox.Location = new System.Drawing.Point(224, 62);
+			this._RemovePageLinksBox.Location = new System.Drawing.Point(224, 63);
 			this._RemovePageLinksBox.Name = "_RemovePageLinksBox";
 			this._RemovePageLinksBox.Size = new System.Drawing.Size(144, 16);
 			this._RemovePageLinksBox.TabIndex = 5;
@@ -641,7 +634,7 @@
 			// _RemoveAnnotationsBox
 			// 
 			this._RemoveAnnotationsBox.AutoSize = true;
-			this._RemoveAnnotationsBox.Location = new System.Drawing.Point(6, 63);
+			this._RemoveAnnotationsBox.Location = new System.Drawing.Point(6, 64);
 			this._RemoveAnnotationsBox.Name = "_RemoveAnnotationsBox";
 			this._RemoveAnnotationsBox.Size = new System.Drawing.Size(120, 16);
 			this._RemoveAnnotationsBox.TabIndex = 4;
@@ -670,6 +663,7 @@
 			// 
 			// groupBox3
 			// 
+			this.groupBox3.Controls.Add(this._RemoveAttachmentsBox);
 			this.groupBox3.Controls.Add(this._RemoveBookmarksBox);
 			this.groupBox3.Controls.Add(this._FixContentBox);
 			this.groupBox3.Controls.Add(this._RemoveXmlMetaDataBox);
@@ -677,7 +671,7 @@
 			this.groupBox3.Controls.Add(this._RemoveUsageRightsBox);
 			this.groupBox3.Location = new System.Drawing.Point(6, 6);
 			this.groupBox3.Name = "groupBox3";
-			this.groupBox3.Size = new System.Drawing.Size(432, 93);
+			this.groupBox3.Size = new System.Drawing.Size(432, 90);
 			this.groupBox3.TabIndex = 0;
 			this.groupBox3.TabStop = false;
 			this.groupBox3.Text = "源文档";
@@ -769,21 +763,10 @@
 			this._DocumentInfoPage.Location = new System.Drawing.Point(4, 22);
 			this._DocumentInfoPage.Name = "_DocumentInfoPage";
 			this._DocumentInfoPage.Padding = new System.Windows.Forms.Padding(3);
-			this._DocumentInfoPage.Size = new System.Drawing.Size(444, 295);
+			this._DocumentInfoPage.Size = new System.Drawing.Size(438, 289);
 			this._DocumentInfoPage.TabIndex = 2;
 			this._DocumentInfoPage.Text = "文档属性";
 			this._DocumentInfoPage.UseVisualStyleBackColor = true;
-			// 
-			// _DocumentInfoEditor
-			// 
-			this._DocumentInfoEditor.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this._DocumentInfoEditor.Location = new System.Drawing.Point(0, 0);
-			this._DocumentInfoEditor.Margin = new System.Windows.Forms.Padding(4);
-			this._DocumentInfoEditor.Name = "_DocumentInfoEditor";
-			this._DocumentInfoEditor.Size = new System.Drawing.Size(439, 294);
-			this._DocumentInfoEditor.TabIndex = 0;
 			// 
 			// _PageLabelsPage
 			// 
@@ -791,20 +774,10 @@
 			this._PageLabelsPage.Location = new System.Drawing.Point(4, 22);
 			this._PageLabelsPage.Name = "_PageLabelsPage";
 			this._PageLabelsPage.Padding = new System.Windows.Forms.Padding(3);
-			this._PageLabelsPage.Size = new System.Drawing.Size(444, 295);
+			this._PageLabelsPage.Size = new System.Drawing.Size(438, 289);
 			this._PageLabelsPage.TabIndex = 3;
 			this._PageLabelsPage.Text = "页码标签";
 			this._PageLabelsPage.UseVisualStyleBackColor = true;
-			// 
-			// _PageLabelEditor
-			// 
-			this._PageLabelEditor.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._PageLabelEditor.Labels = null;
-			this._PageLabelEditor.Location = new System.Drawing.Point(3, 3);
-			this._PageLabelEditor.Margin = new System.Windows.Forms.Padding(4);
-			this._PageLabelEditor.Name = "_PageLabelEditor";
-			this._PageLabelEditor.Size = new System.Drawing.Size(438, 289);
-			this._PageLabelEditor.TabIndex = 0;
 			// 
 			// _PageSettingsPage
 			// 
@@ -812,20 +785,10 @@
 			this._PageSettingsPage.Location = new System.Drawing.Point(4, 22);
 			this._PageSettingsPage.Name = "_PageSettingsPage";
 			this._PageSettingsPage.Padding = new System.Windows.Forms.Padding(3);
-			this._PageSettingsPage.Size = new System.Drawing.Size(444, 295);
+			this._PageSettingsPage.Size = new System.Drawing.Size(438, 289);
 			this._PageSettingsPage.TabIndex = 6;
 			this._PageSettingsPage.Text = "页面设置";
 			this._PageSettingsPage.UseVisualStyleBackColor = true;
-			// 
-			// _PageSettingsEditor
-			// 
-			this._PageSettingsEditor.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._PageSettingsEditor.Location = new System.Drawing.Point(3, 3);
-			this._PageSettingsEditor.Margin = new System.Windows.Forms.Padding(4);
-			this._PageSettingsEditor.Name = "_PageSettingsEditor";
-			this._PageSettingsEditor.Settings = null;
-			this._PageSettingsEditor.Size = new System.Drawing.Size(438, 289);
-			this._PageSettingsEditor.TabIndex = 0;
 			// 
 			// _FontSubstitutionsPage
 			// 
@@ -833,21 +796,10 @@
 			this._FontSubstitutionsPage.Location = new System.Drawing.Point(4, 22);
 			this._FontSubstitutionsPage.Name = "_FontSubstitutionsPage";
 			this._FontSubstitutionsPage.Padding = new System.Windows.Forms.Padding(3);
-			this._FontSubstitutionsPage.Size = new System.Drawing.Size(444, 295);
+			this._FontSubstitutionsPage.Size = new System.Drawing.Size(438, 289);
 			this._FontSubstitutionsPage.TabIndex = 7;
 			this._FontSubstitutionsPage.Text = "替换字体";
 			this._FontSubstitutionsPage.UseVisualStyleBackColor = true;
-			// 
-			// _FontSubstitutionsEditor
-			// 
-			this._FontSubstitutionsEditor.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._FontSubstitutionsEditor.Location = new System.Drawing.Point(3, 3);
-			this._FontSubstitutionsEditor.Margin = new System.Windows.Forms.Padding(4);
-			this._FontSubstitutionsEditor.Name = "_FontSubstitutionsEditor";
-			this._FontSubstitutionsEditor.Options = null;
-			this._FontSubstitutionsEditor.Size = new System.Drawing.Size(438, 289);
-			this._FontSubstitutionsEditor.Substitutions = null;
-			this._FontSubstitutionsEditor.TabIndex = 0;
 			// 
 			// _ConfigPage
 			// 
@@ -858,7 +810,7 @@
 			this._ConfigPage.Margin = new System.Windows.Forms.Padding(2);
 			this._ConfigPage.Name = "_ConfigPage";
 			this._ConfigPage.Padding = new System.Windows.Forms.Padding(2);
-			this._ConfigPage.Size = new System.Drawing.Size(444, 295);
+			this._ConfigPage.Size = new System.Drawing.Size(438, 289);
 			this._ConfigPage.TabIndex = 9;
 			this._ConfigPage.Text = "其它";
 			this._ConfigPage.UseVisualStyleBackColor = true;
@@ -901,6 +853,66 @@
 			this.panel1.Name = "panel1";
 			this.panel1.Size = new System.Drawing.Size(452, 321);
 			this.panel1.TabIndex = 3;
+			// 
+			// _RemoveAttachmentsBox
+			// 
+			this._RemoveAttachmentsBox.AutoSize = true;
+			this._RemoveAttachmentsBox.Location = new System.Drawing.Point(224, 64);
+			this._RemoveAttachmentsBox.Name = "_RemoveAttachmentsBox";
+			this._RemoveAttachmentsBox.Size = new System.Drawing.Size(96, 16);
+			this._RemoveAttachmentsBox.TabIndex = 5;
+			this._RemoveAttachmentsBox.Text = "清除所有附件";
+			this._RemoveAttachmentsBox.UseVisualStyleBackColor = true;
+			// 
+			// _ViewerSettingsEditor
+			// 
+			this._ViewerSettingsEditor.Location = new System.Drawing.Point(0, 0);
+			this._ViewerSettingsEditor.Margin = new System.Windows.Forms.Padding(4);
+			this._ViewerSettingsEditor.Name = "_ViewerSettingsEditor";
+			this._ViewerSettingsEditor.Size = new System.Drawing.Size(438, 279);
+			this._ViewerSettingsEditor.TabIndex = 0;
+			// 
+			// _DocumentInfoEditor
+			// 
+			this._DocumentInfoEditor.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this._DocumentInfoEditor.Location = new System.Drawing.Point(0, 0);
+			this._DocumentInfoEditor.Margin = new System.Windows.Forms.Padding(4);
+			this._DocumentInfoEditor.Name = "_DocumentInfoEditor";
+			this._DocumentInfoEditor.Size = new System.Drawing.Size(439, 294);
+			this._DocumentInfoEditor.TabIndex = 0;
+			// 
+			// _PageLabelEditor
+			// 
+			this._PageLabelEditor.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._PageLabelEditor.Labels = null;
+			this._PageLabelEditor.Location = new System.Drawing.Point(3, 3);
+			this._PageLabelEditor.Margin = new System.Windows.Forms.Padding(4);
+			this._PageLabelEditor.Name = "_PageLabelEditor";
+			this._PageLabelEditor.Size = new System.Drawing.Size(432, 283);
+			this._PageLabelEditor.TabIndex = 0;
+			// 
+			// _PageSettingsEditor
+			// 
+			this._PageSettingsEditor.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._PageSettingsEditor.Location = new System.Drawing.Point(3, 3);
+			this._PageSettingsEditor.Margin = new System.Windows.Forms.Padding(4);
+			this._PageSettingsEditor.Name = "_PageSettingsEditor";
+			this._PageSettingsEditor.Settings = null;
+			this._PageSettingsEditor.Size = new System.Drawing.Size(432, 283);
+			this._PageSettingsEditor.TabIndex = 0;
+			// 
+			// _FontSubstitutionsEditor
+			// 
+			this._FontSubstitutionsEditor.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._FontSubstitutionsEditor.Location = new System.Drawing.Point(3, 3);
+			this._FontSubstitutionsEditor.Margin = new System.Windows.Forms.Padding(4);
+			this._FontSubstitutionsEditor.Name = "_FontSubstitutionsEditor";
+			this._FontSubstitutionsEditor.Options = null;
+			this._FontSubstitutionsEditor.Size = new System.Drawing.Size(432, 283);
+			this._FontSubstitutionsEditor.Substitutions = null;
+			this._FontSubstitutionsEditor.TabIndex = 0;
 			// 
 			// PatcherOptionsControl
 			// 
@@ -1009,5 +1021,6 @@
 		private System.Windows.Forms.Button _ImportButton;
 		private System.Windows.Forms.Button _ExportButton;
 		private System.Windows.Forms.Panel panel1;
+		private System.Windows.Forms.CheckBox _RemoveAttachmentsBox;
 	}
 }

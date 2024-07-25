@@ -53,6 +53,16 @@ namespace PDFPatcher.Processor
 					Tracker.TraceMessage("删除文档批注。");
 					pdf.Catalog.Remove(PdfName.ACROFORM);
 				}
+				if (_options.RemoveAttachments) {
+					Tracker.TraceMessage("删除文档附件。");
+					var names = pdf.Catalog.GetAsDict(PdfName.NAMES);
+					if (names != null) {
+						names.Remove(PdfName.EMBEDDEDFILES);
+						if (names.Size == 0) {
+							pdf.Catalog.Remove(PdfName.NAMES);
+						}
+					}
+				}
 			}
 			if (_options.RemovePageAutoActions) {
 				Tracker.TraceMessage("删除页面自动动作。");

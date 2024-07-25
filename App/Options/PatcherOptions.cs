@@ -20,6 +20,8 @@ namespace PDFPatcher
 		public bool FixContents { get; set; }
 		[XmlAttribute("删除批注")]
 		public bool RemoveAnnotations { get; set; }
+		[XmlAttribute("删除附件")]
+		public bool RemoveAttachments { get; set; }
 		[XmlAttribute("删除导航书签")]
 		public bool RemoveBookmarks { get; set; }
 		[XmlAttribute("删除页面开头指令")]
