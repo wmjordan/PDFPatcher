@@ -25,8 +25,6 @@ namespace PDFPatcher.Processor
 		PdfIndirectReference font;
 		PdfIndirectReference fontV;
 
-		public ImportOcrResultProcessor() {
-		}
 		#region IDocProcessor 成员
 		public string Name => "导入光学字符识别结果";
 
@@ -100,7 +98,7 @@ namespace PDFPatcher.Processor
 					var bt = EnclosingCommand.Create("BT", null);
 #else
 					var bt = EnclosingCommand.Create ("BT", null,
-						PdfPageCommand.Create ("Tr", new PdfNumber (3))
+						PdfPageCommand.Create ("Tr", new PdfNumber (3)) // 隐藏识别的文本
 						);
 #endif
 					var bmc = EnclosingCommand.Create("BMC", new PdfObject[] { OcrResultBmcName }, bt);
@@ -218,18 +216,17 @@ namespace PDFPatcher.Processor
 				|| w <= 0
 				|| h <= 0
 				) {
-				Tracker.TraceMessage(String.Concat("识别结果的“", Constants.Ocr.Image, "”元素", (w <= 0 ? "宽属性无效" : String.Empty),
-					(h <= 0 ? "高属性无效" : String.Empty), "。"));
+				Tracker.TraceMessage($"识别结果的“{Constants.Ocr.Image}”元素{(w <= 0 ? "宽属性无效" : String.Empty)}{(h <= 0 ? "高属性无效" : String.Empty)}。");
 				return 0;
 			}
 			var m = result.GetAttribute(Constants.Content.OperandNames.Matrix);
 			if (String.IsNullOrEmpty(m)) {
-				Tracker.TraceMessage(String.Concat("识别结果的“", Constants.Ocr.Image, "”元素缺少", Constants.Content.OperandNames.Matrix, "属性。"));
+				Tracker.TraceMessage($"识别结果的“{Constants.Ocr.Image}”元素缺少{Constants.Content.OperandNames.Matrix}属性。");
 				return 0;
 			}
 			var matrix = DocInfoImporter.ToSingleArray(m, true);
 			if (matrix == null || matrix.Length < 6) {
-				Tracker.TraceMessage(String.Concat("识别结果的“", Constants.Ocr.Image, "”元素中，", Constants.Content.OperandNames.Matrix, "属性值无效。"));
+				Tracker.TraceMessage($"识别结果的“{Constants.Ocr.Image}”元素中，{Constants.Content.OperandNames.Matrix}属性值无效。");
 				return 0;
 			}
 			var info = new OcrContentInfo(w, h, matrix);
@@ -282,18 +279,9 @@ namespace PDFPatcher.Processor
 			string _text;
 			int _top, _bottom, _left, _right, _size;
 			int _cx, _cy, _dx, _dy;
-			//float _m11, _m12, _m21, _m22, _mx, _my;
 			internal OcrContentInfo(int imageWidth, int imageHeight, float[] matrix) {
 				ImageHeight = imageHeight;
 				ImageWidth = imageWidth;
-				//_m11 = matrix[A1];
-				//_m12 = matrix[A2];
-				//_m21 = matrix[B1];
-				//_m22 = matrix[B2];
-				//_mx = matrix[DX];
-				//_my = matrix[DY];
-				//_ix = 1 / (float)imageWidth;
-				//_iy = 1 / (float)imageHeight;
 			}
 			internal bool GetInfo(XmlElement ocrInfoItem) {
 				if (ocrInfoItem.GetAttribute(Constants.Coordinates.Top).TryParse(out _top) == false

@@ -118,7 +118,7 @@ namespace PDFPatcher.Processor
 					}
 				}
 				catch (Exception) {
-					Tracker.TraceMessage("在处理文档第 " + i + " 页时出错。");
+					Tracker.TraceMessage($"在处理文档第 {i} 页时出错。");
 					throw;
 				}
 			}

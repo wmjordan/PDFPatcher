@@ -25,12 +25,6 @@ namespace PDFPatcher.Processor
 		public bool OrientPage { get; set; }
 		public WritingDirection WritingDirection { get; set; }
 
-		public ModiOcr() {
-			//if (_modiPath == null) {
-			//    _modiPath = FindModi ();
-			//}
-		}
-
 		internal static bool ModiInstalled => __ModiInstalled;
 
 		#region COMInterop
@@ -210,8 +204,7 @@ namespace PDFPatcher.Processor
 					cr = Get<int>(word, "RegionID");
 					var sl = (cl == lineID && cr == regionID); // 处于同一行
 					if (sl && WritingDirection != WritingDirection.Unknown) {
-						sl = cti != null
-								&& cti.Region.IsAlignedWith(ti.Region, WritingDirection);
+						sl = cti?.Region.IsAlignedWith(ti.Region, WritingDirection) == true;
 					}
 					if (sl) {
 						if (cti != null && cti.Region == ti.Region) {
@@ -233,7 +226,7 @@ namespace PDFPatcher.Processor
 					}
 					cti = ti;
 #if DEBUGOCR && DEBUG
-					l.WriteLine(String.Concat(ti.Size, "\t", ti.Text, "\t", ti.Region.Top, " ", ti.Region.Left, " ", ti.Region.Bottom, " ", ti.Region.Right));
+					l.WriteLine($"{ti.Size}\t{ti.Text}\t{ti.Region.Top} {ti.Region.Left} {ti.Region.Bottom} {ti.Region.Right}");
 #endif
 					FinalReleaseComObjects(word);
 				}
@@ -274,22 +267,6 @@ namespace PDFPatcher.Processor
 				ocr = images = image = layout = null;
 				merge = mergeImages = null;
 			}
-
 		}
-
-		//private static string FindModi () {
-		//    var p = Registry.GetValue (@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Shared Tools", "SharedFilesDir", null) as string;
-		//    if (p != null && Directory.Exists (p)) {
-		//        var m = String.Concat (p, @"\MODI\12.0\");
-		//        if (Directory.Exists (m)) {
-		//            return m;
-		//        }
-		//        m = String.Concat (p, @"\MODI\11.0\");
-		//        if (Directory.Exists (m)) {
-		//            return m;
-		//        }
-		//    }
-		//    throw new FileNotFoundException ("无法找到微软 Office 文档图像处理引擎。");
-		//}
 	}
 }

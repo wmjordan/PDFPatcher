@@ -143,13 +143,8 @@ namespace MuPdfSharp
 			}
 			_displayList = _context.CreateDisplayList(Bound);
 			using (var d = new DeviceHandle(_context, _displayList)) {
-				//if (hideAnnotations) {
-				//	NativeMethods.RunPageContents (_document, _page, d, ref m, _cookie);
-				//}
-				//else {
 				NativeMethods.RunPage(_context, _page, d, Matrix.Identity, ref _cookie);
 				d.EndOperations();
-				//}
 			}
 			if (_cookie.ErrorCount > 0) {
 				System.Diagnostics.Debug.WriteLine("在第 " + PageNumber + " 页有 " + _cookie.ErrorCount + " 个错误。");
@@ -203,10 +198,6 @@ namespace MuPdfSharp
 						NativeMethods.RunPageAnnotations(_context, _page, dev, ctm, ref _cookie);
 						NativeMethods.RunPageWidgets(_context, _page, dev, ctm, ref _cookie);
 					}
-					//NativeMethods.BeginPage (dev, ref b, ref ctm);
-					//NativeMethods.RunDisplayList (_context, GetDisplayList(), dev, ctm, ctm.Transform(VisualBound), ref _cookie);
-					//NativeMethods.EndPage (dev);
-
 					dev.EndOperations();
 
 					if (_cookie.IsCancellationPending) {
