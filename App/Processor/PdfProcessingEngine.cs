@@ -51,7 +51,7 @@ namespace PDFPatcher.Processor
 				PageProcessors.Add(new RemoveAnnotationProcessor(PdfName.LINK));
 			}
 			if (settings.RecompressWithJbig2) {
-				PageProcessors.Add(new ImageRecompressor());
+				PageProcessors.Add(new ImageRecompressor() { ConvertToBinary = settings.RecompressImageToBinary });
 				//this.PageProcessors.Add (new ColorizeBinaryImageProcessor ());
 			}
 			if (settings.RemovePageTextBlocks) {

@@ -55,6 +55,7 @@ namespace PDFPatcher.Functions
 			settings.RemovePageTextBlocks = _RemovePageTextBlocksBox.Checked;
 			settings.RemovePageThumbnails = _RemovePageThumbnailsBox.Checked;
 			settings.RemoveTrailingCommandCount = (int)_RemoveTrailingCommandCountBox.Value;
+			settings.RecompressImageToBinary = _RecompressToBinaryImageBox.Checked;
 			settings.FixContents = _FixContentBox.Checked;
 			settings.FullCompression = _FullCompressionBox.Checked;
 			return Options;
@@ -97,6 +98,7 @@ namespace PDFPatcher.Functions
 			_RemoveUsageRightsBox.Checked = settings.RemoveUsageRights;
 			_RemoveXmlMetaDataBox.Checked = settings.RemoveXmlMetadata;
 			_FullCompressionBox.Checked = settings.FullCompression;
+			_RecompressToBinaryImageBox.Checked = settings.RecompressImageToBinary;
 
 			var ps = settings.UnifiedPageSettings;
 			_AutoRotateBox.Checked = ps.AutoRotation;

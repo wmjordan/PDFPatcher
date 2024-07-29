@@ -10,7 +10,7 @@ namespace PDFPatcher.Processor
 {
 	sealed class ImageRecompressor : IPageProcessor
 	{
-		static readonly PdfName[] __IgnoreFilters = new PdfName[] { PdfName.DCTDECODE, PdfName.JBIG2DECODE };
+		static readonly PdfName[] __IgnoreFilters = new PdfName[] { PdfName.JBIG2DECODE };
 		static readonly ImageExtracterOptions _imgExpOption = new ImageExtracterOptions() {
 			OutputPath = System.IO.Path.GetTempPath(),
 			MergeImages = false
@@ -18,6 +18,8 @@ namespace PDFPatcher.Processor
 
 		int _processedImageCount;
 		int _optimizedImageCount;
+
+		public bool ConvertToBinary { get; set; }
 
 		#region IPageProcessor 成员
 		public string Name => "优化压缩黑白图片";
@@ -78,24 +80,28 @@ namespace PDFPatcher.Processor
 				fn = f as PdfName;
 			}
 			if (fn == null || !__IgnoreFilters.Contains(fn)) {
-				if (OptimizeBinaryImage(pdfRef, img, l.IntValue)
+				if (OptimizeBinaryImage(pdfRef, img, l.IntValue, ConvertToBinary)
 					/*|| ReplaceJ2kImage(pdfRef, im, fn)*/) {
 					_optimizedImageCount++;
 				}
 			}
 		}
 
-		static bool OptimizeBinaryImage(PdfIndirectReference imgRef, PRStream imgStream, int length) {
-			var bpc = imgStream.GetAsNumber(PdfName.BITSPERCOMPONENT);
-			var mask = imgStream.GetAsBoolean(PdfName.IMAGEMASK);
-			if (bpc == null && (mask == null || mask.BooleanValue == false)
-				|| bpc != null && bpc.IntValue != 1) {
+		static bool OptimizeBinaryImage(PdfIndirectReference imgRef, PRStream imgStream, int length, bool convertToBinary) {
+			var oneBitPerComponent = imgStream.GetAsNumber(PdfName.BITSPERCOMPONENT)?.IntValue == 1;
+			var isMask = imgStream.GetAsBoolean(PdfName.IMAGEMASK)?.BooleanValue == true;
+			if (oneBitPerComponent == false && isMask == false && convertToBinary == false) {
 				return false;
 			}
 
 			var info = new ImageInfo(imgRef);
 			var bytes = info.DecodeImage(_imgExpOption);
 			using (var fi = ImageExtractor.CreateFreeImageBitmap(info, ref bytes, false, false)) {
+				if (convertToBinary
+					&& (fi.HasPalette || fi.UniqueColors <= 256)
+					&& fi.ConvertColorDepth(FreeImageAPI.FREE_IMAGE_COLOR_DEPTH.FICD_01_BPP_THRESHOLD) == false) {
+					return false;
+				}
 				var sb = JBig2Encoder.Encode(fi);
 				if (sb.Length > length) {
 					return false;

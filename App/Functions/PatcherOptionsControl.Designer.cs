@@ -54,6 +54,7 @@
 			this.label5 = new System.Windows.Forms.Label();
 			this.label4 = new System.Windows.Forms.Label();
 			this._ViewerSettingsPage = new System.Windows.Forms.TabPage();
+			this._ViewerSettingsEditor = new PDFPatcher.Functions.ViewerPreferenceEditor();
 			this._CleanerPage = new System.Windows.Forms.TabPage();
 			this.groupBox4 = new System.Windows.Forms.GroupBox();
 			this.label12 = new System.Windows.Forms.Label();
@@ -69,29 +70,31 @@
 			this._RemovePageAutoActionsBox = new System.Windows.Forms.CheckBox();
 			this._RemovePageMetaDataBox = new System.Windows.Forms.CheckBox();
 			this.groupBox3 = new System.Windows.Forms.GroupBox();
+			this._RemoveAttachmentsBox = new System.Windows.Forms.CheckBox();
 			this._RemoveBookmarksBox = new System.Windows.Forms.CheckBox();
 			this._FixContentBox = new System.Windows.Forms.CheckBox();
 			this._RemoveXmlMetaDataBox = new System.Windows.Forms.CheckBox();
 			this._RemoveDocAutoActionsBox = new System.Windows.Forms.CheckBox();
 			this._RemoveUsageRightsBox = new System.Windows.Forms.CheckBox();
-			this.groupBox1 = new System.Windows.Forms.GroupBox();
-			this._RecompressWithJbig2Box = new System.Windows.Forms.CheckBox();
-			this._FullCompressionBox = new System.Windows.Forms.CheckBox();
 			this._DocumentInfoPage = new System.Windows.Forms.TabPage();
+			this._DocumentInfoEditor = new PDFPatcher.Functions.DocumentInfoEditor();
 			this._PageLabelsPage = new System.Windows.Forms.TabPage();
+			this._PageLabelEditor = new PDFPatcher.Functions.PageLabelEditor();
 			this._PageSettingsPage = new System.Windows.Forms.TabPage();
+			this._PageSettingsEditor = new PDFPatcher.Functions.PageSettingsEditor();
 			this._FontSubstitutionsPage = new System.Windows.Forms.TabPage();
+			this._FontSubstitutionsEditor = new PDFPatcher.Functions.FontSubstitutionsEditor();
 			this._ConfigPage = new System.Windows.Forms.TabPage();
 			this._ResetButton = new System.Windows.Forms.Button();
 			this._ImportButton = new System.Windows.Forms.Button();
 			this._ExportButton = new System.Windows.Forms.Button();
 			this.panel1 = new System.Windows.Forms.Panel();
-			this._RemoveAttachmentsBox = new System.Windows.Forms.CheckBox();
-			this._ViewerSettingsEditor = new PDFPatcher.Functions.ViewerPreferenceEditor();
-			this._DocumentInfoEditor = new PDFPatcher.Functions.DocumentInfoEditor();
-			this._PageLabelEditor = new PDFPatcher.Functions.PageLabelEditor();
-			this._PageSettingsEditor = new PDFPatcher.Functions.PageSettingsEditor();
-			this._FontSubstitutionsEditor = new PDFPatcher.Functions.FontSubstitutionsEditor();
+			this._CompressionPage = new System.Windows.Forms.TabPage();
+			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this._RecompressWithJbig2Box = new System.Windows.Forms.CheckBox();
+			this._FullCompressionBox = new System.Windows.Forms.CheckBox();
+			this.groupBox2 = new System.Windows.Forms.GroupBox();
+			this._RecompressToBinaryImageBox = new System.Windows.Forms.CheckBox();
 			this._MainTab.SuspendLayout();
 			this._PageLayoutPage.SuspendLayout();
 			this._MarginGroupBox.SuspendLayout();
@@ -108,13 +111,15 @@
 			((System.ComponentModel.ISupportInitialize)(this._RemoveTrailingCommandCountBox)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this._RemoveLeadingCommandCountBox)).BeginInit();
 			this.groupBox3.SuspendLayout();
-			this.groupBox1.SuspendLayout();
 			this._DocumentInfoPage.SuspendLayout();
 			this._PageLabelsPage.SuspendLayout();
 			this._PageSettingsPage.SuspendLayout();
 			this._FontSubstitutionsPage.SuspendLayout();
 			this._ConfigPage.SuspendLayout();
 			this.panel1.SuspendLayout();
+			this._CompressionPage.SuspendLayout();
+			this.groupBox1.SuspendLayout();
+			this.groupBox2.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// _MainTab
@@ -125,6 +130,7 @@
 			this._MainTab.Controls.Add(this._PageLayoutPage);
 			this._MainTab.Controls.Add(this._ViewerSettingsPage);
 			this._MainTab.Controls.Add(this._CleanerPage);
+			this._MainTab.Controls.Add(this._CompressionPage);
 			this._MainTab.Controls.Add(this._DocumentInfoPage);
 			this._MainTab.Controls.Add(this._PageLabelsPage);
 			this._MainTab.Controls.Add(this._PageSettingsPage);
@@ -510,17 +516,24 @@
 			this._ViewerSettingsPage.Text = "阅读方式";
 			this._ViewerSettingsPage.UseVisualStyleBackColor = true;
 			// 
+			// _ViewerSettingsEditor
+			// 
+			this._ViewerSettingsEditor.Location = new System.Drawing.Point(0, 0);
+			this._ViewerSettingsEditor.Margin = new System.Windows.Forms.Padding(4);
+			this._ViewerSettingsEditor.Name = "_ViewerSettingsEditor";
+			this._ViewerSettingsEditor.Size = new System.Drawing.Size(438, 279);
+			this._ViewerSettingsEditor.TabIndex = 0;
+			// 
 			// _CleanerPage
 			// 
 			this._CleanerPage.Controls.Add(this.groupBox4);
 			this._CleanerPage.Controls.Add(this.groupBox3);
-			this._CleanerPage.Controls.Add(this.groupBox1);
 			this._CleanerPage.Location = new System.Drawing.Point(4, 22);
 			this._CleanerPage.Name = "_CleanerPage";
 			this._CleanerPage.Padding = new System.Windows.Forms.Padding(3);
 			this._CleanerPage.Size = new System.Drawing.Size(438, 289);
 			this._CleanerPage.TabIndex = 5;
-			this._CleanerPage.Text = "压缩清理";
+			this._CleanerPage.Text = "清理";
 			this._CleanerPage.UseVisualStyleBackColor = true;
 			// 
 			// groupBox4
@@ -539,7 +552,7 @@
 			this.groupBox4.Controls.Add(this._RemovePageMetaDataBox);
 			this.groupBox4.Location = new System.Drawing.Point(6, 102);
 			this.groupBox4.Name = "groupBox4";
-			this.groupBox4.Size = new System.Drawing.Size(432, 136);
+			this.groupBox4.Size = new System.Drawing.Size(426, 136);
 			this.groupBox4.TabIndex = 1;
 			this.groupBox4.TabStop = false;
 			this.groupBox4.Text = "源文档页面";
@@ -671,10 +684,20 @@
 			this.groupBox3.Controls.Add(this._RemoveUsageRightsBox);
 			this.groupBox3.Location = new System.Drawing.Point(6, 6);
 			this.groupBox3.Name = "groupBox3";
-			this.groupBox3.Size = new System.Drawing.Size(432, 90);
+			this.groupBox3.Size = new System.Drawing.Size(426, 90);
 			this.groupBox3.TabIndex = 0;
 			this.groupBox3.TabStop = false;
 			this.groupBox3.Text = "源文档";
+			// 
+			// _RemoveAttachmentsBox
+			// 
+			this._RemoveAttachmentsBox.AutoSize = true;
+			this._RemoveAttachmentsBox.Location = new System.Drawing.Point(224, 64);
+			this._RemoveAttachmentsBox.Name = "_RemoveAttachmentsBox";
+			this._RemoveAttachmentsBox.Size = new System.Drawing.Size(96, 16);
+			this._RemoveAttachmentsBox.TabIndex = 5;
+			this._RemoveAttachmentsBox.Text = "清除所有附件";
+			this._RemoveAttachmentsBox.UseVisualStyleBackColor = true;
 			// 
 			// _RemoveBookmarksBox
 			// 
@@ -726,37 +749,6 @@
 			this._RemoveUsageRightsBox.Text = "清除复制、打印等限制";
 			this._RemoveUsageRightsBox.UseVisualStyleBackColor = true;
 			// 
-			// groupBox1
-			// 
-			this.groupBox1.Controls.Add(this._RecompressWithJbig2Box);
-			this.groupBox1.Controls.Add(this._FullCompressionBox);
-			this.groupBox1.Location = new System.Drawing.Point(6, 244);
-			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(432, 43);
-			this.groupBox1.TabIndex = 2;
-			this.groupBox1.TabStop = false;
-			this.groupBox1.Text = "内容压缩";
-			// 
-			// _RecompressWithJbig2Box
-			// 
-			this._RecompressWithJbig2Box.AutoSize = true;
-			this._RecompressWithJbig2Box.Location = new System.Drawing.Point(224, 20);
-			this._RecompressWithJbig2Box.Name = "_RecompressWithJbig2Box";
-			this._RecompressWithJbig2Box.Size = new System.Drawing.Size(132, 16);
-			this._RecompressWithJbig2Box.TabIndex = 1;
-			this._RecompressWithJbig2Box.Text = "优化黑白图片压缩率";
-			this._RecompressWithJbig2Box.UseVisualStyleBackColor = true;
-			// 
-			// _FullCompressionBox
-			// 
-			this._FullCompressionBox.AutoSize = true;
-			this._FullCompressionBox.Location = new System.Drawing.Point(6, 20);
-			this._FullCompressionBox.Name = "_FullCompressionBox";
-			this._FullCompressionBox.Size = new System.Drawing.Size(120, 16);
-			this._FullCompressionBox.TabIndex = 0;
-			this._FullCompressionBox.Text = "压缩索引表和书签";
-			this._FullCompressionBox.UseVisualStyleBackColor = true;
-			// 
 			// _DocumentInfoPage
 			// 
 			this._DocumentInfoPage.Controls.Add(this._DocumentInfoEditor);
@@ -767,6 +759,17 @@
 			this._DocumentInfoPage.TabIndex = 2;
 			this._DocumentInfoPage.Text = "文档属性";
 			this._DocumentInfoPage.UseVisualStyleBackColor = true;
+			// 
+			// _DocumentInfoEditor
+			// 
+			this._DocumentInfoEditor.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this._DocumentInfoEditor.Location = new System.Drawing.Point(0, 0);
+			this._DocumentInfoEditor.Margin = new System.Windows.Forms.Padding(4);
+			this._DocumentInfoEditor.Name = "_DocumentInfoEditor";
+			this._DocumentInfoEditor.Size = new System.Drawing.Size(439, 294);
+			this._DocumentInfoEditor.TabIndex = 0;
 			// 
 			// _PageLabelsPage
 			// 
@@ -779,6 +782,16 @@
 			this._PageLabelsPage.Text = "页码标签";
 			this._PageLabelsPage.UseVisualStyleBackColor = true;
 			// 
+			// _PageLabelEditor
+			// 
+			this._PageLabelEditor.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._PageLabelEditor.Labels = null;
+			this._PageLabelEditor.Location = new System.Drawing.Point(3, 3);
+			this._PageLabelEditor.Margin = new System.Windows.Forms.Padding(4);
+			this._PageLabelEditor.Name = "_PageLabelEditor";
+			this._PageLabelEditor.Size = new System.Drawing.Size(432, 283);
+			this._PageLabelEditor.TabIndex = 0;
+			// 
 			// _PageSettingsPage
 			// 
 			this._PageSettingsPage.Controls.Add(this._PageSettingsEditor);
@@ -790,6 +803,16 @@
 			this._PageSettingsPage.Text = "页面设置";
 			this._PageSettingsPage.UseVisualStyleBackColor = true;
 			// 
+			// _PageSettingsEditor
+			// 
+			this._PageSettingsEditor.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._PageSettingsEditor.Location = new System.Drawing.Point(3, 3);
+			this._PageSettingsEditor.Margin = new System.Windows.Forms.Padding(4);
+			this._PageSettingsEditor.Name = "_PageSettingsEditor";
+			this._PageSettingsEditor.Settings = null;
+			this._PageSettingsEditor.Size = new System.Drawing.Size(432, 283);
+			this._PageSettingsEditor.TabIndex = 0;
+			// 
 			// _FontSubstitutionsPage
 			// 
 			this._FontSubstitutionsPage.Controls.Add(this._FontSubstitutionsEditor);
@@ -800,6 +823,17 @@
 			this._FontSubstitutionsPage.TabIndex = 7;
 			this._FontSubstitutionsPage.Text = "替换字体";
 			this._FontSubstitutionsPage.UseVisualStyleBackColor = true;
+			// 
+			// _FontSubstitutionsEditor
+			// 
+			this._FontSubstitutionsEditor.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._FontSubstitutionsEditor.Location = new System.Drawing.Point(3, 3);
+			this._FontSubstitutionsEditor.Margin = new System.Windows.Forms.Padding(4);
+			this._FontSubstitutionsEditor.Name = "_FontSubstitutionsEditor";
+			this._FontSubstitutionsEditor.Options = null;
+			this._FontSubstitutionsEditor.Size = new System.Drawing.Size(432, 283);
+			this._FontSubstitutionsEditor.Substitutions = null;
+			this._FontSubstitutionsEditor.TabIndex = 0;
 			// 
 			// _ConfigPage
 			// 
@@ -854,65 +888,67 @@
 			this.panel1.Size = new System.Drawing.Size(452, 321);
 			this.panel1.TabIndex = 3;
 			// 
-			// _RemoveAttachmentsBox
+			// _CompressionPage
 			// 
-			this._RemoveAttachmentsBox.AutoSize = true;
-			this._RemoveAttachmentsBox.Location = new System.Drawing.Point(224, 64);
-			this._RemoveAttachmentsBox.Name = "_RemoveAttachmentsBox";
-			this._RemoveAttachmentsBox.Size = new System.Drawing.Size(96, 16);
-			this._RemoveAttachmentsBox.TabIndex = 5;
-			this._RemoveAttachmentsBox.Text = "清除所有附件";
-			this._RemoveAttachmentsBox.UseVisualStyleBackColor = true;
+			this._CompressionPage.Controls.Add(this.groupBox2);
+			this._CompressionPage.Controls.Add(this.groupBox1);
+			this._CompressionPage.Location = new System.Drawing.Point(4, 22);
+			this._CompressionPage.Name = "_CompressionPage";
+			this._CompressionPage.Size = new System.Drawing.Size(438, 289);
+			this._CompressionPage.TabIndex = 10;
+			this._CompressionPage.Text = "压缩";
+			this._CompressionPage.UseVisualStyleBackColor = true;
 			// 
-			// _ViewerSettingsEditor
+			// groupBox1
 			// 
-			this._ViewerSettingsEditor.Location = new System.Drawing.Point(0, 0);
-			this._ViewerSettingsEditor.Margin = new System.Windows.Forms.Padding(4);
-			this._ViewerSettingsEditor.Name = "_ViewerSettingsEditor";
-			this._ViewerSettingsEditor.Size = new System.Drawing.Size(438, 279);
-			this._ViewerSettingsEditor.TabIndex = 0;
+			this.groupBox1.Controls.Add(this._RecompressWithJbig2Box);
+			this.groupBox1.Controls.Add(this._FullCompressionBox);
+			this.groupBox1.Location = new System.Drawing.Point(3, 3);
+			this.groupBox1.Name = "groupBox1";
+			this.groupBox1.Size = new System.Drawing.Size(432, 43);
+			this.groupBox1.TabIndex = 0;
+			this.groupBox1.TabStop = false;
+			this.groupBox1.Text = "无损压缩";
 			// 
-			// _DocumentInfoEditor
+			// _RecompressWithJbig2Box
 			// 
-			this._DocumentInfoEditor.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this._DocumentInfoEditor.Location = new System.Drawing.Point(0, 0);
-			this._DocumentInfoEditor.Margin = new System.Windows.Forms.Padding(4);
-			this._DocumentInfoEditor.Name = "_DocumentInfoEditor";
-			this._DocumentInfoEditor.Size = new System.Drawing.Size(439, 294);
-			this._DocumentInfoEditor.TabIndex = 0;
+			this._RecompressWithJbig2Box.AutoSize = true;
+			this._RecompressWithJbig2Box.Location = new System.Drawing.Point(224, 20);
+			this._RecompressWithJbig2Box.Name = "_RecompressWithJbig2Box";
+			this._RecompressWithJbig2Box.Size = new System.Drawing.Size(132, 16);
+			this._RecompressWithJbig2Box.TabIndex = 1;
+			this._RecompressWithJbig2Box.Text = "优化黑白图片压缩率";
+			this._RecompressWithJbig2Box.UseVisualStyleBackColor = true;
 			// 
-			// _PageLabelEditor
+			// _FullCompressionBox
 			// 
-			this._PageLabelEditor.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._PageLabelEditor.Labels = null;
-			this._PageLabelEditor.Location = new System.Drawing.Point(3, 3);
-			this._PageLabelEditor.Margin = new System.Windows.Forms.Padding(4);
-			this._PageLabelEditor.Name = "_PageLabelEditor";
-			this._PageLabelEditor.Size = new System.Drawing.Size(432, 283);
-			this._PageLabelEditor.TabIndex = 0;
+			this._FullCompressionBox.AutoSize = true;
+			this._FullCompressionBox.Location = new System.Drawing.Point(6, 20);
+			this._FullCompressionBox.Name = "_FullCompressionBox";
+			this._FullCompressionBox.Size = new System.Drawing.Size(120, 16);
+			this._FullCompressionBox.TabIndex = 0;
+			this._FullCompressionBox.Text = "压缩索引表和书签";
+			this._FullCompressionBox.UseVisualStyleBackColor = true;
 			// 
-			// _PageSettingsEditor
+			// groupBox2
 			// 
-			this._PageSettingsEditor.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._PageSettingsEditor.Location = new System.Drawing.Point(3, 3);
-			this._PageSettingsEditor.Margin = new System.Windows.Forms.Padding(4);
-			this._PageSettingsEditor.Name = "_PageSettingsEditor";
-			this._PageSettingsEditor.Settings = null;
-			this._PageSettingsEditor.Size = new System.Drawing.Size(432, 283);
-			this._PageSettingsEditor.TabIndex = 0;
+			this.groupBox2.Controls.Add(this._RecompressToBinaryImageBox);
+			this.groupBox2.Location = new System.Drawing.Point(3, 52);
+			this.groupBox2.Name = "groupBox2";
+			this.groupBox2.Size = new System.Drawing.Size(432, 43);
+			this.groupBox2.TabIndex = 1;
+			this.groupBox2.TabStop = false;
+			this.groupBox2.Text = "有损压缩";
 			// 
-			// _FontSubstitutionsEditor
+			// _RecompressToBinaryImageBox
 			// 
-			this._FontSubstitutionsEditor.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._FontSubstitutionsEditor.Location = new System.Drawing.Point(3, 3);
-			this._FontSubstitutionsEditor.Margin = new System.Windows.Forms.Padding(4);
-			this._FontSubstitutionsEditor.Name = "_FontSubstitutionsEditor";
-			this._FontSubstitutionsEditor.Options = null;
-			this._FontSubstitutionsEditor.Size = new System.Drawing.Size(432, 283);
-			this._FontSubstitutionsEditor.Substitutions = null;
-			this._FontSubstitutionsEditor.TabIndex = 0;
+			this._RecompressToBinaryImageBox.AutoSize = true;
+			this._RecompressToBinaryImageBox.Location = new System.Drawing.Point(6, 20);
+			this._RecompressToBinaryImageBox.Name = "_RecompressToBinaryImageBox";
+			this._RecompressToBinaryImageBox.Size = new System.Drawing.Size(132, 16);
+			this._RecompressToBinaryImageBox.TabIndex = 0;
+			this._RecompressToBinaryImageBox.Text = "尽量将图片转成黑白";
+			this._RecompressToBinaryImageBox.UseVisualStyleBackColor = true;
 			// 
 			// PatcherOptionsControl
 			// 
@@ -941,14 +977,17 @@
 			((System.ComponentModel.ISupportInitialize)(this._RemoveLeadingCommandCountBox)).EndInit();
 			this.groupBox3.ResumeLayout(false);
 			this.groupBox3.PerformLayout();
-			this.groupBox1.ResumeLayout(false);
-			this.groupBox1.PerformLayout();
 			this._DocumentInfoPage.ResumeLayout(false);
 			this._PageLabelsPage.ResumeLayout(false);
 			this._PageSettingsPage.ResumeLayout(false);
 			this._FontSubstitutionsPage.ResumeLayout(false);
 			this._ConfigPage.ResumeLayout(false);
 			this.panel1.ResumeLayout(false);
+			this._CompressionPage.ResumeLayout(false);
+			this.groupBox1.ResumeLayout(false);
+			this.groupBox1.PerformLayout();
+			this.groupBox2.ResumeLayout(false);
+			this.groupBox2.PerformLayout();
 			this.ResumeLayout(false);
 
 		}
@@ -1005,9 +1044,6 @@
 		private System.Windows.Forms.CheckBox _RemoveXmlMetaDataBox;
 		private System.Windows.Forms.CheckBox _RemoveDocAutoActionsBox;
 		private System.Windows.Forms.CheckBox _RemoveUsageRightsBox;
-		private System.Windows.Forms.GroupBox groupBox1;
-		private System.Windows.Forms.CheckBox _RecompressWithJbig2Box;
-		private System.Windows.Forms.CheckBox _FullCompressionBox;
 		private System.Windows.Forms.TabPage _DocumentInfoPage;
 		private DocumentInfoEditor _DocumentInfoEditor;
 		private System.Windows.Forms.TabPage _PageLabelsPage;
@@ -1022,5 +1058,11 @@
 		private System.Windows.Forms.Button _ExportButton;
 		private System.Windows.Forms.Panel panel1;
 		private System.Windows.Forms.CheckBox _RemoveAttachmentsBox;
+		private System.Windows.Forms.TabPage _CompressionPage;
+		private System.Windows.Forms.GroupBox groupBox2;
+		private System.Windows.Forms.CheckBox _RecompressToBinaryImageBox;
+		private System.Windows.Forms.GroupBox groupBox1;
+		private System.Windows.Forms.CheckBox _RecompressWithJbig2Box;
+		private System.Windows.Forms.CheckBox _FullCompressionBox;
 	}
 }

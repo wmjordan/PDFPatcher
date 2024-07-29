@@ -50,6 +50,8 @@ namespace PDFPatcher
 		public bool RemoveXmlMetadata { get; set; }
 		[XmlAttribute("优化黑白图片压缩算法")]
 		public bool RecompressWithJbig2 { get; set; }
+		[XmlAttribute("将图片转换为黑白")]
+		public bool RecompressImageToBinary { get; set; }
 
 		[XmlElement("页面布局")]
 		public PageBoxSettings UnifiedPageSettings { get; set; }
