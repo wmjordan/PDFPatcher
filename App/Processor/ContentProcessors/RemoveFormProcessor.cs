@@ -67,7 +67,7 @@ namespace PDFPatcher.Processor
 
 		#endregion
 
-		private bool ProcessCommands(IList<Model.PdfPageCommand> parent, HashSet<PdfName> formNames) {
+		static bool ProcessCommands(IList<Model.PdfPageCommand> parent, HashSet<PdfName> formNames) {
 			var r = false;
 			for (int i = parent.Count - 1; i >= 0; i--) {
 				var cmd = parent[i];

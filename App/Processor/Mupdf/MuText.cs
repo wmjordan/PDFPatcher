@@ -63,19 +63,6 @@ namespace MuPdfSharp
 			_TextPage = _handle.MarshalAs<NativeTextPage>();
 		}
 
-		///// <summary>
-		///// 获取指针指向的所有文本集合。
-		///// </summary>
-		///// <param name="firstPage">第一个 fz_text_page 指针。</param>
-		///// <returns>包含所有文本页的集合。</returns>
-		//internal static List<MuTextPage> GetTextPages (TextPageHandle firstPage) {
-		//	var l = new List<MuTextPage> ();
-		//	foreach (var p in firstPage.EnumerateLinkedList<NativeTextPage> ()) {
-		//		l.Add (new MuTextPage (p.Data));
-		//	}
-		//	return l;
-		//}
-
 		struct NativeTextPage
 		{
 			readonly IntPtr /*fz_pool*/ _Pool;

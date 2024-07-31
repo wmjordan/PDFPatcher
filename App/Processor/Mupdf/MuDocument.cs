@@ -33,28 +33,14 @@ namespace MuPdfSharp
 
 		internal ContextHandle Context => _context;
 		MuPdfDictionary _trailer;
-		internal MuPdfDictionary Trailer {
-			get {
-				if (_trailer == null) {
-					_trailer = new MuPdfDictionary(_context, NativeMethods.GetTrailer(_context, _document));
-				}
-				return _trailer;
-			}
-		}
+		internal MuPdfDictionary Trailer => _trailer ?? (_trailer = new MuPdfDictionary(_context, NativeMethods.GetTrailer(_context, _document)));
 		internal MuPdfDictionary Root => Trailer["Root"].AsDictionary();
 		internal MuDocumentInfo Info => new MuDocumentInfo(Trailer["Info"].AsDictionary());
 		PageLabelCollection _PageLabels;
 		/// <summary>
 		/// 返回文档的页码标签。
 		/// </summary>
-		public PageLabelCollection PageLabels {
-			get {
-				if (_PageLabels == null) {
-					_PageLabels = new PageLabelCollection(this);
-				}
-				return _PageLabels;
-			}
-		}
+		public PageLabelCollection PageLabels => _PageLabels ?? (_PageLabels = new PageLabelCollection(this));
 		MuCookie _cookie;
 		#endregion
 
@@ -247,45 +233,5 @@ namespace MuPdfSharp
 			return new MuPdfDictionary(_context, NativeMethods.NewDictionary(_context, _document, 4));
 		}
 		#endregion
-
-		unsafe struct FzFont
-		{
-#pragma warning disable 649, 169
-			readonly int refs;
-			[MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)] readonly byte[] name;
-			internal FzBuffer* Buffer;
-			internal FzFontFlags Flags;
-#pragma warning restore 649, 169
-			public string Name => System.Text.Encoding.Default.GetString(name, 0, Array.IndexOf(name, 0));
-		}
-
-		struct FzFontFlags
-		{
-#pragma warning disable 649
-			internal uint flag;
-#pragma warning restore 649
-			bool IsMono => (flag & 1) > 0;
-			bool IsSerif => (flag & 2) > 0;
-			bool IsBold => (flag & 4) > 0;
-			bool IsItalic => (flag & 8) > 0;
-			bool IsSubstitute => (flag & 16) > 0; /* use substitute metrics */
-			bool IsStretch => (flag & 32) > 0; /* stretch to match PDF metrics */
-			bool IsFakeBold => (flag & 64) > 0; /* synthesize bold */
-			bool IsFakeItalic => (flag & 128) > 0; /* synthesize italic */
-			bool IsForcedHinting => (flag & 256) > 0; /* force hinting for DynaLab fonts */
-			bool HasOpenType => (flag & 512) > 0; /* has opentype shaping tables */
-			bool InvalidBBox => (flag & 1024) > 0;
-		}
-
-		struct FzBuffer
-		{
-#pragma warning disable 649, 169
-			readonly int refs;
-			readonly IntPtr data;
-			internal uint cap, len;
-			readonly int unused_bits;
-			readonly int shared;
-#pragma warning restore 649, 169
-		}
 	}
 }
