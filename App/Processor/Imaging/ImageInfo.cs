@@ -228,8 +228,10 @@ namespace PDFPatcher.Processor.Imaging
 					bmp.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_01_BPP);
 				}
 				else if (PaletteEntryCount < 17) {
-					PixelFormat = PixelFormat.Format4bppIndexed;
-					bmp.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_04_BPP);
+					if (PixelFormat != PixelFormat.Format4bppIndexed) {
+						PixelFormat = PixelFormat.Format4bppIndexed;
+						bmp.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_04_BPP);
+					}
 				}
 			}
 			if (ICCProfile != null) {

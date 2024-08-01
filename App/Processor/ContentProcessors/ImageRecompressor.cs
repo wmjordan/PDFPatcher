@@ -96,10 +96,11 @@ namespace PDFPatcher.Processor
 
 			var info = new ImageInfo(imgRef);
 			var bytes = info.DecodeImage(_imgExpOption);
-			using (var fi = ImageExtractor.CreateFreeImageBitmap(info, ref bytes, false, false)) {
+			using (var fi = ImageExtractor.CreateFreeImageBitmap(info, ref bytes, false, info.ICCProfile != null)) {
 				if (convertToBinary
-					&& (fi.HasPalette || fi.UniqueColors <= 256)
-					&& fi.ConvertColorDepth(FreeImageAPI.FREE_IMAGE_COLOR_DEPTH.FICD_01_BPP_THRESHOLD) == false) {
+					&& (fi.HasPalette == false
+					|| fi.UniqueColors > 256
+					|| fi.ConvertColorDepth(FreeImageAPI.FREE_IMAGE_COLOR_DEPTH.FICD_01_BPP_THRESHOLD) == false)) {
 					return false;
 				}
 				var sb = JBig2Encoder.Encode(fi);
@@ -108,9 +109,7 @@ namespace PDFPatcher.Processor
 				}
 				imgStream.SetData(sb, false);
 				imgStream.Put(PdfName.FILTER, PdfName.JBIG2DECODE);
-				if (imgStream.GetAsArray(PdfName.COLORSPACE) == null) {
-					imgStream.Put(PdfName.COLORSPACE, PdfName.DEVICEGRAY);
-				}
+				imgStream.Put(PdfName.COLORSPACE, PdfName.DEVICEGRAY);
 				imgStream.Put(PdfName.BITSPERCOMPONENT, new PdfNumber(1));
 				imgStream.Put(PdfName.LENGTH, new PdfNumber(sb.Length));
 				imgStream.Remove(PdfName.K);

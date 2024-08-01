@@ -433,7 +433,8 @@ namespace PDFPatcher.Processor
 			else {
 				bmp = new FreeImageBitmap(info.Width, info.Height, GetStride(info, bytes, vFlip), info.PixelFormat, bytes);
 			}
-			if (loadPaletteAndIccp) {
+			if (loadPaletteAndIccp
+				|| info.ColorSpace == PdfName.DEVICEGRAY && info.PaletteColorSpace == null) {
 				info.CreatePaletteAndIccProfile(bmp);
 			}
 			return bmp;
