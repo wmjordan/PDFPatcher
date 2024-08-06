@@ -102,6 +102,7 @@
       <DependentUpon>PatcherOptionsControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Options\ReaderOptions.cs" />
+    <Compile Include="Processor\Imaging\FreeImageHelper.cs" />
     <Compile Include="ShellHelper.cs" />
     <Compile Include="Common\CommandRegistry.cs" />
     <Compile Include="Common\FilePath.cs" />

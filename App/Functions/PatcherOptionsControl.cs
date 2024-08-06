@@ -56,6 +56,8 @@ namespace PDFPatcher.Functions
 			settings.RemovePageThumbnails = _RemovePageThumbnailsBox.Checked;
 			settings.RemoveTrailingCommandCount = (int)_RemoveTrailingCommandCountBox.Value;
 			settings.RecompressImageToBinary = _RecompressToBinaryImageBox.Checked;
+			settings.BinaryImageThreshold = (byte)_BinaryThresholdBox.Value;
+			settings.UseThresholdAlgorithm = _ThresholdBinaryBox.Checked;
 			settings.FixContents = _FixContentBox.Checked;
 			settings.FullCompression = _FullCompressionBox.Checked;
 			return Options;
@@ -99,6 +101,9 @@ namespace PDFPatcher.Functions
 			_RemoveXmlMetaDataBox.Checked = settings.RemoveXmlMetadata;
 			_FullCompressionBox.Checked = settings.FullCompression;
 			_RecompressToBinaryImageBox.Checked = settings.RecompressImageToBinary;
+			_BinaryThresholdBox.SetValue(settings.BinaryImageThreshold);
+			_ThresholdBinaryBox.Checked = settings.UseThresholdAlgorithm;
+			_DitherBinaryBox.Checked = !settings.UseThresholdAlgorithm;
 
 			var ps = settings.UnifiedPageSettings;
 			_AutoRotateBox.Checked = ps.AutoRotation;
@@ -143,11 +148,38 @@ namespace PDFPatcher.Functions
 					Reset();
 				}
 			};
+			_RecompressWithJbig2Box.CheckStateChanged += _RecompressWithJbig2Box_CheckStateChanged;
+			_RecompressToBinaryImageBox.CheckStateChanged += _RecompressToBinaryImageBox_CheckStateChanged;
+			_ThresholdBinaryBox.CheckedChanged += _ThresholdBinaryBox_CheckedChanged;
+			_RecompressToBinaryImageBox.Enabled
+				= _BinaryThresholdBox.Enabled
+				= _ThresholdBinaryBox.Enabled
+				= _DitherBinaryBox.Enabled
+				= false;
 			Reload();
 			if (ForEditor) {
 				_MainTab.TabPages.Remove(_DocumentInfoPage);
 				Options.MetaData.SpecifyMetaData = false;
 			}
+		}
+
+		void _ThresholdBinaryBox_CheckedChanged(object sender, EventArgs e) {
+			_BinaryThresholdBox.Enabled = _ThresholdBinaryBox.Checked;
+		}
+
+		void _RecompressToBinaryImageBox_CheckStateChanged(object sender, EventArgs e) {
+			var b = _ThresholdBinaryBox.Enabled
+				= _DitherBinaryBox.Enabled
+				= _RecompressToBinaryImageBox.Checked && _RecompressWithJbig2Box.Checked;
+			_BinaryThresholdBox.Enabled = b && _ThresholdBinaryBox.Checked;
+		}
+
+		void _RecompressWithJbig2Box_CheckStateChanged(object sender, EventArgs e) {
+			var b = _RecompressToBinaryImageBox.Enabled = _RecompressWithJbig2Box.Checked;
+			b = _DitherBinaryBox.Enabled
+				= _ThresholdBinaryBox.Enabled
+				= b && _RecompressToBinaryImageBox.Checked;
+			_BinaryThresholdBox.Enabled = b && _ThresholdBinaryBox.Checked;
 		}
 
 		static float CmToPoint(NumericUpDown box) {

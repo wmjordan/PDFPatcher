@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using FreeImageAPI;
 using iTextSharp.text.pdf;
 using PDFPatcher.Model;
 using PDFPatcher.Processor.Imaging;
@@ -19,7 +18,8 @@ namespace PDFPatcher.Processor
 		int _processedImageCount;
 		int _optimizedImageCount;
 
-		public bool ConvertToBinary { get; set; }
+		public byte BinaryThreshold { get; set; }
+		public byte Algorithm { get; set; }
 
 		#region IPageProcessor 成员
 		public string Name => "优化压缩黑白图片";
@@ -80,27 +80,27 @@ namespace PDFPatcher.Processor
 				fn = f as PdfName;
 			}
 			if (fn == null || !__IgnoreFilters.Contains(fn)) {
-				if (OptimizeBinaryImage(pdfRef, img, l.IntValue, ConvertToBinary)
+				if (OptimizeBinaryImage(pdfRef, img, l.IntValue, BinaryThreshold, Algorithm)
 					/*|| ReplaceJ2kImage(pdfRef, im, fn)*/) {
 					_optimizedImageCount++;
 				}
 			}
 		}
 
-		static bool OptimizeBinaryImage(PdfIndirectReference imgRef, PRStream imgStream, int length, bool convertToBinary) {
+		static bool OptimizeBinaryImage(PdfIndirectReference imgRef, PRStream imgStream, int length, byte binaryThreshold, byte algorithm) {
 			var oneBitPerComponent = imgStream.GetAsNumber(PdfName.BITSPERCOMPONENT)?.IntValue == 1;
 			var isMask = imgStream.GetAsBoolean(PdfName.IMAGEMASK)?.BooleanValue == true;
-			if (oneBitPerComponent == false && isMask == false && convertToBinary == false) {
+			if (oneBitPerComponent == false && isMask == false && binaryThreshold == 0) {
 				return false;
 			}
 
 			var info = new ImageInfo(imgRef);
 			var bytes = info.DecodeImage(_imgExpOption);
 			using (var fi = ImageExtractor.CreateFreeImageBitmap(info, ref bytes, false, info.ICCProfile != null)) {
-				if (convertToBinary
+				if (binaryThreshold != 0
 					&& (fi.HasPalette == false
 					|| fi.UniqueColors > 256
-					|| fi.ConvertColorDepth(FreeImageAPI.FREE_IMAGE_COLOR_DEPTH.FICD_01_BPP_THRESHOLD) == false)) {
+					|| fi.UseDib(dib => FreeImage.ConvertColorDepth(dib, algorithm == 255 ? FREE_IMAGE_COLOR_DEPTH.FICD_01_BPP_THRESHOLD | FREE_IMAGE_COLOR_DEPTH.FICD_FORCE_GREYSCALE | FREE_IMAGE_COLOR_DEPTH.FICD_REORDER_PALETTE : FREE_IMAGE_COLOR_DEPTH.FICD_01_BPP_DITHER, binaryThreshold, false)) == false)) {
 					return false;
 				}
 				var sb = JBig2Encoder.Encode(fi);
@@ -115,7 +115,6 @@ namespace PDFPatcher.Processor
 				imgStream.Remove(PdfName.K);
 				imgStream.Remove(PdfName.ENDOFLINE);
 				imgStream.Remove(PdfName.ENCODEDBYTEALIGN);
-				imgStream.Remove(PdfName.COLUMNS);
 				imgStream.Remove(PdfName.ROWS);
 				imgStream.Remove(PdfName.ENDOFBLOCK);
 				imgStream.Remove(PdfName.BLACKIS1);

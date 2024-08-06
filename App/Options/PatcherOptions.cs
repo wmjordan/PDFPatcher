@@ -52,6 +52,12 @@ namespace PDFPatcher
 		public bool RecompressWithJbig2 { get; set; }
 		[XmlAttribute("将图片转换为黑白")]
 		public bool RecompressImageToBinary { get; set; }
+		[XmlAttribute("使用门限约束二值化算法")]
+		public bool UseThresholdAlgorithm { get; set; }
+		[XmlAttribute("黑白图片门限")]
+		public byte BinaryImageThreshold { get; set; } = 128;
+		[XmlAttribute("抖动黑白图像")]
+		public byte DitherAlgorithm { get; set; } = 1;
 
 		[XmlElement("页面布局")]
 		public PageBoxSettings UnifiedPageSettings { get; set; }
