@@ -15,6 +15,7 @@ namespace PDFPatcher.Functions
 
 		void OnLoad() {
 			_ShiftNumberBox.Select();
+			_ShiftNumberBox.Select(0, 1);
 			_ShiftNumberBox.Focus();
 			_ShiftNumberBox.Maximum = 299999;
 			_ShiftNumberBox.Minimum = -299999;
