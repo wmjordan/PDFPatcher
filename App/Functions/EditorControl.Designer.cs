@@ -356,21 +356,22 @@
 			// _ShiftMultiPageNumber
 			// 
 			_ShiftMultiPageNumber.Name = "_ShiftMultiPageNumber";
-			_ShiftMultiPageNumber.Size = new System.Drawing.Size(172, 22);
+			_ShiftMultiPageNumber.ShortcutKeyDisplayString = "*";
+			_ShiftMultiPageNumber.Size = new System.Drawing.Size(185, 22);
 			_ShiftMultiPageNumber.Text = "增减指定数值(&S)...";
 			// 
 			// _IncrementPageNumber
 			// 
 			_IncrementPageNumber.Name = "_IncrementPageNumber";
 			_IncrementPageNumber.ShortcutKeyDisplayString = "+";
-			_IncrementPageNumber.Size = new System.Drawing.Size(172, 22);
+			_IncrementPageNumber.Size = new System.Drawing.Size(185, 22);
 			_IncrementPageNumber.Text = "增加页码(&Z)";
 			// 
 			// _DecrementPageNumber
 			// 
 			_DecrementPageNumber.Name = "_DecrementPageNumber";
 			_DecrementPageNumber.ShortcutKeyDisplayString = "-";
-			_DecrementPageNumber.Size = new System.Drawing.Size(172, 22);
+			_DecrementPageNumber.Size = new System.Drawing.Size(185, 22);
 			_DecrementPageNumber.Text = "减少页码(&J)";
 			// 
 			// _MergeBookmark
@@ -492,6 +493,7 @@
             this._CollapseSelection,
             this._CollapseChildren});
 			this._SelectionMenu.Name = "_SelectionMenu";
+			this._SelectionMenu.OwnerItem = _SelectItems;
 			this._SelectionMenu.Size = new System.Drawing.Size(163, 208);
 			this._SelectionMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this._MainToolbar_ItemClicked);
 			// 
@@ -892,13 +894,13 @@
 			// _SetOpenStatusTrue
 			// 
 			_SetOpenStatusTrue.Name = "_SetOpenStatusTrue";
-			_SetOpenStatusTrue.Size = new System.Drawing.Size(117, 22);
+			_SetOpenStatusTrue.Size = new System.Drawing.Size(180, 22);
 			_SetOpenStatusTrue.Text = "打开(&D)";
 			// 
 			// _SetOpenStatusFalse
 			// 
 			_SetOpenStatusFalse.Name = "_SetOpenStatusFalse";
-			_SetOpenStatusFalse.Size = new System.Drawing.Size(117, 22);
+			_SetOpenStatusFalse.Size = new System.Drawing.Size(180, 22);
 			_SetOpenStatusFalse.Text = "关闭(&G)";
 			// 
 			// _OcrDetectPunctuation
@@ -1119,10 +1121,10 @@
 			this._EditMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             _BookmarkAction,
             toolStripSeparator13,
-            this._SetOpenStatus,
             _ShiftPageNumber,
             _AlterPosition,
             this._ChangeZoomRate,
+            this._SetOpenStatus,
             _ForceInternalLink,
             toolStripSeparator7,
             _MergeBookmark,
@@ -1134,7 +1136,7 @@
             _MarkBookmark,
             _SelectMarkedBookmarks});
 			this._EditMenu.Name = "_EditMenu";
-			this._EditMenu.Size = new System.Drawing.Size(246, 308);
+			this._EditMenu.Size = new System.Drawing.Size(246, 330);
 			this._EditMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this._MainToolbar_ItemClicked);
 			// 
 			// _SetOpenStatus

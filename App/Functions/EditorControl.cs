@@ -536,6 +536,8 @@ namespace PDFPatcher.Functions
 			switch (keyData ^ Keys.Shift) {
 				case Keys.Tab:
 					ExecuteCommand("_LevelUp"); return true;
+				case Keys.D8:
+					ExecuteCommand("_ShiftMultiPageNumber"); return true;
 			}
 			switch (keyData) {
 				case Keys.Insert:
@@ -548,6 +550,8 @@ namespace PDFPatcher.Functions
 				case Keys.Subtract:
 				case Keys.OemMinus:
 					ExecuteCommand("_DecrementPageNumber"); return true;
+				case Keys.Multiply:
+					ExecuteCommand("_ShiftMultiPageNumber"); return true;
 				case Keys.P:
 					if (_BookmarkBox.FocusedItem != null) {
 						_BookmarkBox.EditSubItem(_BookmarkBox.FocusedItem as BrightIdeasSoftware.OLVListItem, _BookmarkBox.BookmarkPageColumn.Index);
