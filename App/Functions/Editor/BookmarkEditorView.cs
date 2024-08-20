@@ -27,7 +27,6 @@ namespace PDFPatcher.Functions
 		public bool HasMarker => _markers.Count > 0;
 
 		readonly Dictionary<BookmarkElement, Color> _markers = new Dictionary<BookmarkElement, Color>();
-		AutoResizingTextBox _LabelEditBox;
 
 		public BookmarkEditorView() {
 			InitializeComponent();
@@ -44,16 +43,20 @@ namespace PDFPatcher.Functions
 			#endregion
 			this.SetTreeViewLine();
 			this.FixEditControlWidth();
+			// 避免与 OnCellEditFinished 的行为冲突
+			CellEditKeyEngine.SetKeyBehaviour(Keys.Tab, CellEditCharacterBehaviour.Ignore, CellEditAtEdgeBehaviour.Ignore);
 			CanExpandGetter = (object x) => x is BookmarkElement e && e.HasSubBookmarks;
 			ChildrenGetter = (object x) => ((BookmarkElement)x).SubBookmarks;
 			_BookmarkNameColumn.AutoCompleteEditorMode = AutoCompleteMode.Suggest;
-			//this.SelectedRowDecoration = new RowBorderDecoration ()
-			//{
-			//    FillBrush = new SolidBrush (Color.FromArgb (64, SystemColors.Highlight)),
-			//    BoundsPadding = new Size (0, 0),
-			//    CornerRounding = 2,
-			//    BorderPen = new Pen (Color.FromArgb (216, SystemColors.Highlight))
-			//};
+			SelectedBackColor = UnfocusedSelectedBackColor = BackColor;
+			SelectedForeColor = UnfocusedSelectedForeColor = ForeColor;
+			HideSelection = true;
+			SelectedRowDecoration = new RowBorderDecoration() {
+				FillBrush = new SolidBrush(Color.FromArgb(40, SystemColors.Highlight)),
+				BoundsPadding = new Size(0, 0),
+				CornerRounding = 3,
+				BorderPen = new Pen(Color.FromArgb(216, SystemColors.Highlight))
+			};
 			new TypedColumn<BookmarkElement>(_BookmarkNameColumn) {
 				AspectGetter = (e) => e.Title,
 				AspectPutter = (e, newValue) => {
@@ -487,6 +490,18 @@ namespace PDFPatcher.Functions
 			EditSubItem(GetItem(e.Item), 0);
 		}
 
+		protected override void OnCellClick(CellClickEventArgs args) {
+			base.OnCellClick(args);
+			if (args.ColumnIndex == 0 && IsCellEditing == false && SelectedIndices.Count < 2) {
+				if (args.ClickCount > 1) {
+					EditSubItem(args.Item, 0);
+				}
+				else if (args.Model != SelectedObject) {
+					SelectedObject = args.Model;
+				}
+			}
+		}
+
 		protected override void OnCellEditStarting(CellEditEventArgs e) {
 			base.OnCellEditStarting(e);
 			if (e.Column == _BookmarkNameColumn) {
@@ -507,14 +522,30 @@ namespace PDFPatcher.Functions
 
 		protected override void OnCellEditFinished(CellEditEventArgs e) {
 			base.OnCellEditFinished(e);
-			if (e.Column == _BookmarkNameColumn && e.Cancel == false) {
+			if (e.Cancel || FormHelper.IsCtrlKeyDown) {
+				return;
+			}
+			if (e.Column == _BookmarkNameColumn) {
 				var i = GetItem(e.ListViewItem.Index);
 				var o = e.RowObject as XmlElement;
-				if (o.HasChildNodes && FormHelper.IsCtrlKeyDown == false) {
+				if (o.HasChildNodes) {
 					Expand(o);
 				}
 				if (e.Value as string != Constants.Bookmark && i.Index < Items.Count - 1) {
-					GetItem(i.Index + 1).BeginEdit();
+					EditSubItem(GetItem(i.Index + 1), 0);
+				}
+			}
+			else if (e.Column == _BookmarkPageColumn) {
+				if ((int)e.Value == (int)e.NewValue) {
+					return;
+				}
+				var i = GetItem(e.ListViewItem.Index);
+				var o = e.RowObject as XmlElement;
+				if (o.HasChildNodes) {
+					Expand(o);
+				}
+				if (i.Index < Items.Count - 1) {
+					EditSubItem(GetItem(i.Index + 1), _BookmarkPageColumn.Index);
 				}
 			}
 		}
@@ -648,29 +679,24 @@ namespace PDFPatcher.Functions
 				AcceptsReturn = text.IndexOf('\n') >= 0;
 			}
 
-			void ResizeForText(string value) {
-				Size = new Size(_Width, Math.Min(Math.Max((int)PreferredSize.Height, _MinHeight), _MaxHeight));
+			void ResizeForText() {
+				Size = new Size(_Width, Math.Min(Math.Max(PreferredSize.Height, _MinHeight), _MaxHeight));
 			}
 
 			protected override void OnTextChanged(EventArgs e) {
 				base.OnTextChanged(e);
-				ResizeForText(Text);
+				ResizeForText();
 			}
 
 			protected override void OnKeyDown(KeyEventArgs e) {
 				if (e.KeyData == (Keys.Shift | Keys.Enter)) {
 					AcceptsReturn = true;
-					// hack: The following line can throw ObjectDisposedException
-					//ScrollBars = ScrollBars.Vertical;
-					this.SelectedText = Environment.NewLine;
-					ResizeForText(Text);
+				}
+				else if (e.KeyData == (Keys.Control | Keys.Enter)) {
 					e.Handled = true;
 					e.SuppressKeyPress = true;
-					return;
+					Parent.Focus();
 				}
-				//else if (e.KeyData == (Keys.Control | Keys.Enter)) {
-				//	AcceptsReturn = false;
-				//}
 				base.OnKeyDown(e);
 			}
 		}

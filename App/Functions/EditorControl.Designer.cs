@@ -1239,7 +1239,6 @@
 			this._BookmarkBox.Cursor = System.Windows.Forms.Cursors.Default;
 			this._BookmarkBox.GridLines = true;
 			this._BookmarkBox.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-			this._BookmarkBox.HideSelection = false;
 			this._BookmarkBox.IsSimpleDragSource = true;
 			this._BookmarkBox.IsSimpleDropSink = true;
 			this._BookmarkBox.LabelEdit = true;
@@ -1250,8 +1249,6 @@
 			this._BookmarkBox.ShowGroups = false;
 			this._BookmarkBox.Size = new System.Drawing.Size(261, 266);
 			this._BookmarkBox.TabIndex = 0;
-			this._BookmarkBox.UnfocusedSelectedBackColor = System.Drawing.SystemColors.MenuHighlight;
-			this._BookmarkBox.UnfocusedSelectedForeColor = System.Drawing.SystemColors.MenuText;
 			this._BookmarkBox.UseCellFormatEvents = true;
 			this._BookmarkBox.UseCompatibleStateImageBehavior = false;
 			this._BookmarkBox.UseHyperlinks = true;

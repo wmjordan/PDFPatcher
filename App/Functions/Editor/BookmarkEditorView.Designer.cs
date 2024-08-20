@@ -52,7 +52,6 @@
 			this.Cursor = System.Windows.Forms.Cursors.Default;
 			this.GridLines = true;
 			this.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-			this.HideSelection = false;
 			this.IsSimpleDragSource = true;
 			this.IsSimpleDropSink = true;
 			this.LabelEdit = true;
