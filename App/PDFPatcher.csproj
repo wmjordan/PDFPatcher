@@ -95,6 +95,9 @@
     </Compile>
     <Compile Include="Commands.cs" />
     <Compile Include="Functions\Editor\IEditView.cs" />
+    <Compile Include="Functions\FunctionTabContainer.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Functions\PatcherOptionsControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

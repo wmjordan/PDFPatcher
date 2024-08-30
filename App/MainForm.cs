@@ -204,6 +204,20 @@ namespace PDFPatcher
 			}
 		}
 
+		protected override void OnFormClosing(FormClosingEventArgs e) {
+			base.OnFormClosing(e);
+			int n = 0;
+			foreach (var item in _FunctionContainer.GetPrimaryControlsInTabs<IDocumentEditor>()) {
+				if (item.IsDirty) {
+					n++;
+				}
+			}
+			if (n != 0
+				&& this.ConfirmYesBox(Messages.ConfirmCloseNDirtyDocument.Replace("<N>", n.ToText())) == false) {
+				e.Cancel = true;
+			}
+		}
+
 		void OnLoad() {
 			Processor.PdfHelper.ToggleReaderDebugMode(true); // 打开容错模式
 			Processor.PdfHelper.ToggleUnethicalMode(true); // 打开强制读取加密文档模式
@@ -247,28 +261,13 @@ namespace PDFPatcher
 			_FunctionContainer.ImageList = new ImageList();
 			_FunctionContainer.DisplayStyleProvider.SelectedTextStyle = FontStyle.Bold;
 			_FunctionContainer.AllowDrop = true;
-			_FunctionContainer.MouseClick += (s, args) => {
-				if (args.Button == MouseButtons.Middle) { ClickCloseTab(args); }
-			};
-			_FunctionContainer.MouseDoubleClick += (s, args) => { ClickCloseTab(args); };
+			_FunctionContainer.MiddleClickCloseTab = true;
+			_FunctionContainer.DoubleClickCloseTab = true;
 			_FunctionContainer.TabClosing += (s, args) => {
-				var t = _FunctionContainer.SelectedTab;
-				Tracker.DebugMessage(args.Action.ToString());
-				if (t.Tag.CastOrDefault<Function>() == Function.FrontPage) {
-					args.Cancel = true;
-					return;
+				if (_FunctionContainer.SafeCloseTab(args.TabPage)) {
+					_MainStatusLabel.Text = String.Empty;
 				}
-				var i = args.TabPageIndex;
-				var c = _FunctionContainer.TabCount;
-				if (i == 0 && c > 1) {
-					_FunctionContainer.SelectedIndex = 1;
-				}
-				else if (i < c) {
-					_FunctionContainer.SelectedIndex = i - 1;
-				}
-				_FunctionContainer.TabPages.RemoveAt(i);
-				t.Dispose();
-				_MainStatusLabel.Text = String.Empty;
+				args.Cancel = true;
 			};
 			_FunctionContainer.Selected += SelectedFunctionChanged;
 			_FunctionContainer.Deselected += FunctionDeselected;
@@ -334,17 +333,6 @@ namespace PDFPatcher
 				client = null;
 			};
 			client.DownloadDataAsync(new Uri(Constants.AppUpdateFile));
-		}
-
-		void ClickCloseTab(MouseEventArgs args) {
-			for (int i = _FunctionContainer.TabCount - 1; i >= 0; i--) {
-				if (_FunctionContainer.GetTabRect(i).Contains(args.Location) == false) {
-					continue;
-				}
-				if (_FunctionContainer.TabPages[i].Tag.CastOrDefault<Function>() != Function.FrontPage) {
-					_FunctionContainer.TabPages[i].Dispose();
-				}
-			}
 		}
 
 		void MenuCommand(object sender, ToolStripItemClickedEventArgs e) {
@@ -451,8 +439,7 @@ namespace PDFPatcher
 		}
 
 		Control GetActiveFunctionControl() {
-			var t = _FunctionContainer.SelectedTab;
-			return t == null || t.HasChildren == false ? null : t.Controls[0];
+			return _FunctionContainer.FirstControlInActiveTab;
 		}
 
 		internal void OpenFileWithEditor(FilePath path) {

@@ -91,6 +91,7 @@ namespace PDFPatcher.Functions
 			}
 		}
 		public bool IsBusy => _controller.IsBusy;
+		public bool IsDirty => _controller.Model.Undo.IsDirty;
 
 		public event EventHandler<DocumentChangedEventArgs> DocumentChanged;
 
@@ -594,7 +595,9 @@ namespace PDFPatcher.Functions
 		}
 
 		void _BookmarkBox_DragDrop(object sender, DragEventArgs e) {
-			if (this.DropFileOver(e, Constants.FileExtensions.PdfAndAllBookmarkExtension)) {
+			if (this.DropFileOver(e, Constants.FileExtensions.PdfAndAllBookmarkExtension)
+				&& (_controller.Model.Undo.IsDirty == false
+					|| AppContext.MainForm.ConfirmYesBox(Messages.ConfirmAbandonDocument))) {
 				_controller.LoadDocument(Text, false);
 			}
 		}

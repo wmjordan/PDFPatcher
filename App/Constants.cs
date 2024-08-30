@@ -511,5 +511,8 @@ namespace PDFPatcher
 		internal const string PageRanges = "在此输入需要处理的页码范围。\n如：“1-100”表示处理第1～100页。\n如有多个页码范围，可用空格、分号或逗号分开。\n如：“1-10;12;14-20”表示处理1～10、12和14～20页。";
 		internal const string ReversePageRanges = "此外还可以输入逆序页码，如“100-1”表示从第100页开始倒序处理至第1页。";
 		internal const string ModiNotAvailable = "本机尚未安装微软文本识别组件（MODI），无法使用识别文本功能。";
+		internal const string ConfirmAbandonDocument = "文档已被修改。打开新的文档将丢弃未保存的更改，是否确定打开新的文档？";
+		internal const string ConfirmCloseDirtyDocument = "文档已被修改。是否确定关闭文档？";
+		internal const string ConfirmCloseNDirtyDocument = "有 <N> 个文档的书签已被修改，但尚未保存。是否确定关闭程序？";
 	}
 }

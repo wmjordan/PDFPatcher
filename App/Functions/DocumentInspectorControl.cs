@@ -48,6 +48,7 @@ namespace PDFPatcher.Functions
 			}
 		}
 		public bool IsBusy => _LoadDocumentWorker.IsBusy;
+		public bool IsDirty => false;
 
 		public DocumentInspectorControl() {
 			InitializeComponent();

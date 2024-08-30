@@ -9,7 +9,7 @@ namespace PDFPatcher.Functions
 	{
 		readonly PdfInfoXmlDocument _bookmarkDocument;
 		public EventHandler DoWork;
-		public EventHandler Finished;
+		public Action<bool> Finished;
 
 		public string SourceFilePath => _SourceFileBox.Text;
 		public string TargetFilePath => _TargetFileBox.Text;
@@ -52,18 +52,18 @@ namespace PDFPatcher.Functions
 			_OptionsBox.OnLoad();
 		}
 
-		void _OkButton_Click(Object source, EventArgs args) {
+		void _OkButton_Click(object source, EventArgs args) {
 			_OptionsBox.Apply();
 			AppContext.MainForm.ResetWorker();
 			var doc = _bookmarkDocument;
 			var s = _SourceFileBox.Text;
 			var t = _OverwriteBox.Checked ? _SourceFileBox.Text : _TargetFileBox.Text;
 			if (String.IsNullOrEmpty(s)) {
-				Common.FormHelper.ErrorBox(Messages.SourceFileNotFound);
+				FormHelper.ErrorBox(Messages.SourceFileNotFound);
 				return;
 			}
 			if (String.IsNullOrEmpty(t)) {
-				Common.FormHelper.ErrorBox(Messages.TargetFileNotSpecified);
+				FormHelper.ErrorBox(Messages.TargetFileNotSpecified);
 				return;
 			}
 			_SourceFileBox.FileList.AddHistoryItem();
@@ -72,9 +72,9 @@ namespace PDFPatcher.Functions
 			var worker = AppContext.MainForm.GetWorker();
 			worker.DoWork += (dummy, arg) => {
 				DoWork?.Invoke(this, null);
-				Processor.Worker.PatchDocument(new SourceItem.Pdf(s), t, _bookmarkDocument, AppContext.Importer, AppContext.Editor);
+				arg.Result = Processor.Worker.PatchDocument(new SourceItem.Pdf(s), t, _bookmarkDocument, AppContext.Importer, AppContext.Editor);
 			};
-			worker.RunWorkerCompleted += (dummy, arg) => Finished?.Invoke(this, arg);
+			worker.RunWorkerCompleted += (dummy, arg) => Finished?.Invoke(arg.Result.CastOrDefault<bool>());
 			worker.RunWorkerAsync();
 
 			DialogResult = DialogResult.OK;

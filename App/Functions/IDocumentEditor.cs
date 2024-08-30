@@ -10,6 +10,7 @@ namespace PDFPatcher.Functions
 	interface IDocumentEditor : IDocumentSource
 	{
 		bool IsBusy { get; }
+		bool IsDirty { get; }
 		event EventHandler<DocumentChangedEventArgs> DocumentChanged;
 		void CloseDocument();
 		void Reopen();

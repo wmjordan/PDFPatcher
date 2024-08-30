@@ -41,12 +41,10 @@ namespace PDFPatcher.Functions.Editor
 						d.InitialDirectory = t.Directory;
 						d.FileName = t.FileNameWithoutExtension;
 					}
-					if (d.ShowDialog() == DialogResult.OK) {
-						t = d.FileName;
-					}
-					else {
+					if (d.ShowDialog() != DialogResult.OK) {
 						return;
 					}
+					t = d.FileName;
 				}
 			}
 
@@ -75,6 +73,7 @@ namespace PDFPatcher.Functions.Editor
 
 				RecentFileMenuHelper.AddRecentHistoryFile(t);
 			}
+			controller.Model.Undo.MarkClean();
 		}
 
 		private static void SavePdf(Controller controller) {
@@ -86,7 +85,11 @@ namespace PDFPatcher.Functions.Editor
 			}
 			using (var f = new SavePdfForm(m.GetPdfFilePath(), m.LastSavedPdfPath, m.Document)) {
 				f.DoWork = (s, args) => vv.CloseFile();
-				f.Finished = (s, args) => { vv.Reopen(); vv.Enabled = true; };
+				f.Finished = (success) => {
+					vv.Reopen();
+					vv.Enabled = true;
+					if (success) { m.Undo.MarkClean(); }
+				};
 
 				if (f.ShowDialog() == DialogResult.OK) {
 					vv.Enabled = false;

@@ -327,15 +327,15 @@ namespace PDFPatcher.Processor
 			}
 		}
 
-		internal static void PatchDocument(SourceItem.Pdf sourceFile, FilePath targetFile, object infoDoc, ImporterOptions options, PatcherOptions pdfSettings) {
+		internal static bool PatchDocument(SourceItem.Pdf sourceFile, FilePath targetFile, object infoDoc, ImporterOptions options, PatcherOptions pdfSettings) {
 			var sourcePath = sourceFile.FilePath.ToString();
 			if (sourceFile.FilePath.IsEmpty) {
 				Tracker.TraceMessage(Tracker.Category.Error, "输入文件名为空。");
-				return;
+				return false;
 			}
 			if (String.IsNullOrEmpty(targetFile) || targetFile.IsEmpty) {
 				Tracker.TraceMessage(Tracker.Category.Error, "输出文件名为空。");
-				return;
+				return false;
 			}
 			Tracker.TraceMessage(Tracker.Category.InputFile, sourcePath);
 			Tracker.TraceMessage(Tracker.Category.OutputFile, targetFile);
@@ -343,7 +343,7 @@ namespace PDFPatcher.Processor
 			DateTime sourceCreationTime = DateTime.Now;
 			var pdf = OpenPdf(sourcePath, AppContext.LoadPartialPdfFile, true);
 			if (pdf == null) {
-				return;
+				return false;
 			}
 			try {
 				DocInfoImporter import;
@@ -360,8 +360,9 @@ namespace PDFPatcher.Processor
 				else {
 					Tracker.TraceMessage(Tracker.Category.ImportantMessage, String.Concat("加载信息文件：<<", docPath, ">>。"));
 					import = new DocInfoImporter(options, docPath);
-					if (import.InfoDoc != null && VerifyInfoDocument(import.InfoDoc) == false)
-						return;
+					if (import.InfoDoc != null && VerifyInfoDocument(import.InfoDoc) == false) {
+						return false;
+					}
 				}
 				var pdfEngine = new PdfProcessingEngine(pdf);
 				pdfEngine.CreateProcessors(pdfSettings);
@@ -371,7 +372,7 @@ namespace PDFPatcher.Processor
 				Tracker.TrackProgress(10);
 
 				if (pdf.ConfirmUnethicalMode() == false) {
-					return;
+					return false;
 				}
 
 				Tracker.TraceMessage("导入文档属性。");
@@ -393,16 +394,16 @@ namespace PDFPatcher.Processor
 
 				Tracker.TraceMessage(Tracker.Category.OutputFile, targetFile);
 				if (FileHelper.ComparePath(sourcePath, targetFile)) {
-					if (FormHelper.YesNoBox("是否覆盖原始 PDF 文件？\n如处理过程出现错误，覆盖操作将导致原始数据无法恢复！") == DialogResult.No) {
+					if (FileHelper.CheckOverwrite(targetFile) == false) {
 						Tracker.TraceMessage(Tracker.Category.Error, Messages.SourceFileEqualsTargetFile);
-						return;
+						return false;
 					}
 					overwriteSource = true;
 					sourceCreationTime = sourceFile.FilePath.ToFileInfo().CreationTime;
 					targetFile = sourceFile.FilePath.ChangeExtension(Ext.Tmp).ToString();
 				}
 				else if (FileHelper.CheckOverwrite(targetFile) == false) {
-					return;
+					return false;
 				}
 
 				targetFile.CreateContainingDirectory();
@@ -515,12 +516,12 @@ namespace PDFPatcher.Processor
 			}
 			catch (OperationCanceledException) {
 				Tracker.TraceMessage(Tracker.Category.ImportantMessage, OperationCanceled);
-				return;
+				return false;
 			}
 			catch (Exception ex) {
 				Tracker.TraceMessage(ex);
 				AppContext.MainForm.ErrorBox("导入信息时发生错误", ex);
-				return;
+				return false;
 			}
 			finally {
 				if (pdf != null) {
@@ -543,9 +544,11 @@ namespace PDFPatcher.Processor
 				}
 				catch (Exception) {
 					FormHelper.ErrorBox($"无法覆盖输入文件。\n请手工将“{Ext.Tmp}”后缀的临时文件更名为输入文件。");
+					return false;
 				}
 			}
 			Tracker.TraceMessage(Tracker.Category.Alert, $"成功导入信息到 <<{targetFile}>>。");
+			return true;
 		}
 
 		internal static string ReplaceTargetFileNameMacros(string sourceFile, string targetFile, PdfReader pdf) {

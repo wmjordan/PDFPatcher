@@ -14,17 +14,26 @@ namespace PDFPatcher.Processor
 	{
 		readonly Stack<IUndoAction> _undoActions = new Stack<IUndoAction>();
 		readonly List<string> _names = new List<string>();
+		int _CleanLevel;
 
 		public delegate void OnUndoDelegate(UndoManager undoManager, IUndoAction action);
+		public OnUndoDelegate OnAddUndo;
+		public OnUndoDelegate OnUndo;
 
 		public bool CanUndo => _names.Count > 0;
 
-		public OnUndoDelegate OnAddUndo = null;
-		public OnUndoDelegate OnUndo = null;
+		public bool IsDirty {
+			get => _CleanLevel != _undoActions.Count;
+		}
+
+		public void MarkClean() {
+			_CleanLevel = _undoActions.Count;
+		}
 
 		public void Clear() {
 			_names.Clear();
 			_undoActions.Clear();
+			_CleanLevel = 0;
 		}
 
 		public void AddUndo(string name, IUndoAction action) {
@@ -49,7 +58,6 @@ namespace PDFPatcher.Processor
 			if (!CanUndo) {
 				return null;
 			}
-
 			_names.RemoveAt(_names.Count - 1);
 			if (_names.Count > 100 && _names.Capacity > 200) {
 				_names.TrimExcess();

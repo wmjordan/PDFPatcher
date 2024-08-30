@@ -91,7 +91,7 @@
 			this.statusStrip1 = new System.Windows.Forms.StatusStrip();
 			this._MainStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			this._GeneralToolbar = new System.Windows.Forms.ToolStrip();
-			this._FunctionContainer = new System.Windows.Forms.CustomTabControl();
+			this._FunctionContainer = new PDFPatcher.Functions.FunctionTabContainer();
 			_Select = new System.Windows.Forms.ToolStripMenuItem();
 			_Copy = new System.Windows.Forms.ToolStripMenuItem();
 			_Delete = new System.Windows.Forms.ToolStripMenuItem();
@@ -753,7 +753,7 @@
 		private System.Windows.Forms.StatusStrip statusStrip1;
 		private System.Windows.Forms.ToolStripMenuItem _ResetOptions;
 		private System.Windows.Forms.ToolStrip _GeneralToolbar;
-		private System.Windows.Forms.CustomTabControl _FunctionContainer;
+		private PDFPatcher.Functions.FunctionTabContainer _FunctionContainer;
 		private System.Windows.Forms.ToolStripStatusLabel _MainStatusLabel;
 	}
 }

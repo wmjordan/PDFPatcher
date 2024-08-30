@@ -13,6 +13,10 @@ namespace PDFPatcher.Functions.Editor
 		}
 
 		public void Process(Controller controller, params string[] parameters) {
+			if (controller.Model.Undo.IsDirty
+				&& AppContext.MainForm.ConfirmYesBox(Messages.ConfirmAbandonDocument) == false) {
+				return;
+			}
 			if (_showDialog) {
 				using (var f = new OpenFileDialog {
 					DefaultExt = _importBookmark ? Constants.FileExtensions.Xml : Constants.FileExtensions.Pdf,
