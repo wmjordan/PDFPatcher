@@ -652,7 +652,7 @@ namespace PDFPatcher.Functions
 				var z = GetZoomFactorForPage(b);
 				var o = GetVirtualImageOffset(pageNumber);
 				using (var spanPen = new Pen(Color.LightGray, 1))
-				using (var blockPen = new Pen(Color.Gray, 1)) {
+				using (var blockPen = new Pen(Color.DimGray, 1)) {
 					blockPen.DashStyle
 						= spanPen.DashStyle
 						= System.Drawing.Drawing2D.DashStyle.Dash;
