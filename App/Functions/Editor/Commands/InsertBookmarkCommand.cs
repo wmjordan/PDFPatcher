@@ -46,9 +46,7 @@ namespace PDFPatcher.Functions.Editor
 				if (v.HorizontalFlow) {
 					fp.X += sr.Width.ToInt32() + 20;
 				}
-				else {
-					fp.Y -= f.Height + 20;
-				}
+				fp.Y -= f.Height + 20;
 			}
 			else {
 				fp = new Point(mousePoint.X + 20, mousePoint.Y - f.Height);
