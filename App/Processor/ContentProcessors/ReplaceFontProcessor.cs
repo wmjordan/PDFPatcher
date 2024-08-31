@@ -4,6 +4,7 @@ using System.Linq;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using PDFPatcher.Model;
+using FontId = System.Tuple<string, bool>;
 
 namespace PDFPatcher.Processor
 {
@@ -17,13 +18,15 @@ namespace PDFPatcher.Processor
 		const string FullWidthLetters = "ａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺ";
 		const string HalfWidthNumbers = "0123456789";
 		const string FullWidthNumbers = "０１２３４５６７８９";
+		const string HorizontalPunctuations = "，、。：；！？〖〗…‥—–（）｛｝〔〕【】《》〈〉「」『』［］";
+		const string VerticalPunctuations = "︐︑︒︓︔︕︖︗︘︙︰︱︲︵︶︷︸︹︺︻︼︽︾︿﹀﹁﹂﹃﹄﹇﹈";
 
 		readonly bool _embedLegacyFonts;
 		readonly bool _trimTrailingWhiteSpace;
 		NewFont _currentNewFont;
 		FontInfo _currentFont;
 		FontFactoryImp _fontFactory;
-		Dictionary<string, NewFont> _newFonts;
+		Dictionary<FontId, NewFont> _newFonts;
 		Dictionary<PdfName, NewFont> _fontMap;
 		Dictionary<PdfName, int> _fontNameIDMap;
 		Dictionary<int, FontInfo> _fontInfoMap;
@@ -45,7 +48,7 @@ namespace PDFPatcher.Processor
 				_fontSubstitutions = new Dictionary<string, FontSubstitution>(0);
 			}
 			var l = __LegacyFonts.Length + _fontSubstitutions.Count;
-			_newFonts = new Dictionary<string, NewFont>(l, StringComparer.CurrentCultureIgnoreCase);
+			_newFonts = new Dictionary<FontId, NewFont>(l);
 			_fontMap = new Dictionary<PdfName, NewFont>(l);
 			_fontNameIDMap = new Dictionary<PdfName, int>();
 			_fontInfoMap = new Dictionary<int, FontInfo>();
@@ -270,6 +273,7 @@ namespace PDFPatcher.Processor
 			foreach (var item in fonts) {
 				string sn; // 替换字体名称
 				string n; // 字体名称
+				bool v; // 是否竖排文字
 				var fr = item.Value as PdfIndirectReference;
 				if (fr == null
 					|| _bypassFonts.Contains(fr.Number)) {
@@ -300,9 +304,10 @@ namespace PDFPatcher.Processor
 						}
 						sn = null;
 					}
-					if (_newFonts.TryGetValue(sn ?? n, out nf) == false) {
+					v = f.GetAsName(PdfName.ENCODING)?.ToString().EndsWith("-V") ?? false;
+					if (_newFonts.TryGetValue(new FontId(sn ?? n, v), out nf) == false) {
 						try {
-							Tracker.TraceMessage("加载字体：" + (sn != null ? String.Concat(sn, "(替换 ", n, ")") : n));
+							Tracker.TraceMessage("加载字体：" + (v ? "@" : String.Empty) + (sn != null ? $"{sn}(替换 {n})" : n));
 							if (sn != null) {
 								n = sn;
 							}
@@ -314,20 +319,25 @@ namespace PDFPatcher.Processor
 								}
 							}
 							nf = new NewFont {
-								Font = _fontFactory.GetFont(sf ?? n, BaseFont.IDENTITY_H),
+								Font = _fontFactory.GetFont(sf ?? n, v ? BaseFont.IDENTITY_V : BaseFont.IDENTITY_H),
 								FontRef = context.Pdf.AddPdfObject(new PdfDictionary()),
-								DescendantFontRef = context.Pdf.AddPdfObject(new PdfArray())
+								DescendantFontRef = context.Pdf.AddPdfObject(new PdfArray()),
+								Vertical = v,
 							};
+							var italic = f.Locate<PdfNumber>(PdfName.DESCENDANTFONTS, 0, PdfName.FONTDESCRIPTOR, PdfName.ITALICANGLE)?.DoubleValue ?? 0d;
+							if (italic != 0) {
+								nf.ItalicAngle = italic;
+							}
 							if (fs != null) {
 								SetupFontSubstitutionMaps(nf, fs);
 							}
 							if (sn == null && p != -1 && nf.Font.BaseFont == null) {
-								nf.Font = _fontFactory.GetFont(__AlternativeFonts[p], BaseFont.IDENTITY_H);
+								nf.Font = _fontFactory.GetFont(__AlternativeFonts[p], v ? BaseFont.IDENTITY_V : BaseFont.IDENTITY_H);
 							}
 							if (nf.Font.BaseFont == null) {
 								throw new System.IO.FileNotFoundException("无法加载字体：" + n);
 							}
-							_newFonts.Add(n, nf);
+							_newFonts.Add(new FontId(n, v), nf);
 						}
 						catch (Exception) {
 							Tracker.TraceMessage(Tracker.Category.Error, "无法加载字体");
@@ -338,13 +348,13 @@ namespace PDFPatcher.Processor
 					if (_fontInfoMap.ContainsKey(fr.Number) == false) {
 						var fi = new FontInfo(f, fr.Number);
 						_fontInfoMap.Add(fr.Number, fi);
-						//try {
-						//	ReadSingleByteFontWidths (f, fi, nf);
-						//	ReadCidFontWidths (f, fi, nf);
-						//}
-						//catch (NullReferenceException) {
-						//	Tracker.TraceMessage (Tracker.Category.ImportantMessage, "字体“" + n + "”的 CID 宽度表错误。");
-						//}
+						try {
+							ReadSingleByteFontWidths(f, fi, nf);
+							ReadCidFontWidths(f, fi, nf);
+						}
+						catch (NullReferenceException) {
+							Tracker.TraceMessage(Tracker.Category.ImportantMessage, "字体“" + n + "”的 CID 宽度表错误。");
+						}
 					}
 					_fontRefIDMap[nf.FontRef.Number] = nf;
 				}
@@ -402,6 +412,11 @@ namespace PDFPatcher.Processor
 					nf.CharSubstitutions[fs.OriginalCharacters[i]] = fs.SubstituteCharacters[i];
 				}
 			}
+			#region HACK: 将 iText 转码的横向标点转回竖向标点
+			if (nf.Vertical) {
+				Map(nf.CharSubstitutions, HorizontalPunctuations, VerticalPunctuations);
+			}
+			#endregion
 		}
 
 		static void Map(Dictionary<char, char> map, string from, string to) {
@@ -484,7 +499,7 @@ namespace PDFPatcher.Processor
 			f.Put(PdfName.TYPE, PdfName.FONT);
 			f.Put(PdfName.SUBTYPE, PdfName.TYPE0);
 			f.Put(PdfName.BASEFONT, new PdfName(font.FontName));
-			f.Put(PdfName.ENCODING, new PdfName(BaseFont.IDENTITY_H));
+			f.Put(PdfName.ENCODING, new PdfName(font.Vertical ? BaseFont.IDENTITY_V : BaseFont.IDENTITY_H));
 			f.Put(PdfName.DESCENDANTFONTS, font.DescendantFontRef);
 			var metrics = new int[font.UsedCidMap.Count][];
 			var i = -1;
@@ -577,6 +592,10 @@ namespace PDFPatcher.Processor
 				df.Put(PdfName.DW, FontInfo.DefaultDefaultWidth);
 				var fs = pdf.AddPdfObject(SubsetFont(newFont, ttf));
 				var fd = ttf.GetFontDescriptor(fs, newFont.SubsetPrefix, null);
+				if (newFont.ItalicAngle != 0) {
+					fd.Put(PdfName.ITALICANGLE, newFont.ItalicAngle);
+					fd.Put(PdfName.FLAGS, 1 << 6);
+				}
 				df.Put(PdfName.FONTDESCRIPTOR, pdf.AddPdfObject(fd));
 				WriteCidWidths(newFont, df);
 
@@ -650,6 +669,8 @@ namespace PDFPatcher.Processor
 			public string FontName => SubsetPrefix + _Font.Familyname;
 			public HashSet<char> AbsentChars { get; }
 			public Dictionary<char, char> CharSubstitutions { get; }
+			public bool Vertical { get; set; }
+			public double ItalicAngle { get; set; }
 			Font _Font;
 			public Font Font {
 				get => _Font;
