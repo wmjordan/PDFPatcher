@@ -602,7 +602,7 @@ namespace PDFPatcher.Functions
 				);
 				var pl = GetPageLabel(p);
 				TextRenderer.DrawText(e.Graphics,
-					string.Concat(pl, pl.Length > 0 ? " / 第 " : "第 ", p, " 页 (", pb.Width, " * ", pb.Height, ")"),
+					$"{pl}{(pl.Length > 0 ? " / 第 " : "第 ")}{p} 页 ({pb.Width} * {pb.Height})",
 					SystemFonts.MessageBoxFont,
 					new DrawingPoint(ox + op.X + __pageMargin, oy + op.Y),
 					Color.Black);

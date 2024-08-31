@@ -21,7 +21,7 @@ namespace PDFPatcher.Common
 			}
 		}
 
-		private static void ListInstalledFonts() {
+		static void ListInstalledFonts() {
 			var uf = new List<FriendlyFontName>(); // 可能包含中文的字体
 			var of = new List<FriendlyFontName>(); // 其他字体
 			var fs = FontHelper.GetInstalledFonts(false);

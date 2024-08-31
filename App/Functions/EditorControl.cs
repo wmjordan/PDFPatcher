@@ -235,7 +235,15 @@ namespace PDFPatcher.Functions
 				}
 				var ti = _ViewerBox.FindTextLines(p);
 				var t = ti.ToString();
-				_PageInfoBox.Text = string.Concat("页面：", p.Page, "; 位置：", Math.Round(p.PageX, 2), " * ", Math.Round(p.PageY, 2), ti.Spans.HasContent() ? String.Concat("; 字体：", String.Join(";", ti.GetFontNames()), " ", ti.Spans[0].Size) : null, t != null ? "; 文本：" : null, t);
+				_PageInfoBox.Text = string.Concat("页面：",
+					p.Page,
+					"; 位置：",
+					Math.Round(p.PageX, 2),
+					" * ",
+					Math.Round(p.PageY, 2),
+					ti.Spans.HasContent() ? String.Concat("; 字体：", String.Join(";", ti.GetFontNames()), " ", ti.Spans[0].Size) : null,
+					t != null ? "; 文本：" : null,
+					t);
 			};
 			_ViewerBox.MouseClick += _ViewBox_MouseClick;
 			_ViewerToolbar.Enabled = false;
@@ -257,7 +265,7 @@ namespace PDFPatcher.Functions
 		void _ViewerBoxInitializeAfterDocumentLoad(object sender, EventArgs e) {
 			_ViewerBox.ContentDirection = AppContext.Reader.ContentDirection;
 			_ViewerBox.FullPageScroll = AppContext.Reader.FullPageScroll;
-			_CurrentPageBox.ToolTipText = "文档共" + _ViewerBox.Document.PageCount + "页\nHome：转到第一页\nEnd：转到最后一页";
+			_CurrentPageBox.ToolTipText = $"文档共{_ViewerBox.Document.PageCount}页\nHome：转到第一页\nEnd：转到最后一页";
 			_ZoomBox.Text = _ViewerBox.LiteralZoom = AppContext.Reader.Zoom.SubstituteDefault(Constants.DestinationAttributes.ViewType.FitH);
 			_ZoomBox.Enabled = true;
 		}
@@ -394,7 +402,7 @@ namespace PDFPatcher.Functions
 					if (m.DropDownItems.Count == 0) {
 						m.DropDownItemClicked += _MainToolbar_ItemClicked;
 						for (int i = 1; i < 8; i++) {
-							m.DropDownItems.Add(new ToolStripMenuItem("&" + i + " 级标题") { Name = "_AutoBookmarkLevel" + i });
+							m.DropDownItems.Add(new ToolStripMenuItem($"&{i} 级标题") { Name = "_AutoBookmarkLevel" + i });
 						}
 					}
 					break;

@@ -77,16 +77,16 @@ namespace PDFPatcher.Functions.Editor
 		public static readonly PageRegion Empty = new PageRegion();
 
 		public readonly int Page;
-		public readonly MuPdfSharp.Rectangle Region;
+		public readonly MuRectangle Region;
 
 		internal PageRegion(PagePosition p1, PagePosition p2) {
 			if (p1.Page != p2.Page) {
 				Page = 0;
-				Region = new MuPdfSharp.Rectangle();
+				Region = new MuRectangle();
 			}
 			else {
 				Page = p1.Page;
-				Region = new MuPdfSharp.Rectangle(p1.PageX, p1.PageY, p2.PageX, p2.PageY);
+				Region = new MuRectangle(p1.PageX, p1.PageY, p2.PageX, p2.PageY);
 			}
 		}
 
@@ -105,12 +105,12 @@ namespace PDFPatcher.Functions.Editor
 		public readonly MuPage Page;
 
 		/// <summary>获取文本字符的位置边框。</summary>
-		public readonly MuPdfSharp.Rectangle TextBBox;
+		public readonly MuRectangle TextBBox;
 		/// <summary>获取文本位置以下的文本行。</summary>
 		public readonly List<MuTextLine> Lines;
 		public readonly List<MuTextSpan> Spans;
 
-		public TextInfo(MuPage page, MuPdfSharp.Rectangle bbox, List<MuTextLine> textLines, List<MuTextSpan> spans) {
+		public TextInfo(MuPage page, MuRectangle bbox, List<MuTextLine> textLines, List<MuTextSpan> spans) {
 			Page = page;
 			TextBBox = bbox;
 			Lines = textLines;
@@ -119,7 +119,7 @@ namespace PDFPatcher.Functions.Editor
 
 		IEnumerable<MuTextLine> IMuTextLines.Lines => Lines;
 
-		public MuPdfSharp.Rectangle BBox => TextBBox;
+		public MuRectangle BBox => TextBBox;
 
 		IEnumerable<MuTextSpan> IMuTextSpans.Spans => Spans;
 
@@ -185,7 +185,7 @@ namespace PDFPatcher.Functions.Editor
 		/// <summary>
 		/// 获取选中区域在页面上的矩形区域（屏幕左下角点坐标为0，0）。
 		/// </summary>
-		public readonly MuPdfSharp.Rectangle PageRegion;
+		public readonly MuRectangle PageRegion;
 		/// <summary>
 		/// 获取选中区域在显示图片上的矩形区域。
 		/// </summary>
@@ -194,7 +194,7 @@ namespace PDFPatcher.Functions.Editor
 		public Bitmap GetSelectedBitmap() {
 			_cache.LoadPage(Page);
 			var p = _cache.GetBitmap(Page);
-			var clip = new MuPdfSharp.Rectangle(
+			var clip = new MuRectangle(
 					ImageRegion.Left < 0 ? 0 : ImageRegion.Left,
 					ImageRegion.Top < 0 ? 0 : ImageRegion.Top,
 					ImageRegion.Right > p.Width ? p.Width : ImageRegion.Right,
@@ -203,7 +203,7 @@ namespace PDFPatcher.Functions.Editor
 			return p.Clone(clip, p.PixelFormat);
 		}
 
-		public Selection(RenderResultCache cache, int page, MuPdfSharp.Rectangle region, RectangleF imageRegion) {
+		public Selection(RenderResultCache cache, int page, MuRectangle region, RectangleF imageRegion) {
 			Page = page;
 			PageRegion = region;
 			ImageRegion = imageRegion;
