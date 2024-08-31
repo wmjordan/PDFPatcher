@@ -656,7 +656,7 @@ namespace PDFPatcher.Functions
 					blockPen.DashStyle
 						= spanPen.DashStyle
 						= System.Drawing.Drawing2D.DashStyle.Dash;
-					using (var m = new System.Drawing.Drawing2D.Matrix(z, 0, 0, z, offset.X + o.X - z * b.Left, offset.Y + o.Y - z * b.Top)) {
+					using (var m = new System.Drawing.Drawing2D.Matrix(z, 0, 0, z, offset.X + o.X, offset.Y + o.Y)) {
 						g.MultiplyTransform(m);
 					}
 					foreach (var block in p.TextPage.Blocks) {
@@ -786,9 +786,6 @@ namespace PDFPatcher.Functions
 			lock (_mupdf.SyncObj) {
 				var page = _cache.LoadPage(region.Page);
 				var pr = region.ToPageCoordinate(page);
-				if (pr.Intersect(page.VisualBound).IsEmpty) {
-					return null;
-				}
 				if (pr.Intersect(page.TextPage.BBox).IsEmpty) {
 					return null;
 				}
@@ -1013,8 +1010,8 @@ namespace PDFPatcher.Functions
 			var o = _pageOffsets[pageNumber];
 			var b = _pageBounds[pageNumber];
 			var z = _zoomFactor;
-			var l = (box.Left - b.Left) * z + __pageMargin;
-			var t = (box.Top - b.Top) * z + __pageMargin;
+			var l = box.Left * z + __pageMargin;
+			var t = box.Top * z + __pageMargin;
 			if (rtl) {
 				l += o;
 			}

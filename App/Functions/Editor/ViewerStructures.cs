@@ -68,7 +68,7 @@ namespace PDFPatcher.Functions.Editor
 
 		public MuPoint ToPageCoordinate(MuPage page) {
 			var pb = page.VisualBound;
-			return new MuPoint(PageX, pb.Bottom - (PageY - pb.Top));
+			return new MuPoint(PageX - pb.Left, pb.Bottom - PageY);
 		}
 	}
 
@@ -94,9 +94,9 @@ namespace PDFPatcher.Functions.Editor
 			var r = Region;
 			var pb = page.VisualBound;
 			return new MuRectangle(r.Left,
-				pb.Bottom - (r.Top - pb.Top),
+				pb.Bottom - r.Top,
 				r.Right,
-				pb.Bottom - (r.Bottom - pb.Top));
+				pb.Bottom - r.Bottom);
 		}
 	}
 
