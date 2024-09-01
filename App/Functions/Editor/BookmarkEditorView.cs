@@ -130,8 +130,7 @@ namespace PDFPatcher.Functions
 			if (o == null) {
 				return;
 			}
-			var f = o.GetFileDropList();
-			foreach (var item in f) {
+			foreach (var item in o.GetFileDropList()) {
 				if (FileHelper.HasExtension(item, Constants.FileExtensions.Xml)
 					|| FileHelper.HasExtension(item, Constants.FileExtensions.Pdf)) {
 					args.Handled = true;
@@ -150,7 +149,7 @@ namespace PDFPatcher.Functions
 				e.Effect = DragDropEffects.None;
 				return;
 			}
-			var copy = (Control.ModifierKeys & Keys.Control) != Keys.None || (e.SourceModels[0] as XmlElement).OwnerDocument != ti.OwnerDocument;
+			var copy = (ModifierKeys & Keys.Control) != Keys.None || (e.SourceModels[0] as XmlElement).OwnerDocument != ti.OwnerDocument;
 			if (copy == false) {
 				if (e.DropTargetItem.Selected) {
 					e.Effect = DragDropEffects.None;
@@ -195,8 +194,8 @@ namespace PDFPatcher.Functions
 			Freeze();
 			var child = ml.X > d.Position.X + d.GetBounds(ItemBoundsPortion.ItemOnly).Width / 2;
 			var append = ml.Y > d.Position.Y + d.Bounds.Height / 2;
-			var copy = (Control.ModifierKeys & Keys.Control) != Keys.None || (args.SourceModels[0] as BookmarkElement).OwnerDocument != ti.OwnerDocument;
-			var deepCopy = copy && (OperationAffectsDescendants || (Control.ModifierKeys & Keys.Shift) != Keys.None);
+			var copy = (ModifierKeys & Keys.Control) != Keys.None || (args.SourceModels[0] as BookmarkElement).OwnerDocument != ti.OwnerDocument;
+			var deepCopy = copy && (OperationAffectsDescendants || (ModifierKeys & Keys.Shift) != Keys.None);
 			var tii = TopItemIndex;
 			CopyOrMoveElement(se, ti, child, append, copy, deepCopy);
 			//e.RefreshObjects ();
@@ -265,12 +264,6 @@ namespace PDFPatcher.Functions
 					pn.Add(e);
 				}
 			}
-			//else {
-			//	foreach (var item in source) {
-			//		this.Collapse (item);
-			//	}
-			//	this.RemoveObjects (source);
-			//}
 			if (child) {
 				if (after) {
 					tpr = target.Name == Constants.DocumentBookmark;

@@ -43,10 +43,8 @@ namespace PDFPatcher.Functions
 				else if (args.ProgressPercentage > 0) {
 					_ProgressBar.SetValue(args.ProgressPercentage);
 				}
-				else {
-					if (args.UserState is PageFont pf) {
-						_FontListBox.AddObject(pf);
-					}
+				else if (args.UserState is PageFont pf) {
+					_FontListBox.AddObject(pf);
 				}
 			};
 			_Worker.RunWorkerCompleted += (s, args) => {
@@ -133,8 +131,7 @@ namespace PDFPatcher.Functions
 			}
 		}
 
-		private void SetGoal(int goal) { _ProgressBar.Maximum = goal; }
-		private void _ListFontsButton_Click(object sender, EventArgs e) {
+		void _ListFontsButton_Click(object sender, EventArgs e) {
 			_ProgressBar.Value = 0;
 			_ListFontsButton.Enabled = false;
 			_Worker.RunWorkerAsync();
@@ -159,7 +156,7 @@ namespace PDFPatcher.Functions
 			}
 		}
 
-		private void _SelectAllButton_Click(object sender, EventArgs e) {
+		void _SelectAllButton_Click(object sender, EventArgs e) {
 			if (_FontListBox.GetItemCount() == 0) {
 				return;
 			}
@@ -172,7 +169,7 @@ namespace PDFPatcher.Functions
 			_FontListBox.Focus();
 		}
 
-		private void _AddSelectedFontsButton_Click(object sender, EventArgs e) {
+		void _AddSelectedFontsButton_Click(object sender, EventArgs e) {
 			if (SubstitutionsEditor == null) {
 				return;
 			}
@@ -185,7 +182,7 @@ namespace PDFPatcher.Functions
 			Close();
 		}
 
-		private void _AppConfigButton_Click(object sender, EventArgs e) {
+		void _AppConfigButton_Click(object sender, EventArgs e) {
 			this.ShowDialog<AppOptionForm>();
 		}
 	}

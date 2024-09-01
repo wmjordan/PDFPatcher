@@ -108,8 +108,7 @@ namespace MuPdfSharp
 			if (grayscale) {
 				bmp.Palette.CreateGrayscalePalette();
 				for (int y = height - 1; y >= 0; y--) {
-					var pDest = bmp.GetScanlinePointer(y);
-					var pl = (byte*)pDest.ToPointer();
+					var pl = (byte*)bmp.GetScanlinePointer(y).ToPointer();
 					var sl = ptrSrc;
 					for (int x = 0; x < width; x++) {
 						*pl = invert ? (byte)(*sl ^ 0xFF) : *sl;
@@ -121,8 +120,7 @@ namespace MuPdfSharp
 			}
 			else { // DeviceBGR
 				for (int y = height - 1; y >= 0; y--) {
-					var pDest = bmp.GetScanlinePointer(y);
-					var pl = (byte*)pDest.ToPointer();
+					var pl = (byte*)bmp.GetScanlinePointer(y).ToPointer();
 					var sl = ptrSrc;
 					if (invert) {
 						for (int x = 0; x < width; x++) {
