@@ -425,6 +425,21 @@ namespace PDFPatcher.Functions
 			}
 		}
 
+		internal void SelectPreviousBookmark() {
+			var si = this.GetFocusedOrFirstSelectedItem();
+			if (si == null || si.Index < 1) {
+				return;
+			}
+			(SelectedItem = GetItem(si.Index - 1)).Focused = true;
+		}
+		internal void SelectNextBookmark() {
+			var si = this.GetFocusedOrFirstSelectedItem();
+			if (si == null || si.Index == GetItemCount() - 1) {
+				return;
+			}
+			(SelectedItem = GetItem(si.Index + 1)).Focused = true;
+		}
+
 		internal void CopySelectedBookmark() {
 			_copiedBookmarks = GetSelectedElements(false);
 			Clipboard.Clear();

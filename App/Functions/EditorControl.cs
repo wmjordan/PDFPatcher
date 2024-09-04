@@ -528,7 +528,12 @@ namespace PDFPatcher.Functions
 				case Keys.V:
 					ExecuteCommand(Commands.Paste); return true;
 				case Keys.W:
-					ExecuteCommand(Commands.EditorBookmarkSetCurrentCoordinates); return true;
+					ExecuteCommand(Commands.EditorBookmarkSetCurrentCoordinates);
+					return true;
+				case Keys.Shift | Keys.W:
+					ExecuteCommand(Commands.EditorBookmarkSetCurrentCoordinates);
+					_controller.View.Bookmark.SelectNextBookmark();
+					return true;
 				case Keys.Down:
 					_controller.InsertBookmark(InsertBookmarkPositionType.AfterCurrent);
 					return true;
@@ -547,6 +552,16 @@ namespace PDFPatcher.Functions
 					ExecuteCommand("_LevelUp"); return true;
 				case Keys.D8:
 					ExecuteCommand("_ShiftMultiPageNumber"); return true;
+				case Keys.Up:
+					_controller.View.Bookmark.SelectPreviousBookmark(); return true;
+				case Keys.Down:
+					_controller.View.Bookmark.SelectNextBookmark(); return true;
+				case Keys.Right:
+					_controller.View.Bookmark.ExpandSelected(); return true;
+				case Keys.Left:
+					_controller.View.Bookmark.CollapseSelected(); return true;
+				case Keys.Enter:
+					ScrollToSelectedBookmarkLocation(); return true;
 			}
 			switch (keyData) {
 				case Keys.Insert:

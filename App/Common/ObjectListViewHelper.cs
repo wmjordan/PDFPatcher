@@ -127,7 +127,13 @@ namespace BrightIdeasSoftware
 			return view.GetModelObject(view.GetFirstSelectedIndex()) as T;
 		}
 
-		/// <remarks>树视图存在子节点且多选节点时，在 SelectedIndexChanged 事件中，SelectedIndices属性可能返回无内容的集合。</remarks>
+		public static OLVListItem GetFocusedOrFirstSelectedItem(this ObjectListView view) {
+			return (view.FocusedItem
+				?? view.SelectedItem
+				?? (view.SelectedItems.Count > 0 ? view.SelectedItems[0] : null)) as OLVListItem;
+		}
+
+		// 树视图存在子节点且多选节点时，在 SelectedIndexChanged 事件中，SelectedIndices属性可能返回无内容的集合。
 		public static int GetFirstSelectedIndex(this ObjectListView view) {
 			var c = view.GetItemCount();
 			int i = c;
