@@ -544,17 +544,7 @@ namespace PDFPatcher.Functions
 				}
 			}
 			else if (e.Column == _BookmarkPageColumn) {
-				if ((int)e.Value == (int)e.NewValue) {
-					return;
-				}
-				var i = GetItem(e.ListViewItem.Index);
-				var o = e.RowObject as XmlElement;
-				if (o.HasChildNodes) {
-					Expand(o);
-				}
-				if (i.Index < Items.Count - 1) {
-					EditSubItem(GetItem(i.Index + 1), _BookmarkPageColumn.Index);
-				}
+				SelectedItem = FocusedItem as OLVListItem;
 			}
 		}
 
