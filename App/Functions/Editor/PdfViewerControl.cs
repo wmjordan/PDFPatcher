@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using Cyotek.Windows.Forms;
@@ -639,7 +640,13 @@ namespace PDFPatcher.Functions
 
 		Model.PageRange GetDisplayingPageRange() {
 			var b = GetOffsetRectangle(GetImageViewPort());
-			return new Model.PageRange(GetPageNumberFromOffset(-b.Left + b.Width, -b.Y), GetPageNumberFromOffset(-b.Left, -(b.Y - b.Height)));
+			int start = GetPageNumberFromOffset(-b.Left + b.Width, -b.Y);
+			int end = GetPageNumberFromOffset(-b.Left, -(b.Y - b.Height));
+			Debug.Assert(end >= start);
+			if (end == 0) {
+				end = start;
+			}
+			return new Model.PageRange(start, end);
 		}
 
 		void DrawTextBorders(Graphics g, int pageNumber, DrawingPoint offset) {
