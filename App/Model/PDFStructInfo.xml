@@ -150,7 +150,17 @@
 				<Info Token="NM" Name="批注名称" Description="相同页面内唯一识别此批注的标识符"/>
 				<Info Token="M" Name="最近修改时间"/>
 				<Info Token="F" Name="标志位"/>
-				<Info Token="AP" Name="批注外观"/>
+				<Info Token="AP" Name="批注外观">
+					<Info Token="N" Name="正常样式">
+						<Info Token="MK" Name="样式特性">
+							<Info Token="CA" Name="正常状态文本" />
+							<Info Token="I" Name="正常状态图标" Description="表单对象"/>
+							<Info Token="TP" Name="文本标题与图标位置关系" Description="0：仅有文本无图标（默认）；1：仅有图标无文本；2：文本在图标上方；3：文本在图标下方；4：文本在图标右侧；5：文本在图标左侧；6：文本覆盖在图标上"/>
+						</Info>
+					</Info>
+					<Info Token="R" Name="悬停样式"/>
+					<Info Token="D" Name="压下样式"/>
+				</Info>
 				<Info Token="Border" Name="批注边框" Description="参数：水平圆角半径、垂直圆角半径、线宽，以及可选的线型样式数组"/>
 				<Info Token="C" Name="批注颜色"/>
 				<RefInfo Token="Dest"/>
