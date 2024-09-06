@@ -582,6 +582,19 @@ namespace PDFPatcher.Functions
 			base.OnHotItemChanged(e);
 		}
 
+		protected override void OnMouseMove(MouseEventArgs e) {
+			base.OnMouseMove(e);
+			var t = HitTest(e.X, e.Y);
+			if (t.Item != null
+				&& (t.Location == ListViewHitTestLocations.Label || t.Location == ListViewHitTestLocations.Image)
+				&& t.Item.SubItems[0] == t.SubItem) {
+				Cursor = Cursors.Hand;
+			}
+			else {
+				Cursor = Cursors.Default;
+			}
+		}
+
 		protected override void OnFormatRow(FormatRowEventArgs args) {
 			base.OnFormatRow(args);
 			var b = args.Model as BookmarkElement;
