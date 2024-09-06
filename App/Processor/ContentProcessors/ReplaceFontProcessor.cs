@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using PDFPatcher.Model;
@@ -33,7 +33,7 @@ namespace PDFPatcher.Processor
 		Dictionary<string, FontSubstitution> _fontSubstitutions;
 		Dictionary<int, NewFont> _fontRefIDMap;
 		Dictionary<PdfDictionary, Dictionary<PdfName, PRIndirectReference>> _fontDictMap;
-		HashSet<int> _bypassFonts;
+		HashSet<int> _bypassFonts, _processedForms;
 		//bool _usedStyle;
 
 		public ReplaceFontProcessor(bool embedLegacyFonts, bool trimTrailingWhiteSpace, Dictionary<string, FontSubstitution> fontSubstitutions) {
@@ -56,6 +56,7 @@ namespace PDFPatcher.Processor
 			_fontRefIDMap = new Dictionary<int, NewFont>();
 			_fontDictMap = new Dictionary<PdfDictionary, Dictionary<PdfName, PRIndirectReference>>();
 			_bypassFonts = new HashSet<int>();
+			_processedForms = new HashSet<int>();
 			foreach (var item in Common.FontHelper.GetInstalledFonts(true)) {
 				try {
 					_fontFactory.Register(item.Value, item.Key);
@@ -84,27 +85,67 @@ namespace PDFPatcher.Processor
 
 		public bool Process(PageProcessorContext context) {
 			Tracker.IncrementProgress(1);
-			var fonts = context.Page.Locate<PdfDictionary>(PdfName.RESOURCES, PdfName.FONT);
-			if (fonts == null) {
-				return false;
-			}
-			//bool hasAnsiCjkFont = DetectLegacyCjkFont (context, fonts);
-			//if (hasAnsiCjkFont == false) {
-			//    return false;
-			//}
 			_currentFont = null;
 			_currentNewFont = null;
 			_fontNameIDMap.Clear();
 			_fontMap.Clear();
+			bool modified = false;
+			if (ProcessPageContents(context)) {
+				context.IsPageContentModified = modified = true;
+			}
+			ProcessResourceContents(context, context.Page.Locate<PdfDictionary>(PdfName.RESOURCES, PdfName.XOBJECT), ref modified);
+			var annots = context.Page.GetAsArray(PdfName.ANNOTS);
+			if (annots != null && annots.Size != 0) {
+				foreach (var item in annots) {
+					if (PdfReader.GetPdfObjectRelease(item) is PdfDictionary annot) {
+						ProcessResourceContents(context, annot, ref modified);
+					}
+				}
+			}
+			return modified;
+		}
+
+		bool ProcessPageContents(PageProcessorContext context) {
+			var fonts = context.Page.Locate<PdfDictionary>(PdfName.RESOURCES, PdfName.FONT);
+			if (fonts == null) {
+				return false;
+			}
 			LoadFonts(context, fonts);
 			if (_fontMap.Count == 0) {
 				return false;
 			}
-			if (ProcessCommands(context.PageCommands.Commands)) {
-				context.IsPageContentModified = true;
-				return true;
+			return ProcessCommands(context.PageCommands.Commands);
+		}
+
+		void ProcessResourceContents(PageProcessorContext context, PdfDictionary container, ref bool modified) {
+			if (container == null) {
+				return;
 			}
-			return false;
+			foreach (var item in GetForms(container)) {
+				if (_processedForms.Add(item.Ref.Number) == false
+					|| !(item.Resource is PRStream s)) {
+					continue;
+				}
+				var resources = item.Resource.GetAsDict(PdfName.RESOURCES);
+				if (resources == null || resources.Size == 0) {
+					continue;
+				}
+				var fonts = resources.GetAsDict(PdfName.FONT);
+				if (fonts == null || fonts.Size == 0) {
+					continue;
+				}
+				LoadFonts(context, fonts);
+				var cp = new PdfPageCommandProcessor();
+				cp.ProcessContent(PdfReader.GetStreamBytes(s), resources);
+				if (ProcessCommands(cp.Commands)) {
+					using (var ms = new MemoryStream()) {
+						cp.WritePdfCommands(ms);
+						ms.Flush();
+						s.SetData(ms.ToArray(), ms.Length > 100, 9);
+					}
+					modified = true;
+				}
+			}
 		}
 
 		#endregion
@@ -266,6 +307,11 @@ namespace PDFPatcher.Processor
 				return false;
 			}
 			return PdfDocumentFont.HasEmbeddedFont(font) == false;
+		}
+
+		static IEnumerable<ResourceReference> GetForms(PdfDictionary container) {
+			var visitedRefs = new HashSet<PdfIndirectReference>();
+			return PdfModelHelper.GetReferencedResources(container, o => PdfName.FORM.Equals(o.GetAsName(PdfName.SUBTYPE)), visitedRefs);
 		}
 
 		void LoadFonts(PageProcessorContext context, PdfDictionary fonts) {

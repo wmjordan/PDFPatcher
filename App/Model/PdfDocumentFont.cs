@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using iTextSharp.text.pdf;
-using PDFPatcher.Processor;
 
 namespace PDFPatcher.Model
 {
@@ -14,30 +12,6 @@ namespace PDFPatcher.Model
 		/// <param name="name">字体名称。</param>
 		internal static string RemoveSubsetPrefix(string name) {
 			return name.Length > 7 && name[6] == '+' ? name.Substring(7) : name;
-		}
-
-		/// <summary>
-		/// 列举指定页面所用的字体。
-		/// </summary>
-		/// <param name="page">页面对应的 <see cref="PdfDictionary"/>。</param>
-		/// <param name="fonts">用于放置字体名称的集合。</param>
-		internal static void EnumerateFonts(PdfDictionary page, ICollection<string> fonts) {
-			var fl = page.Locate<PdfDictionary>(true, PdfName.RESOURCES, PdfName.FONT);
-			if (fl == null) {
-				return;
-			}
-			foreach (var item in fl) {
-				var fr = item.Value as PdfIndirectReference;
-				if (fr == null) {
-					continue;
-				}
-				var f = PdfReader.GetPdfObject(fr) as PdfDictionary;
-				var fn = f.GetAsName(PdfName.BASEFONT);
-				if (fn == null) {
-					continue;
-				}
-				fonts.Add(RemoveSubsetPrefix(PdfHelper.GetPdfNameString(fn)));
-			}
 		}
 
 		internal static bool HasEmbeddedFont(PdfDictionary font) {
@@ -57,7 +31,7 @@ namespace PDFPatcher.Model
 			return df.Type == PdfObject.DICTIONARY && IsEmbeddedFont(df as PdfDictionary);
 		}
 
-		private static bool IsEmbeddedFont(PdfDictionary font) {
+		static bool IsEmbeddedFont(PdfDictionary font) {
 			var fd = font.Locate<PdfDictionary>(true, PdfName.FONTDESCRIPTOR);
 			if (fd == null) {
 				return false;
@@ -65,6 +39,44 @@ namespace PDFPatcher.Model
 			return fd.Contains(PdfName.FONTFILE) || fd.Contains(PdfName.FONTFILE2) || fd.Contains(PdfName.FONTFILE3);
 		}
 
+		/// <summary>
+		/// 列举指定页面所用的字体。
+		/// </summary>
+		/// <param name="page">页面对应的 <see cref="PdfDictionary"/>。</param>
+		public static IEnumerable<ResourceReference> GetPageFontReferences(PdfDictionary page) {
+			var visitedRefs = new HashSet<PdfIndirectReference>();
+			var res = page.Locate<PdfDictionary>(true, PdfName.RESOURCES);
+			if (res != null) {
+				var fonts = res.GetAsDict(PdfName.FONT);
+				if (fonts != null) {
+					foreach (var fr in fonts) {
+						if (fr.Value is PdfIndirectReference r) {
+							yield return new ResourceReference(r, fr.Key, PdfReader.GetPdfObjectRelease(r) as PdfDictionary);
+						}
+					}
+				}
+				var xObjects = res.GetAsDict(PdfName.XOBJECT);
+				if (xObjects != null) {
+					foreach (var item in xObjects) {
+						var form = PdfReader.GetPdfObjectRelease(item.Value) as PdfDictionary;
+						if (form == null || PdfName.FORM.Equals(form.GetAsName(PdfName.SUBTYPE)) == false) {
+							continue;
+						}
+						foreach (var font in PdfModelHelper.GetReferencedResources(form, o => PdfName.FONT.Equals(o.GetAsName(PdfName.TYPE)), visitedRefs)) {
+							yield return font;
+						}
+					}
+				}
+			}
+			var annots = page.GetAsArray(PdfName.ANNOTS);
+			if (annots != null) {
+				foreach (var item in annots) {
+					foreach (var font in PdfModelHelper.GetReferencedResources(PdfReader.GetPdfObjectRelease(item) as PdfDictionary, o => PdfName.FONT.Equals(o.GetAsName(PdfName.TYPE)), visitedRefs)) {
+						yield return font;
+					}
+				}
+			}
+		}
 
 	}
 }

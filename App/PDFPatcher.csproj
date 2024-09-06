@@ -104,6 +104,7 @@
     <Compile Include="Functions\PatcherOptionsControl.Designer.cs">
       <DependentUpon>PatcherOptionsControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Model\ResourceReference.cs" />
     <Compile Include="Options\ReaderOptions.cs" />
     <Compile Include="Processor\Imaging\FreeImageHelper.cs" />
     <Compile Include="ShellHelper.cs" />

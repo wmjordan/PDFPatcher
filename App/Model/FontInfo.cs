@@ -23,7 +23,7 @@ namespace PDFPatcher.Model
 
 		private readonly static Encoding __GbkEncoding = System.Text.Encoding.GetEncoding("gbk");
 		//private readonly static Encoding __Big5Encoding = System.Text.Encoding.GetEncoding ("big5");
-		private readonly static PdfName[] __GbkEncodingNames = { new PdfName("GBK-EUC-H"), new PdfName("GBK-EUC-V"), new PdfName("GB-EUC-H"), new PdfName("GB-EUC-V") };
+		private readonly static PdfName[] __GbkEncodingNames = { new PdfName("GBK-EUC-H"), new PdfName("GBK-EUC-V"), new PdfName("GB-EUC-H"), new PdfName("GB-EUC-V"), PdfName.WIN_ANSI_ENCODING };
 		private readonly static string[] __gbkFontNames = { "宋体", "黑体", "楷体_GB2312", "仿宋体", "仿宋_GB2312", "隶书", "幼圆" };
 		readonly static PdfName[] __IdentityEncodingNames = { new PdfName("Identity-H"), new PdfName("Identity-V") };
 		public const int DefaultDefaultWidth = 1000;
@@ -136,9 +136,9 @@ namespace PDFPatcher.Model
 			//if (CjkType == CjkFontType.Chinese) {
 			//	s = __GbkEncoding.GetString (cid < 256 ? new byte[] { (byte)cid } : new byte[] { (byte)cid, (byte)(cid >> 8) });
 			//}
-			//else {
-			s = Decode(new byte[] { (byte)(cid >> 8), (byte)cid }, 0, 2);
-			//}
+			else {
+				s = Decode(new byte[] { (byte)(cid >> 8), (byte)cid }, 0, 2);
+			}
 			if (s.Length == 0) {
 				return 0;
 			}

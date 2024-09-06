@@ -74,7 +74,7 @@ namespace PDFPatcher.Functions
 									continue;
 								}
 								pp[page] = 1;
-								GetPageFonts(p, page);
+								RegisterFonts(PdfDocumentFont.GetPageFontReferences(p.GetPageNRelease(page)), page);
 							}
 						}
 					}
@@ -99,35 +99,25 @@ namespace PDFPatcher.Functions
 			};
 		}
 
-		private void GetPageFonts(PdfReader pdf, int pageNumber) {
-			var page = pdf.GetPageNRelease(pageNumber);
-			var fl = page.Locate<PdfDictionary>(true, PdfName.RESOURCES, PdfName.FONT);
-			if (fl == null) {
-				return;
-			}
-			foreach (var item in fl) {
-				var fr = item.Value as PdfIndirectReference;
-				if (fr == null) {
-					continue;
-				}
+		void RegisterFonts(IEnumerable<ResourceReference> fontRefs, int pageNumber) {
+			foreach (var item in fontRefs) {
+				var fr = item.Ref;
 				if (_fontIdNames.TryGetValue(fr.Number, out string fn)) {
 					_pageFonts[fn].IncrementReference();
 					continue;
 				}
-				if (PdfReader.GetPdfObjectRelease(fr) is PdfDictionary f) {
-					var bf = f.GetAsName(PdfName.BASEFONT);
-					if (bf == null) {
-						continue;
-					}
-					fn = PdfHelper.GetPdfNameString(bf, AppContext.Encodings.FontNameEncoding); // 字体名称
-					fn = PdfDocumentFont.RemoveSubsetPrefix(fn);
-					_fontIdNames.Add(fr.Number, fn);
-					if (_pageFonts.TryGetValue(fn, out PageFont pf)) {
-						pf.IncrementReference();
-						continue;
-					}
-					_pageFonts.Add(fn, new PageFont(fn, pageNumber, PdfDocumentFont.HasEmbeddedFont(f)));
+				var bf = item.Resource.GetAsName(PdfName.BASEFONT);
+				if (bf == null) {
+					continue;
 				}
+				fn = PdfHelper.GetPdfNameString(bf, AppContext.Encodings.FontNameEncoding); // 字体名称
+				fn = PdfDocumentFont.RemoveSubsetPrefix(fn);
+				_fontIdNames.Add(fr.Number, fn);
+				if (_pageFonts.TryGetValue(fn, out PageFont pf)) {
+					pf.IncrementReference();
+					continue;
+				}
+				_pageFonts.Add(fn, new PageFont(fn, pageNumber, PdfDocumentFont.HasEmbeddedFont(item.Resource)));
 			}
 		}
 

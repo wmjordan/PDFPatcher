@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using iTextSharp.text.pdf;
@@ -128,6 +129,26 @@ namespace PDFPatcher.Model
 				}
 			}
 			return u ? new PdfString(text, PdfObject.TEXT_UNICODE) : new PdfString(text);
+		}
+
+		internal static IEnumerable<ResourceReference> GetReferencedResources(PdfDictionary source, Predicate<PdfDictionary> predicate, HashSet<PdfIndirectReference> refDedup) {
+			foreach (var item in source) {
+				if (item.Value is PdfIndirectReference r
+					&& refDedup.Add(r)
+					&& PdfReader.GetPdfObjectRelease(r) is PdfDictionary o) {
+					if (predicate(o)) {
+						yield return new ResourceReference(r, item.Key, o);
+					}
+					foreach (var f in GetReferencedResources(o, predicate, refDedup)) {
+						yield return f;
+					}
+				}
+				else if (item.Value is PdfDictionary d) {
+					foreach (var f in GetReferencedResources(d, predicate, refDedup)) {
+						yield return f;
+					}
+				}
+			}
 		}
 	}
 }
