@@ -557,9 +557,11 @@ namespace PDFPatcher.Functions
 				case Keys.Down:
 					_controller.View.Bookmark.SelectNextBookmark(); return true;
 				case Keys.Right:
-					_controller.View.Bookmark.ExpandSelected(); return true;
+					_controller.View.Bookmark.ExpandSelected(true);
+					return true;
 				case Keys.Left:
-					_controller.View.Bookmark.CollapseSelected(); return true;
+					_controller.View.Bookmark.CollapseSelected(true);
+					return true;
 				case Keys.Enter:
 					ScrollToSelectedBookmarkLocation(); return true;
 			}

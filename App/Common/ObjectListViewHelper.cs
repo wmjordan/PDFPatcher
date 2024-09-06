@@ -38,10 +38,23 @@ namespace BrightIdeasSoftware
 			};
 		}
 
-		public static void ExpandSelected(this TreeListView view) {
+		public static void ExpandSelected(this TreeListView view, bool moveToFirstChild = false) {
 			var so = view.SelectedObjects;
+			if (so.Count == 0) {
+				return;
+			}
+			var expanded = false;
 			foreach (var item in so) {
-				view.Expand(item);
+				if (view.IsExpanded(item) == false) {
+					view.Expand(item);
+					expanded = true;
+				}
+			}
+			if (moveToFirstChild && expanded == false) {
+				foreach (var ch in view.GetChildren(so[0])) {
+					view.SelectedObject = view.FocusedObject = ch;
+					return;
+				}
 			}
 		}
 		public static void Expand(this TreeListView view, System.Collections.IEnumerable items, bool recursive) {
@@ -92,10 +105,23 @@ namespace BrightIdeasSoftware
 			return r;
 		}
 
-		public static void CollapseSelected(this TreeListView view) {
+		public static void CollapseSelected(this TreeListView view, bool moveToParent = false) {
 			var so = view.SelectedObjects;
+			if (so.Count == 0) {
+				return;
+			}
+			var collapsed = false;
 			foreach (var item in so) {
-				view.Collapse(item);
+				if (view.IsExpanded(item)) {
+					view.Collapse(item);
+					collapsed = true;
+				}
+			}
+			if (moveToParent && collapsed == false) {
+				var parent = view.GetParent(so[0]);
+				if (parent != null) {
+					view.SelectedObject = view.FocusedObject = parent;
+				}
 			}
 		}
 

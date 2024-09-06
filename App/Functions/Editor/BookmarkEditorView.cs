@@ -427,14 +427,28 @@ namespace PDFPatcher.Functions
 
 		internal void SelectPreviousBookmark() {
 			var si = this.GetFocusedOrFirstSelectedItem();
-			if (si == null || si.Index < 1) {
+			if (si == null) {
+				if (GetItemCount() != 0) {
+					(SelectedItem = GetItem(0)).Focused = true;
+				}
+				return;
+			}
+
+			if (si.Index < 1) {
 				return;
 			}
 			(SelectedItem = GetItem(si.Index - 1)).Focused = true;
 		}
 		internal void SelectNextBookmark() {
 			var si = this.GetFocusedOrFirstSelectedItem();
-			if (si == null || si.Index == GetItemCount() - 1) {
+			if (si == null) {
+				if (GetItemCount() != 0) {
+					(SelectedItem = GetItem(0)).Focused = true;
+				}
+				return;
+			}
+
+			if (si.Index == GetItemCount() - 1) {
 				return;
 			}
 			(SelectedItem = GetItem(si.Index + 1)).Focused = true;
