@@ -513,6 +513,6 @@ namespace PDFPatcher
 		internal const string ModiNotAvailable = "本机尚未安装微软文本识别组件（MODI），无法使用识别文本功能。";
 		internal const string ConfirmAbandonDocument = "文档已被修改。打开新的文档将丢弃未保存的更改，是否确定打开新的文档？";
 		internal const string ConfirmCloseDirtyDocument = "文档已被修改。是否确定关闭文档？";
-		internal const string ConfirmCloseNDirtyDocument = "有 <N> 个文档的书签已被修改，但尚未保存。是否确定关闭程序？";
+		internal const string ConfirmCloseNDirtyDocument = "有 <N> 个文档的书签已被修改，但尚未保存。\n\n是否确定放弃所作的修改，并关闭程序？";
 	}
 }
