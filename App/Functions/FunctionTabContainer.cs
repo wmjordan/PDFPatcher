@@ -31,22 +31,23 @@ namespace PDFPatcher.Functions
 			}
 			Control c;
 			if (t.HasChildren == false
-				|| (c = t.Controls[0]) is ITabContent tc && tc.CanClose
-				|| c is IDocumentEditor editor
-					&& (editor.IsDirty == false || AppContext.MainForm.ConfirmYesBox(Messages.ConfirmCloseDirtyDocument))) {
-				var i = TabPages.IndexOf(tabPage);
-				var n = TabCount;
-				if (i == 0 && n > 1) {
-					SelectedIndex = 1;
-				}
-				else if (i < n) {
-					SelectedIndex = i - 1;
-				}
-				TabPages.RemoveAt(i);
-				t.Dispose();
-				return true;
+				|| (c = t.Controls[0]) is ITabContent tc && tc.CanClose == false
+				|| (c is IDocumentEditor editor
+					&& editor.IsDirty
+					&& AppContext.MainForm.ConfirmYesBox(Messages.ConfirmCloseDirtyDocument) == false)) {
+				return false;
 			}
-			return false;
+			var i = TabPages.IndexOf(tabPage);
+			var n = TabCount;
+			if (i == 0 && n > 1) {
+				SelectedIndex = 1;
+			}
+			else if (i < n) {
+				SelectedIndex = i - 1;
+			}
+			TabPages.RemoveAt(i);
+			t.Dispose();
+			return true;
 		}
 
 		public IEnumerable<TObject> GetPrimaryControlsInTabs<TObject>() {
