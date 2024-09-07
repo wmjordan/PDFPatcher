@@ -27,12 +27,8 @@ namespace PDFPatcher.Functions
 					c.Dispose();
 				}
 			};
-			_HomePageButton.Click += (s, args) => {
-				ShellHelper.VisitHomePage();
-			};
-			_DownloadButton.Click += (s, args) => {
-				System.Diagnostics.Process.Start(_DownloadButton.Tag.ToString());
-			};
+			_HomePageButton.Click += (s, args) => ShellHelper.VisitHomePage();
+			_DownloadButton.Click += (s, args) => System.Diagnostics.Process.Start(_DownloadButton.Tag.ToString());
 			_CheckUpdateIntervalBox.SelectedIndexChanged += (s, args) => {
 				AppContext.CheckUpdateInterval = _CheckUpdateIntervalBox.SelectedIndex switch {
 					0 => 7,
@@ -72,7 +68,7 @@ namespace PDFPatcher.Functions
 			_UpdateChecker = null;
 		}
 
-		private void CheckResult(XmlDocument x) {
+		void CheckResult(XmlDocument x) {
 			var r = x.DocumentElement;
 			if (r == null || r.Name != Constants.AppEngName) {
 				_InfoBox.SelectionColor = Color.Red;
@@ -81,13 +77,10 @@ namespace PDFPatcher.Functions
 			}
 			var v = r.GetAttribute("version");
 			var d = r.GetAttribute("date");
-			var u = r.GetAttribute("url");
-			var c = r.SelectSingleNode("content");
 			if (new Version(ProductVersion) < new Version(r.GetAttribute("version"))) {
 				_InfoBox.SelectionColor = Color.Blue;
-				_InfoBox.AppendLine(String.Concat("发现新版本：", v, " ", d));
-				_InfoBox.AppendLine(c.InnerText);
-				_InfoBox.SelectionStart = 0;
+				_InfoBox.AppendLine($"发现新版本：{v} {d}");
+				var u = r.GetAttribute("url");
 				if (u.Length > 0) {
 					_DownloadButton.Enabled = true;
 					_DownloadButton.Tag = u;
@@ -95,8 +88,15 @@ namespace PDFPatcher.Functions
 			}
 			else {
 				_InfoBox.AppendLine(String.Join("\n", new string[] {
-							"未发现新版本。", "服务器上发布的版本是：", v + " " + d
+							"未发现新版本。", $"服务器上发布的版本是：{v} {d}", String.Empty
 						}));
+				_InfoBox.SelectionColor = Color.DimGray;
+			}
+
+			var c = r.SelectSingleNode("content");
+			if (c != null) {
+				_InfoBox.AppendLine(c.InnerText);
+				_InfoBox.SelectionStart = 0;
 			}
 		}
 	}
