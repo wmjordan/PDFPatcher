@@ -1152,9 +1152,6 @@ namespace PDFPatcher.Functions
 				AppContext.MainForm.ErrorBox($"显示页面 {pageNumber.ToText()} 时出错", ex);
 				return false;
 			}
-			//if (PageChanged != null) {
-			//	PageChanged (this, new PageChangedEventArgs (pageNumber));
-			//}
 			return true;
 		}
 
@@ -1180,7 +1177,12 @@ namespace PDFPatcher.Functions
 		}
 
 		bool Next(int deltaPageNumber) {
-			return ShowPage(CurrentPageNumber + deltaPageNumber);
+			if (_pageOffsets == null) {
+				return false;
+			}
+			return (HorizontalFlow && deltaPageNumber > 0 && HorizontalScroll.Value > _pageOffsets[CurrentPageNumber])
+				? ShowPage(CurrentPageNumber + deltaPageNumber - 1)
+				: ShowPage(CurrentPageNumber + deltaPageNumber);
 		}
 
 		void LoadPageBounds() {
