@@ -406,9 +406,6 @@ namespace PDFPatcher.Functions
 						}
 					}
 					break;
-				case "_FullScreen":
-					m.Checked = AppContext.MainForm.FullScreen;
-					break;
 				default:
 					EnableCommand(item, true, true);
 					break;

@@ -31,6 +31,7 @@ namespace PDFPatcher
 		#region Tools menu
 		internal const string LogWindow = "_LogWindow";
 		internal const string ShowGeneralToolbar = "_ShowGeneralToolbar";
+		internal const string FullScreenDisplay = "_FullScreenDisplay";
 		internal const string CustomizeToolbar = "_CustomizeToolbar";
 		#endregion
 

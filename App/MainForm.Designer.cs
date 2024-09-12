@@ -92,6 +92,7 @@
 			this._MainStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
 			this._GeneralToolbar = new System.Windows.Forms.ToolStrip();
 			this._FunctionContainer = new PDFPatcher.Functions.FunctionTabContainer();
+			this._FullScreenDisplay = new System.Windows.Forms.ToolStripMenuItem();
 			_Select = new System.Windows.Forms.ToolStripMenuItem();
 			_Copy = new System.Windows.Forms.ToolStripMenuItem();
 			_Delete = new System.Windows.Forms.ToolStripMenuItem();
@@ -249,6 +250,7 @@
             _ExportInfoFile,
             toolStripSeparator5,
             _ShowGeneralToolbar,
+            this._FullScreenDisplay,
             _CustomizeToolbarCommand,
             _LogWindow});
 			_ToolBox.Image = ((System.Drawing.Image)(resources.GetObject("_ToolBox.Image")));
@@ -706,14 +708,23 @@
 			this._FunctionContainer.DisplayStyleProvider.TextColorDisabled = System.Drawing.SystemColors.ControlDark;
 			this._FunctionContainer.DisplayStyleProvider.TextColorSelected = System.Drawing.SystemColors.ControlText;
 			this._FunctionContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._FunctionContainer.DoubleClickCloseTab = false;
 			this._FunctionContainer.DrawMode = System.Windows.Forms.TabDrawMode.OwnerDrawFixed;
 			this._FunctionContainer.HotTrack = true;
 			this._FunctionContainer.Location = new System.Drawing.Point(0, 49);
 			this._FunctionContainer.Margin = new System.Windows.Forms.Padding(0, 1, 0, 1);
+			this._FunctionContainer.MiddleClickCloseTab = false;
 			this._FunctionContainer.Name = "_FunctionContainer";
 			this._FunctionContainer.SelectedIndex = 0;
 			this._FunctionContainer.Size = new System.Drawing.Size(604, 404);
 			this._FunctionContainer.TabIndex = 2;
+			// 
+			// _FullScreenDisplay
+			// 
+			this._FullScreenDisplay.Name = "_FullScreenDisplay";
+			this._FullScreenDisplay.ShortcutKeys = System.Windows.Forms.Keys.F11;
+			this._FullScreenDisplay.Size = new System.Drawing.Size(198, 22);
+			this._FullScreenDisplay.Text = "全屏显示";
 			// 
 			// MainForm
 			// 
@@ -755,6 +766,7 @@
 		private System.Windows.Forms.ToolStrip _GeneralToolbar;
 		private PDFPatcher.Functions.FunctionTabContainer _FunctionContainer;
 		private System.Windows.Forms.ToolStripStatusLabel _MainStatusLabel;
+		private System.Windows.Forms.ToolStripMenuItem _FullScreenDisplay;
 	}
 }
 

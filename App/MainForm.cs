@@ -408,6 +408,9 @@ namespace PDFPatcher
 			else if (commandName == Commands.Exit) {
 				Close();
 			}
+			else if (commandName == Commands.FullScreenDisplay) {
+				FullScreen = !FullScreen;
+			}
 			else if (GetActiveFunctionControl() is FunctionControl f) {
 				if (commandName == Commands.Action && f.DefaultButton != null) {
 					f.DefaultButton.PerformClick();

@@ -101,7 +101,6 @@
 			System.Windows.Forms.ToolStripMenuItem _SetOpenStatusTrue;
 			System.Windows.Forms.ToolStripMenuItem _SetOpenStatusFalse;
 			System.Windows.Forms.ToolStripMenuItem _OcrDetectPunctuation;
-			System.Windows.Forms.ToolStripMenuItem _FullScreen;
 			System.Windows.Forms.ToolStripMenuItem _PageProperties;
 			System.Windows.Forms.ToolStripMenuItem _MarkBookmark;
 			System.Windows.Forms.ToolStripMenuItem _MarkBookmarkRed;
@@ -139,8 +138,8 @@
 			this._InsertWithOcrOnly = new System.Windows.Forms.ToolStripMenuItem();
 			this._ShowAnnotations = new System.Windows.Forms.ToolStripMenuItem();
 			this._EditMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
-			this._SetOpenStatus = new System.Windows.Forms.ToolStripMenuItem();
 			this._ChangeZoomRate = new System.Windows.Forms.ToolStripMenuItem();
+			this._SetOpenStatus = new System.Windows.Forms.ToolStripMenuItem();
 			this._ChangeCase = new System.Windows.Forms.ToolStripMenuItem();
 			this._QuickSelect = new System.Windows.Forms.ToolStripMenuItem();
 			this._RecentFileMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -242,7 +241,6 @@
 			_SetOpenStatusTrue = new System.Windows.Forms.ToolStripMenuItem();
 			_SetOpenStatusFalse = new System.Windows.Forms.ToolStripMenuItem();
 			_OcrDetectPunctuation = new System.Windows.Forms.ToolStripMenuItem();
-			_FullScreen = new System.Windows.Forms.ToolStripMenuItem();
 			_PageProperties = new System.Windows.Forms.ToolStripMenuItem();
 			_MarkBookmark = new System.Windows.Forms.ToolStripMenuItem();
 			_MarkBookmarkRed = new System.Windows.Forms.ToolStripMenuItem();
@@ -841,7 +839,7 @@
 			// _OcrDisabled
 			// 
 			_OcrDisabled.Name = "_OcrDisabled";
-			_OcrDisabled.Size = new System.Drawing.Size(164, 22);
+			_OcrDisabled.Size = new System.Drawing.Size(180, 22);
 			_OcrDisabled.Text = "不要识别文本(&B)";
 			// 
 			// _ShowTextBorders
@@ -872,6 +870,7 @@
 			// _ShowBookmarks
 			// 
 			_ShowBookmarks.Name = "_ShowBookmarks";
+			_ShowBookmarks.ShortcutKeys = System.Windows.Forms.Keys.F12;
 			_ShowBookmarks.Size = new System.Drawing.Size(208, 22);
 			_ShowBookmarks.Text = "显示书签栏(&Q)";
 			// 
@@ -894,13 +893,13 @@
 			// _SetOpenStatusTrue
 			// 
 			_SetOpenStatusTrue.Name = "_SetOpenStatusTrue";
-			_SetOpenStatusTrue.Size = new System.Drawing.Size(180, 22);
+			_SetOpenStatusTrue.Size = new System.Drawing.Size(117, 22);
 			_SetOpenStatusTrue.Text = "打开(&D)";
 			// 
 			// _SetOpenStatusFalse
 			// 
 			_SetOpenStatusFalse.Name = "_SetOpenStatusFalse";
-			_SetOpenStatusFalse.Size = new System.Drawing.Size(180, 22);
+			_SetOpenStatusFalse.Size = new System.Drawing.Size(117, 22);
 			_SetOpenStatusFalse.Text = "关闭(&G)";
 			// 
 			// _OcrDetectPunctuation
@@ -908,12 +907,6 @@
 			_OcrDetectPunctuation.Name = "_OcrDetectPunctuation";
 			_OcrDetectPunctuation.Size = new System.Drawing.Size(208, 22);
 			_OcrDetectPunctuation.Text = "增强识别目录页标点";
-			// 
-			// _FullScreen
-			// 
-			_FullScreen.Name = "_FullScreen";
-			_FullScreen.Size = new System.Drawing.Size(208, 22);
-			_FullScreen.Text = "全屏显示(&Q)";
 			// 
 			// _PageProperties
 			// 
@@ -1082,7 +1075,6 @@
             _DarkMode,
             _GreenMode,
             toolStripSeparator14,
-            _FullScreen,
             _ShowBookmarks,
             _ShowTextBorders,
             this._ShowAnnotations});
@@ -1136,8 +1128,15 @@
             _MarkBookmark,
             _SelectMarkedBookmarks});
 			this._EditMenu.Name = "_EditMenu";
-			this._EditMenu.Size = new System.Drawing.Size(246, 330);
+			this._EditMenu.Size = new System.Drawing.Size(246, 308);
 			this._EditMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this._MainToolbar_ItemClicked);
+			// 
+			// _ChangeZoomRate
+			// 
+			this._ChangeZoomRate.Image = global::PDFPatcher.Properties.Resources.Zoom;
+			this._ChangeZoomRate.Name = "_ChangeZoomRate";
+			this._ChangeZoomRate.Size = new System.Drawing.Size(245, 22);
+			this._ChangeZoomRate.Text = "设置目标显示方式(&X)";
 			// 
 			// _SetOpenStatus
 			// 
@@ -1148,13 +1147,6 @@
 			this._SetOpenStatus.Name = "_SetOpenStatus";
 			this._SetOpenStatus.Size = new System.Drawing.Size(245, 22);
 			this._SetOpenStatus.Text = "设置书签默认打开状态(&T)";
-			// 
-			// _ChangeZoomRate
-			// 
-			this._ChangeZoomRate.Image = global::PDFPatcher.Properties.Resources.Zoom;
-			this._ChangeZoomRate.Name = "_ChangeZoomRate";
-			this._ChangeZoomRate.Size = new System.Drawing.Size(245, 22);
-			this._ChangeZoomRate.Text = "设置目标显示方式(&X)";
 			// 
 			// _ChangeCase
 			// 
@@ -1246,9 +1238,13 @@
 			this._BookmarkBox.Name = "_BookmarkBox";
 			this._BookmarkBox.OperationAffectsDescendants = false;
 			this._BookmarkBox.RevealAfterExpand = false;
+			this._BookmarkBox.SelectedBackColor = System.Drawing.SystemColors.Window;
+			this._BookmarkBox.SelectedForeColor = System.Drawing.SystemColors.WindowText;
 			this._BookmarkBox.ShowGroups = false;
 			this._BookmarkBox.Size = new System.Drawing.Size(261, 266);
 			this._BookmarkBox.TabIndex = 0;
+			this._BookmarkBox.UnfocusedSelectedBackColor = System.Drawing.SystemColors.Window;
+			this._BookmarkBox.UnfocusedSelectedForeColor = System.Drawing.SystemColors.WindowText;
 			this._BookmarkBox.UseCellFormatEvents = true;
 			this._BookmarkBox.UseCompatibleStateImageBehavior = false;
 			this._BookmarkBox.UseHyperlinks = true;
@@ -1450,7 +1446,7 @@
             this._ViewerButton});
 			this._ViewerToolbar.Location = new System.Drawing.Point(342, 0);
 			this._ViewerToolbar.Name = "_ViewerToolbar";
-			this._ViewerToolbar.Size = new System.Drawing.Size(262, 25);
+			this._ViewerToolbar.Size = new System.Drawing.Size(293, 25);
 			this._ViewerToolbar.TabIndex = 4;
 			this._ViewerToolbar.Text = "toolStrip1";
 			this._ViewerToolbar.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this._MainToolbar_ItemClicked);
