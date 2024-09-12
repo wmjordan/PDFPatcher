@@ -216,6 +216,10 @@ namespace PDFPatcher
 				&& this.ConfirmYesBox(Messages.ConfirmCloseNDirtyDocument.Replace("<N>", n.ToText())) == false) {
 				e.Cancel = true;
 			}
+			else if (FullScreen) {
+				FullScreen = false;
+				e.Cancel = true;
+			}
 		}
 
 		void OnLoad() {
