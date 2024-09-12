@@ -7,7 +7,7 @@ namespace PDFPatcher.Functions.Editor
 {
 	sealed partial class InsertBookmarkForm : DraggableForm
 	{
-		public event EventHandler OkClicked;
+		public event CancelEventHandler OkClicked;
 
 		/// <summary>
 		/// 获取或设置书签标题。
@@ -52,13 +52,6 @@ namespace PDFPatcher.Functions.Editor
 			}
 		}
 		void OnLoad() {
-			VisibleChanged += (s, args) => {
-				if (!Visible) {
-					return;
-				}
-				_TitleBox.Focus();
-				_TitleBox.SelectAll();
-			};
 			_AfterCurrentBox.DoubleClick += InsertModeBox_DoubleClick;
 			_AfterParentBox.DoubleClick += InsertModeBox_DoubleClick;
 			_AsChildBox.DoubleClick += InsertModeBox_DoubleClick;
@@ -66,18 +59,36 @@ namespace PDFPatcher.Functions.Editor
 			_ReplaceBookmarkBox.DoubleClick += InsertModeBox_DoubleClick;
 			_AfterGrandParentBox.DoubleClick += InsertModeBox_DoubleClick;
 			_AfterLastRootBox.DoubleClick += InsertModeBox_DoubleClick;
-			_OkButton.Click += (s, args) => {
-				OkClicked?.Invoke(this, args);
-				if (_AfterCurrentBox.Checked == false) {
-					_AfterCurrentBox.Checked = true;
-				}
-				Hide();
-			};
+			_OkButton.Click += OkButtonClicked;
 			_CancelButton.Click += (s, args) => Hide();
 		}
 
 		void InsertModeBox_DoubleClick(object sender, EventArgs e) {
 			_OkButton.PerformClick();
+		}
+
+		void OkButtonClicked(object sender, EventArgs args) {
+			var cancel = new CancelEventArgs();
+			OkClicked?.Invoke(this, cancel);
+			if (cancel.Cancel == false) {
+				if (_AfterCurrentBox.Checked == false) {
+					_AfterCurrentBox.Checked = true;
+				}
+				Hide();
+			}
+		}
+
+		protected override void OnVisibleChanged(EventArgs e) {
+			base.OnVisibleChanged(e);
+			if (!Visible) {
+				return;
+			}
+			FocusTitleBox();
+		}
+
+		public void FocusTitleBox() {
+			_TitleBox.Focus();
+			_TitleBox.SelectAll();
 		}
 
 		protected override void OnActivated(EventArgs e) {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -82,12 +83,14 @@ namespace PDFPatcher.Functions.Editor
 			_dialog = new InsertBookmarkForm {
 				Controller = controller
 			};
-			_dialog.OkClicked += (object sender, EventArgs e) => {
+			_dialog.OkClicked += (object sender, CancelEventArgs e) => {
 				var f = (InsertBookmarkForm)sender;
 				var c = f.Controller;
 				var t = f.Title;
 				if (string.IsNullOrEmpty(t) && f.InsertMode != 0) {
-					FormHelper.ErrorBox("书签标题不能为空。");
+					f.Comment = "书签标题不能为空。";
+					f.FocusTitleBox();
+					e.Cancel = true;
 					return;
 				}
 				c.Model.LockDownViewer = true;
