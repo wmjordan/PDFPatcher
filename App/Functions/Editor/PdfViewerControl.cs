@@ -1159,17 +1159,23 @@ namespace PDFPatcher.Functions
 			if (_mupdf == null) {
 				return;
 			}
+			var h = HorizontalFlow;
 			var op = GetVirtualImageOffset(position.Page);
 			var bound = _pageBounds[position.Page];
 			position.Location.Deconstruct(out var px, out var py);
 			if (px != 0) {
 				px -= bound.Left;
 			}
+			else if (h) {
+				op.X -= __pageMargin;
+			}
 			if (py != 0) {
 				py = bound.Height - (py - bound.Top);
 			}
+			else if (h == false) {
+				op.Y -= __pageMargin;
+			}
 			var z = GetZoomFactorForPage(bound);
-			var h = HorizontalFlow;
 			ScrollTo(
 				(position.PageX == 0 && h == false) ? HorizontalScroll.Value : (px * z).ToInt32() + op.X,
 				(position.PageY == 0 && h) ? VerticalScroll.Value : (position.Location.Y == 0 ? 0 : (py * z).ToInt32()) + op.Y
