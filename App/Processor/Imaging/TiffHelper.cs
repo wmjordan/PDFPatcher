@@ -16,14 +16,14 @@ namespace PDFPatcher.Processor.Imaging
 			if (_tiffCodec != null) {
 				if (bmp.HasPalette) {
 					// HACK: TIFF编码与调色板不符，解决 .NET TIFF 编码器无法正常保存双色图片的问题
-					var color0 = bmp.Palette[0].Color;
+					var color0 = bmp.Palette[0].Color.ToArgb() & 0x00FFFFFF;
 					if (bmp.ColorType == FREE_IMAGE_COLOR_TYPE.FIC_MINISWHITE) {
-						if (color0 != Color.White) {
+						if (color0 != 0x00FFFFFF) {
 							bmp.Invert();
 						}
 					}
 					else if (bmp.ColorType == FREE_IMAGE_COLOR_TYPE.FIC_MINISBLACK) {
-						if (color0 != Color.Black) {
+						if (color0 != 0) {
 							bmp.Invert();
 						}
 					}
