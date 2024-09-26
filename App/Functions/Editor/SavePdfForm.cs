@@ -72,7 +72,7 @@ namespace PDFPatcher.Functions
 			var worker = AppContext.MainForm.GetWorker();
 			worker.DoWork += (dummy, arg) => {
 				DoWork?.Invoke(this, null);
-				arg.Result = Processor.Worker.PatchDocument(new SourceItem.Pdf(s), t, _bookmarkDocument, AppContext.Importer, AppContext.Editor);
+				arg.Result = Processor.Worker.PatchDocument(new SourceItem.Pdf(s), t, _bookmarkDocument, AppContext.Importer, AppContext.Editor, true);
 			};
 			worker.RunWorkerCompleted += (dummy, arg) => Finished?.Invoke(arg.Result.CastOrDefault<bool>());
 			worker.RunWorkerAsync();

@@ -327,7 +327,7 @@ namespace PDFPatcher.Processor
 			}
 		}
 
-		internal static bool PatchDocument(SourceItem.Pdf sourceFile, FilePath targetFile, object infoDoc, ImporterOptions options, PatcherOptions pdfSettings) {
+		internal static bool PatchDocument(SourceItem.Pdf sourceFile, FilePath targetFile, object infoDoc, ImporterOptions options, PatcherOptions pdfSettings, bool suppressWarning = false) {
 			var sourcePath = sourceFile.FilePath.ToString();
 			if (sourceFile.FilePath.IsEmpty) {
 				Tracker.TraceMessage(Tracker.Category.Error, "输入文件名为空。");
@@ -394,7 +394,7 @@ namespace PDFPatcher.Processor
 
 				Tracker.TraceMessage(Tracker.Category.OutputFile, targetFile);
 				if (FileHelper.ComparePath(sourcePath, targetFile)) {
-					if (FileHelper.CheckOverwrite(targetFile) == false) {
+					if (suppressWarning == false && FileHelper.CheckOverwrite(targetFile) == false) {
 						Tracker.TraceMessage(Tracker.Category.Error, Messages.SourceFileEqualsTargetFile);
 						return false;
 					}
@@ -402,7 +402,7 @@ namespace PDFPatcher.Processor
 					sourceCreationTime = sourceFile.FilePath.ToFileInfo().CreationTime;
 					targetFile = sourceFile.FilePath.ChangeExtension(Ext.Tmp).ToString();
 				}
-				else if (FileHelper.CheckOverwrite(targetFile) == false) {
+				else if (suppressWarning == false && FileHelper.CheckOverwrite(targetFile) == false) {
 					return false;
 				}
 
