@@ -174,6 +174,8 @@ namespace PDFPatcher.Model
 					case PdfObjectType.Pages:
 					case PdfObjectType.Page:
 					case PdfObjectType.Image:
+					case PdfObjectType.Form:
+					case PdfObjectType.Resources:
 					case PdfObjectType.Outline:
 					case PdfObjectType.PageCommand:
 					case PdfObjectType.PageCommands:

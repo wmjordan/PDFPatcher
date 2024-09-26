@@ -94,6 +94,10 @@ namespace PDFPatcher.Functions
 							return __OpNameIcons["Page"];
 						case PdfObjectType.Image:
 							return __OpNameIcons["Image"];
+						case PdfObjectType.Form:
+							return __OpNameIcons["Form"];
+						case PdfObjectType.Resources:
+							return __OpNameIcons["Resources"];
 						case PdfObjectType.Outline:
 							return __OpNameIcons["Outline"];
 						case PdfObjectType.PageCommands:
@@ -386,7 +390,7 @@ namespace PDFPatcher.Functions
 			if (d.Value != null && (d.Value.Type == PdfObject.INDIRECT || d.Value.Type == PdfObject.STREAM)) {
 				var s = d.Value as PRStream ?? d.ExtensiveObject as PRStream;
 				if (s != null) {
-					_ViewButton.Enabled = d.Name.StartsWith("Font") == false;
+					_ViewButton.Enabled = d.Name.StartsWith("Font", StringComparison.Ordinal) == false;
 					_ExportButton.Enabled = _AddObjectMenu.Enabled = true;
 					if (PdfName.IMAGE.Equals(s.GetAsName(PdfName.SUBTYPE))) {
 						ShowDescription("图片", null, PdfHelper.GetTypeName(PdfObject.STREAM));
@@ -417,11 +421,11 @@ namespace PDFPatcher.Functions
 			}
 			ShowDescription(String.IsNullOrEmpty(i.Name) || d.Name == i.Name ? d.Name : String.Concat(d.Name, ":", i.Name), i.Description, t);
 			_DeleteButton.Enabled = !i.IsRequired && d != null
-				&& (d.Type == PdfObjectType.Normal || d.Type == PdfObjectType.Image || d.Type == PdfObjectType.Outline && d.Name == "Outlines");
+				&& (d.Type == PdfObjectType.Normal || d.Type == PdfObjectType.Image || d.Type == PdfObjectType.Form || d.Type == PdfObjectType.Resources || d.Type == PdfObjectType.Outline && d.Name == "Outlines");
 		}
 
 		Dictionary<string, int> InitOpNameIcons() {
-			var p = new string[] { "Document", "Pages", "Page", "PageCommands", "Image", "Hidden", "GoToPage", "Outline", "Null" };
+			var p = new string[] { "Document", "Pages", "Page", "PageCommands", "Image", "Form", "Resources", "Hidden", "GoToPage", "Outline", "Null" };
 			var n = new string[] {
 				"q", "Tm", "cm", "gs", "ri", "CS", "cs",
 				"RG", "rg", "scn", "SCN", "sc", "SC", "K", "k",
@@ -471,8 +475,8 @@ namespace PDFPatcher.Functions
 		static int GetImageKey(DocumentObject d) {
 			if (d.Value != null) {
 				var po = d.Value;
-				if (po.Type == PdfObject.INDIRECT && d.ExtensiveObject is PdfObject) {
-					po = d.ExtensiveObject as PdfObject;
+				if (po.Type == PdfObject.INDIRECT && d.ExtensiveObject is PdfObject e) {
+					po = e;
 				}
 				return __PdfObjectIcons.GetOrDefault(po.Type);
 			}
@@ -481,10 +485,6 @@ namespace PDFPatcher.Functions
 
 		void _GotoImportLink_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
 			AppContext.MainForm.SelectFunctionList(Function.Patcher);
-		}
-
-		void bookmarkEditor1_DragEnter(object sender, DragEventArgs e) {
-			e.FeedbackDragFileOver(Constants.FileExtensions.PdfAndAllBookmarkExtension);
 		}
 
 		void ControlEvent(object sender, EventArgs e) {
@@ -615,14 +615,12 @@ namespace PDFPatcher.Functions
 					}
 					else if (d.Type == PdfObjectType.Pages) {
 						foreach (var r in PageRangeCollection.Parse((string)d.ExtensiveObject, 1, _pdf.PageCount, true)) {
-							foreach (var p in r) {
-								ep.Add(p);
-							}
+							ep.AddRange(r);
 						}
 					}
 				}
 				if (ep.Count == 1) {
-					ExportXmlInfo((n.FriendlyName ?? n.Name), exportTrailer, new int[] { (int)n.ExtensiveObject });
+					ExportXmlInfo(n.FriendlyName ?? n.Name, exportTrailer, new int[] { (int)n.ExtensiveObject });
 				}
 				else {
 					ExportXmlInfo(Path.GetFileNameWithoutExtension(_fileName), exportTrailer, ep.ToArray());
@@ -640,9 +638,8 @@ namespace PDFPatcher.Functions
 			using (var f = new AddPdfObjectForm()) {
 				f.PdfObjectType = objectType;
 				if (f.ShowDialog() == DialogResult.OK) {
-					var d = (documentObject.ExtensiveObject ?? documentObject.ExtensiveObject) as PdfDictionary;
 					var v = f.PdfValue;
-					d.Put(new PdfName(f.ObjectName), f.CreateAsIndirect ? _pdf.Document.AddPdfObject(v) : v);
+					((PdfDictionary)documentObject.ExtensiveObject).Put(new PdfName(f.ObjectName), f.CreateAsIndirect ? _pdf.Document.AddPdfObject(v) : v);
 					documentObject.PopulateChildren(true);
 					_ObjectDetailBox.RefreshObject(documentObject);
 				}
@@ -650,7 +647,13 @@ namespace PDFPatcher.Functions
 		}
 
 		void ExportXmlInfo(string fileName, bool exportTrailer, int[] pages) {
-			using (var d = new SaveFileDialog() { AddExtension = true, FileName = fileName + Constants.FileExtensions.Xml, DefaultExt = Constants.FileExtensions.Xml, Filter = Constants.FileExtensions.XmlFilter, Title = "请选择信息文件的保存位置" }) {
+			using (var d = new SaveFileDialog() {
+				AddExtension = true,
+				FileName = fileName + Constants.FileExtensions.Xml,
+				DefaultExt = Constants.FileExtensions.Xml,
+				Filter = Constants.FileExtensions.XmlFilter,
+				Title = "请选择信息文件的保存位置"
+			}) {
 				if (d.ShowDialog() == DialogResult.OK) {
 					var exp = new PdfContentExport(new ExporterOptions() { ExtractPageDictionary = true, ExportContentOperators = true });
 					using (XmlWriter w = XmlWriter.Create(d.FileName, DocInfoExporter.GetWriterSettings())) {
@@ -669,7 +672,13 @@ namespace PDFPatcher.Functions
 		}
 
 		void ExportBinHexStream(DocumentObject n, bool decode) {
-			using (var d = new SaveFileDialog() { AddExtension = true, FileName = (n.FriendlyName ?? n.Name) + Constants.FileExtensions.Txt, DefaultExt = Constants.FileExtensions.Txt, Filter = "文本形式的二进制数据文件(*.txt)|*.txt|" + Constants.FileExtensions.AllFilter, Title = "请选择文件流的保存位置" }) {
+			using (var d = new SaveFileDialog() {
+				AddExtension = true,
+				FileName = (n.FriendlyName ?? n.Name) + Constants.FileExtensions.Txt,
+				DefaultExt = Constants.FileExtensions.Txt,
+				Filter = "文本形式的二进制数据文件(*.txt)|*.txt|" + Constants.FileExtensions.AllFilter,
+				Title = "请选择文件流的保存位置"
+			}) {
 				if (d.ShowDialog() == DialogResult.OK) {
 					var s = n.ExtensiveObject as PRStream;
 					try {
@@ -684,7 +693,13 @@ namespace PDFPatcher.Functions
 		}
 
 		void ExportBinaryStream(DocumentObject n, bool decode) {
-			using (var d = new SaveFileDialog() { AddExtension = true, FileName = (n.FriendlyName ?? n.Name) + ".bin", DefaultExt = ".bin", Filter = "二进制数据文件(*.bin,*.dat)|*.bin;*.dat|" + Constants.FileExtensions.AllFilter, Title = "请选择文件流的保存位置" }) {
+			using (var d = new SaveFileDialog() {
+				AddExtension = true,
+				FileName = (n.FriendlyName ?? n.Name) + ".bin",
+				DefaultExt = ".bin",
+				Filter = "二进制数据文件(*.bin,*.dat)|*.bin;*.dat|" + Constants.FileExtensions.AllFilter,
+				Title = "请选择文件流的保存位置"
+			}) {
 				if (d.ShowDialog() == DialogResult.OK) {
 					var s = n.ExtensiveObject as PRStream;
 					try {
@@ -699,7 +714,13 @@ namespace PDFPatcher.Functions
 		}
 
 		void ExportToUnicode(DocumentObject n) {
-			using (var d = new SaveFileDialog { AddExtension = true, FileName = (n.Parent.FriendlyName ?? n.Name) + ".xml", DefaultExt = ".xml", Filter = "统一码映射信息文件(*.xml)|*.xml|" + Constants.FileExtensions.AllFilter, Title = "请选择统一码映射表的保存位置" }) {
+			using (var d = new SaveFileDialog {
+				AddExtension = true,
+				FileName = (n.Parent.FriendlyName ?? n.Name) + ".xml",
+				DefaultExt = ".xml",
+				Filter = "统一码映射信息文件(*.xml)|*.xml|" + Constants.FileExtensions.AllFilter,
+				Title = "请选择统一码映射表的保存位置"
+			}) {
 				if (d.ShowDialog() == DialogResult.OK) {
 					var s = n.ExtensiveObject as PRStream;
 					try {

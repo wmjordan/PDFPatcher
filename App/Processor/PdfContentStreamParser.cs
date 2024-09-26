@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using iTextSharp.text.error_messages;
 using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.parser;
+using PDFPatcher.Common;
 using PDFPatcher.Model;
 
 namespace PDFPatcher.Processor
@@ -151,6 +152,9 @@ namespace PDFPatcher.Processor
 		}
 
 		public void ProcessContent(byte[] contentBytes, PdfDictionary resources) {
+			if (contentBytes.HasContent() == false || resources == null) {
+				return;
+			}
 			_Resources.Push(resources);
 			var tokenizer = new PRTokeniser(new RandomAccessFileOrArray(contentBytes));
 			var ps = new PdfContentParser(tokenizer);

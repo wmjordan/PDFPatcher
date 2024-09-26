@@ -8,6 +8,8 @@
 		Pages,
 		Page,
 		Image,
+		Form,
+		Resources,
 		Outline,
 		PageCommand,
 		PageCommands,
