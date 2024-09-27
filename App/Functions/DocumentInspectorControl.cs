@@ -156,7 +156,7 @@ namespace PDFPatcher.Functions
 						return;
 					}
 					else if (po.Type == PdfObject.STRING) {
-						args.Control = new TextBox() { Text = (po as PdfString).ToUnicodeString(), Bounds = args.CellBounds };
+						args.Control = new AutoResizingTextBox(args.CellBounds, (po as PdfString).ToUnicodeString());
 						return;
 					}
 					else if (PdfHelper.CompoundTypes.Contains(po.Type)) {
