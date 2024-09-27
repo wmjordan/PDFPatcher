@@ -36,7 +36,12 @@ namespace PDFPatcher.Model
 		public bool HasChildren {
 			get {
 				if (Type != PdfObjectType.Normal
-					&& (Type == PdfObjectType.Trailer || Type == PdfObjectType.Pages || Type == PdfObjectType.Page || Type == PdfObjectType.PageCommands || Type == PdfObjectType.Hidden || Type == PdfObjectType.PageCommand && Children.Count > 0)) {
+					&& (Type == PdfObjectType.Trailer
+						|| Type == PdfObjectType.Pages
+						|| Type == PdfObjectType.Page
+						|| Type == PdfObjectType.PageCommands
+						|| Type == PdfObjectType.Hidden
+						|| Type == PdfObjectType.PageCommand && Children.Count > 0)) {
 					return true;
 				}
 				var po = Value ?? ExtensiveObject as PdfObject;
@@ -57,10 +62,10 @@ namespace PDFPatcher.Model
 					if (r.Type == PdfObject.DICTIONARY && Parent.Type == PdfObjectType.Outline && Name == "Next") {
 						return false;
 					}
-					return (r.Type == PdfObject.DICTIONARY && __ReversalRefNames.Contains(Name) == false
+					return r.Type == PdfObject.DICTIONARY && __ReversalRefNames.Contains(Name) == false
 						|| r.Type == PdfObject.ARRAY
 						|| r.Type == PdfObject.STREAM
-						);
+						;
 				}
 				return false;
 			}
@@ -151,7 +156,7 @@ namespace PDFPatcher.Model
 		internal DocumentObject FindReferenceAncestor() {
 			var d = this;
 			do {
-				if (d.Value != null && d.Value.Type == PdfObject.INDIRECT) {
+				if (d.Value?.Type == PdfObject.INDIRECT) {
 					return d;
 				}
 			} while ((d = d.Parent) != null);
@@ -166,7 +171,7 @@ namespace PDFPatcher.Model
 			switch (po.Type) {
 				case PdfObject.STRING:
 					var s = value as string;
-					if (s == (po as PdfString).ToUnicodeString()) {
+					if (s == ((PdfString)po).ToUnicodeString()) {
 						break;
 					}
 					Value = s.ToPdfString();
@@ -184,14 +189,12 @@ namespace PDFPatcher.Model
 					Value = new PdfBoolean((bool)value); break;
 			}
 			if (Parent != null) {
-				var pd = ((Parent.ExtensiveObject ?? Parent.Value) as PdfDictionary);
-				if (pd != null) {
+				if ((Parent.ExtensiveObject ?? Parent.Value) is PdfDictionary pd) {
 					pd.Put(new PdfName(Name), Value);
 					_Children = null;
 					return true;
 				}
-				var pa = ((Parent.ExtensiveObject ?? Parent.Value) as PdfArray);
-				if (pa != null) {
+				if ((Parent.ExtensiveObject ?? Parent.Value) is PdfArray pa) {
 					pa.ArrayList[Int32.Parse(Name) - 1] = Value;
 					_Children = null;
 					return true;
@@ -209,20 +212,20 @@ namespace PDFPatcher.Model
 				eo = null;
 			}
 			switch (po.Type) {
-				case PdfObject.DICTIONARY: return String.Concat("<<", (po as PdfDictionary).Size, " 子项>>");
+				case PdfObject.DICTIONARY: return $"<<{(po as PdfDictionary).Size} 子项>>";
 				case PdfObject.INDIRECT:
 					if (eo == null || __CompoundTypes.Contains(eo.Type)) {
-						return (po as PdfIndirectReference).ToString();
+						return ((PdfIndirectReference)po).ToString();
 					}
 					else {
-						return String.Concat((po as PdfIndirectReference).ToString(), "→", GetItemValueText(null, eo));
+						return $"{(PdfIndirectReference)po}→{GetItemValueText(null, eo)}";
 					}
 				case PdfObject.NAME: return PdfHelper.DecodeKeyName(po);
-				case PdfObject.NUMBER: return (po as PdfNumber).DoubleValue.ToText();
-				case PdfObject.STRING: return (po as PdfString).Decode(null);
+				case PdfObject.NUMBER: return ((PdfNumber)po).DoubleValue.ToText();
+				case PdfObject.STRING: return ((PdfString)po).Decode(null);
 				case PdfObject.STREAM: goto case PdfObject.DICTIONARY;
-				case PdfObject.ARRAY: return PdfHelper.GetArrayString(po as PdfArray);
-				case PdfObject.BOOLEAN: return (po as PdfBoolean).ToString();
+				case PdfObject.ARRAY: return PdfHelper.GetArrayString((PdfArray)po);
+				case PdfObject.BOOLEAN: return ((PdfBoolean)po).ToString();
 				case PdfObject.NULL: return "Null";
 			}
 		Exit:
@@ -279,7 +282,7 @@ namespace PDFPatcher.Model
 				foreach (var item in pd) {
 					var d = new DocumentObject(OwnerDocument, this, PdfHelper.DecodeKeyName(item.Key), item.Value);
 					r[n++] = d;
-					var i = Model.PdfStructInfo.GetInfo(GetContextName(), d.Name);
+					var i = PdfStructInfo.GetInfo(GetContextName(), d.Name);
 					if (i.Name != null && i.IsKeyObject) {
 						d.IsKeyObject = true;
 					}
@@ -334,7 +337,7 @@ namespace PDFPatcher.Model
 				foreach (var item in pd.ArrayList) {
 					var d = new DocumentObject(OwnerDocument, this, (++n).ToText(), item);
 					r[n - 1] = d;
-					var i = Model.PdfStructInfo.GetInfo(GetContextName(), d.Name);
+					var i = PdfStructInfo.GetInfo(GetContextName(), d.Name);
 					if (i.Name != null && i.IsKeyObject) {
 						d.IsKeyObject = true;
 					}
@@ -401,7 +404,7 @@ namespace PDFPatcher.Model
 				fn = "未知操作符";
 			}
 			var o = new DocumentObject(OwnerDocument, this, fn, null, PdfObjectType.PageCommand) {
-				FriendlyName = String.Concat(fn, "(", op, ")"),
+				FriendlyName = $"{fn}({op})",
 				ExtensiveObject = op
 			};
 			if (item.Type == PdfPageCommandType.Text) {
@@ -441,7 +444,7 @@ namespace PDFPatcher.Model
 						o._Children.Add(new DocumentObject(OwnerDocument, o, (++i).ToText(), t));
 					}
 				}
-				var e = item as EnclosingCommand;
+				var e = (EnclosingCommand)item;
 				if (e.HasCommand == false) {
 					return;
 				}
@@ -450,7 +453,7 @@ namespace PDFPatcher.Model
 				}
 			}
 			else if (item.Type == PdfPageCommandType.InlineImage) {
-				var s = item.Operands[0] as PdfImageData;
+				var s = (PdfImageData)item.Operands[0];
 				CreateChildrenList(ref o._Children);
 				foreach (var ii in s) {
 					o._Children.Add(new DocumentObject(OwnerDocument, o, PdfHelper.DecodeKeyName(ii.Key), ii.Value));
