@@ -569,10 +569,7 @@ namespace PDFPatcher.Functions
 					}
 				}
 				else {
-					var b = PdfReader.GetStreamBytes(s);
-					using (var ms = new MemoryStream(b))
-					using (var r = new StreamReader(ms))
-					using (var f = new TextViewerForm(r.ReadToEnd(), true)) {
+					using (var f = new TextViewerForm(PdfReader.GetStreamBytes(s), true)) {
 						f.ShowDialog(FindForm());
 					}
 				}
