@@ -81,12 +81,6 @@ namespace MuPdfSharp
 			}
 		}
 
-		public void SaveAs(string fileName, MuPdfWriterOptions options) {
-			if (NativeMethods.PdfSaveDocument(_context, _document, fileName, options) == false) {
-				_context.ThrowExceptionIfError();
-			}
-		}
-
 		/// <summary>
 		/// 释放文档对应的句柄，不再占用 PDF 文件。
 		/// </summary>

@@ -223,9 +223,6 @@ namespace MuPdfSharp
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "CloseDocumentWriter")]
 		public static extern bool CloseDocumentWriter(ContextHandle context, IntPtr writer);
 
-		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "PdfSaveDocument", CharSet = CharSet.Unicode)]
-		public static extern bool PdfSaveDocument(ContextHandle context, DocumentHandle document, string filePath, MuPdfWriterOptions options);
-
 		[DllImport(DLL, CallingConvention = CC.Cdecl, EntryPoint = "fz_drop_document_writer")]
 		public static extern IntPtr DropDocumentWriter(ContextHandle context, IntPtr writer);
 		#endregion
