@@ -122,43 +122,49 @@ namespace PDFPatcher.Functions
 				}
 			};
 			new TypedColumn<DocumentObject>(_ValueColumn) {
-				AspectGetter = (DocumentObject d) => {
-					return d.FriendlyValue ?? d.LiteralValue;
-				},
+				AspectGetter = (DocumentObject d) => d.FriendlyValue ?? d.LiteralValue,
 				AspectPutter = (DocumentObject d, object value) => {
-					if (d.UpdateDocumentObject(value)) {
-						var r = d.FindReferenceAncestor();
-						if (r != null) {
-							RefreshReferences(r);
-						}
+					if (!d.UpdateDocumentObject(value)) {
+						return;
 					}
-					else if (d.Parent != null && d.Parent.Type == PdfObjectType.Outline && d.Name == "Title") {
+					var r = d.FindReferenceAncestor();
+					if (r != null) {
+						RefreshReferences(r);
+					}
+					if (d.Parent?.Type == PdfObjectType.Outline && d.Name == "Title") {
 						d.Parent.Description = (string)value;
 						_ObjectDetailBox.RefreshObject(d.Parent);
 					}
 				}
 			};
-			_DescriptionColumn.AspectGetter = (object o) => {
-				return ((DocumentObject)o).Description;
-			};
+			_DescriptionColumn.AspectGetter = (object o) => ((DocumentObject)o).Description;
 			_ObjectDetailBox.PrimarySortColumn = null;
 			_ObjectDetailBox.CopySelectionOnControlC = true;
 			_ObjectDetailBox.CellEditStarting += (s, args) => {
-				var d = args.RowObject as DocumentObject;
-				var po = d.Value as PdfObject;
-				if (po == null) {
-					args.Cancel = true;
-					return;
+				var po = (args.RowObject as DocumentObject).Value;
+				if (po != null) {
+					if (po.Type == PdfObject.BOOLEAN) {
+						args.Control = new CheckBox() { Checked = (po as PdfBoolean).BooleanValue, Bounds = args.CellBounds };
+						return;
+					}
+					else if (po.Type == PdfObject.NUMBER) {
+						args.Control = new TextBox() { Text = (po as PdfNumber).DoubleValue.ToText(), Bounds = args.CellBounds };
+						return;
+					}
+					else if (po.Type == PdfObject.NAME) {
+						args.Control = new TextBox() { Text = PdfName.DecodeName((po as PdfName).ToString()), Bounds = args.CellBounds };
+						return;
+					}
+					else if (po.Type == PdfObject.STRING) {
+						args.Control = new TextBox() { Text = (po as PdfString).ToUnicodeString(), Bounds = args.CellBounds };
+						return;
+					}
+					else if (PdfHelper.CompoundTypes.Contains(po.Type)) {
+						args.Cancel = true;
+						return;
+					}
 				}
-				if (po.Type == PdfObject.BOOLEAN) {
-					args.Control = new CheckBox() { Checked = (po as PdfBoolean).BooleanValue, Bounds = args.CellBounds };
-				}
-				else if (po.Type == PdfObject.NUMBER) {
-					args.Control = new TextBox() { Text = (po as PdfNumber).DoubleValue.ToText(), Bounds = args.CellBounds };
-				}
-				else if (po.Type == PdfObject.INDIRECT || PdfHelper.CompoundTypes.Contains(po.Type)) {
-					args.Cancel = true;
-				}
+				args.Control = new AutoResizingTextBox(args.CellBounds, args.Value?.ToString()) { ReadOnly = true };
 			};
 			_ObjectDetailBox.CanExpandGetter = (object o) => {
 				var d = o as DocumentObject;
