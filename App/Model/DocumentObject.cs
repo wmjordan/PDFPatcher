@@ -418,7 +418,7 @@ namespace PDFPatcher.Model
 						foreach (var ti in a.ArrayList) {
 							var d = new DocumentObject(OwnerDocument, o, (++i).ToText(), ti);
 							if (ti.Type == PdfObject.STRING) {
-								d.FriendlyValue = (ti as PdfString).GetOriginalBytes().ToHexBinString();
+								d.FriendlyValue = ((PdfString)ti).GetOriginalBytes().ToHexBinString();
 								d.Description = pt.DecodedTexts[i - 1];
 							}
 							o._Children.Add(d);
@@ -429,10 +429,10 @@ namespace PDFPatcher.Model
 			else if (item.Type == PdfPageCommandType.Font) {
 				var f = item as FontCommand;
 				o.FriendlyValue = String.Concat(
-					f.FontName,
-					" (", Constants.Content.OperandNames.ResourceName, "：", f.ResourceName.ToString(), "); ",
+					Constants.Content.OperandNames.ResourceName, "：", f.ResourceName.ToString(), "; ",
 					Constants.Content.OperandNames.Size, "：", f.FontSize.DoubleValue.ToText()
 					);
+				o.Description = f.FontName;
 			}
 			else if (item.Type == PdfPageCommandType.Enclosure) {
 				if (item.Operands.HasContent()) {
