@@ -61,7 +61,7 @@ namespace PDFPatcher.Processor
 			return true;
 		}
 
-		private static void RemoveGotoAction(XmlElement item) {
+		static void RemoveGotoAction(XmlElement item) {
 			if (item.Name == Constants.ActionType.Goto) {
 				item.ParentNode.RemoveChild(item);
 			}
@@ -71,7 +71,7 @@ namespace PDFPatcher.Processor
 			}
 		}
 
-		private void RemoveOrphan(XmlElement item) {
+		static void RemoveOrphan(XmlElement item) {
 			if (item.HasChildNodes && item.LocalName == Constants.Bookmark) {
 				while (item.HasChildNodes) {
 					var c = item.LastChild as XmlElement;
@@ -89,7 +89,7 @@ namespace PDFPatcher.Processor
 
 		#endregion
 
-		private static void TranslateDestinationCoordinates(XmlElement item, CoordinateTranslationSettings ct) {
+		static void TranslateDestinationCoordinates(XmlElement item, CoordinateTranslationSettings ct) {
 			float p;
 			if (item.GetAttribute(Constants.Coordinates.Top).TryParse(out p) && p != 0) {
 				item.SetAttribute(Constants.Coordinates.Top, (p * ct.YScale + ct.YTranslation).ToText());

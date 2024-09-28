@@ -77,7 +77,7 @@ namespace PDFPatcher.Processor
 		}
 
 		internal static float GetUnitFactor(XmlElement root) {
-			var unit = root.SelectSingleNode(Constants.Units.ThisName + "/@" + Constants.Units.Unit)?.Value;
+			var unit = root.SelectSingleNode($"{Constants.Units.ThisName}/@{Constants.Units.Unit}")?.Value;
 			return string.IsNullOrEmpty(unit)
 				? 1
 				: ValueHelper.MapValue(unit, Constants.Units.Names, Constants.Units.Factors, 1);

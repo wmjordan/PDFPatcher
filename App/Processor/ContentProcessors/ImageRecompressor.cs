@@ -4,6 +4,7 @@ using FreeImageAPI;
 using iTextSharp.text.pdf;
 using PDFPatcher.Model;
 using PDFPatcher.Processor.Imaging;
+using ColorDepth = FreeImageAPI.FREE_IMAGE_COLOR_DEPTH;
 
 namespace PDFPatcher.Processor
 {
@@ -101,7 +102,7 @@ namespace PDFPatcher.Processor
 				if (binaryThreshold != 0
 					&& (fi.HasPalette == false
 					|| fi.UniqueColors > 256
-					|| fi.UseDib(dib => FreeImage.ConvertColorDepth(dib, algorithm == 255 ? FREE_IMAGE_COLOR_DEPTH.FICD_01_BPP_THRESHOLD | FREE_IMAGE_COLOR_DEPTH.FICD_FORCE_GREYSCALE | FREE_IMAGE_COLOR_DEPTH.FICD_REORDER_PALETTE : FREE_IMAGE_COLOR_DEPTH.FICD_01_BPP_DITHER, binaryThreshold, false)) == false)) {
+					|| fi.UseDib(dib => FreeImage.ConvertColorDepth(dib, algorithm == 255 ? ColorDepth.FICD_01_BPP_THRESHOLD | ColorDepth.FICD_FORCE_GREYSCALE | ColorDepth.FICD_REORDER_PALETTE : ColorDepth.FICD_01_BPP_DITHER, binaryThreshold, false)) == false)) {
 					return false;
 				}
 				var sb = JBig2Encoder.Encode(fi);

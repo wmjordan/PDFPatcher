@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using PDFPatcher.Model;
 
 namespace PDFPatcher.Processor
@@ -8,9 +6,6 @@ namespace PDFPatcher.Processor
 	sealed class CollapseBookmarkProcessor : IInfoDocProcessor
 	{
 		public BookmarkStatus BookmarkStatus { get; set; }
-		public CollapseBookmarkProcessor() {
-
-		}
 
 		#region IBookmarkProcessor 成员
 
@@ -26,7 +21,7 @@ namespace PDFPatcher.Processor
 					return true;
 				case BookmarkStatus.ExpandTop:
 					var p = bookmark.ParentNode;
-					if (p != null && p.Name == Constants.DocumentBookmark) {
+					if (p?.Name == Constants.DocumentBookmark) {
 						bookmark.SetAttribute(Constants.BookmarkAttributes.Open, Constants.Boolean.True);
 					}
 					else {

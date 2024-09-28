@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Xml;
-using PDFPatcher.Common;
-using PDFPatcher.Model;
 
 namespace PDFPatcher.Processor
 {
@@ -19,9 +14,7 @@ namespace PDFPatcher.Processor
 			if (item.Name != Constants.Bookmark && item.Name != Constants.PageLinkAttributes.Link) {
 				return false;
 			}
-
-			var a = item.GetAttribute(Constants.DestinationAttributes.Action);
-			switch (a) {
+			switch (item.GetAttribute(Constants.DestinationAttributes.Action)) {
 				case Constants.ActionType.GotoR:
 				case Constants.ActionType.Launch:
 				case Constants.ActionType.Uri:

@@ -58,17 +58,17 @@ namespace PDFPatcher.Processor.Imaging
 			info.Height = data.TryGetInt32(PdfName.HEIGHT, 0);
 			if (info.Width < options.MinWidth || info.Height < options.MinHeight) {
 				if (info.InlineImage.PdfRef != null) {
-					Tracker.TraceMessage(String.Concat("忽略了一幅编号为 ", info.InlineImage.ToString(), "，尺寸为 ", info.Width, "*", info.Height, "的图像。"));
+					Tracker.TraceMessage($"忽略了一幅编号为 {info.InlineImage}，尺寸为 {info.Width}*{info.Height}的图像。");
 				}
 				else {
-					Tracker.TraceMessage(String.Concat("忽略了一幅尺寸为 ", info.Width, "*", info.Height, "的内嵌图像。"));
+					Tracker.TraceMessage($"忽略了一幅尺寸为 {info.Width}*{info.Height}的内嵌图像。");
 				}
 				return null;
 			}
 			info.BitsPerComponent = data.TryGetInt32(PdfName.BITSPERCOMPONENT, 1);
 			info.PixelFormat = PixelFormat.Format8bppIndexed;
-			var decParams = PdfHelper.GetObjectDirectOrFromContainerArray(data, PdfName.DECODEPARMS, PdfObject.DICTIONARY);
-			var filters = PdfHelper.GetObjectDirectOrFromContainerArray(data, PdfName.FILTER, PdfObject.NAME);
+			var decParams = data.GetObjectDirectOrFromContainerArray(PdfName.DECODEPARMS, PdfObject.DICTIONARY);
+			var filters = data.GetObjectDirectOrFromContainerArray(PdfName.FILTER, PdfObject.NAME);
 			decodedBytes = DecodeStreamContent(data, filters);
 			var filter = filters.Count > 0 ? (filters[filters.Count - 1] as PdfName ?? PdfName.DEFAULT).ToString() : "BMP";
 			var decParam = decParams.Count > 0 ? decParams[decParams.Count - 1] as PdfDictionary : null;
@@ -81,7 +81,6 @@ namespace PDFPatcher.Processor.Imaging
 				case "/JPXDecode":
 				case "/JPX":
 					info.ExtName = Constants.FileExtensions.Jp2;
-					//goto case "JPG";
 					goto EXIT;
 				case "/CCITTFaxDecode":
 				case "/CCF":
@@ -108,14 +107,11 @@ namespace PDFPatcher.Processor.Imaging
 						var globals = new byte[0];
 						if (decParam != null) {
 							var gRef = decParam.GetAsIndirectObject(PdfName.JBIG2GLOBALS);
-							if (gRef != null) {
-								var gs = PdfReader.GetPdfObjectRelease(gRef) as PRStream;
-								if (gs != null) {
-									globals = PdfReader.GetStreamBytes(gs);
-								}
+							if (gRef != null && PdfReader.GetPdfObjectRelease(gRef) is PRStream gs) {
+								globals = PdfReader.GetStreamBytes(gs);
 							}
 						}
-						outBuf = Processor.Imaging.JBig2Decoder.Decode(decodedBytes, globals);
+						outBuf = JBig2Decoder.Decode(decodedBytes, globals);
 						if (outBuf == null) {
 							info.LastDecodeError = "导出 JBig2 编码图片失败。";
 							return null;
@@ -178,8 +174,6 @@ namespace PDFPatcher.Processor.Imaging
 							case FREE_IMAGE_COLOR_TYPE.FIC_RGBALPHA:
 								info.ColorSpace = PdfName.DEVICERGB;
 								break;
-							default:
-								break;
 						}
 						info.BitsPerComponent =
 							info.PixelFormat == PixelFormat.Format1bppIndexed ? 1
@@ -197,9 +191,9 @@ namespace PDFPatcher.Processor.Imaging
 			}
 		EXIT:
 			PRStream sm;
-			if (options.ExtractSoftMask && (
-				(sm = data.GetAsStream(PdfName.SMASK) as PRStream) != null
-					|| (sm = data.GetAsStream(PdfName.MASK) as PRStream) != null)
+			if (options.ExtractSoftMask
+				&& (sm = (data.GetAsStream(PdfName.SMASK) as PRStream)
+					?? (data.GetAsStream(PdfName.MASK) as PRStream)) != null
 				) {
 				var mi = new ImageInfo(sm);
 				var mask = DecodeImage(mi, new ImageExtracterOptions() { InvertBlackAndWhiteImages = !options.InvertSoftMask });
@@ -240,15 +234,6 @@ namespace PDFPatcher.Processor.Imaging
 		}
 
 		void CreatePalette(FreeImageBitmap bmp) {
-			//if (PaletteColorSpace == null) {
-			//	//todo++ 缺少色域信息的图片不一定是灰度图像
-			//	if (bmp.HasPalette) {
-			//		PaletteColorSpace = PdfName.DEVICEGRAY;
-			//	}
-			//	else {
-			//		return;
-			//	}
-			//}
 			if (bmp.HasPalette == false) {
 				Trace.WriteLine("Bitmap does not have palette.");
 				return;
@@ -423,11 +408,10 @@ namespace PDFPatcher.Processor.Imaging
 				return;
 			}
 
-			var colorspace = cs as PdfArray;
+			var colorspace = (PdfArray)cs;
 			// todo: 是否需要将所有 ColorSpace 换成 PaletteColorSpace
 			if (PdfName.ICCBASED.Equals(colorspace.GetAsName(0))) {
-				var iccs = colorspace.GetDirectObject(1) as PRStream;
-				info.ColorSpace = iccs.GetAsName(PdfName.ALTERNATE);
+				info.ColorSpace = ((PRStream)colorspace.GetDirectObject(1)).GetAsName(PdfName.ALTERNATE);
 				return;
 			}
 			if (PdfName.INDEXED.Equals(colorspace.GetAsName(0))) {
@@ -441,7 +425,6 @@ namespace PDFPatcher.Processor.Imaging
 					}
 					else {
 						info.ColorSpace = arr.GetAsName(0);
-						//Tracker.TraceMessage (String.Concat ("不支持此图片的色域：", info.ColorSpace));
 					}
 				}
 				var csp = colorspace.GetDirectObject(3);
@@ -451,7 +434,6 @@ namespace PDFPatcher.Processor.Imaging
 				else if (csp is PRStream s) {
 					info.PaletteBytes = PdfReader.GetStreamBytes(s);
 				}
-				//}
 			}
 		}
 

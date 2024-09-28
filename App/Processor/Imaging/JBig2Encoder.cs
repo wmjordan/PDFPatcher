@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using FreeImageAPI;
+using System.Drawing.Imaging;
 
 namespace PDFPatcher.Processor.Imaging
 {
@@ -9,9 +10,9 @@ namespace PDFPatcher.Processor.Imaging
 		const uint White = 0x00FFFFFF;
 
 		internal static byte[] Encode(FreeImageBitmap fi) {
-			bool zeroIsWhite = fi.HasPalette && fi.Palette.Data[0].uintValue == White;
+			bool zeroIsWhite = fi.HasPalette && (fi.Palette.Data[0].uintValue & White) == White;
 			using (var bmp = fi.ToBitmap()) {
-				var bits = bmp.LockBits(new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format1bppIndexed);
+				var bits = bmp.LockBits(new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format1bppIndexed);
 				var bytes = Encode(bmp.Width, bmp.Height, bits.Stride, zeroIsWhite, bits.Scan0);
 				bmp.UnlockBits(bits);
 				return bytes;

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Xml;
 
 namespace PDFPatcher.Processor
@@ -15,7 +13,7 @@ namespace PDFPatcher.Processor
 
 		#region IInfoDocProcessor 成员
 
-		public bool Process(System.Xml.XmlElement item) {
+		public bool Process(XmlElement item) {
 			ConvertUnit(item, Constants.Coordinates.Bottom);
 			ConvertUnit(item, Constants.Coordinates.Left);
 			ConvertUnit(item, Constants.Coordinates.Right);
@@ -25,7 +23,7 @@ namespace PDFPatcher.Processor
 
 		#endregion
 
-		bool ConvertUnit(System.Xml.XmlElement item, string attribute) {
+		bool ConvertUnit(XmlElement item, string attribute) {
 			var a = item.GetAttributeNode(attribute);
 			if (a != null) {
 				a.Value = Common.UnitConverter.ToPoint(a.Value, UnitFactor);

@@ -42,7 +42,7 @@ namespace PDFPatcher.Processor.Imaging
 		/// </summary>
 		/// <param name="bmp">要保存的图片。</param>
 		/// <param name="fileName">保存路径。</param>
-		internal static void SaveBinaryImage(this System.Drawing.Image bmp, string fileName) {
+		internal static void SaveBinaryImage(this Image bmp, string fileName) {
 			if (bmp.PixelFormat == PixelFormat.Format1bppIndexed) {
 				bmp.Save(fileName, _tiffCodec, _encoderParameters);
 			}
@@ -50,7 +50,7 @@ namespace PDFPatcher.Processor.Imaging
 				bmp.Save(fileName, ImageFormat.Tiff);
 			}
 		}
-		internal static void SaveBinaryImage(this System.Drawing.Image bmp, System.IO.Stream stream) {
+		internal static void SaveBinaryImage(this Image bmp, System.IO.Stream stream) {
 			if (bmp.PixelFormat == PixelFormat.Format1bppIndexed) {
 				bmp.Save(stream, _tiffCodec, _encoderParameters);
 			}
