@@ -97,6 +97,7 @@ namespace PDFPatcher.Processor
 			var info = new ImageInfo(imgRef);
 			var bytes = info.DecodeImage(_imgExpOption);
 			using (var fi = ImageExtractor.CreateFreeImageBitmap(info, ref bytes, false, info.ICCProfile != null)) {
+				info.CreatePaletteAndIccProfile(fi);
 				if (binaryThreshold != 0
 					&& (fi.HasPalette == false
 					|| fi.UniqueColors > 256
