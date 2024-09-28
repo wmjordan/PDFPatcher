@@ -8,19 +8,31 @@ namespace PDFPatcher.Functions
 	{
 		readonly int _MinHeight, _MaxHeight, _Width;
 
-		public AutoResizingTextBox(Rectangle bound, string text) {
+		public AutoResizingTextBox(Rectangle bound, string text, Control parent = null) {
 			Bounds = bound;
 			_Width = bound.Width;
 			_MinHeight = bound.Height;
 			_MaxHeight = bound.Height * 8;
 			MaximumSize = new Size(_Width, _MaxHeight);
 			Multiline = true;
+			Parent = parent;
+			AcceptsReturn = text?.IndexOf('\n') >= 0;
 			Text = text;
-			AcceptsReturn = text.IndexOf('\n') >= 0;
 		}
 
 		void ResizeForText() {
-			Size = new Size(_Width, Math.Min(Math.Max(PreferredSize.Height, _MinHeight), _MaxHeight));
+			using (var g = CreateGraphics()) {
+				// NOTE: 当文本无处换行但又溢出文本框时，PreferredSize 的计算有误，故改用 MeasureString
+				var height = g.MeasureString(Text, Font, _Width, StringFormat.GenericDefault).Height + Margin.Vertical;
+				Size = new Size(_Width, Math.Min(Math.Max((int)height, _MinHeight), _MaxHeight));
+				if (Parent?.ClientRectangle.Height < Bottom) {
+					Location = new Point(Location.X, Location.Y - (Bottom - Parent.ClientRectangle.Height));
+				}
+				// NOTE：如果解除下面的注释，可能会在编辑过程中抛出 ObjectDisposedException
+				//if (height > _MaxHeight) {
+				//	ScrollBars = ScrollBars.Vertical;
+				//}
+			}
 		}
 
 		protected override void OnTextChanged(EventArgs e) {

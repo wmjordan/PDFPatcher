@@ -527,7 +527,7 @@ namespace PDFPatcher.Functions
 		protected override void OnCellEditStarting(CellEditEventArgs e) {
 			base.OnCellEditStarting(e);
 			if (e.Column == _BookmarkNameColumn) {
-				e.Control = new AutoResizingTextBox(e.CellBounds, e.Value as string);
+				e.Control = new AutoResizingTextBox(e.CellBounds, e.Value as string, this);
 			}
 		}
 

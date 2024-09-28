@@ -143,29 +143,40 @@ namespace PDFPatcher.Functions
 			_ObjectDetailBox.CopySelectionOnControlC = true;
 			_ObjectDetailBox.CellEditStarting += (s, args) => {
 				var po = (args.RowObject as DocumentObject).Value;
+				string t;
+				bool readOnly = true;
 				if (po != null) {
-					if (po.Type == PdfObject.BOOLEAN) {
-						args.Control = new CheckBox() { Checked = (po as PdfBoolean).BooleanValue, Bounds = args.CellBounds };
-						return;
-					}
-					else if (po.Type == PdfObject.NUMBER) {
-						args.Control = new TextBox() { Text = (po as PdfNumber).DoubleValue.ToText(), Bounds = args.CellBounds };
-						return;
-					}
-					else if (po.Type == PdfObject.NAME) {
-						args.Control = new TextBox() { Text = PdfName.DecodeName((po as PdfName).ToString()), Bounds = args.CellBounds };
-						return;
-					}
-					else if (po.Type == PdfObject.STRING) {
-						args.Control = new AutoResizingTextBox(args.CellBounds, (po as PdfString).ToUnicodeString());
-						return;
-					}
-					else if (PdfHelper.CompoundTypes.Contains(po.Type)) {
-						args.Cancel = true;
-						return;
+					switch (po.Type) {
+						case PdfObject.BOOLEAN:
+							args.Control = new CheckBox() { Checked = (po as PdfBoolean).BooleanValue, Bounds = args.CellBounds };
+							return;
+						case PdfObject.NUMBER:
+							t = (po as PdfNumber).DoubleValue.ToText();
+							readOnly = false;
+							goto MAKE_CONTROL;
+						case PdfObject.NAME:
+							t = PdfName.DecodeName((po as PdfName).ToString());
+							readOnly = false;
+							goto MAKE_CONTROL;
+						case PdfObject.STRING:
+							t = (po as PdfString).ToUnicodeString();
+							readOnly = false;
+							goto MAKE_CONTROL;
+						case PdfObject.DICTIONARY:
+						case PdfObject.STREAM:
+						case PdfObject.NULL:
+							args.Cancel = true;
+							return;
 					}
 				}
-				args.Control = new AutoResizingTextBox(args.CellBounds, args.Value?.ToString()) { ReadOnly = true };
+				if (args.Value != null) {
+					t = args.Value.ToString();
+					goto MAKE_CONTROL;
+				}
+				args.Cancel = true;
+				return;
+				MAKE_CONTROL:
+				args.Control = new AutoResizingTextBox(args.CellBounds, t, (Control)s) { ReadOnly = readOnly };
 			};
 			_ObjectDetailBox.CanExpandGetter = (object o) => {
 				var d = o as DocumentObject;
@@ -541,10 +552,9 @@ namespace PDFPatcher.Functions
 				if (po.Type == PdfObject.INDIRECT) {
 					po = n.Parent.ExtensiveObject as PdfObject;
 				}
-				if (PdfHelper.CompoundTypes.Contains(po.Type)) {
-					if (n.Parent.RemoveChildByName(n.Name)) {
-						_ObjectDetailBox.RefreshObject(n.Parent);
-					}
+				if (PdfHelper.CompoundTypes.Contains(po.Type)
+					&& n.Parent.RemoveChildByName(n.Name)) {
+					_ObjectDetailBox.RefreshObject(n.Parent);
 				}
 			}
 			else if (ci == _ViewButton) {
