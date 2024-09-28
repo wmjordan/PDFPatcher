@@ -26,7 +26,7 @@ namespace PDFPatcher.Model
 		#region 操作符中文名称
 		static readonly Dictionary<string, string> __OperatorNames = Init();
 		static Dictionary<string, string> Init() {
-			var d = new Dictionary<string, string> {
+			return new Dictionary<string, string> {
 				{ "'", "换行字符串" },
 				{ "\"", "换行字符串" },
 				{ "b", "闭合非零画线填充" },
@@ -102,7 +102,6 @@ namespace PDFPatcher.Model
 				{ "W*", "奇偶裁剪" },
 				{ "y", "控首曲线" }
 			};
-			return d;
 		}
 		#endregion
 
@@ -123,7 +122,7 @@ namespace PDFPatcher.Model
 			return new PdfPageCommand(new PdfLiteral(name), new List<PdfObject>(operands));
 		}
 
-		internal virtual void WriteToPdf(System.IO.Stream target) {
+		internal virtual void WriteToPdf(Stream target) {
 			if (Operands != null) {
 				foreach (var oi in Operands) {
 					WriteOperand(oi, target);
@@ -220,12 +219,12 @@ namespace PDFPatcher.Model
 		public string[] DecodedTexts { get; private set; }
 		public PaceAndTextCommand(PdfLiteral oper, List<PdfObject> operands, TextInfo text, FontInfo font)
 			: base(oper, operands, text) {
-			var a = base.Operands[0] as PdfArray;
+			var a = (PdfArray)Operands[0];
 			DecodedTexts = new string[a.Size];
 			int i = 0;
 			foreach (var item in a.ArrayList) {
 				if (item.Type == PdfObject.STRING) {
-					DecodedTexts[i] = font.DecodeText(item as PdfString);
+					DecodedTexts[i] = font.DecodeText((PdfString)item);
 				}
 				++i;
 			}
@@ -249,7 +248,7 @@ namespace PDFPatcher.Model
 			}) {
 		}
 		public void Multiply(double[] matrix) {
-			var m1 = Array.ConvertAll(Operands, (i) => { return (i as PdfNumber).DoubleValue; });
+			var m1 = Array.ConvertAll(Operands, (i) => ((PdfNumber)i).DoubleValue);
 			Operands[0] = new PdfNumber(m1[0] * matrix[0] + m1[1] * matrix[2]);
 			Operands[1] = new PdfNumber(m1[0] * matrix[1] + m1[1] * matrix[3]);
 			Operands[2] = new PdfNumber(m1[2] * matrix[0] + m1[3] * matrix[2]);

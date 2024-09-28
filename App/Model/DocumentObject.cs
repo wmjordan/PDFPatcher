@@ -212,14 +212,11 @@ namespace PDFPatcher.Model
 				eo = null;
 			}
 			switch (po.Type) {
-				case PdfObject.DICTIONARY: return $"<<{(po as PdfDictionary).Size} 子项>>";
+				case PdfObject.DICTIONARY: return $"<<{((PdfDictionary)po).Size} 子项>>";
 				case PdfObject.INDIRECT:
-					if (eo == null || __CompoundTypes.Contains(eo.Type)) {
-						return ((PdfIndirectReference)po).ToString();
-					}
-					else {
-						return $"{(PdfIndirectReference)po}→{GetItemValueText(null, eo)}";
-					}
+					return eo == null || __CompoundTypes.Contains(eo.Type)
+						? ((PdfIndirectReference)po).ToString()
+						: $"{(PdfIndirectReference)po}→{GetItemValueText(null, eo)}";
 				case PdfObject.NAME: return PdfHelper.DecodeKeyName(po);
 				case PdfObject.NUMBER: return ((PdfNumber)po).DoubleValue.ToText();
 				case PdfObject.STRING: return ((PdfString)po).Decode(null);
@@ -317,7 +314,8 @@ namespace PDFPatcher.Model
 									o.Add(new DocumentObject(OwnerDocument, this, Constants.Bookmark, or, PdfObjectType.Outline) {
 										Description = pd.Contains(PdfName.TITLE) ? pd.GetAsString(PdfName.TITLE).ToUnicodeString() : null
 									});
-									while ((or = pd.Get(PdfName.NEXT)) != null && (pd = PdfReader.GetPdfObject(or) as PdfDictionary) != null) {
+									while ((or = pd.Get(PdfName.NEXT)) != null
+										&& (pd = PdfReader.GetPdfObject(or) as PdfDictionary) != null) {
 										o.Add(new DocumentObject(OwnerDocument, this, Constants.Bookmark, or, PdfObjectType.Outline) {
 											Description = pd.Contains(PdfName.TITLE) ? pd.GetAsString(PdfName.TITLE).ToUnicodeString() : null
 										});
@@ -331,7 +329,7 @@ namespace PDFPatcher.Model
 				_Children = r;
 			}
 			else if (po.Type == PdfObject.ARRAY) {
-				var pd = po as PdfArray;
+				var pd = (PdfArray)po;
 				var r = new DocumentObject[pd.Size];
 				var n = 0;
 				foreach (var item in pd.ArrayList) {

@@ -12,6 +12,7 @@ using iTextSharp.text.pdf;
 using PDFPatcher.Common;
 using PDFPatcher.Model;
 using PDFPatcher.Processor;
+using iTextSharp.text.pdf.fonts.cmaps;
 
 namespace PDFPatcher.Functions
 {
@@ -176,13 +177,9 @@ namespace PDFPatcher.Functions
 				}
 				return d.HasChildren;
 			};
-			_ObjectDetailBox.ChildrenGetter = delegate (object o) {
-				var d = o as DocumentObject;
-				if (d == null) {
-					return null;
-				}
-				return d.Children;
-			};
+			_ObjectDetailBox.ChildrenGetter = (object o) => o is DocumentObject d
+				? (System.Collections.IEnumerable)d.Children
+				: null;
 			_ObjectDetailBox.RowFormatter = (OLVListItem olvItem) => {
 				var o = olvItem.RowObject as DocumentObject;
 				if (o == null) {
@@ -245,9 +242,7 @@ namespace PDFPatcher.Functions
 				args.ClickedItem.Owner.Hide();
 				LoadDocument(args.ClickedItem.ToolTipText);
 			};
-			Disposed += (s, args) => {
-				_pdf?.Document.Dispose();
-			};
+			Disposed += (s, args) => _pdf?.Document.Dispose();
 		}
 
 		public override void SetupCommand(ToolStripItem item) {
@@ -352,8 +347,7 @@ namespace PDFPatcher.Functions
 			if (o == null) {
 				return;
 			}
-			var f = o.GetFileDropList();
-			foreach (var item in f) {
+			foreach (var item in o.GetFileDropList()) {
 				if (FileHelper.HasExtension(item, Constants.FileExtensions.Xml)
 					|| FileHelper.HasExtension(item, Constants.FileExtensions.Pdf)) {
 					e.Handled = true;
@@ -404,7 +398,7 @@ namespace PDFPatcher.Functions
 					}
 				}
 			}
-			if (d.Value != null && d.Value is PdfDictionary || d.ExtensiveObject is PdfDictionary) {
+			if ((d.Value != null && d.Value is PdfDictionary) || d.ExtensiveObject is PdfDictionary) {
 				_AddObjectMenu.Enabled = true;
 			}
 			if (__XmlExportableTypes.Contains(d.Type)) {
@@ -419,13 +413,13 @@ namespace PDFPatcher.Functions
 				}
 				return;
 			}
-			var i = Model.PdfStructInfo.GetInfo(d.Parent.GetContextName(), d.Name);
+			var i = PdfStructInfo.GetInfo(d.Parent.GetContextName(), d.Name);
 			string t = null;
 			var o = d.ExtensiveObject as PdfObject ?? d.Value;
 			if (o != null) {
 				t = PdfHelper.GetTypeName(o.Type);
 			}
-			ShowDescription(String.IsNullOrEmpty(i.Name) || d.Name == i.Name ? d.Name : String.Concat(d.Name, ":", i.Name), i.Description, t);
+			ShowDescription(String.IsNullOrEmpty(i.Name) || d.Name == i.Name ? d.Name : $"{d.Name}:{i.Name}", i.Description, t);
 			_DeleteButton.Enabled = !i.IsRequired && d != null
 				&& (d.Type == PdfObjectType.Normal || d.Type == PdfObjectType.Image || d.Type == PdfObjectType.Form || d.Type == PdfObjectType.Resources || d.Type == PdfObjectType.Outline && d.Name == "Outlines");
 		}
@@ -727,10 +721,8 @@ namespace PDFPatcher.Functions
 				if (d.ShowDialog() == DialogResult.OK) {
 					var s = n.ExtensiveObject as PRStream;
 					try {
-						var touni = PdfReader.GetStreamBytes((PRStream)s);
-						var lb = new iTextSharp.text.pdf.fonts.cmaps.CidLocationFromByte(touni);
-						var m = new iTextSharp.text.pdf.fonts.cmaps.CMapToUnicode();
-						iTextSharp.text.pdf.fonts.cmaps.CMapParserEx.ParseCid("", m, lb);
+						var m = new CMapToUnicode();
+						CMapParserEx.ParseCid("", m, new CidLocationFromByte(PdfReader.GetStreamBytes(s)));
 						using (var w = XmlWriter.Create(d.FileName, DocInfoExporter.GetWriterSettings())) {
 							w.WriteStartElement("toUnicode");
 							w.WriteAttributeString("name", m.Name);
