@@ -21,14 +21,11 @@ namespace PDFPatcher.Model
 			None = 0x8000
 		}
 
-		private readonly static Encoding __GbkEncoding = System.Text.Encoding.GetEncoding("gbk");
-		//private readonly static Encoding __Big5Encoding = System.Text.Encoding.GetEncoding ("big5");
-		private readonly static PdfName[] __GbkEncodingNames = { new PdfName("GBK-EUC-H"), new PdfName("GBK-EUC-V"), new PdfName("GB-EUC-H"), new PdfName("GB-EUC-V"), PdfName.WIN_ANSI_ENCODING };
-		private readonly static string[] __gbkFontNames = { "宋体", "黑体", "楷体_GB2312", "仿宋体", "仿宋_GB2312", "隶书", "幼圆" };
+		readonly static Encoding __GbkEncoding = System.Text.Encoding.GetEncoding("gbk");
+		readonly static PdfName[] __GbkEncodingNames = { new PdfName("GBK-EUC-H"), new PdfName("GBK-EUC-V"), new PdfName("GB-EUC-H"), new PdfName("GB-EUC-V"), PdfName.WIN_ANSI_ENCODING };
+		readonly static string[] __gbkFontNames = { "宋体", "黑体", "楷体_GB2312", "仿宋体", "仿宋_GB2312", "隶书", "幼圆" };
 		readonly static PdfName[] __IdentityEncodingNames = { new PdfName("Identity-H"), new PdfName("Identity-V") };
 		public const int DefaultDefaultWidth = 1000;
-
-		//private readonly static string[] __big5FontNames = new string[] { "MINGLIU" };
 
 		readonly PdfDictionary _Font;
 		PdfDictionary _FontDescriptor;
@@ -100,7 +97,6 @@ namespace PDFPatcher.Model
 			var encoding = _Font.GetAsName(PdfName.ENCODING);
 			var fn = FontName.ToUpperInvariant();
 			var c = __gbkFontNames.Contains(fn) || __GbkEncodingNames.Contains(encoding);
-			//&& PdfName.WIN_ANSI_ENCODING.Equals (this.fontDict.GetAsName (PdfName.ENCODING));
 			_CjkFontType = c ? CjkFontType.Chinese : CjkFontType.None;
 			if (_CjkFontType != CjkFontType.None) {
 				return;
@@ -109,8 +105,6 @@ namespace PDFPatcher.Model
 			if (c) {
 				_CjkFontType = CjkFontType.Unicode;
 			}
-			//c = Common.Range.InCollection (fn, __big5FontNames);
-			//_CjkFontType = c ? CjkFontType.Big5Chinese : CjkFontType.None;
 		}
 
 		readonly int _FontID = -1;
@@ -120,24 +114,27 @@ namespace PDFPatcher.Model
 			: base(font) {
 			_Font = font;
 			_FontID = refNumber;
-			//this.DefaultWidth = _Font.Locate<PdfArray> (PdfName.DESCENDANTFONTS).Locate<PdfDictionary> (0).Locate<PdfDictionary> (PdfName.FONTDESCRIPTOR).TryGetInt32 (PdfName.W, 1000);
 		}
 		public FontInfo(PRIndirectReference refFont) : base(refFont) {
 			_Font = (PdfDictionary)PdfReader.GetPdfObjectRelease(refFont);
 			_FontID = refFont.Number;
-			//this.DefaultWidth = _Font.Locate<PdfArray> (PdfName.DESCENDANTFONTS).Locate<PdfDictionary> (0).Locate<PdfDictionary> (PdfName.FONTDESCRIPTOR).TryGetInt32 (PdfName.W, 1000);
 		}
 
-		internal int DecodeCidToUnicode(int cid) {
+		static byte[] __CidSlot = new byte[2];
+		internal int DecodeCidToUnicode(iTextSharp.text.pdf.fonts.cmaps.CMapCidUni cMap, int cid) {
 			string s;
 			if (AppContext.Encodings.TextEncoding != null) {
-				s = AppContext.Encodings.TextEncoding.GetString(new byte[] { (byte)(cid >> 8), (byte)cid });
+				__CidSlot[0] = (byte)(cid >> 8);
+				__CidSlot[1] = (byte)cid;
+				s = AppContext.Encodings.TextEncoding.GetString(__CidSlot);
 			}
-			//if (CjkType == CjkFontType.Chinese) {
-			//	s = __GbkEncoding.GetString (cid < 256 ? new byte[] { (byte)cid } : new byte[] { (byte)cid, (byte)(cid >> 8) });
-			//}
+			else if (cMap != null) {
+				return cMap.Lookup(cid);
+			}
 			else {
-				s = Decode(new byte[] { (byte)(cid >> 8), (byte)cid }, 0, 2);
+				__CidSlot[0] = (byte)(cid >> 8);
+				__CidSlot[1] = (byte)cid;
+				s = Decode(__CidSlot, 0, 2);
 			}
 			if (s.Length == 0) {
 				return 0;
@@ -152,9 +149,6 @@ namespace PDFPatcher.Model
 			if (CjkType == CjkFontType.Chinese) {
 				return __GbkEncoding.GetString(bytes);
 			}
-			//else if (CjkType == CjkFontType.Big5Chinese) {
-			//	return __Big5Encoding.GetString (bytes);
-			//}
 			return Decode(bytes, 0, bytes.Length);
 		}
 		internal string DecodeText(PdfString text) {
