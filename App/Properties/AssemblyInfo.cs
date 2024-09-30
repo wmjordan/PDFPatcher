@@ -5,8 +5,8 @@ using System.Runtime.InteropServices;
 // 有关程序集的常规信息通过下列属性集
 // 控制。更改这些属性值可修改
 // 与程序集关联的信息。
-[assembly: AssemblyTitle("PDFPatcher")]
-[assembly: AssemblyDescription(PDFPatcher.Constants.AppName)]
+[assembly: AssemblyTitle(PDFPatcher.Constants.AppName)]
+[assembly: AssemblyDescription(PDFPatcher.Constants.AppName + " - 解除 PDF 文档的烦恼")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("wmjordan@163.com")]
 [assembly: AssemblyProduct(PDFPatcher.Constants.AppEngName)]
@@ -23,4 +23,4 @@ using System.Runtime.InteropServices;
 [assembly: Guid("e8969c5f-a5fe-4dce-a08b-555686483732")]
 
 [assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.3.4323")]
+[assembly: AssemblyFileVersion("1.0.4.4512")]
