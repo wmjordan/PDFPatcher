@@ -98,7 +98,7 @@ namespace PDFPatcher.Processor
 					var bt = EnclosingCommand.Create("BT", null);
 #else
 					var bt = EnclosingCommand.Create ("BT", null,
-						PdfPageCommand.Create ("Tr", new PdfNumber (3)) // 隐藏识别的文本
+						new AdjustCommand ("Tr", new PdfNumber (3)) // 隐藏识别的文本
 						);
 #endif
 					var bmc = EnclosingCommand.Create("BMC", new PdfObject[] { OcrResultBmcName }, bt);
