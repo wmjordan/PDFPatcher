@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using iTextSharp.text.pdf;
-using PDFPatcher.Common;
 using PDFPatcher.Processor;
 
 namespace PDFPatcher.Model
@@ -10,7 +8,6 @@ namespace PDFPatcher.Model
 	sealed class PdfPathDocument : IHierarchicalObject<DocumentObject>
 	{
 		const int pageGroupNumber = 100;
-		static readonly DocumentObject[] __Leaf = new DocumentObject[0];
 		readonly PdfReader _pdf;
 		readonly DocumentObject[] _rootObjects;
 		readonly DocumentObject _trailer;
@@ -19,7 +16,7 @@ namespace PDFPatcher.Model
 
 		public PdfPathDocument(string pdfPath) {
 			_pdf = PdfHelper.OpenPdfFile(pdfPath, AppContext.LoadPartialPdfFile, false);
-			_pageMapper = Processor.PdfHelper.GetPageRefMapper(_pdf);
+			_pageMapper = _pdf.GetPageRefMapper();
 			_trailer = new DocumentObject(this, null, "Trailer", _pdf.Trailer, PdfObjectType.Trailer) {
 				IsKeyObject = true,
 				Description = "文档根节点",
@@ -32,8 +29,8 @@ namespace PDFPatcher.Model
 				c[0] = _trailer;
 				for (int i = 1; i < c.Length - 1; i++) {
 					var a = (i - 1) * pageGroupNumber + 1;
-					var b = Math.Min(l, (i * pageGroupNumber));
-					c[i] = new DocumentObject(this, null, "Pages", null, PdfObjectType.Pages) { IsKeyObject = true, ExtensiveObject = a + "-" + b, FriendlyValue = String.Concat("第 ", a, " 至 ", b, " 页，共 ", l, " 页") };
+					var b = Math.Min(l, i * pageGroupNumber);
+					c[i] = new DocumentObject(this, null, "Pages", null, PdfObjectType.Pages) { IsKeyObject = true, ExtensiveObject = a + "-" + b, FriendlyValue = $"第 {a} 至 {b} 页，共 {l} 页" };
 				}
 				c[c.Length - 1] = _hiddenObjects;
 				_rootObjects = c;
@@ -58,8 +55,7 @@ namespace PDFPatcher.Model
 		}
 
 		public int GetPageNumber(PdfIndirectReference pdfRef) {
-			int page;
-			_pageMapper.TryGetValue(pdfRef.Number, out page);
+			_pageMapper.TryGetValue(pdfRef.Number, out int page);
 			return page;
 		}
 

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Xml;
+
 namespace PDFPatcher.Model
 {
-	struct PdfStructInfo
+	readonly struct PdfStructInfo
 	{
 		static readonly Dictionary<string, PdfStructInfo> _Info = InitStructInfo();
 		readonly string _Name;
@@ -30,7 +30,7 @@ namespace PDFPatcher.Model
 		}
 		internal static PdfStructInfo GetInfo(string context, string name) {
 			PdfStructInfo i;
-			if (_Info.TryGetValue(String.Concat(context, "/", name), out i)) {
+			if (_Info.TryGetValue($"{context}/{name}", out i)) {
 				return i;
 			}
 			else {
@@ -50,7 +50,7 @@ namespace PDFPatcher.Model
 			return d;
 		}
 
-		private static void AddSubItems(Dictionary<string, PdfStructInfo> d, XmlElement element) {
+		static void AddSubItems(Dictionary<string, PdfStructInfo> d, XmlElement element) {
 			if (element.HasChildNodes == false) {
 				return;
 			}
@@ -68,13 +68,13 @@ namespace PDFPatcher.Model
 					AddItem(d, String.IsNullOrEmpty(currentToken) ? t : String.Concat(currentToken, "/", t), new PdfStructInfo(e.GetAttribute("Name"), e.HasChildNodes, e.GetAttribute("Required") == "true", e.GetAttribute("Description"), e.GetAttribute("ImageKey")));
 					AddSubItems(d, e);
 				}
-				else if (e.Name == "RefInfo" && d.ContainsKey(t)) {
-					AddItem(d, String.IsNullOrEmpty(currentToken) ? t : String.Concat(currentToken, "/", t), d[t]);
+				else if (e.Name == "RefInfo" && d.TryGetValue(t, out var s)) {
+					AddItem(d, String.IsNullOrEmpty(currentToken) ? t : $"{currentToken}/{t}", s);
 				}
 			}
 		}
 
-		private static void AddItem(Dictionary<string, PdfStructInfo> d, string key, PdfStructInfo item) {
+		static void AddItem(Dictionary<string, PdfStructInfo> d, string key, PdfStructInfo item) {
 			if (d.ContainsKey(key)) {
 				System.Diagnostics.Debug.WriteLine("已添加 " + key);
 				return;
