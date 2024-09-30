@@ -101,8 +101,7 @@ namespace PDFPatcher.Processor
 		}
 
 		protected virtual void InvokeOperator(PdfLiteral oper, List<PdfObject> operands) {
-			IContentOperator op;
-			if (operators.TryGetValue(oper.ToString(), out op)) {
+			if (operators.TryGetValue(oper.ToString(), out IContentOperator op)) {
 				op.Invoke(this, oper, operands);
 			}
 			else {
@@ -200,6 +199,7 @@ namespace PDFPatcher.Processor
 		#region Nested Types
 		internal interface IContentOperator
 		{
+			bool HasOutput { get; }
 			void Invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands);
 		}
 		internal interface IXObjectDoHandler
@@ -209,7 +209,7 @@ namespace PDFPatcher.Processor
 
 		protected sealed class BeginMarkedContentC : IContentOperator
 		{
-			// Methods
+			public bool HasOutput => false;
 			public void Invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
 				processor.BeginMarkedContent((PdfName)operands[0], new PdfDictionary());
 			}
@@ -217,24 +217,22 @@ namespace PDFPatcher.Processor
 
 		protected sealed class BeginMarkedContentDictionary : IContentOperator
 		{
-			// Methods
-			private PdfDictionary GetPropertiesDictionary(PdfObject operand1, PdfContentStreamProcessor.ResourceDictionary resources) {
-				if (operand1.IsDictionary()) {
-					return (PdfDictionary)operand1;
-				}
-				var dictionaryName = (PdfName)operand1;
-				return resources.GetAsDict(dictionaryName);
+			public bool HasOutput => false;
+			static PdfDictionary GetPropertiesDictionary(PdfObject operand1, ResourceDictionary resources) {
+				return operand1.IsDictionary()
+					? (PdfDictionary)operand1
+					: resources.GetAsDict((PdfName)operand1);
 			}
 
 			public void Invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
-				var properties = operands[1];
-				processor.BeginMarkedContent((PdfName)operands[0], GetPropertiesDictionary(properties, processor._Resources));
+				processor.BeginMarkedContent((PdfName)operands[0],
+					GetPropertiesDictionary(operands[1], processor._Resources));
 			}
 		}
 
 		protected sealed class BeginTextC : IContentOperator
 		{
-			// Methods
+			public bool HasOutput => false;
 			public void Invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
 				processor._TextMatrix = new Matrix();
 				processor._TextLineMatrix = processor._TextMatrix;
@@ -244,16 +242,15 @@ namespace PDFPatcher.Processor
 
 		protected sealed class Do : IContentOperator
 		{
-			// Methods
+			public bool HasOutput => true;
 			public void Invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
-				var xobjectName = (PdfName)operands[0];
-				processor.DisplayXObject(xobjectName);
+				processor.DisplayXObject((PdfName)operands[0]);
 			}
 		}
 
 		protected sealed class EndMarkedContentC : IContentOperator
 		{
-			// Methods
+			public bool HasOutput => false;
 			public void Invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
 				processor.EndMarkedContent();
 			}
@@ -261,7 +258,7 @@ namespace PDFPatcher.Processor
 
 		protected sealed class EndTextC : IContentOperator
 		{
-			// Methods
+			public bool HasOutput => false;
 			public void Invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
 				processor._TextMatrix = null;
 				processor._TextLineMatrix = null;
@@ -293,7 +290,7 @@ namespace PDFPatcher.Processor
 
 		protected sealed class IgnoreOperatorContentOperator : IContentOperator
 		{
-			// Methods
+			public bool HasOutput => false;
 			public void Invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
 			}
 		}
@@ -316,7 +313,7 @@ namespace PDFPatcher.Processor
 
 		protected sealed class ModifyCurrentTransformationMatrix : IContentOperator
 		{
-			// Methods
+			public bool HasOutput => false;
 			public void Invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
 				float a = ((PdfNumber)operands[0]).FloatValue;
 				float b = ((PdfNumber)operands[1]).FloatValue;
@@ -324,19 +321,17 @@ namespace PDFPatcher.Processor
 				float d = ((PdfNumber)operands[3]).FloatValue;
 				float e = ((PdfNumber)operands[4]).FloatValue;
 				float f = ((PdfNumber)operands[5]).FloatValue;
-				var matrix = new Matrix(a, b, c, d, e, f);
 				var gs = processor.gsStack.Peek();
-				gs.TransMatrix = matrix.Multiply(gs.TransMatrix);
+				gs.TransMatrix = new Matrix(a, b, c, d, e, f).Multiply(gs.TransMatrix);
 			}
 		}
 
 		protected sealed class MoveNextLineAndShowText : IContentOperator
 		{
-			// Fields
-			private readonly IContentOperator showText;
-			private readonly IContentOperator textMoveNextLine;
+			readonly IContentOperator showText;
+			readonly IContentOperator textMoveNextLine;
 
-			// Methods
+			public bool HasOutput => true;
 			public MoveNextLineAndShowText(IContentOperator textMoveNextLine, IContentOperator showText) {
 				this.textMoveNextLine = textMoveNextLine;
 				this.showText = showText;
@@ -350,12 +345,11 @@ namespace PDFPatcher.Processor
 
 		protected sealed class MoveNextLineAndShowTextWithSpacing : IContentOperator
 		{
-			// Fields
-			private readonly IContentOperator moveNextLineAndShowText;
-			private readonly IContentOperator setTextCharacterSpacing;
-			private readonly IContentOperator setTextWordSpacing;
+			readonly IContentOperator moveNextLineAndShowText;
+			readonly IContentOperator setTextCharacterSpacing;
+			readonly IContentOperator setTextWordSpacing;
 
-			// Methods
+			public bool HasOutput => true;
 			public MoveNextLineAndShowTextWithSpacing(IContentOperator setTextWordSpacing, IContentOperator setTextCharacterSpacing, IContentOperator moveNextLineAndShowText) {
 				this.setTextWordSpacing = setTextWordSpacing;
 				this.setTextCharacterSpacing = setTextCharacterSpacing;
@@ -380,7 +374,7 @@ namespace PDFPatcher.Processor
 
 		protected sealed class PopGraphicsState : IContentOperator
 		{
-			// Methods
+			public bool HasOutput => false;
 			public void Invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
 				try {
 					processor.gsStack.Pop();
@@ -393,17 +387,16 @@ namespace PDFPatcher.Processor
 
 		protected sealed class ProcessGraphicsStateResource : IContentOperator
 		{
-			// Methods
+			public bool HasOutput => false;
+
 			public void Invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
+				var extGState = processor._Resources.GetAsDict(PdfName.EXTGSTATE)
+					?? throw new ArgumentException(MessageLocalization.GetComposedMessage("resources.do.not.contain.extgstate.entry.unable.to.process.oper.1", oper));
+
 				var dictionaryName = (PdfName)operands[0];
-				var extGState = processor._Resources.GetAsDict(PdfName.EXTGSTATE);
-				if (extGState == null) {
-					throw new ArgumentException(MessageLocalization.GetComposedMessage("resources.do.not.contain.extgstate.entry.unable.to.process.oper.1", oper));
-				}
-				var gsDic = extGState.GetAsDict(dictionaryName);
-				if (gsDic == null) {
-					throw new ArgumentException(MessageLocalization.GetComposedMessage("1.is.an.unknown.graphics.state.dictionary", dictionaryName));
-				}
+				var gsDic = extGState.GetAsDict(dictionaryName)
+					?? throw new ArgumentException(MessageLocalization.GetComposedMessage("1.is.an.unknown.graphics.state.dictionary", dictionaryName));
+
 				var fontParameter = gsDic.GetAsArray(PdfName.FONT);
 				if (fontParameter != null) {
 					var font = processor.GetFont((PRIndirectReference)fontParameter[0]);
@@ -416,7 +409,7 @@ namespace PDFPatcher.Processor
 
 		protected sealed class PushGraphicsState : IContentOperator
 		{
-			// Methods
+			public bool HasOutput => false;
 			public void Invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
 				processor.gsStack.Push(processor.gsStack.Peek().Copy());
 			}
@@ -424,10 +417,8 @@ namespace PDFPatcher.Processor
 
 		protected sealed class ResourceDictionary : PdfDictionary
 		{
-			// Fields
-			private readonly IList<PdfDictionary> resourcesStack = new List<PdfDictionary>();
+			readonly IList<PdfDictionary> resourcesStack = new List<PdfDictionary>();
 
-			// Methods
 			public override PdfObject GetDirectObject(PdfName key) {
 				for (int i = resourcesStack.Count - 1; i >= 0; i--) {
 					var subResource = resourcesStack[i];
@@ -452,84 +443,75 @@ namespace PDFPatcher.Processor
 
 		protected sealed class SetTextCharacterSpacing : IContentOperator
 		{
-			// Methods
+			public bool HasOutput => false;
 			public void Invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
-				var charSpace = (PdfNumber)operands[0];
-				processor.CurrentGraphicState.CharacterSpacing = charSpace.FloatValue;
+				processor.CurrentGraphicState.CharacterSpacing = ((PdfNumber)operands[0]).FloatValue;
 			}
 		}
 
 		protected sealed class SetTextFont : IContentOperator
 		{
-			// Methods
+			public bool HasOutput => false;
 			public void Invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
 				var fontResourceName = (PdfName)operands[0];
-				float size = ((PdfNumber)operands[1]).FloatValue;
 				var f = processor._Resources.GetAsDict(PdfName.FONT).Get(fontResourceName);
 				var g = processor.CurrentGraphicState;
 				if (f is PRIndirectReference fref) {
-					var font = processor.GetFont(fref);
 					g.FontID = fref.Number;
-					g.Font = font;
+					g.Font = processor.GetFont(fref);
 				}
 				else {
-					Tracker.DebugMessage("字体（" + fontResourceName + "）不为引用。");
-					var fd = f as PdfDictionary;
+					Tracker.DebugMessage($"字体（{fontResourceName}）不为引用。");
 					g.FontID = 0;
-					g.Font = new FontInfo(fd, 0);
+					g.Font = new FontInfo((PdfDictionary)f, 0);
 				}
-				g.FontSize = size;
+				g.FontSize = ((PdfNumber)operands[1]).FloatValue;
 			}
 		}
 
 		protected sealed class SetTextHorizontalScaling : IContentOperator
 		{
-			// Methods
+			public bool HasOutput => false;
 			public void Invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
-				var scale = (PdfNumber)operands[0];
-				processor.CurrentGraphicState.HorizontalScaling = scale.FloatValue / 100f;
+				processor.CurrentGraphicState.HorizontalScaling = ((PdfNumber)operands[0]).FloatValue / 100f;
 			}
 		}
 
 		protected sealed class SetTextLeading : IContentOperator
 		{
-			// Methods
+			public bool HasOutput => false;
 			public void Invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
-				var leading = (PdfNumber)operands[0];
-				processor.CurrentGraphicState.Leading = leading.FloatValue;
+				processor.CurrentGraphicState.Leading = ((PdfNumber)operands[0]).FloatValue;
 			}
 		}
 
 		protected sealed class SetTextRenderMode : IContentOperator
 		{
-			// Methods
+			public bool HasOutput => false;
 			public void Invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
-				var render = (PdfNumber)operands[0];
-				processor.CurrentGraphicState.RenderMode = render.IntValue;
+				processor.CurrentGraphicState.RenderMode = ((PdfNumber)operands[0]).IntValue;
 			}
 		}
 
 		protected sealed class SetTextRise : IContentOperator
 		{
-			// Methods
+			public bool HasOutput => false;
 			public void Invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
-				var rise = (PdfNumber)operands[0];
-				processor.CurrentGraphicState.Rise = rise.FloatValue;
+				processor.CurrentGraphicState.Rise = ((PdfNumber)operands[0]).FloatValue;
 			}
 		}
 
 		protected sealed class SetTextWordSpacing : IContentOperator
 		{
-			// Methods
+			public bool HasOutput => false;
 			public void Invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
-				var wordSpace = (PdfNumber)operands[0];
-				processor.CurrentGraphicState.WordSpacing = wordSpace.FloatValue;
+				processor.CurrentGraphicState.WordSpacing = ((PdfNumber)operands[0]).FloatValue;
 			}
 		}
 
 		protected sealed class ShowText : IContentOperator
 		{
-			// Methods
+			public bool HasOutput => true;
 			public void Invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
 				var str = (PdfString)operands[0];
 				processor.DisplayPdfString(str);
@@ -538,6 +520,7 @@ namespace PDFPatcher.Processor
 
 		protected sealed class AccumulatedShowTextArray : IContentOperator
 		{
+			public bool HasOutput => true;
 			public void Invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
 				var array = (PdfArray)operands[0];
 				float adj = 0;
@@ -558,30 +541,18 @@ namespace PDFPatcher.Processor
 
 		protected sealed class ShowTextArray : IContentOperator
 		{
-			// Methods
+			public bool HasOutput => true;
 			public void Invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
 				var array = (PdfArray)operands[0];
-				//using (var ms = new System.IO.MemoryStream (array.Length)) {
-				//    foreach (PdfObject item in array.ArrayList) {
-				//        if (item.Type == PdfObject.STRING) {
-				//            ms.Write ((item as PdfString).GetBytes (), 0, item.Length);
-				//        }
-				//        else {
-				//            processor.ApplyTextAdjust (((PdfNumber)item).FloatValue);
-				//        }
-				//    }
-				//    processor.DisplayPdfString (new PdfString (ms.ToArray ()));
-				//}
-
-				float tj = 0f;
 				foreach (PdfObject entryObj in array.ArrayList) {
-					if (entryObj is PdfString) {
-						processor.DisplayPdfString((PdfString)entryObj);
-						tj = 0f;
+					if (entryObj is PdfString s) {
+						processor.DisplayPdfString(s);
+					}
+					else if (entryObj is PdfNumber n) {
+						processor.ApplyTextAdjust(n.FloatValue);
 					}
 					else {
-						tj = ((PdfNumber)entryObj).FloatValue;
-						processor.ApplyTextAdjust(tj);
+						// ignore
 					}
 				}
 			}
@@ -589,25 +560,24 @@ namespace PDFPatcher.Processor
 
 		protected sealed class TextMoveNextLine : IContentOperator
 		{
-			// Fields
-			private readonly TextMoveStartNextLine moveStartNextLine;
+			readonly TextMoveStartNextLine _MoveStartNextLine;
 
-			// Methods
 			public TextMoveNextLine(TextMoveStartNextLine moveStartNextLine) {
-				this.moveStartNextLine = moveStartNextLine;
+				_MoveStartNextLine = moveStartNextLine;
 			}
 
+			public bool HasOutput => false;
 			public void Invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
-				var tdoperands = new List<PdfObject>(2);
-				tdoperands.Insert(0, new PdfNumber(0));
-				tdoperands.Insert(1, new PdfNumber(-processor.CurrentGraphicState.Leading));
-				moveStartNextLine.Invoke(processor, null, tdoperands);
+				_MoveStartNextLine.Invoke(processor, null, new List<PdfObject>(2) {
+					new PdfNumber(0),
+					new PdfNumber(-processor.CurrentGraphicState.Leading)
+				});
 			}
 		}
 
 		protected sealed class TextMoveStartNextLine : IContentOperator
 		{
-			// Methods
+			public bool HasOutput => false;
 			public void Invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
 				float tx = ((PdfNumber)operands[0]).FloatValue;
 				float ty = ((PdfNumber)operands[1]).FloatValue;
@@ -618,28 +588,25 @@ namespace PDFPatcher.Processor
 
 		protected sealed class TextMoveStartNextLineWithLeading : IContentOperator
 		{
-			// Fields
-			private readonly TextMoveStartNextLine moveStartNextLine;
-			private readonly SetTextLeading setTextLeading;
+			readonly TextMoveStartNextLine _MoveStartNextLine;
+			readonly SetTextLeading _SetTextLeading;
 
-			// Methods
 			public TextMoveStartNextLineWithLeading(TextMoveStartNextLine moveStartNextLine, SetTextLeading setTextLeading) {
-				this.moveStartNextLine = moveStartNextLine;
-				this.setTextLeading = setTextLeading;
+				_MoveStartNextLine = moveStartNextLine;
+				_SetTextLeading = setTextLeading;
 			}
 
+			public bool HasOutput => false;
 			public void Invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
 				float ty = ((PdfNumber)operands[1]).FloatValue;
-				var tlOperands = new List<PdfObject>(1);
-				tlOperands.Insert(0, new PdfNumber(-ty));
-				setTextLeading.Invoke(processor, null, tlOperands);
-				moveStartNextLine.Invoke(processor, null, operands);
+				_SetTextLeading.Invoke(processor, null, new List<PdfObject>(1) { new PdfNumber(-ty) });
+				_MoveStartNextLine.Invoke(processor, null, operands);
 			}
 		}
 
 		protected sealed class TextSetTextMatrix : IContentOperator
 		{
-			// Methods
+			public bool HasOutput => false;
 			public void Invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
 				float a = ((PdfNumber)operands[0]).FloatValue;
 				float b = ((PdfNumber)operands[1]).FloatValue;

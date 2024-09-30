@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using iTextSharp.text.pdf;
-using PDFPatcher.Model;
 
 namespace PDFPatcher.Processor
 {
@@ -11,12 +9,19 @@ namespace PDFPatcher.Processor
 		/// <summary>
 		/// 处理内容的 <see cref="PdfContentStreamProcessor.IContentOperator"/> 列表。
 		/// </summary>
-		public List<PdfContentStreamProcessor.IContentOperator> Operators { get; private set; }
+		public List<PdfContentStreamProcessor.IContentOperator> Operators { get; }
+		public bool HasOutput { get; }
 
 		public OperatorGroup(IEnumerable<PdfContentStreamProcessor.IContentOperator> operators) {
 			Operators = new List<PdfContentStreamProcessor.IContentOperator>();
 			if (operators != null) {
 				Operators.AddRange(operators);
+				foreach (var item in operators) {
+					if (item.HasOutput) {
+						HasOutput = true;
+						return;
+					}
+				}
 			}
 		}
 

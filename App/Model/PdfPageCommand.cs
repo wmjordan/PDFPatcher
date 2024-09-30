@@ -21,7 +21,7 @@ namespace PDFPatcher.Model
 		bool HasCommand { get; }
 		IList<PdfPageCommand> Commands { get; }
 	}
-	class PdfPageCommand
+	abstract class PdfPageCommand
 	{
 		#region 操作符中文名称
 		static readonly Dictionary<string, string> __OperatorNames = Init();
@@ -106,20 +106,19 @@ namespace PDFPatcher.Model
 		#endregion
 
 		public virtual PdfLiteral Name { get; }
+		public abstract bool HasOutput { get; }
 		public PdfObject[] Operands { get; }
 		public virtual PdfPageCommandType Type => PdfPageCommandType.Normal;
 		internal bool HasOperand => Operands?.Length > 0;
 
-		public PdfPageCommand(PdfLiteral oper, List<PdfObject> operands) {
+		protected PdfPageCommand(PdfLiteral oper, List<PdfObject> operands) {
 			Name = oper;
 			if (operands?.Count > 0) {
 				Operands = new PdfObject[operands[operands.Count - 1] is PdfLiteral ? operands.Count - 1 : operands.Count];
 				operands.CopyTo(0, Operands, 0, Operands.Length);
 			}
 		}
-
-		internal static PdfPageCommand Create(string name, params PdfObject[] operands) {
-			return new PdfPageCommand(new PdfLiteral(name), new List<PdfObject>(operands));
+		protected PdfPageCommand(string oper, params PdfObject[] operands) : this(new PdfLiteral(oper), new List<PdfObject>(operands)) {
 		}
 
 		internal virtual void WriteToPdf(Stream target) {
@@ -175,6 +174,19 @@ namespace PDFPatcher.Model
 		public bool HasCommand => Commands.Count > 0;
 		public IList<PdfPageCommand> Commands { get; }
 		public override PdfPageCommandType Type => PdfPageCommandType.Enclosure;
+		public override bool HasOutput {
+			get {
+				if (HasCommand) {
+					foreach (var item in Commands) {
+						if (item.HasOutput) {
+							return true;
+						}
+					}
+				}
+				return false;
+			}
+		}
+
 		public EnclosingCommand(PdfLiteral oper, List<PdfObject> operands)
 			: base(oper, operands) {
 			Commands = new List<PdfPageCommand>();
@@ -204,7 +216,27 @@ namespace PDFPatcher.Model
 		}
 	}
 
-	class TextCommand : PdfPageCommand
+	class OutputCommand : PdfPageCommand
+	{
+		public override bool HasOutput => true;
+
+		public OutputCommand(PdfLiteral oper, List<PdfObject> operands) : base(oper, operands) {
+		}
+		public OutputCommand(string oper, params PdfObject[] operands) : base(oper, operands) {
+		}
+	}
+
+	class AdjustCommand : PdfPageCommand
+	{
+		public override bool HasOutput => false;
+
+		public AdjustCommand(PdfLiteral oper, List<PdfObject> operands) : base(oper, operands) {
+		}
+		public AdjustCommand(string oper, params PdfObject[] operands) : base(oper, operands) {
+		}
+	}
+
+	class TextCommand : OutputCommand
 	{
 		public TextInfo TextInfo { get; private set; }
 		public override PdfPageCommandType Type => PdfPageCommandType.Text;
@@ -216,7 +248,8 @@ namespace PDFPatcher.Model
 
 	sealed class PaceAndTextCommand : TextCommand
 	{
-		public string[] DecodedTexts { get; private set; }
+		public string[] DecodedTexts { get; }
+
 		public PaceAndTextCommand(PdfLiteral oper, List<PdfObject> operands, TextInfo text, FontInfo font)
 			: base(oper, operands, text) {
 			var a = (PdfArray)Operands[0];
@@ -232,11 +265,12 @@ namespace PDFPatcher.Model
 		}
 	}
 
-	sealed class MatrixCommand : PdfPageCommand
+	sealed class MatrixCommand : AdjustCommand
 	{
 		public static PdfLiteral CM = new PdfLiteral("cm");
 		public static PdfLiteral TM = new PdfLiteral("Tm");
 		public override PdfPageCommandType Type => PdfPageCommandType.Matrix;
+
 		public MatrixCommand(PdfLiteral oper, List<PdfObject> operands)
 			: base(oper, operands) {
 		}
@@ -258,7 +292,7 @@ namespace PDFPatcher.Model
 		}
 	}
 
-	sealed class FontCommand : PdfPageCommand
+	sealed class FontCommand : AdjustCommand
 	{
 		public FontCommand(PdfLiteral oper, List<PdfObject> operands, string fontName)
 			: base(oper, operands) {
@@ -275,9 +309,10 @@ namespace PDFPatcher.Model
 			set => Operands[1] = value;
 		}
 		public override PdfPageCommandType Type => PdfPageCommandType.Font;
+		public override bool HasOutput => false;
 	}
 
-	sealed class InlineImageCommand : PdfPageCommand
+	sealed class InlineImageCommand : OutputCommand
 	{
 		//static readonly PdfName __DCT = new PdfName ("DCT");
 		//static readonly PdfName __CCF = new PdfName ("CCF");

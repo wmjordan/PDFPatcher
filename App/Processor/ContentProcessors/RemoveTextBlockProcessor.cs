@@ -28,9 +28,8 @@ namespace PDFPatcher.Processor
 		public bool Process(PageProcessorContext context) {
 			Tracker.IncrementProgress(3);
 			var p = context.PageCommands;
-			var r = false;
-			r = ProcessCommands(p.Commands);
-			if (r == true) {
+			var r = ProcessCommands(p.Commands);
+			if (r) {
 				context.IsPageContentModified = true;
 				_processedPageCount++;
 			}

@@ -28,8 +28,7 @@ namespace PDFPatcher.Processor
 
 		public PdfPageCommandProcessor(PRStream form)
 			: this() {
-			var resources = form.Locate<PdfDictionary>(PdfName.RESOURCES);
-			ProcessContent(PdfReader.GetStreamBytes(form), resources);
+			ProcessContent(PdfReader.GetStreamBytes(form), form.Locate<PdfDictionary>(PdfName.RESOURCES));
 		}
 
 		protected override void DisplayPdfString(PdfString str) {
@@ -51,8 +50,7 @@ namespace PDFPatcher.Processor
 		protected override void InvokeOperator(PdfLiteral oper, List<PdfObject> operands) {
 			base.InvokeOperator(oper, operands);
 			PdfPageCommand cmd;
-			var o = oper.ToString();
-			switch (o) {
+			switch (oper.ToString()) {
 				case "TJ":
 					cmd = new PaceAndTextCommand(oper, operands, GetTextInfo(new PdfString()), CurrentGraphicState.Font);
 					break;
@@ -68,25 +66,47 @@ namespace PDFPatcher.Processor
 				case "Tm":
 					cmd = new MatrixCommand(oper, operands);
 					break;
+				case "Do":
+				case "S":
+				case "s":
+				case "F":
+				case "f":
+				case "f*":
+				case "B":
+				case "B*":
+				case "b":
+				case "b*":
+				case "n":
+					cmd = new OutputCommand(oper, operands);
+					break;
+				case "q":
+				case "BT":
+				case "BMC":
+				case "BDC":
+				case "BX":
+					cmd = new EnclosingCommand(oper, operands);
+					break;
+				case "Q":
+				case "ET":
+				case "EMC":
+				case "EX":
+					// 兼容结构异常的 PDF 文档（github: #121）
+					if (_commandStack.Count > 0) {
+						_commandStack.Pop();
+						_currentCommand = _commandStack.Count > 0 ? _commandStack.Peek() : null;
+					}
+					else {
+						_currentCommand = null;
+					}
+					return;
 				case "BI":
 					cmd = new InlineImageCommand(oper, operands);
 					break;
 				default:
-					cmd = EnclosingCommand.IsStartingCommand(o) ? new EnclosingCommand(oper, operands) : new PdfPageCommand(oper, operands);
+					cmd = new AdjustCommand(oper, operands);
 					break;
 			}
 
-			if (EnclosingCommand.IsEndingCommand(o)) {
-				// 兼容结构异常的 PDF 文档（github: #121）
-				if (_commandStack.Count > 0) {
-					_commandStack.Pop();
-					_currentCommand = _commandStack.Count > 0 ? _commandStack.Peek() : null;
-				}
-				else {
-					_currentCommand = null;
-				}
-				return;
-			}
 			if (_currentCommand != null) {
 				_currentCommand.Commands.Add(cmd);
 			}

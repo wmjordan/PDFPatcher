@@ -230,7 +230,7 @@ namespace PDFPatcher.Processor
 				return 0;
 			}
 			var info = new OcrContentInfo(w, h, matrix);
-			sc.Add(PdfPageCommand.Create("Tm",
+			sc.Add(new AdjustCommand("Tm", 
 				new PdfNumber(matrix[OcrContentInfo.A1] / w), new PdfNumber(matrix[OcrContentInfo.A2] / w),
 				new PdfNumber(matrix[OcrContentInfo.B1] / h), new PdfNumber(matrix[OcrContentInfo.B2] / h),
 				new PdfNumber(matrix[OcrContentInfo.DX]), new PdfNumber(matrix[OcrContentInfo.DY])
@@ -249,15 +249,15 @@ namespace PDFPatcher.Processor
 						fn = OcrFont;
 					}
 					if (info.FontSize != fSize) {
-						sc.Add(PdfPageCommand.Create("Tf", fn, new PdfNumber(info.FontSize)));
+						sc.Add(new AdjustCommand("Tf", fn, new PdfNumber(info.FontSize)));
 						fSize = info.FontSize;
 						isV = info.IsVertical;
 					}
 					else if (isV != info.IsVertical) {
-						sc.Add(PdfPageCommand.Create("Tf", fn, new PdfNumber(fSize)));
+						sc.Add(new AdjustCommand("Tf", fn, new PdfNumber(fSize)));
 					}
-					sc.Add(PdfPageCommand.Create("Td", new PdfNumber(info.DeltaX), new PdfNumber(info.DeltaY)));
-					sc.Add(PdfPageCommand.Create("Tj", new PdfString(GbkEncoding.GetBytes(info.Text))));
+					sc.Add(new AdjustCommand("Td", new PdfNumber(info.DeltaX), new PdfNumber(info.DeltaY)));
+					sc.Add(new OutputCommand("Tj", new PdfString(GbkEncoding.GetBytes(info.Text))));
 				}
 			}
 			return (hasHFont ? 1 : 0) + (hasVFont ? 2 : 0);

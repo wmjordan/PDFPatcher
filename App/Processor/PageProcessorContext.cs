@@ -17,23 +17,15 @@ namespace PDFPatcher.Processor
 
 		PdfDictionary _Page;
 		/// <summary>获取正在处理的页面。</summary>
-		public PdfDictionary Page {
-			get {
-				if (_Page == null) {
-					_Page = Pdf.GetPageN(PageNumber);
-				}
-				return _Page;
-			}
-		}
+		public PdfDictionary Page => _Page ?? (_Page = Pdf.GetPageN(PageNumber));
 
 		PdfPageCommandProcessor _processor;
 		/// <summary>获取正在处理的页面指令集合。</summary>
-		public Model.IPdfPageCommandContainer PageCommands {
+		public IPdfPageCommandContainer PageCommands {
 			get {
 				if (_processor == null) {
 					_processor = new PdfPageCommandProcessor();
-					var resources = Page.Locate<PdfDictionary>(PdfName.RESOURCES);
-					_processor.ProcessContent(PdfReader.GetPageContent(Page), resources);
+					_processor.ProcessContent(PdfReader.GetPageContent(Page), Page.Locate<PdfDictionary>(PdfName.RESOURCES));
 				}
 				return _processor;
 			}
@@ -48,13 +40,5 @@ namespace PDFPatcher.Processor
 		internal void WritePageCommands() {
 			_processor.WritePdfCommands(Pdf, PageNumber);
 		}
-
-		//internal void UpdateContentBytes () {
-		//    if (_ContentBytes == null) {
-		//        return;
-		//    }
-		//    Pdf.SafeSetPageContent (PageNumber, _ContentBytes);
-		//    Pdf.ResetReleasePage ();
-		//}
 	}
 }

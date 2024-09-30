@@ -74,6 +74,9 @@ namespace PDFPatcher.Processor
 					PageProcessors.Add(new PageDimensionProcessor { Settings = item });
 				}
 			}
+#if DEBUG
+			PageProcessors.Add(new CleanContentStreamProcessor());
+#endif
 			//if (settings.DeskewImages) {
 			//    this.PageProcessors.Add (new ImageDeskewProcessor ());
 			//}
@@ -110,7 +113,7 @@ namespace PDFPatcher.Processor
 			}
 			var pn = Pdf.NumberOfPages;
 			var i = 0;
-			while ((++i <= pn)) {
+			while (++i <= pn) {
 				var pc = new PageProcessorContext(Pdf, i);
 				try {
 					foreach (var p in pp) {

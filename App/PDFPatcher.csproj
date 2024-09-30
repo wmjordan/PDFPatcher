@@ -109,6 +109,7 @@
     </Compile>
     <Compile Include="Model\ResourceReference.cs" />
     <Compile Include="Options\ReaderOptions.cs" />
+    <Compile Include="Processor\ContentProcessors\CleanContentStreamProcessor.cs" />
     <Compile Include="Processor\Imaging\FreeImageHelper.cs" />
     <Compile Include="ShellHelper.cs" />
     <Compile Include="Common\CommandRegistry.cs" />

@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using iTextSharp.text.pdf;
 using PDFPatcher.Model;
-using PDFPatcher.Processor.Imaging;
 
 namespace PDFPatcher.Processor
 {
@@ -57,22 +55,20 @@ namespace PDFPatcher.Processor
 
 		#endregion
 
-		private bool ProcessCommands(IList<Model.PdfPageCommand> parent, IList<PdfName> bwImages) {
+		static bool ProcessCommands(IList<PdfPageCommand> parent, IList<PdfName> bwImages) {
 			var r = false;
-			Model.PdfPageCommand cmd;
-			Model.EnclosingCommand ec;
+			PdfPageCommand cmd;
 			for (int i = 0; i < parent.Count; i++) {
 				cmd = parent[i];
-				ec = cmd as Model.EnclosingCommand;
-				if (ec != null) {
+				if (cmd is EnclosingCommand ec) {
 					r |= ProcessCommands(ec.Commands, bwImages);
 					continue;
 				}
 				if (cmd.Name.ToString() == "Do") {
 					foreach (var item in bwImages) {
 						if (item.Equals(cmd.Operands[0])) {
-							parent.Insert(i, Model.PdfPageCommand.Create("RG", new PdfNumber(1), new PdfNumber(0), new PdfNumber(0)));
-							parent.Insert(i, Model.PdfPageCommand.Create("rg", new PdfNumber(0), new PdfNumber(1), new PdfNumber(0)));
+							parent.Insert(i, new AdjustCommand("RG", new PdfNumber(1), new PdfNumber(0), new PdfNumber(0)));
+							parent.Insert(i, new AdjustCommand("rg", new PdfNumber(0), new PdfNumber(1), new PdfNumber(0)));
 							return true;
 						}
 					}
