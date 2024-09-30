@@ -100,6 +100,12 @@ namespace PDFPatcher.Model
 								Description = $"指向第 {page} 页";
 								type = PdfObjectType.GoToPage;
 							}
+							else if (PdfName.FONT.Equals(((PdfDictionary)r).GetAsName(PdfName.TYPE)) && parent.Name == "Font") {
+								var fontName = ((PdfDictionary)r).GetAsName(PdfName.BASEFONT);
+								if (fontName != null) {
+									Description = PdfName.DecodeName(fontName.ToString());
+								}
+							}
 						}
 						else if (r.Type == PdfObject.STREAM) {
 							var subType = ((PdfDictionary)r).GetAsName(PdfName.SUBTYPE);
@@ -349,49 +355,54 @@ namespace PDFPatcher.Model
 
 		private void PopulateChildrenForSpecialObject() {
 			var pdf = OwnerDocument.Document;
-			if (Type == PdfObjectType.Pages) {
-				if (pdf.NumberOfPages == 0) {
-					return;
-				}
-				var r = PageRangeCollection.Parse(ExtensiveObject as string, 1, pdf.NumberOfPages, true);
-				var pn = new DocumentObject[r.TotalPages];
-				var i = 0;
-				foreach (var item in r) {
-					foreach (var p in item) {
-						pn[i++] = new DocumentObject(OwnerDocument, this, $"第{p}页", null, PdfObjectType.Page) { ExtensiveObject = p };
+			switch (Type) {
+				case PdfObjectType.Pages: {
+						if (pdf.NumberOfPages == 0) {
+							return;
+						}
+						var r = PageRangeCollection.Parse(ExtensiveObject as string, 1, pdf.NumberOfPages, true);
+						var pn = new DocumentObject[r.TotalPages];
+						var i = 0;
+						foreach (var item in r) {
+							foreach (var p in item) {
+								pn[i++] = new DocumentObject(OwnerDocument, this, $"第{p}页", null, PdfObjectType.Page) { ExtensiveObject = p };
+							}
+						}
+						_Children = pn;
+						break;
 					}
-				}
-				_Children = pn;
-			}
-			else if (Type == PdfObjectType.PageCommands) {
-				// 解释页面指令
-				var cp = new PdfPageCommandProcessor();
-				if (Parent.Type == PdfObjectType.Page) {
-					var pn = (int)Parent.ExtensiveObject;
-					cp.ProcessContent(pdf.GetPageContent(pn), pdf.GetPageN(pn).GetAsDict(PdfName.RESOURCES));
-				}
-				else if (Parent.Type == PdfObjectType.Form) {
-					var form = PdfReader.GetPdfObjectRelease(Parent.Value) as PRStream;
-					cp.ProcessContent(PdfReader.GetStreamBytes(form), form.GetAsDict(PdfName.RESOURCES));
-				}
-				foreach (var item in cp.Commands) {
-					PopulatePageCommand(item);
-				}
-			}
-			else if (Type == PdfObjectType.PageCommand) {
-				_Children = __Leaf;
-			}
-			else if (Type == PdfObjectType.Hidden) {
-				var ul = PdfHelper.ListUnusedObjects(pdf, AppContext.LoadPartialPdfFile);
-				ExtensiveObject = ul;
-				var uo = new List<DocumentObject>();
-				foreach (var item in ul) {
-					var u = pdf.GetPdfObjectRelease(item);
-					if (u != null) {
-						uo.Add(new DocumentObject(OwnerDocument, this, item.ToText(), u));
+				case PdfObjectType.PageCommands: {
+						// 解释页面指令
+						var cp = new PdfPageCommandProcessor();
+						if (Parent.Type == PdfObjectType.Page) {
+							var pn = (int)Parent.ExtensiveObject;
+							cp.ProcessContent(pdf.GetPageContent(pn), pdf.GetPageN(pn).GetAsDict(PdfName.RESOURCES));
+						}
+						else if (Parent.Type == PdfObjectType.Form) {
+							var form = PdfReader.GetPdfObjectRelease(Parent.Value) as PRStream;
+							cp.ProcessContent(PdfReader.GetStreamBytes(form), form.GetAsDict(PdfName.RESOURCES));
+						}
+						foreach (var item in cp.Commands) {
+							PopulatePageCommand(item);
+						}
+						break;
 					}
-				}
-				_Children = uo;
+				case PdfObjectType.PageCommand:
+					_Children = __Leaf;
+					break;
+				case PdfObjectType.Hidden: {
+						var ul = PdfHelper.ListUnusedObjects(pdf, AppContext.LoadPartialPdfFile);
+						ExtensiveObject = ul;
+						var uo = new List<DocumentObject>();
+						foreach (var item in ul) {
+							var u = pdf.GetPdfObjectRelease(item);
+							if (u != null) {
+								uo.Add(new DocumentObject(OwnerDocument, this, item.ToText(), u));
+							}
+						}
+						_Children = uo;
+						break;
+					}
 			}
 		}
 

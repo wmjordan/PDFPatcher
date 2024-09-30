@@ -72,18 +72,14 @@ namespace PDFPatcher.Functions
 			_ObjectDetailBox.SetTreeViewLine();
 			_ObjectDetailBox.FixEditControlWidth();
 			new TypedColumn<DocumentObject>(_NameColumn) {
-				AspectGetter = (DocumentObject d) => {
-					return d.FriendlyName ?? d.Name;
-				},
+				AspectGetter = (DocumentObject d) => d.FriendlyName ?? d.Name,
 				ImageGetter = (DocumentObject d) => {
 					if (d.ImageKey != null) {
 						return d.ImageKey;
 					}
-
 					if (d.Type == PdfObjectType.Normal) {
 						return GetImageKey(d);
 					}
-
 					switch (d.Type) {
 						case PdfObjectType.Trailer:
 							return __OpNameIcons["Document"];
@@ -142,24 +138,32 @@ namespace PDFPatcher.Functions
 			_ObjectDetailBox.PrimarySortColumn = null;
 			_ObjectDetailBox.CopySelectionOnControlC = true;
 			_ObjectDetailBox.CellEditStarting += (s, args) => {
-				var po = (args.RowObject as DocumentObject).Value;
+				var o = (DocumentObject)args.RowObject;
 				string t;
 				bool readOnly = true;
+				if (args.Column.Index == 2) {
+					if (String.IsNullOrEmpty(o.Description) == false) {
+						t = o.Description;
+						goto MAKE_CONTROL;
+					}
+					goto EXIT;
+				}
+				var po = o.Value;
 				if (po != null) {
 					switch (po.Type) {
 						case PdfObject.BOOLEAN:
-							args.Control = new CheckBox() { Checked = (po as PdfBoolean).BooleanValue, Bounds = args.CellBounds };
+							args.Control = new CheckBox() { Checked = ((PdfBoolean)po).BooleanValue, Bounds = args.CellBounds };
 							return;
 						case PdfObject.NUMBER:
-							t = (po as PdfNumber).DoubleValue.ToText();
+							t = ((PdfNumber)po).DoubleValue.ToText();
 							readOnly = false;
 							goto MAKE_CONTROL;
 						case PdfObject.NAME:
-							t = PdfName.DecodeName((po as PdfName).ToString());
+							t = PdfName.DecodeName(((PdfName)po).ToString());
 							readOnly = false;
 							goto MAKE_CONTROL;
 						case PdfObject.STRING:
-							t = (po as PdfString).ToUnicodeString();
+							t = ((PdfString)po).ToUnicodeString();
 							readOnly = false;
 							goto MAKE_CONTROL;
 						case PdfObject.DICTIONARY:
@@ -173,6 +177,7 @@ namespace PDFPatcher.Functions
 					t = args.Value.ToString();
 					goto MAKE_CONTROL;
 				}
+				EXIT:
 				args.Cancel = true;
 				return;
 				MAKE_CONTROL:
@@ -229,8 +234,7 @@ namespace PDFPatcher.Functions
 				}
 				else if (o.Type == PdfObjectType.PageCommand && (o.Name == "字符串" || o.Name == "换行字符串")) {
 					olvItem.UseItemStyleForSubItems = false;
-					var s = olvItem.SubItems[_DescriptionColumn.Index];
-					s.Font = new Font(olvItem.Font, FontStyle.Underline);
+					olvItem.SubItems[_DescriptionColumn.Index].Font = new Font(olvItem.Font, FontStyle.Underline);
 				}
 			};
 			_ObjectDetailBox.SelectionChanged += _ObjectDetailBox_SelectionChanged;
@@ -436,7 +440,7 @@ namespace PDFPatcher.Functions
 		}
 
 		Dictionary<string, int> InitOpNameIcons() {
-			var p = new string[] { "Document", "Pages", "Page", "PageCommands", "Image", "Form", "Resources", "Hidden", "GoToPage", "Outline", "Null" };
+			var p = new string[] { "Document", "Pages", "Page", "PageCommands", "Image", "Form", "Font", "Resources", "Hidden", "GoToPage", "Outline", "Null" };
 			var n = new string[] {
 				"q", "Tm", "cm", "gs", "ri", "CS", "cs",
 				"RG", "rg", "scn", "SCN", "sc", "SC", "K", "k",

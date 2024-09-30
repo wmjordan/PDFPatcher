@@ -171,7 +171,7 @@
 			// 
 			// _DescriptionColumn
 			// 
-			this._DescriptionColumn.IsEditable = false;
+			this._DescriptionColumn.IsEditable = true;
 			this._DescriptionColumn.Text = "说明";
 			this._DescriptionColumn.Width = 93;
 			// 
