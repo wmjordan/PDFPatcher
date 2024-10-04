@@ -1231,7 +1231,9 @@ namespace PDFPatcher.Functions
 						w += vs.Width - w1;
 					}
 				}
-				VirtualSize = new Size(w, GetPageFullHeight(h));
+				VirtualSize = new Size(w, h = GetPageFullHeight(h));
+				HorizontalScroll.Visible = HorizontalScroll.Enabled = w > ClientSize.Width;
+				VerticalScroll.Visible = VerticalScroll.Enabled = h > ClientSize.Height;
 			}
 			else {
 				lock (_mupdf.SyncObj) {
@@ -1248,7 +1250,9 @@ namespace PDFPatcher.Functions
 						h += vs.Height - h1;
 					}
 				}
-				VirtualSize = new Size(GetPageFullWidth(w), h);
+				VirtualSize = new Size(w = GetPageFullWidth(w), h);
+				VerticalScroll.Visible = VerticalScroll.Enabled = h > ClientSize.Height;
+				HorizontalScroll.Visible = HorizontalScroll.Enabled = w > ClientSize.Width;
 			}
 			_lockDown = false;
 		}
