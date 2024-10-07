@@ -11,7 +11,7 @@
 				return null;
 			}
 			var undo = new UndoActionGroup();
-			var n = item.SelectSingleNode("preceding-sibling::" + Constants.Bookmark + "[1]");
+			var n = item.SelectSingleNode($"preceding-sibling::{Constants.Bookmark}[1]");
 			if (n == null) {
 				return null;
 			}

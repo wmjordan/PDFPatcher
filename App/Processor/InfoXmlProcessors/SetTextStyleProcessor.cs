@@ -25,17 +25,13 @@ namespace PDFPatcher.Processor
 
 		#region IInfoDocProcessor 成员
 
-		public string Name {
-			get {
-				return _style switch {
-					Style.SetBold => "设置书签文本为粗体",
-					Style.SetItalic => "设置书签文本为斜体",
-					Style.RemoveBold => "清除书签文本粗体样式",
-					Style.RemoveItalic => "清除书签文本斜体样式",
-					_ => "",
-				};
-			}
-		}
+		public string Name => _style switch {
+			Style.SetBold => "设置书签文本为粗体",
+			Style.SetItalic => "设置书签文本为斜体",
+			Style.RemoveBold => "清除书签文本粗体样式",
+			Style.RemoveItalic => "清除书签文本斜体样式",
+			_ => "",
+		};
 
 		public IUndoAction Process(System.Xml.XmlElement item) {
 			var value = item.GetAttribute(Constants.BookmarkAttributes.Style);

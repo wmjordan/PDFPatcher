@@ -7,7 +7,7 @@ namespace PDFPatcher.Processor
 		/// <summary>
 		/// 检查传入的 <see cref="Model.AutoBookmarkContext"/> 是否符合指定的过滤条件。
 		/// </summary>
-		/// <param name="text">包含需要过滤的文本信息及其它上下文的 <see cref="Model.AutoBookmarkContext"/>。</param>
+		/// <param name="context">包含需要过滤的文本信息及其它上下文的 <see cref="Model.AutoBookmarkContext"/>。</param>
 		/// <returns>过滤结果。</returns>
 		internal abstract bool Matches(Model.AutoBookmarkContext context);
 

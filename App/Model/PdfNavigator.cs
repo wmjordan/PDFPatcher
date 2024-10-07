@@ -11,7 +11,7 @@ namespace PDFPatcher.Model
 	{
 		sealed class HtmlNameTable : XmlNameTable
 		{
-			readonly NameTable _nameTable = new NameTable();
+			readonly NameTable _nameTable = new();
 			public override string Add(string array) {
 				return _nameTable.Add(array);
 			}
@@ -59,18 +59,13 @@ namespace PDFPatcher.Model
 		public override bool IsEmptyElement => !_currentObject.HasChildren;
 
 		public override bool IsSamePosition(XPathNavigator other) {
-			var o = other as PdfNavigator;
-			if (o == null) {
-				return false;
-			}
-			return _currentObject == o._currentObject;
+			return other is PdfNavigator o && _currentObject == o._currentObject;
 		}
 
 		public override string LocalName => _nameTable.GetOrAdd(_currentObject.FriendlyName ?? _currentObject.Name);
 
 		public override bool MoveTo(XPathNavigator other) {
-			var o = other as PdfNavigator;
-			if (o == null) {
+			if (other is not PdfNavigator o) {
 				return false;
 			}
 			if (_doc != o._doc) {
@@ -86,11 +81,11 @@ namespace PDFPatcher.Model
 
 		public override bool MoveToFirstChild() {
 			_currentObject.PopulateChildren(false);
-			if (_currentObject.HasChildren == false) {
+			if (!_currentObject.HasChildren) {
 				return false;
 			}
 			_childIndex = 0;
-			_currentObject = (_currentObject.Children as IList<DocumentObject>)[0];
+			_currentObject = ((IList<DocumentObject>)_currentObject.Children)[0];
 			return true;
 		}
 
@@ -99,13 +94,8 @@ namespace PDFPatcher.Model
 		}
 
 		public override bool MoveToId(string id) {
-			if (id.StartsWith("PAGE", StringComparison.OrdinalIgnoreCase)) {
-				if (id.Substring(4).TryParse(out int p) && p < _doc.PageCount) {
-					// 将当前对象设置为该页
-					return true;
-				}
-			}
-			return false;
+			// 将当前对象设置为该页
+			return id.HasCaseInsensitivePrefix("PAGE") && id.Substring(4).TryParse(out int p) && p < _doc.PageCount;
 		}
 
 		public override bool MoveToNext() {
@@ -114,7 +104,7 @@ namespace PDFPatcher.Model
 			}
 			if (_childIndex < _currentObject.Parent.Children.Count - 1) {
 				_childIndex++;
-				_currentObject = (_currentObject.Children as IList<DocumentObject>)[_childIndex];
+				_currentObject = ((IList<DocumentObject>)_currentObject.Children)[_childIndex];
 				return true;
 			}
 			return false;
@@ -143,7 +133,7 @@ namespace PDFPatcher.Model
 			}
 			if (_childIndex > 0) {
 				_childIndex--;
-				_currentObject = (_currentObject.Children as IList<DocumentObject>)[_childIndex];
+				_currentObject = ((IList<DocumentObject>)_currentObject.Children)[_childIndex];
 				return true;
 			}
 			return false;
@@ -160,14 +150,10 @@ namespace PDFPatcher.Model
 				switch (_currentObject.Type) {
 					case PdfObjectType.Normal:
 						var po = _currentObject.ExtensiveObject as PdfObject;
-						switch (po.Type) {
-							case PdfObject.ARRAY:
-							case PdfObject.DICTIONARY:
-							case PdfObject.STREAM:
-								return XPathNodeType.Element;
-							default:
-								return XPathNodeType.Attribute;
-						}
+						return po.Type switch {
+							PdfObject.ARRAY or PdfObject.DICTIONARY or PdfObject.STREAM => XPathNodeType.Element,
+							_ => XPathNodeType.Attribute,
+						};
 					case PdfObjectType.Trailer:
 						return XPathNodeType.Root;
 					case PdfObjectType.Root:
@@ -198,12 +184,12 @@ namespace PDFPatcher.Model
 			var p = _currentObject.Parent;
 			p.Children.Remove(_currentObject);
 			_currentObject = p;
-			_childIndex = (p.Parent.Children as IList<DocumentObject>).IndexOf(p);
+			_childIndex = ((IList<DocumentObject>)p.Parent.Children).IndexOf(p);
 		}
 
 		public override object UnderlyingObject => _currentObject;
 
-		public override bool ValueAsBoolean => (PdfObject as PdfBoolean)?.BooleanValue == true;
+		public override bool ValueAsBoolean => PdfObject is PdfBoolean { BooleanValue: true };
 
 
 		#endregion

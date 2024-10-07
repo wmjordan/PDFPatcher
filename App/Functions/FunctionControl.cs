@@ -5,7 +5,7 @@ using PDFPatcher.Common;
 
 namespace PDFPatcher.Functions
 {
-	public class FunctionControl : System.Windows.Forms.UserControl
+	public class FunctionControl : UserControl
 	{
 		[Browsable(false)]
 		public virtual string FunctionName => null;
@@ -47,8 +47,7 @@ namespace PDFPatcher.Functions
 
 		protected FunctionControl() {
 			ListRecentFiles = (s, args) => {
-				var m = (ToolStripDropDownItem)s;
-				var l = m.DropDown.Items;
+				var l = ((ToolStripDropDownItem)s).DropDown.Items;
 				l.ClearDropDownItems();
 				l.AddSourcePdfFiles();
 			};
@@ -91,8 +90,7 @@ namespace PDFPatcher.Functions
 				}
 				SetupCommand(item);
 				if (item.Visible) {
-					var s = item is ToolStripSeparator;
-					if (s) {
+					if (item is ToolStripSeparator) {
 						item.Visible = pvs == false;
 						pvs = true;
 					}

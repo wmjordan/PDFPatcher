@@ -3,16 +3,10 @@ using iTextSharp.text.pdf;
 
 namespace PDFPatcher.Model
 {
-	readonly struct ResourceReference
+	readonly struct ResourceReference(PdfIndirectReference resourceRef, PdfName name, PdfDictionary resource)
 	{
-		public ResourceReference(PdfIndirectReference resourceRef, PdfName name, PdfDictionary resource) {
-			Ref = resourceRef;
-			Name = name;
-			Resource = resource;
-		}
-
-		public PdfIndirectReference Ref { get; }
-		public PdfName Name { get; }
-		public PdfDictionary Resource { get; }
+		public PdfIndirectReference Ref { get; } = resourceRef;
+		public PdfName Name { get; } = name;
+		public PdfDictionary Resource { get; } = resource;
 	}
 }

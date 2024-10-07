@@ -19,7 +19,7 @@ namespace PDFPatcher
 				}
 				else {
 					Process.GetProcesses()
-						.FirstOrDefault(p => p.MainWindowTitle.StartsWith(Constants.AppName + " [", StringComparison.Ordinal))
+						.FirstOrDefault(p => p.MainWindowTitle.HasPrefix($"{Constants.AppName} ["))
 						?.SendCopyDataMessage(String.Join("\n", args));
 				}
 			}

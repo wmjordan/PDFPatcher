@@ -52,8 +52,7 @@ namespace PDFPatcher.Functions
 			};
 			_LevelAdjustmentBox.DropSink = new BrightIdeasSoftware.RearrangingDropSink(false);
 			_AdvancedFilterColumn.AspectGetter = (object x) => {
-				var f = x as AutoBookmarkOptions.LevelAdjustmentOption;
-				if (f == null) {
+				if (x is not AutoBookmarkOptions.LevelAdjustmentOption f) {
 					return null;
 				}
 				return f.Condition.Description;
@@ -63,8 +62,7 @@ namespace PDFPatcher.Functions
 				return f?.AdjustmentLevel ?? 0;
 			};
 			_AdjustmentLevelColumn.AspectPutter = (object x, object value) => {
-				var f = x as AutoBookmarkOptions.LevelAdjustmentOption;
-				if (f == null) {
+				if (x is not AutoBookmarkOptions.LevelAdjustmentOption f) {
 					return;
 				}
 				if ((value ?? "0").ToString().TryParse(out float a)) {
@@ -73,8 +71,7 @@ namespace PDFPatcher.Functions
 			};
 			_RelativeAdjustmentColumn.AspectGetter = (object x) => (x as AutoBookmarkOptions.LevelAdjustmentOption)?.RelativeAdjustment == true;
 			_RelativeAdjustmentColumn.AspectPutter = (object x, object value) => {
-				var f = x as AutoBookmarkOptions.LevelAdjustmentOption;
-				if (f == null) {
+				if (x is not AutoBookmarkOptions.LevelAdjustmentOption f) {
 					return;
 				}
 				f.RelativeAdjustment = value is bool b && b;
@@ -92,8 +89,7 @@ namespace PDFPatcher.Functions
 			d.CheckFileExists = false;
 			d.CheckPathExists = false;
 
-			var sd = d as SaveFileDialog;
-			if (sd != null) {
+			if (d is SaveFileDialog sd) {
 				sd.OverwritePrompt = false;
 			}
 		}
@@ -154,7 +150,7 @@ namespace PDFPatcher.Functions
 			}
 
 			AppContext.MainForm.ResetWorker();
-			AppContext.MainForm.GetWorker().DoWork += new DoWorkEventHandler(ExportControl_DoWork);
+			AppContext.MainForm.GetWorker().DoWork += ExportControl_DoWork;
 			SyncOptions();
 			AppContext.MainForm.GetWorker().RunWorkerAsync(new object[] {
 				AppContext.SourceFiles,

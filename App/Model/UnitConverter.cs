@@ -6,8 +6,8 @@ namespace PDFPatcher.Common
 {
 	public class UnitConverter
 	{
-		const string Null = "null";
 		internal const string ToStringFormat = "0.###";
+		const string Null = "null";
 
 		/// <summary>
 		/// 获取单位转换因数。
@@ -104,7 +104,5 @@ namespace PDFPatcher.Common
 		internal static float[] ConvertUnit(float[] source, float factor) {
 			return Array.ConvertAll(source, i => ToPoint(i, factor));
 		}
-
-
 	}
 }

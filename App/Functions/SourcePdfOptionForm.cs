@@ -26,7 +26,7 @@ namespace PDFPatcher.Functions
 
 		void _OkButton_Click(Object source, EventArgs args) {
 			DialogResult = DialogResult.OK;
-			_pdf.PageRanges = Model.PageRangeCollection.Parse(_PageRangeBox.Text, 1, _pdf.PageCount, true).ToString();
+			_pdf.PageRanges = PageRangeCollection.Parse(_PageRangeBox.Text, 1, _pdf.PageCount, true).ToString();
 			_pdf.ImportImagesOnly = _ImportImagesOnlyBox.Checked;
 			_pdf.ExtractImageOptions.MergeImages = _MergeImagesBox.Checked;
 			_pdf.ExtractImageOptions.InvertBlackAndWhiteImages = _InvertBlackAndWhiteImageBox.Checked;

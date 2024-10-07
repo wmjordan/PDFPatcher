@@ -13,12 +13,10 @@ namespace PDFPatcher.Processor
 	/// <summary>A class which manages outlines (bookmarks) of PDF documents.</summary>
 	static class OutlineManager
 	{
-		// modifed: added split array for action parameters
-		static readonly char[] __ActionSplitters = new char[] { ' ', '\t', '\r', '\n' };
-		static readonly char[] __fullWidthNums = "０１２３４５６７８９".ToCharArray();
-		static readonly char[] __halfWidthNums = "0123456789".ToCharArray();
-		static readonly char[] __cmdIdentifiers = new char[] { '=', '﹦', '＝', ':', '：' };
-		static readonly char[] __pageLabelSeparators = new char[] { ';', '；', ',', '，', ' ' };
+		static readonly char[] __fullWidthNumbers = "０１２３４５６７８９".ToCharArray();
+		static readonly char[] __halfWidthNumbers = "0123456789".ToCharArray();
+		static readonly char[] __cmdIdentifiers = ['=', '﹦', '＝', ':', '：'];
+		static readonly char[] __pageLabelSeparators = [';', '；', ',', '，', ' '];
 
 		static void BookmarkDepth(PdfReader reader, Dictionary<string, PdfObject> names, PdfActionExporter exporter, PdfDictionary outline, Dictionary<int, int> pageRefMap, XmlWriter target) {
 			while (outline != null) {
@@ -39,8 +37,7 @@ namespace PDFPatcher.Processor
 					}
 				}
 
-				var count = outline.Get(PdfName.COUNT) as PdfNumber;
-				if (count != null) {
+				if (outline.Get(PdfName.COUNT) is PdfNumber count) {
 					target.WriteAttributeString(Constants.BookmarkAttributes.Open, count.IntValue < 0 ? Constants.Boolean.False : Constants.Boolean.True);
 				}
 
@@ -91,12 +88,14 @@ namespace PDFPatcher.Processor
 		private static Object[] CreateOutlines(PdfWriter writer, PdfIndirectReference parent, XmlElement kids, int maxPageNumber, bool namedAsNames) {
 			var bookmarks = kids.SelectNodes(Constants.Bookmark);
 			var refs = new PdfIndirectReference[bookmarks.Count];
-			for (int k = 0; k < refs.Length; ++k)
+			for (int k = 0; k < refs.Length; ++k) {
 				refs[k] = writer.PdfIndirectReference;
+			}
+
 			int ptr = 0;
 			int count = 0;
 			foreach (XmlElement child in bookmarks) {
-				Object[] lower = null;
+				object[] lower = null;
 				if (child.SelectSingleNode(Constants.Bookmark) != null)
 					lower = CreateOutlines(writer, refs[ptr], child, maxPageNumber, namedAsNames);
 				var outline = new PdfDictionary();
@@ -134,7 +133,7 @@ namespace PDFPatcher.Processor
 				writer.AddToBody(outline, refs[ptr]);
 				++ptr;
 			}
-			return new Object[] { refs[0], refs[refs.Length - 1], count };
+			return [refs[0], refs[refs.Length - 1], count];
 		}
 
 		internal static PdfIndirectReference WriteOutline(PdfWriter writer, XmlElement bookmarks, int maxPageNumber) {
@@ -190,7 +189,7 @@ namespace PDFPatcher.Processor
 			}
 		}
 
-		public static string EscapeBinaryString(String s) {
+		public static string EscapeBinaryString(string s) {
 			var buf = StringBuilderCache.Acquire();
 			var cc = s.ToCharArray();
 			int len = cc.Length;
@@ -284,7 +283,7 @@ namespace PDFPatcher.Processor
 							break;
 						case "缩进标记":
 							indentString = cmdData;
-							Tracker.TraceMessage(String.Concat("缩进标记改为“", indentString, "”"));
+							Tracker.TraceMessage($"缩进标记改为“{indentString}”");
 							break;
 						case "版本":
 							if (lineNum == 1) {
@@ -350,8 +349,8 @@ namespace PDFPatcher.Processor
 					pageNum = 0;
 				}
 				else {
-					if (pnText.IndexOfAny(__fullWidthNums) != -1) {
-						digits = Array.ConvertAll(m.Groups[2].Value.ToCharArray(), d => ValueHelper.MapValue(d, __fullWidthNums, __halfWidthNums, d));
+					if (pnText.IndexOfAny(__fullWidthNumbers) != -1) {
+						digits = Array.ConvertAll(m.Groups[2].Value.ToCharArray(), d => ValueHelper.MapValue(d, __fullWidthNumbers, __halfWidthNumbers, d));
 						pnText = new string(digits, 0, digits.Length);
 					}
 					if (pnText.TryParse(out pageNum)) {
@@ -365,7 +364,7 @@ namespace PDFPatcher.Processor
 				else if (indent > currentIndent) {
 					currentBookmark.AppendChild(bookmark);
 					if (indent - currentIndent > 1) {
-						throw new FormatException(String.Concat("在简易书签第 ", lineNum, " 行的缩进格式不正确。\n\n说明：下级书签最多只能比上级书签多一个缩进标记。"));
+						throw new FormatException($"在简易书签第 {lineNum} 行的缩进格式不正确。\n\n说明：下级书签最多只能比上级书签多一个缩进标记。");
 					}
 					currentIndent++;
 				}
@@ -439,7 +438,7 @@ namespace PDFPatcher.Processor
 					continue;
 				}
 				var s = item.GetString(b);
-				if (s.StartsWith(VersionString, StringComparison.Ordinal) || s.StartsWith(VersionString2, StringComparison.Ordinal)) {
+				if (s.HasPrefix(VersionString) || s.HasPrefix(VersionString2)) {
 					return item;
 				}
 			}

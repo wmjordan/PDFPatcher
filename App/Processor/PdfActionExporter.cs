@@ -128,8 +128,7 @@ namespace PDFPatcher.Processor
 			if (dest.Size < 2) {
 				return;
 			}
-			var pn = dest[1] as PdfName;
-			if (pn == null) {
+			if (dest[1] is not PdfName pn) {
 				return;
 			}
 			var m = PdfHelper.GetPdfFriendlyName(pn);
@@ -200,8 +199,7 @@ namespace PDFPatcher.Processor
 		}
 
 		private static int GetNumber(PdfIndirectReference indirect) {
-			var pdfObj = PdfReader.GetPdfObjectRelease(indirect) as PdfDictionary;
-			if (pdfObj == null) {
+			if (PdfReader.GetPdfObjectRelease(indirect) is not PdfDictionary pdfObj) {
 				return 0;
 			}
 			if (pdfObj.Contains(PdfName.TYPE)

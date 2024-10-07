@@ -19,9 +19,7 @@ namespace PDFPatcher.Processor
 
 		public PdfReader GetPdfReader(string path) {
 			if (_sink.TryGetValue(path, out PdfReaderReference rr)) {
-				if (rr.Reader == null) {
-					rr.Reader = PdfHelper.OpenPdfFile(path, AppContext.LoadPartialPdfFile, false);
-				}
+				rr.Reader ??= PdfHelper.OpenPdfFile(path, AppContext.LoadPartialPdfFile, false);
 				return rr.Reader;
 			}
 			return null;

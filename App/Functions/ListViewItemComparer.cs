@@ -46,17 +46,12 @@ namespace PDFPatcher
 
 	}
 
-	sealed class OlvColumnSmartComparer : System.Collections.IComparer
+	sealed class OlvColumnSmartComparer(BrightIdeasSoftware.OLVColumn column, SortOrder sortOrder) : System.Collections.IComparer
 	{
 		///<summary>获取排序列。</summary>
-		public BrightIdeasSoftware.OLVColumn Column { get; }
+		public BrightIdeasSoftware.OLVColumn Column { get; } = column;
 		///<summary>获取列表排序的方式。</summary>
-		public SortOrder SortOrder { get; }
-
-		public OlvColumnSmartComparer(BrightIdeasSoftware.OLVColumn column, SortOrder sortOrder) {
-			Column = column;
-			SortOrder = sortOrder;
-		}
+		public SortOrder SortOrder { get; } = sortOrder;
 
 		#region IComparer 成员
 

@@ -302,7 +302,7 @@ namespace PDFPatcher.Processor
 			int pn = pdf.NumberOfPages;
 			ImageExtractor imgExp = null;
 			if (importImagesOnly) {
-				imgExp = new ImageExtractor(sourceFile.ExtractImageOptions, pdf);
+				imgExp = new ImageExtractor(sourceFile.ExtractImageOptions);
 			}
 			if (_option.KeepBookmarks) {
 				pdf.ConsolidateNamedDestinations();

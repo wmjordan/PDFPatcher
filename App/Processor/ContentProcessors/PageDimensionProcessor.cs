@@ -34,9 +34,7 @@ namespace PDFPatcher.Processor
 			if (settings.AutoRotation && size.SpecialSize == SpecialPaperSize.None && (size.Width > size.Height) ^ (mb.Width > mb.Height)) {
 				size = new PaperSize(size.PaperName, size.Height, size.Width);
 			}
-			if (b == null) {
-				b = new Rectangle(mb);
-			}
+			b ??= new Rectangle(mb);
 			float d, z = 1, zx = 1, zy = 1;
 			float dx = 0, dy = 0;
 			float sw = b.Width, sh = b.Height; // resized width and height
@@ -185,8 +183,7 @@ namespace PDFPatcher.Processor
 				return;
 			}
 			foreach (var item in ann.ArrayList) {
-				var an = PdfReader.GetPdfObject(item) as PdfDictionary;
-				if (an != null) {
+				if (PdfReader.GetPdfObject(item) is PdfDictionary an) {
 					var rect = an.GetAsArray(PdfName.RECT);
 					if (rect != null && rect.Size == 4) {
 						rect[0] = new PdfNumber((rect[0] as PdfNumber).FloatValue * ct.XScale + ct.XTranslation);

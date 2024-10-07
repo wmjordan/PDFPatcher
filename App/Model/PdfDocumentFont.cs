@@ -58,8 +58,7 @@ namespace PDFPatcher.Model
 				var xObjects = res.GetAsDict(PdfName.XOBJECT);
 				if (xObjects != null) {
 					foreach (var item in xObjects) {
-						var form = PdfReader.GetPdfObjectRelease(item.Value) as PdfDictionary;
-						if (form == null || PdfName.FORM.Equals(form.GetAsName(PdfName.SUBTYPE)) == false) {
+						if (PdfReader.GetPdfObjectRelease(item.Value) is not PdfDictionary form || PdfName.FORM.Equals(form.GetAsName(PdfName.SUBTYPE)) == false) {
 							continue;
 						}
 						foreach (var font in PdfModelHelper.GetReferencedResources(form, o => PdfName.FONT.Equals(o.GetAsName(PdfName.TYPE)), visitedRefs)) {

@@ -15,7 +15,7 @@ namespace PDFPatcher.Processor
 		}
 		public bool EndProcess(PdfReader pdf) {
 			Tracker.TraceMessage(Tracker.Category.Notice, Name + "功能：");
-			Tracker.TraceMessage("　　删除了 " + _processedItemCount + " 幅缩略图。");
+			Tracker.TraceMessage($"　　删除了 {_processedItemCount} 幅缩略图。");
 			return false;
 		}
 		public int EstimateWorkload(PdfReader pdf) {

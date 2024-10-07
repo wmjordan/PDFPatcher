@@ -127,7 +127,7 @@ namespace PDFPatcher.Model
 		}
 
 		public override string ToString() {
-			return String.Join(";", ConvertAll((r) => { return r.ToString(); }).ToArray());
+			return String.Join(";", ConvertAll(r => r.ToString()).ToArray());
 		}
 	}
 }

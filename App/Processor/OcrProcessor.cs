@@ -50,7 +50,7 @@ namespace PDFPatcher.Processor
 			};
 			CleanUpTempFiles(expOptions.OutputPath);
 			_reader = reader;
-			_ocrImageExp = new ImageExtractor(expOptions, reader) {
+			_ocrImageExp = new ImageExtractor(expOptions) {
 				PrintImageLocation = false
 			};
 		}

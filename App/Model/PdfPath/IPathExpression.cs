@@ -29,8 +29,7 @@ namespace PDFPatcher.Model.PdfPath
 		///<summary>获取匹配条件列表。</summary>
 		public IList<IPathPredicate> Predicates {
 			get {
-				if (_Predicates == null)
-					_Predicates = new List<IPathPredicate>();
+				_Predicates ??= new List<IPathPredicate>();
 				return _Predicates;
 			}
 		}

@@ -52,8 +52,7 @@ namespace PDFPatcher.Functions
 				}
 			};
 			_FontNameSizeColumn.AspectGetter = (object o) => {
-				var f = o as XmlElement;
-				if (f == null) {
+				if (o is not XmlElement f) {
 					return null;
 				}
 				if (f.Name == Constants.Font.ThisName) {
@@ -130,8 +129,7 @@ namespace PDFPatcher.Functions
 					return;
 				}
 			}
-			var f = _FontInfoBox.GetModelObject(_FontInfoBox.FocusedItem.Index) as XmlElement;
-			if (f == null) {
+			if (_FontInfoBox.GetModelObject(_FontInfoBox.FocusedItem.Index) is not XmlElement f) {
 				e.Cancel = true;
 				return;
 			}
@@ -186,8 +184,7 @@ namespace PDFPatcher.Functions
 		}
 
 		void _AddFilterMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e) {
-			var f = e.ClickedItem.Tag as FilterSetting;
-			if (f == null) {
+			if (e.ClickedItem.Tag is not FilterSetting f) {
 				return;
 			}
 			AutoBookmarkCondition fc = new AutoBookmarkCondition.FontNameCondition(f.FontName, f.FullMatch);

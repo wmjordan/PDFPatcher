@@ -26,7 +26,7 @@ namespace PDFPatcher.Model
 					s = (s as PdfDictionary).GetDirectObject(n);
 					continue;
 				}
-				if (item is Int32 == false) {
+				if (item is not int) {
 					throw new ArgumentException("参数类型必须为 Int32 或 PdfName");
 				}
 				int i = (int)item;

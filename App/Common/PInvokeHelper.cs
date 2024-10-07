@@ -17,7 +17,5 @@ namespace PDFPatcher.Common
 			Marshal.PtrToStructure(ptr, t);
 			return t;
 		}
-
-
 	}
 }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Text;
 using MuPDF;
 using MuPDF.Extensions;
 using PDFPatcher.Common;
@@ -23,17 +22,12 @@ namespace PDFPatcher.Functions.Editor
 		Move, Selection
 	}
 
-	public readonly struct PagePoint : IEquatable<PagePoint>
+	public readonly struct PagePoint(int pageNumber, float imageX, float imageY) : IEquatable<PagePoint>
 	{
 		public static readonly PagePoint Empty;
 
-		public readonly int Page;
-		public readonly float ImageX, ImageY;
-		public PagePoint(int pageNumber, float imageX, float imageY) {
-			Page = pageNumber;
-			ImageX = imageX;
-			ImageY = imageY;
-		}
+		public readonly int Page = pageNumber;
+		public readonly float ImageX = imageX, ImageY = imageY;
 
 		public override bool Equals(object obj) {
 			return obj is PagePoint point && Equals(point);
@@ -62,9 +56,9 @@ namespace PDFPatcher.Functions.Editor
 		}
 	}
 
-	public readonly struct PagePosition
+	readonly struct PagePosition
 	{
-		public static readonly PagePosition Empty;
+		public static readonly PagePosition Empty = default;
 		/// <summary>
 		/// 所在页码。
 		/// </summary>
@@ -81,7 +75,7 @@ namespace PDFPatcher.Functions.Editor
 		/// 当前点是否在页面上。
 		/// </summary>
 		public readonly bool IsInPage;
-		public MuPDF.Point Location => new MuPDF.Point(PageX, PageY);
+
 		internal PagePosition(int page, PointF position, DrawingPoint imagePosition, bool isInPage)
 			: this(page, position.X, position.Y, imagePosition.X, imagePosition.Y, isInPage) { }
 
@@ -94,13 +88,15 @@ namespace PDFPatcher.Functions.Editor
 			IsInPage = isInPage;
 		}
 
+		public MuPoint Location => new(PageX, PageY);
+
 		public MuPoint ToPageCoordinate(Page page) {
 			var pb = page.Bound;
 			return new MuPoint(PageX - pb.Left, pb.Bottom - PageY);
 		}
 	}
 
-	public readonly struct PageRegion
+	readonly struct PageRegion
 	{
 		public static readonly PageRegion Empty = new PageRegion();
 
@@ -128,7 +124,7 @@ namespace PDFPatcher.Functions.Editor
 		}
 	}
 
-	public readonly struct TextInfo
+	readonly struct TextInfo
 	{
 		public readonly Page Page;
 
@@ -180,7 +176,7 @@ namespace PDFPatcher.Functions.Editor
 			if (c == 1) {
 				return Lines[0].GetText();
 			}
-			var sb = new StringBuilder();
+			var sb = StringBuilderCache.Acquire(100);
 			var b = Lines[0].Bound;
 			foreach (var line in Lines) {
 				if (line.Bound.IsHorizontalNeighbor(b)) {
@@ -193,30 +189,20 @@ namespace PDFPatcher.Functions.Editor
 					sb.Append(line.GetText());
 				}
 			}
-			return sb.ToString();
+			return StringBuilderCache.GetStringAndRelease(sb);
 		}
 	}
 
 	[DebuggerDisplay("Point={Point}; Font={Font}; Size={Size}; Color={Color}; Text={Text}")]
-	public sealed class TextSpan
+	public sealed class TextSpan(TextLine line, MuPoint point, string text, float size, TextFont font, MuRectangle box, int color)
 	{
-		public TextSpan(TextLine line, MuPoint point, string text, float size, TextFont font, MuRectangle box, int color) {
-			Line = line;
-			Point = point;
-			Text = text;
-			Size = size;
-			Font = font;
-			Box = box;
-			Color = color;
-		}
-
-		public TextLine Line { get; }
-		public MuPoint Point { get; }
-		public string Text { get; }
-		public float Size { get; }
-		public TextFont Font { get; }
-		public MuRectangle Box { get; }
-		public int Color { get; }
+		public TextLine Line { get; } = line;
+		public MuPoint Point { get; } = point;
+		public string Text { get; } = text;
+		public float Size { get; } = size;
+		public TextFont Font { get; } = font;
+		public MuRectangle Box { get; } = box;
+		public int Color { get; } = color;
 
 		public static IEnumerable<TextSpan> GetTextSpans(TextLine line) {
 			var r = new List<TextSpan>(2);
@@ -226,7 +212,7 @@ namespace PDFPatcher.Functions.Editor
 			var size = ch.Size;
 			var font = ch.Font;
 			var color = ch.Color;
-			var t = new System.Text.StringBuilder(100);
+			var t = StringBuilderCache.Acquire(100);
 			t.Append((char)ch.Character);
 			do {
 				ch = ch.Next;
@@ -246,50 +232,45 @@ namespace PDFPatcher.Functions.Editor
 				t.Append((char)ch.Character);
 			} while (ch != end);
 			if (t.Length > 0) {
-				var s = t.ToString().TrimEnd();
+				var s = StringBuilderCache.GetStringAndRelease(t).TrimEnd();
 				if (s.Length > 0) {
 					r.Add(new TextSpan(line, start.Origin, s, size, font, start.Quad.Union(end.Quad).ToBox(), color));
 				}
+			}
+			else {
+				StringBuilderCache.Release(t);
 			}
 			return r;
 		}
 	}
 
-	public readonly struct Selection
+	readonly struct Selection(RenderResultCache cache, int page, MuRectangle region, RectangleF imageRegion)
 	{
-		readonly RenderResultCache _cache;
-		public static readonly Selection Empty;
+		public static readonly Selection Empty = default;
 
+		readonly RenderResultCache _cache = cache;
 		/// <summary>
 		/// 获取选中区域的页码。
 		/// </summary>
-		public readonly int Page;
+		public readonly int Page = page;
 		/// <summary>
 		/// 获取选中区域在页面上的矩形区域（屏幕左下角点坐标为0，0）。
 		/// </summary>
-		public readonly MuRectangle PageRegion;
+		public readonly MuRectangle PageRegion = region;
 		/// <summary>
 		/// 获取选中区域在显示图片上的矩形区域。
 		/// </summary>
-		public readonly RectangleF ImageRegion;
+		public readonly RectangleF ImageRegion = imageRegion;
 
 		public Bitmap GetSelectedBitmap() {
 			_cache.LoadPage(Page);
 			var p = _cache.GetBitmap(Page);
-			var clip = new MuRectangle(
+			return p.Clone(new MuRectangle(
 					ImageRegion.Left < 0 ? 0 : ImageRegion.Left,
 					ImageRegion.Top < 0 ? 0 : ImageRegion.Top,
 					ImageRegion.Right > p.Width ? p.Width : ImageRegion.Right,
 					ImageRegion.Bottom > p.Height ? p.Height : ImageRegion.Bottom
-				);
-			return p.Clone(clip.ToRectangleF(), p.PixelFormat);
-		}
-
-		public Selection(RenderResultCache cache, int page, Box region, RectangleF imageRegion) {
-			Page = page;
-			PageRegion = region;
-			ImageRegion = imageRegion;
-			_cache = cache;
+				).ToRectangleF(), p.PixelFormat);
 		}
 	}
 }

@@ -28,7 +28,7 @@ namespace PDFPatcher.Processor
 		internal static bool ModiInstalled => __ModiInstalled;
 
 		#region COMInterop
-		static readonly object[] EmptyArray = new object[0];
+		static readonly object[] EmptyArray = [];
 		static object Create(string type) {
 			var t = Type.GetTypeFromProgID(type);
 			if (t == null) {

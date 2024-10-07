@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace PDFPatcher.Model.PdfPath
 {
-	class PathCompiler
+	static class PathCompiler
 	{
 		const char PathSeparator = '/';
 		const char SelfChar = '.';

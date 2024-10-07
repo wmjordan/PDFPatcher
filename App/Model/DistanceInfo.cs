@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace PDFPatcher.Model
 {
@@ -18,9 +16,9 @@ namespace PDFPatcher.Model
 			Down = 16
 		}
 
-		internal Placement Location { get; private set; }
-		internal float DistanceX { get; private set; }
-		internal float DistanceY { get; private set; }
+		internal Placement Location { get; }
+		internal float DistanceX { get; }
+		internal float DistanceY { get; }
 		internal bool IsOverlapping => (Location & Placement.Overlapping) != Placement.Unknown;
 		internal bool IsLeft => (Location & Placement.Left) != Placement.Unknown;
 		internal bool IsRight => (Location & Placement.Right) != Placement.Unknown;

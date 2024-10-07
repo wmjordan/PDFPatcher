@@ -3,18 +3,13 @@ using PDFPatcher.Common;
 
 namespace PDFPatcher.Processor
 {
-	sealed class ChangePageNumberProcessor : IPdfInfoXmlProcessor
+	sealed class ChangePageNumberProcessor(int amount, bool isAbsolute, bool skipZero) : IPdfInfoXmlProcessor
 	{
-		public bool IsAbsolute { get; }
-		public int Amount { get; }
-		public bool SkipZero { get; }
+		public bool IsAbsolute { get; } = isAbsolute;
+		public int Amount { get; } = amount;
+		public bool SkipZero { get; } = skipZero;
 
 		public ChangePageNumberProcessor(int amount) : this(amount, false, false) { }
-		public ChangePageNumberProcessor(int amount, bool isAbsolute, bool skipZero) {
-			IsAbsolute = isAbsolute;
-			Amount = amount;
-			SkipZero = skipZero;
-		}
 
 		#region IInfoDocProcessor 成员
 
@@ -39,10 +34,9 @@ namespace PDFPatcher.Processor
 				else {
 					p += Amount;
 				}
-				if (p < 1) {
-					return null;
-				}
-				return UndoAttributeAction.GetUndoAction(item, Constants.DestinationAttributes.Page, p.ToText());
+				return p < 1
+					? null
+					: UndoAttributeAction.GetUndoAction(item, Constants.DestinationAttributes.Page, p.ToText());
 			}
 			else {
 				var undo = new UndoActionGroup();

@@ -30,7 +30,7 @@ namespace PDFPatcher.Functions
 					_TargetBox.Text = FileHelper.CombinePath(Path.GetDirectoryName(sourceFile), Path.GetFileNameWithoutExtension(sourceFile));
 				}
 			};
-			_AutoOutputDirBox.CheckedChanged += (object sender, EventArgs e) => { AppContext.ImageExtracter.AutoOutputFolder = _AutoOutputDirBox.Checked; };
+			_AutoOutputDirBox.CheckedChanged += (object sender, EventArgs e) => AppContext.ImageExtracter.AutoOutputFolder = _AutoOutputDirBox.Checked;
 			ShowFileMaskPreview();
 			AppContext.MainForm.SetTooltip(_SourceFileControl.FileList, "包含图片的 PDF 文件路径");
 			AppContext.MainForm.SetTooltip(_TargetBox, "放置输出图片的文件夹路径");
@@ -137,7 +137,7 @@ namespace PDFPatcher.Functions
 					Processor.Worker.ExtractImages(files[0], options);
 				}
 			};
-			worker.RunWorkerCompleted += (dummy, arg) => { AppContext.ImageExtracter.OutputPath = _ExtractPageRangeBox.Text; };
+			worker.RunWorkerCompleted += (dummy, arg) => AppContext.ImageExtracter.OutputPath = _ExtractPageRangeBox.Text;
 			var option = AppContext.ImageExtracter;
 			option.ExtractAnnotationImages = _ExportAnnotImagesBox.Checked;
 			option.PageRange = _ExtractPageRangeBox.Text;

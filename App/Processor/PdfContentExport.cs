@@ -75,7 +75,7 @@ namespace PDFPatcher.Processor
 
 		internal void ExportContents(XmlWriter writer, PdfReader reader) {
 			if (_options.ExtractImages) {
-				_imageExporter = new ImageExtractor(_options.Images, reader);
+				_imageExporter = new ImageExtractor(_options.Images);
 			}
 			writer.WriteStartElement(Constants.Body);
 			writer.WriteAttributeString(Constants.ContentPrefix, "http://www.w3.org/2000/xmlns/", Constants.ContentNamespace);

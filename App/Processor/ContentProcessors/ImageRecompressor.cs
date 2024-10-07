@@ -10,7 +10,7 @@ namespace PDFPatcher.Processor
 {
 	sealed class ImageRecompressor : IPageProcessor
 	{
-		static readonly PdfName[] __IgnoreFilters = new PdfName[] { PdfName.JBIG2DECODE };
+		static readonly PdfName[] __IgnoreFilters = [PdfName.JBIG2DECODE];
 		static readonly ImageExtracterOptions _imgExpOption = new ImageExtracterOptions() {
 			OutputPath = System.IO.Path.GetTempPath(),
 			MergeImages = false
@@ -31,8 +31,8 @@ namespace PDFPatcher.Processor
 		}
 		public bool EndProcess(PdfReader pdf) {
 			Tracker.TraceMessage(Tracker.Category.Notice, Name + "功能：");
-			Tracker.TraceMessage("　　处理了 " + _processedImageCount + " 幅图片。");
-			Tracker.TraceMessage("　　优化了 " + _optimizedImageCount + " 幅图片的压缩率。");
+			Tracker.TraceMessage($"　　处理了 {_processedImageCount} 幅图片。");
+			Tracker.TraceMessage($"　　优化了 {_optimizedImageCount} 幅图片的压缩率。");
 			return false;
 		}
 

@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using System.Windows.Forms;
 using PDFPatcher.Common;
-using PDFPatcher.Model;
 
 namespace PDFPatcher.Functions
 {

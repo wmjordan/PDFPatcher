@@ -10,12 +10,12 @@ namespace PDFPatcher.Model
 	[System.Diagnostics.DebuggerDisplay("Name = {Name}({FriendlyName}); Value = {Value}; {HasChildren}")]
 	public sealed class DocumentObject : IHierarchicalObject<DocumentObject>
 	{
-		static readonly string[] __ReversalRefNames = new string[] { "Parent", "Prev", "First", "Last", "P" };
-		static readonly int[] __CompoundTypes = new int[] { PdfObject.DICTIONARY, PdfObject.ARRAY, PdfObject.STREAM };
-		static readonly DocumentObject[] __Leaf = new DocumentObject[0];
+		static readonly string[] __ReversalRefNames = ["Parent", "Prev", "First", "Last", "P"];
+		static readonly int[] __CompoundTypes = [PdfObject.DICTIONARY, PdfObject.ARRAY, PdfObject.STREAM];
+		static readonly DocumentObject[] __Leaf = [];
 
-		internal PdfPathDocument OwnerDocument { get; private set; }
-		internal DocumentObject Parent { get; private set; }
+		internal PdfPathDocument OwnerDocument { get; }
+		internal DocumentObject Parent { get; }
 		internal string Name { get; set; }
 		internal PdfObject Value { get; set; }
 		internal string Description { get; set; }
@@ -55,8 +55,7 @@ namespace PDFPatcher.Model
 					if (Type == PdfObjectType.GoToPage) {
 						return false;
 					}
-					var r = ExtensiveObject as PdfObject;
-					if (r == null) {
+					if (ExtensiveObject is not PdfObject r) {
 						return false;
 					}
 					if (r.Type == PdfObject.DICTIONARY && Parent.Type == PdfObjectType.Outline && Name == "Next") {
@@ -75,9 +74,7 @@ namespace PDFPatcher.Model
 			get {
 				if (_Children == null) {
 					PopulateChildren(false);
-					if (_Children == null) {
-						_Children = __Leaf;
-					}
+					_Children ??= __Leaf;
 				}
 				return _Children;
 			}
@@ -132,7 +129,7 @@ namespace PDFPatcher.Model
 		}
 
 		internal bool RemoveChildByName(string name) {
-			if (HasChildren == false) {
+			if (!HasChildren) {
 				return false;
 			}
 			for (int i = _Children.Count - 1; i >= 0; i--) {
@@ -170,8 +167,7 @@ namespace PDFPatcher.Model
 		}
 
 		internal bool UpdateDocumentObject(object value) {
-			var po = Value as PdfObject;
-			if (po == null) {
+			if (Value is not PdfObject po) {
 				return false;
 			}
 			switch (po.Type) {
@@ -248,7 +244,7 @@ namespace PDFPatcher.Model
 						return "Form";
 				}
 			}
-			while ((d.IsKeyObject == false || String.IsNullOrEmpty(contextName = d.Name)) && (d = d.Parent) != null) {
+			while ((!d.IsKeyObject || String.IsNullOrEmpty(contextName = d.Name)) && (d = d.Parent) != null) {
 			}
 			return contextName;
 		}
@@ -409,7 +405,7 @@ namespace PDFPatcher.Model
 		private void PopulatePageCommand(PdfPageCommand item) {
 			string fn;
 			var op = item.Name.ToString();
-			if (PdfPageCommand.GetFriendlyCommandName(op, out fn) == false) {
+			if (!PdfPageCommand.GetFriendlyCommandName(op, out fn)) {
 				fn = "未知操作符";
 			}
 			var o = new DocumentObject(OwnerDocument, this, fn, null, PdfObjectType.PageCommand) {
@@ -454,7 +450,7 @@ namespace PDFPatcher.Model
 					}
 				}
 				var e = (EnclosingCommand)item;
-				if (e.HasCommand == false) {
+				if (!e.HasCommand) {
 					return;
 				}
 				foreach (var cmd in e.Commands) {

@@ -2,7 +2,7 @@
 {
 	sealed class ReplaceTitleTextProcessor : IPdfInfoXmlProcessor
 	{
-		static readonly BookmarkMatcher.SimpleReplacer __replacer = new BookmarkMatcher.SimpleReplacer();
+		static readonly BookmarkMatcher.SimpleReplacer __replacer = new();
 
 		readonly BookmarkMatcher _matcher;
 		readonly string _replacement;
@@ -12,23 +12,18 @@
 			_replacement = replacement;
 		}
 		public ReplaceTitleTextProcessor(BookmarkMatcher matcher, string replacement) {
-			if (matcher == null) {
-				throw new System.ArgumentNullException("matcher");
-			}
-			_matcher = matcher;
+			_matcher = matcher ?? throw new System.ArgumentNullException(nameof(matcher));
 			_replacement = replacement;
 		}
 
 		#region IInfoDocProcessor 成员
 
-		public string Name => string.Concat("替换文本为“", _replacement, "”");
+		public string Name => $"替换文本为“{_replacement}”";
 
 		public IUndoAction Process(System.Xml.XmlElement item) {
-			var a = item.GetAttributeNode(Constants.BookmarkAttributes.Title);
-			if (a == null) {
-				return null;
-			}
-			return _matcher.Replace(item, _replacement);
+			return item.HasAttribute(Constants.BookmarkAttributes.Title)
+				? _matcher.Replace(item, _replacement)
+				: null;
 		}
 
 		#endregion

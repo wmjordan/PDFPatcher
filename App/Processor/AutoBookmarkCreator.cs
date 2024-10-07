@@ -11,19 +11,14 @@ namespace PDFPatcher.Processor
 {
 	sealed class AutoBookmarkCreator
 	{
-		sealed class SizeOccurrence
+		sealed class SizeOccurrence(float size, int page, string instance)
 		{
-			public float Size { get; set; }
-			public int FirstPage { get; set; }
-			public string FirstInstance { get; set; }
-			public int Occurrence { get; set; }
-			public SizeOccurrence(float size, int page, string instance) {
-				Size = size;
-				Occurrence = 1;
-				FirstPage = page;
-				FirstInstance = instance.Length > 50 ? instance.Substring(0, 50) : instance;
-			}
+			public float Size { get; set; } = size;
+			public int FirstPage { get; set; } = page;
+			public string FirstInstance { get; set; } = instance.Length > 50 ? instance.Substring(0, 50) : instance;
+			public int Occurrence { get; set; } = 1;
 		}
+
 		sealed class FontOccurrence
 		{
 			readonly Dictionary<string, List<SizeOccurrence>> oc = new Dictionary<string, List<SizeOccurrence>>();
@@ -36,7 +31,7 @@ namespace PDFPatcher.Processor
 					oc.Add(fontName, new List<SizeOccurrence>() { new SizeOccurrence(size, page, instance) });
 				}
 				else {
-					var o = oc[fontName].Find((s) => { return s.Size == size; });
+					var o = oc[fontName].Find((s) => s.Size == size);
 					if (o != null) {
 						o.Occurrence++;
 					}
@@ -52,6 +47,7 @@ namespace PDFPatcher.Processor
 		readonly PdfReader _reader;
 		readonly AutoBookmarkOptions _options;
 		const int OpenWorkload = 10;
+
 		public AutoBookmarkCreator(PdfReader reader, AutoBookmarkOptions options) {
 			_reader = reader;
 			_options = options;
@@ -108,7 +104,7 @@ namespace PDFPatcher.Processor
 			XmlWriter oldWriter = null;
 			if (options.ExportTextCoordinates == false) {
 				oldWriter = writer;
-				writer = new Processor.NullXmlWriter();
+				writer = new NullXmlWriter();
 			}
 			foreach (PageRange r in ranges) {
 				for (int i = r.StartValue; i <= r.EndValue && i < pn; i++) {
@@ -131,10 +127,7 @@ namespace PDFPatcher.Processor
 						};
 					}
 					p.ProcessContent(reader.GetPageContent(i), reader.GetPageNRelease(i).GetAsDict(PdfName.RESOURCES));
-					//p.SortTextList ();
-					//p.PostProcessTextList ();
 
-					//var tr = p.TextList;
 					c.IsTextMerged = false;
 					c.TextLine = null;
 					// TODO: 自动根据已知排版方向比例修正排版方向
@@ -206,7 +199,6 @@ namespace PDFPatcher.Processor
 							}
 							if (options.AutoHierarchicalArrangement) {
 								do {
-									//if (ValueHelper.TryParse (be.GetAttribute (Constants.Font.Size), out size) == false || s < size) {
 									if (sizes.Count == 0 || s < (size = sizes.Peek())) {
 										be = be.AppendChild(doc.CreateElement(Constants.Bookmark)) as XmlElement;
 										sizes.Push(s);
@@ -308,7 +300,7 @@ namespace PDFPatcher.Processor
 						writer.WriteAttributeString(Constants.FontOccurrence.FirstText, s.FirstInstance);
 						writer.WriteAttributeString(Constants.FontOccurrence.FirstPage, s.FirstPage.ToText());
 						if (options.DisplayFontStatistics && (s.Occurrence > 0 || options.DisplayAllFonts)) {
-							Tracker.TraceMessage(String.Concat("\t尺寸：", s.Size.ToText(), "\t出现次数：", s.Occurrence.ToText(), "\t首次出现于第", s.FirstPage.ToText(), "页（", s.FirstInstance, "）"));
+							Tracker.TraceMessage($"\t尺寸：{s.Size.ToText()}\t出现次数：{s.Occurrence.ToText()}\t首次出现于第{s.FirstPage.ToText()}页（{s.FirstInstance}）");
 						}
 						writer.WriteEndElement();
 					}
@@ -553,12 +545,9 @@ namespace PDFPatcher.Processor
 			readonly List<TextInfo> _TextList;
 			readonly LevelProcessor _levelProcessor;
 			readonly AutoBookmarkContext _context;
-			const string __AddSpaceAfterCharacters = ":.,\"'?!)]};";
-			const string __InsertSpaceBeforeCharacters = "\"'([{";
 
 			public TextToBookmarkProcessor(AutoBookmarkOptions options, AutoBookmarkContext context) {
 				_fontSizeThreshold = options.TitleThreshold;
-				//_positionRectangle = options.PositionRectangle;
 				_mergeAdjacentTitles = options.MergeAdjacentTitles;
 				_mergeDifferentSizeTitles = options.MergeDifferentSizeTitles;
 				_levelProcessor = new LevelProcessor(options.LevelAdjustment);
@@ -575,7 +564,7 @@ namespace PDFPatcher.Processor
 			/// <summary>
 			/// 获取字体列表。
 			/// </summary>
-			internal IDictionary<int, string> FontList => base.Fonts;
+			internal IDictionary<int, string> FontList => Fonts;
 
 			public Matrix RotationMatrix { get; set; }
 
@@ -587,14 +576,14 @@ namespace PDFPatcher.Processor
 			protected override void DisplayPdfString(PdfString str) {
 				var gs = CurrentGraphicState;
 				var font = gs.Font;
-				var chars = font.DecodeText(str).ToCharArray();
+				var chars = font.DecodeText(str);
 				float totalWidth = 0, charWidth = 0;
 				foreach (var c in chars) {
 					float w = font.GetWidth(c) / 1000.0f;
 					if (w == 0 && (font.CjkType & FontInfo.CjkFontType.CJK) > 0) {
 						w = c < 0xFF ? 0.5f : 1f;
 					}
-					float wordSpacing = (c == ' ' ? gs.WordSpacing : 0f);
+					float wordSpacing = c == ' ' ? gs.WordSpacing : 0f;
 					if (Char.IsLetterOrDigit(c)) {
 						charWidth += w * gs.FontSize * gs.HorizontalScaling;
 					}
@@ -625,9 +614,6 @@ namespace PDFPatcher.Processor
 						if (size < 0) {
 							size = -size;
 						}
-						//if (size < _fontSizeThreshold) {
-						//    goto default;
-						//}
 						text = CurrentGraphicState.Font.DecodeText(operands[0] as PdfString);
 						break;
 					default:
@@ -663,28 +649,12 @@ namespace PDFPatcher.Processor
 					goto Exit;
 				}
 				//TODO: 筛选文本
-				//this._context.TextInfo = ti;
-				//ti.Size = _levelProcessor.ChangeSizeLevel (this._context);
-				//if (ti.Size < _fontSizeThreshold) {
-				//    return;
-				//}
-
-				//if (_positionRectangle != null && ti.Region.Right < this._positionRectangle.Left
-				//    || ti.Region.Top < this._positionRectangle.Top - this._positionRectangle.Height
-				//    || ti.Region.Bottom > this._positionRectangle.Top
-				//    || ti.Region.Left > this._positionRectangle.Right) {
-				//    // 文本落在范围框之外
-				//    goto Exit;
-				//}
 				_TextList.Add(ti);
 			Exit:
 				return;
 			}
 
 			string DecodeTJText(List<PdfObject> operands, float size) {
-				//if (size < _fontSizeThreshold) {
-				//    goto default;
-				//}
 				var array = (PdfArray)operands[0];
 				float d = size * CurrentGraphicState.HorizontalScaling * 4f / 1000f;
 				var t = new string[array.Size];

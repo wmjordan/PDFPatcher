@@ -9,12 +9,9 @@ namespace PDFPatcher.Processor
 	/// <summary>
 	/// 删除指定字典名称项目的处理器。
 	/// </summary>
-	sealed class RemoveDictionaryItemProcessor : IPageProcessor
+	sealed class RemoveDictionaryItemProcessor(PdfName itemName) : IPageProcessor
 	{
-		readonly PdfName _ItemName;
-		public RemoveDictionaryItemProcessor(PdfName itemName) {
-			_ItemName = itemName;
-		}
+		readonly PdfName _ItemName = itemName;
 
 		#region IPageProcessor 成员
 		public string Name => "删除字典项目";

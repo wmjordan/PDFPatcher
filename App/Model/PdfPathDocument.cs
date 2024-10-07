@@ -30,17 +30,17 @@ namespace PDFPatcher.Model
 				for (int i = 1; i < c.Length - 1; i++) {
 					var a = (i - 1) * pageGroupNumber + 1;
 					var b = Math.Min(l, i * pageGroupNumber);
-					c[i] = new DocumentObject(this, null, "Pages", null, PdfObjectType.Pages) { IsKeyObject = true, ExtensiveObject = a + "-" + b, FriendlyValue = $"第 {a} 至 {b} 页，共 {l} 页" };
+					c[i] = new DocumentObject(this, null, "Pages", null, PdfObjectType.Pages) { IsKeyObject = true, ExtensiveObject = $"{a}-{b}", FriendlyValue = $"第 {a} 至 {b} 页，共 {l} 页" };
 				}
 				c[c.Length - 1] = _hiddenObjects;
 				_rootObjects = c;
 			}
 			else {
-				_rootObjects = new DocumentObject[] {
+				_rootObjects = [
 					_trailer,
 					new DocumentObject (this, null, "Pages", null, PdfObjectType.Pages) { IsKeyObject = true, FriendlyValue = "共 " + l + " 页" },
 					_hiddenObjects
-				};
+				];
 			}
 		}
 

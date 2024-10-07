@@ -2,6 +2,9 @@
 
 namespace PDFPatcher
 {
+	/// <summary>
+	/// 支持自定义工具栏。
+	/// </summary>
 	sealed class Toolkit
 	{
 		internal static readonly Toolkit[] Toolkits = {

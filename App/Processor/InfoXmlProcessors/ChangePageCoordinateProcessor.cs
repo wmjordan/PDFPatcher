@@ -1,20 +1,11 @@
-﻿using PDFPatcher.Common;
-
-namespace PDFPatcher.Processor
+﻿namespace PDFPatcher.Processor
 {
-	sealed class ChangePageCoordinateProcessor : IPdfInfoXmlProcessor
+	sealed class ChangePageCoordinateProcessor(string coordinateName, int pageNumber, float x, float y) : IPdfInfoXmlProcessor
 	{
-		public string CoordinateName { get; }
-		public int PageNumber { get; }
-		public float X { get; }
-		public float Y { get; }
-
-		public ChangePageCoordinateProcessor(string coordinateName, int pageNumber, float x, float y) {
-			CoordinateName = coordinateName;
-			PageNumber = pageNumber;
-			X = x;
-			Y = y;
-		}
+		public string CoordinateName { get; } = coordinateName;
+		public int PageNumber { get; } = pageNumber;
+		public float X { get; } = x;
+		public float Y { get; } = y;
 
 		#region IInfoDocProcessor 成员
 

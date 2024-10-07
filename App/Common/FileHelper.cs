@@ -118,9 +118,9 @@ namespace PDFPatcher.Common
 
 			switch (__OverwriteMode) {
 				case OverwriteType.Prompt:
-					var r = Common.FormHelper.YesNoCancelBox(String.Join("\n", new string[] {
+					var r = Common.FormHelper.YesNoCancelBox(String.Join("\n", [
 						"是否覆盖目标文件？", targetFile, "\n按住 Shift 键重复此对话框的选择，本次操作不再弹出覆盖文件提示。"
-					}));
+					]));
 					if (r == System.Windows.Forms.DialogResult.No) {
 						if (FormHelper.IsShiftKeyDown) {
 							__OverwriteMode = OverwriteType.Skip;
@@ -218,7 +218,7 @@ namespace PDFPatcher.Common
 				length = 11;
 			}
 			return path == null ? string.Empty
-				: path.Length > length ? (path.Substring(0, 7) + "..." + path.Substring(path.Length - (length - 10)))
+				: path.Length > length ? $"{path.Substring(0, 7)}...{path.Substring(path.Length - (length - 10))}"
 				: path;
 		}
 

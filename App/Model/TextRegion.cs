@@ -1,26 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace PDFPatcher.Model
 {
 	[System.Diagnostics.DebuggerDisplay("{Direction}({Region.Top},{Region.Left})Lines={Lines.Count}")]
 	sealed class TextRegion
 	{
-		internal WritingDirection Direction { get; set; }
-		internal Bound Region { get; private set; }
+		internal Bound Region { get; }
 
 		/// <summary>
 		/// 获取文本区域中的行。
-		/// 不应该调用此属性的 Add 方法添加行，而应使用 <see cref="TextRegion.AddLine"/> 方法。
+		/// 不应该调用此属性的 Add 方法添加行，而应使用 <see cref="AddLine"/> 方法。
 		/// </summary>
-		internal List<TextLine> Lines { get; private set; }
+		internal List<TextLine> Lines { get; } = [];
+		internal WritingDirection Direction { get; set; }
 
-		internal TextRegion() {
-			Lines = new List<TextLine>();
-		}
-
-		internal TextRegion(TextLine text) : this() {
+		internal TextRegion(TextLine text) {
 			Region = new Bound(text.Region);
 			AddLine(text);
 		}

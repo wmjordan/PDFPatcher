@@ -195,7 +195,6 @@ namespace BrightIdeasSoftware
 
 		/// <summary>测试坐标点属于哪个单元格。</summary>
 		public static GridTestResult GetGridAt(this ObjectListView view, int x, int y) {
-			OLVColumn c = null;
 			var cr = view.ContentRectangle;
 			var ic = view.GetItemCount();
 			var ob = false;
@@ -216,7 +215,7 @@ namespace BrightIdeasSoftware
 				y = cb;
 				ob = true;
 			}
-			var r = view.GetItemAt(x, y, out c);
+			var r = view.GetItemAt(x, y, out OLVColumn c);
 			if (r != null) {
 				return new GridTestResult(c.DisplayIndex, r.Index, ob);
 			}
@@ -253,16 +252,10 @@ namespace BrightIdeasSoftware
 
 	}
 
-	public struct GridTestResult
+	struct GridTestResult(int columnIndex, int rowIndex, bool isOutOfRange)
 	{
-		public int ColumnIndex { get; private set; }
-		public int RowIndex { get; private set; }
-		public bool IsOutOfRange { get; private set; }
-
-		public GridTestResult(int columnIndex, int rowIndex, bool isOutOfRange) {
-			ColumnIndex = columnIndex;
-			RowIndex = rowIndex;
-			IsOutOfRange = isOutOfRange;
-		}
+		public int ColumnIndex { get; } = columnIndex;
+		public int RowIndex { get; } = rowIndex;
+		public bool IsOutOfRange { get; } = isOutOfRange;
 	}
 }

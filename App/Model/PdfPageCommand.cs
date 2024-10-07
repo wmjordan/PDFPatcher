@@ -149,7 +149,7 @@ namespace PDFPatcher.Model
 		}
 	}
 
-	sealed class EnclosingCommand : PdfPageCommand, IPdfPageCommandContainer
+	sealed class EnclosingCommand(PdfLiteral oper, List<PdfObject> operands) : PdfPageCommand(oper, operands), IPdfPageCommandContainer
 	{
 		const string BQ = "q";
 		const string BT = "BT";
@@ -161,18 +161,18 @@ namespace PDFPatcher.Model
 		const string EMC = "EMC";
 		const string EX = "EX";
 
-		static readonly string[] __StartEnclosingCommands = new string[] { BQ, BT, BDC, BMC, BX };
-		static readonly string[] __EndEnclosingCommands = new string[] { EQ, ET, EMC, EX };
-		static readonly PdfLiteral[] __EnclosingCommands = new PdfLiteral[] {
+		static readonly string[] __StartEnclosingCommands = [BQ, BT, BDC, BMC, BX];
+		static readonly string[] __EndEnclosingCommands = [EQ, ET, EMC, EX];
+		static readonly PdfLiteral[] __EnclosingCommands = [
 			new PdfLiteral(EQ),
 			new PdfLiteral(ET),
 			new PdfLiteral(EMC),
 			new PdfLiteral(EMC),
 			new PdfLiteral(EX)
-		};
+		];
 
 		public bool HasCommand => Commands.Count > 0;
-		public IList<PdfPageCommand> Commands { get; }
+		public IList<PdfPageCommand> Commands { get; } = new List<PdfPageCommand>();
 		public override PdfPageCommandType Type => PdfPageCommandType.Enclosure;
 		public override bool HasOutput {
 			get {
@@ -187,13 +187,10 @@ namespace PDFPatcher.Model
 			}
 		}
 
-		public EnclosingCommand(PdfLiteral oper, List<PdfObject> operands)
-			: base(oper, operands) {
-			Commands = new List<PdfPageCommand>();
-		}
-
 		internal static EnclosingCommand Create(string name, IEnumerable<PdfObject> operands, params PdfPageCommand[] subCommands) {
-			var c = new EnclosingCommand(new PdfLiteral(name), operands != null ? new List<PdfObject>(operands) : null);
+			var c = new EnclosingCommand(new PdfLiteral(name), operands != null
+				? new List<PdfObject>(operands)
+				: null);
 			((List<PdfPageCommand>)c.Commands).AddRange(subCommands);
 			return c;
 		}
@@ -236,14 +233,10 @@ namespace PDFPatcher.Model
 		}
 	}
 
-	class TextCommand : OutputCommand
+	class TextCommand(PdfLiteral oper, List<PdfObject> operands, TextInfo text) : OutputCommand(oper, operands)
 	{
-		public TextInfo TextInfo { get; private set; }
+		public TextInfo TextInfo { get; } = text;
 		public override PdfPageCommandType Type => PdfPageCommandType.Text;
-		public TextCommand(PdfLiteral oper, List<PdfObject> operands, TextInfo text)
-			: base(oper, operands) {
-			TextInfo = text;
-		}
 	}
 
 	sealed class PaceAndTextCommand : TextCommand
@@ -267,8 +260,8 @@ namespace PDFPatcher.Model
 
 	sealed class MatrixCommand : AdjustCommand
 	{
-		public static PdfLiteral CM = new PdfLiteral("cm");
-		public static PdfLiteral TM = new PdfLiteral("Tm");
+		public static PdfLiteral CM = new("cm");
+		public static PdfLiteral TM = new("Tm");
 		public override PdfPageCommandType Type => PdfPageCommandType.Matrix;
 
 		public MatrixCommand(PdfLiteral oper, List<PdfObject> operands)
@@ -292,14 +285,9 @@ namespace PDFPatcher.Model
 		}
 	}
 
-	sealed class FontCommand : AdjustCommand
+	sealed class FontCommand(PdfLiteral oper, List<PdfObject> operands, string fontName) : AdjustCommand(oper, operands)
 	{
-		public FontCommand(PdfLiteral oper, List<PdfObject> operands, string fontName)
-			: base(oper, operands) {
-			FontName = fontName;
-		}
-
-		public string FontName { get; }
+		public string FontName { get; } = fontName;
 		public PdfName ResourceName {
 			get => Operands[0] as PdfName;
 			set => Operands[0] = value;
@@ -312,15 +300,12 @@ namespace PDFPatcher.Model
 		public override bool HasOutput => false;
 	}
 
-	sealed class InlineImageCommand : OutputCommand
+	sealed class InlineImageCommand(PdfLiteral oper, List<PdfObject> operands) : OutputCommand(oper, operands)
 	{
 		//static readonly PdfName __DCT = new PdfName ("DCT");
 		//static readonly PdfName __CCF = new PdfName ("CCF");
-		static readonly PdfLiteral __ID = new PdfLiteral("ID");
-		static readonly PdfLiteral __EI = new PdfLiteral("EI");
-
-		public InlineImageCommand(PdfLiteral oper, List<PdfObject> operands) : base(oper, operands) {
-		}
+		static readonly PdfLiteral __ID = new("ID");
+		static readonly PdfLiteral __EI = new("EI");
 
 		public PdfImageData Image => Operands[0] as PdfImageData;
 		public override PdfPageCommandType Type => PdfPageCommandType.InlineImage;

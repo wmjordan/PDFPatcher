@@ -104,8 +104,7 @@ namespace PDFPatcher.Functions
 				}
 			};
 			_ActionColumn.AspectGetter = (object x) => {
-				var e = x as XmlElement;
-				if (e == null) {
+				if (x is not XmlElement e) {
 					return String.Empty;
 				}
 				var a = e.GetAttribute(Constants.DestinationAttributes.Action);
@@ -126,8 +125,7 @@ namespace PDFPatcher.Functions
 		}
 		#region 拖放操作
 		protected override void OnCanDrop(OlvDropEventArgs args) {
-			var o = args.DataObject as DataObject;
-			if (o == null) {
+			if (args.DataObject is not DataObject o) {
 				return;
 			}
 			foreach (var item in o.GetFileDropList()) {
@@ -415,9 +413,7 @@ namespace PDFPatcher.Functions
 						return;
 					}
 					li = i;
-					if (fi == null) {
-						fi = i;
-					}
+					fi ??= i;
 				}
 			}
 			if ((fi ?? li) != null) {
@@ -597,8 +593,7 @@ namespace PDFPatcher.Functions
 
 		protected override void OnFormatRow(FormatRowEventArgs args) {
 			base.OnFormatRow(args);
-			var b = args.Model as BookmarkElement;
-			if (b == null) {
+			if (args.Model is not BookmarkElement b) {
 				return;
 			}
 			args.Item.UseItemStyleForSubItems = false;

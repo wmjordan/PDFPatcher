@@ -1,42 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml;
+using PDFPatcher.Common;
 
 namespace PDFPatcher.Model
 {
-	readonly struct PdfStructInfo
+	readonly struct PdfStructInfo(string name, bool isKeyObject, bool isRequired, string description, string imageKey)
 	{
 		static readonly Dictionary<string, PdfStructInfo> _Info = InitStructInfo();
-		readonly string _Name;
-		readonly bool _IsKeyObject;
-		readonly bool _IsRequired;
-		readonly string _Description;
-		readonly string _ImageKey;
 
-		public string Name => _Name;
-		public bool IsKeyObject => _IsKeyObject;
-		public bool IsRequired => _IsRequired;
-		public string Description => _Description;
-		public string ImageKey => _ImageKey;
+		public string Name { get; } = name;
+		public bool IsKeyObject { get; } = isKeyObject;
+		public bool IsRequired { get; } = isRequired;
+		public string Description { get; } = description;
+		public string ImageKey { get; } = imageKey;
 
 		public PdfStructInfo(string name, bool isKeyObject) : this(name, isKeyObject, false, null, null) {
 		}
-		public PdfStructInfo(string name, bool isKeyObject, bool isRequired, string description, string imageKey) {
-			_Name = name;
-			_IsKeyObject = isKeyObject;
-			_IsRequired = isRequired;
-			_Description = description;
-			_ImageKey = imageKey;
-		}
+
 		internal static PdfStructInfo GetInfo(string context, string name) {
 			PdfStructInfo i;
-			if (_Info.TryGetValue($"{context}/{name}", out i)) {
-				return i;
-			}
-			else {
+			if (!_Info.TryGetValue($"{context}/{name}", out i)) {
 				_Info.TryGetValue(name, out i);
-				return i;
 			}
+			return i;
 		}
 
 		static Dictionary<string, PdfStructInfo> InitStructInfo() {
@@ -44,8 +31,8 @@ namespace PDFPatcher.Model
 			using (System.IO.Stream s = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("PDFPatcher.Model.PDFStructInfo.xml")) {
 				var doc = new XmlDocument();
 				doc.Load(s);
-				AddSubItems(d, doc.SelectSingleNode("PDF/Global") as XmlElement);
-				AddSubItems(d, doc.SelectSingleNode("PDF") as XmlElement);
+				AddSubItems(d, doc.GetElement("PDF").GetElement("Global"));
+				AddSubItems(d, doc.GetElement("PDF"));
 			}
 			return d;
 		}
@@ -56,8 +43,7 @@ namespace PDFPatcher.Model
 			}
 			var currentToken = element.GetAttribute("Token");
 			foreach (XmlNode item in element.ChildNodes) {
-				var e = item as XmlElement;
-				if (e == null) {
+				if (item is not XmlElement e) {
 					continue;
 				}
 				var t = e.GetAttribute("Token");
@@ -65,7 +51,7 @@ namespace PDFPatcher.Model
 					continue;
 				}
 				if (e.Name == "Info") {
-					AddItem(d, String.IsNullOrEmpty(currentToken) ? t : String.Concat(currentToken, "/", t), new PdfStructInfo(e.GetAttribute("Name"), e.HasChildNodes, e.GetAttribute("Required") == "true", e.GetAttribute("Description"), e.GetAttribute("ImageKey")));
+					AddItem(d, String.IsNullOrEmpty(currentToken) ? t : $"{currentToken}/{t}", new PdfStructInfo(e.GetAttribute("Name"), e.HasChildNodes, e.GetAttribute("Required") == "true", e.GetAttribute("Description"), e.GetAttribute("ImageKey")));
 					AddSubItems(d, e);
 				}
 				else if (e.Name == "RefInfo" && d.TryGetValue(t, out var s)) {

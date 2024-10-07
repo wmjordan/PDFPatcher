@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using PDFPatcher.Model;
 
 namespace PDFPatcher.Processor
 {
 	internal sealed class MultiConditionFilter : AutoBookmarkFilter
 	{
-		readonly List<AutoBookmarkFilter> _filters = new List<AutoBookmarkFilter>();
+		readonly List<AutoBookmarkFilter> _filters = [];
 
 		public MultiConditionFilter(AutoBookmarkCondition.MultiCondition condition) {
 			foreach (var item in condition.Conditions) {

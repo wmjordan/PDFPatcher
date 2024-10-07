@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using PDFPatcher.Common;
 
 namespace PDFPatcher.Model.PdfPath
@@ -47,59 +45,40 @@ namespace PDFPatcher.Model.PdfPath
 		}
 
 		public static bool ToBoolean(DocumentObject source, IPathValue value) {
-			switch (value.ValueType) {
-				case PathValueType.Expression:
-					return (value as IPathExpression).SelectObject(source) != null;
-				case PathValueType.String:
-					return (value as PathStringValue).Value.Length > 0;
-				case PathValueType.Number:
-					return (value as PathNumberValue).Value != 0;
-				case PathValueType.Boolean:
-					return (value as PathBooleanValue).Value;
-				default:
-					return false;
-			}
+			return value.ValueType switch {
+				PathValueType.Expression => ((IPathExpression)value).SelectObject(source) != null,
+				PathValueType.String => ((PathStringValue)value).Value.Length > 0,
+				PathValueType.Number => ((PathNumberValue)value).Value != 0,
+				PathValueType.Boolean => ((PathBooleanValue)value).Value,
+				_ => false,
+			};
 		}
 
-
-		sealed class PathStringValue : IConstantPathValue
+		sealed class PathStringValue(string value) : IConstantPathValue
 		{
 			public PathValueType ValueType => PathValueType.String;
 
-			public string Value { get; private set; }
+			public string Value { get; } = value;
 
 			public string LiteralValue => Value;
-
-			public PathStringValue(string value) {
-				Value = value;
-			}
 		}
 
-		sealed class PathNumberValue : IConstantPathValue
+		sealed class PathNumberValue(double value) : IConstantPathValue
 		{
 			public PathValueType ValueType => PathValueType.Number;
 
-			public double Value { get; private set; }
+			public double Value { get; } = value;
 
 			public string LiteralValue => Value.ToText();
-
-			public PathNumberValue(double value) {
-				Value = value;
-			}
 		}
 
-		sealed class PathBooleanValue : IConstantPathValue
+		sealed class PathBooleanValue(bool value) : IConstantPathValue
 		{
 			public PathValueType ValueType => PathValueType.Boolean;
 
-			public bool Value { get; private set; }
+			public bool Value { get; } = value;
 
 			public string LiteralValue => Value.ToString();
-
-			public PathBooleanValue(bool value) {
-				Value = value;
-			}
 		}
-
 	}
 }

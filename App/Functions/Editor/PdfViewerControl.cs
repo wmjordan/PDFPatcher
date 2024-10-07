@@ -785,9 +785,7 @@ namespace PDFPatcher.Functions
 					continue;
 				}
 				var s = new HashSet<int>();
-				if (r == null) {
-					r = new List<TextLine>();
-				}
+				r ??= new List<TextLine>();
 				foreach (var line in block) {
 					if (pr.Intersect(line.Bound).Area > line.Bound.Area * 0.618f) {
 						r.Add(line);

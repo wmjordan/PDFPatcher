@@ -10,7 +10,7 @@ namespace PDFPatcher
 
 			sourceFile = System.IO.Path.GetFileName(sourceFile);
 			Text += "：" + sourceFile;
-			_MessageLabel.Text = _MessageLabel.Text.Replace("PDF 文件", String.Concat("PDF 文件 ", sourceFile, " "));
+			_MessageLabel.Text = _MessageLabel.Text.Replace("PDF 文件", $"PDF 文件 {sourceFile} ");
 		}
 
 		/// <summary>

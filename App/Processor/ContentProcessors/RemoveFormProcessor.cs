@@ -18,7 +18,7 @@ namespace PDFPatcher.Processor
 		}
 		public bool EndProcess(PdfReader pdf) {
 			Tracker.TraceMessage(Tracker.Category.Notice, Name + "功能：");
-			Tracker.TraceMessage("　　删除了 " + _processedPageCount + " 页的表单区域。");
+			Tracker.TraceMessage($"　　删除了 {_processedPageCount} 页的表单区域。");
 			return false;
 		}
 
@@ -49,8 +49,7 @@ namespace PDFPatcher.Processor
 			}
 			var r = new HashSet<PdfName>();
 			foreach (var item in fl) {
-				var f = PdfReader.GetPdfObject(item.Value) as PRStream;
-				if (f == null
+				if (PdfReader.GetPdfObject(item.Value) is not PRStream f
 					|| PdfName.FORM.Equals(f.GetAsName(PdfName.SUBTYPE)) == false) {
 					continue;
 				}
@@ -71,8 +70,7 @@ namespace PDFPatcher.Processor
 			var r = false;
 			for (int i = parent.Count - 1; i >= 0; i--) {
 				var cmd = parent[i];
-				var ec = cmd as Model.EnclosingCommand;
-				if (ec != null) {
+				if (cmd is EnclosingCommand ec) {
 					r |= ProcessCommands(ec.Commands, formNames);
 				}
 				if (cmd.Name.ToString() == "Do" && cmd.HasOperand && formNames.Contains(cmd.Operands[0] as PdfName)) {

@@ -22,9 +22,9 @@ namespace PDFPatcher.Model
 		}
 
 		readonly static Encoding __GbkEncoding = System.Text.Encoding.GetEncoding("gbk");
-		readonly static PdfName[] __GbkEncodingNames = { new PdfName("GBK-EUC-H"), new PdfName("GBK-EUC-V"), new PdfName("GB-EUC-H"), new PdfName("GB-EUC-V"), PdfName.WIN_ANSI_ENCODING };
-		readonly static string[] __gbkFontNames = { "宋体", "黑体", "楷体_GB2312", "仿宋体", "仿宋_GB2312", "隶书", "幼圆" };
-		readonly static PdfName[] __IdentityEncodingNames = { new PdfName("Identity-H"), new PdfName("Identity-V") };
+		readonly static PdfName[] __GbkEncodingNames = [new PdfName("GBK-EUC-H"), new PdfName("GBK-EUC-V"), new PdfName("GB-EUC-H"), new PdfName("GB-EUC-V"), PdfName.WIN_ANSI_ENCODING];
+		readonly static string[] __gbkFontNames = ["宋体", "黑体", "楷体_GB2312", "仿宋体", "仿宋_GB2312", "隶书", "幼圆"];
+		readonly static PdfName[] __IdentityEncodingNames = [new PdfName("Identity-H"), new PdfName("Identity-V")];
 		public const int DefaultDefaultWidth = 1000;
 
 		readonly PdfDictionary _Font;
@@ -33,9 +33,7 @@ namespace PDFPatcher.Model
 			get {
 				if (_FontDescriptor == null) {
 					_FontDescriptor = _Font.Locate<PdfArray>(PdfName.DESCENDANTFONTS).Locate<PdfDictionary>(0).Locate<PdfDictionary>(PdfName.FONTDESCRIPTOR);
-					if (_FontDescriptor == null) {
-						_FontDescriptor = new PdfDictionary();
-					}
+					_FontDescriptor ??= new PdfDictionary();
 				}
 				return _FontDescriptor;
 			}
@@ -78,12 +76,7 @@ namespace PDFPatcher.Model
 			get {
 				if (_DefaultWidth == -1) {
 					var w = _Font.Locate<PdfNumber>(PdfName.DESCENDANTFONTS, 0, PdfName.DW);
-					if (w == null) {
-						_DefaultWidth = DefaultDefaultWidth;
-					}
-					else {
-						_DefaultWidth = w.IntValue;
-					}
+					_DefaultWidth = w == null ? DefaultDefaultWidth : w.IntValue;
 				}
 				return _DefaultWidth;
 			}

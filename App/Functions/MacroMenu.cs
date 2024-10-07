@@ -40,13 +40,11 @@ namespace PDFPatcher.Functions
 			}
 
 			t = t.Substring(InsertText.Length);
-			var c = SourceControl as TextBoxBase;
-			if (c != null) {
+			if (SourceControl is TextBoxBase c) {
 				c.SelectedText = t;
 				return;
 			}
-			var cb = SourceControl as ComboBox;
-			if (cb != null) {
+			if (SourceControl is ComboBox cb) {
 				cb.SelectedText = t;
 			}
 		}

@@ -40,16 +40,13 @@ namespace PDFPatcher.Processor
 				return;
 			}
 			for (int i = 1; i <= pn; i += options.SeparateByPage) {
-				if (pdf == null) {
-					pdf = PdfHelper.OpenPdfFile(sourceFile, AppContext.LoadPartialPdfFile, false);
-				}
+				pdf ??= PdfHelper.OpenPdfFile(sourceFile, AppContext.LoadPartialPdfFile, false);
 				var tf = RewriteTargetFileName(sourceFile, targetFile, pdf);
 				var e = i + options.SeparateByPage - 1;
 				if (e > pn) {
 					e = pn;
 				}
-				//var r = String.Concat (i.ToText (), "-", e.ToText ());
-				var s = options.NumberFileNames || c > 1 ? String.Concat("[", c.ToText(), "]") : null;
+				var s = options.NumberFileNames || c > 1 ? $"[{c.ToText()}]" : null;
 				if (s != null) {
 					tf = string.Concat(tf.Substring(0, tf.LastIndexOf('.')), s, Ext.Pdf);
 				}
@@ -71,11 +68,9 @@ namespace PDFPatcher.Processor
 			}
 			Tracker.SetProgressGoal(c);
 			foreach (var range in rl) {
-				if (pdf == null) {
-					pdf = PdfHelper.OpenPdfFile(sourceFile, AppContext.LoadPartialPdfFile, false);
-				}
+				pdf ??= PdfHelper.OpenPdfFile(sourceFile, AppContext.LoadPartialPdfFile, false);
 				var tf = RewriteTargetFileName(sourceFile, targetFile, pdf);
-				var s = options.NumberFileNames || i > 1 ? String.Concat("[", i.ToText(), "]") : null;
+				var s = options.NumberFileNames || i > 1 ? $"[{i.ToText()}]" : null;
 				if (s != null) {
 					tf = string.Concat(tf.Substring(0, tf.LastIndexOf('.')), s, Ext.Pdf);
 				}
@@ -213,11 +208,11 @@ namespace PDFPatcher.Processor
 					pdf.Catalog.Put(PdfName.OUTLINES, OutlineManager.WriteOutline(w.Writer, bm, ranges.TotalPages));
 					w.ViewerPreferences = PdfWriter.PageModeUseOutlines;
 				}
-				w.Writer.Info.Put(PdfName.PRODUCER, new PdfString(String.Concat(Application.ProductName, " ", Application.ProductVersion)));
+				w.Writer.Info.Put(PdfName.PRODUCER, new PdfString($"{Application.ProductName} {Application.ProductVersion}"));
 				Tracker.TraceMessage("保存文件：" + targetFile);
 				w.Close();
 			}
-			Tracker.TraceMessage(Tracker.Category.Alert, "成功提取文件内容到 <<" + targetFile + ">>。");
+			Tracker.TraceMessage(Tracker.Category.Alert, $"成功提取文件内容到 <<{targetFile}>>。");
 		}
 
 		static void FixIncorrectTrailerInfo(PdfReader pdf) {

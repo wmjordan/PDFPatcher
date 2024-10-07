@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using PDFPatcher.Common;
 using Microsoft.Win32;
+using PDFPatcher.Common;
 
 namespace PDFPatcher
 {
@@ -10,14 +8,14 @@ namespace PDFPatcher
 	{
 		internal static void CreateShortcut() {
 			var p = System.IO.Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath);
-			var s = new ShortcutFile(FileHelper.CombinePath(p, Constants.AppEngName + ".exe")) {
+			var s = new ShortcutFile(FileHelper.CombinePath(p, $"{Constants.AppEngName}.exe")) {
 				WorkingDirectory = p,
 				Description = Constants.AppName
 			};
 			var desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-			s.Save(FileHelper.CombinePath(desktopPath, Constants.AppName + ".lnk"));
+			s.Save(FileHelper.CombinePath(desktopPath, $"{Constants.AppName}.lnk"));
 
-			FormHelper.InfoBox("已在桌面创建" + Constants.AppName + "的快捷方式。");
+			FormHelper.InfoBox($"已在桌面创建{Constants.AppName}的快捷方式。");
 		}
 
 		internal static void VisitHomePage() {
@@ -92,7 +90,7 @@ namespace PDFPatcher
 					using (var shell = progId.OpenOrCreateSubKey("shell", true))
 					using (var openWith = shell.OpenOrCreateSubKey(ShellCommandKey, true))
 					using (var command = openWith.OpenOrCreateSubKey("command", true)) {
-						openWith.SetValue(String.Empty, "使用 " + Constants.AppName + " 打开");
+						openWith.SetValue(String.Empty, $"使用 {Constants.AppName} 打开");
 						command.SetValue(String.Empty, $"\"{FilePath.AppPath}\" \"%1\"");
 					}
 				}
@@ -112,7 +110,7 @@ namespace PDFPatcher
 						classes.DeleteSubKeyTree(progIdName, false);
 						return;
 					}
-					using (var shell = classes.OpenSubKey(progIdName + "\\shell", true))
+					using (var shell = classes.OpenSubKey($"{progIdName}\\shell", true))
 					using (var openWith = shell.OpenOrCreateSubKey(ShellCommandKey, true)) {
 						shell.DeleteSubKeyTree(ShellCommandKey, false);
 					}

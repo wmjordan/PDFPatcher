@@ -21,11 +21,11 @@ namespace PDFPatcher.Processor
 
 		private static PdfReader OpenPdf(string sourceFile, bool loadPartial, bool removeUnusedObjects) {
 			try {
-				Tracker.TraceMessage(Tracker.Category.ImportantMessage, String.Concat("打开 PDF 文件：<<", sourceFile, ">>。"));
+				Tracker.TraceMessage(Tracker.Category.ImportantMessage, $"打开 PDF 文件：<<{sourceFile}>>。");
 				return PdfHelper.OpenPdfFile(sourceFile, loadPartial, removeUnusedObjects);
 			}
 			catch (FileNotFoundException) {
-				FormHelper.ErrorBox(String.Concat("找不到文件：“", sourceFile, "”。"));
+				FormHelper.ErrorBox($"找不到文件：“{sourceFile}”。");
 				return null;
 			}
 			catch (iTextSharp.text.exceptions.BadPasswordException) {
@@ -68,7 +68,7 @@ namespace PDFPatcher.Processor
 				if (FileHelper.HasFileNameMacro(om)) {
 					options.FileMask = ReplaceTargetFileNameMacros(sourceFile, om, pdf);
 				}
-				var exp = new ImageExtractor(options, pdf);
+				var exp = new ImageExtractor(options);
 				foreach (var range in ranges) {
 					foreach (var i in range) {
 						exp.ExtractPageImages(pdf, i);
@@ -363,7 +363,7 @@ namespace PDFPatcher.Processor
 					Tracker.TraceMessage("加载源 PDF 文件信息完毕，准备执行补丁操作。");
 				}
 				else {
-					Tracker.TraceMessage(Tracker.Category.ImportantMessage, String.Concat("加载信息文件：<<", docPath, ">>。"));
+					Tracker.TraceMessage(Tracker.Category.ImportantMessage, $"加载信息文件：<<{docPath}>>。");
 					import = new DocInfoImporter(options, docPath);
 					if (import.InfoDoc != null && VerifyInfoDocument(import.InfoDoc) == false) {
 						return false;
@@ -671,7 +671,7 @@ namespace PDFPatcher.Processor
 				PdfPageLabels labels = null;
 				BookmarkContainer bookmarks = null;
 				if (String.IsNullOrEmpty(infoFile) == false) {
-					Tracker.TraceMessage(Tracker.Category.ImportantMessage, String.Concat("加载信息文件：<<", infoFile, ">>。"));
+					Tracker.TraceMessage(Tracker.Category.ImportantMessage, $"加载信息文件：<<{infoFile}>>。");
 					var import = new DocInfoImporter(impOptions, infoFile);
 					info = import.ImportDocumentInformation();
 					labels = import.ImportPageLabels();
@@ -683,7 +683,7 @@ namespace PDFPatcher.Processor
 
 				var f = targetFile.EnsureExtension(Ext.Pdf);
 				Tracker.TraceMessage(Tracker.Category.OutputFile, f.ToString());
-				Tracker.TraceMessage(Tracker.Category.ImportantMessage, String.Concat("输出到文件：", f, "。"));
+				Tracker.TraceMessage(Tracker.Category.ImportantMessage, $"输出到文件：{f}。");
 				if (f.IsValidPath == false) {
 					Tracker.TraceMessage(Tracker.Category.Error, "输出文件路径无效。");
 					return;
@@ -917,21 +917,21 @@ namespace PDFPatcher.Processor
 
 		internal static void RenameFiles(List<SourceItem.Pdf> items, string template, bool keepSourceFile) {
 			Tracker.SetTotalProgressGoal(items.Count);
-			Tracker.TraceMessage(String.Concat("使用“", template, "”模板重命名。"));
+			Tracker.TraceMessage($"使用“{template}”模板重命名。");
 			foreach (var item in items) {
 				try {
 					var s = item.FilePath.ToFullPath();
 					if (s.ExistsFile == false) {
-						Tracker.TraceMessage(Tracker.Category.Error, String.Concat("找不到 PDF 文件：", s));
+						Tracker.TraceMessage(Tracker.Category.Error, $"找不到 PDF 文件：{s}");
 						continue;
 					}
 					var t = GetExpandedFileName(item, template);
 					Tracker.TraceMessage(Tracker.Category.InputFile, s.ToString());
 					Tracker.TraceMessage(Tracker.Category.OutputFile, t);
-					Tracker.TraceMessage(Tracker.Category.ImportantMessage, String.Concat("重命名 PDF 文件：", s));
-					Tracker.TraceMessage(Tracker.Category.ImportantMessage, String.Concat("到目标 PDF 文件：<<", t, ">>。"));
+					Tracker.TraceMessage(Tracker.Category.ImportantMessage, $"重命名 PDF 文件：{s}");
+					Tracker.TraceMessage(Tracker.Category.ImportantMessage, $"到目标 PDF 文件：<<{t}>>。");
 					if (FileHelper.IsPathValid(t) == false) {
-						Tracker.TraceMessage(Tracker.Category.Error, String.Concat("输出文件名 ", t, " 无效。"));
+						Tracker.TraceMessage(Tracker.Category.Error, $"输出文件名 {t} 无效。");
 						goto Exit;
 					}
 					if (s.Equals(t)) {

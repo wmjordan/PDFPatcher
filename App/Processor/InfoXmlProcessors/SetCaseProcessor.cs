@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace PDFPatcher.Processor
 {
-	sealed class SetCaseProcessor : IPdfInfoXmlProcessor
+	sealed class SetCaseProcessor(SetCaseProcessor.LetterCase letterCase) : IPdfInfoXmlProcessor
 	{
 		static readonly System.Globalization.TextInfo __currentTextInfo = System.Globalization.CultureInfo.CurrentCulture.TextInfo;
 		static readonly char[] FullWidthNumbers = "０１２３４５６７８９０".ToCharArray();
@@ -31,11 +31,7 @@ namespace PDFPatcher.Processor
 			TraditionalToSimplifiedCjk, SimplifiedToTraditionalCjk
 		}
 
-		public LetterCase Case { get; }
-
-		public SetCaseProcessor(LetterCase letterCase) {
-			Case = letterCase;
-		}
+		public LetterCase Case { get; } = letterCase;
 
 		#region IInfoDocProcessor 成员
 
@@ -157,12 +153,9 @@ namespace PDFPatcher.Processor
 			public static readonly Converter<string, string> Convert = new StringMapper(HalfWidthNumberToFullWidth).Convert;
 		}
 
-		sealed class StringMapper
+		sealed class StringMapper(Converter<char, char> converter)
 		{
-			readonly Converter<char, char> Converter;
-			public StringMapper(Converter<char, char> converter) {
-				Converter = converter;
-			}
+			readonly Converter<char, char> _converter = converter;
 
 			public unsafe string Convert(string value) {
 				if (String.IsNullOrEmpty(value)) {
@@ -170,7 +163,7 @@ namespace PDFPatcher.Processor
 				}
 				int i = 0;
 				foreach (var ch in value) {
-					if (ch != Converter(ch)) {
+					if (ch != _converter(ch)) {
 						break;
 					}
 					++i;
@@ -183,7 +176,7 @@ namespace PDFPatcher.Processor
 					char* c = s + i;
 					char* end = c + value.Length;
 					do {
-						*c = Converter(*c);
+						*c = _converter(*c);
 					} while (++c < end);
 				}
 				return r;
@@ -207,16 +200,10 @@ namespace PDFPatcher.Processor
 			}
 		}
 
-		sealed class SequentialCharacterMapper
+		sealed class SequentialCharacterMapper(char from, char to, int count)
 		{
-			readonly char _From, _To;
-			readonly int _Count;
-
-			public SequentialCharacterMapper(char from, char to, int count) {
-				_From = from;
-				_To = to;
-				_Count = count;
-			}
+			readonly char _From = from, _To = to;
+			readonly int _Count = count;
 
 			public char Map(char value) {
 				var d = value - _From;

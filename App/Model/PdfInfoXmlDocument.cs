@@ -113,12 +113,8 @@ namespace PDFPatcher.Model
 			set => this.SetValue(Constants.Info.Subject, value, null);
 		}
 	}
-	public abstract class BookmarkContainer : XmlElement
+	public abstract class BookmarkContainer(string name, XmlDocument doc) : XmlElement(String.Empty, name, String.Empty, doc)
 	{
-		protected BookmarkContainer(string name, XmlDocument doc)
-			: base(String.Empty, name, String.Empty, doc) {
-		}
-
 		/// <summary>获取当前书签容器是否有子书签。</summary>
 		public bool HasSubBookmarks => HasChildNodes && SelectSingleNode(Constants.Bookmark) != null;
 
@@ -225,15 +221,10 @@ namespace PDFPatcher.Model
 		/// <summary>获取或设置书签的默认打开状态。</summary>
 		public bool IsOpen {
 			get {
-				if (HasChildNodes == false) {
-					return false;
-				}
-				return GetAttribute(Constants.BookmarkAttributes.Open) == Constants.Boolean.True;
+				return HasChildNodes
+					&& GetAttribute(Constants.BookmarkAttributes.Open) == Constants.Boolean.True;
 			}
 			set {
-				//if (HasSubBookmarks == false) {
-				//	return;
-				//}
 				if (value) {
 					SetAttribute(Constants.BookmarkAttributes.Open, Constants.Boolean.True);
 				}

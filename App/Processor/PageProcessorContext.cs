@@ -17,7 +17,7 @@ namespace PDFPatcher.Processor
 
 		PdfDictionary _Page;
 		/// <summary>获取正在处理的页面。</summary>
-		public PdfDictionary Page => _Page ?? (_Page = Pdf.GetPageN(PageNumber));
+		public PdfDictionary Page => _Page ??= Pdf.GetPageN(PageNumber);
 
 		PdfPageCommandProcessor _processor;
 		/// <summary>获取正在处理的页面指令集合。</summary>

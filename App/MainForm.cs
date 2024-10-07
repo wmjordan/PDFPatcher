@@ -170,22 +170,22 @@ namespace PDFPatcher
 		}
 
 		void OnDocumentChanged(object sender, DocumentChangedEventArgs args) {
-			var p = args.Path;
-			_MainStatusLabel.Text = p ?? String.Empty;
-			if (!FileHelper.IsPathValid(p)) {
+			FilePath p = args.Path;
+			_MainStatusLabel.Text = p.ToString();
+			if (!p.IsValidPath) {
 				return;
 			}
 
-			p = System.IO.Path.GetFileNameWithoutExtension(p);
-			if (p.Length > 20) {
-				p = p.Substring(0, 17) + "...";
+			var t = p.FileNameWithoutExtension;
+			if (t.Length > 20) {
+				t = t.Substring(0, 17) + "...";
 			}
 			if (sender is Control f) {
 				f = f.Parent;
 				if (f == null) {
 					return;
 				}
-				f.Text = p;
+				f.Text = t;
 			}
 		}
 
@@ -438,13 +438,6 @@ namespace PDFPatcher
 			_GeneralToolbar.ScaleIcons(16);
 		}
 
-		DialogResult ShowDialogWindow(Form window) {
-			using (var f = window) {
-				f.StartPosition = FormStartPosition.CenterParent;
-				return f.ShowDialog(this);
-			}
-		}
-
 		Control GetActiveFunctionControl() {
 			return _FunctionContainer.FirstControlInActiveTab;
 		}
@@ -476,7 +469,7 @@ namespace PDFPatcher
 			}
 		}
 
-		internal Control SelectFunctionList(Function func) {
+		internal FunctionControl SelectFunctionList(Function func) {
 			if (func == Function.PatcherOptions) {
 				this.ShowDialog<PatcherOptionForm>();
 			}
@@ -541,9 +534,6 @@ namespace PDFPatcher
 
 		void SelectedFunctionChanged(object sender, TabControlEventArgs args) {
 			if (GetActiveFunctionControl() is FunctionControl c) {
-				//foreach (ToolStripMenuItem item in _MainMenu.Items) {
-				//	c.SetupMenu (item);
-				//}
 				c.OnSelected();
 				_MainStatusLabel.Text = c is IDocumentEditor b ? b.DocumentPath : Messages.Welcome;
 				AcceptButton = c.DefaultButton;

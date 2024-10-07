@@ -2,23 +2,16 @@
 
 namespace PDFPatcher.Processor
 {
-	sealed class ChangeCoordinateProcessor : IPdfInfoXmlProcessor
+	sealed class ChangeCoordinateProcessor(string coordinateName, float value, bool absolute, bool proportional) : IPdfInfoXmlProcessor
 	{
-		public string CoordinateName { get; }
-		public float Value { get; }
-		public bool IsAbsolute { get; }
-		public bool IsProportional { get; }
-
-		public ChangeCoordinateProcessor(string coordinateName, float value, bool absolute, bool proportional) {
-			CoordinateName = coordinateName;
-			Value = value;
-			IsAbsolute = absolute;
-			IsProportional = proportional;
-		}
+		public string CoordinateName { get; } = coordinateName;
+		public float Value { get; } = value;
+		public bool IsAbsolute { get; } = absolute;
+		public bool IsProportional { get; } = proportional;
 
 		#region IInfoDocProcessor 成员
 
-		public string Name => string.Concat((IsAbsolute ? "更改" : IsProportional ? "缩放" : "调整"), CoordinateName, "坐标定位");
+		public string Name => $"{(IsAbsolute ? "更改" : IsProportional ? "缩放" : "调整")}{CoordinateName}坐标定位";
 
 		public IUndoAction Process(System.Xml.XmlElement item) {
 			float c;

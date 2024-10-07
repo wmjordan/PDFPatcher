@@ -12,8 +12,8 @@ namespace PDFPatcher.Processor
 
 	sealed class UndoManager
 	{
-		readonly Stack<IUndoAction> _undoActions = new Stack<IUndoAction>();
-		readonly List<string> _names = new List<string>();
+		readonly Stack<IUndoAction> _undoActions = new();
+		readonly List<string> _names = [];
 		int _CleanLevel;
 
 		public delegate void OnUndoDelegate(UndoManager undoManager, IUndoAction action);
@@ -22,9 +22,7 @@ namespace PDFPatcher.Processor
 
 		public bool CanUndo => _names.Count > 0;
 
-		public bool IsDirty {
-			get => _CleanLevel != _undoActions.Count;
-		}
+		public bool IsDirty => _CleanLevel != _undoActions.Count;
 
 		public void MarkClean() {
 			_CleanLevel = _undoActions.Count;
@@ -71,7 +69,7 @@ namespace PDFPatcher.Processor
 
 	sealed class UndoActionGroup : IUndoAction
 	{
-		readonly List<IUndoAction> _actions = new List<IUndoAction>();
+		readonly List<IUndoAction> _actions = new();
 
 		public int Count => _actions.Count;
 
@@ -129,42 +127,30 @@ namespace PDFPatcher.Processor
 		#endregion
 	}
 
-	abstract class UndoElementAction : IUndoAction
+	abstract class UndoElementAction(XmlElement target) : IUndoAction
 	{
-		public XmlNode Parent { get; }
-		public XmlElement TargetElement { get; }
-
-		protected UndoElementAction(XmlElement target) {
-			TargetElement = target ?? throw new ArgumentNullException("undo/element/target");
-			Parent = target.ParentNode;
-		}
+		public XmlNode Parent { get; } = target.ParentNode;
+		public XmlElement TargetElement { get; } = target ?? throw new ArgumentNullException("undo/element/target");
 
 		#region IUndoAction 成员
 
-		public IEnumerable<XmlNode> AffectedElements => new XmlNode[] { Parent };
+		public IEnumerable<XmlNode> AffectedElements => [Parent];
 		public abstract bool Undo();
 
 		#endregion
 	}
 
-	sealed class RemoveElementAction : UndoElementAction
+	sealed class RemoveElementAction(XmlElement target) : UndoElementAction(target)
 	{
-		public RemoveElementAction(XmlElement target) : base(target) {
-		}
-
 		public override bool Undo() {
 			TargetElement.ParentNode.RemoveChild(TargetElement);
 			return true;
 		}
 	}
 
-	sealed class AddElementAction : UndoElementAction
+	sealed class AddElementAction(XmlElement target) : UndoElementAction(target)
 	{
-		public XmlNode RefNode { get; }
-
-		public AddElementAction(XmlElement target) : base(target) {
-			RefNode = target.NextSibling;
-		}
+		public XmlNode RefNode { get; } = target.NextSibling;
 
 		public override bool Undo() {
 			if (RefNode == null) {
@@ -189,33 +175,6 @@ namespace PDFPatcher.Processor
 			TargetElement = targetNode ?? throw new ArgumentNullException("undo/attr/target");
 			Name = name;
 		}
-
-		//internal static UndoActionGroup GetUndoAttributeGroup (XmlElement targetNode, params string[] names) {
-		//	var undoList = new UndoActionGroup ();
-		//	foreach (var item in names) {
-		//		if (targetNode.HasAttribute (item)) {
-		//			undoList.Add (new SetAttributeAction (targetNode, item, targetNode.GetAttribute (item)));
-		//		}
-		//		else {
-		//			undoList.Add (new RemoveAttributeAction (targetNode, item));
-		//		}
-		//	}
-		//	return undoList;
-		//}
-
-		//internal static IUndoAction[] GetUndoListForAttributes (XmlElement targetNode, params string[] names) {
-		//	var undoList = new IUndoAction[names.Length];
-		//	var i = 0;
-		//	foreach (var item in names) {
-		//		if (targetNode.HasAttribute (item)) {
-		//			undoList[i++] = new SetAttributeAction (targetNode, item, targetNode.GetAttribute (item));
-		//		}
-		//		else {
-		//			undoList[i++] = new RemoveAttributeAction (targetNode, item);
-		//		}
-		//	}
-		//	return undoList;
-		//}
 
 		/// <summary>
 		/// 设置目标元素的属性值，并返回撤销动作。
@@ -245,29 +204,22 @@ namespace PDFPatcher.Processor
 		}
 
 		#region IUndoAction 成员
-		public IEnumerable<XmlNode> AffectedElements => new XmlNode[] { TargetElement };
+		public IEnumerable<XmlNode> AffectedElements => [TargetElement];
 		public abstract bool Undo();
 		#endregion
 	}
 
-	sealed class RemoveAttributeAction : UndoAttributeAction
+	sealed class RemoveAttributeAction(XmlElement targetNode, string name) : UndoAttributeAction(targetNode, name)
 	{
-		public RemoveAttributeAction(XmlElement targeNode, string name) : base(targeNode, name) {
-		}
-
 		public override bool Undo() {
 			TargetElement.RemoveAttribute(Name);
 			return true;
 		}
 	}
 
-	sealed class SetAttributeAction : UndoAttributeAction
+	sealed class SetAttributeAction(XmlElement targetNode, string name, string value) : UndoAttributeAction(targetNode, name)
 	{
-		public string Value { get; }
-
-		public SetAttributeAction(XmlElement targeNode, string name, string value) : base(targeNode, name) {
-			Value = value;
-		}
+		public string Value { get; } = value;
 
 		public override bool Undo() {
 			TargetElement.SetAttribute(Name, Value);

@@ -81,8 +81,8 @@ namespace PDFPatcher
 		string GetLastFileList() {
 			var i = 0;
 			return String.Concat(AppContext.Recent.SourcePdfFiles.ConvertAll((s) => FileHelper.IsPathValid(s) && new FilePath(s).ExistsFile
-				  ? String.Concat(@"<li><a href=""recent:", i++, "\">", SubstringAfter(s, '\\'), "</a></li>")
-				  : String.Concat(@"<li id=""", i++, "\">", SubstringAfter(s, '\\'), "</li>")));
+				  ? $"<li><a href=\"recent:{i++}\">{s.SubstringAfter('\\')}</a></li>"
+				  : $"<li id=\"{i++}\">{s.SubstringAfter('\\')}</li>"));
 		}
 
 		void _FrontPageBox_LinkClicked(object sender, HtmlLinkClickedEventArgs e) {

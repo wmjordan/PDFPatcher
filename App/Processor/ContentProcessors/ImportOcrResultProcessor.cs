@@ -33,8 +33,7 @@ namespace PDFPatcher.Processor
 		}
 
 		public void BeginProcess(DocProcessorContext context) {
-			var x = context.ExtraData[DocProcessorContext.OcrData] as XmlReader;
-			if (x == null) {
+			if (context.ExtraData[DocProcessorContext.OcrData] is not XmlReader x) {
 				return;
 			}
 			if (x.Name == Constants.PdfInfo) {
@@ -45,8 +44,7 @@ namespace PDFPatcher.Processor
 		}
 
 		public bool Process(DocProcessorContext context) {
-			var x = context.ExtraData[DocProcessorContext.OcrData] as XmlReader;
-			if (x == null || x.Name != Constants.Ocr.Result) {
+			if (context.ExtraData[DocProcessorContext.OcrData] is not XmlReader x || x.Name != Constants.Ocr.Result) {
 				return false;
 			}
 			ImportOcrResult(context, x);
@@ -64,7 +62,7 @@ namespace PDFPatcher.Processor
 			int pn = pdf.NumberOfPages;
 			var xd = new XmlDocument();
 			PdfDictionary page;
-			while (x.EOF == false) {
+			while (!x.EOF) {
 				// 读取一页识别结果
 				if (x.MoveToContent() != XmlNodeType.Element
 					|| x.Name != Constants.Ocr.Result
@@ -101,7 +99,7 @@ namespace PDFPatcher.Processor
 						new AdjustCommand ("Tr", new PdfNumber (3)) // 隐藏识别的文本
 						);
 #endif
-					var bmc = EnclosingCommand.Create("BMC", new PdfObject[] { OcrResultBmcName }, bt);
+					var bmc = EnclosingCommand.Create("BMC", [OcrResultBmcName], bt);
 					fontUse |= ImportImageOcrResult(bt, image);
 					commands.Add(bmc);
 				}
@@ -121,8 +119,7 @@ namespace PDFPatcher.Processor
 
 		private static void ClearPreviousOcrResult(IList<PdfPageCommand> commands) {
 			for (int i = commands.Count - 1; i >= 0; i--) {
-				var c = commands[i] as EnclosingCommand;
-				if (c == null
+				if (commands[i] is not EnclosingCommand c
 					|| c.HasOperand == false
 					|| c.Name.ToString() != "BMC"
 					|| OcrResultBmcName.Equals(c.Operands[0]) == false) {
@@ -147,7 +144,7 @@ namespace PDFPatcher.Processor
 			PdfIndirectReference fontRef;
 			var fontName = isVertical ? OcrFontV : OcrFont;
 			fontRef = d.GetAsIndirectObject(fontName);
-			if (fontRef == null || (d.GetDirectObject(fontName) as PdfDictionary) == null) {
+			if (fontRef == null || d.GetDirectObject(fontName) is not PdfDictionary) {
 				fontRef = CreateOcrFont(context, isVertical);
 				d.Put(fontName, fontRef);
 			}
@@ -185,7 +182,6 @@ namespace PDFPatcher.Processor
 			fd.Put(PdfName.FLAGS, new PdfNumber(4));
 			fd.Put(PdfName.FONTBBOX, new PdfArray(new int[] { -250, -143, 600, 857 }));
 			fd.Put(PdfName.FONTNAME, FontName);
-			//fd.Put (PdfName.ITALICANGLE, new PdfNumber (0));
 			fd.Put(PdfName.STEMV, new PdfNumber(91));
 			fd.Put(new PdfName("StemH"), new PdfNumber(91));
 			return context.Pdf.AddPdfObject(f);
@@ -229,7 +225,7 @@ namespace PDFPatcher.Processor
 				Tracker.TraceMessage($"识别结果的“{Constants.Ocr.Image}”元素中，{Constants.Content.OperandNames.Matrix}属性值无效。");
 				return 0;
 			}
-			var info = new OcrContentInfo(w, h, matrix);
+			var info = new OcrContentInfo(w, h);
 			sc.Add(new AdjustCommand("Tm", 
 				new PdfNumber(matrix[OcrContentInfo.A1] / w), new PdfNumber(matrix[OcrContentInfo.A2] / w),
 				new PdfNumber(matrix[OcrContentInfo.B1] / h), new PdfNumber(matrix[OcrContentInfo.B2] / h),
@@ -266,8 +262,8 @@ namespace PDFPatcher.Processor
 		sealed class OcrContentInfo
 		{
 			internal const int A1 = 0, A2 = 1, B1 = 2, B2 = 3, DX = 4, DY = 5; // 矩阵数组索引
-			internal int ImageWidth { get; private set; }
-			internal int ImageHeight { get; private set; }
+			internal int ImageWidth { get; }
+			internal int ImageHeight { get; }
 			internal string Text { get; private set; }
 			internal int DeltaX => _dx;
 			internal int DeltaY => _dy;
@@ -275,11 +271,10 @@ namespace PDFPatcher.Processor
 			internal float FontSize => _size;
 
 			bool _isVertical;
-			//float _ix, _iy, _dx, _dy;
 			string _text;
 			int _top, _bottom, _left, _right, _size;
 			int _cx, _cy, _dx, _dy;
-			internal OcrContentInfo(int imageWidth, int imageHeight, float[] matrix) {
+			internal OcrContentInfo(int imageWidth, int imageHeight) {
 				ImageHeight = imageHeight;
 				ImageWidth = imageWidth;
 			}
@@ -296,19 +291,19 @@ namespace PDFPatcher.Processor
 				}
 				_isVertical = ocrInfoItem.GetAttribute(Constants.Coordinates.Direction) == Constants.Coordinates.Vertical;
 				_size = Math.Abs(_isVertical ? _right - _left : _bottom - _top);
-				if (_isVertical == false) {
-					_bottom = ImageHeight - _bottom;
-					_dx = _left - _cx;
-					_dy = _bottom - _cy;
-					_cx = _left;
-					_cy = _bottom;
-				}
-				else {
+				if (_isVertical) {
 					_top = ImageHeight - _top;
 					_dx = _left - _cx;
 					_dy = _top - _cy;
 					_cx = _left;
 					_cy = _top;
+				}
+				else {
+					_bottom = ImageHeight - _bottom;
+					_dx = _left - _cx;
+					_dy = _bottom - _cy;
+					_cx = _left;
+					_cy = _bottom;
 				}
 				Text = _text;
 				return true;

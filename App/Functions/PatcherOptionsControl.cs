@@ -1,10 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using PDFPatcher.Common;
 using PDFPatcher.Model;
@@ -13,7 +7,6 @@ namespace PDFPatcher.Functions
 {
 	public partial class PatcherOptionsControl : UserControl
 	{
-		const float cm2point = (72f / 2.54f);
 		string paperName;
 		bool _uiLockDown;
 
@@ -255,10 +248,8 @@ namespace PDFPatcher.Functions
 			if (_SyncMarginsBox.Checked == false || _uiLockDown) {
 				return;
 			}
-			var c = sender as NumericUpDown;
-			var d = c.Value;
+			var d = (sender as NumericUpDown).Value;
 			_TopMarginBox.Value = _BottomMarginBox.Value = _LeftMarginBox.Value = _RightMarginBox.Value = d;
 		}
-
 	}
 }

@@ -55,7 +55,7 @@ namespace PDFPatcher.Functions
 			else {
 				_ReplaceInAllBox.Checked = true;
 			}
-			_SearchTextBox.TextChanged += new EventHandler(_SearchTextBox_TextChanged);
+			_SearchTextBox.TextChanged += _SearchTextBox_TextChanged;
 		}
 
 		BookmarkMatcher CreateMatcher() {

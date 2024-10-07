@@ -23,7 +23,7 @@ namespace PDFPatcher.Processor
 		}
 		public bool EndProcess(PdfReader pdf) {
 			Tracker.TraceMessage(Tracker.Category.Notice, Name + "功能：");
-			Tracker.TraceMessage("　　删除了 " + _processedPageCount + " 页的指令。");
+			Tracker.TraceMessage($"　　删除了 {_processedPageCount} 页的指令。");
 			return false;
 		}
 

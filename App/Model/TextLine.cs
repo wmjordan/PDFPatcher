@@ -27,9 +27,7 @@ namespace PDFPatcher.Model
 		/// </summary>
 		public string Text {
 			get {
-				if (_Text == null) {
-					_Text = GetConcatenatedText();
-				}
+				_Text ??= GetConcatenatedText();
 				return _Text;
 			}
 		}

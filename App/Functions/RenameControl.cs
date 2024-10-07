@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using PDFPatcher.Common;
@@ -44,7 +43,7 @@ namespace PDFPatcher.Functions
 
 			_TargetPdfFile.FileMacroMenu.LoadStandardInfoMacros();
 			_TargetPdfFile.FileMacroMenu.LoadStandardSourceFileMacros();
-			_TargetPdfFile.BrowseForFile += new EventHandler<EventArgs>(FileControl_BrowseForFile);
+			_TargetPdfFile.BrowseForFile += FileControl_BrowseForFile;
 			_TargetPdfFile.TargetFileChangedByBrowseButton += (s, args) => {
 				int i;
 				var f = _TargetPdfFile.FileDialog.FileName;
@@ -216,7 +215,7 @@ namespace PDFPatcher.Functions
 				try {
 					s = item.FilePath;
 					if (s.ExistsFile == false) {
-						t = String.Concat("(找不到 PDF 文件：", s, ")");
+						t = $"(找不到 PDF 文件：{s})";
 						continue;
 					}
 					else {

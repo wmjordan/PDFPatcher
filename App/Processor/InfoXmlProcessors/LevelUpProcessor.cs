@@ -1,4 +1,5 @@
 ﻿using System;
+using PDFPatcher.Common;
 
 namespace PDFPatcher.Processor
 {
@@ -13,8 +14,7 @@ namespace PDFPatcher.Processor
 				return null;
 			}
 			var undo = new UndoActionGroup();
-			var fs = item.SelectNodes("following-sibling::" + Constants.Bookmark);
-			foreach (System.Xml.XmlElement f in fs) {
+			foreach (System.Xml.XmlElement f in item.SelectNodes("following-sibling::" + Constants.Bookmark)) {
 				undo.Add(new AddElementAction(f));
 				item.AppendChild(f);
 				undo.Add(new RemoveElementAction(f));

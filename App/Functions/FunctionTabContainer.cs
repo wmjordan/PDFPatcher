@@ -1,18 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using PDFPatcher.Common;
 
 namespace PDFPatcher.Functions
 {
-	class FunctionTabContainer : CustomTabControl
+	sealed class FunctionTabContainer : CustomTabControl
 	{
 		bool _MiddleClickCloseTab, _DoubleClickCloseTab;
-
-		public CancelEventHandler BeforeCloseTab;
 
 		public Control FirstControlInActiveTab {
 			get {

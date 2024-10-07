@@ -8,7 +8,7 @@ namespace PDFPatcher
 {
 	public class AutoBookmarkOptions
 	{
-		public readonly static Regex NumericPattern = new Regex("^[0-9]+$", RegexOptions.Compiled);
+		public readonly static Regex NumericPattern = new("^[0-9]+$", RegexOptions.Compiled);
 
 		#region 识别选项
 		/// <summary>

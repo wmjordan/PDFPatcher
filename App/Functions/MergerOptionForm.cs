@@ -59,7 +59,7 @@ namespace PDFPatcher.Functions
 			_KeepSourcePdfBookmarkBox.Checked = options.KeepBookmarks;
 			_LeftMarginBox.SetValue(ps.Margins.Left / Constants.Units.CmToPoint);
 			for (int i = 0; i < _PageSizeBox.Items.Count; i++) {
-				var p = _PageSizeBox.Items[i] as Model.PaperSize;
+				var p = _PageSizeBox.Items[i] as PaperSize;
 				if (p.PaperName == ps.PaperSize.PaperName) {
 					_PageSizeBox.SelectedIndex = i;
 				}
@@ -124,7 +124,7 @@ namespace PDFPatcher.Functions
 			ps.PaperSize.Width = CmToPoint(_WidthBox);
 			ps.PaperSize.Height = CmToPoint(_HeightBox);
 			ps.HorizontalAlign = (Model.HorizontalAlignment)_ImageHAlignBox.SelectedIndex;
-			ps.VerticalAlign = (Model.VerticalAlignment)_ImageVAlignBox.SelectedIndex;
+			ps.VerticalAlign = (VerticalAlignment)_ImageVAlignBox.SelectedIndex;
 			ps.ScaleContent = _ScalePdfPagesBox.Checked;
 			option.SubFolder = _SubFoldersBeforeFilesBox.Checked ? MergerOptions.SubFolderPosition.BeforeFiles
 				: _SubFolderWithFilesBox.Checked ? MergerOptions.SubFolderPosition.WithFiles
@@ -153,14 +153,14 @@ namespace PDFPatcher.Functions
 			if (_PageSizeBox.SelectedIndex == -1) {
 				return;
 			}
-			var p = _PageSizeBox.SelectedItem as Model.PaperSize;
+			var p = _PageSizeBox.SelectedItem as PaperSize;
 			if (p.Width > 0 && p.Height > 0) {
 				_WidthBox.SetValue((decimal)p.Width / (decimal)100);
 				_HeightBox.SetValue((decimal)p.Height / (decimal)100);
 			}
 			paperName = p.PaperName;
 			switch (paperName) {
-				case Model.PaperSize.FixedWidthAutoHeight:
+				case PaperSize.FixedWidthAutoHeight:
 					_AutoRotateBox.Enabled =
 					_HeightBox.Enabled =
 					_ImageVAlignBox.Enabled =
@@ -170,7 +170,7 @@ namespace PDFPatcher.Functions
 					_ImageGroupBox.Enabled =
 					_WidthBox.Enabled = true;
 					break;
-				case Model.PaperSize.AsPageSize:
+				case PaperSize.AsPageSize:
 					_AutoRotateBox.Enabled =
 					_WidthBox.Enabled =
 					_ImageHAlignBox.Enabled =

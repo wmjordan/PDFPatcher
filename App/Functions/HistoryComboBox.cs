@@ -43,7 +43,7 @@ namespace PDFPatcher
 			Text = text;
 		}
 
-		private int IndexOf(string o) {
+		int IndexOf(string o) {
 			var l = Contents;
 			if (l != null) {
 				return l.IndexOf(o);
@@ -53,7 +53,7 @@ namespace PDFPatcher
 			}
 		}
 
-		private void RemoveAt(int i) {
+		void RemoveAt(int i) {
 			var l = Contents;
 			if (l != null) {
 				l.RemoveAt(i);
@@ -63,7 +63,7 @@ namespace PDFPatcher
 			}
 		}
 
-		private void Insert(int i, string o) {
+		void Insert(int i, string o) {
 			var l = Contents;
 			if (l != null) {
 				l.Insert(i, o);

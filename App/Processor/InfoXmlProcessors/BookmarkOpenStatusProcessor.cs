@@ -15,7 +15,7 @@ namespace PDFPatcher.Processor
 
 		#region IInfoDocProcessor 成员
 
-		public string Name => "设置书签状态为" + (Parameter ? "打开" : "关闭");
+		public string Name => $"设置书签状态为{(Parameter ? "打开" : "关闭")}";
 
 		public IUndoAction Process(System.Xml.XmlElement item) {
 			if (item.SelectSingleNode(Constants.Bookmark) == null) {

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using iTextSharp.text.pdf;
 
 namespace PDFPatcher.Processor
@@ -16,7 +15,7 @@ namespace PDFPatcher.Processor
 		}
 		public bool EndProcess(PdfReader pdf) {
 			Tracker.TraceMessage(Tracker.Category.Notice, Name + "功能：");
-			Tracker.TraceMessage("　　删除了 " + _processedPageCount + " 页的冗余内容。");
+			Tracker.TraceMessage($"　　删除了 {_processedPageCount} 页的冗余内容。");
 			return false;
 		}
 

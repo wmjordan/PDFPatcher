@@ -9,39 +9,25 @@ using PDFPatcher.Model;
 
 namespace PDFPatcher.Processor
 {
-	internal sealed class DocInfoExporter
+	internal sealed class DocInfoExporter(PdfReader reader, ExporterOptions options)
 	{
 		const string SimpleBookmarkPageNumLeader = " ………… ";
 		const int OpenDocWorkload = 10;
 		const int BookmarkWorkload = 30;
 
-		readonly PdfReader _reader;
-		readonly ExporterOptions _options;
-		readonly PdfContentExport _contentExport;
-		readonly PdfActionExporter _actionExport;
+		readonly PdfReader _reader = reader;
+		readonly ExporterOptions _options = options;
+		readonly PdfContentExport _contentExport = new PdfContentExport(options);
+		readonly PdfActionExporter _actionExport = new PdfActionExporter(options.UnitConverter);
 		Dictionary<int, int> _pageReferenceMapper;
 		Dictionary<string, PdfObject> _namedDestinations;
-
-		public DocInfoExporter(PdfReader reader, ExporterOptions options) {
-			_reader = reader;
-			_options = options;
-			_contentExport = new PdfContentExport(options);
-			_actionExport = new PdfActionExporter(options.UnitConverter);
-		}
 
 		public FilePath BinaryStreamPath {
 			get => _contentExport.BinaryStreamPath;
 			set => _contentExport.BinaryStreamPath = value;
 		}
 
-		Dictionary<int, int> PageReferenceMapper {
-			get {
-				if (_pageReferenceMapper == null) {
-					_pageReferenceMapper = _reader.GetPageRefMapper();
-				}
-				return _pageReferenceMapper;
-			}
-		}
+		Dictionary<int, int> PageReferenceMapper => _pageReferenceMapper ??= _reader.GetPageRefMapper();
 
 		static internal XmlWriterSettings GetWriterSettings() {
 			return new XmlWriterSettings() {
@@ -356,12 +342,11 @@ namespace PDFPatcher.Processor
 
 		private static void ExportViewerPreferences(PdfDictionary preferences, XmlWriter w) {
 			foreach (var item in preferences) {
-				var nv = item.Value as PdfName;
 				if (item.Key.Equals(PdfName.TYPE)) {
 					continue;
 				}
 				var itemName = ValueHelper.MapValue(item.Key, Constants.ViewerPreferencesType.PdfNames, Constants.ViewerPreferencesType.Names, PdfName.DecodeName(item.Key.ToString()));
-				if (nv != null) {
+				if (item.Value is PdfName nv) {
 					if (PdfName.DIRECTION.Equals(item.Key)) {
 						w.WriteAttributeString(Constants.ViewerPreferencesType.Direction,
 							ValueHelper.MapValue(nv, Constants.ViewerPreferencesType.DirectionType.PdfNames,
@@ -398,7 +383,7 @@ namespace PDFPatcher.Processor
 		}
 
 		Dictionary<string, PdfObject> LoadNamedDestinations() {
-			return _namedDestinations ?? (_namedDestinations = _reader.GetNamedDestinations());
+			return _namedDestinations ??= _reader.GetNamedDestinations();
 		}
 
 		internal void ExportBookmarks(XmlElement bookmarks, TextWriter w, int level, bool isOpen) {
@@ -499,8 +484,7 @@ namespace PDFPatcher.Processor
 				if (annots == null) {
 					continue;
 				}
-				var arr = annots.ArrayList;
-				foreach (PdfObject item in arr) {
+				foreach (PdfObject item in annots.ArrayList) {
 					if (item.IsNull()) {
 						continue;
 					}
@@ -536,20 +520,12 @@ namespace PDFPatcher.Processor
 						if (annot.Contains(PdfName.H)) {
 							var style = PdfHelper.GetPdfNameString(annot.GetAsName(PdfName.H));
 							style = ValueHelper.MapValue(style,
-								new string[] { "N", "I", "O", "P" },
-								new string[] { "无", "取反内容", "取反边框", "按下" },
+								["N", "I", "O", "P"],
+								["无", "取反内容", "取反边框", "按下"],
 								style
 								);
 							w.WriteAttributeString(Constants.PageLinkAttributes.Style, style);
 						}
-						//if (annot.Contains (PdfName.M)) {
-						//    try {
-						//        w.WriteAttributeString ("日期", PdfDate.Decode (annot.GetAsString (PdfName.M).ToString ()).ToString ());
-						//    }
-						//    catch (Exception) {
-						//        w.WriteAttributeString ("日期", annot.GetAsString (PdfName.M).ToString ());
-						//    }
-						//}
 						if (annot.Contains(PdfName.QUADPOINTS)) {
 							w.WriteAttributeString(Constants.PageLinkAttributes.QuadPoints, PdfHelper.GetNumericArrayString(annot.GetAsArray(PdfName.QUADPOINTS), _options.UnitConverter.UnitFactor));
 						}
@@ -566,8 +542,8 @@ namespace PDFPatcher.Processor
 							if (bs.Contains(PdfName.S)) {
 								var style = PdfHelper.GetPdfNameString(bs.GetAsName(PdfName.S));
 								style = ValueHelper.MapValue(style,
-									new string[] { "S", "U", "D", "B", "I" },
-									new string[] { "方框", "下划线", "虚线", "凸起", "凹陷" },
+									["S", "U", "D", "B", "I"],
+									["方框", "下划线", "虚线", "凸起", "凹陷"],
 									style
 									);
 								w.WriteAttributeString("样式", style);
@@ -627,6 +603,5 @@ namespace PDFPatcher.Processor
 			}
 			w.WriteEndElement();
 		}
-
 	}
 }

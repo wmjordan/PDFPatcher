@@ -722,8 +722,7 @@ namespace PDFPatcher.Processor
 
 					PdfName resolvedKey;
 					inlineImageEntryAbbreviationMap.TryGetValue((PdfName)key, out resolvedKey);
-					if (resolvedKey == null)
-						resolvedKey = (PdfName)key;
+					resolvedKey ??= (PdfName)key;
 
 					dictionary.Put(resolvedKey, GetAlternateValue(resolvedKey, value));
 				}

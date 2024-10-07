@@ -21,7 +21,7 @@ namespace PDFPatcher.Functions
 		public PageLabelEditor() {
 			InitializeComponent();
 			this.OnFirstLoad(OnLoad);
-			_LabelBox = new TypedObjectListView<PDFPatcher.Model.PageLabel>(_PageLabelBox);
+			_LabelBox = new TypedObjectListView<Model.PageLabel>(_PageLabelBox);
 			_PageLabelBox.FormatRow += (s, args) => args.Item.SubItems[0].Text = (args.RowIndex + 1).ToText();
 			new TypedColumn<Model.PageLabel>(_PageNumColumn) {
 				AspectGetter = (o) => o.PageNumber,

@@ -460,7 +460,7 @@ namespace PDFPatcher.Functions
 					break;
 				#endregion
 				default:
-					if (cmd.StartsWith("_AutoBookmarkLevel", StringComparison.Ordinal)) {
+					if (cmd.HasPrefix("_AutoBookmarkLevel")) {
 						_controller.ConfigAutoBookmarkTextStyles(
 							cmd.Substring("_AutoBookmarkLevel".Length).ToInt32(),
 							_ViewerBox.FindTextLines(_ViewerBox.TransposeVirtualImageToPagePosition(_ViewerBox.PinPoint.X, _ViewerBox.PinPoint.Y)));

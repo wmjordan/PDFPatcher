@@ -104,11 +104,11 @@ namespace EnhancedGlassButton
 			SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.ResizeRedraw | ControlStyles.SupportsTransparentBackColor | ControlStyles.UserPaint, true);
 			SetStyle(ControlStyles.Opaque, false);
 
-			SizeChanged += new EventHandler(GlassButton_SizeChanged);
-			MouseEnter += new EventHandler(GlassButton_MouseEnter);
-			MouseLeave += new EventHandler(GlassButton_MouseLeave);
-			GotFocus += new EventHandler(GlassButton_GotFocus);
-			LostFocus += new EventHandler(GlassButton_LostFocus);
+			SizeChanged += GlassButton_SizeChanged;
+			MouseEnter += GlassButton_MouseEnter;
+			MouseLeave += GlassButton_MouseLeave;
+			GotFocus += GlassButton_GotFocus;
+			LostFocus += GlassButton_LostFocus;
 		}
 
 		private void InitializeComponent() {
@@ -118,7 +118,7 @@ namespace EnhancedGlassButton
 			// 
 			// timer
 			// 
-			timer.Tick += new System.EventHandler(timer_Tick);
+			timer.Tick += timer_Tick;
 			ResumeLayout(false);
 
 		}

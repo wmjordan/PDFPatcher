@@ -825,7 +825,7 @@ namespace PDFPatcher.Processor
 				return;
 			}
 
-			var ps = _infoDoc.DocumentElement.SelectNodes(string.Concat(Constants.Content.PageSettings.ThisName, "/", Constants.Content.Page));
+			var ps = _infoDoc.DocumentElement.SelectNodes($"{Constants.Content.PageSettings.ThisName}/{Constants.Content.Page}");
 			if (ps.Count == 0) {
 				return;
 			}

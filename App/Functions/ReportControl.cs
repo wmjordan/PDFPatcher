@@ -22,11 +22,9 @@ namespace PDFPatcher.Functions
 			if (AppContext.MainForm.IsWorkerBusy == false) {
 				Hide();
 			}
-			else {
-				if (Common.FormHelper.YesNoBox("程序正在工作，是否终止执行？") == DialogResult.Yes) {
-					AppContext.MainForm.GetWorker().CancelAsync();
-					AppContext.Abort = true;
-				}
+			else if (Common.FormHelper.YesNoBox("程序正在工作，是否终止执行？") == DialogResult.Yes) {
+				AppContext.MainForm.GetWorker().CancelAsync();
+				AppContext.Abort = true;
 			}
 		}
 

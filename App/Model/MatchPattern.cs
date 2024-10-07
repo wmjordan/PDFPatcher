@@ -88,15 +88,11 @@ namespace PDFPatcher.Model
 			bool Matches(string text);
 			string Replace(string text, string replacement);
 		}
-		sealed class RegexMatcher : IMatcher
+		sealed class RegexMatcher(MatchPattern pattern) : IMatcher
 		{
-			readonly Regex _regex;
-			readonly bool _fullMatch;
-			public RegexMatcher(MatchPattern pattern) {
-				_regex = new Regex(pattern.Text,
+			readonly Regex _regex = new Regex(pattern.Text,
 							 RegexOptions.Compiled | RegexOptions.CultureInvariant | (pattern.MatchCase ? RegexOptions.None : RegexOptions.IgnoreCase));
-				_fullMatch = pattern.FullMatch;
-			}
+			readonly bool _fullMatch = pattern.FullMatch;
 
 			public bool Matches(string text) {
 				var m = _regex.Match(text);
@@ -106,17 +102,11 @@ namespace PDFPatcher.Model
 				return _regex.Replace(text, replacement);
 			}
 		}
-		sealed class SimpleMatcher : IMatcher
+		sealed class SimpleMatcher(MatchPattern pattern) : IMatcher
 		{
-			readonly bool _fullMatch;
-			readonly string _text;
-			readonly StringComparison _comparison;
-
-			public SimpleMatcher(MatchPattern pattern) {
-				_text = pattern.Text;
-				_fullMatch = pattern.FullMatch;
-				_comparison = pattern.MatchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
-			}
+			readonly bool _fullMatch = pattern.FullMatch;
+			readonly string _text = pattern.Text;
+			readonly StringComparison _comparison = pattern.MatchCase ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
 
 			public bool Matches(string text) {
 				if (String.IsNullOrEmpty(text)) {

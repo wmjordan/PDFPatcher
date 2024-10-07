@@ -157,8 +157,7 @@ namespace PDFPatcher.Functions
 
 		#region 拖放操作
 		void ItemList_CanDropFile(object sender, OlvDropEventArgs e) {
-			var o = e.DataObject as DataObject;
-			if (o == null) {
+			if (e.DataObject is not DataObject o) {
 				return;
 			}
 			var f = o.GetFileDropList();
@@ -183,8 +182,7 @@ namespace PDFPatcher.Functions
 		}
 
 		void ItemList_FileDropped(object sender, OlvDropEventArgs e) {
-			var o = e.DataObject as DataObject;
-			if (o == null) {
+			if (e.DataObject is not DataObject o) {
 				return;
 			}
 			var f = o.GetFileDropList();
@@ -269,7 +267,7 @@ namespace PDFPatcher.Functions
 			if (item.OwnerItem != null && item.OwnerItem.Name == Commands.Selection) {
 				EnableCommand(item, _ItemList.GetItemCount() > 0 && _ItemList.Focused, true);
 			}
-			else if (n.StartsWith(Commands.Copy, StringComparison.Ordinal) || n.StartsWith(Commands.Paste, StringComparison.Ordinal) || n == Commands.Delete) {
+			else if (n.HasPrefix(Commands.Copy) || n.HasPrefix(Commands.Paste) || n == Commands.Delete) {
 				EnableCommand(item, _ItemList.GetItemCount() > 0 && _ItemList.GetFirstSelectedIndex() > -1, true);
 			}
 			else if (n == Commands.Options) {
@@ -341,9 +339,7 @@ namespace PDFPatcher.Functions
 
 		SourceItem GetParentSourceItem(SourceItem item) {
 			var p = _ItemList.GetParentModel(item);
-			if (p == null) {
-				p = _itemsContainer;
-			}
+			p ??= _itemsContainer;
 			return p;
 		}
 
@@ -791,8 +787,7 @@ namespace PDFPatcher.Functions
 			var s = items[0] as SourceItem.Image;
 			int c = 1;
 			for (int i = 1; i < items.Count; i++) {
-				var image = items[i] as SourceItem.Image;
-				if (image == null || image.Type == SourceItem.ItemType.Pdf) {
+				if (items[i] is not SourceItem.Image image || image.Type == SourceItem.ItemType.Pdf) {
 					continue;
 				}
 				if (s == null) {

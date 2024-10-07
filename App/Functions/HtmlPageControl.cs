@@ -10,8 +10,7 @@ namespace PDFPatcher.Functions
 			if (i == -1) {
 				return;
 			}
-			var p = link.Substring(0, i);
-			switch (p) {
+			switch (link.Substring(0, i)) {
 				case "func":
 					var func = (Function)Enum.Parse(typeof(Function), link.Substring(i + 1));
 					AppContext.MainForm.SelectFunctionList(func);
@@ -33,16 +32,5 @@ namespace PDFPatcher.Functions
 			e.Callback(Properties.Resources.ResourceManager.GetObject(e.Src.Substring("res:".Length)) as System.Drawing.Image);
 			e.Handled = true;
 		}
-
-		/// <summary>返回字符串中包含指定字符串之后的子字符串。</summary>
-		/// <remarks>如果找不到指定字符串，则返回空字符串。</remarks>
-		protected static string SubstringAfter(string source, char value) {
-			int index = source.LastIndexOf(value);
-			if (index != -1) {
-				return source.Substring(index + 1);
-			}
-			return String.Empty;
-		}
-
 	}
 }

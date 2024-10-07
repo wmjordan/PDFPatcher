@@ -46,11 +46,11 @@ namespace MuPDF.Extensions
 		#endregion
 
 		public static string GetText(this TextLine textLine) {
-			var sb = new StringBuilder(10);
+			var sb = StringBuilderCache.Acquire(10);
 			foreach (var ch in textLine) {
 				sb.Append(Char.IsSurrogate((char)ch.Character) ? "?" : char.ConvertFromUtf32(ch.Character));
 			}
-			return sb.ToString();
+			return StringBuilderCache.GetStringAndRelease(sb);
 		}
 
 		#region 渲染页面
@@ -250,12 +250,12 @@ namespace MuPDF.Extensions
 			if (name[0] == '@') {
 				name = name.Substring(1);
 			}
-			return name.StartsWith("SimKai", StringComparison.OrdinalIgnoreCase) || name.StartsWith("楷体_GB2312", StringComparison.OrdinalIgnoreCase) || name.StartsWith("Kaiti_GB2312", StringComparison.OrdinalIgnoreCase) ? ff + "simkai.ttf"
-				: name.StartsWith("SimSun", StringComparison.OrdinalIgnoreCase) || name.StartsWith("宋体", StringComparison.OrdinalIgnoreCase) || name.StartsWith("STSong", StringComparison.OrdinalIgnoreCase) ? ff + "simsun.ttc"
-				: name.StartsWith("SimHei", StringComparison.OrdinalIgnoreCase) || name.StartsWith("黑体", StringComparison.OrdinalIgnoreCase) ? ff + "simhei.ttf"
-				: name.StartsWith("SimLi", StringComparison.OrdinalIgnoreCase) || name.StartsWith("隶书", StringComparison.OrdinalIgnoreCase) ? ff + "simli.ttf"
-				: name.StartsWith("SimFang", StringComparison.OrdinalIgnoreCase) || name.StartsWith("仿宋_GB2312", StringComparison.OrdinalIgnoreCase) || name.StartsWith("Fangsong_GB2312", StringComparison.OrdinalIgnoreCase) ? ff + "simfang.ttf"
-				: name.StartsWith("SimYou", StringComparison.OrdinalIgnoreCase) || name.StartsWith("幼圆", StringComparison.OrdinalIgnoreCase) ? ff + "simyou.ttf"
+			return name.HasCaseInsensitivePrefix("SimKai") || name.HasCaseInsensitivePrefix("楷体_GB2312") || name.HasCaseInsensitivePrefix("Kaiti_GB2312") ? ff + "simkai.ttf"
+				: name.HasCaseInsensitivePrefix("SimSun") || name.HasCaseInsensitivePrefix("宋体") || name.HasCaseInsensitivePrefix("STSong") ? ff + "simsun.ttc"
+				: name.HasCaseInsensitivePrefix("SimHei") || name.HasCaseInsensitivePrefix("黑体") ? ff + "simhei.ttf"
+				: name.HasCaseInsensitivePrefix("SimLi") || name.HasCaseInsensitivePrefix("隶书") ? ff + "simli.ttf"
+				: name.HasCaseInsensitivePrefix("SimFang") || name.HasCaseInsensitivePrefix("仿宋_GB2312") || name.HasCaseInsensitivePrefix("Fangsong_GB2312") ? ff + "simfang.ttf"
+				: name.HasCaseInsensitivePrefix("SimYou") || name.HasCaseInsensitivePrefix("幼圆") ? ff + "simyou.ttf"
 				: null;
 		}
 

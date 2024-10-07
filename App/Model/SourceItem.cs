@@ -20,9 +20,7 @@ namespace PDFPatcher.Model
 		public abstract DateTime FileTime { get; }
 		public List<SourceItem> Items {
 			get {
-				if (_Items == null) {
-					_Items = new List<SourceItem>();
-				}
+				_Items ??= new List<SourceItem>();
 				return _Items;
 			}
 		}
@@ -130,28 +128,18 @@ namespace PDFPatcher.Model
 					return new Pdf(path, r, c, info);
 				}
 				catch (FileNotFoundException) {
-					FormHelper.ErrorBox(String.Concat("找不到文件：“", path, "”。"));
+					FormHelper.ErrorBox($"找不到文件：“{path}”。");
 				}
 				catch (Exception) {
-					FormHelper.ErrorBox(String.Concat("打开 PDF 文件“", path, "”时出错。"));
+					FormHelper.ErrorBox($"打开 PDF 文件“{path}”时出错。");
 					// ignore corrupted 
 				}
 				return Create();
 			}
 			if (path.HasExtension(Constants.FileExtensions.AllSupportedImageExtension)) {
 				return new Image(path);
-				//try {
-				//    using (var i = new FreeImageAPI.FreeImageBitmap (path, (FreeImageAPI.FREE_IMAGE_LOAD_FLAGS)0x0800/*仅加载图像尺寸信息*/)) {
-				//        var fc = i.FrameCount;
-				//        return new Image (path);
-				//    }
-				//}
-				//catch (Exception) {
-				//    Common.FormHelper.ErrorBox (String.Concat ("不支持图片文件“", path, "”。"));
-				//    // ignore unsupported images
-				//}
 			}
-			FormHelper.ErrorBox(String.Concat("不支持文件“", path, "”。"));
+			FormHelper.ErrorBox($"不支持文件“{path}”。");
 			return Create();
 		}
 
@@ -620,7 +608,7 @@ namespace PDFPatcher.Model
 		}
 
 		static bool MatchCajPattern(string text, string pattern) {
-			if (text.StartsWith(pattern, StringComparison.OrdinalIgnoreCase) == false) {
+			if (!text.HasCaseInsensitivePrefix(pattern)) {
 				return false;
 			}
 			int l = pattern.Length;

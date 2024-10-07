@@ -611,8 +611,7 @@ namespace PDFPatcher.Functions.Editor
 					}
 				}
 				while (es[i].HasChildNodes) {
-					var c = es[i].FirstChild as XmlElement;
-					if (c == null) {
+					if (es[i].FirstChild is not XmlElement c) {
 						continue;
 					}
 					undo.Add(new AddElementAction(c));
@@ -735,9 +734,7 @@ namespace PDFPatcher.Functions.Editor
 									var b = span.Box;
 									if (bl < style.Level) {
 										if (matcher != null) {
-											if (jointBlockText == null) {
-												jointBlockText = GetLineText(line, block, out hasJointText);
-											}
+											jointBlockText ??= GetLineText(line, block, out hasJointText);
 											if ((matchLine = matcher(jointBlockText)) == false) {
 												continue;
 											}
@@ -771,9 +768,7 @@ namespace PDFPatcher.Functions.Editor
 											continue;
 										}
 										if (matcher != null) {
-											if (jointBlockText == null) {
-												jointBlockText = GetLineText(line, block, out hasJointText);
-											}
+											jointBlockText ??= GetLineText(line, block, out hasJointText);
 											if ((matchLine = matcher(jointBlockText)) == false) {
 												continue;
 											}
@@ -786,9 +781,7 @@ namespace PDFPatcher.Functions.Editor
 											--bl;
 										}
 										if (matcher != null) {
-											if (jointBlockText == null) {
-												jointBlockText = GetLineText(line, block, out hasJointText);
-											}
+											jointBlockText ??= GetLineText(line, block, out hasJointText);
 											if ((matchLine = matcher(jointBlockText)) == false) {
 												continue;
 											}

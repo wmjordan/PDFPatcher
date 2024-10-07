@@ -36,8 +36,7 @@ namespace PDFPatcher.Model
 			public MultiCondition() { }
 
 			public MultiCondition(AutoBookmarkCondition condition) {
-				var m = condition as MultiCondition;
-				if (m != null) {
+				if (condition is MultiCondition m) {
 					foreach (var item in m.Conditions) {
 						Conditions.Add(item.Clone() as AutoBookmarkCondition);
 					}

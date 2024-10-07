@@ -4,22 +4,22 @@ using System.Windows.Forms;
 namespace PDFPatcher.Functions
 {
 	/// <summary>
-	/// Class used to preserve / restore / maximize state of the form
+	/// 用于保存窗体状态的类。
 	/// </summary>
 	public sealed class FormState
 	{
-		FormBorderStyle brdStyle;
-		bool topMost;
-		Rectangle bounds;
+		FormBorderStyle _borderStyle;
+		bool _topMost;
+		Rectangle _bounds;
 
-		bool IsMaximized;
+		bool _isMaximized;
 
 		public void Maximize(Form targetForm) {
-			if (IsMaximized) {
+			if (_isMaximized) {
 				return;
 			}
 
-			IsMaximized = true;
+			_isMaximized = true;
 			if (targetForm.WindowState == FormWindowState.Maximized) {
 				targetForm.WindowState = FormWindowState.Normal;
 			}
@@ -30,16 +30,16 @@ namespace PDFPatcher.Functions
 		}
 
 		void Save(Form targetForm) {
-			brdStyle = targetForm.FormBorderStyle;
-			topMost = targetForm.TopMost;
-			bounds = targetForm.Bounds;
+			_borderStyle = targetForm.FormBorderStyle;
+			_topMost = targetForm.TopMost;
+			_bounds = targetForm.Bounds;
 		}
 
 		public void Restore(Form targetForm) {
-			targetForm.FormBorderStyle = brdStyle;
-			targetForm.TopMost = topMost;
-			targetForm.Bounds = bounds;
-			IsMaximized = false;
+			targetForm.FormBorderStyle = _borderStyle;
+			targetForm.TopMost = _topMost;
+			targetForm.Bounds = _bounds;
+			_isMaximized = false;
 		}
 	}
 }

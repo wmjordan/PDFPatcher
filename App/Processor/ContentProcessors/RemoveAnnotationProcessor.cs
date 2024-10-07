@@ -40,8 +40,7 @@ namespace PDFPatcher.Processor
 			bool removed = false;
 			var l = anns.Size;
 			for (int i = l - 1; i >= 0; i--) {
-				var ann = PdfReader.GetPdfObject(anns[i]) as PdfDictionary;
-				if (ann == null) {
+				if (PdfReader.GetPdfObject(anns[i]) is not PdfDictionary ann) {
 					continue;
 				}
 				if (_AnnotationType.Equals(ann.GetAsName(PdfName.SUBTYPE)) == false) {

@@ -46,5 +46,21 @@ namespace PDFPatcher.Common
 		public static string ToDescription<TEnum>(this TEnum value) where TEnum : Enum {
 			return value.ToString();
 		}
+
+		public static bool HasCaseInsensitivePrefix(this string text, string prefix) {
+			return text?.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) == true;
+		}
+		public static bool HasPrefix(this string text, string prefix) {
+			return text?.StartsWith(prefix, StringComparison.Ordinal) == true;
+		}
+
+		/// <summary>返回字符串中包含指定字符串之后的子字符串。</summary>
+		/// <remarks>如果找不到指定字符串，则返回空字符串。</remarks>
+		public static string SubstringAfter(this string source, char value) {
+			int index = source.LastIndexOf(value);
+			return index != -1
+				? source.Substring(index + 1)
+				: String.Empty;
+		}
 	}
 }

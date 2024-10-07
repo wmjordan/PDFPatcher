@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.Xml.Serialization;
 
@@ -14,7 +12,11 @@ namespace MuPDF
 		///<summary>获取或指定导出图片的格式。</summary>
 		[XmlAttribute("图片格式")]
 		public ImageFormat FileFormat { get; set; }
-		public string FileFormatExtension => FileFormat == ImageFormat.Jpeg ? ".jpg" : FileFormat == ImageFormat.Tiff ? ".tif" : ".png";
+		public string FileFormatExtension => FileFormat == ImageFormat.Jpeg
+			? ".jpg"
+			: FileFormat == ImageFormat.Tiff
+				? ".tif"
+				: ".png";
 		///<summary>获取或指定是否垂直翻转导出的图片。</summary>
 		[XmlAttribute("垂直翻转图片")]
 		public bool VerticalFlipImages { get; set; }
@@ -46,7 +48,10 @@ namespace MuPDF
 
 		float _Dpi = 72f;
 		[XmlAttribute("分辨率")]
-		public float Dpi { get => _Dpi; set => _Dpi = value > 0 ? value : 72f; }
+		public float Dpi {
+			get => _Dpi;
+			set => _Dpi = value > 0 ? value : 72f;
+		}
 
 		[XmlAttribute("尺寸模式")]
 		public bool UseSpecificWidth { get; set; }

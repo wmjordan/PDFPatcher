@@ -9,17 +9,17 @@ using System.Windows.Forms;
 using System.Xml;
 using BrightIdeasSoftware;
 using iTextSharp.text.pdf;
+using iTextSharp.text.pdf.fonts.cmaps;
 using PDFPatcher.Common;
 using PDFPatcher.Model;
 using PDFPatcher.Processor;
-using iTextSharp.text.pdf.fonts.cmaps;
 
 namespace PDFPatcher.Functions
 {
 	[ToolboxItem(false)]
 	public sealed partial class DocumentInspectorControl : FunctionControl, IDocumentEditor
 	{
-		static readonly PdfObjectType[] __XmlExportableTypes = new PdfObjectType[] { PdfObjectType.Page, PdfObjectType.Pages, PdfObjectType.Trailer };
+		static readonly PdfObjectType[] __XmlExportableTypes = [PdfObjectType.Page, PdfObjectType.Pages, PdfObjectType.Trailer];
 		static Dictionary<string, int> __OpNameIcons;
 		static Dictionary<int, int> __PdfObjectIcons;
 
@@ -184,8 +184,7 @@ namespace PDFPatcher.Functions
 				args.Control = new AutoResizingTextBox(args.CellBounds, t, (Control)s) { ReadOnly = readOnly };
 			};
 			_ObjectDetailBox.CanExpandGetter = (object o) => {
-				var d = o as DocumentObject;
-				if (d == null) {
+				if (o is not DocumentObject d) {
 					return false;
 				}
 				if (d.Type == PdfObjectType.GoToPage) {
@@ -197,8 +196,7 @@ namespace PDFPatcher.Functions
 				? (System.Collections.IEnumerable)d.Children
 				: null;
 			_ObjectDetailBox.RowFormatter = (OLVListItem olvItem) => {
-				var o = olvItem.RowObject as DocumentObject;
-				if (o == null) {
+				if (olvItem.RowObject is not DocumentObject o) {
 					return;
 				}
 				if (o.Type == PdfObjectType.Normal) {
@@ -249,8 +247,8 @@ namespace PDFPatcher.Functions
 			_AddNumberNode.Image = _ObjectTypeIcons.Images["Number"];
 			_AddBooleanNode.Image = _ObjectTypeIcons.Images["Bool"];
 
-			_addPdfObjectMenuItems = new ToolStripItem[] { _AddNameNode, _AddStringNode, _AddDictNode, _AddArrayNode, _AddNumberNode, _AddBooleanNode };
-			_pdfTypeForAddObjectMenuItems = new int[] { PdfObject.NAME, PdfObject.STRING, PdfObject.DICTIONARY, PdfObject.ARRAY, PdfObject.NUMBER, PdfObject.BOOLEAN };
+			_addPdfObjectMenuItems = [_AddNameNode, _AddStringNode, _AddDictNode, _AddArrayNode, _AddNumberNode, _AddBooleanNode];
+			_pdfTypeForAddObjectMenuItems = [PdfObject.NAME, PdfObject.STRING, PdfObject.DICTIONARY, PdfObject.ARRAY, PdfObject.NUMBER, PdfObject.BOOLEAN];
 
 			_OpenButton.DropDownOpening += FileListHelper.OpenPdfButtonDropDownOpeningHandler;
 			_OpenButton.DropDownItemClicked += (s, args) => {
@@ -271,8 +269,6 @@ namespace PDFPatcher.Functions
 				case Commands.Delete:
 					EnableCommand(item, _DeleteButton.Enabled, true);
 					return;
-				default:
-					break;
 			}
 			if (Commands.CommonSelectionCommands.Contains(n)
 				|| Commands.RecentFiles == n
@@ -333,8 +329,7 @@ namespace PDFPatcher.Functions
 			var v = r.Value as PdfIndirectReference;
 			var l = _ObjectDetailBox.VirtualListSize;
 			for (int i = 0; i < l; i++) {
-				var m = _ObjectDetailBox.GetModelObject(i) as DocumentObject;
-				if (m == null) {
+				if (_ObjectDetailBox.GetModelObject(i) is not DocumentObject m) {
 					continue;
 				}
 				if (m.Type == PdfObjectType.PageCommands) {
@@ -358,8 +353,7 @@ namespace PDFPatcher.Functions
 		}
 
 		void _ObjectDetailBox_CanDrop(object sender, OlvDropEventArgs e) {
-			var o = e.DataObject as DataObject;
-			if (o == null) {
+			if (e.DataObject is not DataObject o) {
 				return;
 			}
 			foreach (var item in o.GetFileDropList()) {
@@ -377,8 +371,7 @@ namespace PDFPatcher.Functions
 		}
 
 		void _ObjectDetailBox_Dropped(object sender, OlvDropEventArgs e) {
-			var o = e.DataObject as DataObject;
-			if (o == null) {
+			if (e.DataObject is not DataObject o) {
 				return;
 			}
 			var f = o.GetFileDropList();
@@ -394,18 +387,17 @@ namespace PDFPatcher.Functions
 				return;
 			}
 			_ExpandButton.Enabled = _CollapseButton.Enabled = true;
-			var d = _ObjectDetailBox.GetModelObject(si.Index) as DocumentObject;
 			_ViewButton.Enabled = false;
 			_DeleteButton.Enabled = false;
 			_ExportButton.Enabled = false;
 			_AddObjectMenu.Enabled = false;
-			if (d == null) {
+			if (_ObjectDetailBox.GetModelObject(si.Index) is not DocumentObject d) {
 				return;
 			}
 			if (d.Value != null && (d.Value.Type == PdfObject.INDIRECT || d.Value.Type == PdfObject.STREAM)) {
 				var s = d.Value as PRStream ?? d.ExtensiveObject as PRStream;
 				if (s != null) {
-					_ViewButton.Enabled = d.Name.StartsWith("Font", StringComparison.Ordinal) == false;
+					_ViewButton.Enabled = d.Name.HasPrefix("Font") == false;
 					_ExportButton.Enabled = _AddObjectMenu.Enabled = true;
 					if (PdfName.IMAGE.Equals(s.GetAsName(PdfName.SUBTYPE))) {
 						ShowDescription("图片", null, PdfHelper.GetTypeName(PdfObject.STREAM));
@@ -549,8 +541,7 @@ namespace PDFPatcher.Functions
 				if (n == null || n.Parent == null) {
 					return;
 				}
-				var po = n.Parent.Value as PdfObject;
-				if (po == null) {
+				if (n.Parent.Value is not PdfObject po) {
 					return;
 				}
 				if (po.Type == PdfObject.INDIRECT) {
@@ -565,8 +556,7 @@ namespace PDFPatcher.Functions
 				if (n == null) {
 					return;
 				}
-				var s = n.ExtensiveObject as PRStream;
-				if (s == null) {
+				if (n.ExtensiveObject is not PRStream s) {
 					return;
 				}
 				if (PdfName.IMAGE.Equals(s.GetAsName(PdfName.SUBTYPE))
@@ -617,8 +607,7 @@ namespace PDFPatcher.Functions
 					exportTrailer = true;
 				}
 				foreach (var item in so) {
-					var d = item as DocumentObject;
-					if (d == null) {
+					if (item is not DocumentObject d) {
 						continue;
 					}
 					if (d.Type == PdfObjectType.Page) {
@@ -631,7 +620,7 @@ namespace PDFPatcher.Functions
 					}
 				}
 				if (ep.Count == 1) {
-					ExportXmlInfo(n.FriendlyName ?? n.Name, exportTrailer, new int[] { (int)n.ExtensiveObject });
+					ExportXmlInfo(n.FriendlyName ?? n.Name, exportTrailer, [(int)n.ExtensiveObject]);
 				}
 				else {
 					ExportXmlInfo(Path.GetFileNameWithoutExtension(_fileName), exportTrailer, ep.ToArray());
@@ -840,9 +829,8 @@ namespace PDFPatcher.Functions
 		}
 
 		void _LoadDocumentWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
-			var path = e.Result as string;
 			_DescriptionBox.Text = String.Empty;
-			if (path != null) {
+			if (e.Result is string path) {
 				AppContext.RecentItems.AddHistoryItem(AppContext.Recent.SourcePdfFiles, path);
 				DocumentPath = path;
 				ReloadPdf();
@@ -851,7 +839,7 @@ namespace PDFPatcher.Functions
 		}
 
 		void ReloadPdf() {
-			_imgExp = new Processor.ImageExtractor(_imgExpOption, _pdf.Document);
+			_imgExp = new ImageExtractor(_imgExpOption);
 
 			_ObjectDetailBox.ClearObjects();
 			_ObjectDetailBox.Objects = ((IHierarchicalObject<DocumentObject>)_pdf).Children;

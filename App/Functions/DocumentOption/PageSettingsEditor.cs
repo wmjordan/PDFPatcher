@@ -13,10 +13,10 @@ namespace PDFPatcher.Functions
 {
 	sealed partial class PageSettingsEditor : UserControl
 	{
-		readonly TypedObjectListView<Model.PageBoxSettings> _SettingsBox;
-		private List<Model.PageBoxSettings> _Settings;
+		readonly TypedObjectListView<PageBoxSettings> _SettingsBox;
+		private List<PageBoxSettings> _Settings;
 		[Browsable(false)]
-		public List<Model.PageBoxSettings> Settings {
+		public List<PageBoxSettings> Settings {
 			get => _Settings;
 			set { _Settings = value; _SettingsBox.Objects = value; }
 		}
@@ -24,8 +24,8 @@ namespace PDFPatcher.Functions
 		public PageSettingsEditor() {
 			InitializeComponent();
 			this.OnFirstLoad(OnLoad);
-			_SettingsBox = new TypedObjectListView<Model.PageBoxSettings>(_PageSettingsBox);
-			new TypedColumn<Model.PageBoxSettings>(_PageFilterColumn) {
+			_SettingsBox = new TypedObjectListView<PageBoxSettings>(_PageSettingsBox);
+			new TypedColumn<PageBoxSettings>(_PageFilterColumn) {
 				AspectGetter = (o) => {
 					var f = o.Filter;
 					var eo = f & (PageFilterFlag.Even | PageFilterFlag.Odd);
@@ -53,16 +53,14 @@ namespace PDFPatcher.Functions
 						);
 				}
 			};
-			new TypedColumn<Model.PageBoxSettings>(_PageRangeColumn) {
-				AspectGetter = (o) => { return String.IsNullOrEmpty(o.PageRanges) ? Constants.PageFilterTypes.AllPages : o.PageRanges; },
+			new TypedColumn<PageBoxSettings>(_PageRangeColumn) {
+				AspectGetter = (o) => String.IsNullOrEmpty(o.PageRanges) ? Constants.PageFilterTypes.AllPages : o.PageRanges,
 				AspectPutter = (o, v) => {
 					var s = v as string;
 					o.PageRanges = s != Constants.PageFilterTypes.AllPages ? s : null;
 				}
 			};
-			_PageSettingsBox.FormatRow += (s, args) => {
-				args.Item.SubItems[0].Text = (args.RowIndex + 1).ToText();
-			};
+			_PageSettingsBox.FormatRow += (s, args) => args.Item.SubItems[0].Text = (args.RowIndex + 1).ToText();
 		}
 
 		void OnLoad() {

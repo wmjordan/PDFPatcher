@@ -23,15 +23,14 @@ namespace PDFPatcher.Processor
 		int _pageRotation;
 		readonly ImageExtracterOptions _options;
 		readonly List<ImageInfo> _imageInfoList = new List<ImageInfo>();
+		readonly List<ImageDisposition> _imagePosList = new List<ImageDisposition>();
 		readonly HashSet<PdfObject> _exportedImages = new HashSet<PdfObject>();
 
 		internal List<ImageInfo> InfoList => _imageInfoList;
-
-		readonly List<ImageDisposition> _imagePosList = new List<ImageDisposition>();
 		internal List<ImageDisposition> PosList => _imagePosList;
 		internal bool PrintImageLocation { get; set; }
 
-		public ImageExtractor(ImageExtracterOptions options, PdfReader reader) {
+		public ImageExtractor(ImageExtracterOptions options) {
 			_fileMask = String.IsNullOrEmpty(options.FileMask) ? "0" : options.FileMask;
 			_options = options;
 			_parser = new PdfPageImageProcessor(_imagePosList, _imageInfoList);
@@ -123,16 +122,14 @@ namespace PDFPatcher.Processor
 			if (source == null) {
 				return;
 			}
-			PdfDictionary obj;
 			foreach (var item in source) {
 				if (PdfName.SMASK.Equals(item.Key)
 					|| PdfName.MASK.Equals(item.Key)
 					|| _options.AllowRedundantImages == false && _exportedImages.Contains(item.Value)
-					|| (obj = PdfReader.GetPdfObject(item.Value) as PdfDictionary) == null) {
+					|| PdfReader.GetPdfObject(item.Value) is not PdfDictionary obj) {
 					continue;
 				}
-				var stream = obj as PRStream;
-				if (stream == null) {
+				if (obj is not PRStream stream) {
 					goto NEXT;
 				}
 				PdfName subType = stream.GetAsName(PdfName.SUBTYPE);

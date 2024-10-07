@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using PDFPatcher.Common;
@@ -53,8 +52,8 @@ namespace PDFPatcher.Functions
 			_TargetPdfFile.FileMacroMenu.LoadStandardInfoMacros();
 			_TargetPdfFile.FileMacroMenu.LoadStandardSourceFileMacros();
 			_BookmarkControl.FileDialog.CheckFileExists = false;
-			_BookmarkControl.BrowseForFile += new EventHandler<EventArgs>(FileControl_BrowseForFile);
-			_TargetPdfFile.BrowseForFile += new EventHandler<EventArgs>(FileControl_BrowseForFile);
+			_BookmarkControl.BrowseForFile += FileControl_BrowseForFile;
+			_TargetPdfFile.BrowseForFile += FileControl_BrowseForFile;
 			_TargetPdfFile.TargetFileChangedByBrowseButton += (s, args) => {
 				int i;
 				var f = _TargetPdfFile.FileDialog.FileName;
@@ -64,9 +63,7 @@ namespace PDFPatcher.Functions
 				}
 			};
 			var fi = _FileTypeList.Images;
-			fi.AddRange(new System.Drawing.Image[] {
-				Properties.Resources.OriginalPdfFile
-			});
+			fi.AddRange([Properties.Resources.OriginalPdfFile]);
 			_ItemList.FixEditControlWidth();
 			_ItemList.ScaleColumnWidths();
 			_listHelper = new FileListHelper(_ItemList);
@@ -286,41 +283,6 @@ namespace PDFPatcher.Functions
 
 		void _MainToolbar_ItemClicked(object sender, ToolStripItemClickedEventArgs e) {
 			_listHelper.ProcessCommonMenuCommand(e.ClickedItem.Name);
-		}
-
-		void PreviewRename(List<SourceItem.Pdf> items, string template) {
-			var i = 0;
-			var result = new string[items.Count];
-			var source = new string[items.Count];
-			FilePath s;
-			string t;
-			foreach (var item in items) {
-				try {
-					s = item.FilePath;
-					if (s.ExistsFile == false) {
-						t = string.Concat("(找不到 PDF 文件：", s, ")");
-						continue;
-					}
-					else {
-						t = Processor.Worker.GetExpandedFileName(item, template);
-						if (t.Length == 0) {
-							t = "<输出文件名无效>";
-						}
-						else if (Path.GetFileName(t).Length == 0) {
-							t = "<输出文件名为空>";
-						}
-					}
-					source[i] = s.ToString();
-					result[i] = t;
-					i++;
-				}
-				catch (Exception ex) {
-					FormHelper.ErrorBox(ex.Message);
-				}
-			}
-			using (var f = new RenamePreviewForm(source, result)) {
-				f.ShowDialog();
-			}
 		}
 
 		#region AddDocumentWorker

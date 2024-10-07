@@ -13,12 +13,12 @@ namespace PDFPatcher.Processor
 {
 	sealed class ReplaceFontProcessor : IPageProcessor
 	{
-		static readonly string[] __LegacyFonts = { "宋体", "楷体_GB2312", "仿宋_GB2312", "黑体", "STSONG-LIGHT-GB-EUC-H", "STSONG-LIGHT-GBK-EUC-H" };
-		static readonly string[] __AlternativeFonts = { "宋体", "楷体", "仿宋", "微软雅黑", "宋体", "宋体" };
+		static readonly string[] __LegacyFonts = ["宋体", "楷体_GB2312", "仿宋_GB2312", "黑体", "STSONG-LIGHT-GB-EUC-H", "STSONG-LIGHT-GBK-EUC-H"];
+		static readonly string[] __AlternativeFonts = ["宋体", "楷体", "仿宋", "微软雅黑", "宋体", "宋体"];
 		static readonly PdfName __GbkEncoding = new PdfName("GBK-EUC-H");
 		static readonly PdfName __GbEncoding = new PdfName("GB-EUC-H");
-		static readonly string[] __BuiltInEncodings = { "78-EUC-H", "78-EUC-V", "78-H", "78ms-RKSJ-H", "78ms-RKSJ-V", "78-RKSJ-H", "78-RKSJ-V", "78-V", "83pv-RKSJ-H", "90msp-RKSJ-H", "90msp-RKSJ-V", "90ms-RKSJ-H", "90ms-RKSJ-V", "90pv-RKSJ-H", "90pv-RKSJ-V", "Add-H", "Add-RKSJ-H", "Add-RKSJ-V", "Add-V", "Adobe-CNS1-0", "Adobe-CNS1-1", "Adobe-CNS1-2", "Adobe-CNS1-3", "Adobe-CNS1-4", "Adobe-CNS1-5", "Adobe-CNS1-6", "Adobe-GB1-0", "Adobe-GB1-1", "Adobe-GB1-2", "Adobe-GB1-3", "Adobe-GB1-4", "Adobe-GB1-5", "Adobe-Japan1-0", "Adobe-Japan1-1", "Adobe-Japan1-2", "Adobe-Japan1-3", "Adobe-Japan1-4", "Adobe-Japan1-5", "Adobe-Japan1-6", "Adobe-Korea1-0", "Adobe-Korea1-1", "Adobe-Korea1-2", "B5-H", "B5pc-H", "B5pc-V", "B5-V", "CNS1-H", "CNS1-V", "CNS2-H", "CNS2-V", "CNS-EUC-H", "CNS-EUC-V", "ETen-B5-H", "ETen-B5-V", "ETenms-B5-H", "ETenms-B5-V", "ETHK-B5-H", "ETHK-B5-V", "EUC-H", "EUC-V", "Ext-H", "Ext-RKSJ-H", "Ext-RKSJ-V", "Ext-V", "GB-EUC-H", "GB-EUC-V", "GB-H", "GBK2K-H", "GBK2K-V", "GBK-EUC-H", "GBK-EUC-V", "GBKp-EUC-H", "GBKp-EUC-V", "GBpc-EUC-H", "GBpc-EUC-V", "GBT-EUC-H", "GBT-EUC-V", "GBT-H", "GBTpc-EUC-H", "GBTpc-EUC-V", "GBT-V", "GB-V", "H", "Hankaku", "Hiragana", "HKdla-B5-H", "HKdla-B5-V", "HKdlb-B5-H", "HKdlb-B5-V", "HKgccs-B5-H", "HKgccs-B5-V", "HKm314-B5-H", "HKm314-B5-V", "HKm471-B5-H", "HKm471-B5-V", "HKscs-B5-H", "HKscs-B5-V", "Katakana", "KSC-EUC-H", "KSC-EUC-V", "KSC-H", "KSC-Johab-H", "KSC-Johab-V", "KSCms-UHC-H", "KSCms-UHC-HW-H", "KSCms-UHC-HW-V", "KSCms-UHC-V", "KSCpc-EUC-H", "KSCpc-EUC-V", "KSC-V", "NWP-H", "NWP-V", "RKSJ-H", "RKSJ-V", "Roman", "UniCNS-UCS2-H", "UniCNS-UCS2-V", "UniCNS-UTF16-H", "UniCNS-UTF16-V", "UniCNS-UTF32-H", "UniCNS-UTF32-V", "UniCNS-UTF8-H", "UniCNS-UTF8-V", "UniGB-UCS2-H", "UniGB-UCS2-V", "UniGB-UTF16-H", "UniGB-UTF16-V", "UniGB-UTF32-H", "UniGB-UTF32-V", "UniGB-UTF8-H", "UniGB-UTF8-V", "UniJIS2004-UTF16-H", "UniJIS2004-UTF16-V", "UniJIS2004-UTF32-H", "UniJIS2004-UTF32-V", "UniJIS2004-UTF8-H", "UniJIS2004-UTF8-V", "UniJISPro-UCS2-HW-V", "UniJISPro-UCS2-V", "UniJISPro-UTF8-V", "UniJIS-UCS2-H", "UniJIS-UCS2-HW-H", "UniJIS-UCS2-HW-V", "UniJIS-UCS2-V", "UniJIS-UTF16-H", "UniJIS-UTF16-V", "UniJIS-UTF32-H", "UniJIS-UTF32-V", "UniJIS-UTF8-H", "UniJIS-UTF8-V", "UniJISX02132004-UTF32-H", "UniJISX02132004-UTF32-V", "UniJISX0213-UTF32-H", "UniJISX0213-UTF32-V", "UniKS-UCS2-H", "UniKS-UCS2-V", "UniKS-UTF16-H", "UniKS-UTF16-V", "UniKS-UTF32-H", "UniKS-UTF32-V", "UniKS-UTF8-H", "UniKS-UTF8-V", "V", "WP-Symbol" };
-		static readonly string[] __GbEucEncodings = { "GBK-EUC-H", "GBK-EUC-V", "GBT-EUC-H", "GB-EUC-H", "GB-EUC-V" };
+		static readonly string[] __BuiltInEncodings = ["78-EUC-H", "78-EUC-V", "78-H", "78ms-RKSJ-H", "78ms-RKSJ-V", "78-RKSJ-H", "78-RKSJ-V", "78-V", "83pv-RKSJ-H", "90msp-RKSJ-H", "90msp-RKSJ-V", "90ms-RKSJ-H", "90ms-RKSJ-V", "90pv-RKSJ-H", "90pv-RKSJ-V", "Add-H", "Add-RKSJ-H", "Add-RKSJ-V", "Add-V", "Adobe-CNS1-0", "Adobe-CNS1-1", "Adobe-CNS1-2", "Adobe-CNS1-3", "Adobe-CNS1-4", "Adobe-CNS1-5", "Adobe-CNS1-6", "Adobe-GB1-0", "Adobe-GB1-1", "Adobe-GB1-2", "Adobe-GB1-3", "Adobe-GB1-4", "Adobe-GB1-5", "Adobe-Japan1-0", "Adobe-Japan1-1", "Adobe-Japan1-2", "Adobe-Japan1-3", "Adobe-Japan1-4", "Adobe-Japan1-5", "Adobe-Japan1-6", "Adobe-Korea1-0", "Adobe-Korea1-1", "Adobe-Korea1-2", "B5-H", "B5pc-H", "B5pc-V", "B5-V", "CNS1-H", "CNS1-V", "CNS2-H", "CNS2-V", "CNS-EUC-H", "CNS-EUC-V", "ETen-B5-H", "ETen-B5-V", "ETenms-B5-H", "ETenms-B5-V", "ETHK-B5-H", "ETHK-B5-V", "EUC-H", "EUC-V", "Ext-H", "Ext-RKSJ-H", "Ext-RKSJ-V", "Ext-V", "GB-EUC-H", "GB-EUC-V", "GB-H", "GBK2K-H", "GBK2K-V", "GBK-EUC-H", "GBK-EUC-V", "GBKp-EUC-H", "GBKp-EUC-V", "GBpc-EUC-H", "GBpc-EUC-V", "GBT-EUC-H", "GBT-EUC-V", "GBT-H", "GBTpc-EUC-H", "GBTpc-EUC-V", "GBT-V", "GB-V", "H", "Hankaku", "Hiragana", "HKdla-B5-H", "HKdla-B5-V", "HKdlb-B5-H", "HKdlb-B5-V", "HKgccs-B5-H", "HKgccs-B5-V", "HKm314-B5-H", "HKm314-B5-V", "HKm471-B5-H", "HKm471-B5-V", "HKscs-B5-H", "HKscs-B5-V", "Katakana", "KSC-EUC-H", "KSC-EUC-V", "KSC-H", "KSC-Johab-H", "KSC-Johab-V", "KSCms-UHC-H", "KSCms-UHC-HW-H", "KSCms-UHC-HW-V", "KSCms-UHC-V", "KSCpc-EUC-H", "KSCpc-EUC-V", "KSC-V", "NWP-H", "NWP-V", "RKSJ-H", "RKSJ-V", "Roman", "UniCNS-UCS2-H", "UniCNS-UCS2-V", "UniCNS-UTF16-H", "UniCNS-UTF16-V", "UniCNS-UTF32-H", "UniCNS-UTF32-V", "UniCNS-UTF8-H", "UniCNS-UTF8-V", "UniGB-UCS2-H", "UniGB-UCS2-V", "UniGB-UTF16-H", "UniGB-UTF16-V", "UniGB-UTF32-H", "UniGB-UTF32-V", "UniGB-UTF8-H", "UniGB-UTF8-V", "UniJIS2004-UTF16-H", "UniJIS2004-UTF16-V", "UniJIS2004-UTF32-H", "UniJIS2004-UTF32-V", "UniJIS2004-UTF8-H", "UniJIS2004-UTF8-V", "UniJISPro-UCS2-HW-V", "UniJISPro-UCS2-V", "UniJISPro-UTF8-V", "UniJIS-UCS2-H", "UniJIS-UCS2-HW-H", "UniJIS-UCS2-HW-V", "UniJIS-UCS2-V", "UniJIS-UTF16-H", "UniJIS-UTF16-V", "UniJIS-UTF32-H", "UniJIS-UTF32-V", "UniJIS-UTF8-H", "UniJIS-UTF8-V", "UniJISX02132004-UTF32-H", "UniJISX02132004-UTF32-V", "UniJISX0213-UTF32-H", "UniJISX0213-UTF32-V", "UniKS-UCS2-H", "UniKS-UCS2-V", "UniKS-UTF16-H", "UniKS-UTF16-V", "UniKS-UTF32-H", "UniKS-UTF32-V", "UniKS-UTF8-H", "UniKS-UTF8-V", "V", "WP-Symbol"];
+		static readonly string[] __GbEucEncodings = ["GBK-EUC-H", "GBK-EUC-V", "GBT-EUC-H", "GB-EUC-H", "GB-EUC-V"];
 		const string HalfWidthLetters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 		const string FullWidthLetters = "ａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺ";
 		const string HalfWidthNumbers = "0123456789";
@@ -48,19 +48,17 @@ namespace PDFPatcher.Processor
 		#region IPageProcessor 成员
 		public string Name => "嵌入汉字库";
 		public void BeginProcess(DocProcessorContext context) {
-			if (_fontSubstitutions == null) {
-				_fontSubstitutions = new Dictionary<string, FontSubstitution>(0);
-			}
+			_fontSubstitutions ??= [];
 			var l = __LegacyFonts.Length + _fontSubstitutions.Count;
 			_newFonts = new Dictionary<FontId, NewFont>(l);
 			_fontMap = new Dictionary<PdfName, NewFont>(l);
-			_fontNameIDMap = new Dictionary<PdfName, int>();
-			_fontInfoMap = new Dictionary<int, FontInfo>();
+			_fontNameIDMap = [];
+			_fontInfoMap = [];
 			_fontFactory = new FontFactoryImp();
-			_fontRefIDMap = new Dictionary<int, NewFont>();
-			_fontDictMap = new Dictionary<PdfDictionary, Dictionary<PdfName, PRIndirectReference>>();
-			_bypassFonts = new HashSet<int>();
-			_processedForms = new HashSet<int>();
+			_fontRefIDMap = [];
+			_fontDictMap = [];
+			_bypassFonts = [];
+			_processedForms = [];
 			foreach (var item in FontHelper.GetInstalledFonts(true)) {
 				try {
 					_fontFactory.Register(item.Value, item.Key);
@@ -293,8 +291,7 @@ namespace PDFPatcher.Processor
 				string sn; // 替换字体名称
 				string n; // 字体名称
 				bool v; // 是否竖排文字
-				var fr = item.Value as PdfIndirectReference;
-				if (fr == null
+				if (item.Value is not PdfIndirectReference fr
 					|| _bypassFonts.Contains(fr.Number)) {
 					continue;
 				}
@@ -458,7 +455,7 @@ namespace PDFPatcher.Processor
 				if (item == null) {
 					continue;
 				}
-				var s = fontInfo.Decode(new byte[] { (byte)fc }, 0, 1);
+				var s = fontInfo.Decode([(byte)fc], 0, 1);
 				if (s.Length == 0) {
 					continue;
 				}
@@ -503,7 +500,7 @@ namespace PDFPatcher.Processor
 							continue;
 						}
 						widths[u] = (width as PdfNumber).IntValue;
-						Debug.WriteLine(String.Join(" ", new string[] { cid.ToText(), u.ToText("X"), ((char)u).ToString(), widths[u].ToText() }));
+						Debug.WriteLine(String.Join(" ", [cid.ToText(), u.ToText("X"), ((char)u).ToString(), widths[u].ToText()]));
 						++cid;
 					}
 				}
@@ -517,7 +514,7 @@ namespace PDFPatcher.Processor
 							continue;
 						}
 						widths[u] = width;
-						Debug.WriteLine(String.Join(" ", new string[] { cid.ToText(), u.ToText("X"), ((char)u).ToString(), width.ToText() }));
+						Debug.WriteLine(String.Join(" ", [cid.ToText(), u.ToText("X"), ((char)u).ToString(), width.ToText()]));
 					} while (++cid < cid2);
 				}
 			}
@@ -533,7 +530,7 @@ namespace PDFPatcher.Processor
 			var metrics = new int[font.UnicodeCidMap.Count][];
 			var i = -1;
 			foreach (var m in font.UnicodeCidMap) {
-				metrics[++i] = new int[] { m.Value, 0, m.Key };
+				metrics[++i] = [m.Value, 0, m.Key];
 			}
 			var ttf = font.Font.BaseFont as TrueTypeFontUnicode;
 			Array.Sort(metrics, ttf);
@@ -662,14 +659,10 @@ namespace PDFPatcher.Processor
 		}
 
 		[DebuggerDisplay("{ID},{Width}")]
-		struct CharacterWidth
+		struct CharacterWidth(int id, int width)
 		{
-			public int ID, Width;
+			public int ID = id, Width = width;
 
-			public CharacterWidth(int id, int width) {
-				ID = id;
-				Width = width;
-			}
 			public static int Compare(CharacterWidth x, CharacterWidth y) {
 				return x.ID.CompareTo(y.ID);
 			}
@@ -678,24 +671,25 @@ namespace PDFPatcher.Processor
 		[DebuggerDisplay("{FontName}")]
 		sealed class NewFont
 		{
-			public Dictionary<int, PdfDictionary> FontDictionaries { get; set; }
+			Font _Font;
+
+			public Dictionary<int, PdfDictionary> FontDictionaries { get; } = [];
 			public PRIndirectReference FontRef { get; set; }
 			public PdfIndirectReference DescendantFontRef { get; set; }
 			/// <summary>
 			/// 字体 Unicode 到宽度的映射表。
 			/// </summary>
-			public Dictionary<int, int> GlyphWidths { get; }
+			public Dictionary<int, int> GlyphWidths { get; } = [];
 			/// <summary>
 			/// 字体 Unicode 和 CID 的映射表。
 			/// </summary>
-			public Dictionary<int, int> UnicodeCidMap { get; }
+			public Dictionary<int, int> UnicodeCidMap { get; } = [];
 			public string SubsetPrefix { get; private set; }
 			public string FontName => SubsetPrefix + _Font.Familyname;
-			public HashSet<char> AbsentChars { get; }
-			public Dictionary<char, char> CharSubstitutions { get; }
+			public HashSet<char> AbsentChars { get; } = [];
+			public Dictionary<char, char> CharSubstitutions { get; } = [];
 			public bool Vertical { get; set; }
 			public double ItalicAngle { get; set; }
-			Font _Font;
 			public Font Font {
 				get => _Font;
 				set {
@@ -703,23 +697,12 @@ namespace PDFPatcher.Processor
 					SubsetPrefix = BaseFont.CreateSubsetPrefix();
 				}
 			}
-
-			public NewFont() {
-				GlyphWidths = new Dictionary<int, int>();
-				FontDictionaries = new Dictionary<int, PdfDictionary>();
-				UnicodeCidMap = new Dictionary<int, int>();
-				AbsentChars = new HashSet<char>();
-				CharSubstitutions = new Dictionary<char, char>();
-			}
 		}
 
-		sealed class GbkCidUni : CMapCidUni
+		sealed class GbkCidUni(CMapCidUni baseCMap) : CMapCidUni
 		{
-			readonly CMapCidUni _BaseCMap;
+			readonly CMapCidUni _BaseCMap = baseCMap;
 
-			public GbkCidUni(CMapCidUni baseCMap) {
-				_BaseCMap = baseCMap;
-			}
 			public override int Lookup(int character) {
 				return character > 813 && character < 908 ? character - (814 - 0x21)
 					: character == 7716 ? ' '

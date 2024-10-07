@@ -208,7 +208,7 @@ namespace PDFPatcher.Common
 							ext => f.EndsWith(ext, StringComparison.InvariantCultureIgnoreCase));
 				});
 			}
-			return new string[0];
+			return [];
 		}
 		public static bool DropFileOver(this Control control, DragEventArgs args, params string[] allowedFileExtension) {
 			var files = DropFileOver(args, allowedFileExtension);
@@ -378,17 +378,11 @@ namespace PDFPatcher.Common
 			public static extern IntPtr LocalFree(IntPtr p);
 		}
 
-		struct CopyDataStruct : IDisposable
+		struct CopyDataStruct(string text) : IDisposable
 		{
-			readonly IntPtr dwData;
-			readonly int cbData;
-			internal IntPtr lpData;
-
-			public CopyDataStruct(string text) {
-				cbData = (text.Length + 1) * 2;
-				dwData = (IntPtr)1;
-				lpData = Marshal.StringToBSTR(text);
-			}
+			readonly IntPtr dwData = (IntPtr)1;
+			readonly int cbData = (text.Length + 1) * 2;
+			internal IntPtr lpData = Marshal.StringToBSTR(text);
 
 			public void Dispose() {
 				NativeMethods.LocalFree(lpData);
