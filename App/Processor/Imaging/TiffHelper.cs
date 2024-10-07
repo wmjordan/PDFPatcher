@@ -13,27 +13,26 @@ namespace PDFPatcher.Processor.Imaging
 
 		internal static void Save(FreeImageBitmap bmp, string fileName) {
 			// 使用 .NET 的 TIFF 保存方式，文件尺寸较小
-			if (_tiffCodec != null) {
-				if (bmp.HasPalette) {
-					// HACK: TIFF编码与调色板不符，解决 .NET TIFF 编码器无法正常保存双色图片的问题
-					var color0 = bmp.Palette[0].Color.ToArgb() & 0x00FFFFFF;
-					if (bmp.ColorType == FREE_IMAGE_COLOR_TYPE.FIC_MINISWHITE) {
-						if (color0 != 0x00FFFFFF) {
-							bmp.Invert();
-						}
-					}
-					else if (bmp.ColorType == FREE_IMAGE_COLOR_TYPE.FIC_MINISBLACK) {
-						if (color0 != 0) {
-							bmp.Invert();
-						}
+			if (_tiffCodec == null) {
+				bmp.Save(fileName, FREE_IMAGE_FORMAT.FIF_TIFF, FREE_IMAGE_SAVE_FLAGS.TIFF_CCITTFAX4);
+				return;
+			}
+			if (bmp.HasPalette) {
+				// HACK: TIFF编码与调色板不符，解决 .NET TIFF 编码器无法正常保存双色图片的问题
+				var color0 = bmp.Palette[0].Color.ToArgb() & 0x00FFFFFF;
+				if (bmp.ColorType == FREE_IMAGE_COLOR_TYPE.FIC_MINISWHITE) {
+					if (color0 != 0x00FFFFFF) {
+						bmp.Invert();
 					}
 				}
-				using (var b = bmp.ToBitmap()) {
-					b.Save(fileName, _tiffCodec, _encoderParameters);
+				else if (bmp.ColorType == FREE_IMAGE_COLOR_TYPE.FIC_MINISBLACK) {
+					if (color0 != 0) {
+						bmp.Invert();
+					}
 				}
 			}
-			else {
-				bmp.Save(fileName, FREE_IMAGE_FORMAT.FIF_TIFF, FREE_IMAGE_SAVE_FLAGS.TIFF_CCITTFAX4);
+			using (var b = bmp.ToBitmap()) {
+				b.Save(fileName, _tiffCodec, _encoderParameters);
 			}
 		}
 
@@ -60,7 +59,7 @@ namespace PDFPatcher.Processor.Imaging
 		}
 
 		internal static byte[] Decode(ImageInfo info, byte[] bytes, int k, bool endOfLine, bool encodedByteAlign, bool endOfBlock, bool blackIs1) {
-			using (var s = new MuPdfSharp.MuStream(bytes))
+			using (var s = new MuPDF.Stream(bytes))
 			using (var img = s.DecodeTiffFax(info.Width, info.Height, k, endOfLine, encodedByteAlign, endOfBlock, blackIs1)) {
 				return img.ReadAll(bytes.Length);
 			}

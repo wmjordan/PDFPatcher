@@ -5,10 +5,13 @@ using System.Windows.Forms;
 using System.Xml;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
-using MuPdfSharp;
 using PDFPatcher.Common;
 using PDFPatcher.Model;
+using MuDocument = MuPDF.Document;
+using ImageRendererOptions = MuPDF.ImageRendererOptions;
+using MuImageFormat = MuPDF.ImageFormat;
 using Ext = PDFPatcher.Constants.FileExtensions;
+using MuPDF.Extensions;
 
 namespace PDFPatcher.Processor
 {
@@ -107,15 +110,16 @@ namespace PDFPatcher.Processor
 				Tracker.SetProgressGoal(loadCount);
 				Tracker.TraceMessage("正在转换图片。");
 				Tracker.TrackProgress(loadDocProgressWeight);
+				var cookie = new MuPDF.Cookie();
 				foreach (var range in ranges) {
 					foreach (var i in range) {
 						var fn = FileHelper.CombinePath(options.ExtractImagePath, i.ToString(options.FileMask) + options.FileFormatExtension);
-						using (var p = mupdf.LoadPage(i))
-						using (var bmp = p.RenderBitmapPage(options.ImageWidth, 0, options)) {
+						using (var p = mupdf.LoadPage(i - 1))
+						using (var bmp = p.RenderBitmapPage(options.ImageWidth, 0, options, cookie)) {
 							if (bmp == null) {
 								Tracker.TraceMessage(Tracker.Category.Error, "页面" + i + "的尺寸为空。");
 							}
-							else if (options.FileFormat == ImageFormat.Tiff) {
+							else if (options.FileFormat == MuImageFormat.Tiff) {
 								using (var b = Imaging.BitmapHelper.ToBitonal(bmp)) {
 									Imaging.BitmapHelper.SaveAs(b, fn);
 								}
@@ -132,7 +136,7 @@ namespace PDFPatcher.Processor
 										Imaging.BitmapHelper.SaveAs(b, fn);
 									}
 								}
-								else if (options.FileFormat == ImageFormat.Jpeg) {
+								else if (options.FileFormat == MuImageFormat.Jpeg) {
 									Imaging.JpgHelper.Save(bmp, fn, options.JpegQuality);
 								}
 								else {
@@ -175,15 +179,16 @@ namespace PDFPatcher.Processor
 				Tracker.TrackProgress(loadDocProgressWeight);
 				MemoryStream ms = new MemoryStream();
 				var fn = options.FileFormatExtension;
+				var cookie = new MuPDF.Cookie();
 				foreach (var range in ranges) {
 					foreach (var i in range) {
 						ms.Position = 0;
-						using (var p = mupdf.LoadPage(i))
-						using (var bmp = p.RenderBitmapPage(options.ImageWidth, 0, options)) {
+						using (var p = mupdf.LoadPage(i - 1))
+						using (var bmp = p.RenderBitmapPage(options.ImageWidth, 0, options, cookie)) {
 							if (bmp == null) {
 								Tracker.TraceMessage(Tracker.Category.Error, "页面" + i + "的尺寸为空。");
 							}
-							else if (options.FileFormat == ImageFormat.Tiff) {
+							else if (options.FileFormat == MuImageFormat.Tiff) {
 								using (var b = Imaging.BitmapHelper.ToBitonal(bmp)) {
 									b.SetResolution(options.Dpi, options.Dpi);
 									Imaging.BitmapHelper.SaveAs(b, fn, ms);
@@ -203,7 +208,7 @@ namespace PDFPatcher.Processor
 										Imaging.BitmapHelper.SaveAs(b, fn, ms);
 									}
 								}
-								else if (options.FileFormat == ImageFormat.Jpeg) {
+								else if (options.FileFormat == MuImageFormat.Jpeg) {
 									Imaging.JpgHelper.Save(bmp, ms, options.JpegQuality);
 								}
 								else {
@@ -212,8 +217,8 @@ namespace PDFPatcher.Processor
 							}
 
 							doc.SetPageSize((options.Rotation % 180) == 0
-								? new iTextSharp.text.Rectangle(p.Bound.Width, p.Bound.Height)
-								: new iTextSharp.text.Rectangle(p.Bound.Height, p.Bound.Width));
+								? new Rectangle(p.Bound.Width, p.Bound.Height)
+								: new Rectangle(p.Bound.Height, p.Bound.Width));
 							doc.NewPage();
 						}
 						var image = Image.GetInstance(ms.ToArray(), true);

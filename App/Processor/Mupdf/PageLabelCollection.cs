@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using PDFPatcher.Common;
 
-namespace MuPdfSharp
+namespace MuPDF
 {
 	public sealed class PageLabelCollection : ICollection<PageLabel>
 	{
@@ -10,17 +11,17 @@ namespace MuPdfSharp
 
 		public PageLabel this[int index] => _labels[index];
 
-		internal PageLabelCollection(MuDocument document) {
+		internal PageLabelCollection(Document document) {
 			var pl = new List<PageLabel>();
-			var l = document.Trailer.Locate("Root/PageLabels/Nums").AsArray();
-			if (l.Kind == MuPdfObjectKind.PDF_ARRAY) {
-				for (int i = 0; i < l.Count; i++) {
-					var n = l[i].IntegerValue;
-					var d = l[++i].AsDictionary();
-					var sp = d["St"].IntegerValue;
-					var p = d["P"].StringValue;
-					var s = d["S"].NameValue;
-					pl.Add(new PageLabel(n, sp, p, s.Length == 0 ? PageLabelStyle.Default : (PageLabelStyle)(byte)s[0]));
+			var l = document.Trailer.Locate(PdfNames.Root, PdfNames.PageLabels, PdfNames.Nums);
+			if (l.IsArray) {
+				var a = l as PdfArray;
+				for (int i = 0; i < a.Count; i++) {
+					var n = a[i].IntegerValue;
+					var d = a[++i].UnderlyingObject as PdfDictionary;
+					var sp = d[PdfNames.St].IntegerValue;
+					var p = d[PdfNames.P] as PdfString;
+					pl.Add(new PageLabel(n, sp, p?.Value, d[PdfNames.S] is PdfName s ? (PageLabelStyle)(byte)s.Name[0] : PageLabelStyle.Default));
 				}
 				pl.Sort();
 			}
@@ -114,5 +115,57 @@ namespace MuPdfSharp
 		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() {
 			return _labels.GetEnumerator();
 		}
+	}
+
+	[DebuggerDisplay("From: {FromPageNumber}, Format: {Format (1)}")]
+	public readonly struct PageLabel : IComparable<PageLabel>
+	{
+		public readonly string Prefix;
+		public readonly PageLabelStyle NumericStyle;
+		public readonly int StartAt;
+		public readonly int FromPageNumber;
+		public static PageLabel Empty = new PageLabel(-1, -1, null, PageLabelStyle.Default);
+		public bool IsEmpty => FromPageNumber < 0;
+
+		public PageLabel(int pageNumber, int startAt, string prefix, PageLabelStyle numericStyle) {
+			FromPageNumber = pageNumber;
+			StartAt = startAt;
+			Prefix = prefix;
+			NumericStyle = numericStyle;
+		}
+
+		int IComparable<PageLabel>.CompareTo(PageLabel other) {
+			return FromPageNumber.CompareTo(other.FromPageNumber);
+		}
+
+		public string Format(int pageNumber) {
+			var n = pageNumber - FromPageNumber + (StartAt < 1 ? 0 : StartAt - 1);
+			switch (NumericStyle) {
+				case PageLabelStyle.Default:
+					return Prefix;
+				case PageLabelStyle.Digit:
+					return String.Concat(Prefix, n.ToText());
+				case PageLabelStyle.UpperRoman:
+					return String.Concat(Prefix, n.ToRoman());
+				case PageLabelStyle.LowerRoman:
+					return String.Concat(Prefix, n.ToRoman()).ToLowerInvariant();
+				case PageLabelStyle.UpperAlphabetic:
+					return String.Concat(Prefix, n.ToAlphabet(true));
+				case PageLabelStyle.LowerAlphabetic:
+					return String.Concat(Prefix, n.ToAlphabet(false));
+				default:
+					goto case PageLabelStyle.Digit;
+			}
+		}
+	}
+
+	public enum PageLabelStyle : byte
+	{
+		Default = (byte)'-',
+		Digit = (byte)'d',
+		UpperRoman = (byte)'R',
+		LowerRoman = (byte)'r',
+		UpperAlphabetic = (byte)'A',
+		LowerAlphabetic = (byte)'a'
 	}
 }

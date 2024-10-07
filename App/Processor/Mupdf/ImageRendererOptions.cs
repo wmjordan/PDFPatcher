@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Xml.Serialization;
 
-namespace MuPdfSharp
+namespace MuPDF
 {
 	public class ImageRendererOptions
 	{
@@ -25,7 +25,7 @@ namespace MuPdfSharp
 
 		/// <summary>获取或指定导出图片的颜色。</summary>
 		[XmlAttribute("图片颜色")]
-		public ColorSpace ColorSpace { get; set; }
+		public ColorspaceKind ColorSpace { get; set; }
 
 		/// <summary>获取或指定是否反转图片的颜色。</summary>
 		[XmlAttribute("反转图片颜色")]
@@ -91,5 +91,26 @@ namespace MuPdfSharp
 			Gamma = 1.0f;
 			TintColor = Color.Transparent;
 		}
+	}
+
+	/// <summary>
+	/// 渲染页面的颜色空间。
+	/// </summary>
+	public enum ColorSpace
+	{
+		Rgb,
+		Bgr,
+		Cmyk,
+		Gray
+	}
+
+	/// <summary>
+	/// 保存渲染页面的文件格式。
+	/// </summary>
+	public enum ImageFormat
+	{
+		Png,
+		Jpeg,
+		Tiff
 	}
 }

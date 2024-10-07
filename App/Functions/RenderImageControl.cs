@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Windows.Forms;
 using iTextSharp.text.pdf;
-using MuPdfSharp;
+using MuPDF;
 using PDFPatcher.Common;
 
 namespace PDFPatcher.Functions
@@ -78,7 +78,7 @@ namespace PDFPatcher.Functions
 		public void Reload() {
 			var o = AppContext.ImageRenderer;
 			_AutoOutputDirBox.Checked = o.AutoOutputFolder;
-			_ColorSpaceRgbBox.Checked = !(_ColorSpaceGrayBox.Checked = o.ColorSpace == ColorSpace.Gray);
+			_ColorSpaceRgbBox.Checked = !(_ColorSpaceGrayBox.Checked = o.ColorSpace == ColorspaceKind.Gray);
 			_FileNameMaskBox.Text = o.FileMask;
 			_HorizontalFlipImageBox.Checked = o.HorizontalFlipImages;
 			_HideAnnotationsBox.Checked = o.HideAnnotations;
@@ -176,7 +176,7 @@ namespace PDFPatcher.Functions
 			};
 			worker.RunWorkerCompleted += (dummy, arg) => { AppContext.ImageExtracter.OutputPath = _ExtractPageRangeBox.Text; };
 			var option = AppContext.ImageRenderer;
-			option.ColorSpace = _ColorSpaceRgbBox.Checked ? ColorSpace.Rgb : ColorSpace.Gray;
+			option.ColorSpace = _ColorSpaceRgbBox.Checked ? ColorspaceKind.Rgb : ColorspaceKind.Gray;
 			option.ExtractPageRange = _ExtractPageRangeBox.Text;
 			option.ExtractImagePath = _RenderToPdfBox.Checked
 				? GetRenderedPdfFileName(_TargetBox.Text)

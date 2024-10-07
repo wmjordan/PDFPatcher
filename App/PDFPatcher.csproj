@@ -74,6 +74,10 @@
     <Reference Include="JacksonSoft.CustomTabControl">
       <HintPath>Lib\JacksonSoft.CustomTabControl.dll</HintPath>
     </Reference>
+    <Reference Include="MuPDFLib, Version=1.0.9034.14476, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Lib\MuPDFLib.dll</HintPath>
+    </Reference>
     <Reference Include="ObjectListView, Version=2.9.1.1072, Culture=neutral, PublicKeyToken=b1c5bf581481bcd4, processorArchitecture=MSIL">
       <HintPath>..\packages\ObjectListView.Official.2.9.1\lib\net20\ObjectListView.dll</HintPath>
     </Reference>
@@ -111,6 +115,7 @@
     <Compile Include="Options\ReaderOptions.cs" />
     <Compile Include="Processor\ContentProcessors\CleanContentStreamProcessor.cs" />
     <Compile Include="Processor\Imaging\FreeImageHelper.cs" />
+    <Compile Include="Processor\MuPdf\MuPDFExtensions.cs" />
     <Compile Include="ShellHelper.cs" />
     <Compile Include="Common\CommandRegistry.cs" />
     <Compile Include="Common\FilePath.cs" />
@@ -212,11 +217,6 @@
     <Compile Include="Processor\Imaging\BitmapHelper.cs" />
     <Compile Include="Processor\InfoXmlProcessors\ChangePageCoordinateProcessor.cs" />
     <Compile Include="Processor\InfoXmlProcessors\ClearDestinationOffsetProcessor.cs" />
-    <Compile Include="Processor\MuPdf\MuDocumentInfo.cs" />
-    <Compile Include="Processor\MuPdf\MuHandle.cs" />
-    <Compile Include="Processor\MuPdf\NativeMethods.cs" />
-    <Compile Include="Processor\MuPdf\NativeMethods.Document.cs" />
-    <Compile Include="Processor\MuPdf\NativeMethods.PdfObjects.cs" />
     <Compile Include="Processor\MuPdf\PageLabelCollection.cs" />
     <Compile Include="Processor\MuPdf\RenderResultCache.cs" />
     <Compile Include="Functions\Editor\DoubleClickableRadioButton.cs">
@@ -409,7 +409,6 @@
     <Compile Include="Model\ITextRegion.cs" />
     <Compile Include="Model\IHierarchicalObject.cs" />
     <Compile Include="Processor\DocumentSink.cs" />
-    <Compile Include="Processor\MuPdf\MuPdfObject.cs" />
     <Compile Include="Processor\OutlineManager.cs" />
     <Compile Include="Processor\PageProcessorContext.cs" />
     <Compile Include="Model\PdfImageData.cs" />
@@ -611,16 +610,6 @@
     <Compile Include="Processor\Imaging\JBig2Structs.cs" />
     <Compile Include="Processor\IProcessor.cs" />
     <Compile Include="Processor\ModiOcr.cs" />
-    <Compile Include="Processor\MuPdf\Interop.cs" />
-    <Compile Include="Processor\MuPdf\MuDocument.cs" />
-    <Compile Include="Processor\MuPdf\MuPage.cs" />
-    <Compile Include="Processor\MuPdf\MuPdfException.cs" />
-    <Compile Include="Processor\MuPdf\MuStream.cs" />
-    <Compile Include="Processor\MuPdf\MuText.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Processor\MuPdf\PixmapData.cs" />
-    <Compile Include="Processor\MuPdf\Structures.cs" />
     <Compile Include="Processor\OcrProcessor.cs" />
     <Compile Include="Processor\OperatorGroup.cs" />
     <Compile Include="Model\PdfPath\IPathExpression.cs" />
@@ -905,6 +894,7 @@
     <Content Include="..\更新历史.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include=".editorconfig" />
     <None Include="Resources\clock.png" />
     <None Include="Resources\arrow-continue-090.png" />
     <None Include="Common\app.manifest" />

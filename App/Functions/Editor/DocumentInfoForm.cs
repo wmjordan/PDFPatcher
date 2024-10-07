@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Windows.Forms;
-using MuPdfSharp;
+using MuPDF;
 using PDFPatcher.Common;
 
 namespace PDFPatcher.Functions.Editor
 {
 	sealed partial class DocumentInfoForm : Form
 	{
-		internal MuDocument Document { get; set; }
+		internal Document Document { get; set; }
 		internal Model.PdfInfoXmlDocument InfoDocument { get; set; }
 
 		public DocumentInfoForm() {

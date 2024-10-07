@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Xml;
-using MuPdfSharp;
+using MuPDF;
 using PDFPatcher.Common;
 using PowerJson;
 

@@ -40,7 +40,7 @@ namespace PDFPatcher
 		[XmlElement("导出图像设置")]
 		public ImageExtracterOptions ImageExporterOptions { get; set; }
 		[XmlElement("转为图片设置")]
-		public MuPdfSharp.ImageRendererOptions ImageRendererOptions { get; set; }
+		public MuPDF.ImageRendererOptions ImageRendererOptions { get; set; }
 		[XmlElement("提取页面设置")]
 		public ExtractPageOptions ExtractPageOptions { get; set; }
 		[XmlElement("文本识别设置")]

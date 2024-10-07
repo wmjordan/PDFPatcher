@@ -5,10 +5,10 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 using BrightIdeasSoftware;
+using MuPDF.Extensions;
 using PDFPatcher.Common;
 using PDFPatcher.Model;
 using PDFPatcher.Processor;
@@ -276,7 +276,7 @@ namespace PDFPatcher.Functions.Editor
 			Model.Document = document;
 			LoadBookmarks(b, m);
 			if (Model.PdfDocument != null && document.PageLabelRoot.HasChildNodes) {
-				var pl = Model.PdfDocument.PageLabels;
+				var pl = Model.PageLabels;
 				pl.Clear();
 				foreach (PageLabelElement item in document.PageLabels) {
 					pl.Add(item.ToPageLabel());
@@ -328,16 +328,16 @@ namespace PDFPatcher.Functions.Editor
 			EditModel.TextSource ts;
 			if (Model.InsertBookmarkWithOcrOnly == false && lines.HasContent()) {
 				var sb = StringBuilderCache.Acquire();
-				var r = lines[0].BBox;
+				var r = lines[0].Bound;
 				foreach (var line in lines) {
 					if (sb.Length > 100) {
 						break;
 					}
-					t = line.Text.TrimEnd();
+					t = line.GetText().TrimEnd();
 					if (sb.Length > 0 && t.Length > 0) {
 						var c = t[0];
 						sb.Append(' ');
-						r = r.Union(line.BBox);
+						r = r.Union(line.Bound);
 					}
 					sb.Append(t);
 				}
@@ -408,7 +408,7 @@ namespace PDFPatcher.Functions.Editor
 			if (position.Page == 0) {
 				return;
 			}
-			var l = Model.PdfDocument.PageLabels;
+			var l = Model.PageLabels;
 			if (l == null) {
 				return;
 			}
@@ -430,7 +430,7 @@ namespace PDFPatcher.Functions.Editor
 			if (form.DialogResult == DialogResult.Cancel) {
 				return;
 			}
-			var l = Model.PdfDocument.PageLabels;
+			var l = Model.PageLabels;
 			if (form.DialogResult == DialogResult.OK) {
 				if (l == null) {
 					return;
@@ -438,7 +438,7 @@ namespace PDFPatcher.Functions.Editor
 				l.Add(form.PageLabel);
 			}
 			else if (form.DialogResult == DialogResult.Abort) {
-				Model.PdfDocument.PageLabels.Remove(form.PageLabel);
+				Model.PageLabels.Remove(form.PageLabel);
 			}
 			var pl = Model.Document.PageLabelRoot;
 			pl.InnerText = String.Empty;
@@ -455,7 +455,7 @@ namespace PDFPatcher.Functions.Editor
 			if (Model.PdfDocument != null) {
 				var pn = View.Viewer.CurrentPageNumber;
 				var p = View.Viewer.TransposeClientToPagePosition(0, 0).PageY;
-				var pt = View.Viewer.GetPageBound(pn).Bottom;
+				var pt = View.Viewer.GetPageBound(pn).Y1;
 				if (pt < p) {
 					p = pt;
 				}
@@ -649,7 +649,7 @@ namespace PDFPatcher.Functions.Editor
 				return;
 			}
 			foreach (var span in textInfo.Spans) {
-				var s = textInfo.Page.GetFont(span);
+				var s = span.Font;
 				if (s == null) {
 					continue;
 				}
@@ -704,27 +704,27 @@ namespace PDFPatcher.Functions.Editor
 			if (keepExisting == false) {
 				bm.RemoveAll();
 			}
-			var spans = new List<MuPdfSharp.MuTextSpan>(3);
+			var spans = new List<TextSpan>(3);
 			var bl = 0;
 			for (int i = 0; i < c;) {
-				using (var p = pdf.LoadPage(++i)) {
-					var pb = p.VisualBound;
+				using (var p = pdf.LoadPage(i++)) {
+					var pb = p.Bound;
 					var h = pb.Height;
-					var dh = pb.Bottom - h;
-					var pt = pb.Top;
-					foreach (var block in p.TextPage.Blocks) {
+					var dh = pb.Y1 - h;
+					var pt = pb.Y0;
+					foreach (var block in p.TextPage) {
 						string jointBlockText = null;
 						bool hasJointText = false;
-						foreach (var line in block.Lines) {
+						foreach (var line in block) {
 							var matchLine = false;
-							foreach (var span in line.Spans) {
+							foreach (var span in TextSpan.GetTextSpans(line)) {
 								if (matchLine) {
 									break;
 								}
 								for (var si = 0; si < bs.Count; si++) {
 									var style = bs[si];
 									var matcher = mp[si];
-									if (style.FontName != PdfDocumentFont.RemoveSubsetPrefix(p.GetFont(span).Name)
+									if (style.FontName != PdfDocumentFont.RemoveSubsetPrefix(span.Font.Name)
 										|| style.FontSize != span.Size.ToInt32()) {
 										continue;
 									}
@@ -750,11 +750,11 @@ namespace PDFPatcher.Functions.Editor
 										var cb = bm as BookmarkElement;
 										var bb = h - cb.Bottom + dh;
 										var bt = h - cb.Top;
-										var lt = b.Top - b.Height * 2 + dh;
-										var lb = b.Bottom;
-										if (cb.Page == p.PageNumber
+										var lt = b.Y0 - b.Height * 2 + dh;
+										var lb = b.Y1;
+										if (cb.Page == p.PageNumber + 1
 											&& (bb >= lt && bb <= lb || bt >= lt && bt <= lb || bt < lt && bb > lb)
-											&& (mergeAdjacentTitle || spans[spans.Count - 1].Box.IsHorizontalNeighbor(span.Box))) {
+											&& (mergeAdjacentTitle || spans[spans.Count - 1].Box.IsHorizontalNeighbor(b))) {
 											if (/*m == false &&*/ t.Length > 0) {
 												// 保留英文和数字文本之间的空格
 												var ct = cb.Title;
@@ -804,10 +804,10 @@ namespace PDFPatcher.Functions.Editor
 											: FontStyle.Regular;
 									}
 									be.Title = matchLine ? jointBlockText : t;
-									be.Top = (s.GoToTop ? h + dh : h - b.Top + b.Height + dh) + pt;
-									be.Bottom = h - b.Bottom + dh + pt;
+									be.Top = (s.GoToTop ? h + dh : h - b.Y1 + b.Height + dh) + pt;
+									be.Bottom = h - b.Y0 + dh + pt;
 									be.Action = Constants.ActionType.Goto;
-									be.Page = p.PageNumber;
+									be.Page = p.PageNumber + 1;
 									if (s.IsOpened) {
 										be.IsOpen = true;
 									}
@@ -833,23 +833,23 @@ namespace PDFPatcher.Functions.Editor
 			View.Bookmark.RebuildAll(false);
 		}
 
-		static BookmarkContainer CreateNewSiblingBookmarkForParent(BookmarkContainer bm, List<MuPdfSharp.MuTextSpan> spans) {
+		static BookmarkContainer CreateNewSiblingBookmarkForParent(BookmarkContainer bm, List<TextSpan> spans) {
 			TrimBookmarkText(bm);
 			bm = bm.Parent.AppendBookmark();
 			spans.Clear();
 			return bm;
 		}
 
-		static string GetLineText(MuPdfSharp.MuTextLine line, MuPdfSharp.MuTextBlock block, out bool jointLines) {
+		static string GetLineText(MuPDF.TextLine line, MuPDF.TextBlock block, out bool jointLines) {
 			string t = null;
 			jointLines = false;
-			foreach (var item in block.Lines) {
+			foreach (var item in block) {
 				if (line == item) {
-					t += item.Text;
+					t += item.GetText();
 				}
-				else if (line.BBox.IsHorizontalNeighbor(item.BBox)) {
+				else if (line.Bound.IsHorizontalNeighbor(item.Bound)) {
 					jointLines = true;
-					t += item.Text;
+					t += item.GetText();
 				}
 			}
 			return t;
@@ -865,7 +865,7 @@ namespace PDFPatcher.Functions.Editor
 			}
 		}
 
-		static BookmarkContainer CreateNewSiblingBookmark(BookmarkContainer bm, List<MuPdfSharp.MuTextSpan> spans) {
+		static BookmarkContainer CreateNewSiblingBookmark(BookmarkContainer bm, List<TextSpan> spans) {
 			TrimBookmarkText(bm);
 			bm = bm.AppendBookmark();
 			spans.Clear();

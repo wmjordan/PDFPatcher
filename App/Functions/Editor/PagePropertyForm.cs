@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using MuPdfSharp;
+using MuPDF;
 using PDFPatcher.Common;
-using MuRectangle = MuPdfSharp.Rectangle;
+using MuRectangle = MuPDF.Box;
 
 namespace PDFPatcher.Functions.Editor
 {
@@ -24,7 +24,7 @@ namespace PDFPatcher.Functions.Editor
 			_TextStyleBox.ScaleColumnWidths();
 		}
 
-		public void LoadPage(MuPage page) {
+		public void LoadPage(Page page) {
 			_PageDimensionBox.Items.Clear();
 			AddBox(page, page.CropBox, Constants.Content.PageSettings.CropBox);
 			AddBox(page, page.MediaBox, Constants.Content.PageSettings.MediaBox);
@@ -36,19 +36,19 @@ namespace PDFPatcher.Functions.Editor
 				_PageDimensionBox.SelectedIndex = 0;
 			}
 			var ts = new HashSet<MuFontAndSize>(new FontAndSizeComparer());
-			foreach (var block in page.TextPage.Blocks) {
-				foreach (var line in block.Lines) {
+			foreach (var block in page.TextPage) {
+				foreach (var line in block) {
 					var c = line.FirstCharacter;
-					ts.Add(new MuFontAndSize(Model.PdfDocumentFont.RemoveSubsetPrefix(page.GetFont(c).Name), c.Size));
+					ts.Add(new MuFontAndSize(Model.PdfDocumentFont.RemoveSubsetPrefix(c.Font.Name), c.Size));
 				}
 			}
 			_TextStyleBox.Objects = ts;
 			_TextStyleBox.Sort(_SizeColumn, SortOrder.Descending);
-			PageNumber = page.PageNumber;
+			PageNumber = page.PageNumber + 1;
 		}
 
-		void AddBox(MuPage page, MuRectangle rect, string title) {
-			if (rect.IsEmpty == false) {
+		void AddBox(Page page, MuRectangle rect, string title) {
+			if (rect.IsValid && rect.IsEmpty == false) {
 				_PageDimensionBox.Items.Add(new Box(rect, title));
 			}
 		}

@@ -20,7 +20,25 @@ namespace PDFPatcher.Functions.Editor
 		internal UndoManager Undo { get; }
 		internal string DocumentPath { get; set; }
 		internal string LastSavedPdfPath { get; set; }
-		internal MuPdfSharp.MuDocument PdfDocument { get; set; }
+		MuPDF.Document _Document;
+		internal MuPDF.Document PdfDocument {
+			get => _Document;
+			set {
+				if (_Document != value) {
+					_Document = value;
+					_PageLabels = null;
+				}
+			}
+		}
+		MuPDF.PageLabelCollection _PageLabels;
+		internal MuPDF.PageLabelCollection PageLabels {
+			get {
+				if (_PageLabels == null && PdfDocument != null) {
+					_PageLabels = new MuPDF.PageLabelCollection(PdfDocument);
+				}
+				return _PageLabels;
+			}
+		}
 		internal List<AutoBookmarkSettings> TitleStyles { get; }
 		internal string GetPdfFilePath() {
 			if (DocumentPath == null) {

@@ -3,25 +3,25 @@ using System.Collections.Generic;
 using System.Drawing;
 using PDFPatcher.Common;
 
-namespace MuPdfSharp
+namespace MuPDF
 {
 	public sealed class RenderResultCache : IDisposable
 	{
 		const int __bufferSize = 10;
-		readonly MuDocument _document;
+		readonly Document _document;
 		Dictionary<int, RenderResult> _buffer = new Dictionary<int, RenderResult>(__bufferSize);
 		readonly object _SyncObj = new object();
 		public object SyncObj => _SyncObj;
 
-		public RenderResultCache(MuDocument document) {
+		public RenderResultCache(Document document) {
 			_document = document;
 		}
 
-		public MuPage LoadPage(int pageNumber) {
+		public Page LoadPage(int pageNumber) {
 			if (_buffer.TryGetValue(pageNumber, out var r)) {
 				return r.Page;
 			}
-			var p = _document.LoadPage(pageNumber);
+			var p = _document.LoadPage(pageNumber - 1);
 			_buffer.Add(pageNumber, new RenderResult(p));
 			return p;
 		}
@@ -77,10 +77,10 @@ namespace MuPdfSharp
 
 		sealed class RenderResult : IDisposable
 		{
-			public MuPage Page { get; private set; }
+			public Page Page { get; private set; }
 			public Bitmap Image { get; internal set; }
 
-			public RenderResult(MuPage page) {
+			public RenderResult(Page page) {
 				Page = page;
 			}
 

@@ -6,11 +6,11 @@ using System.Drawing;
 using System.Windows.Forms;
 using Cyotek.Windows.Forms;
 using Cyotek.Windows.Forms.Demo;
-using MuPdfSharp;
+using MuPDF;
+using MuPDF.Extensions;
 using PDFPatcher.Common;
 using DrawingPoint = System.Drawing.Point;
 using DrawingRectangle = System.Drawing.Rectangle;
-using MuRectangle = MuPdfSharp.Rectangle;
 
 namespace PDFPatcher.Functions
 {
@@ -47,7 +47,10 @@ namespace PDFPatcher.Functions
 		readonly Timer _refreshTimer;
 		bool _cancelRendering, _disposed;
 		bool _lockDown;
-		MuDocument _mupdf;
+		Document _mupdf;
+		Cookie _cookie = new Cookie();
+		PageLabelCollection _pageLabels;
+		readonly object _syncObj = new object();
 		readonly ImageRendererOptions _renderOptions;
 
 		ZoomMode _zoomMode;
@@ -56,7 +59,7 @@ namespace PDFPatcher.Functions
 		/// <summary>
 		/// 页面的尺寸信息。
 		/// </summary>
-		MuRectangle[] _pageBounds;
+		Box[] _pageBounds;
 		SizeF _maxDimension;
 		/// <summary>
 		/// 页面的滚动位置。
@@ -79,7 +82,7 @@ namespace PDFPatcher.Functions
 				if (value == CurrentPageNumber) {
 					return;
 				}
-				ShowPage(value);
+				ScrollToPage(value);
 			}
 		}
 		/// <summary>
@@ -138,7 +141,7 @@ namespace PDFPatcher.Functions
 					SelectionRegion = r;
 				}
 				if (_zoomMode == ZoomMode.FitPage) {
-					ShowPage(pp.Page);
+					ScrollToPage(pp.Page);
 				}
 				else {
 					ScrollToPosition(pp);
@@ -153,9 +156,9 @@ namespace PDFPatcher.Functions
 		/// </summary>
 		[DefaultValue(false)]
 		public bool GrayScale {
-			get => _renderOptions.ColorSpace == ColorSpace.Gray;
+			get => _renderOptions.ColorSpace == ColorspaceKind.Gray;
 			set {
-				var v = value ? ColorSpace.Gray : ColorSpace.Rgb;
+				var v = value ? ColorspaceKind.Gray : ColorspaceKind.Rgb;
 				if (_renderOptions.ColorSpace != v) {
 					_renderOptions.ColorSpace = v;
 					UpdateDisplay();
@@ -209,13 +212,11 @@ namespace PDFPatcher.Functions
 			get => SelectionMode != ImageBoxSelectionMode.Rectangle ? Editor.MouseMode.Move : Editor.MouseMode.Selection;
 			set {
 				if (value == Editor.MouseMode.Move) {
-					PanMode = ImageBoxPanMode.Both;
 					AllowZoom = false;
 					SelectionMode = ImageBoxSelectionMode.None;
 					SelectionRegion = RectangleF.Empty;
 				}
 				else {
-					PanMode = ImageBoxPanMode.Both;
 					AllowZoom = false;
 					SelectionMode = ImageBoxSelectionMode.Rectangle;
 				}
@@ -308,7 +309,7 @@ namespace PDFPatcher.Functions
 		[Description("指定需要显示的 PDF 文档")]
 		[Browsable(false)]
 		[DefaultValue(null)]
-		public MuDocument Document {
+		public Document Document {
 			get => _mupdf;
 			set {
 				Enabled = false;
@@ -318,13 +319,13 @@ namespace PDFPatcher.Functions
 					Tracker.DebugMessage("Load document.");
 					var l = _mupdf.PageCount + 1;
 					_pageOffsets = new int[l];
-					_pageBounds = new MuRectangle[l];
+					_pageBounds = new Box[l];
 					LoadPageBounds();
 					_cache = new RenderResultCache(_mupdf);
 					Tracker.DebugMessage("Calculating document virtual size.");
 					CalculateZoomFactor(_LiteralZoom);
 					CalculateDocumentVirtualSize();
-					ShowPage(1);
+					ScrollToPage(1);
 					_refreshTimer.Start();
 					if (_renderWorker.IsBusy == false) {
 						_renderWorker.RunWorkerAsync();
@@ -338,7 +339,6 @@ namespace PDFPatcher.Functions
 		public PdfViewerControl() {
 			VirtualMode = true;
 			VirtualSize = Size.Empty;
-			PanMode = ImageBoxPanMode.Both;
 			AllowUnfocusedMouseWheel = true;
 			_renderOptions = new ImageRendererOptions();
 			//_ViewBox.SelectionMode = ImageBoxSelectionMode.Rectangle;
@@ -376,7 +376,7 @@ namespace PDFPatcher.Functions
 					}
 					if (_cancelRendering
 						|| _renderWorker.CancellationPending
-						|| _mupdf.IsDocumentOpened == false) {
+						|| _mupdf.IsDisposed) {
 						_cancelRendering = false;
 						args.Cancel = true;
 						return;
@@ -414,22 +414,6 @@ namespace PDFPatcher.Functions
 				LimitSelectionInPage(e.Location);
 			}
 		}
-
-		//        protected override void SetCursor (DrawingPoint point) {
-		//            if (IsPanning) {
-		//                return;
-		//            }
-		//#if DEBUG
-		//            if (!IsResizing || !IsSelecting) {
-		//                var p = TransposeClientToPageImage (point.X, point.Y);
-		//                if (p.ImageY < 0) {
-		//                    this.Cursor = Cursors.Hand;
-		//                    return;
-		//                }
-		//            }
-		//#endif
-		//            base.SetCursor (point);
-		//        }
 
 		protected override void OnSelectionRegionChanged(EventArgs e) {
 			base.OnSelectionRegionChanged(e);
@@ -486,7 +470,7 @@ namespace PDFPatcher.Functions
 				c = true;
 			}
 			if (c) {
-				SelectionRegion = new MuRectangle(p.X + x1, p.Y + y1, p.X + x2, p.Y + y2);
+				SelectionRegion = RectangleF.FromLTRB(p.X + x1, p.Y + y1, p.X + x2, p.Y + y2);
 			}
 		}
 		protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
@@ -517,11 +501,11 @@ namespace PDFPatcher.Functions
 					}
 					return true;
 				case Keys.Home:
-					ShowPage(1);
+					ScrollToPage(1);
 					return true;
 				case Keys.End:
 					if (_mupdf != null) {
-						ShowPage(_mupdf.PageCount);
+						ScrollToPage(_mupdf.PageCount);
 					}
 					return true;
 			}
@@ -557,11 +541,11 @@ namespace PDFPatcher.Functions
 		internal void CloseFile() {
 			if (_mupdf != null) {
 				_cache.Clear();
-				_mupdf.ReleaseFile();
+				_mupdf.CloseFile();
 			}
 		}
 		internal void Reopen() {
-			if (_mupdf != null && _mupdf.IsDocumentOpened == false) {
+			if (_mupdf != null && _mupdf.IsDisposed) {
 				_mupdf.Reopen();
 				UpdateDisplay(true);
 			}
@@ -635,7 +619,12 @@ namespace PDFPatcher.Functions
 		}
 
 		string GetPageLabel(int pageNumber) {
-			return _mupdf.IsDocumentOpened ? _mupdf.PageLabels.Format(pageNumber) : String.Empty;
+			return _mupdf.IsDisposed
+				? String.Empty
+				: (_pageLabels != null
+					? _pageLabels
+					: (_pageLabels = new PageLabelCollection(_mupdf)))
+					.Format(pageNumber);
 		}
 
 		Model.PageRange GetDisplayingPageRange() {
@@ -650,34 +639,32 @@ namespace PDFPatcher.Functions
 		}
 
 		void DrawTextBorders(Graphics g, int pageNumber, DrawingPoint offset) {
-			if (_mupdf.IsDocumentOpened == false) {
+			if (_mupdf.IsDisposed) {
 				return;
 			}
-			lock (_mupdf.SyncObj) {
-				var p = _cache.LoadPage(pageNumber);
-				var b = p.VisualBound;
-				var z = GetZoomFactorForPage(b);
-				var o = GetVirtualImageOffset(pageNumber);
-				using (var spanPen = new Pen(Color.LightGray, 1))
-				using (var blockPen = new Pen(Color.DimGray, 1)) {
-					blockPen.DashStyle
-						= spanPen.DashStyle
-						= System.Drawing.Drawing2D.DashStyle.Dash;
-					using (var m = new System.Drawing.Drawing2D.Matrix(z, 0, 0, z, offset.X + o.X, offset.Y + o.Y)) {
-						g.MultiplyTransform(m);
+			var p = _cache.LoadPage(pageNumber);
+			var b = p.Bound;
+			var z = GetZoomFactorForPage(b);
+			var o = GetVirtualImageOffset(pageNumber);
+			using (var spanPen = new Pen(Color.LightGray, 1))
+			using (var blockPen = new Pen(Color.DimGray, 1)) {
+				blockPen.DashStyle
+					= spanPen.DashStyle
+					= System.Drawing.Drawing2D.DashStyle.Dash;
+				using (var m = new System.Drawing.Drawing2D.Matrix(z, 0, 0, z, offset.X + o.X, offset.Y + o.Y)) {
+					g.MultiplyTransform(m);
+				}
+				foreach (var block in p.TextPage) {
+					g.DrawRectangle(blockPen, block.Bound.ToRectangle());
+					if (block == null) {
+						continue;
 					}
-					foreach (var block in p.TextPage.Blocks) {
-						g.DrawRectangle(blockPen, block.BBox);
-						if (block == null) {
-							continue;
-						}
-						foreach (var line in block.Lines) {
-							g.DrawRectangle(spanPen, line.BBox);
-						}
+					foreach (var line in block) {
+						g.DrawRectangle(spanPen, line.Bound.ToRectangle());
 					}
 				}
-				g.ResetTransform();
 			}
+			g.ResetTransform();
 		}
 
 		/// <summary>
@@ -686,19 +673,17 @@ namespace PDFPatcher.Functions
 		/// <returns>选定的矩形区域。</returns>
 		internal Editor.Selection GetSelection() {
 			var s = GetSelectionPageRegion();
-			if (s.Page == 0 || _mupdf.IsDocumentOpened == false) {
+			if (s.Page == 0 || _mupdf.IsDisposed) {
 				return Editor.Selection.Empty;
 			}
 			else {
-				lock (_mupdf.SyncObj) {
-					var vb = _pageBounds[s.Page];
-					var sr = s.Region;
-					var pr = new MuRectangle(sr.Left - vb.Left, vb.Bottom - sr.Top, sr.Right - vb.Left, vb.Bottom - sr.Bottom);
-					var o = GetVirtualImageOffset(s.Page);
-					var area = SelectionRegion;
-					area.Offset(-o.X, -o.Y);
-					return new Editor.Selection(_cache, s.Page, pr, area);
-				}
+				var vb = _pageBounds[s.Page];
+				var sr = s.Region;
+				var pr = new Box(sr.X0 - vb.X0, vb.X1 - sr.Y0, sr.X1 - vb.Y0, vb.Y1 - sr.Y1);
+				var o = GetVirtualImageOffset(s.Page);
+				var area = SelectionRegion;
+				area.Offset(-o.X, -o.Y);
+				return new Editor.Selection(_cache, s.Page, pr, area);
 			}
 		}
 
@@ -707,7 +692,9 @@ namespace PDFPatcher.Functions
 			if (area.IsEmpty) {
 				return Editor.PageRegion.Empty;
 			}
+			#if DEBUG
 			var b = GetOffsetRectangle(GetImageViewPort());
+			#endif
 			var p1 = TransposeVirtualImageToPagePosition(area.Left.ToInt32(), area.Top.ToInt32());
 			var p2 = TransposeVirtualImageToPagePosition(area.Right.ToInt32(), area.Bottom.ToInt32());
 			return new Editor.PageRegion(p1, p2);
@@ -719,62 +706,60 @@ namespace PDFPatcher.Functions
 		/// <param name="position">查找文本行的位置。</param>
 		/// <returns>返回指定位置的文本行以及与该文本行具有相同样式的后续文本行。</returns>
 		internal Editor.TextInfo FindTextLines(Editor.PagePosition position) {
-			var rect = new MuRectangle();
+			var rect = new Box();
 			var ti = new Editor.TextInfo();
-			if (_mupdf.IsDocumentOpened == false) {
+			if (_mupdf.IsDisposed) {
 				return ti;
 			}
-			lock (_mupdf.SyncObj) {
-				var page = _cache.LoadPage(position.Page);
-				var point = position.ToPageCoordinate(page);
-				if (page.Bound.Contains(point) == false
-					|| page.TextPage.BBox.Contains(point) == false) {
-					return ti;
+			var page = _cache.LoadPage(position.Page);
+			var point = position.ToPageCoordinate(page);
+			if (page.Bound.Contains(point) == false
+				|| page.TextPage.Bound.Contains(point) == false) {
+				return ti;
+			}
+			foreach (var block in page.TextPage) {
+				if (block.IsImageBlock || block.Bound.Contains(point) == false) {
+					continue;
 				}
-				foreach (var block in page.TextPage.Blocks) {
-					if (block.Type != ContentBlockType.Text || block.BBox.Contains(point) == false) {
-						continue;
-					}
-					HashSet<IntPtr> s = null;
-					MuTextLine l = null;
-					List<MuTextLine> r = null;
-					foreach (var line in block.Lines) {
-						if (l == null) {
-							if (line.BBox.Contains(point) == false) {
-								continue;
-							}
-							s = new HashSet<IntPtr>(); // 获取选中文本行的文本样式集合
-							r = new List<MuTextLine>();
-							foreach (var ch in line.Characters) {
-								s.Add(ch.FontID);
-							}
-							rect = line.BBox;
-							l = line;
-							r.Add(l);
+				HashSet<TextFont> s = null;
+				TextLine l = null;
+				List<TextLine> r = null;
+				foreach (var line in block) {
+					if (l == null) {
+						if (line.Bound.Contains(point) == false) {
+							continue;
 						}
-						else {
-							if (line.BBox.IsHorizontalNeighbor(rect) == false) {
-								break;
-							}
-							// 获取具有相同样式的邻接文本行
-							foreach (var ch in line.Characters) {
-								if (s.Contains(ch.FontID)) {
-									r.Add(line);
-									l = line;
-									goto NEXT;
-								}
-							}
-							rect = rect.Union(line.BBox);
+						s = new HashSet<TextFont>(); // 获取选中文本行的文本样式集合
+						r = new List<TextLine>();
+						foreach (var ch in line) {
+							s.Add(ch.Font);
 						}
-					NEXT:;
+						rect = line.Bound;
+						l = line;
+						r.Add(l);
 					}
-					if (l != null) {
-						var spans = new List<MuTextSpan>(r.Count * 2);
-						foreach (var item in r) {
-							spans.AddRange(item.Spans);
+					else {
+						if (line.Bound.IsHorizontalNeighbor(rect) == false) {
+							break;
 						}
-						return new Editor.TextInfo(page, rect, r, spans);
+						// 获取具有相同样式的邻接文本行
+						foreach (var ch in line) {
+							if (s.Contains(ch.Font)) {
+								r.Add(line);
+								l = line;
+								goto NEXT;
+							}
+						}
+						rect = rect.Union(line.Bound);
 					}
+				NEXT:;
+				}
+				if (l != null) {
+					var spans = new List<Editor.TextSpan>(r.Count * 2);
+					foreach (var item in r) {
+						spans.AddRange(Editor.TextSpan.GetTextSpans(item));
+					}
+					return new Editor.TextInfo(page, rect, r, spans);
 				}
 			}
 			return ti;
@@ -785,36 +770,34 @@ namespace PDFPatcher.Functions
 		/// </summary>
 		/// <param name="region">选择的区域。</param>
 		/// <returns>区域内的文本行。</returns>
-		internal List<MuTextLine> FindTextLines(Editor.PageRegion region) {
-			if (_mupdf.IsDocumentOpened == false) {
+		internal List<TextLine> FindTextLines(Editor.PageRegion region) {
+			if (_mupdf.IsDisposed) {
 				return null;
 			}
-			List<MuTextLine> r = null;
-			lock (_mupdf.SyncObj) {
-				var page = _cache.LoadPage(region.Page);
-				var pr = region.ToPageCoordinate(page);
-				if (pr.Intersect(page.TextPage.BBox).IsEmpty) {
-					return null;
+			List<TextLine> r = null;
+			var page = _cache.LoadPage(region.Page);
+			var pr = region.ToPageCoordinate(page);
+			if (pr.Intersect(page.TextPage.Bound).IsEmpty) {
+				return null;
+			}
+			foreach (var block in page.TextPage) {
+				if (block.IsImageBlock || pr.Intersect(block.Bound).IsEmpty) {
+					continue;
 				}
-				foreach (var block in page.TextPage.Blocks) {
-					if (block.Type != ContentBlockType.Text || pr.Intersect(block.BBox).IsEmpty) {
-						continue;
-					}
-					var s = new HashSet<int>();
-					if (r == null) {
-						r = new List<MuTextLine>();
-					}
-					foreach (var line in block.Lines) {
-						if (pr.Intersect(line.BBox).Area > line.BBox.Area * 0.618f) {
-							r.Add(line);
-						}
+				var s = new HashSet<int>();
+				if (r == null) {
+					r = new List<TextLine>();
+				}
+				foreach (var line in block) {
+					if (pr.Intersect(line.Bound).Area > line.Bound.Area * 0.618f) {
+						r.Add(line);
 					}
 				}
 			}
 			return r;
 		}
 
-		float GetZoomFactorForPage(MuRectangle bound) {
+		float GetZoomFactorForPage(Box bound) {
 			return _zoomFactor;
 		}
 
@@ -858,10 +841,10 @@ namespace PDFPatcher.Functions
 			return RenderPage(pageNumber, (z * b.Width).ToInt32(), (z * b.Height).ToInt32());
 		}
 
-		public MuPage LoadPage(int pageNumber) {
+		public Page LoadPage(int pageNumber) {
 			return _cache.LoadPage(pageNumber);
 		}
-		public MuRectangle GetPageBound(int pageNumber) {
+		public Box GetPageBound(int pageNumber) {
 			return _pageBounds[pageNumber];
 		}
 
@@ -870,36 +853,37 @@ namespace PDFPatcher.Functions
 			if (bmp != null) {
 				return bmp;
 			}
-			if (_mupdf == null || _mupdf.IsDocumentOpened == false || Enabled == false) {
+			if (_mupdf == null || _mupdf.IsDisposed || Enabled == false) {
 				return null;
 			}
-			lock (_mupdf.SyncObj) {
+			lock (_syncObj) {
 				var p = _cache.LoadPage(pageNumber);
 				if (pageNumber < _DisplayRange.StartValue - 1 || pageNumber > _DisplayRange.EndValue + 1) {
 					return null;
 				}
 				Tracker.DebugMessage("render page " + pageNumber);
-				bmp = p.RenderBitmapPage(width, height, _renderOptions);
+				bmp = p.RenderBitmapPage(width, height, _renderOptions, _cookie);
 				_cache.AddBitmap(pageNumber, bmp);
 			}
 			return bmp;
 		}
 
 		int GetPageNumberFromOffset(int offsetX, int offsetY) {
-			if (_mupdf == null) {
+			var offsets = _pageOffsets;
+			if (offsets == null) {
 				return 0;
 			}
 			var p = HorizontalFlow ?
-				Array.BinarySearch(_pageOffsets, 1, _pageOffsets.Length - 1, offsetX, __horizontalComparer) :
-				Array.BinarySearch(_pageOffsets, 1, _pageOffsets.Length - 1, offsetY);
+				Array.BinarySearch(offsets, 1, offsets.Length - 1, offsetX, __horizontalComparer) :
+				Array.BinarySearch(offsets, 1, offsets.Length - 1, offsetY);
 			if (p < 0) {
 				p = ~p;
 				if (HorizontalFlow == false) {
 					--p;
 				}
 			}
-			if (p >= _pageOffsets.Length) {
-				return _pageOffsets.Length - 1;
+			if (p >= offsets.Length) {
+				return offsets.Length - 1;
 			}
 			else if (p < 1) {
 				return 1;
@@ -934,7 +918,7 @@ namespace PDFPatcher.Functions
 			}
 			if (pp.Page > 0) {
 				if (_zoomMode == ZoomMode.FitPage) {
-					ShowPage(pp.Page);
+					ScrollToPage(pp.Page);
 				}
 				else {
 					ScrollToPosition(pp);
@@ -991,7 +975,7 @@ namespace PDFPatcher.Functions
 			_renderWorker.CancelAsync();
 			_cancelRendering = true;
 			if (_cache != null) {
-				lock (_mupdf.SyncObj) {
+				lock (_syncObj) {
 					lock (_cache.SyncObj) {
 						_cache.Clear();
 					}
@@ -1012,13 +996,13 @@ namespace PDFPatcher.Functions
 			return SelectionRegion.Contains(PointToImage(point));
 		}
 
-		internal RectangleF MuRectangleToImageRegion(int pageNumber, MuRectangle box) {
+		internal RectangleF MuRectangleToImageRegion(int pageNumber, Box box) {
 			var rtl = HorizontalFlow;
 			var o = _pageOffsets[pageNumber];
 			var b = _pageBounds[pageNumber];
 			var z = _zoomFactor;
-			var l = box.Left * z + __pageMargin;
-			var t = box.Top * z + __pageMargin;
+			var l = box.X0 * z + __pageMargin;
+			var t = box.Y0 * z + __pageMargin;
 			if (rtl) {
 				l += o;
 			}
@@ -1102,12 +1086,12 @@ namespace PDFPatcher.Functions
 			var o = GetVirtualImageOffset(pageNumber);
 			var b = _pageBounds[pageNumber];
 			var z = GetZoomFactorForPage(b);
-			var ox = (float)(imageX - o.X) / z;
-			var oy = (float)(imageY - o.Y) / z;
+			var ox = (imageX - o.X) / z;
+			var oy = (imageY - o.Y) / z;
 			return new Editor.PagePosition(pageNumber,
-				b.Left + ox, b.Top + b.Height - oy,
+				b.X0 + ox, b.Y0 + b.Height - oy,
 				imageX - o.X, imageY - o.Y,
-				b.Contains(ox, oy));
+				b.Contains(new MuPDF.Point(ox, oy)));
 		}
 
 		internal Editor.PagePosition TransposePageImageToPagePosition(int pageNumber, float pageImageX, float pageImageY) {
@@ -1116,9 +1100,9 @@ namespace PDFPatcher.Functions
 			var ox = pageImageX / z;
 			var oy = pageImageY / z;
 			return new Editor.PagePosition(pageNumber,
-				b.Left + ox, b.Top + b.Height - oy,
+				b.X0 + ox, b.Y0 + b.Height - oy,
 				pageImageX.ToInt32(), pageImageY.ToInt32(),
-				b.Contains(ox, oy));
+				b.Contains(new MuPDF.Point(ox, oy)));
 		}
 		#endregion
 
@@ -1129,7 +1113,7 @@ namespace PDFPatcher.Functions
 			return __pageMargin + __pageMargin + (pageHeight * _zoomFactor).ToInt32();
 		}
 
-		bool ShowPage(int pageNumber) {
+		bool ScrollToPage(int pageNumber) {
 			if (_mupdf == null || _pageOffsets == null) {
 				return false;
 			}
@@ -1164,13 +1148,13 @@ namespace PDFPatcher.Functions
 			var bound = _pageBounds[position.Page];
 			position.Location.Deconstruct(out var px, out var py);
 			if (px != 0) {
-				px -= bound.Left;
+				px -= bound.X0;
 			}
 			else if (h) {
 				op.X -= __pageMargin;
 			}
 			if (py != 0) {
-				py = bound.Height - (py - bound.Top);
+				py = bound.Height - (py - bound.Y0);
 			}
 			else if (h == false) {
 				op.Y -= __pageMargin;
@@ -1187,15 +1171,15 @@ namespace PDFPatcher.Functions
 				return false;
 			}
 			return (HorizontalFlow && deltaPageNumber > 0 && HorizontalScroll.Value > _pageOffsets[CurrentPageNumber])
-				? ShowPage(CurrentPageNumber + deltaPageNumber - 1)
-				: ShowPage(CurrentPageNumber + deltaPageNumber);
+				? ScrollToPage(CurrentPageNumber + deltaPageNumber - 1)
+				: ScrollToPage(CurrentPageNumber + deltaPageNumber);
 		}
 
 		void LoadPageBounds() {
 			float w = 0, h = 0;
 			for (int i = _mupdf.PageCount; i > 0; i--) {
-				using (var p = _mupdf.LoadPage(i)) {
-					var b = p.VisualBound;
+				using (var p = _mupdf.LoadPage(i - 1)) {
+					var b = p.Bound;
 					_pageBounds[i] = b;
 					if (b.Width > w) {
 						w = b.Width;
@@ -1217,7 +1201,7 @@ namespace PDFPatcher.Functions
 			var vs = GetInsideViewPort().Size;
 			_lockDown = true;
 			if (HorizontalFlow) {
-				lock (_mupdf.SyncObj) {
+				lock (_syncObj) {
 					for (int i = l - 1; i >= 0; i--) {
 						var b = _pageBounds[i];
 						_pageOffsets[i] = w;
@@ -1236,7 +1220,7 @@ namespace PDFPatcher.Functions
 				VerticalScroll.Visible = VerticalScroll.Enabled = h > ClientSize.Height;
 			}
 			else {
-				lock (_mupdf.SyncObj) {
+				lock (_syncObj) {
 					for (int i = 1; i < l; i++) {
 						var b = _pageBounds[i];
 						_pageOffsets[i] = h;
@@ -1259,10 +1243,10 @@ namespace PDFPatcher.Functions
 
 		public void ExecuteCommand(string cmd) {
 			switch (cmd) {
-				case "_FirstPage": ShowPage(1); break;
+				case "_FirstPage": ScrollToPage(1); break;
 				case "_PreviousPage": Next(-1); break;
 				case "_NextPage": Next(1); break;
-				case "_LastPage": ShowPage(-1); break;
+				case "_LastPage": ScrollToPage(-1); break;
 				case "_ScrollVertical": ContentDirection = Editor.ContentDirection.TopToDown; break;
 				case "_ScrollHorizontal": ContentDirection = Editor.ContentDirection.RightToLeft; break;
 				case "_TrueColorSpace": GrayScale = false; break;
@@ -1301,7 +1285,13 @@ namespace PDFPatcher.Functions
 			Tracker.DebugMessage("PDF Viewer control destroyed.");
 			_cancelRendering = true;
 			_disposed = true;
-			_mupdf?.AbortAsync();
+			Cookie cookie = _cookie;
+			if (cookie != null) {
+				cookie.Cancel();
+				cookie.Dispose();
+				_cookie = null;
+			}
+			_mupdf?.Dispose();
 			_refreshTimer.Stop();
 			_renderWorker.CancelAsync();
 			if (_cache != null) {

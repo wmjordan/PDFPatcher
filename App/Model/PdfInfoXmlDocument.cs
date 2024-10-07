@@ -58,7 +58,7 @@ namespace PDFPatcher.Model
 			}
 			return b;
 		}
-		public PageLabelElement CreatePageLabel(MuPdfSharp.PageLabel label) {
+		public PageLabelElement CreatePageLabel(MuPDF.PageLabel label) {
 			var l = new PageLabelElement(this);
 			l.SetAttributes(label);
 			return l;
@@ -332,7 +332,7 @@ namespace PDFPatcher.Model
 
 		public XmlNodeList Labels => SelectNodes(Constants.PageLabelsAttributes.Style);
 
-		public void Add(MuPdfSharp.PageLabel label) {
+		public void Add(MuPDF.PageLabel label) {
 			foreach (PageLabelElement item in Labels) {
 				if (item.PageNumber == label.FromPageNumber) {
 					item.SetAttributes(label);
@@ -370,19 +370,19 @@ namespace PDFPatcher.Model
 			: base(String.Empty, Constants.PageLabelsAttributes.Style, String.Empty, doc) {
 		}
 
-		public void SetAttributes(MuPdfSharp.PageLabel label) {
+		public void SetAttributes(MuPDF.PageLabel label) {
 			this.SetValue(Constants.PageLabelsAttributes.PageNumber, label.FromPageNumber + 1, 0);
 			SetAttribute(Constants.PageLabelsAttributes.Style, ValueHelper.MapValue((char)label.NumericStyle, Constants.PageLabelStyles.PdfValues, Constants.PageLabelStyles.Names));
 			this.SetValue(Constants.PageLabelsAttributes.StartPage, label.StartAt, 0);
 			this.SetValue(Constants.PageLabelsAttributes.Prefix, label.Prefix);
 		}
 
-		public MuPdfSharp.PageLabel ToPageLabel() {
-			return new MuPdfSharp.PageLabel(
+		public MuPDF.PageLabel ToPageLabel() {
+			return new MuPDF.PageLabel(
 				PageNumber - 1,
 				StartNumber,
 				PrefixLabel,
-				(MuPdfSharp.PageLabelStyle)ValueHelper.MapValue(Style, Constants.PageLabelStyles.Names, Constants.PageLabelStyles.PdfValues));
+				(MuPDF.PageLabelStyle)ValueHelper.MapValue(Style, Constants.PageLabelStyles.Names, Constants.PageLabelStyles.PdfValues));
 		}
 	}
 

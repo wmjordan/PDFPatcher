@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using iTextSharp.text.pdf;
+using MuPDF.Extensions;
 using PDFPatcher.Common;
 using PDFPatcher.Model;
 
@@ -45,7 +46,7 @@ namespace PDFPatcher.Processor
 			while (true) {
 				try {
 					if (File.Exists(sourceFile) == false) {
-						throw new FileNotFoundException(String.Concat("找不到文件：", sourceFile));
+						throw new FileNotFoundException($"找不到文件：{sourceFile}");
 					}
 					PdfReader r;
 					if (partial) {
@@ -70,7 +71,7 @@ namespace PDFPatcher.Processor
 					password = Encoding.Default.GetBytes(f.Password);
 				}
 				catch (iTextSharp.text.exceptions.InvalidPdfException ex) {
-					FormHelper.ErrorBox("PDF 文档已经损坏，或使用了不支持的加密方式：" + ex.Message);
+					FormHelper.ErrorBox($"PDF 文档已经损坏，或使用了不支持的加密方式：{ex.Message}");
 					throw;
 				}
 			}
@@ -88,20 +89,22 @@ namespace PDFPatcher.Processor
 			return r;
 		}
 
-		internal static MuPdfSharp.MuDocument OpenMuDocument(string sourceFile) {
-			var d = new MuPdfSharp.MuDocument(sourceFile);
+		internal static MuPDF.Document OpenMuDocument(string sourceFile) {
+			var d = MuPDF.Context.Instance.OpenDocument(sourceFile);
+			MuPDF.Context.Instance.HootSystemFontLookup();
 			if (d.NeedsPassword) {
+				var authenticated = false;
 				if (__PdfPasswordCache.TryGetValue(sourceFile, out byte[] password)) {
-					d.AuthenticatePassword(password != null ? Encoding.Default.GetString(password) : String.Empty);
+					authenticated = d.CheckPassword(password != null ? Encoding.Default.GetString(password) : String.Empty);
 				}
-				while (d.IsAuthenticated == false) {
+				while (authenticated == false) {
 					using (var f = new PasswordEntryForm(sourceFile)) {
 						if (f.ShowDialog() == System.Windows.Forms.DialogResult.Cancel) {
 							throw new iTextSharp.text.exceptions.BadPasswordException("密码错误，没有权限打开 PDF 文件。");
 						}
 						__PdfPasswordCache[sourceFile] = password = Encoding.Default.GetBytes(f.Password);
 					}
-					d.AuthenticatePassword(password != null ? Encoding.Default.GetString(password) : String.Empty);
+					authenticated = d.CheckPassword(password != null ? Encoding.Default.GetString(password) : String.Empty);
 				}
 			}
 			return d;

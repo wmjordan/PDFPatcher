@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Permissions;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
+using MuPDF.Extensions;
 using PDFPatcher.Common;
 using PDFPatcher.Model;
 using PDFPatcher.Processor;
@@ -364,7 +365,7 @@ namespace PDFPatcher.Functions
 					// keep disabled
 					break;
 				case Commands.DocumentProperties:
-					item.Enabled = _ViewerBox.Document != null && _ViewerBox.Document.IsDocumentOpened;
+					item.Enabled = _ViewerBox.Document != null && _ViewerBox.Document.IsDisposed == false;
 					item.Visible = true;
 					break;
 				case "_ScrollVertical": m.Checked = _ViewerBox.ContentDirection == Editor.ContentDirection.TopToDown; break;
@@ -442,7 +443,7 @@ namespace PDFPatcher.Functions
 						var r = _ViewerBox.GetSelectionPageRegion();
 						var lines = _ViewerBox.FindTextLines(r);
 						if (lines != null) {
-							Clipboard.SetText(String.Join(Environment.NewLine, lines.Select(i => i.Text)));
+							Clipboard.SetText(String.Join(Environment.NewLine, lines.Select(i => i.GetText())));
 						}
 						else {
 							using (var b = sel.GetSelectedBitmap()) {
