@@ -314,7 +314,7 @@
     <Compile Include="Functions\RenameControl.Designer.cs">
       <DependentUpon>RenameControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Functions\Editor\PdfViewerControl.cs">
+    <Compile Include="Functions\Editor\ViewerControl.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Functions\AutoBookmark\TextSizeConditionEditor.cs">

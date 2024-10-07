@@ -150,7 +150,7 @@
 			this._BookmarkBox = new PDFPatcher.Functions.BookmarkEditorView();
 			this._MainPanel = new System.Windows.Forms.SplitContainer();
 			this._PageInfoBox = new System.Windows.Forms.Label();
-			this._ViewerBox = new PDFPatcher.Functions.PdfViewerControl();
+			this._ViewerBox = new PDFPatcher.Functions.ViewerControl();
 			this._ViewerMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this._OcrPage = new System.Windows.Forms.ToolStripMenuItem();
 			this._SavePageImage = new System.Windows.Forms.ToolStripMenuItem();
@@ -1520,7 +1520,7 @@
 		private System.Windows.Forms.ToolStripMenuItem _ChangeCase;
 		private System.Windows.Forms.CheckBox _IncludeDecendantBox;
 		private System.Windows.Forms.SplitContainer _MainPanel;
-		private PdfViewerControl _ViewerBox;
+		private ViewerControl _ViewerBox;
 		private System.Windows.Forms.Label _PageInfoBox;
 		private System.Windows.Forms.ToolStrip _BookmarkToolbar;
 		private System.Windows.Forms.ToolStripSplitButton _UndoButton;

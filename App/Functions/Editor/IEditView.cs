@@ -8,7 +8,7 @@ namespace PDFPatcher.Functions.Editor
 		ToolStripSplitButton UndoButton { get; }
 		AutoBookmarkForm AutoBookmark { get; }
 		BookmarkEditorView Bookmark { get; }
-		PdfViewerControl Viewer { get; }
+		ViewerControl Viewer { get; }
 		ToolStrip ViewerToolbar { get; }
 		ToolStrip BookmarkToolbar { get; }
 		SplitContainer MainPanel { get; }

@@ -121,7 +121,7 @@ namespace PDFPatcher.Functions.Editor
 			}
 		}
 
-		internal void Uninitialize(PdfViewerControl v) {
+		internal void Uninitialize(ViewerControl v) {
 			v.Document.TryDispose();
 			View.AutoBookmark.TryDispose();
 			Model.PdfDocument = v.Document = null;

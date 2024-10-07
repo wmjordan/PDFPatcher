@@ -214,8 +214,8 @@ namespace PDFPatcher.Functions
 				_ZoomBox.Text = _ViewerBox.LiteralZoom;
 			};
 			_ViewerBox.PageChanged += (s, args) => _CurrentPageBox.Text = _ViewerBox.CurrentPageNumber.ToText();
-			_ViewerBox.ContentDirectionChanged += (s, args) => AppContext.Reader.ContentDirection = ((PdfViewerControl)s).ContentDirection;
-			_ViewerBox.PageScrollModeChanged += (s, args) => AppContext.Reader.FullPageScroll = ((PdfViewerControl)s).FullPageScroll;
+			_ViewerBox.ContentDirectionChanged += (s, args) => AppContext.Reader.ContentDirection = ((ViewerControl)s).ContentDirection;
+			_ViewerBox.PageScrollModeChanged += (s, args) => AppContext.Reader.FullPageScroll = ((ViewerControl)s).FullPageScroll;
 			//_ViewerBox.SelectionChanged += (s, args) =>
 			//{
 			//	var t = args.Selection.SelectedText;
@@ -641,7 +641,7 @@ namespace PDFPatcher.Functions
 
 		BookmarkEditorView Editor.IEditView.Bookmark => _BookmarkBox;
 
-		PdfViewerControl Editor.IEditView.Viewer => _ViewerBox;
+		ViewerControl Editor.IEditView.Viewer => _ViewerBox;
 
 		ToolStrip Editor.IEditView.ViewerToolbar => _ViewerToolbar;
 

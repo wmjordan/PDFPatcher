@@ -14,7 +14,7 @@ using DrawingRectangle = System.Drawing.Rectangle;
 
 namespace PDFPatcher.Functions
 {
-	internal sealed class PdfViewerControl : ImageBoxEx {
+	internal sealed class ViewerControl : ImageBoxEx {
 		enum ZoomMode {
 			Custom, FitPage = -1, FitHorizontal = -2, FitVertical = -3
 		}
@@ -336,7 +336,7 @@ namespace PDFPatcher.Functions
 			}
 		}
 
-		public PdfViewerControl() {
+		public ViewerControl() {
 			VirtualMode = true;
 			VirtualSize = Size.Empty;
 			AllowUnfocusedMouseWheel = true;
