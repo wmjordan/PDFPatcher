@@ -26,17 +26,11 @@ namespace PDFPatcher.Functions
 		public event EventHandler<PageChangedEventArgs> PageChanged;
 		public event EventHandler<SelectionChangedEventArgs> SelectionChanged;
 
-		internal sealed class PageChangedEventArgs : EventArgs {
-			public int PageNumber { get; }
-			public PageChangedEventArgs(int pageNumber) {
-				PageNumber = pageNumber;
-			}
+		internal sealed class PageChangedEventArgs(int pageNumber) : EventArgs {
+			public int PageNumber { get; } = pageNumber;
 		}
-		internal sealed class SelectionChangedEventArgs : EventArgs {
-			public Editor.Selection Selection { get; }
-			public SelectionChangedEventArgs(Editor.Selection selection) {
-				Selection = selection;
-			}
+		internal sealed class SelectionChangedEventArgs(Editor.Selection selection) : EventArgs {
+			public Editor.Selection Selection { get; } = selection;
 		}
 
 		readonly static IComparer<int> __horizontalComparer = ValueHelper.GetReverseComparer<int>();
