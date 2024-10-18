@@ -14,7 +14,8 @@ namespace PDFPatcher.Model
 		Enclosure,
 		Matrix,
 		Font,
-		InlineImage
+		InlineImage,
+		Invalid
 	}
 	interface IPdfPageCommandContainer
 	{
@@ -323,6 +324,17 @@ namespace PDFPatcher.Model
 			target.Write(img.RawBytes, 0, img.RawBytes.Length);
 			target.WriteByte((byte)'\n');
 			WriteOperator(__EI, target);
+		}
+	}
+
+	sealed class InvalidCommand(PdfLiteral oper, List<PdfObject> operands) : PdfPageCommand(oper, operands)
+	{
+		public override PdfPageCommandType Type => PdfPageCommandType.Invalid;
+		public override bool HasOutput => false;
+		public string Error { get; set; }
+
+		internal override void WriteToPdf(Stream target) {
+			// do nothing
 		}
 	}
 }

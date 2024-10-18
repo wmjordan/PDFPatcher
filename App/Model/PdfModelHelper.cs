@@ -63,6 +63,16 @@ namespace PDFPatcher.Model
 		internal static T CastAs<T>(this PdfIndirectReference pdfRef) where T : PdfObject {
 			return PdfReader.GetPdfObject(pdfRef) as T;
 		}
+		internal static float ValueAsFloat(this PdfObject obj) {
+			return obj is PdfNumber n
+				? n.FloatValue
+				: 0;
+		}
+		internal static float ValueAsInt(this PdfObject obj) {
+			return obj is PdfNumber n
+				? n.IntValue
+				: 0;
+		}
 
 		internal static bool ValueIs(this PdfNumber obj, double value) {
 			return obj != null && obj.DoubleValue == value;

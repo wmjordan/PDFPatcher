@@ -108,7 +108,7 @@ namespace PDFPatcher.Functions
 									d.ImageKey = ic;
 								}
 								else {
-									d.ImageKey = __OpNameIcons["Null"];
+									d.ImageKey = __OpNameIcons["?"];
 								}
 							}
 							return d.ImageKey;
@@ -445,7 +445,8 @@ namespace PDFPatcher.Functions
 				"Do",
 				"W*", "W", "c", "v", "y", "l", "re",
 				"m", "h", "n", "w", "J", "j", "M", "d", "i",
-				"pdf:number", "pdf:string", "pdf:name", "pdf:dictionary", "pdf:array", "pdf:boolean" };
+				"pdf:number", "pdf:string", "pdf:name", "pdf:dictionary", "pdf:array", "pdf:boolean",
+				"?" };
 			var ico = new string[] {
 				"op_q", "op_tm", "op_cm", "op_gs", "op_gs", "op_gs", "op_gs",
 				"op_sc", "op_sc", "op_sc", "op_sc", "op_sc", "op_sc", "op_sc", "op_sc",
@@ -458,7 +459,8 @@ namespace PDFPatcher.Functions
 				"Resources",
 				"op_W*", "op_W*", "op_c", "op_c", "op_c", "op_l", "op_re",
 				"op_m", "op_h", "op_h", "op_w", "op_l", "op_l", "op_M_", "op_d", "op_gs",
-				"Number", "String", "Name", "Dictionary", "Array", "Bool" };
+				"Number", "String", "Name", "Dictionary", "Array", "Bool",
+				"Error" };
 			var d = new Dictionary<string, int>(n.Length + p.Length);
 			foreach (var i in p) {
 				d.Add(i, _ObjectTypeIcons.Images.IndexOfKey(i));

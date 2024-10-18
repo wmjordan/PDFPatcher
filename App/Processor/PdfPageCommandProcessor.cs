@@ -9,21 +9,20 @@ namespace PDFPatcher.Processor
 {
 	sealed class PdfPageCommandProcessor : PdfContentStreamProcessor, IPdfPageCommandContainer
 	{
+		readonly Stack<EnclosingCommand> _commandStack = new Stack<EnclosingCommand>();
+		EnclosingCommand _currentCommand;
+		float _textWidth;
 
 		public bool HasCommand => Commands.Count > 0;
 		/// <summary>
 		/// 分析内容后得到的 PDF 命令操作符及操作数列表。
 		/// </summary>
-		public IList<PdfPageCommand> Commands { get; }
-		readonly Stack<EnclosingCommand> _commandStack;
-		EnclosingCommand _currentCommand;
-		float _textWidth;
+		public IList<PdfPageCommand> Commands { get; } = new List<PdfPageCommand>();
+		public string LastError { get; private set; }
 
 		public PdfPageCommandProcessor() {
 			PopulateOperators();
 			RegisterContentOperator("TJ", new AccumulatedShowTextArray());
-			Commands = new List<PdfPageCommand>();
-			_commandStack = new Stack<EnclosingCommand>();
 		}
 
 		public PdfPageCommandProcessor(PRStream form)
@@ -48,8 +47,20 @@ namespace PDFPatcher.Processor
 		}
 
 		protected override void InvokeOperator(PdfLiteral oper, List<PdfObject> operands) {
-			base.InvokeOperator(oper, operands);
 			PdfPageCommand cmd;
+			try {
+				base.InvokeOperator(oper, operands);
+			}
+			catch (Exception ex) {
+				cmd = new InvalidCommand(oper, operands) {
+					Error = LastError = oper + " " + (ex is IndexOutOfRangeException ? "指令参数不足"
+						: ex is ArgumentOutOfRangeException ? "指令参数不足"
+						: ex is InvalidCastException ? "指令参数类型不匹配"
+						: ex.Message)
+				};
+				goto ADD_COMMAND;
+			}
+
 			switch (oper.ToString()) {
 				case "TJ":
 					cmd = new PaceAndTextCommand(oper, operands, GetTextInfo(new PdfString()), CurrentGraphicState.Font);
@@ -97,6 +108,8 @@ namespace PDFPatcher.Processor
 					}
 					else {
 						_currentCommand = null;
+						cmd = new InvalidCommand(oper, operands) { Error = "嵌套指令不配对" };
+						goto ADD_COMMAND;
 					}
 					return;
 				case "BI":
@@ -106,7 +119,7 @@ namespace PDFPatcher.Processor
 					cmd = new AdjustCommand(oper, operands);
 					break;
 			}
-
+			ADD_COMMAND:
 			if (_currentCommand != null) {
 				_currentCommand.Commands.Add(cmd);
 			}

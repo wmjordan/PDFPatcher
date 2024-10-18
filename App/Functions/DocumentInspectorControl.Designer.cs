@@ -171,7 +171,6 @@
 			// 
 			// _DescriptionColumn
 			// 
-			this._DescriptionColumn.IsEditable = true;
 			this._DescriptionColumn.Text = "说明";
 			this._DescriptionColumn.Width = 93;
 			// 
@@ -232,6 +231,7 @@
 			this._ObjectTypeIcons.Images.SetKeyName(50, "op_b");
 			this._ObjectTypeIcons.Images.SetKeyName(51, "op_m");
 			this._ObjectTypeIcons.Images.SetKeyName(52, "op_h");
+			this._ObjectTypeIcons.Images.SetKeyName(53, "Error");
 			// 
 			// _DescriptionBox
 			// 

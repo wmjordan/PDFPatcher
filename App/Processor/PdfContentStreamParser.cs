@@ -159,14 +159,22 @@ namespace PDFPatcher.Processor
 			var ps = new PdfContentParser(tokenizer);
 			var operands = new List<PdfObject>();
 			while (ps.Parse(operands).Count > 0) {
-				var oper = (PdfLiteral)operands[operands.Count - 1];
-				if ("BI".Equals(oper.ToString())) {
+				var oper = operands[operands.Count - 1] as PdfLiteral;
+				if (oper is null) {
+					break;
+				}
+				if ("BI".Equals(oper)) {
 					var img = InlineImageUtils.ParseInlineImage(ps, resources.GetAsDict(PdfName.COLORSPACE));
 					InvokeOperator(oper, new List<PdfObject> { img, oper });
 					//    this.renderListener.RenderImage (renderInfo);
 				}
 				else {
-					InvokeOperator(oper, operands);
+					try {
+						InvokeOperator(oper, operands);
+					}
+					catch (Exception) {
+						continue;
+					}
 				}
 			}
 			tokenizer.Close();
@@ -273,18 +281,18 @@ namespace PDFPatcher.Processor
 				var resources = stream.GetAsDict(PdfName.RESOURCES);
 				var contentBytes = ContentByteUtils.GetContentBytesFromContentObject(stream);
 				var matrix = stream.GetAsArray(PdfName.MATRIX);
-				new PdfContentStreamProcessor.PushGraphicsState().Invoke(processor, null, null);
+				new PushGraphicsState().Invoke(processor, null, null);
 				if (matrix != null) {
-					float a = matrix.GetAsNumber(0).FloatValue;
-					float b = matrix.GetAsNumber(1).FloatValue;
-					float c = matrix.GetAsNumber(2).FloatValue;
-					float d = matrix.GetAsNumber(3).FloatValue;
-					float e = matrix.GetAsNumber(4).FloatValue;
-					float f = matrix.GetAsNumber(5).FloatValue;
+					float a = matrix[0].ValueAsFloat();
+					float b = matrix[1].ValueAsFloat();
+					float c = matrix[2].ValueAsFloat();
+					float d = matrix[3].ValueAsFloat();
+					float e = matrix[4].ValueAsFloat();
+					float f = matrix[5].ValueAsFloat();
 					processor.CurrentGraphicState.TransMatrix = new Matrix(a, b, c, d, e, f).Multiply(processor.CurrentGraphicState.TransMatrix);
 				}
 				processor.ProcessContent(contentBytes, resources);
-				new PdfContentStreamProcessor.PopGraphicsState().Invoke(processor, null, null);
+				new PopGraphicsState().Invoke(processor, null, null);
 			}
 		}
 
@@ -315,12 +323,12 @@ namespace PDFPatcher.Processor
 		{
 			public bool HasOutput => false;
 			public void Invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
-				float a = ((PdfNumber)operands[0]).FloatValue;
-				float b = ((PdfNumber)operands[1]).FloatValue;
-				float c = ((PdfNumber)operands[2]).FloatValue;
-				float d = ((PdfNumber)operands[3]).FloatValue;
-				float e = ((PdfNumber)operands[4]).FloatValue;
-				float f = ((PdfNumber)operands[5]).FloatValue;
+				float a = operands[0].ValueAsFloat();
+				float b = operands[1].ValueAsFloat();
+				float c = operands[2].ValueAsFloat();
+				float d = operands[3].ValueAsFloat();
+				float e = operands[4].ValueAsFloat();
+				float f = operands[5].ValueAsFloat();
 				var gs = processor.gsStack.Peek();
 				gs.TransMatrix = new Matrix(a, b, c, d, e, f).Multiply(gs.TransMatrix);
 			}
@@ -608,12 +616,12 @@ namespace PDFPatcher.Processor
 		{
 			public bool HasOutput => false;
 			public void Invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
-				float a = ((PdfNumber)operands[0]).FloatValue;
-				float b = ((PdfNumber)operands[1]).FloatValue;
-				float c = ((PdfNumber)operands[2]).FloatValue;
-				float d = ((PdfNumber)operands[3]).FloatValue;
-				float e = ((PdfNumber)operands[4]).FloatValue;
-				float f = ((PdfNumber)operands[5]).FloatValue;
+				float a = operands[0].ValueAsFloat();
+				float b = operands[1].ValueAsFloat();
+				float c = operands[2].ValueAsFloat();
+				float d = operands[3].ValueAsFloat();
+				float e = operands[4].ValueAsFloat();
+				float f = operands[5].ValueAsFloat();
 				processor._TextLineMatrix = new Matrix(a, b, c, d, e, f);
 				processor._TextMatrix = processor._TextLineMatrix;
 			}

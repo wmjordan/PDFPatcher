@@ -381,6 +381,9 @@ namespace PDFPatcher.Model
 						foreach (var item in cp.Commands) {
 							PopulatePageCommand(item);
 						}
+						if (cp.LastError != null) {
+							Description = cp.LastError;
+						}
 						break;
 					}
 				case PdfObjectType.PageCommand:
@@ -409,7 +412,7 @@ namespace PDFPatcher.Model
 				fn = "未知操作符";
 			}
 			var o = new DocumentObject(OwnerDocument, this, fn, null, PdfObjectType.PageCommand) {
-				FriendlyName = $"{fn}({op})",
+				FriendlyName = fn + "(" + op + ")",
 				ExtensiveObject = op
 			};
 			if (item.Type == PdfPageCommandType.Text) {
@@ -462,6 +465,17 @@ namespace PDFPatcher.Model
 				CreateChildrenList(ref o._Children);
 				foreach (var ii in s) {
 					o._Children.Add(new DocumentObject(OwnerDocument, o, PdfHelper.DecodeKeyName(ii.Key), ii.Value));
+				}
+			}
+			else if (item.Type == PdfPageCommandType.Invalid) {
+				o.Description = ((InvalidCommand)item).Error;
+				o.ExtensiveObject = "?";
+				if (item.Operands.HasContent()) {
+					var i = 0;
+					CreateChildrenList(ref o._Children);
+					foreach (var t in item.Operands) {
+						o._Children.Add(new DocumentObject(OwnerDocument, o, (++i).ToText(), t));
+					}
 				}
 			}
 			else {
