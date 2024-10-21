@@ -134,6 +134,10 @@ namespace PDFPatcher.Processor
 					++_inputDocumentCount;
 					break;
 				case SourceItem.ItemType.Folder:
+					if (sourceFile.HasContent == false) {
+						Tracker.TraceMessage("已忽略不包含内容的文件夹：" + sourceFile);
+						return;
+					}
 					Tracker.TraceMessage("添加文件夹：" + sourceFile);
 					break;
 			}

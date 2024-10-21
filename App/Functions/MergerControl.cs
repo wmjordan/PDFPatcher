@@ -25,7 +25,7 @@ namespace PDFPatcher.Functions
 
 		public MergerControl() {
 			InitializeComponent();
-			_bookmarkStyleButtonNames = new [] { "_BoldStyleButton", "_BookmarkColorButton", "_ItalicStyleButton" };
+			_bookmarkStyleButtonNames = ["_BoldStyleButton", "_BookmarkColorButton", "_ItalicStyleButton"];
 			this.OnFirstLoad(OnLoad);
 		}
 
@@ -37,7 +37,7 @@ namespace PDFPatcher.Functions
 			_RecentFolderMenu.ScaleIcons(16);
 			_ItemList.ScaleColumnWidths();
 
-			_BookmarkColorButton.SelectedColorChanged += (s, e) => { RefreshBookmarkColor(); };
+			_BookmarkColorButton.SelectedColorChanged += (s, e) => RefreshBookmarkColor();
 
 			AppContext.MainForm.SetTooltip(_BookmarkControl.FileList, "为目标 PDF 文件添加书签的信息文件（可选）");
 			AppContext.MainForm.SetTooltip(_ItemList, "在此添加需要合并的 PDF 文件、图片文件或包含上述类型文件的文件夹");
@@ -46,19 +46,17 @@ namespace PDFPatcher.Functions
 			_ItemList.EmptyListMsg = "请使用“添加文件”按钮添加需要合并的文件，或从资源管理器拖放文件到本列表框";
 
 			var fi = _FileTypeList.Images;
-			fi.AddRange(new [] {
+			fi.AddRange([
 				Properties.Resources.EmptyPage,
 				Properties.Resources.OriginalPdfFile,
 				Properties.Resources.Image,
 				Properties.Resources.ImageFolder
-			});
+			]);
 
 			_BookmarkControl.FileDialog.CheckFileExists = false;
 			_BookmarkControl.BrowseForFile += FileControl_BrowseForFile;
 			_TargetPdfFile.BrowseForFile += FileControl_BrowseForFile;
-			_IndividualMergerModeBox.CheckedChanged += (s, e) => {
-				_BookmarkControl.Enabled = !_IndividualMergerModeBox.Checked;
-			};
+			_IndividualMergerModeBox.CheckedChanged += (s, e) => _BookmarkControl.Enabled = !_IndividualMergerModeBox.Checked;
 			_listHelper = new FileListHelper(_ItemList);
 			_ItemList.FixEditControlWidth();
 			_ItemList.BeforeSorting += (s, e) => e.Canceled = true;
@@ -211,7 +209,7 @@ namespace PDFPatcher.Functions
 				e.Effect = DragDropEffects.None;
 				return;
 			}
-			var copy = (Control.ModifierKeys & Keys.Control) != Keys.None;
+			var copy = (ModifierKeys & Keys.Control) != Keys.None;
 			if (copy == false) {
 				if (e.DropTargetItem.Selected) {
 					e.Effect = DragDropEffects.None;
@@ -401,12 +399,12 @@ namespace PDFPatcher.Functions
 
 			if (fm) {
 				foreach (var item in _itemsContainer.Items) {
-					if (item.HasSubItems) {
+					if (item.HasContent) {
 						fl.Add(item);
 					}
 				}
 				if (fl.Count == 0) {
-					FormHelper.ErrorBox("合并文件列表没有包含子项的首层项目。");
+					FormHelper.ErrorBox("合并文件列表没有包含文件的首层项目。");
 					return;
 				}
 			}
@@ -427,12 +425,10 @@ namespace PDFPatcher.Functions
 								break;
 							case SourceItem.ItemType.Pdf:
 							case SourceItem.ItemType.Image:
-								Processor.Worker.MergeDocuments(new SourceItem[] { item }, tn, null);
+								Processor.Worker.MergeDocuments([item], tn, null);
 								break;
 							case SourceItem.ItemType.Folder:
 								Processor.Worker.MergeDocuments(item.Items, tn, null);
-								break;
-							default:
 								break;
 						}
 						Tracker.IncrementTotalProgress();
@@ -578,20 +574,20 @@ namespace PDFPatcher.Functions
 						}
 						else if (item.Type == SourceItem.ItemType.Pdf) {
 							var pi = item as SourceItem.Pdf;
-							sb.AppendLine(String.Join("\t", new[] {
+							sb.AppendLine(String.Join("\t", [
 								pi.FilePath.ToString(),
 								item.Bookmark != null ? item.Bookmark.Title : String.Empty,
 								pi.PageRanges,
 								pi.PageCount.ToText ()
-							}));
+							]));
 						}
 						else if (item.Type == SourceItem.ItemType.Image) {
 							var im = item as SourceItem.Image;
-							sb.AppendLine(String.Join("\t", new string[] {
+							sb.AppendLine(String.Join("\t", [
 								im.FilePath.ToString(),
 								item.Bookmark != null ? item.Bookmark.Title : String.Empty,
 								"-"/*im.PageRanges*/,
-								im.PageCount.ToText () }));
+								im.PageCount.ToText () ]));
 						}
 						else if (item.Type == SourceItem.ItemType.Folder) {
 							sb.AppendLine(item.FilePath.ToString());
@@ -718,8 +714,6 @@ namespace PDFPatcher.Functions
 				case "__Refresh":
 					_ItemList.RefreshObjects(_ItemList.SelectedObjects);
 					break;
-				default:
-					break;
 			}
 		}
 
@@ -845,9 +839,9 @@ namespace PDFPatcher.Functions
 			if (_ItemList.GetItemCount() == 0) {
 				return null;
 			}
-			var l = (selectedOnly ? _ItemList.SelectedObjects : _ItemList.Objects);
+			var l = selectedOnly ? _ItemList.SelectedObjects : _ItemList.Objects;
 			var items = new List<T>(selectedOnly ? 10 : _ItemList.GetItemCount());
-			SelectItems<T>(l, items);
+			SelectItems(l, items);
 			return items;
 		}
 
@@ -858,7 +852,7 @@ namespace PDFPatcher.Functions
 				}
 				results.Add(item);
 				if (item.HasSubItems) {
-					SelectItems<T>(item.Items, results);
+					SelectItems(item.Items, results);
 				}
 			}
 		}
@@ -882,7 +876,7 @@ namespace PDFPatcher.Functions
 				return;
 			}
 			_ItemList.Focus();
-			AddItems(new[] { item });
+			AddItems([item]);
 		}
 
 		void AddItems(SourceItem[] items) {

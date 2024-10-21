@@ -18,14 +18,10 @@ namespace PDFPatcher.Model
 		public int PageCount { get; private set; }
 		public abstract int FileSize { get; }
 		public abstract DateTime FileTime { get; }
-		public List<SourceItem> Items {
-			get {
-				_Items ??= new List<SourceItem>();
-				return _Items;
-			}
-		}
+		public List<SourceItem> Items => _Items ??= [];
 
 		public bool HasSubItems => _Items.HasContent();
+		public virtual bool HasContent => _Items?.Any(i => i.HasContent) == true;
 
 		public abstract ItemType Type { get; }
 		public static void SortFileList(string[] fileList) {
@@ -228,6 +224,7 @@ namespace PDFPatcher.Model
 			public override ItemType Type => ItemType.Image;
 			public override int FileSize => _FileSize;
 			public override DateTime FileTime => _FileTime;
+			public override bool HasContent => true;
 
 			public override SourceItem Clone() {
 				return new Image(FilePath) {
@@ -267,6 +264,7 @@ namespace PDFPatcher.Model
 			public override ItemType Type => ItemType.Pdf;
 			public override int FileSize => _FileSize;
 			public override DateTime FileTime => _FileTime;
+			public override bool HasContent => true;
 
 			public void Refresh(Encoding encoding) {
 				Refresh(FilePath.ToString(), encoding);
@@ -306,7 +304,7 @@ namespace PDFPatcher.Model
 
 		internal sealed class Folder : SourceItem
 		{
-			DateTime _FolderTime;
+			readonly DateTime _FolderTime;
 
 			public Folder(string path) : base(path, 0) {
 				var p = new FilePath(path);
@@ -354,7 +352,7 @@ namespace PDFPatcher.Model
 				return n;
 			}
 
-			private static void AddSubDirectoriesAndFiles(string folderPath, List<SourceItem> list) {
+			static void AddSubDirectoriesAndFiles(string folderPath, List<SourceItem> list) {
 				var fl = Array.FindAll(Directory.GetFiles(folderPath), (i) => {
 					var ext = Path.GetExtension(i).ToLowerInvariant();
 					return Constants.FileExtensions.Pdf == ext
