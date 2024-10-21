@@ -454,7 +454,7 @@
 			// 
 			// _FolderColumn
 			// 
-			this._FolderColumn.IsEditable = false;
+			this._FolderColumn.IsEditable = true;
 			this._FolderColumn.Text = "文件夹";
 			this._FolderColumn.Width = 104;
 			// 

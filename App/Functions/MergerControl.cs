@@ -75,7 +75,20 @@ namespace PDFPatcher.Functions
 				}
 				_MainToolbar.ToggleEnabled(en, _bookmarkStyleButtonNames);
 			};
-			_ItemList.CellEditStarting += (s, e) => _MainToolbar.Enabled = false;
+			_ItemList.CellEditStarting += (s, e) => {
+				_MainToolbar.Enabled = false;
+				if (e.Column == _BookmarkColumn) {
+					e.Control = new AutoResizingTextBox(e.CellBounds, ((SourceItem)e.RowObject).Bookmark?.Title, (Control)s);
+				}
+				else if (e.Column == _FolderColumn) {
+					if (e.RowObject is SourceItem i && i.FolderName != null) {
+						e.Control = new AutoResizingTextBox(e.CellBounds, i.FolderName, (Control)s) { ReadOnly = true };
+					}
+					else {
+						e.Cancel = true;
+					}
+				}
+			};
 			_ItemList.CellEditFinishing += (s, e) => _MainToolbar.Enabled = true;
 			_ItemList.CanDrop += ItemList_CanDropFile;
 			_ItemList.Dropped += ItemList_FileDropped;
@@ -723,7 +736,12 @@ namespace PDFPatcher.Functions
 				bt.AppendLine(converter(item));
 			}
 			if (bt.Length > 0) {
-				Clipboard.SetText(bt.ToString());
+				try {
+					Clipboard.SetDataObject(bt.ToString(), true, 10, 50);
+				}
+				catch (System.Runtime.InteropServices.ExternalException) {
+					// ignore
+				}
 			}
 			StringBuilderCache.Release(bt);
 		}
