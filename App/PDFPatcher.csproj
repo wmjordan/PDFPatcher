@@ -74,7 +74,7 @@
     <Reference Include="JacksonSoft.CustomTabControl">
       <HintPath>Lib\JacksonSoft.CustomTabControl.dll</HintPath>
     </Reference>
-    <Reference Include="MuPDFLib, Version=1.0.9034.14476, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="MuPDFLib">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Lib\MuPDFLib.dll</HintPath>
     </Reference>
