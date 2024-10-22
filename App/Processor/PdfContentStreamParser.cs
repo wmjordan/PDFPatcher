@@ -163,7 +163,7 @@ namespace PDFPatcher.Processor
 				if (oper is null) {
 					break;
 				}
-				if ("BI".Equals(oper)) {
+				if ("BI".Equals(oper.ToString())) {
 					var img = InlineImageUtils.ParseInlineImage(ps, resources.GetAsDict(PdfName.COLORSPACE));
 					InvokeOperator(oper, new List<PdfObject> { img, oper });
 					//    this.renderListener.RenderImage (renderInfo);
