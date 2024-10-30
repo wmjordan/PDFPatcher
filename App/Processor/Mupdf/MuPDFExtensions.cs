@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Runtime.InteropServices;
-using System.Text;
 using PDFPatcher.Common;
 
 namespace MuPDF.Extensions
@@ -218,51 +215,5 @@ namespace MuPDF.Extensions
 		}
 		#endregion
 
-		#region 支持加载未嵌入字体
-		static readonly FzLoadSystemFont __LoadSystemFont = RequestSystemFont;
-		static readonly FzLoadSystemCjkFont __LoadSystemCjkFont = RequestSystemCjkFont;
-		static readonly FzLoadSystemFallbackFont __LoadSystemFallbackFont = RequestSystemFallbackFont;
-		static bool __FontLookupHooked;
-		[DllImport("MuPDFLib.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "fz_new_font_from_file", CharSet = CharSet.Ansi)]
-		internal static extern IntPtr LoadFontFromFile(IntPtr ctx, [MarshalAs(UnmanagedType.LPStr)] string name, [MarshalAs(UnmanagedType.LPStr)] string path, int index, int useGlyphBox);
-		public static void HootSystemFontLookup(this Context context) {
-			if (__FontLookupHooked == false) {
-				context.InstallLoadSystemFontFuncs(__LoadSystemFont, __LoadSystemCjkFont, __LoadSystemFallbackFont);
-				__FontLookupHooked = true;
-			}
-		}
-		static IntPtr RequestSystemFont(IntPtr ctx, string name, int bold, int italic, int needExactMetrics) {
-			System.Diagnostics.Debug.WriteLine("Requesting system font: " + name);
-			var f = TryLoadCompatibleFont(name);
-			if (f != null) {
-				return LoadFontFromFile(ctx, null, f, 0, 0);
-			}
-			return IntPtr.Zero;
-		}
-		static IntPtr RequestSystemCjkFont(IntPtr ctx, string name, int registry, int serifDesired) {
-			System.Diagnostics.Debug.WriteLine("Requesting system CJK font: " + name);
-			var ff = TryLoadCompatibleFont(name);
-			return ff != null ? LoadFontFromFile(ctx, name, ff, 0, 1) : IntPtr.Zero;
-		}
-
-		static string TryLoadCompatibleFont(string name) {
-			var ff = System.IO.Path.GetDirectoryName(Environment.GetFolderPath(Environment.SpecialFolder.System)) + "\\Fonts\\";
-			if (name[0] == '@') {
-				name = name.Substring(1);
-			}
-			return name.HasCaseInsensitivePrefix("SimKai") || name.HasCaseInsensitivePrefix("楷体_GB2312") || name.HasCaseInsensitivePrefix("Kaiti_GB2312") ? ff + "simkai.ttf"
-				: name.HasCaseInsensitivePrefix("SimSun") || name.HasCaseInsensitivePrefix("宋体") || name.HasCaseInsensitivePrefix("STSong") ? ff + "simsun.ttc"
-				: name.HasCaseInsensitivePrefix("SimHei") || name.HasCaseInsensitivePrefix("黑体") ? ff + "simhei.ttf"
-				: name.HasCaseInsensitivePrefix("SimLi") || name.HasCaseInsensitivePrefix("隶书") ? ff + "simli.ttf"
-				: name.HasCaseInsensitivePrefix("SimFang") || name.HasCaseInsensitivePrefix("仿宋_GB2312") || name.HasCaseInsensitivePrefix("Fangsong_GB2312") ? ff + "simfang.ttf"
-				: name.HasCaseInsensitivePrefix("SimYou") || name.HasCaseInsensitivePrefix("幼圆") ? ff + "simyou.ttf"
-				: null;
-		}
-
-		static IntPtr RequestSystemFallbackFont(IntPtr ctx, int script, int language, int serif, int bold, int italic) {
-			System.Diagnostics.Debug.WriteLine("Requesting fallback font: " + script);
-			return IntPtr.Zero;
-		}
-		#endregion
 	}
 }
