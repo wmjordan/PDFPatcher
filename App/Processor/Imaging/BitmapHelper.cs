@@ -209,6 +209,7 @@ namespace PDFPatcher.Processor.Imaging
 			}
 			source.UnlockBits(sourceData);
 			result.UnlockBits(targetData);
+			result.SetResolution(source.HorizontalResolution, source.VerticalResolution);
 			return result;
 		}
 

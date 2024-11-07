@@ -14,17 +14,17 @@ namespace PDFPatcher.Processor.Imaging
 		const int __SideSize = 33;
 		const int __MaxSideIndex = 32;
 
-		public static Bitmap QuantizeImage(Bitmap image) {
+		public static Bitmap QuantizeImage(Bitmap source) {
 			var colorCount = __MaxColor;
-			var data = BuildHistogram(image);
+			var data = BuildHistogram(source);
 			CalculateMoments(data);
 			var cubes = SplitData(ref colorCount, data);
 			var palette = GetQuantizedPalette(colorCount, data, cubes);
-			return ProcessImagePixels(image, palette);
+			return ProcessImagePixels(source, palette);
 		}
 
-		static Bitmap ProcessImagePixels(Image sourceImage, QuantizedPalette palette) {
-			var result = new Bitmap(sourceImage.Width, sourceImage.Height, PixelFormat.Format8bppIndexed);
+		static Bitmap ProcessImagePixels(Image source, QuantizedPalette palette) {
+			var result = new Bitmap(source.Width, source.Height, PixelFormat.Format8bppIndexed);
 			var newPalette = result.Palette;
 			palette.Colors.CopyTo(newPalette.Entries, 0);
 			result.Palette = newPalette;
@@ -56,7 +56,7 @@ namespace PDFPatcher.Processor.Imaging
 				if (targetData != null)
 					result.UnlockBits(targetData);
 			}
-
+			result.SetResolution(source.HorizontalResolution, source.VerticalResolution);
 			return result;
 		}
 
