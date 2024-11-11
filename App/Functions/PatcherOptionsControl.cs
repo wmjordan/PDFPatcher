@@ -220,6 +220,16 @@ namespace PDFPatcher.Functions
 					_ResizePdfPagesBox.Enabled =
 					_HeightBox.Enabled = false;
 					break;
+				case PaperSize.AsFirstPage:
+					_HeightBox.Enabled =
+					_WidthBox.Enabled =
+					false;
+					_AutoRotateBox.Enabled =
+					_ImageVAlignBox.Enabled =
+					_ImageHAlignBox.Enabled =
+					_ScalePdfPagesBox.Enabled =
+					_ResizePdfPagesBox.Enabled = true;
+					break;
 				case PaperSize.AsLargestPage:
 				case PaperSize.AsSmallestPage:
 					_AutoRotateBox.Enabled =

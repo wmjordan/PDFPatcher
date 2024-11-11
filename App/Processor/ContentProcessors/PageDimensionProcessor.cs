@@ -100,12 +100,12 @@ namespace PDFPatcher.Processor
 		}
 
 		static void ResizeBox(PdfDictionary page, Rectangle box, Rectangle refBox) {
-			page.Put(PdfName.MEDIABOX, new PdfArray(new float[]{
+			page.Put(PdfName.MEDIABOX, new PdfArray([
 				box.Left < refBox.Left ? box.Left : refBox.Left,
 				box.Bottom < refBox.Bottom ? box.Bottom : refBox.Bottom,
 				box.Right > refBox.Right ? box.Right : refBox.Right,
 				box.Top > refBox.Top ? box.Top : refBox.Top
-			}));
+			]));
 		}
 
 		static bool RotatePage(PdfDictionary page, PageBoxSettings settings) {
@@ -133,12 +133,8 @@ namespace PDFPatcher.Processor
 
 		static bool FilterPageNumber(int pageNumber, PageFilterFlag filter) {
 			var odd = (pageNumber & 1) > 0;
-			if (odd && (filter & PageFilterFlag.Even) == PageFilterFlag.Even
-				|| (odd == false && (filter & PageFilterFlag.Odd) == PageFilterFlag.Odd)
-				) {
-				return false;
-			}
-			return true;
+			return (!odd || (filter & PageFilterFlag.Even) != PageFilterFlag.Even)
+				&& (odd || (filter & PageFilterFlag.Odd) != PageFilterFlag.Odd);
 		}
 
 		/// <summary>
@@ -148,11 +144,11 @@ namespace PDFPatcher.Processor
 		/// <param name="pageNumber">页码。</param>
 		/// <param name="ct">拉伸及平移参数。</param>
 		internal static byte[] ScaleContent(PdfReader pdf, int pageNumber, CoordinateTranslationSettings ct) {
-			var newContent = Encoding.ASCII.GetBytes(String.Join(" ", new string[] {
+			var newContent = Encoding.ASCII.GetBytes(String.Join(" ", 
 				ct.XScale.ToText (), "0",
 				"0", ct.YScale.ToText (),
 				ct.XTranslation.ToText (), ct.YTranslation.ToText (), "cm "
-			}));
+			));
 			var cb = pdf.GetPageContent(pageNumber);
 			Array.Resize(ref newContent, cb.Length + newContent.Length);
 			cb.CopyTo(newContent, newContent.Length - cb.Length);
@@ -168,7 +164,7 @@ namespace PDFPatcher.Processor
 			if (cmds.Count > 0 && cmds[0].Type == PdfPageCommandType.Matrix) {
 				var c = cmds[0] as MatrixCommand;
 				if (c.Name.ToString() == "cm") {
-					c.Multiply(new double[] { ct.XScale, 0, 0, ct.YScale, ct.XTranslation, ct.YTranslation });
+					c.Multiply([ct.XScale, 0, 0, ct.YScale, ct.XTranslation, ct.YTranslation]);
 				}
 			}
 			else {
@@ -186,10 +182,10 @@ namespace PDFPatcher.Processor
 				if (PdfReader.GetPdfObject(item) is PdfDictionary an) {
 					var rect = an.GetAsArray(PdfName.RECT);
 					if (rect != null && rect.Size == 4) {
-						rect[0] = new PdfNumber((rect[0] as PdfNumber).FloatValue * ct.XScale + ct.XTranslation);
-						rect[1] = new PdfNumber((rect[1] as PdfNumber).FloatValue * ct.YScale + ct.YTranslation);
-						rect[2] = new PdfNumber((rect[2] as PdfNumber).FloatValue * ct.XScale + ct.XTranslation);
-						rect[3] = new PdfNumber((rect[3] as PdfNumber).FloatValue * ct.YScale + ct.YTranslation);
+						rect[0] = new PdfNumber(((PdfNumber)rect[0]).FloatValue * ct.XScale + ct.XTranslation);
+						rect[1] = new PdfNumber(((PdfNumber)rect[1]).FloatValue * ct.YScale + ct.YTranslation);
+						rect[2] = new PdfNumber(((PdfNumber)rect[2]).FloatValue * ct.XScale + ct.XTranslation);
+						rect[3] = new PdfNumber(((PdfNumber)rect[3]).FloatValue * ct.YScale + ct.YTranslation);
 					}
 				}
 			}
@@ -214,12 +210,12 @@ namespace PDFPatcher.Processor
 				return;
 			}
 			var r = PdfReader.GetNormalizedRectangle(b);
-			page.Put(boxName, new PdfArray(new float[] {
+			page.Put(boxName, new PdfArray([
 				r.Left - margins.Left,
 				r.Bottom - margins.Bottom,
 				r.Right + margins.Right,
 				r.Top + margins.Top
-			}));
+			]));
 		}
 
 		#region IPageProcessor 成员
@@ -240,6 +236,10 @@ namespace PDFPatcher.Processor
 			//todo 为新增加的适应拉伸模式设置参考尺寸
 			switch (Settings.PaperSize.SpecialSize) {
 				case SpecialPaperSize.AsSpecificPage:
+					break;
+				case SpecialPaperSize.AsFirstPage:
+					var r = context.Pdf.GetPageSizeWithRotation(1);
+					_refPaperSize = new PaperSize(Settings.PaperSize.PaperName, r.Width, r.Height);
 					break;
 				case SpecialPaperSize.AsWidestPage:
 				case SpecialPaperSize.AsNarrowestPage:
@@ -294,12 +294,11 @@ namespace PDFPatcher.Processor
 
 		public bool Process(PageProcessorContext context) {
 			var f = Settings.Filter;
-			if (FilterPageNumber(context.PageNumber, f) == false) {
+			if (FilterPageNumber(context.PageNumber, f) == false
+				|| _pageRanges != null && _pageRanges.IsInRange(context.PageNumber) == false) {
 				return false;
 			}
-			if (_pageRanges != null && _pageRanges.IsInRange(context.PageNumber) == false) {
-				return false;
-			}
+
 			context.Pdf.ResetReleasePage();
 			if (_resizePages) {
 				var ct = ResizePage(context.Page, Settings, _refPaperSize);
@@ -308,7 +307,6 @@ namespace PDFPatcher.Processor
 					context.IsPageContentModified = true;
 				}
 				_cts[context.PageNumber] = ct;
-				ct = null;
 			}
 			if (_adjustMargins) {
 				AdjustMargins(context.Page, Settings.Margins);

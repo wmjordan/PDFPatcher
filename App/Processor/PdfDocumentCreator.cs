@@ -7,7 +7,6 @@ using System.Xml;
 using FreeImageAPI;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
-using iTextSharp.text.pdf.parser;
 using PDFPatcher.Common;
 using PDFPatcher.Model;
 using iTextImage = iTextSharp.text.Image;
@@ -34,6 +33,7 @@ namespace PDFPatcher.Processor
 				new PaperSize (PaperSize.AsNarrowestPage, 0, 0),
 				new PaperSize (PaperSize.AsLargestPage, 0, 0),
 				new PaperSize (PaperSize.AsSmallestPage, 0, 0),
+				new PaperSize (PaperSize.AsFirstPage, 0, 0),
 				new PaperSize ("16 开 (18.4*26.0)", 1840, 2600),
 				new PaperSize ("32 开 (13.0*18.4)", 1300, 1840),
 				new PaperSize ("大 32 开 (14.0*20.3)", 1400, 2030),

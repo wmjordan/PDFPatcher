@@ -7,6 +7,7 @@ namespace PDFPatcher.Model
 	{
 		public const string AsPageSize = "等同原始内容尺寸";
 		public const string FixedWidthAutoHeight = "固定页宽自动高度";
+		public const string AsFirstPage = "等同第一页尺寸";
 		public const string AsSpecificPage = "等同指定页面尺寸";
 		public const string AsWidestPage = "宽度同最宽页面，自动高度";
 		public const string AsNarrowestPage = "宽度同最窄页面，自动高度";
@@ -27,6 +28,7 @@ namespace PDFPatcher.Model
 					AsNarrowestPage => SpecialPaperSize.AsNarrowestPage,
 					AsLargestPage => SpecialPaperSize.AsLargestPage,
 					AsSmallestPage => SpecialPaperSize.AsSmallestPage,
+					AsFirstPage => SpecialPaperSize.AsFirstPage,
 					_ => SpecialPaperSize.None,
 				};
 			}
@@ -98,7 +100,8 @@ namespace PDFPatcher.Model
 		AsWidestPage,
 		AsNarrowestPage,
 		AsLargestPage,
-		AsSmallestPage
+		AsSmallestPage,
+		AsFirstPage
 	}
 
 }
