@@ -27,7 +27,13 @@ namespace PDFPatcher.Common
 		}
 
 		static void GetFontsFromRegistryKey(bool includeFamilyName, Dictionary<string, string> d, RegistryKey k) {
+			if (k is null) {
+				return;
+			}
 			foreach (var name in k.GetValueNames()) {
+				if (name is null) {
+					continue;
+				}
 				var p = k.GetValue(name) as string;
 				if (String.IsNullOrEmpty(p)) {
 					continue;
