@@ -65,6 +65,10 @@ namespace PDFPatcher.Processor
 					_imageInfoList.RemoveAll(IsOutOfPage);
 				}
 			}
+			pp = o.Locate<PdfDictionary>(PdfName.RESOURCES, PdfName.PATTERN);
+			if (pp != null) {
+				ExtractImageInstances(pp, true);
+			}
 			// 收集批注中的图片
 			if (_options.ExtractAnnotationImages) {
 				var an = o.Locate<PdfArray>(PdfName.ANNOTS);
