@@ -249,7 +249,7 @@ namespace PDFPatcher
 			}
 
 			_OpenPdfDialog.DefaultExt = Constants.FileExtensions.Pdf;
-			_OpenPdfDialog.Filter = Constants.FileExtensions.PdfFilter;
+			_OpenPdfDialog.Filter = Constants.FileExtensions.PdfOrXmlFilter;
 
 			_LogControl = new ReportControl {
 				Location = _FunctionContainer.Location,
