@@ -596,26 +596,30 @@ namespace PDFPatcher.Functions
 			if (args.Model is not BookmarkElement b) {
 				return;
 			}
-			args.Item.UseItemStyleForSubItems = false;
+
+			var item = args.Item;
+			item.UseItemStyleForSubItems = false;
 			args.UseCellFormatEvents = false;
 			Color c;
 			if (b.MarkerColor != 0) {
-				args.Item.BackColor = Color.FromArgb(b.MarkerColor);
+				item.BackColor = Color.FromArgb(b.MarkerColor);
 			}
 			c = b.ForeColor;
 			if (c != Color.Transparent) {
-				args.Item.ForeColor = c;
+				item.ForeColor = c;
 			}
 
 			if (b.Title.IndexOf('\n') >= 0) {
-				args.Item.GetSubItem(0).Decoration = new TextDecoration("…", ContentAlignment.BottomRight) { Font = Font };
+				item.GetSubItem(0).Decoration = new TextDecoration("…", ContentAlignment.BottomRight) { Font = Font };
 			}
 			var ts = b.TextStyle;
 			if (ts != FontStyle.Regular) {
-				args.Item.Font = new Font(args.Item.Font, ts);
+				item.Font = new Font(item.Font, ts);
 			}
 			if (_ActionColumn.Index != -1) {
-				args.Item.SubItems[_ActionColumn.Index].ForeColor = Color.Blue;
+				item.SubItems[_ActionColumn.Index].ForeColor = Color.Blue;
+			}
+		}
 			}
 		}
 
