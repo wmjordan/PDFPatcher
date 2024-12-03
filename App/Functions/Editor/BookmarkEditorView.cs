@@ -620,8 +620,22 @@ namespace PDFPatcher.Functions
 				item.SubItems[_ActionColumn.Index].ForeColor = Color.Blue;
 			}
 		}
+
+		#region 使右键点击选中行的空白位置时，不取消选中状态
+		protected override void OnMouseDown(MouseEventArgs e) {
+			if (e.Button != MouseButtons.Left) {
+				FullRowSelect = true;
+			}
+			base.OnMouseDown(e);
+		}
+
+		protected override void OnMouseUp(MouseEventArgs e) {
+			base.OnMouseUp(e);
+			if (e.Button != MouseButtons.Left) {
+				FullRowSelect = false;
 			}
 		}
+		#endregion
 
 		internal void ShowBookmarkProperties(BookmarkElement bookmark) {
 			if (bookmark == null) {
