@@ -219,7 +219,7 @@ namespace PDFPatcher.Functions.Editor
 				if (ch is null) {
 					break;
 				}
-				if (ch.Size == size && ch.Font == font && ch.Color == color) {
+				if (start.HasSameStyle(ch)) {
 					t.Append((char)ch.Character);
 					continue;
 				}

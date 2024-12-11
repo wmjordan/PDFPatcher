@@ -703,7 +703,7 @@ namespace PDFPatcher.Functions.Editor
 			if (keepExisting == false) {
 				bm.RemoveAll();
 			}
-			var spans = new List<TextSpan>(3);
+			var spans = new List<MuPDF.TextSpan>(3);
 			var bl = 0;
 			for (int i = 0; i < c;) {
 				using (var p = pdf.LoadPage(i++)) {
@@ -716,7 +716,7 @@ namespace PDFPatcher.Functions.Editor
 						bool hasJointText = false;
 						foreach (var line in block) {
 							var matchLine = false;
-							foreach (var span in TextSpan.GetTextSpans(line)) {
+							foreach (var span in line.GetSpans()) {
 								if (matchLine) {
 									break;
 								}
@@ -727,11 +727,11 @@ namespace PDFPatcher.Functions.Editor
 										|| style.FontSize != span.Size.ToInt32()) {
 										continue;
 									}
-									var t = span.Text;
+									var t = span.ToString();
 									if (t.Length == 0) {
 										continue;
 									}
-									var b = span.Box;
+									var b = span.Bound;
 									if (bl < style.Level) {
 										if (matcher != null) {
 											jointBlockText ??= GetLineText(line, block, out hasJointText);
@@ -751,7 +751,7 @@ namespace PDFPatcher.Functions.Editor
 										var lb = b.Y1;
 										if (cb.Page == p.PageNumber + 1
 											&& (bb >= lt && bb <= lb || bt >= lt && bt <= lb || bt < lt && bb > lb)
-											&& (mergeAdjacentTitle || spans[spans.Count - 1].Box.IsHorizontalNeighbor(b))) {
+											&& (mergeAdjacentTitle || spans[spans.Count - 1].Bound.IsHorizontalNeighbor(b))) {
 											if (/*m == false &&*/ t.Length > 0) {
 												// 保留英文和数字文本之间的空格
 												var ct = cb.Title;
@@ -826,7 +826,7 @@ namespace PDFPatcher.Functions.Editor
 			View.Bookmark.RebuildAll(false);
 		}
 
-		static BookmarkContainer CreateNewSiblingBookmarkForParent(BookmarkContainer bm, List<TextSpan> spans) {
+		static BookmarkContainer CreateNewSiblingBookmarkForParent(BookmarkContainer bm, List<MuPDF.TextSpan> spans) {
 			TrimBookmarkText(bm);
 			bm = bm.Parent.AppendBookmark();
 			spans.Clear();
@@ -858,7 +858,7 @@ namespace PDFPatcher.Functions.Editor
 			}
 		}
 
-		static BookmarkContainer CreateNewSiblingBookmark(BookmarkContainer bm, List<TextSpan> spans) {
+		static BookmarkContainer CreateNewSiblingBookmark(BookmarkContainer bm, List<MuPDF.TextSpan> spans) {
 			TrimBookmarkText(bm);
 			bm = bm.AppendBookmark();
 			spans.Clear();
