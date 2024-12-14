@@ -59,60 +59,87 @@ namespace PDFPatcher
 
 		sealed class OpenWithAssociation
 		{
-			const string DocumentType = Constants.AppEngName + ".Document";
-			const string ShellCommandKey = "OpenWith" + Constants.AppEngName;
-			const string ProgId = "PDF.Document";
+			const string MRUList = "MRUList";
+			const string ApplicationKey = @"SOFTWARE\Classes\Applications\PDFPatcher.exe";
+			const string ShellOpenCommandKey = @"\shell\open\command";
+			const string OpenWithList = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.pdf\OpenWithList";
+			static readonly string AppName = FilePath.AppPath.FileName;
 
 			public static bool HasAssociation() {
-				using (var classes = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Classes"))
-				using (var fileType = classes.OpenSubKey(Constants.FileExtensions.Pdf, true)) {
-					if (fileType == null) {
+				using (var command = Registry.CurrentUser.OpenOrCreateSubKey(ApplicationKey + ShellOpenCommandKey, false)) {
+					if (command?.GetValue(String.Empty) is string != true) {
 						return false;
 					}
-					var progIdName = fileType.GetValue(String.Empty, null) as string;
-					if (progIdName == ProgId) {
-						return true;
+				}
+				using (var openWithList = Registry.CurrentUser.OpenOrCreateSubKey(OpenWithList, false)) {
+					if (openWithList == null) {
+						return false;
 					}
-					using (var command = classes.OpenSubKey($@"{progIdName}\shell\{ShellCommandKey}\command")) {
-						return command != null;
+					var mruList = openWithList.GetValue(MRUList) as string;
+					if (mruList == null) {
+						return false;
+					}
+					foreach (var k in mruList) {
+						var appName = openWithList.GetValue(k.ToString()) as string;
+						if (String.Equals(appName, AppName, StringComparison.OrdinalIgnoreCase)) {
+							return true;
+						}
 					}
 				}
+				return false;
 			}
 
 			public static void Create() {
-				using (var classes = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Classes", true))
-				using (var fileType = classes.OpenOrCreateSubKey(Constants.FileExtensions.Pdf, true)) {
-					var progIdName = fileType.GetValue(String.Empty, null) as string;
-					if (String.IsNullOrEmpty(progIdName)) {
-						fileType.SetValue(String.Empty, progIdName = ProgId);
+				using (var command = Registry.CurrentUser.OpenOrCreateSubKey(ApplicationKey + ShellOpenCommandKey, true)) {
+					command.SetValue(String.Empty, $"\"{FilePath.AppPath}\" \"%1\"");
+				}
+				using (var openWithList = Registry.CurrentUser.OpenOrCreateSubKey(OpenWithList, true)) {
+					var mruList = openWithList.GetValue(MRUList) as string;
+					if (mruList == null) {
+						openWithList.SetValue(MRUList, "a");
+						openWithList.SetValue("a", AppName);
+						return;
 					}
-					using (var progId = classes.OpenOrCreateSubKey(progIdName, true))
-					using (var shell = progId.OpenOrCreateSubKey("shell", true))
-					using (var openWith = shell.OpenOrCreateSubKey(ShellCommandKey, true))
-					using (var command = openWith.OpenOrCreateSubKey("command", true)) {
-						openWith.SetValue(String.Empty, $"使用 {Constants.AppName} 打开");
-						command.SetValue(String.Empty, $"\"{FilePath.AppPath}\" \"%1\"");
+					var slots = new bool[26];
+					foreach (var k in mruList) {
+						var appName = openWithList.GetValue(k.ToString()) as string;
+						if (String.Equals(appName, AppName, StringComparison.OrdinalIgnoreCase)) {
+							return;
+						}
+						if ((uint)(k - 'a') <= ('z' - 'a')) {
+							slots[k - 'a'] = true;
+						}
+					}
+					for (char i = 'a'; i <= 'z'; i++) {
+						if (slots[i - 'a'] == false) {
+							openWithList.SetValue(i.ToString(), AppName);
+							if (mruList.IndexOf(i) < 0) {
+								openWithList.SetValue(MRUList, i + mruList);
+							}
+							return;
+						}
 					}
 				}
 			}
 
 			public static void Delete() {
-				using (var classes = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Classes", true))
-				using (var fileType = classes.OpenSubKey(Constants.FileExtensions.Pdf, true)) {
-					if (fileType == null) {
+				Registry.CurrentUser.DeleteSubKeyTree(ApplicationKey);
+				using (var openWithList = Registry.CurrentUser.OpenOrCreateSubKey(OpenWithList, false)) {
+					if (openWithList == null) {
 						return;
 					}
-					var progIdName = fileType.GetValue(String.Empty, null) as string;
-					if (String.IsNullOrEmpty(progIdName)) {
+					var mruList = openWithList.GetValue(MRUList) as string;
+					if (mruList == null) {
 						return;
 					}
-					if (progIdName == ProgId) {
-						classes.DeleteSubKeyTree(progIdName, false);
-						return;
-					}
-					using (var shell = classes.OpenSubKey($"{progIdName}\\shell", true))
-					using (var openWith = shell.OpenOrCreateSubKey(ShellCommandKey, true)) {
-						shell.DeleteSubKeyTree(ShellCommandKey, false);
+					foreach (var k in mruList) {
+						var keyName = k.ToString();
+						var appName = openWithList.GetValue(keyName) as string;
+						if (String.Equals(appName, AppName, StringComparison.OrdinalIgnoreCase)) {
+							openWithList.DeleteValue(keyName);
+							openWithList.SetValue(MRUList, mruList.Replace(keyName, String.Empty));
+							return;
+						}
 					}
 				}
 			}
