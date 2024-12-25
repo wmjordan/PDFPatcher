@@ -54,6 +54,7 @@ namespace PDFPatcher.Functions.Editor
 						break;
 					}
 				}
+				b.FireBookmarkChanged();
 				b.RefreshObjects(r.ToArray());
 			}
 			b.Unfreeze();
@@ -583,6 +584,7 @@ namespace PDFPatcher.Functions.Editor
 			View.Bookmark.SelectedObjects = sl;
 			View.UndoButton.Enabled = Model.Undo.CanUndo;
 			Model.LockDownViewer = false;
+			View.Bookmark.FireBookmarkChanged();
 		}
 
 		internal void MergeBookmark(IList<BookmarkElement> es) {

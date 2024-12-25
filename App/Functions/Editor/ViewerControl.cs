@@ -984,6 +984,10 @@ namespace PDFPatcher.Functions
 		}
 
 		#region 坐标转换
+		internal Editor.PagePosition GetCurrentScrollPosition() {
+			return TransposeClientToPagePosition(ClientRectangle.Width, 0);
+		}
+
 		internal bool IsClientPointInSelection(DrawingPoint point) {
 			return SelectionRegion.Contains(PointToImage(point));
 		}
@@ -1081,7 +1085,7 @@ namespace PDFPatcher.Functions
 			var ox = (imageX - o.X) / z;
 			var oy = (imageY - o.Y) / z;
 			return new Editor.PagePosition(pageNumber,
-				b.X0 + ox, b.Y0 + b.Height - oy,
+				b.X0 + ox, Math.Min(b.Y1, b.Y0 + b.Height - oy),
 				imageX - o.X, imageY - o.Y,
 				b.Contains(new MuPDF.Point(ox, oy)));
 		}

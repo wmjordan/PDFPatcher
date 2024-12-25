@@ -28,6 +28,8 @@ namespace PDFPatcher.Functions
 
 		readonly Dictionary<BookmarkElement, Color> _markers = new Dictionary<BookmarkElement, Color>();
 
+		public event EventHandler BookmarkChanged;
+
 		public BookmarkEditorView() {
 			InitializeComponent();
 			InitEditorBox();
@@ -113,6 +115,14 @@ namespace PDFPatcher.Functions
 				}
 				return a;
 			};
+		}
+
+		internal void FireBookmarkChanged() {
+			BookmarkChanged?.Invoke(this, EventArgs.Empty);
+		}
+
+		public BookmarkElement GetBookmark(int index) {
+			return GetModelObject(index) as BookmarkElement;
 		}
 
 		protected override void OnBeforeSorting(BeforeSortingEventArgs e) {

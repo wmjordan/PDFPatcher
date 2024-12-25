@@ -102,6 +102,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Functions\Editor\IEditView.cs" />
+    <Compile Include="Functions\Editor\Parts\BookmarkInViewSynchronizer.cs" />
     <Compile Include="Functions\FunctionTabContainer.cs">
       <SubType>Component</SubType>
     </Compile>

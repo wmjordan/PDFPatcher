@@ -30,6 +30,13 @@ namespace BrightIdeasSoftware
 			}
 		}
 
+		public static void RedrawItem(this ObjectListView view, int index) {
+			var c = view.GetItemCount();
+			if (c > 0) {
+				view.RedrawItems(Math.Max(0, index - 1), Math.Min(index + 1, c - 1), true);
+			}
+		}
+
 		public static void SetTreeViewLine(this TreeListView view) {
 			var tcr = view.TreeColumnRenderer as TreeListView.TreeRenderer;
 			tcr.LinePen = new Pen(SystemColors.ControlDark) {

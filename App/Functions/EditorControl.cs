@@ -97,6 +97,7 @@ namespace PDFPatcher.Functions
 		public event EventHandler<DocumentChangedEventArgs> DocumentChanged;
 
 		void OnLoad() {
+			new Editor.Parts.BookmarkInViewSynchronizer(_BookmarkBox, _ViewerBox);
 			ListRecentFiles = _OpenButton_DropDownOpening;
 			RecentFileItemClicked = _OpenButton_DropDownItemClicked;
 			var s = this.GetDpiScale();
