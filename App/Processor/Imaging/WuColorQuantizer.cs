@@ -461,12 +461,12 @@ namespace PDFPatcher.Processor.Imaging
 			var lookups = BuildLookups(cubes, data);
 
 			var quantizedPixels = data.QuantizedPixels;
-			for (int index = 0, pixel, red, green; index < imageSize; ++index) {
+			int red, green;
+			for (int index = 0; index < imageSize; ++index) {
 				ref var p = ref quantizedPixels[index];
-				pixel = p;
-				red = pixel >> 16;
-				green = 0xFF & (pixel >> 8);
-				p = lookups.Tags[(red << 10) + (red << 6) + red + (green << 5) + green + (0xFF & pixel)];// red*33*33 + green*33 + blue
+				red = p >> 16;
+				green = 0xFF & (p >> 8);
+				p = lookups.Tags[(red << 10) + (red << 6) + red + (green << 5) + green + (0xFF & p)];// red*33*33 + green*33 + blue
 			}
 
 			var reds = new int[colorCount + 1];

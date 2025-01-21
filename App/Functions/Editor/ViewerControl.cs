@@ -568,7 +568,7 @@ namespace PDFPatcher.Functions
 
 			var r = DrawingRectangle.Empty;
 			do {
-				System.Diagnostics.Debug.Assert(p > 0 && p < _mupdf.PageCount + 1, p.ToString());
+				Debug.Assert(p > 0 && p < _mupdf.PageCount + 1, p.ToString());
 				var pb = _pageBounds[p];
 				var z = GetZoomFactorForPage(pb);
 				var ox = HorizontalFlow ? _pageOffsets[p] : 0;
