@@ -257,8 +257,13 @@ namespace PDFPatcher.Common
 			}
 
 			var p1 = _value/*.TrimEnd()*/; // _value 已在创建时 Trim 过，不需再 Trim
-			if (ps == '.') { // 合并扩展名到当前路径
-				return p1 + p2;
+			if (ps == '.') {
+				if (p2.Length == 1) {
+					return p1;
+				}
+				if (p2.IndexOfAny(__PathSeparators, 1) < 0) {
+					return p1 + p2; // 合并扩展名
+				}
 			}
 			return IsDirectorySeparator(p1[p1.Length - 1]) == false && p2r == false
 				? new FilePath(p1 + Path.DirectorySeparatorChar + p2)
