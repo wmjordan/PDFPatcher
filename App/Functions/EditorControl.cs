@@ -39,6 +39,7 @@ namespace PDFPatcher.Functions
 			d.Register(new Editor.BookmarkPageCommand(1), Commands.EditorBookmarkPageNumberIncrement);
 			d.Register(new Editor.BookmarkPageCommand(-1), Commands.EditorBookmarkPageNumberDecrement);
 			d.Register(new Editor.BookmarkPageCommand(0), Commands.EditorBookmarkPageNumberShift);
+			d.Register(new Editor.BookmarkPageCommand(0, true), Commands.EditorBookmarkPageNumberShiftTakeFollowing);
 			d.Register(new Editor.SimpleBookmarkCommand<ClearDestinationOffsetProcessor, ClearDestinationOffsetProcessor.PositionType>(ClearDestinationOffsetProcessor.PositionType.XY), "_ClearPositionXY");
 			d.Register(new Editor.SimpleBookmarkCommand<ClearDestinationOffsetProcessor, ClearDestinationOffsetProcessor.PositionType>(ClearDestinationOffsetProcessor.PositionType.X), "_ClearPositionX");
 			d.Register(new Editor.SimpleBookmarkCommand<ClearDestinationOffsetProcessor, ClearDestinationOffsetProcessor.PositionType>(ClearDestinationOffsetProcessor.PositionType.Y), "_ClearPositionY");

@@ -79,6 +79,7 @@ namespace PDFPatcher
 		internal const string EditorBookmarkPageNumberIncrement = "_IncrementPageNumber";
 		internal const string EditorBookmarkPageNumberDecrement = "_DecrementPageNumber";
 		internal const string EditorBookmarkPageNumberShift = "_ShiftMultiPageNumber";
+		internal const string EditorBookmarkPageNumberShiftTakeFollowing = "_ShiftMultiPageNumberTakeFollowing";
 		internal const string EditorBookmarkSetCurrentCoordinates = "_SetCurrentCoordinates";
 		internal const string EditorOcrPage = "_OcrPage";
 		internal const string EditorPageProperties = "_PageProperties";

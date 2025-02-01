@@ -29,13 +29,14 @@
 			this._CancelButton = new System.Windows.Forms.Button();
 			this._MessageLabel = new System.Windows.Forms.Label();
 			this._ShiftNumberBox = new System.Windows.Forms.NumericUpDown();
+			this._TakeFollowingBox = new System.Windows.Forms.CheckBox();
 			((System.ComponentModel.ISupportInitialize)(this._ShiftNumberBox)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// _OkButton
 			// 
 			this._OkButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this._OkButton.Location = new System.Drawing.Point(128, 71);
+			this._OkButton.Location = new System.Drawing.Point(128, 104);
 			this._OkButton.Name = "_OkButton";
 			this._OkButton.Size = new System.Drawing.Size(75, 23);
 			this._OkButton.TabIndex = 0;
@@ -47,7 +48,7 @@
 			// 
 			this._CancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this._CancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this._CancelButton.Location = new System.Drawing.Point(209, 71);
+			this._CancelButton.Location = new System.Drawing.Point(209, 104);
 			this._CancelButton.Name = "_CancelButton";
 			this._CancelButton.Size = new System.Drawing.Size(75, 23);
 			this._CancelButton.TabIndex = 1;
@@ -72,13 +73,23 @@
 			this._ShiftNumberBox.TabIndex = 3;
 			this._ShiftNumberBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
+			// _TakeFollowingBox
+			// 
+			this._TakeFollowingBox.Location = new System.Drawing.Point(23, 63);
+			this._TakeFollowingBox.Name = "_TakeFollowingBox";
+			this._TakeFollowingBox.Size = new System.Drawing.Size(260, 35);
+			this._TakeFollowingBox.TabIndex = 4;
+			this._TakeFollowingBox.Text = "对于无指向具体页面的书签，以下一个书签的目标页面为基准";
+			this._TakeFollowingBox.UseVisualStyleBackColor = true;
+			// 
 			// ShiftPageNumberEntryForm
 			// 
 			this.AcceptButton = this._OkButton;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this._CancelButton;
-			this.ClientSize = new System.Drawing.Size(296, 106);
+			this.ClientSize = new System.Drawing.Size(296, 139);
+			this.Controls.Add(this._TakeFollowingBox);
 			this.Controls.Add(this._ShiftNumberBox);
 			this.Controls.Add(this._MessageLabel);
 			this.Controls.Add(this._CancelButton);
@@ -102,6 +113,7 @@
 		private System.Windows.Forms.Button _CancelButton;
 		private System.Windows.Forms.Label _MessageLabel;
 		private System.Windows.Forms.NumericUpDown _ShiftNumberBox;
+		private System.Windows.Forms.CheckBox _TakeFollowingBox;
 	}
 }
 

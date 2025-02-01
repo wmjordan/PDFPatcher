@@ -7,6 +7,10 @@ namespace PDFPatcher.Functions
 	sealed partial class ShiftPageNumberEntryForm : Form
 	{
 		internal int ShiftNumber => (int)_ShiftNumberBox.Value;
+		internal bool TakeFollowing {
+			get => _TakeFollowingBox.Checked;
+			set => _TakeFollowingBox.Checked = value;
+		}
 
 		public ShiftPageNumberEntryForm() {
 			InitializeComponent();

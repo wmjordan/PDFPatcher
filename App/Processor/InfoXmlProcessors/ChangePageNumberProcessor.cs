@@ -1,30 +1,38 @@
 ﻿using System;
+using System.Xml;
 using PDFPatcher.Common;
 
 namespace PDFPatcher.Processor
 {
-	sealed class ChangePageNumberProcessor(int amount, bool isAbsolute, bool skipZero) : IPdfInfoXmlProcessor
+	sealed class ChangePageNumberProcessor(int amount, bool isAbsolute, bool skipZero, bool takeFollowing = false) : IPdfInfoXmlProcessor
 	{
 		public bool IsAbsolute { get; } = isAbsolute;
 		public int Amount { get; } = amount;
 		public bool SkipZero { get; } = skipZero;
+		public bool TakeFollowing { get; } = takeFollowing;
 
-		public ChangePageNumberProcessor(int amount) : this(amount, false, false) { }
+		public ChangePageNumberProcessor(int amount) : this(amount, false, false, false) { }
 
 		#region IInfoDocProcessor 成员
 
 		public string Name => "更改目标页码";
 
-		public IUndoAction Process(System.Xml.XmlElement item) {
-			int p;
-			var a = item.GetAttribute(Constants.DestinationAttributes.Action);
-			if ((String.IsNullOrEmpty(a) && SkipZero == false
-					|| a == Constants.ActionType.Goto
-					|| a == Constants.ActionType.GotoR) == false
+		public IUndoAction Process(XmlElement item) {
+			int p = item.GetValue(Constants.DestinationAttributes.Page, 0);
+			var a = item.GetValue(Constants.DestinationAttributes.Action);
+			if (a != Constants.ActionType.Goto && a != Constants.ActionType.GotoR
+				&& (a is null && TakeFollowing) == false
+				|| String.IsNullOrEmpty(a) == false && p <= 0) {
+				return null;
+			}
+			if (p == 0 && TakeFollowing) {
+				return TakeFollowingBookmarkDestination(item, Amount);
+			}
+			if ((String.IsNullOrEmpty(a) && SkipZero == false) == false
 				&& item.HasAttribute(Constants.DestinationAttributes.Page) == false) {
 				return null;
 			}
-			if (item.GetAttribute(Constants.DestinationAttributes.Page).TryParse(out p)) {
+			if (item.GetValue(Constants.DestinationAttributes.Page).TryParse(out p)) {
 				if (IsAbsolute) {
 					if (p == Amount) {
 						return null;
@@ -45,6 +53,39 @@ namespace PDFPatcher.Processor
 					undo.SetAttribute(item, Constants.DestinationAttributes.Action, Constants.ActionType.Goto);
 				}
 				return undo;
+			}
+		}
+
+		static UndoActionGroup TakeFollowingBookmarkDestination(XmlElement bookmark, int amount) {
+			foreach (var item in bookmark.ChildrenOrFollowingSiblings()) {
+				var p = item.GetValue(Constants.DestinationAttributes.Page);
+				int n;
+				if (String.IsNullOrEmpty(p) || (n = p.ToInt32()) <= 0) {
+					continue;
+				}
+				var a = item.GetValue(Constants.DestinationAttributes.Action);
+				if (a != Constants.ActionType.Goto && a != Constants.ActionType.GotoR) {
+					continue;
+				}
+				n += amount;
+				if (n <= 0) {
+					break;
+				}
+				var undo = new UndoActionGroup();
+				undo.SetAttribute(bookmark, Constants.DestinationAttributes.Page, (n + amount).ToText());
+				undo.SetAttribute(bookmark, Constants.DestinationAttributes.Action, a);
+				CopyAttributes(bookmark, item, undo, Constants.Coordinates.Top, Constants.Coordinates.Left, Constants.Coordinates.Bottom, Constants.Coordinates.Right, Constants.Coordinates.ScaleFactor);
+				return undo;
+			}
+			return null;
+		}
+
+		static void CopyAttributes(XmlElement bookmark, XmlElement item, UndoActionGroup undo, params string[] names) {
+			foreach (var name in names) {
+				var value = item.GetValue(name);
+				if (String.IsNullOrEmpty(value) == false) {
+					undo.SetAttribute(bookmark, name, value);
+				}
 			}
 		}
 

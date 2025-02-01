@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Xml;
@@ -239,9 +240,65 @@ namespace PDFPatcher.Common
 			return a;
 		}
 
+		public static IEnumerable<XmlElement> ChildrenOrFollowingSiblings(this XmlElement element) {
+			return new ChildrenOrFollowingElementEnumerator(element);
+		}
+
 		static class Empty<TNode>
 		{
 			public static readonly TNode[] Item = new TNode[0];
+		}
+
+		sealed class ChildrenOrFollowingElementEnumerator(XmlElement baseElement) : IEnumerable<XmlElement>, IEnumerator<XmlElement>
+		{
+			readonly XmlElement _base = baseElement;
+			XmlNode _active = baseElement;
+
+			public XmlElement Current => _active as XmlElement;
+			object IEnumerator.Current => _active;
+
+			public void Dispose() {}
+
+			public IEnumerator<XmlElement> GetEnumerator() {
+				return this;
+			}
+
+			public bool MoveNext() {
+				return _active != null
+					&& (_active.HasChildNodes && TryGetFirstChildElement(ref _active)
+						|| TryGetFirstFollowingElement(ref _active));
+			}
+
+			static bool TryGetFirstChildElement(ref XmlNode active) {
+				var c = active.FirstChild;
+				do {
+					if (c.NodeType == XmlNodeType.Element) {
+						active = c;
+						return true;
+					}
+				}
+				while ((c = c.NextSibling) != null);
+				return false;
+			}
+
+			static bool TryGetFirstFollowingElement(ref XmlNode active) {
+				XmlNode s;
+				while ((s = active.NextSibling) != null) {
+					if (s.NodeType == XmlNodeType.Element) {
+						active = s;
+						return true;
+					}
+				}
+				return false;
+			}
+
+			public void Reset() {
+				_active = _base;
+			}
+
+			IEnumerator IEnumerable.GetEnumerator() {
+				return this;
+			}
 		}
 	}
 }
