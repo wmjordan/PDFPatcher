@@ -67,17 +67,16 @@ namespace PDFPatcher.Functions.Editor.Parts
 			float t = float.NaN;
 			var h = _ViewerBox.HorizontalFlow;
 			int start = 0, end = itemCount, i = itemCount >> 1, bp;
-			BookmarkElement b;
+			BookmarkElement b, c;
 			// 使用二分法查找最近的书签，这里假设书签指向的页面从上到下是顺序的
 			while (i != start && i != end) {
-				b = _BookmarkBox.GetBookmark(i);
-				bp = b.Page;
+				c = _BookmarkBox.GetBookmark(i);
+				bp = c.Page;
 				if (bp == 0) {
-					start = i;
-					if (i < end) {
-						++i;
-					}
+					++i;
+					continue;
 				}
+				b = c;
 				if (bp > p.Page) {
 					end = i;
 					i = start + ((i - start) >> 1);
