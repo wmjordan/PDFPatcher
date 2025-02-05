@@ -13,6 +13,10 @@ namespace BrightIdeasSoftware
 			view.Disposed += View_Disposed;
 		}
 
+		public static bool HasSelection(this ObjectListView view) {
+			return view.SelectedIndices.Count > 0;
+		}
+
 		static void View_Disposed(object sender, EventArgs e) {
 			var view = (ObjectListView)sender;
 			view.CellEditStarting -= View_CellEditStarting;
@@ -46,10 +50,10 @@ namespace BrightIdeasSoftware
 		}
 
 		public static void ExpandSelected(this TreeListView view, bool moveToFirstChild = false) {
-			var so = view.SelectedObjects;
-			if (so.Count == 0) {
+			if (view.HasSelection() == false) {
 				return;
 			}
+			var so = view.SelectedObjects;
 			var expanded = false;
 			foreach (var item in so) {
 				if (view.IsExpanded(item) == false) {
@@ -113,10 +117,10 @@ namespace BrightIdeasSoftware
 		}
 
 		public static void CollapseSelected(this TreeListView view, bool moveToParent = false) {
-			var so = view.SelectedObjects;
-			if (so.Count == 0) {
+			if (view.HasSelection() == false) {
 				return;
 			}
+			var so = view.SelectedObjects;
 			var collapsed = false;
 			foreach (var item in so) {
 				if (view.IsExpanded(item)) {
@@ -164,7 +168,7 @@ namespace BrightIdeasSoftware
 			return view.GetItemCount() == 0 ? null
 				: (view.FocusedItem
 				?? view.SelectedItem
-				?? (view.SelectedIndices.Count > 0 ? view.GetItem(view.SelectedIndices[0]) : null)) as OLVListItem;
+				?? (view.HasSelection() ? view.GetItem(view.SelectedIndices[0]) : null)) as OLVListItem;
 		}
 
 		// 树视图存在子节点且多选节点时，在 SelectedIndexChanged 事件中，SelectedIndices属性可能返回无内容的集合。
@@ -256,10 +260,9 @@ namespace BrightIdeasSoftware
 			}
 			view.Unfreeze();
 		}
-
 	}
 
-	struct GridTestResult(int columnIndex, int rowIndex, bool isOutOfRange)
+	readonly struct GridTestResult(int columnIndex, int rowIndex, bool isOutOfRange)
 	{
 		public int ColumnIndex { get; } = columnIndex;
 		public int RowIndex { get; } = rowIndex;
