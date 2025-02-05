@@ -30,6 +30,10 @@ namespace PDFPatcher.Functions.Editor
 		}
 		public bool IsBusy => _loader?.IsBusy == true;
 
+		public void ExecuteCommand(string command, params string[] parameters) {
+			EditorCommands.Execute(command, this, parameters);
+		}
+
 		internal IEnumerable<XmlNode> ProcessBookmarks(IPdfInfoXmlProcessor processor) {
 			return ProcessBookmarks(View.AffectsDescendantBookmarks, true, processor);
 		}

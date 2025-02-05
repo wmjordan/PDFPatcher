@@ -84,6 +84,7 @@ namespace PDFPatcher
 		internal const string EditorOcrPage = "_OcrPage";
 		internal const string EditorPageProperties = "_PageProperties";
 		internal const string EditorSavePageImage = "_SavePageImage";
+		internal const string EditorViewerScrollToBookmark = "_ViewerScrollToBookmark";
 		#endregion
 		internal static readonly string[] TopMenuItems = { File, Tools, Selection };
 		internal static readonly string[] CommonSelectionCommands = { SelectAllItems, SelectNone, InvertSelection };

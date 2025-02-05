@@ -101,8 +101,11 @@
     <Compile Include="Functions\Editor\AutoResizingTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Functions\Editor\EditorCommands.cs" />
+    <Compile Include="Functions\Editor\Commands\ViewerScrollToBookmarkCommand.cs" />
     <Compile Include="Functions\Editor\IEditView.cs" />
     <Compile Include="Functions\Editor\Parts\BookmarkInViewSynchronizer.cs" />
+    <Compile Include="Functions\Editor\Parts\BookmarkTitleEditHandler.cs" />
     <Compile Include="Functions\FunctionTabContainer.cs">
       <SubType>Component</SubType>
     </Compile>
