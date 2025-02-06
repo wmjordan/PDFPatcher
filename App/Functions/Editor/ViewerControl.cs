@@ -90,6 +90,9 @@ namespace PDFPatcher.Functions
 		[Browsable(false)]
 		public int LastPage => _DisplayRange.EndValue;
 
+		[Browsable(false)]
+		public PageLabelCollection PageLabels { get => _pageLabels; set => _pageLabels = value; }
+
 		readonly OcrOptions _OcrOptions = new OcrOptions();
 		/// <summary>
 		/// 获取文本识别选项。

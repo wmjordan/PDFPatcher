@@ -360,9 +360,6 @@ namespace PDFPatcher.Functions
 						}
 					}
 					break;
-				case "_InsertPageLabel":
-					_controller.LabelAtPage(_ViewerBox.TransposeVirtualImageToPagePosition(_ViewerBox.PinPoint.X, _ViewerBox.PinPoint.Y));
-					break;
 				case "_InsertWithOcrOnly":
 					_controller.Model.InsertBookmarkWithOcrOnly = !_controller.Model.InsertBookmarkWithOcrOnly;
 					break;

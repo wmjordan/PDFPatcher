@@ -409,50 +409,6 @@ namespace PDFPatcher.Functions.Editor
 			return new EditModel.Region(pp, t, ts);
 		}
 
-		internal void LabelAtPage(Editor.PagePosition position) {
-			if (position.Page == 0) {
-				return;
-			}
-			var l = Model.PageLabels;
-			if (l == null) {
-				return;
-			}
-			var v = View.Viewer;
-			var f = new InsertPageLabelForm {
-				Location = Cursor.Position.Transpose(-16, -16),
-				PageNumber = position.Page
-			};
-			var pl = l.Find(position.Page);
-			if (pl.IsEmpty == false) {
-				f.SetValues(pl);
-			}
-			f.FormClosed += InsertPageLabelForm_Closed;
-			f.Show();
-		}
-
-		void InsertPageLabelForm_Closed(object sender, EventArgs e) {
-			var form = sender as InsertPageLabelForm;
-			if (form.DialogResult == DialogResult.Cancel) {
-				return;
-			}
-			var l = Model.PageLabels;
-			if (form.DialogResult == DialogResult.OK) {
-				if (l == null) {
-					return;
-				}
-				l.Add(form.PageLabel);
-			}
-			else if (form.DialogResult == DialogResult.Abort) {
-				Model.PageLabels.Remove(form.PageLabel);
-			}
-			var pl = Model.Document.PageLabelRoot;
-			pl.InnerText = String.Empty;
-			foreach (var item in l) {
-				pl.AppendChild(Model.Document.CreatePageLabel(item));
-			}
-			View.Viewer.Invalidate();
-		}
-
 		internal void InsertBookmark(InsertBookmarkPositionType position = InsertBookmarkPositionType.Undefined) {
 			if (position == InsertBookmarkPositionType.Undefined) {
 				position = (Control.ModifierKeys & Keys.Shift) > 0 ? InsertBookmarkPositionType.BeforeCurrent : InsertBookmarkPositionType.AfterCurrent;

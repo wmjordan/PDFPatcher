@@ -1,4 +1,4 @@
-﻿namespace PDFPatcher.Functions
+﻿namespace PDFPatcher.Functions.Editor
 {
 	partial class InsertPageLabelForm
 	{
@@ -171,7 +171,6 @@
 			this.ShowInTaskbar = false;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
 			this.Text = "插入页码标签";
-			this.Load += new System.EventHandler(this.InsertPageLabelForm_Load);
 			((System.ComponentModel.ISupportInitialize)(this._StartAtBox)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();

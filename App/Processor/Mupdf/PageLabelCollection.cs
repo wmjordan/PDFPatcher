@@ -11,6 +11,7 @@ namespace MuPDF
 
 		public PageLabel this[int index] => _labels[index];
 
+		internal PageLabelCollection() {}
 		internal PageLabelCollection(Document document) {
 			var pl = new List<PageLabel>();
 			var l = document.Trailer.Locate(PdfNames.Root, PdfNames.PageLabels, PdfNames.Nums);

@@ -2,7 +2,7 @@
 using System.Windows.Forms;
 using PDFPatcher.Common;
 
-namespace PDFPatcher.Functions
+namespace PDFPatcher.Functions.Editor
 {
 	sealed partial class InsertPageLabelForm : DraggableForm
 	{
@@ -13,25 +13,34 @@ namespace PDFPatcher.Functions
 
 		internal MuPDF.PageLabel PageLabel => new MuPDF.PageLabel(PageNumber - 1, (int)_StartAtBox.Value, _PrefixBox.Text, (MuPDF.PageLabelStyle)Constants.PageLabelStyles.PdfValues[_NumericStyleBox.SelectedIndex]);
 
+		internal EditModel Model { get; set; }
+		internal ViewerControl Viewer { get; set; }
+
 		public InsertPageLabelForm() {
 			InitializeComponent();
-			_NumericStyleBox.AddRange(Constants.PageLabelStyles.Names).Select(0);
-			_RemoveLabelButton.Enabled = false;
+			this.OnFirstLoad(OnLoad);
 		}
 
-		void InsertPageLabelForm_Load(object sender, EventArgs e) {
-			_CancelButton.Click += (s, args) => {
-				DialogResult = DialogResult.Cancel;
-				Close();
-			};
-			_OkButton.Click += (s, args) => {
-				DialogResult = DialogResult.OK;
-				Close();
-			};
-			_RemoveLabelButton.Click += (s, args) => {
-				DialogResult = DialogResult.Abort;
-				Close();
-			};
+		void OnLoad() {
+			_NumericStyleBox.AddRange(Constants.PageLabelStyles.Names).Select(0);
+			_RemoveLabelButton.Enabled = false;
+			_CancelButton.Click += HandleCommandButtonClick;
+			_OkButton.Click += HandleCommandButtonClick;
+			_RemoveLabelButton.Click += HandleCommandButtonClick;
+		}
+
+		protected override void OnFormClosed(FormClosedEventArgs e) {
+			base.OnFormClosed(e);
+			Model = null;
+			Viewer = null;
+		}
+
+		void HandleCommandButtonClick(object sender, EventArgs e) {
+			DialogResult = sender == _CancelButton ? DialogResult.Cancel
+				: sender == _OkButton ? DialogResult.OK
+				: sender == _RemoveLabelButton ? DialogResult.Abort
+				: DialogResult.None;
+			Close();
 		}
 
 		internal void SetValues(MuPDF.PageLabel label) {

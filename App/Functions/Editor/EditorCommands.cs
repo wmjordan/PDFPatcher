@@ -57,6 +57,7 @@ namespace PDFPatcher.Functions.Editor
 			d.Register(new Editor.PagePropertiesCommand(), Commands.EditorPageProperties);
 			d.Register(new Editor.SavePageImageCommand(), Commands.EditorSavePageImage);
 			d.Register(new Editor.ViewerScrollToBookmarkCommand(), Commands.EditorViewerScrollToBookmark);
+			d.Register(new Editor.InsertPageLabelCommand(), Commands.EditorInsertPageLabel);
 			Editor.BookmarkMarkerCommand.RegisterCommands(d);
 			Editor.ViewerCommand.RegisterCommands(d);
 			Editor.QuickSelectCommand.RegisterCommands(d);

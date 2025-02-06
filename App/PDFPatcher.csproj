@@ -101,6 +101,7 @@
     <Compile Include="Functions\Editor\AutoResizingTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Functions\Editor\Commands\InsertPageLabelCommand.cs" />
     <Compile Include="Functions\Editor\EditorCommands.cs" />
     <Compile Include="Functions\Editor\Commands\ViewerScrollToBookmarkCommand.cs" />
     <Compile Include="Functions\Editor\IEditView.cs" />
