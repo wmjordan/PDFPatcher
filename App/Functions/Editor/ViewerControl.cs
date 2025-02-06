@@ -1148,15 +1148,15 @@ namespace PDFPatcher.Functions
 			position.Location.Deconstruct(out var px, out var py);
 			if (px != 0) {
 				px -= bound.X0;
-			}
-			else if (h) {
-				op.X -= __pageMargin;
+				if (h && Math.Abs(px) < 0.001f) {
+					op.X -= __pageMargin;
+				}
 			}
 			if (py != 0) {
 				py = bound.Height - (py - bound.Y0);
-			}
-			else if (h == false) {
-				op.Y -= __pageMargin;
+				if (h == false && Math.Abs(py) < 0.001f) {
+					op.Y -= __pageMargin;
+				}
 			}
 			var z = GetZoomFactorForPage(bound);
 			ScrollTo(
