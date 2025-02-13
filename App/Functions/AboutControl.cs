@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 
@@ -74,19 +75,38 @@ namespace PDFPatcher
 		#endregion
 
 		public override void ExecuteCommand(string commandName, params string[] parameters) {
-			if (commandName == Commands.CheckUpdate) {
-				AppContext.MainForm.ExecuteCommand(commandName);
-			}
-			else {
-				base.ExecuteCommand(commandName, parameters);
+			switch (commandName) {
+				case Commands.CheckUpdate:
+					AppContext.MainForm.ExecuteCommand(commandName);
+					break;
+				case Commands.Open:
+					var n = AppContext.MainForm.ShowPdfFileDialog();
+					if (n != null) {
+						AppContext.MainForm.OpenFileWithEditor(n);
+					}
+					return;
+				case Commands.OpenFile:
+					AppContext.MainForm.OpenFileWithEditor(parameters.FirstOrDefault());
+					break;
+				default:
+					base.ExecuteCommand(commandName, parameters);
+					break;
 			}
 		}
 
-		private void _FrontPageBox_ImageLoad(object sender, TheArtOfDev.HtmlRenderer.Core.Entities.HtmlImageLoadEventArgs e) {
+		public override void SetupCommand(ToolStripItem item) {
+			if (item.Name == Commands.Action) {
+				EnableCommand(item, false, true);
+				return;
+			}
+			base.SetupCommand(item);
+		}
+
+		void _FrontPageBox_ImageLoad(object sender, TheArtOfDev.HtmlRenderer.Core.Entities.HtmlImageLoadEventArgs e) {
 			LoadResourceImage(e);
 		}
 
-		private void _FrontPageBox_LinkClicked(object sender, TheArtOfDev.HtmlRenderer.Core.Entities.HtmlLinkClickedEventArgs e) {
+		void _FrontPageBox_LinkClicked(object sender, TheArtOfDev.HtmlRenderer.Core.Entities.HtmlLinkClickedEventArgs e) {
 			HandleLinkClicked(e.Link);
 			e.Handled = true;
 		}
