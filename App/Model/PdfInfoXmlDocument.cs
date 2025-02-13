@@ -10,7 +10,10 @@ namespace PDFPatcher.Model
 	{
 		/// <summary>返回已经初始化的 <see cref="PdfInfoXmlDocument"/> 实例。</summary>
 		public PdfInfoXmlDocument() {
-			Init();
+			var root = AppendChild(CreateElement(Constants.PdfInfo)) as XmlElement;
+			root.SetAttribute(Constants.Info.ProductName, System.Windows.Forms.Application.ProductName);
+			root.SetAttribute(Constants.Info.ProductVersion, Constants.InfoDocVersion);
+			root.SetAttribute(Constants.Info.ExportDate, DateTime.Now.ToString("yyyy年MM月dd日 HH:mm:ss"));
 		}
 
 		/// <summary>获取或设置配置文件关联的 PDF 文件路径。</summary>
@@ -32,13 +35,6 @@ namespace PDFPatcher.Model
 
 		/// <summary>获取根书签。</summary>
 		public XmlNodeList Bookmarks => DocumentElement.SelectNodes(Constants.DocumentBookmark + "[1]/" + Constants.Bookmark);
-
-		private void Init() {
-			var root = DocumentElement ?? AppendChild(CreateElement(Constants.PdfInfo)) as XmlElement;
-			root.SetAttribute(Constants.Info.ProductName, System.Windows.Forms.Application.ProductName);
-			root.SetAttribute(Constants.Info.ProductVersion, Constants.InfoDocVersion);
-			root.SetAttribute(Constants.Info.ExportDate, DateTime.Now.ToString("yyyy年MM月dd日 HH:mm:ss"));
-		}
 
 		public BookmarkElement CreateBookmark() {
 			return new BookmarkElement(this);

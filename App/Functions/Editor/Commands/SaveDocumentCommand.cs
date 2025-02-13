@@ -76,7 +76,7 @@ namespace PDFPatcher.Functions.Editor
 			controller.Model.Undo.MarkClean();
 		}
 
-		private static void SavePdf(Controller controller) {
+		static void SavePdf(Controller controller) {
 			var m = controller.Model;
 			var vv = controller.View.Viewer;
 			if (m.Document == null) {

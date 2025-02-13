@@ -129,10 +129,6 @@ namespace PDFPatcher.Functions
 			e.Canceled = true; // 禁止排序
 			base.OnBeforeSorting(e);
 		}
-		protected override void OnItemActivate(EventArgs e) {
-			base.OnItemActivate(e);
-			EditSubItem(SelectedItem, 0);
-		}
 		#region 拖放操作
 		protected override void OnCanDrop(OlvDropEventArgs args) {
 			if (args.DataObject is not DataObject o) {
@@ -224,6 +220,7 @@ namespace PDFPatcher.Functions
 			Mark(bookmarks);
 		}
 
+		#region 标记书签
 		void Mark(XmlNodeList bookmarks) {
 			foreach (BookmarkElement item in bookmarks) {
 				if (item == null || item.MarkerColor == 0) {
@@ -232,6 +229,138 @@ namespace PDFPatcher.Functions
 				_markers.Add(item, Color.FromArgb(item.MarkerColor));
 				Mark(item.ChildNodes);
 			}
+		}
+
+		internal void MarkItems(List<BookmarkElement> items, Color color) {
+			foreach (var item in items) {
+				_markers[item] = color;
+				item.MarkerColor = color.ToArgb();
+			}
+			RefreshObjects(items);
+		}
+		internal List<BookmarkElement> SelectMarkedItems(Color color) {
+			Freeze();
+			var items = new List<BookmarkElement>();
+			var c = color.ToArgb();
+			var r = new List<BookmarkElement>();
+			foreach (var item in _markers) {
+				if (item.Value.ToArgb() == c) {
+					var k = item.Key;
+					Debug.Assert((k.ParentNode == null || k.OwnerDocument == null) == false);
+					if (k.ParentNode == null || k.OwnerDocument == null) {
+						r.Add(k);
+						continue;
+					}
+					items.Add(k);
+					MakeItemVisible(k);
+				}
+			}
+			foreach (var item in r) {
+				_markers.Remove(item);
+			}
+			SelectObjects(items);
+			EnsureItemsVisible(items);
+			Unfreeze();
+			return items;
+		}
+		internal void UnmarkItems(List<BookmarkElement> items) {
+			foreach (var item in items) {
+				_markers.Remove(item);
+				item.MarkerColor = 0;
+			}
+			RefreshObjects(items);
+		}
+		internal void ClearMarks(bool refresh) {
+			if (refresh) {
+				var items = new List<XmlElement>(_markers.Count);
+				foreach (var item in _markers) {
+					items.Add(item.Key);
+					item.Key.MarkerColor = 0;
+				}
+				_markers.Clear();
+				RefreshObjects(items);
+			}
+			else {
+				_markers.Clear();
+			}
+		}
+		#endregion
+
+		internal void MakeItemVisible(XmlElement item) {
+			var p = item.ParentNode;
+			var a = new Stack<XmlNode>(); //ancestorsToExpand
+			a.Push(null);
+			a.Push(p);
+			while (p.Name != Constants.DocumentBookmark) {
+				p = p.ParentNode;
+				a.Push(p);
+			}
+			while (a.Peek() != null) {
+				Expand(a.Pop());
+			}
+		}
+
+		internal void EnsureItemsVisible(ICollection<BookmarkElement> items) {
+			if (items.Count == 0) {
+				return;
+			}
+			var cr = ClientRectangle;
+			OLVListItem fi = null, li = null;
+			foreach (var item in items) {
+				var i = ModelToItem(item);
+				if (i != null) {
+					var r = GetItemRect(i.Index);
+					if (r.Top >= cr.Top && r.Bottom <= cr.Bottom) {
+						return;
+					}
+					li = i;
+					fi ??= i;
+				}
+			}
+			if ((fi ?? li) != null) {
+				EnsureVisible(fi.Index);
+			}
+		}
+
+		internal void SelectPreviousBookmark() {
+			var si = this.GetFocusedOrFirstSelectedItem();
+			if (si == null) {
+				if (GetItemCount() != 0) {
+					(SelectedItem = GetItem(0)).Focused = true;
+				}
+				return;
+			}
+
+			if (si.Index < 1) {
+				return;
+			}
+			(SelectedItem = GetItem(si.Index - 1)).Focused = true;
+		}
+		internal void SelectNextBookmark() {
+			var si = this.GetFocusedOrFirstSelectedItem();
+			if (si == null) {
+				if (GetItemCount() != 0) {
+					(SelectedItem = GetItem(0)).Focused = true;
+				}
+				return;
+			}
+
+			if (si.Index == GetItemCount() - 1) {
+				return;
+			}
+			(SelectedItem = GetItem(si.Index + 1)).Focused = true;
+		}
+
+		/// <summary>
+		/// 检查 <paramref name="source"/> 是否为 <paramref name="target"/> 的先代元素。
+		/// </summary>
+		static bool IsAncestorOrSelf(XmlElement source, XmlElement target) {
+			do {
+				if (source == target) {
+					return true;
+				}
+			} while ((target = target.ParentNode as XmlElement) != null);
+			return false;
 		}
 
 		/// <summary>
@@ -329,137 +458,6 @@ namespace PDFPatcher.Functions
 			SelectedObjects = source;
 		}
 
-		/// <summary>
-		/// 检查 <paramref name="source"/> 是否为 <paramref name="target"/> 的先代元素。
-		/// </summary>
-		static bool IsAncestorOrSelf(XmlElement source, XmlElement target) {
-			do {
-				if (source == target) {
-					return true;
-				}
-			} while ((target = target.ParentNode as XmlElement) != null);
-			return false;
-		}
-
-		internal void MarkItems(List<BookmarkElement> items, Color color) {
-			foreach (var item in items) {
-				_markers[item] = color;
-				item.MarkerColor = color.ToArgb();
-			}
-			RefreshObjects(items);
-		}
-		internal List<BookmarkElement> SelectMarkedItems(Color color) {
-			Freeze();
-			var items = new List<BookmarkElement>();
-			var c = color.ToArgb();
-			var r = new List<BookmarkElement>();
-			foreach (var item in _markers) {
-				if (item.Value.ToArgb() == c) {
-					var k = item.Key;
-					Debug.Assert((k.ParentNode == null || k.OwnerDocument == null) == false);
-					if (k.ParentNode == null || k.OwnerDocument == null) {
-						r.Add(k);
-						continue;
-					}
-					items.Add(k);
-					MakeItemVisible(k);
-				}
-			}
-			foreach (var item in r) {
-				_markers.Remove(item);
-			}
-			SelectObjects(items);
-			EnsureItemsVisible(items);
-			Unfreeze();
-			return items;
-		}
-		internal void UnmarkItems(List<BookmarkElement> items) {
-			foreach (var item in items) {
-				_markers.Remove(item);
-				item.MarkerColor = 0;
-			}
-			RefreshObjects(items);
-		}
-		internal void ClearMarks(bool refresh) {
-			if (refresh) {
-				var items = new List<XmlElement>(_markers.Count);
-				foreach (var item in _markers) {
-					items.Add(item.Key);
-					item.Key.MarkerColor = 0;
-				}
-				_markers.Clear();
-				RefreshObjects(items);
-			}
-			else {
-				_markers.Clear();
-			}
-		}
-
-		internal void MakeItemVisible(XmlElement item) {
-			var p = item.ParentNode;
-			var a = new Stack<XmlNode>(); //ancestorsToExpand
-			a.Push(null);
-			a.Push(p);
-			while (p.Name != Constants.DocumentBookmark) {
-				p = p.ParentNode;
-				a.Push(p);
-			}
-			while (a.Peek() != null) {
-				Expand(a.Pop());
-			}
-		}
-
-		internal void EnsureItemsVisible(ICollection<BookmarkElement> items) {
-			if (items.Count == 0) {
-				return;
-			}
-			var cr = ClientRectangle;
-			OLVListItem fi = null, li = null;
-			foreach (var item in items) {
-				var i = ModelToItem(item);
-				if (i != null) {
-					var r = GetItemRect(i.Index);
-					if (r.Top >= cr.Top && r.Bottom <= cr.Bottom) {
-						return;
-					}
-					li = i;
-					fi ??= i;
-				}
-			}
-			if ((fi ?? li) != null) {
-				EnsureVisible(fi.Index);
-			}
-		}
-
-		internal void SelectPreviousBookmark() {
-			var si = this.GetFocusedOrFirstSelectedItem();
-			if (si == null) {
-				if (GetItemCount() != 0) {
-					(SelectedItem = GetItem(0)).Focused = true;
-				}
-				return;
-			}
-
-			if (si.Index < 1) {
-				return;
-			}
-			(SelectedItem = GetItem(si.Index - 1)).Focused = true;
-		}
-		internal void SelectNextBookmark() {
-			var si = this.GetFocusedOrFirstSelectedItem();
-			if (si == null) {
-				if (GetItemCount() != 0) {
-					(SelectedItem = GetItem(0)).Focused = true;
-				}
-				return;
-			}
-
-			if (si.Index == GetItemCount() - 1) {
-				return;
-			}
-			(SelectedItem = GetItem(si.Index + 1)).Focused = true;
-		}
-
 		internal void CopySelectedBookmark() {
 			_copiedBookmarks = GetSelectedElements(false);
 			Clipboard.Clear();
@@ -512,12 +510,6 @@ namespace PDFPatcher.Functions
 			return el;
 		}
 
-		protected override void OnBeforeLabelEdit(LabelEditEventArgs e) {
-			base.OnBeforeLabelEdit(e);
-			e.CancelEdit = true;
-			EditSubItem(GetItem(e.Item), 0);
-		}
-
 		protected override void OnCellClick(CellClickEventArgs args) {
 			base.OnCellClick(args);
 			if (args.ColumnIndex == 0 && IsCellEditing == false && SelectedIndices.Count < 2) {
@@ -528,6 +520,18 @@ namespace PDFPatcher.Functions
 					SelectedObject = args.Model;
 				}
 			}
+		}
+
+		#region 单元格编辑
+		protected override void OnBeforeLabelEdit(LabelEditEventArgs e) {
+			base.OnBeforeLabelEdit(e);
+			e.CancelEdit = true;
+			EditSubItem(GetItem(e.Item), 0);
+		}
+
+		protected override void OnItemActivate(EventArgs e) {
+			base.OnItemActivate(e);
+			EditSubItem(SelectedItem, 0);
 		}
 
 		protected override void OnCellEditStarting(CellEditEventArgs e) {
@@ -567,6 +571,7 @@ namespace PDFPatcher.Functions
 				SelectedItem = FocusedItem as OLVListItem;
 			}
 		}
+		#endregion
 
 		protected override void OnHyperlinkClicked(HyperlinkClickedEventArgs e) {
 			base.OnHyperlinkClicked(e);
