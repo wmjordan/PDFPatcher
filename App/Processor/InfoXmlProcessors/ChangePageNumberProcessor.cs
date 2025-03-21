@@ -22,13 +22,13 @@ namespace PDFPatcher.Processor
 			var a = item.GetValue(Constants.DestinationAttributes.Action);
 			if (a != Constants.ActionType.Goto && a != Constants.ActionType.GotoR
 				&& (a is null && TakeFollowing) == false && Amount == 0
-				|| String.IsNullOrEmpty(a) == false && p <= 0) {
+				|| String.IsNullOrEmpty(a) == false && p < 0) {
 				return null;
 			}
 			if (p == 0 && TakeFollowing) {
 				return TakeFollowingBookmarkDestination(item, Amount);
 			}
-			if ((String.IsNullOrEmpty(a) && SkipZero == false) == false
+			if (SkipZero
 				&& item.HasAttribute(Constants.DestinationAttributes.Page) == false) {
 				return null;
 			}
