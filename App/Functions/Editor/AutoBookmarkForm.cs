@@ -186,7 +186,9 @@ namespace PDFPatcher.Functions
 				d.DefaultExt = Constants.FileExtensions.Xml;
 			}, d => {
 				try {
-					SetValues(Deserialize(d.FileName));
+					_list.Clear();
+					_list.AddRange(Deserialize(d.FileName));
+					_BookmarkConditionBox.Objects = _list;
 				}
 				catch (Exception ex) {
 					this.ErrorBox("加载自动书签格式列表时出现错误", ex);
@@ -194,10 +196,9 @@ namespace PDFPatcher.Functions
 			});
 		}
 
-		static List<EditModel.AutoBookmarkSettings> Deserialize(FilePath path) {
+		static IEnumerable<EditModel.AutoBookmarkSettings> Deserialize(FilePath path) {
 			var doc = new System.Xml.XmlDocument();
 			doc.Load(path);
-			var l = new List<EditModel.AutoBookmarkSettings>();
 			foreach (System.Xml.XmlElement item in doc.DocumentElement.GetElementsByTagName("style")) {
 				var s = new EditModel.AutoBookmarkSettings(
 					item.GetValue("level", 1),
@@ -210,9 +211,8 @@ namespace PDFPatcher.Functions
 					s.MatchPattern.ReadXml(p.CreateNavigator().ReadSubtree());
 				}
 
-				l.Add(s);
+				yield return s;
 			}
-			return l;
 		}
 
 		void SyncList() {
