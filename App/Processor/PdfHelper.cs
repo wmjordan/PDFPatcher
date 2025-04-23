@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using iTextSharp.text.pdf;
 using MuPDF.Extensions;
@@ -175,6 +176,38 @@ namespace PDFPatcher.Processor
 
 		internal static string DecodeKeyName(object name) {
 			return name is PdfName ? PdfName.DecodeName(name.ToString()) : name.ToString();
+		}
+
+		internal static string GetFriendlyValue(this PdfString s) {
+			var bytes = s.GetOriginalBytes();
+			if (s.IsHexWriting()) {
+				return "<" + bytes.ToHexBinString() + ">";
+			}
+			if (bytes.All(i => i < 127)) {
+				return Encoding.ASCII.GetString(bytes);
+			}
+			var sb = new StringBuilder(bytes.Length + 10);
+			bool h = false;
+			foreach (var item in bytes) {
+				if (item > 127) {
+					if (!h) {
+						sb.Append('<');
+						h = true;
+					}
+					sb.Append(item.ToHexBinString(true));
+				}
+				else {
+					if (h) {
+						sb.Append('>');
+						h = false;
+					}
+					sb.Append((char)item);
+				}
+			}
+			if (h) {
+				sb.Append('>');
+			}
+			return sb.ToString();
 		}
 
 		public static Dictionary<string, PdfObject> GetNamedDestinations(this PdfReader pdf) {

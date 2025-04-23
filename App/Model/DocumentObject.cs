@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using iTextSharp.text.pdf;
 using PDFPatcher.Common;
 using PDFPatcher.Processor;
@@ -417,7 +418,7 @@ namespace PDFPatcher.Model
 			};
 			if (item.Type == PdfPageCommandType.Text) {
 				var t = item as TextCommand;
-				o.FriendlyValue = t.TextInfo.PdfString.GetOriginalBytes().ToHexBinString();
+				o.FriendlyValue = t.TextInfo.PdfString.GetFriendlyValue();
 				o.Description = t.TextInfo.Text;
 				if (item.Name.ToString() == "TJ") {
 					var a = item.Operands[0] as PdfArray;
@@ -428,7 +429,7 @@ namespace PDFPatcher.Model
 						foreach (var ti in a.ArrayList) {
 							var d = new DocumentObject(OwnerDocument, o, (++i).ToText(), ti);
 							if (ti.Type == PdfObject.STRING) {
-								d.FriendlyValue = ((PdfString)ti).GetOriginalBytes().ToHexBinString();
+								d.FriendlyValue = ((PdfString)ti).GetFriendlyValue();
 								d.Description = pt.DecodedTexts[i - 1];
 							}
 							o._Children.Add(d);
@@ -490,6 +491,5 @@ namespace PDFPatcher.Model
 				list = new List<DocumentObject>();
 			}
 		}
-
 	}
 }
