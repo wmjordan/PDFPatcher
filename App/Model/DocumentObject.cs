@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using iTextSharp.text.pdf;
 using PDFPatcher.Common;
 using PDFPatcher.Processor;
@@ -206,6 +205,14 @@ namespace PDFPatcher.Model
 			return false;
 		}
 
+		DocumentObject GetPageObject() {
+			var p = this;
+			while (p?.Type != PdfObjectType.Page) {
+				p = p.Parent;
+			}
+			return p;
+		}
+
 		private static string GetItemValueText(PdfObject po, PdfObject eo) {
 			if (po == null && eo == null) {
 				goto Exit;
@@ -377,7 +384,10 @@ namespace PDFPatcher.Model
 						}
 						else if (Parent.Type == PdfObjectType.Form) {
 							var form = PdfReader.GetPdfObjectRelease(Parent.Value) as PRStream;
-							cp.ProcessContent(PdfReader.GetStreamBytes(form), form.GetAsDict(PdfName.RESOURCES));
+							cp.ProcessContent(PdfReader.GetStreamBytes(form),
+								new CompositePdfDictionary(form.GetAsDict(PdfName.RESOURCES),
+									pdf.GetPageN((int)GetPageObject().ExtensiveObject).GetAsDict(PdfName.RESOURCES))
+								);
 						}
 						foreach (var item in cp.Commands) {
 							PopulatePageCommand(item);
@@ -489,6 +499,45 @@ namespace PDFPatcher.Model
 		static void CreateChildrenList(ref IList<DocumentObject> list) {
 			if (list == null || list == __Leaf) {
 				list = new List<DocumentObject>();
+			}
+		}
+
+		sealed class CompositePdfDictionary(PdfDictionary primary, PdfDictionary auxiliary) : PdfDictionary
+		{
+			public new IEnumerable<PdfName> Keys => GetKeyValues().Select(i => i.Key);
+			public override int Size => (primary?.Size ?? 0) + (auxiliary?.Size ?? 0);
+			public override PdfObject GetDirectObject(PdfName key) {
+				var po = primary?.GetDirectObject(key);
+				if (po is PdfDictionary pd) {
+					if (auxiliary != null) {
+						var ao = auxiliary.GetDirectObject(key);
+						return ao is PdfDictionary ad ? new CompositePdfDictionary(pd, ad) : pd;
+					}
+					else {
+						return pd;
+					}
+				}
+				return primary?.GetDirectObject(key) ?? auxiliary?.GetDirectObject(key);
+			}
+			public override bool Contains(PdfName key) {
+				return primary?.Contains(key) ?? auxiliary?.Contains(key) ?? false;
+			}
+			public new IEnumerator<KeyValuePair<PdfName, PdfObject>> GetEnumerator() {
+				return GetKeyValues().GetEnumerator();
+			}
+			public IEnumerable<KeyValuePair<PdfName, PdfObject>> GetKeyValues() {
+				if (primary != null) {
+					foreach (var item in primary) {
+						yield return new KeyValuePair<PdfName, PdfObject>(item.Key, item.Value);
+					}
+				}
+				if (auxiliary != null) {
+					foreach (var item in auxiliary) {
+						if (primary?.Contains(item.Key) == false) {
+							yield return new KeyValuePair<PdfName, PdfObject>(item.Key, item.Value);
+						}
+					}
+				}
 			}
 		}
 	}
