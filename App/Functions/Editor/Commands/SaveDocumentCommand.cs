@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using System.Windows.Forms;
+using System.Xml;
 using PDFPatcher.Common;
 using PDFPatcher.Processor;
 
@@ -23,10 +25,10 @@ namespace PDFPatcher.Functions.Editor
 		}
 
 		static void SaveBookmark(Controller controller, bool showDialog) {
-			var idoc = controller.Model.Document;
-			var mudoc = controller.Model.PdfDocument;
+			var infoDoc = controller.Model.Document;
+			var mupdf = controller.Model.PdfDocument;
 			var t = new FilePath(controller.Model.DocumentPath);
-			if (idoc == null || idoc.DocumentElement == null || t == null) {
+			if (infoDoc == null || infoDoc.DocumentElement == null || t == null) {
 				return;
 			}
 
@@ -52,22 +54,24 @@ namespace PDFPatcher.Functions.Editor
 				using (var writer = new StreamWriter(t)) {
 					const string indentString = "\t";
 					writer.WriteLine("#版本=" + Constants.InfoDocVersion);
-					if (mudoc != null) {
-						writer.WriteLine("#" + Constants.Info.DocumentPath + "=" + mudoc.FilePath);
+					if (mupdf != null) {
+						writer.WriteLine("#" + Constants.Info.DocumentPath + "=" + mupdf.FilePath);
 					}
 					writer.WriteLine("#缩进标记=" + indentString);
 					writer.WriteLine("#首页页码=1");
 					writer.WriteLine();
-					OutlineManager.WriteSimpleBookmark(writer, idoc.BookmarkRoot, 0, indentString);
+					OutlineManager.WriteSimpleBookmark(writer, infoDoc.BookmarkRoot, 0, indentString);
 				}
 			}
 			else {
 				t = t.EnsureExtension(Constants.FileExtensions.Xml);
-				using (var writer = System.Xml.XmlWriter.Create(t, DocInfoExporter.GetWriterSettings())) {
-					if (mudoc != null) {
-						idoc.PdfDocumentPath = t.GetRelativePath(mudoc.FilePath);
-					}
-					idoc.WriteContentTo(writer);
+				var ws = DocInfoExporter.GetWriterSettings();
+				try {
+					SaveBookmarkDocument(infoDoc, mupdf, t, ws);
+				}
+				catch (EncoderFallbackException) when (ws.Encoding != Encoding.UTF8) {
+					ws.Encoding = Encoding.UTF8;
+					SaveBookmarkDocument(infoDoc, mupdf, t, ws);
 				}
 				controller.View.DocumentPath = t;
 
@@ -76,13 +80,18 @@ namespace PDFPatcher.Functions.Editor
 			controller.Model.Undo.MarkClean();
 		}
 
+		static void SaveBookmarkDocument(Model.PdfInfoXmlDocument infoDoc, MuPDF.Document mupdf, FilePath t, XmlWriterSettings ws) {
+			using (var writer = XmlWriter.Create(t, ws)) {
+				if (mupdf != null) {
+					infoDoc.PdfDocumentPath = t.GetRelativePath(mupdf.FilePath);
+				}
+				infoDoc.WriteContentTo(writer);
+			}
+		}
+
 		static void SavePdf(Controller controller) {
 			var m = controller.Model;
 			var vv = controller.View.Viewer;
-			if (m.Document == null) {
-				FormHelper.ErrorBox("尚未加载书签文档。");
-				return;
-			}
 			using (var f = new SavePdfForm(m.GetPdfFilePath(), m.LastSavedPdfPath, m.Document)) {
 				f.DoWork = (s, args) => vv.CloseFile();
 				f.Finished = (success) => {
