@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using iTextSharp.text.pdf;
+using Microsoft.Win32;
 using CharSet = System.Runtime.InteropServices.CharSet;
 using DllImport = System.Runtime.InteropServices.DllImportAttribute;
-using Microsoft.Win32;
 
 namespace PDFPatcher.Common
 {
@@ -49,7 +49,6 @@ namespace PDFPatcher.Common
 					}
 					else if (fp.HasExtension(Constants.FileExtensions.Ttc)) {
 						var nl = BaseFont.EnumerateTTCNames(p).Length;
-						//Tracker.DebugMessage (p);
 						for (int i = 0; i < nl; i++) {
 							AddFontNames(d, p + "," + i.ToText(), includeFamilyName);
 						}
@@ -68,9 +67,8 @@ namespace PDFPatcher.Common
 
 		static void AddFontNames(Dictionary<string, string> fontNames, string fontPath, bool includeFamilyName) {
 			var nl = BaseFont.GetAllFontNames(fontPath, "Cp936", null);
-			//Tracker.DebugMessage (fontPath);
 			if (includeFamilyName) {
-				fontNames[nl[0] as string] = fontPath;
+				AddFontName(fontNames, nl[0] as string, fontPath);
 			}
 			var ffn = nl[2] as string[][];
 			string n = null;
@@ -90,13 +88,14 @@ namespace PDFPatcher.Common
 				}
 			}
 			if (n != null) {
-				//Tracker.DebugMessage (cn ?? nn ?? n);
-				fontNames[cn ?? nn ?? n] = fontPath;
+				AddFontName(fontNames, cn ?? nn ?? n, fontPath);
 			}
-			//foreach (string[] item in nl[1] as string[][]) {
-			//    fontNames[item] = fontPath;
-			//    Tracker.DebugMessage (item);
-			//}
+		}
+
+		static void AddFontName(Dictionary<string, string> fontNames, string name, string path) {
+			if (!String.IsNullOrEmpty(name)) {
+				fontNames[name] = path;
+			}
 		}
 
 		static class NativeMethods
