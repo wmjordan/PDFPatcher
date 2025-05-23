@@ -65,7 +65,7 @@ namespace PDFPatcher.Functions
 		}
 
 		string ShowHexBin() {
-			return ValueHelper.ToHexBinString(_Data, true, ' ', 0, _Data.Length);
+			return _Data.ToHexBinString(true, ' ', 0, _Data.Length);
 		}
 	}
 }

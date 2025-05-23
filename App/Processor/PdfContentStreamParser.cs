@@ -362,17 +362,11 @@ namespace PDFPatcher.Processor
 			}
 
 			public void Invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
-				var aw = (PdfNumber)operands[0];
-				var ac = (PdfNumber)operands[1];
-				var str = (PdfString)operands[2];
-				var twOperands = new List<PdfObject>(1);
-				twOperands.Insert(0, aw);
+				var twOperands = new List<PdfObject>(1) { (PdfNumber)operands[0] };
 				setTextWordSpacing.Invoke(processor, null, twOperands);
-				var tcOperands = new List<PdfObject>(1);
-				tcOperands.Insert(0, ac);
+				var tcOperands = new List<PdfObject>(1) { (PdfNumber)operands[1] };
 				setTextCharacterSpacing.Invoke(processor, null, tcOperands);
-				var tickOperands = new List<PdfObject>(1);
-				tickOperands.Insert(0, str);
+				var tickOperands = new List<PdfObject>(1) { (PdfString)operands[2] };
 				moveNextLineAndShowText.Invoke(processor, null, tickOperands);
 			}
 		}
