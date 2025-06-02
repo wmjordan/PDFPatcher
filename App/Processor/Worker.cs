@@ -350,6 +350,7 @@ namespace PDFPatcher.Processor
 			if (pdf == null) {
 				return false;
 			}
+			pdf.SeparateConjoinedRootAndInfo();
 			try {
 				DocInfoImporter import;
 				var xInfoDoc = infoDoc as PdfInfoXmlDocument;

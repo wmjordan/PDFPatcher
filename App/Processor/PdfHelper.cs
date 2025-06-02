@@ -90,6 +90,21 @@ namespace PDFPatcher.Processor
 			return r;
 		}
 
+		/// <summary>
+		/// 有些奇怪的 PDF 会让 Root 和 Info 共用一个对象，
+		/// 这将导致处理后的文档无法读取，应将其复制成副本，分别修改。
+		/// </summary>
+		internal static void SeparateConjoinedRootAndInfo(this PdfReader pdf) {
+			if (pdf.Catalog == pdf.Trailer.GetAsDict(PdfName.INFO)) {
+				var d = new PdfDictionary();
+				pdf.Trailer.Put(PdfName.INFO, d);
+				d.Merge(pdf.Catalog);
+				d.Put(PdfName.TYPE, PdfName.INFO);
+				d.Remove(PdfName.PAGES);
+				d.Remove(PdfName.OUTLINES);
+			}
+		}
+
 		internal static MuPDF.Document OpenMuDocument(string sourceFile) {
 			var d = MuPDF.Context.Instance.OpenDocument(sourceFile);
 			if (d.NeedsPassword) {
