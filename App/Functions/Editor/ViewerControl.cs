@@ -4,11 +4,13 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
+using CLR;
 using Cyotek.Windows.Forms;
 using Cyotek.Windows.Forms.Demo;
 using MuPDF;
 using MuPDF.Extensions;
 using PDFPatcher.Common;
+using PDFPatcher.Functions.Editor;
 using DrawingPoint = System.Drawing.Point;
 using DrawingRectangle = System.Drawing.Rectangle;
 
@@ -49,7 +51,7 @@ namespace PDFPatcher.Functions
 
 		ZoomMode _zoomMode;
 		float _zoomFactor;
-		Editor.ContentDirection _contentFlow;
+		ContentDirection _contentFlow;
 		/// <summary>
 		/// 页面的尺寸信息。
 		/// </summary>
@@ -715,7 +717,7 @@ namespace PDFPatcher.Functions
 				return ti;
 			}
 			foreach (var block in page.TextPage) {
-				if (block.IsImageBlock || block.Bound.Contains(point) == false) {
+				if (block.Type == BlockType.Image || block.Bound.Contains(point) == false) {
 					continue;
 				}
 				HashSet<TextFont> s = null;
@@ -778,7 +780,7 @@ namespace PDFPatcher.Functions
 				return null;
 			}
 			foreach (var block in page.TextPage) {
-				if (block.IsImageBlock || pr.Intersect(block.Bound).IsEmpty) {
+				if (block.Type == BlockType.Image || pr.Intersect(block.Bound).IsEmpty) {
 					continue;
 				}
 				var s = new HashSet<int>();
@@ -1177,16 +1179,10 @@ namespace PDFPatcher.Functions
 		void LoadPageBounds() {
 			float w = 0, h = 0;
 			for (int i = _mupdf.PageCount; i > 0; i--) {
-				using (var p = _mupdf.LoadPage(i - 1)) {
-					var b = p.Bound;
-					_pageBounds[i] = b;
-					if (b.Width > w) {
-						w = b.Width;
-					}
-					if (b.Height > h) {
-						h = b.Height;
-					}
-				}
+				var b = _mupdf.BoundPage(i - 1);
+				_pageBounds[i] = b;
+				b.Width.SetMax(ref w);
+				b.Height.SetMax(ref h);
 			}
 			_maxDimension = new SizeF(w, h);
 		}

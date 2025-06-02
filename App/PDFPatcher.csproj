@@ -50,6 +50,9 @@
     <ApplicationManifest>Common\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CLR">
+      <HintPath>Lib\CLR.dll</HintPath>
+    </Reference>
     <Reference Include="ColorPicker">
       <HintPath>Lib\ColorPicker.dll</HintPath>
     </Reference>

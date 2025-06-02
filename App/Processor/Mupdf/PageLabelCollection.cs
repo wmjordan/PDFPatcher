@@ -16,17 +16,21 @@ namespace MuPDF
 			var pl = new List<PageLabel>();
 			var l = document.Trailer.Locate(PdfNames.Root, PdfNames.PageLabels, PdfNames.Nums);
 			if (l.IsArray) {
-				var a = l as PdfArray;
-				for (int i = 0; i < a.Count; i++) {
-					var n = a[i].IntegerValue;
-					var d = a[++i].UnderlyingObject as PdfDictionary;
-					var sp = d[PdfNames.St].IntegerValue;
-					var p = d[PdfNames.P] as PdfString;
-					pl.Add(new PageLabel(n, sp, p?.Value, d[PdfNames.S] is PdfName s ? (PageLabelStyle)(byte)s.Name[0] : PageLabelStyle.Default));
-				}
+				ToPageLabels(pl, l);
 				pl.Sort();
 			}
 			_labels = pl;
+		}
+
+		static void ToPageLabels(List<PageLabel> pl, PdfObject l) {
+			var a = l as PdfArray;
+			for (int i = 0; i < a.Count; i++) {
+				var n = a[i].IntegerValue;
+				var d = a[++i].UnderlyingObject as PdfDictionary;
+				var sp = d[PdfNames.St].IntegerValue;
+				var p = d[PdfNames.P] as PdfString;
+				pl.Add(new PageLabel(n, sp, p?.Value, d[PdfNames.S] is PdfName s ? (PageLabelStyle)(byte)s.Name[0] : PageLabelStyle.None));
+			}
 		}
 
 		/// <summary>
@@ -119,13 +123,13 @@ namespace MuPDF
 	}
 
 	[DebuggerDisplay("From: {FromPageNumber}, Format: {Format (1)}")]
-	public readonly struct PageLabel : IComparable<PageLabel>
+	public readonly struct PageLabel : IComparable<PageLabel>, IEquatable<PageLabel>
 	{
 		public readonly string Prefix;
 		public readonly PageLabelStyle NumericStyle;
 		public readonly int StartAt;
 		public readonly int FromPageNumber;
-		public static PageLabel Empty = new PageLabel(-1, -1, null, PageLabelStyle.Default);
+		public static PageLabel Empty = new PageLabel(-1, -1, null, PageLabelStyle.None);
 		public bool IsEmpty => FromPageNumber < 0;
 
 		public PageLabel(int pageNumber, int startAt, string prefix, PageLabelStyle numericStyle) {
@@ -142,32 +146,45 @@ namespace MuPDF
 		public string Format(int pageNumber) {
 			var n = pageNumber - FromPageNumber + (StartAt < 1 ? 0 : StartAt - 1);
 			switch (NumericStyle) {
-				case PageLabelStyle.Default:
+				case PageLabelStyle.None:
 					return Prefix;
-				case PageLabelStyle.Digit:
+				case PageLabelStyle.Decimal:
 					return String.Concat(Prefix, n.ToText());
 				case PageLabelStyle.UpperRoman:
 					return String.Concat(Prefix, n.ToRoman());
 				case PageLabelStyle.LowerRoman:
 					return String.Concat(Prefix, n.ToRoman()).ToLowerInvariant();
-				case PageLabelStyle.UpperAlphabetic:
+				case PageLabelStyle.UpperAlpha:
 					return String.Concat(Prefix, n.ToAlphabet(true));
-				case PageLabelStyle.LowerAlphabetic:
+				case PageLabelStyle.LowerAlpha:
 					return String.Concat(Prefix, n.ToAlphabet(false));
 				default:
-					goto case PageLabelStyle.Digit;
+					goto case PageLabelStyle.Decimal;
 			}
 		}
-	}
 
-	public enum PageLabelStyle : byte
-	{
-		Default = (byte)'-',
-		DigitN = (byte)'D',
-		Digit = (byte)'d',
-		UpperRoman = (byte)'R',
-		LowerRoman = (byte)'r',
-		UpperAlphabetic = (byte)'A',
-		LowerAlphabetic = (byte)'a'
+		public bool Equals(PageLabel other) {
+			return FromPageNumber == other.FromPageNumber
+				&& StartAt == other.StartAt
+				&& Prefix == other.Prefix
+				&& NumericStyle == other.NumericStyle;
+		}
+
+		public override int GetHashCode() {
+			var hashCode = 1096239419;
+			hashCode = hashCode * -1521134295 + Prefix.GetHashCode();
+			hashCode = hashCode * -1521134295 + (int)NumericStyle;
+			hashCode = hashCode * -1521134295 + StartAt;
+			hashCode = hashCode * -1521134295 + FromPageNumber;
+			return hashCode;
+		}
+
+		public override bool Equals(object obj) {
+			return obj is PageLabel l && Equals(l);
+		}
+
+		public static bool operator ==(PageLabel x, PageLabel y) { return x.Equals(y); }
+
+		public static bool operator !=(PageLabel x, PageLabel y) { return !x.Equals(y); }
 	}
 }

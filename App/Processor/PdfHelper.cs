@@ -106,7 +106,7 @@ namespace PDFPatcher.Processor
 		}
 
 		internal static MuPDF.Document OpenMuDocument(string sourceFile) {
-			var d = MuPDF.Context.Instance.OpenDocument(sourceFile);
+			var d = MuPDF.Document.Open(sourceFile);
 			if (d.NeedsPassword) {
 				var authenticated = false;
 				if (__PdfPasswordCache.TryGetValue(sourceFile, out byte[] password)) {

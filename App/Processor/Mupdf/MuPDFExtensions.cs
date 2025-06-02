@@ -68,7 +68,7 @@ namespace MuPDF.Extensions
 			var ctm = CalculateMatrix(page, width, height, options);
 			var bbox = width > 0 && height > 0 ? new BBox(0, 0, width, height) : b.Transform(ctm).Round();
 
-			var pix = Context.Instance.CreatePixmap(options.ColorSpace == ColorspaceKind.None ? ColorspaceKind.Rgb : options.ColorSpace, bbox);
+			var pix = Pixmap.Create(options.ColorSpace == ColorspaceKind.None ? ColorspaceKind.Rgb : options.ColorSpace, bbox);
 			if (pix == null) {
 				throw new MuException($"无法渲染页面：{(page.PageNumber + 1).ToText()}");
 			}
