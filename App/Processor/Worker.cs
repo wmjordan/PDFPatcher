@@ -624,15 +624,15 @@ namespace PDFPatcher.Processor
 		internal static void ExtractPages(ExtractPageOptions options, string sourceFile, string targetFile) {
 			Tracker.TraceMessage(Tracker.Category.InputFile, sourceFile);
 			Tracker.TraceMessage(Tracker.Category.OutputFile, targetFile);
-			var r = OpenPdf(sourceFile, AppContext.LoadPartialPdfFile, false);
-			if (r == null) {
+			var pdf = OpenPdf(sourceFile, AppContext.LoadPartialPdfFile, false);
+			if (pdf == null) {
 				return;
 			}
 			try {
-				if (r.ConfirmUnethicalMode() == false) {
+				if (pdf.ConfirmUnethicalMode() == false) {
 					return;
 				}
-				PdfPageExtractor.ExtractPages(options, sourceFile, targetFile, r);
+				PdfPageExtractor.ExtractPages(options, sourceFile, targetFile, pdf);
 			}
 			catch (OperationCanceledException) {
 				Tracker.TraceMessage(Tracker.Category.ImportantMessage, OperationCanceled);
@@ -642,9 +642,9 @@ namespace PDFPatcher.Processor
 				AppContext.MainForm.ErrorBox("导出页面内容时出错", ex);
 			}
 			finally {
-				if (r != null) {
+				if (pdf != null) {
 					try {
-						r.Close();
+						pdf.Close();
 					}
 					catch (Exception ex) {
 						// ignore exception

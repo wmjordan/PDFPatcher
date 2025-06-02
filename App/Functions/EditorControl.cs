@@ -62,7 +62,6 @@ namespace PDFPatcher.Functions
 			_MainPanel.FixedPanel = FixedPanel.Panel1;
 			//_MainToolbar.ToggleEnabled (false, _editButtonNames);
 
-			_controller.PrepareBookmarkDocument();
 
 			CreateChangeZoomRateItems();
 

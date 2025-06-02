@@ -126,7 +126,7 @@ namespace PDFPatcher.Processor
 				int s = l[i].Key, e = i < l.Count - 1 ? l[i + 1].Key - 1 : n;
 				pdf = PdfHelper.OpenPdfFile(sourceFile, AppContext.LoadPartialPdfFile, false);
 				var tf = FileHelper.CombinePath(dn, String.Concat(
-					fn, Path.DirectorySeparatorChar,
+					fn, Path.DirectorySeparatorChar.ToString(),
 					options.NumberFileNames ? (i + 1).ToText() + " - " : String.Empty,
 					l[i].Value,
 					Ext.Pdf));

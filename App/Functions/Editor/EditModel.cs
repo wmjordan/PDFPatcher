@@ -11,6 +11,7 @@ namespace PDFPatcher.Functions.Editor
 		public EditModel() {
 			Undo = new UndoManager();
 			TitleStyles = new List<AutoBookmarkSettings>();
+			Document = new PdfInfoXmlDocument();
 		}
 
 		internal bool IsLoadingDocument { get; set; }

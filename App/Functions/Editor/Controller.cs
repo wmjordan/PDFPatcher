@@ -91,13 +91,6 @@ namespace PDFPatcher.Functions.Editor
 			}
 		}
 
-		internal XmlElement PrepareBookmarkDocument() {
-			if (Model.Document == null) {
-				Model.Document = new PdfInfoXmlDocument();
-			}
-			return Model.Document.BookmarkRoot;
-		}
-
 		internal void ClearBookmarks() {
 			Model.Document.BookmarkRoot.RemoveAll();
 			View.Bookmark.ClearObjects();
@@ -275,7 +268,6 @@ namespace PDFPatcher.Functions.Editor
 				ClearBookmarks();
 				InitBookmarkEditor();
 				Model.Document = new PdfInfoXmlDocument();
-				PrepareBookmarkDocument();
 				return;
 			}
 			Model.Document = document;
@@ -295,9 +287,6 @@ namespace PDFPatcher.Functions.Editor
 		}
 
 		void ImportBookmarks(BookmarkEditorView editView, XmlNodeList bookmarks) {
-			if (Model.Document == null) {
-				Model.Document = new PdfInfoXmlDocument();
-			}
 			var d = Model.Document;
 			var g = new UndoActionGroup();
 			var s = editView.GetFirstSelectedModel<BookmarkElement>();
