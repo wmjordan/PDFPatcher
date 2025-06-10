@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
+using CLR;
 
 namespace PDFPatcher.Common
 {
@@ -23,7 +24,7 @@ namespace PDFPatcher.Common
 		}
 		[DebuggerStepThrough]
 		public static T SubstituteDefault<T>(this T value, T otherValue) {
-			return EqualityComparer<T>.Default.Equals(value, default(T)) ? otherValue : value;
+			return EqualityComparer<T>.Default.Equals(value, default) ? otherValue : value;
 		}
 		public static TDisposable TryDispose<TDisposable>(this TDisposable disposable)
 			where TDisposable : IDisposable {
@@ -43,27 +44,24 @@ namespace PDFPatcher.Common
 		}
 		[DebuggerStepThrough]
 		public static IComparer<TItem> GetReverseComparer<TItem>()
-		where TItem : IComparable<TItem> {
+		where TItem : struct, IComparable<TItem> {
 			return new ReverseComparer<TItem>();
 		}
-		public static T LimitInRange<T>(this T value, T minValue, T maxValue)
-			where T : IComparable<T> {
-			return
-				value.CompareTo(minValue) < 0 ? minValue
-				: value.CompareTo(maxValue) > 0 ? maxValue
-				: value;
-		}
 		public static TValue GetOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key) {
-			TValue r;
-			return dictionary == null ? default : dictionary.TryGetValue(key, out r) ? r : r;
+			if (dictionary == null) {
+				return default;
+			}
+			dictionary.TryGetValue(key, out TValue r);
+			return r;
 		}
 		public static TValue GetOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue defaultValue) {
-			TValue r;
-			return dictionary != null && dictionary.TryGetValue(key, out r) ? r : defaultValue;
+			return dictionary?.TryGetValue(key, out TValue r) == true
+				? r
+				: defaultValue;
 		}
 
 		public static TMapped MapValue<TValue, TMapped>(TValue input, TValue[] fromValues, TMapped[] toValues) {
-			return MapValue(input, fromValues, toValues, default(TMapped));
+			return MapValue(input, fromValues, toValues, default);
 		}
 		public static TMapped MapValue<TValue, TMapped>(TValue input, TValue[] fromValues, TMapped[] toValues, TMapped defaultValue) {
 			if (fromValues == null) {
@@ -142,12 +140,16 @@ namespace PDFPatcher.Common
 
 		[DebuggerStepThrough]
 		public static string ToText(this float value) {
-			return Math.Abs(value) < 0.00001 ? "0" : value.ToString(NumberFormatInfo.InvariantInfo);
+			return Math.Abs(value) < 0.00001
+				? "0"
+				: value.ToString(NumberFormatInfo.InvariantInfo);
 		}
 
 		[DebuggerStepThrough]
 		public static string ToText(this double value) {
-			return Math.Abs(value) < 0.000000000001 ? "0" : value.ToString(NumberFormatInfo.InvariantInfo);
+			return Math.Abs(value) < 0.000000000001
+				? "0"
+				: value.ToString(NumberFormatInfo.InvariantInfo);
 		}
 
 		[DebuggerStepThrough]
@@ -191,35 +193,36 @@ namespace PDFPatcher.Common
 				switch (c) {
 					case 'T':
 					case 't':
-						if (i + 3 < l && ((c = value[++i]) == 'r' || c == 'R') && ((c = value[++i]) == 'u' || c == 'U') && ((c = value[++i]) == 'e' || c == 'E')) {
+						if (i + 3 < l && value[++i].CeqAny('r', 'R') && value[++i].CeqAny('u', 'U') && value[++i].CeqAny('e', 'E')) {
 							goto EndsWithWhitespaceTrue;
 						}
 						return Invalid;
 					case 'F':
 					case 'f':
-						if (i + 4 < l && ((c = value[++i]) == 'a' || c == 'A') && ((c = value[++i]) == 'l' || c == 'L') && ((c = value[++i]) == 's' || c == 'S') && ((c = value[++i]) == 'e' || c == 'E')) {
+						if (i + 4 < l && value[++i].CeqAny('a', 'A') && value[++i].CeqAny('l', 'L') && value[++i].CeqAny('s', 'S') && value[++i].CeqAny('e', 'E')) {
 							goto EndsWithWhitespaceFalse;
 						}
 						return Invalid;
 					case 'Y':
 					case 'y':
-						if (i + 2 < l && ((c = value[++i]) == 'e' || c == 'E') && ((c = value[++i]) == 's' || c == 'S')) {
+						if (i + 2 < l && value[++i].CeqAny('e', 'E') && value[++i].CeqAny('s', 'S')) {
 							goto EndsWithWhitespaceTrue;
 						}
 						return Invalid;
 					case 'N':
 					case 'n':
-						if (i + 1 < l && ((c = value[++i]) == 'o' || c == 'O')) {
+						if (i + 1 < l && value[++i].CeqAny('o', 'O')) {
 							goto EndsWithWhitespaceFalse;
 						}
 						return Invalid;
 					case 'O':
 					case 'o':
-						if (i + 2 < l && ((c = value[++i]) == 'f' || c == 'F') && ((c = value[++i]) == 'f' || c == 'F')) {
-							goto EndsWithWhitespaceFalse;
-						}
-						if (i + 1 < l && ((c = value[++i]) == 'n' || c == 'N' || c == 'k' || c == 'K')) {
+						if (i + 1 < l && value[i + 1].CeqAny('n', 'N', 'k', 'K')) {
+							++i;
 							goto EndsWithWhitespaceTrue;
+						}
+						if (i + 2 < l && value[++i].CeqAny('f', 'F') && value[++i].CeqAny('f', 'F')) {
+							goto EndsWithWhitespaceFalse;
 						}
 						return Invalid;
 					case '是':
@@ -243,25 +246,23 @@ namespace PDFPatcher.Common
 						if (Char.IsWhiteSpace(c)) {
 							continue;
 						}
-						if (c >= '0' && c <= '9' || c == '-' || c == '+' || c == '.') {
-							bool notZero = c > '0' && c <= '9';
+						if (c.IsBetween('0', '9') || c.CeqAny('-', '+', '.')) {
+							bool notZero = c.CeqAny('1', '9');
 							var hasDot = false;
 							while (++i < l) {
 								c = value[i];
-								if (Char.IsNumber(c) == false && Char.IsWhiteSpace(c) == false) {
+								if (!Char.IsNumber(c) && !Char.IsWhiteSpace(c)) {
 									if (c == '.') {
-										if (hasDot == false) {
+										if (!hasDot) {
 											hasDot = true;
 											continue;
 										}
-										else {
-											return Invalid;
-										}
+										return Invalid;
 									}
 									return Invalid;
 								}
-								if (notZero == false) {
-									notZero = c > '0' && c <= '9';
+								if (!notZero) {
+									notZero = c.CeqAny('1', '9');
 								}
 							}
 							return notZero ? True : False;
@@ -299,53 +300,45 @@ namespace PDFPatcher.Common
 
 		[DebuggerStepThrough]
 		public static int ToInt32(this string value) {
-			int i;
-			value.TryParse(out i);
+			value.TryParse(out int i);
 			return i;
 		}
 		[DebuggerStepThrough]
 		public static int ToInt32(this string value, int defaultValue) {
-			int i;
-			return value.TryParse(out i) ? i : defaultValue;
+			return value.TryParse(out int i) ? i : defaultValue;
 		}
 
 		[DebuggerStepThrough]
 		public static long ToInt64(this string value) {
-			long i;
-			value.TryParse(out i);
+			value.TryParse(out long i);
 			return i;
 		}
 
 		[DebuggerStepThrough]
 		public static long ToInt64(this string value, long defaultValue) {
-			long i;
-			return value.TryParse(out i) ? i : defaultValue;
+			return value.TryParse(out long i) ? i : defaultValue;
 		}
 
 		[DebuggerStepThrough]
 		public static float ToSingle(this string value) {
-			float i;
-			value.TryParse(out i);
+			value.TryParse(out float i);
 			return i;
 		}
 
 		[DebuggerStepThrough]
 		public static float ToSingle(this string value, float defaultValue) {
-			float i;
-			return value.TryParse(out i) ? i : defaultValue;
+			return value.TryParse(out float i) ? i : defaultValue;
 		}
 
 		[DebuggerStepThrough]
 		public static double ToDouble(this string value) {
-			double i;
-			value.TryParse(out i);
+			value.TryParse(out double i);
 			return i;
 		}
 
 		[DebuggerStepThrough]
 		public static double ToDouble(this string value, double defaultValue) {
-			double i;
-			return value.TryParse(out i) ? i : defaultValue;
+			return value.TryParse(out double i) ? i : defaultValue;
 		}
 
 		[DebuggerStepThrough]
@@ -393,8 +386,32 @@ namespace PDFPatcher.Common
 			return decimal.TryParse(value, NumberStyles.Float, NumberFormatInfo.InvariantInfo, out result);
 		}
 
+		[DebuggerStepThrough]
+		public static bool IsUnicodeSpaceEquivalent(this char c) {
+			switch ((int)c) {
+				case 0xa0:  /* NO-BREAK-SPACE */
+				case 0x1680:    /* OGHAM SPACE MARK */
+				case 0x2000:    /* EN QUAD */
+				case 0x2001:    /* EM QUAD */
+				case 0x2002:    /* EN SPACE */
+				case 0x2003:    /* EM SPACE */
+				case 0x2004:    /* THREE-PER-EM-SPACE */
+				case 0x2005:    /* FOUR-PER-EM-SPACE */
+				case 0x2006:    /* SIX-PER-EM-SPACE */
+				case 0x2007:    /* FIGURE-SPACE */
+				case 0x2008:    /* PUNCTUATION-SPACE */
+				case 0x2009:    /* THIN-SPACE */
+				case 0x200A:    /* HAIR-SPACE */
+				case 0x202F:    /* NARROW-NO-BREAK-SPACE */
+				case 0x205F:    /* MEDIUM-MATHEMATICAL-SPACE */
+				case 0x3000:    /* IDEOGRAPHIC-SPACE */
+					return true;
+			}
+			return false;
+		}
+
 		public static string ToRoman(this int value) {
-			if (value > 49999 || value < 1) {
+			if (value.IsOutside(1, 49999)) {
 				return string.Empty;
 			}
 			var sb = new StringBuilder();
@@ -526,15 +543,15 @@ namespace PDFPatcher.Common
 
 		static class Roman
 		{
-			internal static readonly int[] Values = { 1, 4, 5, 9, 10, 40, 50, 90, 100, 400, 500, 900, 1000, 4000, 5000, 9000, 10000, 40000 };
-			internal static readonly string[] Chars = { "I", "IV", "V", "IX", "X", "XL", "L", "XC", "C", "CD", "D", "CM", "M", "Mv", "v", "Mx", "x", "xl" };
+			internal static readonly int[] Values = [1, 4, 5, 9, 10, 40, 50, 90, 100, 400, 500, 900, 1000, 4000, 5000, 9000, 10000, 40000];
+			internal static readonly string[] Chars = ["I", "IV", "V", "IX", "X", "XL", "L", "XC", "C", "CD", "D", "CM", "M", "Mv", "v", "Mx", "x", "xl"];
 		}
 
 		sealed class ReverseComparer<T> : IComparer<T>
-			where T : IComparable<T>
+			where T : struct, IComparable<T>
 		{
 			int IComparer<T>.Compare(T x, T y) {
-				return y.CompareTo(x);
+				return CLR.Op.Cast<T, int>(CLR.Op.Sub(y, x));
 			}
 		}
 	}

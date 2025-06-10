@@ -8,6 +8,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using BrightIdeasSoftware;
+using CLR;
 using MuPDF.Extensions;
 using PDFPatcher.Common;
 using PDFPatcher.Model;
@@ -145,7 +146,7 @@ namespace PDFPatcher.Functions.Editor
 		}
 
 		internal void LoadDocument(string path, bool importMode) {
-			if (File.Exists(path) == false) {
+			if (!File.Exists(path)) {
 				FormHelper.ErrorBox("找不到文件：" + path);
 				return;
 			}
@@ -160,7 +161,7 @@ namespace PDFPatcher.Functions.Editor
 					goto case "<load>";
 				case Constants.FileExtensions.Pdf:
 					View.MainPanel.Enabled = View.BookmarkToolbar.Enabled = false;
-					if (importMode == false) {
+					if (!importMode) {
 						View.DocumentPath = path;
 					}
 					_loader = new BackgroundWorker();
@@ -190,30 +191,19 @@ namespace PDFPatcher.Functions.Editor
 			var path = args[0] as string;
 			bool importMode = (bool)args[1];
 			Tracker.DebugMessage("open file");
-			using (var reader = PdfHelper.OpenPdfFile(path, AppContext.LoadPartialPdfFile, false)) {
-				try {
-					Tracker.DebugMessage("consolidate");
-					try {
-						reader.ConsolidateNamedDestinations();
-					}
-					catch (Exception ex) {
-						Tracker.TraceMessage(ex);
-					}
-					Tracker.DebugMessage("get bookmark");
+			try {
+				Tracker.DebugMessage("get bookmark");
+				using (var d = MuPDF.Document.Open(path)) {
 					e.Result = new object[] {
-					OutlineManager.GetBookmark (reader, new UnitConverter () { Unit = Constants.Units.Point }),
+						OutlineManager.GetBookmark(d, new UnitConverter { Unit = Constants.Units.Point }),
 						importMode,
 						path
 					};
-					Tracker.DebugMessage("finished loading");
 				}
-				catch (iTextSharp.text.exceptions.BadPasswordException) {
-					FormHelper.ErrorBox(Messages.PasswordInvalid);
-					Tracker.TraceMessage(Tracker.Category.Error, Messages.PasswordInvalid);
-				}
-				catch (Exception ex) {
-					AppContext.MainForm.ErrorBox("在打开 PDF 文件时遇到错误", ex);
-				}
+				Tracker.DebugMessage("finished loading bookmark");
+			}
+			catch (Exception ex) {
+				AppContext.MainForm.ErrorBox("在打开 PDF 文件时遇到错误", ex);
 			}
 		}
 
@@ -231,7 +221,7 @@ namespace PDFPatcher.Functions.Editor
 			}
 			LoadPdfDocument();
 			var importMode = (bool)r[1];
-			if (importMode == false) {
+			if (!importMode) {
 				View.DocumentPath = r[2] as string;
 			}
 			if (r[0] is XmlElement b) {
@@ -240,7 +230,7 @@ namespace PDFPatcher.Functions.Editor
 				(root.AppendChild(infoDoc.CreateElement(Constants.Units.ThisName)) as XmlElement).SetAttribute(Constants.Units.Unit, Constants.Units.Point);
 				root.AppendChild(infoDoc.ImportNode(b, true));
 				LoadInfoDocument(infoDoc, importMode);
-				if (importMode == false) {
+				if (!importMode) {
 					infoDoc.PdfDocumentPath = Model.DocumentPath;
 				}
 			}
@@ -251,6 +241,28 @@ namespace PDFPatcher.Functions.Editor
 				}
 				ClearBookmarks();
 				InitBookmarkEditor();
+			}
+		}
+
+		void DecryptDocument(string fileName) {
+			try {
+				FilePath decryptedFilePath = fileName;
+				FilePath p = fileName + ".tmp";
+				var t = new FilePath(View.DocumentPath).ToFileInfo().CreationTime;
+				using (var mupdf = PdfHelper.OpenMuDocument(View.DocumentPath)) {
+					mupdf.Save(p, new MuPDF.WriterOptions { Clean = true, Encrypt = MuPDF.EncryptionMode.Remove });
+				}
+				if (decryptedFilePath.ExistsFile) {
+					File.Delete(decryptedFilePath);
+				}
+				File.Move(p, decryptedFilePath);
+				if (decryptedFilePath.Equals(View.DocumentPath)) {
+					decryptedFilePath.ToFileInfo().CreationTime = t;
+				}
+				FormHelper.InfoBox("处理完毕，请尝试重新打开文档。");
+			}
+			catch (Exception ex) {
+				AppContext.MainForm.ErrorBox("解密文档时出错", ex);
 			}
 		}
 
@@ -320,7 +332,7 @@ namespace PDFPatcher.Functions.Editor
 			var lines = ps ? v.FindTextLines(v.GetSelectionPageRegion()) : v.FindTextLines(pp).Lines;
 			string t = null;
 			EditModel.TextSource ts;
-			if (Model.InsertBookmarkWithOcrOnly == false && lines.HasContent()) {
+			if (!Model.InsertBookmarkWithOcrOnly && lines.HasContent()) {
 				var sb = StringBuilderCache.Acquire();
 				var r = lines[0].Bound;
 				foreach (var line in lines) {
@@ -505,7 +517,7 @@ namespace PDFPatcher.Functions.Editor
 		}
 
 		internal void Undo(int step) {
-			if (Model.Undo.CanUndo == false) {
+			if (!Model.Undo.CanUndo) {
 				return;
 			}
 			Model.LockDownViewer = true;
@@ -517,7 +529,7 @@ namespace PDFPatcher.Functions.Editor
 				var a = Model.Undo.Undo();
 				foreach (var item in a) {
 					e = item as XmlElement;
-					if (r == false && e.Name == Constants.DocumentBookmark) {
+					if (!r && e.Name == Constants.DocumentBookmark) {
 						r = true;
 					}
 					else {
@@ -595,7 +607,6 @@ namespace PDFPatcher.Functions.Editor
 			b.SelectObject(dest);
 		}
 
-
 		internal void ConfigAutoBookmarkTextStyles(int level, Editor.TextInfo textInfo) {
 			if (textInfo.Spans == null) {
 				return;
@@ -614,7 +625,7 @@ namespace PDFPatcher.Functions.Editor
 						goto NEXT;
 					}
 				}
-				if (m == false) {
+				if (!m) {
 					Model.TitleStyles.Add(new EditModel.AutoBookmarkSettings(level, fn, fs));
 				}
 			NEXT:;
@@ -624,7 +635,7 @@ namespace PDFPatcher.Functions.Editor
 
 		internal void ShowAutoBookmarkForm() {
 			var f = View.AutoBookmark;
-			if (f.Visible == false) {
+			if (!f.Visible) {
 				f.Location = Cursor.Position.Transpose(-16, -16);
 				f.Show(View.Viewer);
 			}
@@ -653,7 +664,7 @@ namespace PDFPatcher.Functions.Editor
 			foreach (XmlElement item in bm.SubBookmarks) {
 				ug.Add(new AddElementAction(item));
 			}
-			if (keepExisting == false) {
+			if (!keepExisting) {
 				bm.RemoveAll();
 			}
 			var spans = new List<MuPDF.TextSpan>(3);
@@ -688,7 +699,7 @@ namespace PDFPatcher.Functions.Editor
 									if (bl < style.Level) {
 										if (matcher != null) {
 											jointBlockText ??= GetLineText(line, block, out hasJointText);
-											if ((matchLine = matcher(jointBlockText)) == false) {
+											if ((!(matchLine = matcher(jointBlockText)))) {
 												continue;
 											}
 										}
@@ -703,7 +714,7 @@ namespace PDFPatcher.Functions.Editor
 										var lt = b.Y0 - b.Height * 2 + dh;
 										var lb = b.Y1;
 										if (cb.Page == p.PageNumber + 1
-											&& (bb >= lt && bb <= lb || bt >= lt && bt <= lb || bt < lt && bb > lb)
+											&& (bb.IsBetween(lt, lb) || bt.IsBetween(lt, lb) || bt < lt && bb > lb)
 											&& (mergeAdjacentTitle || spans[spans.Count - 1].Bound.IsHorizontalNeighbor(b))) {
 											if (/*m == false &&*/ t.Length > 0) {
 												// 保留英文和数字文本之间的空格
@@ -722,7 +733,7 @@ namespace PDFPatcher.Functions.Editor
 										}
 										if (matcher != null) {
 											jointBlockText ??= GetLineText(line, block, out hasJointText);
-											if ((matchLine = matcher(jointBlockText)) == false) {
+											if ((!(matchLine = matcher(jointBlockText)))) {
 												continue;
 											}
 										}
@@ -735,7 +746,7 @@ namespace PDFPatcher.Functions.Editor
 										}
 										if (matcher != null) {
 											jointBlockText ??= GetLineText(line, block, out hasJointText);
-											if ((matchLine = matcher(jointBlockText)) == false) {
+											if ((!(matchLine = matcher(jointBlockText)))) {
 												continue;
 											}
 										}

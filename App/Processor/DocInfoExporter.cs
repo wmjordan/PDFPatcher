@@ -9,7 +9,7 @@ using PDFPatcher.Model;
 
 namespace PDFPatcher.Processor
 {
-	internal sealed class DocInfoExporter(PdfReader reader, ExporterOptions options)
+	internal sealed partial class DocInfoExporter(PdfReader reader, ExporterOptions options)
 	{
 		const string SimpleBookmarkPageNumLeader = " ………… ";
 		const int OpenDocWorkload = 10;
@@ -152,7 +152,7 @@ namespace PDFPatcher.Processor
 					Tracker.TraceMessage("导出页面连接。");
 					ExtractPageLinks(w);
 				}
-				if (_options.ConsolidateNamedDestinations == false) {
+				if (!_options.ConsolidateNamedDestinations) {
 					Tracker.TraceMessage("导出命名目标。");
 					ExportNamedDestinations(w);
 				}
@@ -271,10 +271,10 @@ namespace PDFPatcher.Processor
 					if (item.StartPage != 0) {
 						w.WriteAttributeString(Constants.PageLabelsAttributes.StartPage, item.StartPage.ToText());
 					}
-					if (String.IsNullOrEmpty(item.Prefix) == false) {
+					if (!String.IsNullOrEmpty(item.Prefix)) {
 						w.WriteAttributeString(Constants.PageLabelsAttributes.Prefix, item.Prefix);
 					}
-					if (String.IsNullOrEmpty(item.Style) == false) {
+					if (!String.IsNullOrEmpty(item.Style)) {
 						w.WriteAttributeString(Constants.PageLabelsAttributes.Style,
 							ValueHelper.MapValue(item.Style[0],
 								Constants.PageLabelStyles.PdfValues,
@@ -292,7 +292,7 @@ namespace PDFPatcher.Processor
 			var a = new List<PageLabel>();
 			var ls = labels.GetAsArray(PdfName.NUMS);
 			if (ls == null) {
-				return new List<PageLabel>();
+				return [];
 			}
 			for (int i = 0; i < ls.Size; i++) {
 				var l = new PageLabel {
@@ -387,7 +387,7 @@ namespace PDFPatcher.Processor
 		}
 
 		internal void ExportBookmarks(XmlElement bookmarks, TextWriter w, int level, bool isOpen) {
-			if (bookmarks == null || bookmarks.HasChildNodes == false) {
+			if (bookmarks == null || !bookmarks.HasChildNodes) {
 				return;
 			}
 			var childBookmarks = bookmarks.SelectNodes(Constants.Bookmark);
@@ -405,7 +405,7 @@ namespace PDFPatcher.Processor
 					OutlineManager.WriteSimpleBookmarkInstruction(w, "打开书签", open ? "是" : "否");
 					isOpen = open;
 				}
-				if (String.IsNullOrEmpty(title) == false) {
+				if (!String.IsNullOrEmpty(title)) {
 					for (int i = 0; i < level; i++) {
 						w.Write('\t');
 					}

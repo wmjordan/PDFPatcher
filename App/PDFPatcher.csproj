@@ -122,9 +122,12 @@
     <Compile Include="Model\ResourceReference.cs" />
     <Compile Include="Options\ReaderOptions.cs" />
     <Compile Include="Processor\ContentProcessors\CleanContentStreamProcessor.cs" />
+    <Compile Include="Processor\DocInfoExporter.MuPDF.cs" />
     <Compile Include="Processor\Imaging\FreeImageHelper.cs" />
     <Compile Include="Processor\MuPdf\MuPDFExtensions.cs" />
+    <Compile Include="Processor\OutlineManager.MuPDF.cs" />
     <Compile Include="Processor\OutlineManager.iText.cs" />
+    <Compile Include="Processor\PdfActionExporter.MuPDF.cs" />
     <Compile Include="ShellHelper.cs" />
     <Compile Include="Common\CommandRegistry.cs" />
     <Compile Include="Common\FilePath.cs" />

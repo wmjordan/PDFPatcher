@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Text;
+using CLR;
 using PDFPatcher.Common;
 
 namespace MuPDF.Extensions
@@ -42,6 +44,37 @@ namespace MuPDF.Extensions
 		}
 		#endregion
 
+		/// <summary>
+		/// 使用 <see cref="Encoding"/> 强制解码 <see cref="PdfString"/>。
+		/// </summary>
+		/// <param name="text">要解码的字符串。</param>
+		/// <param name="encoding">使用的文本编码。指定 <see langword="null"/> 则自动选择文本编码。</param>
+		public static string Decode(this PdfString text, Encoding encoding) {
+			if (encoding is null) {
+				return text.Value;
+			}
+			var bytes = text.GetBytes();
+			int offset = 0;
+			int length = bytes.Length;
+			ushort h0;
+			if (length >= 2) {
+				if ((h0 = Op.Cast<byte, ushort>(ref bytes[0])).CeqAny(0xFEFF, 0xFFFE)) {
+					offset = 2;
+				}
+				else if (length >= 3) {
+					// UTF-8 BOM: EFBBBF
+					if (h0 == 0xBBEF && bytes[2] == 0xBF) {
+						offset = 3;
+					}
+					// BOM: 0000FEFF
+					else if (length >= 4 && Op.Cast<byte, uint>(ref bytes[0]) == 0xFFFE0000) {
+						offset += 4;
+					}
+				}
+			}
+			return encoding.GetString(bytes, offset, length - offset);
+		}
+
 		public static string GetText(this TextLine textLine) {
 			var sb = StringBuilderCache.Acquire(10);
 			foreach (var ch in textLine) {
@@ -82,7 +115,7 @@ namespace MuPDF.Extensions
 						return null;
 					}
 					page.RunContents(dev, ctm, cookie);
-					if (options.HideAnnotations == false) {
+					if (!options.HideAnnotations) {
 						page.RunAnnotations(dev, ctm, cookie);
 						page.RunWidgets(dev, ctm, cookie);
 					}

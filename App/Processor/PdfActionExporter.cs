@@ -7,7 +7,7 @@ using PDFPatcher.Model;
 
 namespace PDFPatcher.Processor
 {
-	internal sealed class PdfActionExporter
+	internal sealed partial class PdfActionExporter
 	{
 		readonly Common.UnitConverter _unitConverter;
 
@@ -93,14 +93,14 @@ namespace PDFPatcher.Processor
 			string name;
 			if (dest.Type == PdfObject.STRING) {
 				name = StringHelper.ReplaceControlAndBomCharacters((dest as PdfString).ToUnicodeString());
-				if (names.ContainsKey(name) == false) {
+				if (!names.ContainsKey(name)) {
 					return;
 				}
 				target.WriteAttributeString(Constants.DestinationAttributes.Named, name);
 			}
 			else if (dest.Type == PdfObject.NAME) {
 				name = PdfName.DecodeName(dest.ToString());
-				if (names.ContainsKey(name) == false) {
+				if (!names.ContainsKey(name)) {
 					return;
 				}
 				target.WriteAttributeString(Constants.DestinationAttributes.Named, name);
@@ -210,6 +210,5 @@ namespace PDFPatcher.Processor
 			}
 			return indirect.Number;
 		}
-
 	}
 }
