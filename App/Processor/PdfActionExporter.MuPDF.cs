@@ -26,12 +26,12 @@ namespace PDFPatcher.Processor
 				return;
 			}
 			if (dest.IsDictionary) {
-				dest = ((PdfDictionary)dest)[PdfNames.D];
+				dest = ((PdfDictionary)dest).GetObject(PdfNames.D);
 			}
 			// dest 可能是 Array，转到下面处理
 		ARRAY:
 			if (dest.IsArray) {
-				var a = dest as PdfArray;
+				var a = (PdfArray)dest;
 				if (a.Count > 0) {
 					var p = a[0];
 					int pn = 0;
@@ -141,7 +141,7 @@ namespace PDFPatcher.Processor
 			var actionType = (action[PdfNames.S] as PdfName)?.PredefinedValue ?? PdfNames.GoTo;
 			switch (actionType) {
 				case PdfNames.GoTo:
-					dest = action[PdfNames.D];
+					dest = action.GetObject(PdfNames.D);
 					if (!dest.IsNull) {
 						ExportGotoAction(pdf, dest, names, target);
 					}

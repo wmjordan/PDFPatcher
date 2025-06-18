@@ -63,7 +63,7 @@ namespace PDFPatcher.Processor
 					|| v.ForceInternalLink
 					|| (patcherOptions.UnifiedPageSettings.ScaleContent
 						&& patcherOptions.UnifiedPageSettings.PaperSize.SpecialSize != SpecialPaperSize.AsPageSize))
-					&& patcherOptions.RemoveAnnotations == false,
+					&& !patcherOptions.RemoveAnnotations,
 				ExtractPageSettings = false,
 				ExportViewerPreferences = true
 			};
@@ -118,7 +118,7 @@ namespace PDFPatcher.Processor
 		private static int GetPageShift(XmlElement element, int baseShift) {
 			int shift = baseShift;
 			var s = element.GetAttribute(Constants.DestinationAttributes.FirstPageNumber);
-			if (string.IsNullOrEmpty(s) == false) {
+			if (!string.IsNullOrEmpty(s)) {
 				if (s.TryParse(out shift)) {
 					shift--;
 				}
@@ -151,7 +151,7 @@ namespace PDFPatcher.Processor
 		}
 
 		internal GeneralInfo ImportDocumentInformation() {
-			if (_options.ImportDocProperties == false || _infoDoc == null) {
+			if (!_options.ImportDocProperties || _infoDoc == null) {
 				return null;
 			}
 			Tracker.TraceMessage("导入文档元数据信息。");
@@ -182,12 +182,12 @@ namespace PDFPatcher.Processor
 			UpdateInfoValue(d, PdfName.CREATOR, info.Creator, pdfFileName);
 			UpdateInfoValue(d, PdfName.PRODUCER, info.Producer, pdfFileName);
 
-			if (info.RewriteXmp == false) {
+			if (!info.RewriteXmp) {
 				return;
 			}
 			var m = pdf.Catalog.Locate<PRStream>(PdfName.METADATA);
 			if (m == null) {
-				pdf.Catalog.Put(PdfName.METADATA, new PRStream(pdf, new byte[0]));
+				pdf.Catalog.Put(PdfName.METADATA, new PRStream(pdf, []));
 			}
 			try {
 				var xw = new XmpWriter(new MemoryStream(), d);
@@ -227,19 +227,19 @@ namespace PDFPatcher.Processor
 				return;
 			}
 			doc.AddTitle(info.Title);
-			if (string.IsNullOrEmpty(info.Subject) == false) {
+			if (!string.IsNullOrEmpty(info.Subject)) {
 				doc.AddSubject(info.Subject);
 			}
-			if (string.IsNullOrEmpty(info.Author) == false) {
+			if (!string.IsNullOrEmpty(info.Author)) {
 				doc.AddAuthor(info.Author);
 			}
-			if (string.IsNullOrEmpty(info.Keywords) == false) {
+			if (!string.IsNullOrEmpty(info.Keywords)) {
 				doc.AddKeywords(info.Keywords);
 			}
 		}
 
 		internal PdfPageLabels ImportPageLabels() {
-			if (_options.ImportViewerPreferences == false || _infoDoc == null) {
+			if (!_options.ImportViewerPreferences || _infoDoc == null) {
 				return null;
 			}
 			Tracker.TraceMessage("导入页码设置。");
@@ -248,11 +248,11 @@ namespace PDFPatcher.Processor
 			var pls = new PdfPageLabels();
 			bool hasPageLabels = false;
 			foreach (XmlElement item in pn) {
-				if (item.GetAttribute(Constants.PageLabelsAttributes.PageNumber).TryParse(out int physicalPage) == false || physicalPage < 1) {
+				if (!item.GetAttribute(Constants.PageLabelsAttributes.PageNumber).TryParse(out int physicalPage) || physicalPage < 1) {
 					Trace.WriteLine(string.Concat("在“", Constants.PageLabels, "”的“", Constants.PageLabelsAttributes.Style, "”元素中，必须指定大于或等于 1 的“", Constants.PageLabelsAttributes.PageNumber, "”属性。"));
 					continue;
 				}
-				if (item.GetAttribute(Constants.PageLabelsAttributes.StartPage).TryParse(out int firstPage) == false || firstPage < 1) {
+				if (!item.GetAttribute(Constants.PageLabelsAttributes.StartPage).TryParse(out int firstPage) || firstPage < 1) {
 					firstPage = 1;
 				}
 				var prefix = item.GetAttribute(Constants.PageLabelsAttributes.Prefix);
@@ -296,12 +296,12 @@ namespace PDFPatcher.Processor
 				return;
 			}
 			Tracker.TraceMessage("导入页面内连接。");
-			if (_options.KeepPageLinks == false) {
+			if (!_options.KeepPageLinks) {
 				PdfHelper.ClearPageLinks(r);
 			}
 			int pageCount = r.NumberOfPages;
 			foreach (XmlElement item in ls) {
-				if (item.GetAttribute(Constants.PageLinkAttributes.PageNumber).TryParse(out int pageNum) == false) {
+				if (!item.GetAttribute(Constants.PageLinkAttributes.PageNumber).TryParse(out int pageNum)) {
 					Trace.WriteLine("页码属性格式不正确");
 					continue;
 				}
@@ -325,7 +325,7 @@ namespace PDFPatcher.Processor
 				ann.Put(PdfName.SUBTYPE, PdfName.LINK);
 				ann.Put(PdfName.P, w.Writer.GetPageReference(pageNum));
 				var hl = item.GetAttribute(Constants.PageLinkAttributes.Style);
-				if (string.IsNullOrEmpty(hl) == false) {
+				if (!string.IsNullOrEmpty(hl)) {
 					PdfName h;
 					switch (hl) {
 						case "无": h = PdfName.N; break;
@@ -343,7 +343,7 @@ namespace PDFPatcher.Processor
 
 				if (ann != null) {
 					ImportColor(item, ann);
-					if (string.IsNullOrEmpty(border) == false) {
+					if (!string.IsNullOrEmpty(border)) {
 						ImportBorder(border, ann);
 					}
 					else {
@@ -364,30 +364,30 @@ namespace PDFPatcher.Processor
 			if (item.HasAttribute(Constants.Color)) {
 				var s = item.GetAttribute(Constants.Color);
 				if (s == Constants.Colors.Transparent) {
-					components = new PdfArray();
+					components = [];
 				}
 				else {
 					var c = Int32.TryParse(s, out var v) ? System.Drawing.Color.FromArgb(v) : System.Drawing.Color.FromName(s);
-					components = new PdfArray(new float[] { c.R / 255f, c.G / 255f, c.B / 255f });
+					components = new PdfArray([c.R / 255f, c.G / 255f, c.B / 255f]);
 				}
 			}
 			else if (item.HasAttribute(Constants.Colors.Red) || item.HasAttribute(Constants.Colors.Green) || item.HasAttribute(Constants.Colors.Blue)) {
-				components = new PdfArray(new float[] {
+				components = new PdfArray([
 					item.GetValue(Constants.Colors.Red, 0f),
 					item.GetValue(Constants.Colors.Green, 0f),
 					item.GetValue(Constants.Colors.Blue, 0f)
-				});
+				]);
 			}
 			else if (item.HasAttribute(Constants.Colors.Gray)) {
-				components = new PdfArray(new float[] { item.GetValue(Constants.Colors.Gray, 0f) });
+				components = new PdfArray([item.GetValue(Constants.Colors.Gray, 0f)]);
 			}
 			else if (item.HasAttribute(Constants.Colors.Black) || item.HasAttribute(Constants.Colors.Cyan) || item.HasAttribute(Constants.Colors.Magenta) || item.HasAttribute(Constants.Colors.Yellow)) {
-				components = new PdfArray(new float[] {
+				components = new PdfArray([
 					item.GetValue(Constants.Colors.Cyan, 0f),
 					item.GetValue(Constants.Colors.Magenta, 0f),
 					item.GetValue(Constants.Colors.Yellow, 0f),
 					item.GetValue(Constants.Colors.Black, 0f)
-				});
+				]);
 			}
 			else {
 				return;
@@ -427,30 +427,24 @@ namespace PDFPatcher.Processor
 			PdfDictionary fs;
 			switch (action) {
 				case Constants.ActionType.Goto:
-					if (string.IsNullOrEmpty(p = map.GetAttribute(Constants.DestinationAttributes.Named)) == false) {
-						if (namedAsNames)
-							dict.Put(PdfName.DEST, new PdfName(p));
-						else
-							dict.Put(PdfName.DEST, p.ToPdfString());
-					}
-					else if (string.IsNullOrEmpty(p = map.GetAttribute(Constants.DestinationAttributes.Page)) == false) {
+					if (!string.IsNullOrEmpty(p = map.GetAttribute(Constants.DestinationAttributes.Page))) {
 						var ar = new PdfArray();
-						if (p.TryParse(out int pn) == false || pn > maxPageNumber) {
+						if (!p.TryParse(out int pn) || pn > maxPageNumber) {
 							return;
 						}
 						CreateDestination(writer, map, p, ar, false);
 						dict.Put(PdfName.DEST, ar);
 					}
+					else if (!string.IsNullOrEmpty(p = map.GetAttribute(Constants.DestinationAttributes.Named))) {
+						if (namedAsNames)
+							dict.Put(PdfName.DEST, new PdfName(p));
+						else
+							dict.Put(PdfName.DEST, p.ToPdfString());
+					}
 					break;
 				case Constants.ActionType.GotoR:
 					var dic = new PdfDictionary();
-					if (string.IsNullOrEmpty(p = map.GetAttribute(Constants.DestinationAttributes.Named)) == false) {
-						dic.Put(PdfName.D, p.ToPdfString());
-					}
-					else if (string.IsNullOrEmpty(p = map.GetAttribute(Constants.DestinationAttributes.NamedN)) == false) {
-						dic.Put(PdfName.D, new PdfName(p));
-					}
-					else if (string.IsNullOrEmpty(p = map.GetAttribute(Constants.DestinationAttributes.Page)) == false) {
+					if (!string.IsNullOrEmpty(p = map.GetAttribute(Constants.DestinationAttributes.Page))) {
 						p.TryParse(out int pn);
 						if (pn > 0) {
 							pn--;
@@ -458,6 +452,12 @@ namespace PDFPatcher.Processor
 						var ar = new PdfArray();
 						CreateDestination(writer, map, pn.ToText(), ar, true);
 						dic.Put(PdfName.D, ar);
+					}
+					else if (!string.IsNullOrEmpty(p = map.GetAttribute(Constants.DestinationAttributes.Named))) {
+						dic.Put(PdfName.D, p.ToPdfString());
+					}
+					else if (!string.IsNullOrEmpty(p = map.GetAttribute(Constants.DestinationAttributes.NamedN))) {
+						dic.Put(PdfName.D, new PdfName(p));
 					}
 					p = map.GetAttribute(Constants.DestinationAttributes.Path);
 					if (dic.Size > 0 && p != null) {
@@ -475,7 +475,7 @@ namespace PDFPatcher.Processor
 					break;
 				case Constants.ActionType.Uri:
 					p = map.GetAttribute(Constants.DestinationAttributes.Path);
-					if (string.IsNullOrEmpty(p) == false) {
+					if (!string.IsNullOrEmpty(p)) {
 						var u = new PdfDictionary();
 						u.Put(PdfName.S, PdfName.URI);
 						u.Put(PdfName.URI, p);
@@ -484,7 +484,7 @@ namespace PDFPatcher.Processor
 					break;
 				case Constants.ActionType.Launch:
 					p = map.GetAttribute(Constants.DestinationAttributes.Path);
-					if (string.IsNullOrEmpty(p) == false) {
+					if (!string.IsNullOrEmpty(p)) {
 						var l = new PdfDictionary();
 						l.Put(PdfName.S, PdfName.LAUNCH);
 						fs = new PdfDictionary(PdfName.FILESPEC);
@@ -509,11 +509,11 @@ namespace PDFPatcher.Processor
 			bool useDefaultPos = false;
 			var pos = new float[4];
 			int posItemCount = 0;
-			if (p.TryParse(out pn) == false || pn < (isRemote ? 0 : 1)) {
+			if (!p.TryParse(out pn) || pn < (isRemote ? 0 : 1)) {
 				return;
 			}
 			PdfIndirectReference pr = null;
-			if (isRemote == false) {
+			if (!isRemote) {
 				pr = writer.GetPageReference(pn);
 				ar.Add(pr);
 			}
@@ -535,7 +535,7 @@ namespace PDFPatcher.Processor
 					if (top == Constants.Coordinates.Unchanged) {
 						pos[0] = float.NaN;
 					}
-					else if (top.TryParse(out pos[0]) == false) {
+					else if (!top.TryParse(out pos[0])) {
 						if (pr != null && (box = (PdfReader.GetPdfObject(pr) as PdfDictionary).GetPageVisibleRectangle()) != null) {
 							pos[0] = box.Top;
 						}
@@ -551,7 +551,7 @@ namespace PDFPatcher.Processor
 					if (left == Constants.Coordinates.Unchanged) {
 						pos[0] = float.NaN;
 					}
-					else if (left.TryParse(out pos[0]) == false) {
+					else if (!left.TryParse(out pos[0])) {
 						if (pr != null && (box = (PdfReader.GetPdfObject(pr) as PdfDictionary).GetPageVisibleRectangle()) != null) {
 							pos[0] = box.Left;
 						}
@@ -570,13 +570,13 @@ namespace PDFPatcher.Processor
 					posItemCount = 3;
 					left = map.GetAttribute(Constants.Coordinates.Left);
 					top = map.GetAttribute(Constants.Coordinates.Top);
-					if (left.TryParse(out pos[0]) == false) {
+					if (!left.TryParse(out pos[0])) {
 						pos[0] = float.NaN;
 					}
-					if (top.TryParse(out pos[1]) == false) {
+					if (!top.TryParse(out pos[1])) {
 						pos[1] = float.NaN;
 					}
-					if (map.GetAttribute(Constants.Coordinates.ScaleFactor).TryParse(out pos[2]) == false || pos[2] < 0) {
+					if (!map.GetAttribute(Constants.Coordinates.ScaleFactor).TryParse(out pos[2]) || pos[2] < 0) {
 						pos[2] = float.NaN;
 					}
 					if (float.IsNaN(pos[0]) && float.IsNaN(pos[1])
@@ -628,10 +628,10 @@ namespace PDFPatcher.Processor
 
 		private static float[] ImportRectangle(XmlElement map) {
 			var pos = new float[4];
-			if (map.GetAttribute(Constants.Coordinates.Left).TryParse(out pos[0]) == false || pos[0] < 0
-				|| map.GetAttribute(Constants.Coordinates.Bottom).TryParse(out pos[1]) == false || pos[1] < 0
-				|| map.GetAttribute(Constants.Coordinates.Right).TryParse(out pos[2]) == false || pos[2] < 0
-				|| map.GetAttribute(Constants.Coordinates.Top).TryParse(out pos[3]) == false || pos[3] < 0) {
+			if (!map.GetAttribute(Constants.Coordinates.Left).TryParse(out pos[0]) || pos[0] < 0
+				|| !map.GetAttribute(Constants.Coordinates.Bottom).TryParse(out pos[1]) || pos[1] < 0
+				|| !map.GetAttribute(Constants.Coordinates.Right).TryParse(out pos[2]) || pos[2] < 0
+				|| !map.GetAttribute(Constants.Coordinates.Top).TryParse(out pos[3]) || pos[3] < 0) {
 				return null;
 			}
 			return pos;
@@ -659,7 +659,7 @@ namespace PDFPatcher.Processor
 				case "凹陷": s = PdfName.I; break;
 				case "虚线":
 					s = PdfName.D;
-					if (string.IsNullOrEmpty(borderPattern) == false) {
+					if (!string.IsNullOrEmpty(borderPattern)) {
 						var p = ToInt32Array(borderPattern);
 						if (p != null) {
 							var dp = GetPdfDashPattern(p);
@@ -687,7 +687,7 @@ namespace PDFPatcher.Processor
 		}
 
 		internal void ImportViewerPreferences(PdfReader r) {
-			if (_options.ImportViewerPreferences == false || _infoDoc == null)
+			if (!_options.ImportViewerPreferences || _infoDoc == null)
 				return;
 
 			Tracker.TraceMessage("导入阅读器设置。");
@@ -701,13 +701,13 @@ namespace PDFPatcher.Processor
 				switch (item.Name) {
 					case Constants.PageLayout:
 						v = ValueHelper.MapValue(item.Value, Constants.PageLayoutType.Names, Constants.PageLayoutType.PdfNames, PdfName.NONE);
-						if (PdfName.NONE.Equals(v) == false) {
+						if (!PdfName.NONE.Equals(v)) {
 							r.Catalog.Put(PdfName.PAGELAYOUT, v);
 						}
 						continue;
 					case Constants.PageMode:
 						v = ValueHelper.MapValue(item.Value, Constants.PageModes.Names, Constants.PageModes.PdfNames, PdfName.NONE);
-						if (PdfName.NONE.Equals(v) == false) {
+						if (!PdfName.NONE.Equals(v)) {
 							r.Catalog.Put(PdfName.PAGEMODE, v);
 						}
 						continue;
@@ -727,7 +727,7 @@ namespace PDFPatcher.Processor
 						};
 						break;
 				}
-				if (r.Catalog.Contains(PdfName.VIEWERPREFERENCES) == false) {
+				if (!r.Catalog.Contains(PdfName.VIEWERPREFERENCES)) {
 					r.Catalog.Put(PdfName.VIEWERPREFERENCES, new PdfDictionary());
 				}
 				r.Catalog.GetAsDict(PdfName.VIEWERPREFERENCES).Put(n, v);
@@ -736,12 +736,12 @@ namespace PDFPatcher.Processor
 
 		internal static void OverrideViewerPreferences(ViewerOptions options, PdfReader reader, PdfWriter writer) {
 			var v = ValueHelper.MapValue(options.InitialView, Constants.PageLayoutType.Names, Constants.PageLayoutType.PdfNames, PdfName.NONE);
-			if (PdfName.NONE.Equals(v) == false) {
+			if (!PdfName.NONE.Equals(v)) {
 				(reader != null ? reader.Catalog : writer.ExtraCatalog).Put(PdfName.PAGELAYOUT, v);
 			}
 
 			v = ValueHelper.MapValue(options.Direction, Constants.ViewerPreferencesType.DirectionType.Names, Constants.ViewerPreferencesType.DirectionType.PdfNames, PdfName.NONE);
-			if (PdfName.NONE.Equals(v) == false) {
+			if (!PdfName.NONE.Equals(v)) {
 				if (reader != null) {
 					var d = reader.Catalog.GetAsDict(PdfName.VIEWERPREFERENCES);
 					if (d == null) {
@@ -756,7 +756,7 @@ namespace PDFPatcher.Processor
 			}
 
 			v = ValueHelper.MapValue(options.InitialMode, Constants.PageModes.Names, Constants.PageModes.PdfNames, PdfName.NONE);
-			if (PdfName.NONE.Equals(v) == false) {
+			if (!PdfName.NONE.Equals(v)) {
 				(reader != null ? reader.Catalog : writer.ExtraCatalog).Put(PdfName.PAGEMODE, v);
 			}
 
@@ -791,7 +791,7 @@ namespace PDFPatcher.Processor
 			}
 			var pdfDs = pdf.GetNamedDestination();
 			foreach (KeyValuePair<string, XmlElement> item in infoDs) {
-				if (item.Value.GetAttribute(Constants.DestinationAttributes.Page).TryParse(out int targetPn) == false) {
+				if (!item.Value.GetAttribute(Constants.DestinationAttributes.Page).TryParse(out int targetPn)) {
 					Trace.WriteLine("“目标页面”属性的数值格式不正确。");
 					continue;
 				}
@@ -821,7 +821,7 @@ namespace PDFPatcher.Processor
 		}
 
 		internal void ImportPageSettings(PdfReader pdf) {
-			if (_options.ImportPageSettings == false || _infoDoc == null) {
+			if (!_options.ImportPageSettings || _infoDoc == null) {
 				return;
 			}
 
@@ -885,7 +885,7 @@ namespace PDFPatcher.Processor
 			}
 			return false;
 		}
-		static readonly char[] __ValueArraySplitChars = { ' ', '\t', ',', ';' };
+		static readonly char[] __ValueArraySplitChars = [' ', '\t', ',', ';'];
 		public static float[] ToSingleArray(string value) { return ToSingleArray(value, false); }
 
 		public static float[] ToSingleArray(string value, bool allowNegativeNumber) {
@@ -893,18 +893,18 @@ namespace PDFPatcher.Processor
 				return null;
 			}
 			else if (value.Length == 0) {
-				return new float[0];
+				return [];
 			}
 			var parts = value.Split(__ValueArraySplitChars, StringSplitOptions.RemoveEmptyEntries);
 			var vals = new float[parts.Length];
 			var ok = true;
 			for (int i = 0; i < vals.Length; i++) {
-				if (parts[i].TryParse(out vals[i]) == false || (allowNegativeNumber == false && vals[i] < 0)) {
+				if (!parts[i].TryParse(out vals[i]) || (!allowNegativeNumber && vals[i] < 0)) {
 					ok = false;
 					break;
 				}
 			}
-			if (ok == false) {
+			if (!ok) {
 				return null;
 			}
 			return vals;
