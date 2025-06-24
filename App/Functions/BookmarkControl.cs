@@ -84,7 +84,7 @@ namespace PDFPatcher
 			if (Visible && AppContext.MainForm != null) {
 				_BookmarkBox.Contents = AppContext.Recent.InfoDocuments;
 			}
-			else if (Visible == false) {
+			else if (!Visible) {
 				_BookmarkBox.Contents = null;
 			}
 			_BookmarkBox.Text = t;

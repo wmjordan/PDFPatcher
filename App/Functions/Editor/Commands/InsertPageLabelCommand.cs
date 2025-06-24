@@ -22,7 +22,7 @@ namespace PDFPatcher.Functions.Editor
 			f.FormClosing += InsertPageLabelFormClosed;
 			f.Show();
 			var pl = labels.Find(position.Page);
-			if (pl.IsEmpty == false) {
+			if (!pl.IsEmpty) {
 				f.SetValues(pl);
 			}
 		}

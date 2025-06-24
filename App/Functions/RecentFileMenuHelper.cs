@@ -22,7 +22,7 @@ namespace PDFPatcher.Functions
 			foreach (var item in AppContext.Recent.SourcePdfFiles) {
 				var i = list.Add(FileHelper.GetEllipticPath(item, 50));
 				i.ToolTipText = item;
-				if (File.Exists(item) == false) {
+				if (!File.Exists(item)) {
 					i.Enabled = false;
 				}
 			}
@@ -33,7 +33,7 @@ namespace PDFPatcher.Functions
 				if (FileHelper.IsPathValid(item) && Path.IsPathRooted(item)) {
 					var i = list.Add(FileHelper.GetEllipticPath(item, 50));
 					i.ToolTipText = item;
-					if (File.Exists(item) == false) {
+					if (!File.Exists(item)) {
 						i.Enabled = false;
 					}
 				}

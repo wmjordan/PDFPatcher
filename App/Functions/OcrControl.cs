@@ -50,7 +50,7 @@ namespace PDFPatcher.Functions
 				lb.Add("无");
 			}
 			_ExportBookmarkButton.Enabled = Processor.ModiOcr.ModiInstalled;
-			if (_ExportBookmarkButton.Enabled == false) {
+			if (!_ExportBookmarkButton.Enabled) {
 				AppContext.MainForm.SetTooltip(_OcrLangBox, "当前系统尚未安装识别引擎，请先安装微软 Office 文字识别引擎，再重新启动程序。");
 			}
 			Reload();
@@ -109,12 +109,12 @@ namespace PDFPatcher.Functions
 		}
 
 		void Button_Click(object sender, EventArgs e) {
-			if (File.Exists(_SourceFileControl.FirstFile) == false) {
+			if (!File.Exists(_SourceFileControl.FirstFile)) {
 				FormHelper.ErrorBox(Messages.SourceFileNotFound);
 				return;
 			}
 			if (sender == _ImportOcrResultButton) {
-				if (FileHelper.IsPathValid(_TargetFileControl.Text) == false) {
+				if (!FileHelper.IsPathValid(_TargetFileControl.Text)) {
 					FormHelper.ErrorBox(Messages.TargetFileNameInvalid);
 					return;
 				}

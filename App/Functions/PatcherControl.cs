@@ -63,9 +63,9 @@ namespace PDFPatcher.Functions
 				}
 			};
 			var fi = _FileTypeList.Images;
-			fi.AddRange(new System.Drawing.Image[] {
+			fi.AddRange([
 				Properties.Resources.OriginalPdfFile
-			});
+			]);
 
 			_ItemList.FixEditControlWidth();
 			_ItemList.ScaleColumnWidths();
@@ -85,7 +85,7 @@ namespace PDFPatcher.Functions
 
 			RecentFileItemClicked = (s, args) => {
 				args.ClickedItem.Owner.Hide();
-				AddFiles(new string[] { args.ClickedItem.ToolTipText }, true);
+				AddFiles([args.ClickedItem.ToolTipText], true);
 			};
 		}
 
@@ -99,7 +99,7 @@ namespace PDFPatcher.Functions
 			else if (commandName == Commands.OpenFile) {
 				AddFiles(parameters, true);
 			}
-			else if (_listHelper.ProcessCommonMenuCommand(commandName) == false) {
+			else if (!_listHelper.ProcessCommonMenuCommand(commandName)) {
 				base.ExecuteCommand(commandName, parameters);
 			}
 		}
@@ -161,7 +161,7 @@ namespace PDFPatcher.Functions
 				if (files.Count > 1) {
 					string targetFolder = null;
 					var m = FileHelper.HasFileNameMacro(t); // 包含替换符
-					if (m == false) {
+					if (!m) {
 						targetFolder = Path.GetDirectoryName(t);
 					}
 					Tracker.SetTotalProgressGoal(files.Count);
@@ -170,13 +170,13 @@ namespace PDFPatcher.Functions
 							// 确定信息文件名
 							// 优先采用与输入文件同名的 XML 信息文件
 							var f = new FilePath(FileHelper.CombinePath(file.FolderName, Path.ChangeExtension(file.FileName, Constants.FileExtensions.Xml)));
-							if (f.ExistsFile == false) {
+							if (!f.ExistsFile) {
 								// 次之采用与输入文件同名的 TXT 信息文件
 								f = f.ChangeExtension(Constants.FileExtensions.Txt);
-								if (f.ExistsFile == false) {
+								if (!f.ExistsFile) {
 									// 次之采用同一个信息文件
 									f = file.FilePath.ChangeExtension(Constants.FileExtensions.Xml);
-									if (f.ExistsFile == false) {
+									if (!f.ExistsFile) {
 										f = FilePath.Empty;
 									}
 								}

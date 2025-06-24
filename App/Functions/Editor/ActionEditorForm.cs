@@ -35,7 +35,7 @@ namespace PDFPatcher.Functions
 			var action = Action;
 			int i = Array.IndexOf(Constants.ActionType.Names, action.GetAttribute(Constants.DestinationAttributes.Action));
 			_ActionBox.SelectedIndex = (i != -1 ? i : 0);
-			if (_ActionBox.SelectedIndex == 0 && action.HasAttribute(Constants.DestinationAttributes.Page) == false && action.HasAttribute(Constants.DestinationAttributes.Named) == false) {
+			if (_ActionBox.SelectedIndex == 0 && !action.HasAttribute(Constants.DestinationAttributes.Page) && !action.HasAttribute(Constants.DestinationAttributes.Named)) {
 				_ActionBox.SelectedItem = NoAction;
 				_DestinationPanel.Enabled = false;
 			}
@@ -56,9 +56,9 @@ namespace PDFPatcher.Functions
 			_PathBox.Text = action.GetAttribute(Constants.DestinationAttributes.Path);
 			_NewWindowBox.Checked = action.GetAttribute(Constants.DestinationAttributes.NewWindow) == Constants.Boolean.True;
 			_NamedBox.Text = action.GetAttribute(Constants.DestinationAttributes.Named);
-			_GotoNamedDestBox.Checked = String.IsNullOrEmpty(_NamedBox.Text) == false;
-			_GotoLocationBox.Checked = action.HasAttribute(Constants.DestinationAttributes.Named) == false
-				&& action.HasAttribute(Constants.DestinationAttributes.NamedN) == false;
+			_GotoNamedDestBox.Checked = !String.IsNullOrEmpty(_NamedBox.Text);
+			_GotoLocationBox.Checked = !action.HasAttribute(Constants.DestinationAttributes.Named)
+				&& !action.HasAttribute(Constants.DestinationAttributes.NamedN);
 
 			InitCoordinateValue(action, Constants.DestinationAttributes.Page, _PageBox, null);
 			InitCoordinateValue(action, Constants.Coordinates.Left, _LeftBox, _KeepXBox);
@@ -126,7 +126,7 @@ namespace PDFPatcher.Functions
 		void SetValue(string name, string value) {
 			UndoActions ??= new UndoActionGroup();
 			bool a = Action.HasAttribute(name);
-			if ((value == null && a == false)
+			if ((value == null && !a)
 				|| (a && Action.GetAttribute(name) == value)) {
 				return;
 			}
@@ -134,7 +134,7 @@ namespace PDFPatcher.Functions
 		}
 
 		void _OkButton_Click(object source, EventArgs args) {
-			if (String.IsNullOrEmpty(_TitleBox.Text) == false) {
+			if (!String.IsNullOrEmpty(_TitleBox.Text)) {
 				SetValue(Constants.BookmarkAttributes.Title, _TitleBox.Text);
 			}
 			var act = _ActionBox.SelectedItem as string;

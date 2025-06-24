@@ -52,7 +52,7 @@ namespace PDFPatcher.Functions
 		}
 
 		void _ExtractButton_Click(object sender, EventArgs e) {
-			if (File.Exists(_SourceFileControl.FirstFile) == false) {
+			if (!File.Exists(_SourceFileControl.FirstFile)) {
 				FormHelper.ErrorBox(Messages.SourceFileNotFound);
 				return;
 			}

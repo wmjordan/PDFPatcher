@@ -743,10 +743,10 @@ namespace EnhancedGlassButton
 				#endregion
 				#region " Play "
 				case SpecialSymbols.Play:
-					g.FillPolygon(specialSymbolBrush, new Point[3]{
+					g.FillPolygon(specialSymbolBrush, [
 						new Point(Width / 4 + Width / 20, Height / 4),
 						new Point(Width - Width / 4 + Width / 20, Height / 2),
-						new Point(Width / 4 + Width / 20, Height - Height / 4)});
+						new Point(Width / 4 + Width / 20, Height - Height / 4)]);
 					break;
 				#endregion
 				#region " Pause "
@@ -765,78 +765,78 @@ namespace EnhancedGlassButton
 				#endregion
 				#region " FastForward "
 				case SpecialSymbols.FastForward:
-					g.FillPolygon(specialSymbolBrush, new Point[3]{
+					g.FillPolygon(specialSymbolBrush, [
 						new Point(Width / 4, Height / 4),
 						new Point(Width / 2, Height / 2),
-						new Point(Width / 4, Height - Height / 4)});
-					g.FillPolygon(specialSymbolBrush, new Point[3]{
+						new Point(Width / 4, Height - Height / 4)]);
+					g.FillPolygon(specialSymbolBrush, [
 						new Point(Width / 2, Height / 4),
 						new Point(3 * Width / 4, Height / 2),
-						new Point(Width / 2, Height - Height / 4)});
+						new Point(Width / 2, Height - Height / 4)]);
 					g.FillRectangle(specialSymbolBrush, new Rectangle(3 * Width / 4, Height / 4,
 						Width / 12, Height / 2));
 					break;
 				#endregion
 				#region " Forward "
 				case SpecialSymbols.Forward:
-					g.FillPolygon(specialSymbolBrush, new Point[3]{
+					g.FillPolygon(specialSymbolBrush, [
 						new Point(Width / 4 + Width / 12, Height / 4),
 						new Point(Width / 2 + Width / 12, Height / 2),
-						new Point(Width / 4 + Width / 12, Height - Height / 4)});
-					g.FillPolygon(specialSymbolBrush, new Point[3]{
+						new Point(Width / 4 + Width / 12, Height - Height / 4)]);
+					g.FillPolygon(specialSymbolBrush, [
 						new Point(Width / 2 + Width / 12, Height / 4),
 						new Point(3 * Width / 4 + Width / 12, Height / 2),
-						new Point(Width / 2 + Width / 12, Height - Height / 4)});
+						new Point(Width / 2 + Width / 12, Height - Height / 4)]);
 					break;
 				#endregion
 				#region " Backward "
 				case SpecialSymbols.Backward:
-					g.FillPolygon(specialSymbolBrush, new Point[3]{
+					g.FillPolygon(specialSymbolBrush, [
 						new Point(Width / 4 - Width / 12, Height / 2),
 						new Point(Width / 2 - Width / 12, Height / 4),
-						new Point(Width / 2 - Width / 12, Height - Height / 4)});
-					g.FillPolygon(specialSymbolBrush, new Point[3]{
+						new Point(Width / 2 - Width / 12, Height - Height / 4)]);
+					g.FillPolygon(specialSymbolBrush, [
 						new Point(Width / 2 - Width / 12, Height / 2),
 						new Point(3 * Width / 4 - Width / 12, Height / 4),
-						new Point(3 * Width / 4 - Width / 12, Height - Height / 4)});
+						new Point(3 * Width / 4 - Width / 12, Height - Height / 4)]);
 					break;
 				#endregion
 				#region " FastBackward "
 				case SpecialSymbols.FastBackward:
-					g.FillPolygon(specialSymbolBrush, new Point[3]{
+					g.FillPolygon(specialSymbolBrush, [
 						new Point(Width / 4, Height / 2),
 						new Point(Width / 2, Height / 4),
-						new Point(Width / 2, Height - Height / 4)});
-					g.FillPolygon(specialSymbolBrush, new Point[3]{
+						new Point(Width / 2, Height - Height / 4)]);
+					g.FillPolygon(specialSymbolBrush, [
 						new Point(Width / 2, Height / 2),
 						new Point(3 * Width / 4, Height / 4),
-						new Point(3 * Width / 4, Height - Height / 4)});
+						new Point(3 * Width / 4, Height - Height / 4)]);
 					g.FillRectangle(specialSymbolBrush, new Rectangle(Width / 4 - Width / 12, Height / 4,
 						Width / 12, Height / 2));
 					break;
 				#endregion
 				#region " Speaker "
 				case SpecialSymbols.Speaker:
-					g.DrawPolygon(new Pen(specialSymbolBrush, Width / 20), new Point[6] {
+					g.DrawPolygon(new Pen(specialSymbolBrush, Width / 20), [
 						new Point(Width / 2 - Width / 6 - Width / offset, Height / 4 + Height / 10),
 						new Point(Width / 2 - Width / offset, Height / 4 + Height / 10),
 						new Point(Width / 2 + Width / 5 - Width / offset, Height / 4),
 						new Point(Width / 2 + Width / 5 - Width / offset, 3 * Height / 4),
 						new Point(Width / 2 - Width / offset, 3 * Height / 4 - Height / 10),
-						new Point(Width / 2 - Width / 6 - Width / offset, 3 * Height / 4 - Height / 10)});
+						new Point(Width / 2 - Width / 6 - Width / offset, 3 * Height / 4 - Height / 10)]);
 					g.DrawLine(new Pen(specialSymbolBrush, Width / 20), Width / 2 - Width / offset,
 						Height / 4 + Height / 10 + Width / 40, Width / 2 - Width / offset, Height - (Height / 4 + Height / 10 + Width / 40));
 					break;
 				#endregion
 				#region " NoSpeaker "
 				case SpecialSymbols.NoSpeaker:
-					g.DrawPolygon(new Pen(specialSymbolBrush, Width / 20), new Point[6] {
+					g.DrawPolygon(new Pen(specialSymbolBrush, Width / 20), [
 						new Point(Width / 2 - Width / 6 - Width / offset, Height / 4 + Height / 10),
 						new Point(Width / 2 - Width / offset, Height / 4 + Height / 10),
 						new Point(Width / 2 + Width / 5 - Width / offset, Height / 4),
 						new Point(Width / 2 + Width / 5 - Width / offset, 3 * Height / 4),
 						new Point(Width / 2 - Width / offset, 3 * Height / 4 - Height / 10),
-						new Point(Width / 2 - Width / 6 - Width / offset, 3 * Height / 4 - Height / 10)});
+						new Point(Width / 2 - Width / 6 - Width / offset, 3 * Height / 4 - Height / 10)]);
 					g.DrawLine(new Pen(specialSymbolBrush, Width / 20), Width / 2 - Width / offset,
 						Height / 4 + Height / 10 + Width / 40, Width / 2 - Width / offset, Height - (Height / 4 + Height / 10 + Width / 40));
 					g.DrawLine(new Pen(specialSymbolBrush, Width / 20), (int)(Width / 2 - Width / 3.5 - Width / offset), 3 * Height / 4 - Height / 10,
@@ -965,21 +965,21 @@ namespace EnhancedGlassButton
 				if (alternativeFormDirection == Direction.Left) {
 					path.AddArc(l, t, h, h, 90, 180);
 					path.AddLine(l + h, t, l + w, t);
-					path.AddCurve(new Point[5] {
+					path.AddCurve([
 						new Point(l + w, t),
 						new Point(l + w - h / 6, t + h / 4),
 						new Point((int)(l + w - (double)(h / 4.7)), t + h / 2),
 						new Point(l + w - h / 6, t + 3 * h / 4),
-						new Point(l + w, t + h) });
+						new Point(l + w, t + h) ]);
 					path.AddLine(l + h, t + h, l + w, t + h);
 				}
 				else {
-					path.AddCurve(new Point[5] {
+					path.AddCurve([
 						new Point(l, t),
 						new Point(l + h / 6, t + h / 4),
 						new Point((int)(l + (double)(h / 4.85)), t + h / 2),
 						new Point(l + h / 6, t + 3 * h / 4),
-						new Point(l, t + h) });
+						new Point(l, t + h) ]);
 					path.AddLine(l, t + h, l + w - h, t + h);
 					path.AddArc(l + w - h, t, h, h, 90, -180);
 					path.AddLine(l + w - h, t, l, t);
@@ -1019,16 +1019,16 @@ namespace EnhancedGlassButton
 				if (alternativeFormDirection == Direction.Left) {
 					path.AddArc(l, t, h * 2, h * 2, 180, 90);
 					path.AddLine(l + h, t, l + w, t);
-					path.AddCurve(new Point[3] {
+					path.AddCurve([
 						new Point(l + w, t),
 						new Point(l + w - h / 3, t + h / 2),
-						new Point((int)(l + w - (double)(h / 2.35)), t + h)});
+						new Point((int)(l + w - (double)(h / 2.35)), t + h)]);
 				}
 				else {
-					path.AddCurve(new Point[3] {
+					path.AddCurve([
 						new Point(l, t),
 						new Point(l + h / 3, t + h / 2),
-						new Point((int)(l + (double)(h / 2.35)), t + h)});
+						new Point((int)(l + (double)(h / 2.35)), t + h)]);
 					path.AddLine((int)(l + (double)(h / 2.35)), t + h, l + w - h, t + h);
 					path.AddArc(l + w - h * 2, t, h * 2, h * 2, 0, -90);
 				}
@@ -1199,7 +1199,7 @@ namespace EnhancedGlassButton
 			}
 
 			GlowRadialPath.CenterColor = Color.FromArgb(opacity, glowColor);
-			GlowRadialPath.SurroundColors = new Color[] { Color.FromArgb(0, glowColor) };
+			GlowRadialPath.SurroundColors = [Color.FromArgb(0, glowColor)];
 		}
 
 		/// <summary>

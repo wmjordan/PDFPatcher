@@ -48,7 +48,7 @@ namespace PDFPatcher.Functions.Editor
 		}
 
 		void AddBox(Page page, MuRectangle rect, string title) {
-			if (rect.IsValid && rect.IsEmpty == false) {
+			if (rect.IsValid && !rect.IsEmpty) {
 				_PageDimensionBox.Items.Add(new Box(rect, title));
 			}
 		}

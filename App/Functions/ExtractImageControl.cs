@@ -22,7 +22,7 @@ namespace PDFPatcher.Functions
 
 		void OnLoad() {
 			_SourceFileControl.BrowseSelectedFiles += (object sender, EventArgs e) => {
-				if (_AutoOutputDirBox.Checked == false) {
+				if (!_AutoOutputDirBox.Checked) {
 					return;
 				}
 				var sourceFile = _SourceFileControl.FirstFile;
@@ -97,7 +97,7 @@ namespace PDFPatcher.Functions
 		}
 
 		void _ExtractButton_Click(object sender, EventArgs e) {
-			if (File.Exists(_SourceFileControl.FirstFile) == false) {
+			if (!File.Exists(_SourceFileControl.FirstFile)) {
 				FormHelper.ErrorBox(Messages.SourceFileNotFound);
 				return;
 			}
@@ -172,8 +172,8 @@ namespace PDFPatcher.Functions
 
 		void ShowFileMaskPreview() {
 			try {
-				var previews = new string[7];
 				var f = _FileNameMaskBox.Text;
+				var previews = new string[7];
 				previews[0] = 1.ToString(f) + ".jpg";
 				previews[1] = 2.ToString(f) + ".jpg";
 				previews[2] = 3.ToString(f) + ".jpg ...";

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Xml;
 using PDFPatcher.Processor;
 
@@ -27,7 +26,7 @@ namespace PDFPatcher.Functions.Editor
 				undo.Add(new AddElementAction(item));
 				var p = item.ParentNode;
 				p.RemoveChild(item);
-				if (l.Contains(p) == false) {
+				if (!l.Contains(p)) {
 					l.Add(p);
 				}
 			}

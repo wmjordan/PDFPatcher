@@ -119,7 +119,7 @@ namespace PDFPatcher.Functions
 			if (_PageSizeBox.SelectedIndex == -1) {
 				_PageSizeBox.SelectedIndex = 0;
 			}
-			_ResizePdfPagesBox.Checked = ps.ScaleContent == false;
+			_ResizePdfPagesBox.Checked = !ps.ScaleContent;
 			_ScalePdfPagesBox.Checked = ps.ScaleContent;
 			if (_PageSizeBox.SelectedIndex == 0) {
 				_HeightBox.Value = 26.01M;
@@ -255,7 +255,7 @@ namespace PDFPatcher.Functions
 		}
 
 		void MarginBox_ValueChanged(object sender, EventArgs e) {
-			if (_SyncMarginsBox.Checked == false || _uiLockDown) {
+			if (!_SyncMarginsBox.Checked || _uiLockDown) {
 				return;
 			}
 			var d = (sender as NumericUpDown).Value;

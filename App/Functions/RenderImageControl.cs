@@ -24,7 +24,7 @@ namespace PDFPatcher.Functions
 
 		void OnLoad() {
 			_SourceFileControl.BrowseSelectedFiles += (object sender, EventArgs e) => {
-				if (_AutoOutputDirBox.Checked == false) {
+				if (!_AutoOutputDirBox.Checked) {
 					return;
 				}
 				var sourceFile = _SourceFileControl.FirstFile;
@@ -82,7 +82,7 @@ namespace PDFPatcher.Functions
 			_FileNameMaskBox.Text = o.FileMask;
 			_HorizontalFlipImageBox.Checked = o.HorizontalFlipImages;
 			_HideAnnotationsBox.Checked = o.HideAnnotations;
-			_ImageFormatBox.SelectedIndex = ValueHelper.MapValue(o.FileFormat, new ImageFormat[] { ImageFormat.Png, ImageFormat.Jpeg, ImageFormat.Tiff }, new int[] { 0, 1, 2 }, 0);
+			_ImageFormatBox.SelectedIndex = ValueHelper.MapValue(o.FileFormat, [ImageFormat.Png, ImageFormat.Jpeg, ImageFormat.Tiff], [0, 1, 2], 0);
 			_InvertColorBox.Checked = o.InvertColor;
 			if (o.JpegQuality > 0 && o.JpegQuality <= 100) {
 				_JpegQualityBox.Text = o.JpegQuality.ToText();
@@ -93,7 +93,7 @@ namespace PDFPatcher.Functions
 			}
 			_QuantizeBox.Checked = o.Quantize;
 			_ResolutionBox.Text = o.Dpi.ToText();
-			_RotationBox.SelectedIndex = ValueHelper.MapValue(o.Rotation, new int[] { 0, 90, 180, 270 }, new int[] { 0, 1, 2, 3 }, 0);
+			_RotationBox.SelectedIndex = ValueHelper.MapValue(o.Rotation, [0, 90, 180, 270], [0, 1, 2, 3], 0);
 			_SpecificRatioBox.Checked = !o.UseSpecificWidth;
 			_SpecificWidthBox.Checked = o.UseSpecificWidth;
 			_VerticalFlipImageBox.Checked = o.VerticalFlipImages;
@@ -115,7 +115,7 @@ namespace PDFPatcher.Functions
 		}
 
 		void _ExtractButton_Click(object sender, EventArgs e) {
-			if (File.Exists(_SourceFileControl.FirstFile) == false) {
+			if (!File.Exists(_SourceFileControl.FirstFile)) {
 				Common.FormHelper.ErrorBox(Messages.SourceFileNotFound);
 				return;
 			}
@@ -185,7 +185,7 @@ namespace PDFPatcher.Functions
 			option.HideAnnotations = _HideAnnotationsBox.Checked;
 			option.HorizontalFlipImages = _HorizontalFlipImageBox.Checked;
 			option.InvertColor = _InvertColorBox.Checked;
-			option.FileFormat = ValueHelper.MapValue(_ImageFormatBox.SelectedIndex, new int[] { 0, 1, 2 }, new ImageFormat[] { ImageFormat.Png, ImageFormat.Jpeg, ImageFormat.Tiff }, ImageFormat.Png);
+			option.FileFormat = ValueHelper.MapValue(_ImageFormatBox.SelectedIndex, [0, 1, 2], [ImageFormat.Png, ImageFormat.Jpeg, ImageFormat.Tiff], ImageFormat.Png);
 			option.ImageWidth = (int)_ExtractPageImageWidthBox.Value;
 			option.JpegQuality = _JpegQualityBox.Text.TryParse(out int j)
 				? j > 0 && j <= 100 ? j : 75
@@ -206,7 +206,7 @@ namespace PDFPatcher.Functions
 
 		static string GetRenderedPdfFileName(string target) {
 			var p = new FilePath(target).Normalize();
-			if (p.HasExtension(Constants.FileExtensions.Pdf) == false) {
+			if (!p.HasExtension(Constants.FileExtensions.Pdf)) {
 				target = p.Combine(new FilePath(AppContext.SourceFiles[0]).FileName);
 			}
 			foreach (var f in AppContext.SourceFiles) {

@@ -2,6 +2,7 @@
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using CLR;
 using PDFPatcher.Common;
 
 namespace PDFPatcher.Functions
@@ -47,7 +48,7 @@ namespace PDFPatcher.Functions
 		}
 
 		void _EncodingBox_SelectedIndexChanged(object sender, EventArgs e) {
-			if (_Data.HasContent() == false) {
+			if (!_Data.HasContent()) {
 				_TextBox.Clear();
 				return;
 			}
@@ -60,7 +61,7 @@ namespace PDFPatcher.Functions
 			}
 			TextContent = __EscapeChars.Replace(en.GetString(_Data), m => {
 				var c = m.Value[0];
-				return (c != '\t' && c != '\r' && c != '\n') ? EscapeChar(c) : m.Value;
+				return c.CeqAny('\t', '\r', '\n') ? m.Value : EscapeChar(c);
 			});
 		}
 

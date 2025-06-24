@@ -84,7 +84,7 @@ namespace PDFPatcher
 			if (Visible && AppContext.MainForm != null) {
 				_TargetPdfBox.Contents = AppContext.Recent.TargetPdfFiles;
 			}
-			else if (Visible == false) {
+			else if (!Visible) {
 				_TargetPdfBox.Contents = null;
 			}
 			Text = t;

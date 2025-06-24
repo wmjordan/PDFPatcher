@@ -12,7 +12,7 @@ namespace PDFPatcher
 			_controlLockDown = true;
 			InitializeComponent();
 			_controlLockDown = false;
-			Files = new string[] { };
+			Files = [];
 		}
 
 		///<summary>获取文件下拉列表框。</summary>
@@ -70,8 +70,8 @@ namespace PDFPatcher
 			if (_controlLockDown) {
 				return;
 			}
-			if (FileHelper.HasFileNameMacro(_SourcePdfBox.Text) == false) {
-				SelectFiles(new string[] { _SourcePdfBox.Text });
+			if (!FileHelper.HasFileNameMacro(_SourcePdfBox.Text)) {
+				SelectFiles([_SourcePdfBox.Text]);
 			}
 		}
 
@@ -90,7 +90,7 @@ namespace PDFPatcher
 			if (Visible && AppContext.MainForm != null) {
 				_SourcePdfBox.Contents = AppContext.Recent.SourcePdfFiles;
 			}
-			else if (Visible == false) {
+			else if (!Visible) {
 				_SourcePdfBox.Contents = null;
 			}
 			Text = t;

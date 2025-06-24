@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
+using CLR;
 using PDFPatcher.Common;
 using PDFPatcher.Model;
 
@@ -40,14 +41,9 @@ namespace PDFPatcher.Functions
 
 			new TypedColumn<Processor.IProcessor>(_ActionNameColumn) {
 				AspectGetter = (o) => o.Name,
-				ImageGetter = (o) => {
-					if (o is Processor.IPageProcessor) {
-						return Properties.Resources.PageProcessor;
-					}
-					else {
-						return Properties.Resources.DocumentProcessor;
-					}
-				}
+				ImageGetter = (o) => o is Processor.IPageProcessor
+					? Properties.Resources.PageProcessor
+					: Properties.Resources.DocumentProcessor
 			};
 			_TargetPdfFile.FileMacroMenu.LoadStandardInfoMacros();
 			_TargetPdfFile.FileMacroMenu.LoadStandardSourceFileMacros();
@@ -78,7 +74,7 @@ namespace PDFPatcher.Functions
 			_AddFilesButton.DropDownOpening += FileListHelper.OpenPdfButtonDropDownOpeningHandler;
 			_AddFilesButton.DropDownItemClicked += (s, args) => {
 				args.ClickedItem.Owner.Hide();
-				AddFiles(new string[] { args.ClickedItem.ToolTipText }, true);
+				AddFiles([args.ClickedItem.ToolTipText], true);
 			};
 		}
 
@@ -95,7 +91,7 @@ namespace PDFPatcher.Functions
 			else if (commandName == Commands.SaveBookmark) {
 				_ExportBookmarkButton.PerformClick();
 			}
-			else if (_listHelper.ProcessCommonMenuCommand(commandName) == false) {
+			else if (!_listHelper.ProcessCommonMenuCommand(commandName)) {
 				base.ExecuteCommand(commandName, parameters);
 			}
 		}
@@ -266,7 +262,7 @@ namespace PDFPatcher.Functions
 
 		void _ImageList_ColumnClick(object sender, ColumnClickEventArgs e) {
 			var c = e.Column;
-			var ss = c == 0 || c == _PageCountColumn.Index;
+			var ss = c.CeqAny(0, _PageCountColumn.Index);
 			var o = _ItemList.PrimarySortOrder == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
 			_ItemList.ListViewItemSorter = new ListViewItemComparer(e.Column, ss, o);
 		}

@@ -64,7 +64,7 @@ namespace PDFPatcher.Functions.Editor
 			}
 			f.Location = l;
 			f.TargetPosition = p.PageY;
-			if (String.IsNullOrEmpty(region.Text) == false) {
+			if (!String.IsNullOrEmpty(region.Text)) {
 				f.Title = __RemoveOcrWhiteSpace.Replace(region.Text, " ").Trim();
 				if (__FirstChildPatterns.IsMatch(f.Title)) {
 					f.SetInsertMode(InsertBookmarkPositionType.AsChild);
@@ -76,7 +76,7 @@ namespace PDFPatcher.Functions.Editor
 		}
 
 		static InsertBookmarkForm GetDialog(Controller controller) {
-			if (_dialog != null && _dialog.IsDisposed == false) {
+			if (_dialog != null && !_dialog.IsDisposed) {
 				_dialog.Controller = controller;
 				return _dialog;
 			}

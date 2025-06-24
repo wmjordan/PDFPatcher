@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
 using BrightIdeasSoftware;
+using CLR;
 using PDFPatcher.Common;
 using PDFPatcher.Model;
 using PDFPatcher.Processor;
@@ -26,7 +27,7 @@ namespace PDFPatcher.Functions
 		public OLVColumn BookmarkPageColumn => _BookmarkPageColumn;
 		public bool HasMarker => _markers.Count > 0;
 
-		readonly Dictionary<BookmarkElement, Color> _markers = new Dictionary<BookmarkElement, Color>();
+		readonly Dictionary<BookmarkElement, Color> _markers = [];
 
 		public event EventHandler BookmarkChanged;
 
@@ -73,7 +74,7 @@ namespace PDFPatcher.Functions
 			new TypedColumn<BookmarkElement>(_BookmarkOpenColumn) {
 				AspectGetter = (e) => e == null ? false : (object)e.IsOpen,
 				AspectPutter = (e, newValue) => {
-					if (e == null || e.HasSubBookmarks == false) {
+					if (e == null || !e.HasSubBookmarks) {
 						return;
 					}
 					var p = new BookmarkOpenStatusProcessor((bool)newValue);
@@ -154,7 +155,7 @@ namespace PDFPatcher.Functions
 				return;
 			}
 			var copy = (ModifierKeys & Keys.Control) != Keys.None || (e.SourceModels[0] as XmlElement).OwnerDocument != ti.OwnerDocument;
-			if (copy == false) {
+			if (!copy) {
 				if (e.DropTargetItem.Selected) {
 					e.Effect = DragDropEffects.None;
 					return;
@@ -171,7 +172,7 @@ namespace PDFPatcher.Functions
 			var ml = e.MouseLocation;
 			var child = ml.X > d.Position.X + d.GetBounds(ItemBoundsPortion.ItemOnly).Width / 2;
 			var append = ml.Y > d.Position.Y + d.Bounds.Height / 2;
-			if (child == false && copy == false) {
+			if (!child && !copy) {
 				var xi = e.DropTargetIndex + (append ? 1 : -1);
 				if (xi > -1 && xi < e.ListView.Items.Count
 					&& e.ListView.Items[xi].Selected
@@ -246,7 +247,7 @@ namespace PDFPatcher.Functions
 			foreach (var item in _markers) {
 				if (item.Value.ToArgb() == c) {
 					var k = item.Key;
-					Debug.Assert((k.ParentNode == null || k.OwnerDocument == null) == false);
+					Debug.Assert((k.ParentNode != null && k.OwnerDocument != null));
 					if (k.ParentNode == null || k.OwnerDocument == null) {
 						r.Add(k);
 						continue;
@@ -320,35 +321,6 @@ namespace PDFPatcher.Functions
 			if ((fi ?? li) != null) {
 				EnsureVisible(fi.Index);
 			}
-		}
-
-		internal void SelectPreviousBookmark() {
-			var si = this.GetFocusedOrFirstSelectedItem();
-			if (si == null) {
-				if (GetItemCount() != 0) {
-					(SelectedItem = GetItem(0)).Focused = true;
-				}
-				return;
-			}
-
-			if (si.Index < 1) {
-				return;
-			}
-			(SelectedItem = GetItem(si.Index - 1)).Focused = true;
-		}
-		internal void SelectNextBookmark() {
-			var si = this.GetFocusedOrFirstSelectedItem();
-			if (si == null) {
-				if (GetItemCount() != 0) {
-					(SelectedItem = GetItem(0)).Focused = true;
-				}
-				return;
-			}
-
-			if (si.Index == GetItemCount() - 1) {
-				return;
-			}
-			(SelectedItem = GetItem(si.Index + 1)).Focused = true;
 		}
 
 		/// <summary>
@@ -448,7 +420,7 @@ namespace PDFPatcher.Functions
 				}
 			}
 			Undo?.AddUndo(copy ? "复制书签" : "移动书签", undo);
-			if (copy == false && spr || tpr) {
+			if (!copy && spr || tpr) {
 				Roots = (target.OwnerDocument as PdfInfoXmlDocument).BookmarkRoot.SubBookmarks;
 			}
 			if (pn != null) {
@@ -466,7 +438,7 @@ namespace PDFPatcher.Functions
 			try {
 				var t = Clipboard.GetText();
 				bool c = false;
-				if (t.IsNullOrWhiteSpace() == false) {
+				if (!t.IsNullOrWhiteSpace()) {
 					var doc = new PdfInfoXmlDocument();
 					using (var s = new System.IO.StringReader(t)) {
 						OutlineManager.ImportSimpleBookmarks(s, doc);
@@ -512,7 +484,7 @@ namespace PDFPatcher.Functions
 
 		protected override void OnCellClick(CellClickEventArgs args) {
 			base.OnCellClick(args);
-			if (args.ColumnIndex == 0 && IsCellEditing == false && SelectedIndices.Count < 2) {
+			if (args.ColumnIndex == 0 && !IsCellEditing && SelectedIndices.Count < 2) {
 				if (args.ClickCount > 1) {
 					EditSubItem(args.Item, 0);
 				}
@@ -597,7 +569,7 @@ namespace PDFPatcher.Functions
 			base.OnMouseMove(e);
 			var t = HitTest(e.X, e.Y);
 			if (t.Item != null
-				&& (t.Location == ListViewHitTestLocations.Label || t.Location == ListViewHitTestLocations.Image)
+				&& (t.Location.CeqAny(ListViewHitTestLocations.Label, ListViewHitTestLocations.Image))
 				&& t.Item.SubItems[0] == t.SubItem) {
 				Cursor = Cursors.Hand;
 			}

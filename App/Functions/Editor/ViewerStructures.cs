@@ -144,7 +144,7 @@ namespace PDFPatcher.Functions.Editor
 		public MuRectangle BBox => TextBBox;
 
 		public IEnumerable<TextFont> GetFonts() {
-			if (Spans.HasContent() == false) {
+			if (!Spans.HasContent()) {
 				yield break;
 			}
 			var fonts = new HashSet<TextFont>();
@@ -156,10 +156,10 @@ namespace PDFPatcher.Functions.Editor
 		}
 
 		public IEnumerable<string> GetFontNames() {
-			if (Spans.HasContent() == false) {
+			if (!Spans.HasContent()) {
 				yield break;
 			}
-			HashSet<string> fonts = new HashSet<string>();
+			HashSet<string> fonts = [];
 			foreach (var span in Spans) {
 				var f = span.Font;
 				if (fonts.Add(f.Name)) {
@@ -266,10 +266,10 @@ namespace PDFPatcher.Functions.Editor
 			_cache.LoadPage(Page);
 			var p = _cache.GetBitmap(Page);
 			return p.Clone(new MuRectangle(
-					ImageRegion.Left < 0 ? 0 : ImageRegion.Left,
-					ImageRegion.Top < 0 ? 0 : ImageRegion.Top,
-					ImageRegion.Right > p.Width ? p.Width : ImageRegion.Right,
-					ImageRegion.Bottom > p.Height ? p.Height : ImageRegion.Bottom
+					Math.Max(ImageRegion.Left, 0),
+					Math.Max(ImageRegion.Top, 0),
+					Math.Min(ImageRegion.Right, p.Width),
+					Math.Min(ImageRegion.Bottom, p.Height)
 				).ToRectangleF(), p.PixelFormat);
 		}
 	}

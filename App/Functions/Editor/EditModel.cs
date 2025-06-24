@@ -10,7 +10,7 @@ namespace PDFPatcher.Functions.Editor
 	{
 		public EditModel() {
 			Undo = new UndoManager();
-			TitleStyles = new List<AutoBookmarkSettings>();
+			TitleStyles = [];
 			Document = new PdfInfoXmlDocument();
 		}
 
@@ -48,11 +48,11 @@ namespace PDFPatcher.Functions.Editor
 			var s = FileHelper.HasExtension(DocumentPath, Constants.FileExtensions.Pdf) ? DocumentPath : null;
 			if (string.IsNullOrEmpty(s)) {
 				s = Document.PdfDocumentPath;
-				if (Path.IsPathRooted(s) == false) {
+				if (!Path.IsPathRooted(s)) {
 					s = Path.Combine(Path.GetDirectoryName(DocumentPath), s);
 				}
 			}
-			if (File.Exists(s) == false) {
+			if (!File.Exists(s)) {
 				s = null;
 			}
 			return s;

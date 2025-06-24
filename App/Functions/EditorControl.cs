@@ -62,7 +62,6 @@ namespace PDFPatcher.Functions
 			_MainPanel.FixedPanel = FixedPanel.Panel1;
 			//_MainToolbar.ToggleEnabled (false, _editButtonNames);
 
-
 			CreateChangeZoomRateItems();
 
 			_ChangeZoomRate.DropDownItemClicked += _MainToolbar_ItemClicked;
@@ -222,7 +221,7 @@ namespace PDFPatcher.Functions
 			_ViewerBox.PinPoint = _ViewerBox.PointToImage(l);
 			SetupMenu(_ViewerMenu.Items);
 			_ViewerMenu.Show(_ViewerBox, l);
-			if (_ViewerBox.IsClientPointInSelection(l) == false) {
+			if (!_ViewerBox.IsClientPointInSelection(l)) {
 				_ViewerBox.SelectNone();
 			}
 			//_ViewerBox.Invalidate ();
@@ -272,12 +271,12 @@ namespace PDFPatcher.Functions
 					// keep disabled
 					break;
 				case Commands.DocumentProperties:
-					item.Enabled = _ViewerBox.Document != null && _ViewerBox.Document.IsDisposed == false;
+					item.Enabled = _ViewerBox.Document != null && !_ViewerBox.Document.IsDisposed;
 					item.Visible = true;
 					break;
 				case "_ScrollVertical": m.Checked = _ViewerBox.ContentDirection == Editor.ContentDirection.TopToDown; break;
 				case "_ScrollHorizontal": m.Checked = _ViewerBox.ContentDirection == Editor.ContentDirection.RightToLeft; break;
-				case "_TrueColorSpace": m.Checked = _ViewerBox.GrayScale == false; break;
+				case "_TrueColorSpace": m.Checked = !_ViewerBox.GrayScale; break;
 				case "_GrayColorSpace": m.Checked = _ViewerBox.GrayScale; break;
 				case "_InvertColor": m.Checked = _ViewerBox.InvertColor; break;
 				case "_MoveMode": m.Checked = _ViewerBox.MouseMode == Editor.MouseMode.Move; break;
@@ -286,8 +285,8 @@ namespace PDFPatcher.Functions
 				case "_ShowTextBorders": m.Checked = _ViewerBox.ShowTextBorders; break;
 				case "_DarkMode": m.Checked = _ViewerBox.TintColor == __DarkModeColor; break;
 				case "_GreenMode": m.Checked = _ViewerBox.TintColor == __GreenModeColor; break;
-				case "_ShowAnnotations": m.Checked = _ViewerBox.HideAnnotations == false; break;
-				case "_ShowBookmarks": m.Checked = _MainPanel.Panel1Collapsed == false; break;
+				case "_ShowAnnotations": m.Checked = !_ViewerBox.HideAnnotations; break;
+				case "_ShowBookmarks": m.Checked = !_MainPanel.Panel1Collapsed; break;
 				case "_OcrPage": item.Enabled = ModiOcr.ModiInstalled && _ViewerBox.OcrLanguage != Constants.Ocr.NoLanguage; break;
 				case "_OcrDetectPunctuation":
 					item.Enabled = ModiOcr.ModiInstalled && _ViewerBox.OcrLanguage != Constants.Ocr.NoLanguage;
@@ -334,7 +333,7 @@ namespace PDFPatcher.Functions
 					if (_searchForm == null || _searchForm.IsDisposed) {
 						_searchForm = new SearchBookmarkForm(_controller);
 					}
-					if (_searchForm.Visible == false) {
+					if (!_searchForm.Visible) {
 						_searchForm.Show(this);
 					}
 					_searchForm.BringToFront();
@@ -432,9 +431,9 @@ namespace PDFPatcher.Functions
 				case Keys.W:
 					ExecuteCommand(Commands.EditorBookmarkSetCurrentCoordinates);
 					return true;
-				case Keys.Shift | Keys.W:
+				case Keys.Alt | Keys.W:
 					ExecuteCommand(Commands.EditorBookmarkSetCurrentCoordinates);
-					_controller.View.Bookmark.SelectNextBookmark();
+					_controller.View.Bookmark.SelectNext();
 					return true;
 				case Keys.Down:
 					_controller.InsertBookmark(InsertBookmarkPositionType.AfterCurrent);
@@ -455,9 +454,9 @@ namespace PDFPatcher.Functions
 				case Keys.D8:
 					ExecuteCommand("_ShiftMultiPageNumber"); return true;
 				case Keys.Up:
-					_controller.View.Bookmark.SelectPreviousBookmark(); return true;
+					_controller.View.Bookmark.SelectPrevious(); return true;
 				case Keys.Down:
-					_controller.View.Bookmark.SelectNextBookmark(); return true;
+					_controller.View.Bookmark.SelectNext(); return true;
 				case Keys.Right:
 					_controller.View.Bookmark.ExpandSelected(true); return true;
 				case Keys.Left:
@@ -499,6 +498,8 @@ namespace PDFPatcher.Functions
 					}
 					return true;
 				case Keys.ProcessKey:
+				case Keys.Oem4:
+				case Keys.Oem6:
 					if (msg.Msg == 256) {
 						switch ((int)msg.LParam) {
 							case 0x001A0001:
@@ -521,7 +522,7 @@ namespace PDFPatcher.Functions
 
 		void _BookmarkBox_DragDrop(object sender, DragEventArgs e) {
 			if (this.DropFileOver(e, Constants.FileExtensions.PdfAndAllBookmarkExtension)
-				&& (_controller.Model.Undo.IsDirty == false
+				&& (!_controller.Model.Undo.IsDirty
 					|| AppContext.MainForm.ConfirmYesBox(Messages.ConfirmAbandonDocument))) {
 				_controller.LoadDocument(Text, false);
 			}
@@ -534,7 +535,7 @@ namespace PDFPatcher.Functions
 
 		AutoBookmarkForm Editor.IEditView.AutoBookmark {
 			get {
-				if (_autoBookmarkForm == null || _autoBookmarkForm.IsDisposed) {
+				if (_autoBookmarkForm?.IsDisposed != false) {
 					_autoBookmarkForm = new AutoBookmarkForm(_controller);
 				}
 				return _autoBookmarkForm;

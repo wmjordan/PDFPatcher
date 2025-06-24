@@ -8,7 +8,7 @@ namespace PDFPatcher.Functions.Editor
 	{
 		static readonly Color __DarkModeColor = Color.DarkGray;
 		static readonly Color __GreenModeColor = Color.FromArgb(0xCC, 0xFF, 0xCC);
-		static readonly string[] __commands = {
+		static readonly string[] __commands = [
 			"_FirstPage",
 			"_PreviousPage",
 			"_NextPage",
@@ -28,7 +28,7 @@ namespace PDFPatcher.Functions.Editor
 			"_ShowAnnotations",
 			"_OcrDetectPunctuation",
 			"_FullScreen"
-		};
+		];
 		internal static void RegisterCommands(CommandRegistry<Controller> registry) {
 			foreach (var item in __commands) {
 				registry.Register(new ViewerCommand(item), item);

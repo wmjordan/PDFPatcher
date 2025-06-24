@@ -13,7 +13,7 @@ namespace PDFPatcher.Functions
 		public Control FirstControlInActiveTab {
 			get {
 				var t = SelectedTab;
-				return t == null || t.HasChildren == false ? null : t.Controls[0];
+				return t?.HasChildren != true ? null : t.Controls[0];
 			}
 		}
 
@@ -26,11 +26,11 @@ namespace PDFPatcher.Functions
 				return false;
 			}
 			Control c;
-			if (t.HasChildren == false
-				|| (c = t.Controls[0]) is ITabContent tc && tc.CanClose == false
+			if (!t.HasChildren
+				|| (c = t.Controls[0]) is ITabContent tc && !tc.CanClose
 				|| (c is IDocumentEditor editor
 					&& editor.IsDirty
-					&& AppContext.MainForm.ConfirmYesBox(Messages.ConfirmCloseDirtyDocument) == false)) {
+					&& !AppContext.MainForm.ConfirmYesBox(Messages.ConfirmCloseDirtyDocument))) {
 				return false;
 			}
 			var i = TabPages.IndexOf(tabPage);
@@ -69,7 +69,7 @@ namespace PDFPatcher.Functions
 
 		void CloseTabOnMouseEvent(MouseEventArgs args) {
 			for (int i = TabCount - 1; i >= 0; i--) {
-				if (GetTabRect(i).Contains(args.Location) == false) {
+				if (!GetTabRect(i).Contains(args.Location)) {
 					continue;
 				}
 				SafeCloseTab(TabPages[i]);

@@ -55,8 +55,8 @@ namespace PDFPatcher.Functions
 				_ListFontsButton.Enabled = true;
 			};
 			_Worker.DoWork += (s, args) => {
-				_fontIdNames = new Dictionary<int, string>();
-				_pageFonts = new Dictionary<string, PageFont>();
+				_fontIdNames = [];
+				_pageFonts = [];
 				_FontListBox.ClearObjects();
 				try {
 					using (var p = PdfHelper.OpenPdfFile(_SourceFileBox.FirstFile, false, false)) {
@@ -150,7 +150,7 @@ namespace PDFPatcher.Functions
 			if (_FontListBox.GetItemCount() == 0) {
 				return;
 			}
-			if (_FontListBox.GetItem(0).Checked == false) {
+			if (!_FontListBox.GetItem(0).Checked) {
 				_FontListBox.CheckObjects(_FontListBox.Objects);
 			}
 			else {

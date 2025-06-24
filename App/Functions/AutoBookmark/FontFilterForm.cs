@@ -142,7 +142,7 @@ namespace PDFPatcher.Functions
 
 			_AddFilterMenu.Items.Clear();
 			var p = n.IndexOf('+');
-			var m = n.IndexOfAny(new char[] { '-', ',' }, p != -1 ? p : 0);
+			var m = n.IndexOfAny(['-', ','], p != -1 ? p : 0);
 			string fn;
 			if (p != -1) {
 				if (m > p + 1) {

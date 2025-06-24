@@ -6,7 +6,7 @@ namespace PDFPatcher.Functions.Editor
 {
 	sealed class BookmarkMarkerCommand : IEditorCommand
 	{
-		static readonly string[] __commands = {
+		static readonly string[] __commands = [
 			"_MarkBookmarkRed",
 			"_MarkBookmarkYellow",
 			"_MarkBookmarkGreen",
@@ -21,7 +21,7 @@ namespace PDFPatcher.Functions.Editor
 			"_SelectBlueMarks",
 			"_SelectCyanMarks",
 			"_SelectPurpleMarks"
-		};
+		];
 		internal static void RegisterCommands(CommandRegistry<Controller> registry) {
 			foreach (var item in __commands) {
 				registry.Register(new BookmarkMarkerCommand(item), item);

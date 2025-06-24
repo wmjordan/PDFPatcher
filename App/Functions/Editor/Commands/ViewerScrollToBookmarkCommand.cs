@@ -1,5 +1,6 @@
 ﻿using System;
 using BrightIdeasSoftware;
+using CLR;
 using PDFPatcher.Common;
 using PDFPatcher.Model;
 
@@ -18,16 +19,16 @@ namespace PDFPatcher.Functions.Editor
 				return;
 			}
 			el = b.GetModelObject(i) as BookmarkElement;
-			if (context.Model.LockDownViewer == false
+			if (!context.Model.LockDownViewer
 				&& b.SelectedIndices.Count == 1
 				&& (i = el.Page) > 0
 				&& el.Action == Constants.ActionType.Goto) {
 				var v = context.View.Viewer;
-				if (context.Model.PdfDocument != null && el.Page > 0 && el.Page <= v.Document.PageCount) {
+				if (context.Model.PdfDocument != null && el.Page.IsBetween(1, v.Document.PageCount)) {
 					var pb = v.GetPageBound(el.Page);
 					v.ScrollToPosition(new Editor.PagePosition(el.Page,
-						v.HorizontalFlow ? el.Left > pb.Width ? pb.Width : el.Left : 0,
-						v.HorizontalFlow || el.Top == 0 ? 0 : el.Top.LimitInRange(pb.Top, pb.Bottom),
+						v.HorizontalFlow ? Math.Min(el.Left, pb.Width) : 0,
+						v.HorizontalFlow || el.Top == 0 ? 0 : el.Top.Clamp(pb.Top, pb.Bottom),
 						0, 0, true)
 					);
 				}

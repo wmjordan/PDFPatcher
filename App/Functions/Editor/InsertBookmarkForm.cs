@@ -70,8 +70,8 @@ namespace PDFPatcher.Functions.Editor
 		void OkButtonClicked(object sender, EventArgs args) {
 			var cancel = new CancelEventArgs();
 			OkClicked?.Invoke(this, cancel);
-			if (cancel.Cancel == false) {
-				if (_AfterCurrentBox.Checked == false) {
+			if (!cancel.Cancel) {
+				if (!_AfterCurrentBox.Checked) {
 					_AfterCurrentBox.Checked = true;
 				}
 				Hide();

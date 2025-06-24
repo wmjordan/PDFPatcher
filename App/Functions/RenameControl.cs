@@ -14,7 +14,7 @@ namespace PDFPatcher.Functions
 	public partial class RenameControl : FunctionControl
 	{
 		FileListHelper _listHelper;
-		static readonly string[] __EnabledCommands = { Commands.Copy, Commands.Delete };
+		static readonly string[] __EnabledCommands = [Commands.Copy, Commands.Delete];
 
 		public override string FunctionName => "重命名文件";
 
@@ -53,9 +53,9 @@ namespace PDFPatcher.Functions
 				}
 			};
 			var fi = _FileTypeList.Images;
-			fi.AddRange(new System.Drawing.Image[] {
+			fi.AddRange([
 				Properties.Resources.OriginalPdfFile
-			});
+			]);
 			_ItemList.FixEditControlWidth();
 			_ItemList.ScaleColumnWidths();
 			_listHelper = new FileListHelper(_ItemList);
@@ -214,7 +214,7 @@ namespace PDFPatcher.Functions
 			foreach (var item in items) {
 				try {
 					s = item.FilePath;
-					if (s.ExistsFile == false) {
+					if (!s.ExistsFile) {
 						t = $"(找不到 PDF 文件：{s})";
 						continue;
 					}

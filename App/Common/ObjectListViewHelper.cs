@@ -171,6 +171,39 @@ namespace BrightIdeasSoftware
 				?? (view.HasSelection() ? view.GetItem(view.SelectedIndices[0]) : null)) as OLVListItem;
 		}
 
+		public static void SelectPrevious(this ObjectListView view) {
+			var si = view.GetFocusedOrFirstSelectedItem();
+			if (si == null) {
+				if (view.GetItemCount() != 0) {
+					(view.SelectedItem = view.GetItem(0)).Focused = true;
+				}
+				return;
+			}
+
+			int i;
+			if ((i = si.Index) < 1) {
+				return;
+			}
+			(view.SelectedItem = view.GetItem(--i)).Focused = true;
+			view.EnsureVisible(i);
+		}
+		public static void SelectNext(this ObjectListView view) {
+			var si = view.GetFocusedOrFirstSelectedItem();
+			if (si == null) {
+				if (view.GetItemCount() != 0) {
+					(view.SelectedItem = view.GetItem(0)).Focused = true;
+				}
+				return;
+			}
+
+			int i;
+			if ((i = si.Index) == view.GetItemCount() - 1) {
+				return;
+			}
+			(view.SelectedItem = view.GetItem(++i)).Focused = true;
+			view.EnsureVisible(i);
+		}
+
 		// 树视图存在子节点且多选节点时，在 SelectedIndexChanged 事件中，SelectedIndices属性可能返回无内容的集合。
 		public static int GetFirstSelectedIndex(this ObjectListView view) {
 			var c = view.GetItemCount();

@@ -69,7 +69,7 @@ namespace PDFPatcher.Functions
 			}
 			_NumericAwareSortBox.Checked = options.NumericAwareSort;
 			_RemoveOrphanBoomarksBox.Checked = options.RemoveOrphanBookmarks;
-			_ResizePdfPagesBox.Checked = ps.ScaleContent == false;
+			_ResizePdfPagesBox.Checked = !ps.ScaleContent;
 			_ExtraEmptyPageBox.Checked = options.ExtraEmptyPageForOddPdf;
 			_RightMarginBox.SetValue(ps.Margins.Right / Constants.Units.CmToPoint);
 			switch (options.SubFolder) {
@@ -193,7 +193,7 @@ namespace PDFPatcher.Functions
 		}
 
 		void MarginBox_ValueChanged(object sender, EventArgs e) {
-			if (_SyncMarginsBox.Checked == false || _uiLockDown) {
+			if (!_SyncMarginsBox.Checked || _uiLockDown) {
 				return;
 			}
 			var c = sender as NumericUpDown;

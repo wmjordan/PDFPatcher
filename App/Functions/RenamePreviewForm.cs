@@ -21,20 +21,20 @@ namespace PDFPatcher.Functions
 					continue;
 				}
 				if (t.ToString().IndexOf('<') == -1) {
-					c.Add(new ListViewItem(new string[]{
+					c.Add(new ListViewItem([
 						s.FileName,
 						t.FileName,
 						s.Directory,
 						t.Directory
-					}));
+					]));
 				}
 				else {
-					var item = c.Add(new ListViewItem(new string[]{
+					var item = c.Add(new ListViewItem([
 						s.FileName,
 						t,
 						s.Directory,
 						String.Empty
-					}));
+					]));
 					item.UseItemStyleForSubItems = false;
 					item.SubItems[1].BackColor = Color.LightYellow;
 				}

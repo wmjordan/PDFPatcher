@@ -28,11 +28,11 @@ namespace PDFPatcher.Functions.Editor
 			var infoDoc = controller.Model.Document;
 			var mupdf = controller.Model.PdfDocument;
 			var t = new FilePath(controller.Model.DocumentPath);
-			if (infoDoc == null || infoDoc.DocumentElement == null || t == null) {
+			if (infoDoc == null || infoDoc.DocumentElement == null || t.IsEmpty) {
 				return;
 			}
 
-			if (t.HasExtension(Constants.FileExtensions.Xml) == false
+			if (!t.HasExtension(Constants.FileExtensions.Xml)
 				|| showDialog) {
 				using (var d = new SaveFileDialog() {
 					DefaultExt = Constants.FileExtensions.Xml,

@@ -19,7 +19,7 @@ namespace PDFPatcher.Functions.Editor
 			if (_number == 0) {
 				using (var form = new ShiftPageNumberEntryForm() { TakeFollowing = _takeFollowing }) {
 					if (form.ShowDialog() != DialogResult.OK
-						|| form.ShiftNumber == 0 && form.TakeFollowing == false) {
+						|| form.ShiftNumber == 0 && !form.TakeFollowing) {
 						return;
 					}
 					n = form.ShiftNumber;

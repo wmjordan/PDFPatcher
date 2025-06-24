@@ -19,7 +19,7 @@ namespace PDFPatcher.Functions
 		}
 
 		void _CancelButton_Click(object sender, EventArgs e) {
-			if (AppContext.MainForm.IsWorkerBusy == false) {
+			if (!AppContext.MainForm.IsWorkerBusy) {
 				Hide();
 			}
 			else if (Common.FormHelper.YesNoBox("程序正在工作，是否终止执行？") == DialogResult.Yes) {

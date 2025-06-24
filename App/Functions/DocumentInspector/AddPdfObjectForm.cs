@@ -45,7 +45,7 @@ namespace PDFPatcher.Functions
 		}
 		public AddPdfObjectForm() {
 			InitializeComponent();
-			_editBoxes = new Control[] { _NameValueBox, _NumericValueBox, _BooleanValueBox, _TextValueBox };
+			_editBoxes = [_NameValueBox, _NumericValueBox, _BooleanValueBox, _TextValueBox];
 		}
 
 		void AddPdfObjectForm_Load(object sender, EventArgs e) {

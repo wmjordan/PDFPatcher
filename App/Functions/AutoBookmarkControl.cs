@@ -47,9 +47,7 @@ namespace PDFPatcher.Functions
 				_AddFilterMenu.Items.Add(item).Name = EditAdjustmentForm.FilterIDs[i++];
 			}
 			_LevelAdjustmentBox.CellEditUseWholeCell = true;
-			_LevelAdjustmentBox.BeforeSorting += (object sender, BrightIdeasSoftware.BeforeSortingEventArgs e) => {
-				e.Canceled = true;
-			};
+			_LevelAdjustmentBox.BeforeSorting += (object sender, BrightIdeasSoftware.BeforeSortingEventArgs e) => e.Canceled = true;
 			_LevelAdjustmentBox.DropSink = new BrightIdeasSoftware.RearrangingDropSink(false);
 			_AdvancedFilterColumn.AspectGetter = (object x) => {
 				if (x is not AutoBookmarkOptions.LevelAdjustmentOption f) {
@@ -133,7 +131,7 @@ namespace PDFPatcher.Functions
 		}
 
 		private void _ExportBookmarkButton_Click(object sender, EventArgs e) {
-			if (File.Exists(_SourceFileControl.FirstFile) == false) {
+			if (!File.Exists(_SourceFileControl.FirstFile)) {
 				FormHelper.ErrorBox(Messages.SourceFileNotFound);
 				return;
 			}
@@ -245,12 +243,11 @@ namespace PDFPatcher.Functions
 				}
 				_copiedLevelAdjustments = new AutoBookmarkOptions.LevelAdjustmentOption[si.Count];
 				for (int i = 0; i < _copiedLevelAdjustments.Length; i++) {
-					var item = si[i] as AutoBookmarkOptions.LevelAdjustmentOption;
-					_copiedLevelAdjustments[i] = item;
+					_copiedLevelAdjustments[i] = si[i] as AutoBookmarkOptions.LevelAdjustmentOption;
 				}
 			}
 			else if (sender == _PasteButton) {
-				if (_copiedLevelAdjustments.HasContent() == false) {
+				if (!_copiedLevelAdjustments.HasContent()) {
 					return;
 				}
 				foreach (var item in _copiedLevelAdjustments) {

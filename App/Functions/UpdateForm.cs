@@ -87,9 +87,9 @@ namespace PDFPatcher.Functions
 				}
 			}
 			else {
-				_InfoBox.AppendLine(String.Join("\n", new string[] {
+				_InfoBox.AppendLine(String.Join("\n", [
 							"未发现新版本。", $"服务器上发布的版本是：{v} {d}", String.Empty
-						}));
+						]));
 				_InfoBox.SelectionColor = Color.DimGray;
 			}
 

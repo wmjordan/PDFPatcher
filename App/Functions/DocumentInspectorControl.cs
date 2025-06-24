@@ -142,7 +142,7 @@ namespace PDFPatcher.Functions
 				string t;
 				bool readOnly = true;
 				if (args.Column.Index == 2) {
-					if (String.IsNullOrEmpty(o.Description) == false) {
+					if (!String.IsNullOrEmpty(o.Description)) {
 						t = o.Description;
 						goto MAKE_CONTROL;
 					}
@@ -397,7 +397,7 @@ namespace PDFPatcher.Functions
 			if (d.Value != null && (d.Value.Type == PdfObject.INDIRECT || d.Value.Type == PdfObject.STREAM)) {
 				var s = d.Value as PRStream ?? d.ExtensiveObject as PRStream;
 				if (s != null) {
-					_ViewButton.Enabled = d.Name.HasPrefix("Font") == false;
+					_ViewButton.Enabled = !d.Name.HasPrefix("Font");
 					_ExportButton.Enabled = _AddObjectMenu.Enabled = true;
 					if (PdfName.IMAGE.Equals(s.GetAsName(PdfName.SUBTYPE))) {
 						ShowDescription("图片", null, PdfHelper.GetTypeName(PdfObject.STREAM));

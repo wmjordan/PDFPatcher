@@ -8,10 +8,10 @@ namespace PDFPatcher.Functions
 {
 	sealed partial class EditAdjustmentForm : Form
 	{
-		internal static string[] FilterNames = new string[] { "字体名称", "文本尺寸", "文本位置", "页码范围", "文本内容" };
-		internal static string[] FilterIDs = new string[] { "_FontNameFilter", "_FontSizeFilter", "_FontPositionFilter", "_PageRangeFilter", "_TextFilter" };
+		internal static string[] FilterNames = ["字体名称", "文本尺寸", "文本位置", "页码范围", "文本内容"];
+		internal static string[] FilterIDs = ["_FontNameFilter", "_FontSizeFilter", "_FontPositionFilter", "_PageRangeFilter", "_TextFilter"];
 
-		readonly Dictionary<Type, IFilterConditionEditor> _filterEditors = new Dictionary<Type, IFilterConditionEditor>();
+		readonly Dictionary<Type, IFilterConditionEditor> _filterEditors = [];
 		internal AutoBookmarkOptions.LevelAdjustmentOption Filter { get; private set; }
 		AutoBookmarkCondition.MultiCondition conditions;
 
@@ -94,14 +94,14 @@ namespace PDFPatcher.Functions
 		}
 
 		internal static AutoBookmarkCondition CreateCondition(string name) {
-			switch (name) {
-				case "_FontNameFilter": return new AutoBookmarkCondition.FontNameCondition("SimSun", false);
-				case "_FontSizeFilter": return new AutoBookmarkCondition.TextSizeCondition(0, 10);
-				case "_FontPositionFilter": return new AutoBookmarkCondition.TextPositionCondition(1, -9999, 9999);
-				case "_PageRangeFilter": return new AutoBookmarkCondition.PageRangeCondition();
-				case "_TextFilter": return new AutoBookmarkCondition.TextCondition() { Pattern = new MatchPattern("筛选条件", false, false, false) };
-				default: return null;
-			}
+			return name switch {
+				"_FontNameFilter" => new AutoBookmarkCondition.FontNameCondition("SimSun", false),
+				"_FontSizeFilter" => new AutoBookmarkCondition.TextSizeCondition(0, 10),
+				"_FontPositionFilter" => new AutoBookmarkCondition.TextPositionCondition(1, -9999, 9999),
+				"_PageRangeFilter" => new AutoBookmarkCondition.PageRangeCondition(),
+				"_TextFilter" => new AutoBookmarkCondition.TextCondition() { Pattern = new MatchPattern("筛选条件", false, false, false) },
+				_ => null,
+			};
 		}
 
 		internal static void UpdateFilter(IFilterConditionEditor filter) {

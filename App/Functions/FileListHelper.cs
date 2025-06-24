@@ -143,7 +143,7 @@ namespace PDFPatcher.Functions
 			_fileList.KeyUp += (s, args) => {
 				switch (args.KeyCode) {
 					case Keys.Delete:
-						if (_fileList.IsCellEditing || _fileList.Focused == false) {
+						if (_fileList.IsCellEditing || !_fileList.Focused) {
 							return;
 						}
 						ProcessCommonMenuCommand(Commands.Delete);
@@ -171,14 +171,14 @@ namespace PDFPatcher.Functions
 				case "_Copy":
 					var sb = StringBuilderCache.Acquire();
 					foreach (SourceItem.Pdf item in GetSourceItems<SourceItem>(true)) {
-						sb.AppendLine(String.Join("\t", new string[] {
+						sb.AppendLine(String.Join("\t", [
 							item.FilePath.ToString(),
 							item.PageCount.ToText (),
 							item.DocInfo.Title,
 							item.DocInfo.Author,
 							item.DocInfo.Subject,
 							item.DocInfo.Keywords
-						}));
+						]));
 					}
 					if (sb.Length > 0) {
 						Clipboard.SetText(StringBuilderCache.GetStringAndRelease(sb));

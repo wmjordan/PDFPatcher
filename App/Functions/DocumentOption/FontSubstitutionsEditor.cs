@@ -75,11 +75,11 @@ namespace PDFPatcher.Functions
 			var b = cb.Items;
 			b.Add(String.Empty);
 			var sf = (args.RowObject as FontSubstitution).Substitution;
-			bool cf = String.IsNullOrEmpty(sf) == false;
+			bool cf = !String.IsNullOrEmpty(sf);
 			if (cf) {
 				sf = sf.ToUpperInvariant();
 			}
-			if (_Fonts.HasContent() == false) {
+			if (!_Fonts.HasContent()) {
 				_Fonts = FontUtility.InstalledFonts;
 			}
 			var l = _Fonts.Length;
@@ -172,7 +172,7 @@ namespace PDFPatcher.Functions
 
 		void _FontSubstitutionMenu_Opening(object sender, CancelEventArgs e) {
 			_CopySubstitutionFont.Enabled = (_FontSubstitutionsBox.SelectedIndex != -1);
-			_PasteSubstitutionFont.Enabled = String.IsNullOrEmpty(_copiedFont) == false;
+			_PasteSubstitutionFont.Enabled = !String.IsNullOrEmpty(_copiedFont);
 		}
 
 	}

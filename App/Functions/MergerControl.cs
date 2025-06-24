@@ -67,7 +67,7 @@ namespace PDFPatcher.Functions
 				var en = false;
 				if (i != -1) {
 					var b = (_ItemList.GetModelObject(i) as SourceItem).Bookmark;
-					if (b != null && String.IsNullOrEmpty(b.Title) == false) {
+					if (b != null && !String.IsNullOrEmpty(b.Title)) {
 						en = true;
 						_BoldStyleButton.Checked = b.IsBold;
 						_ItalicStyleButton.Checked = b.IsItalic;
@@ -148,7 +148,7 @@ namespace PDFPatcher.Functions
 
 		[SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
 		protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
-			if (_ItemList.IsCellEditing || _ItemList.Focused == false) {
+			if (_ItemList.IsCellEditing || !_ItemList.Focused) {
 				return base.ProcessCmdKey(ref msg, keyData);
 			}
 			switch (keyData) {
@@ -223,7 +223,7 @@ namespace PDFPatcher.Functions
 				return;
 			}
 			var copy = (ModifierKeys & Keys.Control) != Keys.None;
-			if (copy == false) {
+			if (!copy) {
 				if (e.DropTargetItem.Selected) {
 					e.Effect = DragDropEffects.None;
 					return;
@@ -241,7 +241,7 @@ namespace PDFPatcher.Functions
 			var ml = e.MouseLocation;
 			var child = ml.X > d.Position.X + d.GetBounds(ItemBoundsPortion.ItemOnly).Width / 2;
 			var append = ml.Y > d.Position.Y + d.Bounds.Height / 2;
-			if (child == false && copy == false) {
+			if (!child && !copy) {
 				var xi = e.DropTargetIndex + (append ? 1 : -1);
 				if (xi > -1 && xi < e.ListView.GetItemCount()
 					&& e.ListView.Items[xi].Selected
@@ -372,7 +372,7 @@ namespace PDFPatcher.Functions
 			var l = _AddFolderButton.DropDown.Items;
 			l.ClearDropDownItems();
 			foreach (var item in AppContext.Recent.Folders) {
-				if (FileHelper.IsPathValid(item) && String.IsNullOrEmpty(System.IO.Path.GetFileName(item)) == false) {
+				if (FileHelper.IsPathValid(item) && !String.IsNullOrEmpty(System.IO.Path.GetFileName(item))) {
 					l.Add(FileHelper.GetEllipticPath(item, 50)).ToolTipText = item;
 				}
 			}
@@ -381,7 +381,7 @@ namespace PDFPatcher.Functions
 		void _AddFolderButton_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e) {
 			_RecentFolderMenu.Hide();
 			var f = e.ClickedItem.ToolTipText;
-			if (System.IO.Directory.Exists(f) == false) {
+			if (!System.IO.Directory.Exists(f)) {
 				FormHelper.ErrorBox("找不到文件夹：" + f);
 				return;
 			}
@@ -395,7 +395,7 @@ namespace PDFPatcher.Functions
 				FormHelper.ErrorBox(Messages.TargetFileNotSpecified);
 				return;
 			}
-			if (FileHelper.IsPathValid(targetPdfFile) == false) {
+			if (!FileHelper.IsPathValid(targetPdfFile)) {
 				FormHelper.ErrorBox($"输出文件名无效。{(FileHelper.HasFileNameMacro(targetPdfFile) ? "\n合并 PDF 文件功能不支持替代符。" : String.Empty)}");
 				return;
 			}
@@ -573,15 +573,15 @@ namespace PDFPatcher.Functions
 				case Commands.Copy:
 					var sb = StringBuilderCache.Acquire(200);
 					var sl = GetSourceItems<SourceItem>(true);
-					if (sl.HasContent() == false) {
+					if (!sl.HasContent()) {
 						sl = GetSourceItems<SourceItem>(false);
-						if (sl.HasContent() == false) {
+						if (!sl.HasContent()) {
 							return;
 						}
 					}
 					foreach (var item in sl) {
 						if (item.Type == SourceItem.ItemType.Empty) {
-							if (String.IsNullOrEmpty(item.Bookmark?.Title) == false) {
+							if (!String.IsNullOrEmpty(item.Bookmark?.Title)) {
 								sb.Append('\t').Append(item.Bookmark.Title).Append('\t').Append('-').AppendLine();
 							}
 						}
@@ -807,7 +807,7 @@ namespace PDFPatcher.Functions
 					continue;
 				}
 				c++;
-				if (s.Cropping.Equals(image.Cropping) == false) {
+				if (!s.Cropping.Equals(image.Cropping)) {
 					if (FormHelper.YesNoBox("选择的图片具有不同的设置，是否重置为统一的值？") == DialogResult.No) {
 						return;
 					}
@@ -835,7 +835,7 @@ namespace PDFPatcher.Functions
 		ListViewItem GetFocusedPdfItem() {
 			var vi = _ItemList.FocusedItem;
 			if (vi == null
-				|| vi.Text.EndsWith(Constants.FileExtensions.Pdf, StringComparison.OrdinalIgnoreCase) == false) {
+				|| !vi.Text.EndsWith(Constants.FileExtensions.Pdf, StringComparison.OrdinalIgnoreCase)) {
 				return null;
 			}
 			return vi;

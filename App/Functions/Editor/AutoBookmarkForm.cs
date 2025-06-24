@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
+using CLR;
 using PDFPatcher.Common;
 using PDFPatcher.Functions.Editor;
 using PDFPatcher.Model;
@@ -27,13 +28,11 @@ namespace PDFPatcher.Functions
 			MinimumSize = Size;
 			_Toolbar.ScaleIcons(16);
 
-			_ConditionColumn.AsTyped<EditModel.AutoBookmarkSettings>(c => {
-				c.AspectGetter = o => $"字体为{o.FontName} 尺寸为{o.FontSize}{(o.MatchPattern != null ? o.MatchPattern.ToString() : String.Empty)}";
-			});
+			_ConditionColumn.AsTyped<EditModel.AutoBookmarkSettings>(c => c.AspectGetter = o => $"字体为{o.FontName} 尺寸为{o.FontSize}{o.MatchPattern?.ToString() ?? String.Empty}");
 			_LevelColumn.CellEditUseWholeCell = true;
 			_LevelColumn.AsTyped<EditModel.AutoBookmarkSettings>(c => {
 				c.AspectGetter = o => o.Level;
-				c.AspectPutter = (o, v) => o.Level = Convert.ToInt32(v).LimitInRange(1, 10);
+				c.AspectPutter = (o, v) => o.Level = Convert.ToInt32(v).Clamp(1, 10);
 			});
 			_BoldColumn.AsTyped<EditModel.AutoBookmarkSettings>(c => {
 				c.AspectGetter = o => o.Bookmark.IsBold;
@@ -43,9 +42,7 @@ namespace PDFPatcher.Functions
 				c.AspectGetter = o => o.Bookmark.IsItalic;
 				c.AspectPutter = (o, v) => o.Bookmark.IsItalic = (bool)v;
 			});
-			_ColorColumn.AsTyped<EditModel.AutoBookmarkSettings>(c => {
-				c.AspectGetter = o => "点击设置颜色";
-			});
+			_ColorColumn.AsTyped<EditModel.AutoBookmarkSettings>(c => c.AspectGetter = o => "点击设置颜色");
 			_OpenColumn.AsTyped<EditModel.AutoBookmarkSettings>(c => {
 				c.AspectGetter = o => o.Bookmark.IsOpened;
 				c.AspectPutter = (o, v) => o.Bookmark.IsOpened = (bool)v;
@@ -79,7 +76,7 @@ namespace PDFPatcher.Functions
 			_SaveListButton.Click += _SaveListButton_Click;
 
 			QuickSelectCommand.RegisterMenuItemsWithPattern(_SetPatternMenu.DropDownItems);
-			_SetPatternMenu.DropDownItems.AddRange(new ToolStripItem[] {
+			_SetPatternMenu.DropDownItems.AddRange([
 				new ToolStripSeparator(),
 				new ToolStripMenuItem("自定义文本匹配模式...") {
 					Tag = "CustomPattern"
@@ -88,7 +85,7 @@ namespace PDFPatcher.Functions
 					Tag = "ClearPattern",
 					Image = Properties.Resources.Delete
 				}
-			});
+			]);
 			_SetPatternMenu.DropDownItemClicked += _SetPattern_DropDownItemClicked;
 		}
 
@@ -114,9 +111,7 @@ namespace PDFPatcher.Functions
 								f.MatchCase = p.MatchCase;
 								f.FullMatch = p.FullMatch;
 							}
-						}, f => {
-							SetMatchPatternToSelectedBookmarkStyles(f.Pattern.Length != 0 ? new MatchPattern(f.Pattern, f.MatchCase, f.FullMatch, true) : null);
-						});
+						}, f => SetMatchPatternToSelectedBookmarkStyles(f.Pattern.Length != 0 ? new MatchPattern(f.Pattern, f.MatchCase, f.FullMatch, true) : null));
 						return;
 				}
 			}

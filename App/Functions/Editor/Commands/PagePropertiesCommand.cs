@@ -22,7 +22,7 @@ namespace PDFPatcher.Functions.Editor
 		}
 
 		private static PagePropertyForm GetDialog() {
-			if (_dialog != null && _dialog.IsDisposed == false) {
+			if (_dialog != null && !_dialog.IsDisposed) {
 				return _dialog;
 			}
 			_dialog = new PagePropertyForm();

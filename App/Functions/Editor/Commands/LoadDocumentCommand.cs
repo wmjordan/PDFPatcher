@@ -14,7 +14,7 @@ namespace PDFPatcher.Functions.Editor
 
 		public void Process(Controller controller, params string[] parameters) {
 			if (controller.Model.Undo.IsDirty
-				&& AppContext.MainForm.ConfirmYesBox(Messages.ConfirmAbandonDocument) == false) {
+				&& !AppContext.MainForm.ConfirmYesBox(Messages.ConfirmAbandonDocument)) {
 				return;
 			}
 			if (_showDialog) {
@@ -26,7 +26,7 @@ namespace PDFPatcher.Functions.Editor
 					if (f.ShowDialog() != DialogResult.OK) {
 						return;
 					}
-					parameters = new string[] { f.FileName };
+					parameters = [f.FileName];
 				}
 			}
 			try {

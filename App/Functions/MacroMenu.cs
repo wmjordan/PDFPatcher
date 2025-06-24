@@ -16,21 +16,21 @@ namespace PDFPatcher.Functions
 		}
 
 		internal void LoadStandardSourceFileMacros() {
-			Items.AddRange(new ToolStripItem[] {
+			Items.AddRange([
 				new ToolStripMenuItem (InsertText + Constants.FileNameMacros.PathName),
 				new ToolStripMenuItem (InsertText + Constants.FileNameMacros.FileName),
 				new ToolStripMenuItem (InsertText + Constants.FileNameMacros.FolderName)
-			});
+			]);
 		}
 
 		internal void LoadStandardInfoMacros() {
-			Items.AddRange(new ToolStripItem[] {
+			Items.AddRange([
 				new ToolStripMenuItem (InsertText + Constants.FileNameMacros.TitleProperty),
 				new ToolStripMenuItem (InsertText + Constants.FileNameMacros.AuthorProperty),
 				new ToolStripMenuItem (InsertText + Constants.FileNameMacros.SubjectProperty),
 				new ToolStripMenuItem (InsertText + Constants.FileNameMacros.KeywordsProperty),
 				new ToolStripMenuItem (InsertText + Constants.FileNameMacros.PageCount),
-			});
+			]);
 		}
 
 		internal void ProcessInsertMacroCommand(object sender, ToolStripItemClickedEventArgs e) {

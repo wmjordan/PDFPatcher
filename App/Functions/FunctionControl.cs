@@ -29,7 +29,7 @@ namespace PDFPatcher.Functions
 			}
 
 			// 将第一个文本框设置为文件路径
-			if (parameters.Length > 0 && String.IsNullOrEmpty(parameters[0]) == false
+			if (parameters.Length > 0 && !String.IsNullOrEmpty(parameters[0])
 			&& FileHelper.HasExtension(parameters[0], Constants.FileExtensions.Pdf)
 			) {
 				foreach (Control c in Controls) {
@@ -83,15 +83,15 @@ namespace PDFPatcher.Functions
 						break;
 					default:
 						EnableCommand(item,
-							Commands.DefaultDisabledItems.Contains(item.Name) == false,
-							Commands.DefaultHiddenItems.Contains(item.Name) == false
+							!Commands.DefaultDisabledItems.Contains(item.Name),
+							!Commands.DefaultHiddenItems.Contains(item.Name)
 							);
 						break;
 				}
 				SetupCommand(item);
 				if (item.Visible) {
 					if (item is ToolStripSeparator) {
-						item.Visible = pvs == false;
+						item.Visible = !pvs;
 						pvs = true;
 					}
 					else {
