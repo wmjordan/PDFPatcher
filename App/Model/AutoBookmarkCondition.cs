@@ -24,7 +24,7 @@ namespace PDFPatcher.Model
 		public class MultiCondition : AutoBookmarkCondition
 		{
 			internal const string ThisName = "条件组";
-			readonly Collection<AutoBookmarkCondition> _Conditions = new Collection<AutoBookmarkCondition>();
+			readonly Collection<AutoBookmarkCondition> _Conditions = [];
 
 			[XmlElement(FontNameCondition.ThisName, typeof(FontNameCondition))]
 			[XmlElement(TextSizeCondition.ThisName, typeof(TextSizeCondition))]
@@ -188,7 +188,6 @@ namespace PDFPatcher.Model
 				_description = null;
 			}
 
-
 			internal override AutoBookmarkFilter CreateFilter() {
 				return new TextSizeFilter(_minSize, _maxSize);
 			}
@@ -285,7 +284,6 @@ namespace PDFPatcher.Model
 				_description = null;
 			}
 
-
 			internal override AutoBookmarkFilter CreateFilter() {
 				return new TextPositionFilter(_position, _minValue, _maxValue);
 			}
@@ -345,8 +343,5 @@ namespace PDFPatcher.Model
 				Pattern = pattern.Clone() as MatchPattern;
 			}
 		}
-
 	}
-
-
 }

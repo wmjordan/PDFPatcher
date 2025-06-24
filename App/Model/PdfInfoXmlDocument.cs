@@ -46,7 +46,7 @@ namespace PDFPatcher.Model
 				IsOpen = settings.IsOpened,
 				Action = Constants.ActionType.Goto
 			};
-			if (settings.ForeColor.IsEmptyOrTransparent() == false) {
+			if (!settings.ForeColor.IsEmptyOrTransparent()) {
 				b.ForeColor = settings.ForeColor;
 			}
 			if (settings.IsBold || settings.IsItalic) {
@@ -182,7 +182,7 @@ namespace PDFPatcher.Model
 		public FontStyle TextStyle {
 			get {
 				var s = GetAttribute(Constants.BookmarkAttributes.Style);
-				if (String.IsNullOrEmpty(s) == false) {
+				if (!String.IsNullOrEmpty(s)) {
 					switch (s) {
 						case Constants.BookmarkAttributes.StyleType.Bold: return FontStyle.Bold;
 						case Constants.BookmarkAttributes.StyleType.Italic: return FontStyle.Italic;
@@ -241,7 +241,7 @@ namespace PDFPatcher.Model
 			get => this.GetValue(Constants.DestinationAttributes.Page, 0);
 			set {
 				this.SetValue(Constants.DestinationAttributes.Page, value, 0);
-				if (HasAttribute(Constants.DestinationAttributes.Action) == false) {
+				if (!HasAttribute(Constants.DestinationAttributes.Action)) {
 					SetAttribute(Constants.DestinationAttributes.Action, Constants.ActionType.Goto);
 				}
 			}

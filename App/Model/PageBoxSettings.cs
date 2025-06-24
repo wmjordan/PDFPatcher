@@ -30,7 +30,7 @@ namespace PDFPatcher.Model
 		public int BasePage { get; set; }
 
 		public bool NeedResize => PaperSize.SpecialSize != SpecialPaperSize.AsPageSize;
-		public bool NeedAdjustMargins => Margins.IsEmpty == false;
+		public bool NeedAdjustMargins => !Margins.IsEmpty;
 		public PageBoxSettings() {
 			PaperSize = new PaperSize(PaperSize.AsPageSize, 0, 0);
 			Margins = new Margins();

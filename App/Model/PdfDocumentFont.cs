@@ -21,7 +21,7 @@ namespace PDFPatcher.Model
 			}
 			if (df.Type == PdfObject.ARRAY) {
 				foreach (var item in (df as PdfArray).ArrayList) {
-					if (IsEmbeddedFont(PdfReader.GetPdfObjectRelease(item) as PdfDictionary) == false) {
+					if (!IsEmbeddedFont(PdfReader.GetPdfObjectRelease(item) as PdfDictionary)) {
 						return false;
 					}
 				}
@@ -58,7 +58,7 @@ namespace PDFPatcher.Model
 				var xObjects = res.GetAsDict(PdfName.XOBJECT);
 				if (xObjects != null) {
 					foreach (var item in xObjects) {
-						if (PdfReader.GetPdfObjectRelease(item.Value) is not PdfDictionary form || PdfName.FORM.Equals(form.GetAsName(PdfName.SUBTYPE)) == false) {
+						if (PdfReader.GetPdfObjectRelease(item.Value) is not PdfDictionary form || !PdfName.FORM.Equals(form.GetAsName(PdfName.SUBTYPE))) {
 							continue;
 						}
 						foreach (var font in PdfModelHelper.GetReferencedResources(form, o => PdfName.FONT.Equals(o.GetAsName(PdfName.TYPE)), visitedRefs)) {

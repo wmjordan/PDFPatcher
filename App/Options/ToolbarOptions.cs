@@ -12,7 +12,7 @@ namespace PDFPatcher
 		[System.ComponentModel.DefaultValue(true)]
 		public bool ShowGeneralToolbar { get; set; }
 
-		readonly List<ButtonOption> _Buttons = new List<ButtonOption>();
+		readonly List<ButtonOption> _Buttons = [];
 		[XmlElement("按钮")]
 		public List<ButtonOption> Buttons => _Buttons;
 

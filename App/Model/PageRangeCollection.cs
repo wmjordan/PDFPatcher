@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using CLR;
 using PDFPatcher.Common;
 
 namespace PDFPatcher.Model
@@ -20,8 +21,8 @@ namespace PDFPatcher.Model
 
 		public bool IsInRange(int value) {
 			foreach (var item in this) {
-				if (item.StartValue < item.EndValue && value >= item.StartValue && value <= item.EndValue
-					|| value >= item.EndValue && value <= item.StartValue) {
+				if (item.StartValue < item.EndValue && value.IsBetween(item.StartValue, item.EndValue)
+					|| value.IsBetween(item.EndValue, item.StartValue)) {
 					return true;
 				}
 			}
@@ -79,7 +80,7 @@ namespace PDFPatcher.Model
 
 		internal static PageRangeCollection Parse(string rangeText, int minValue, int maxValue, bool addDefaultRange) {
 			var r = new PageRangeCollection();
-			if (String.IsNullOrEmpty(rangeText) == false) {
+			if (!String.IsNullOrEmpty(rangeText)) {
 				var ranges = rangeText.Split(',', ';', ' ', '\t');
 				string startRange, endRange;
 				int startNum, endNum;

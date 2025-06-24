@@ -173,7 +173,7 @@ namespace PDFPatcher.Model
 		];
 
 		public bool HasCommand => Commands.Count > 0;
-		public IList<PdfPageCommand> Commands { get; } = new List<PdfPageCommand>();
+		public IList<PdfPageCommand> Commands { get; } = [];
 		public override PdfPageCommandType Type => PdfPageCommandType.Enclosure;
 		public override bool HasOutput {
 			get {
@@ -269,11 +269,11 @@ namespace PDFPatcher.Model
 			: base(oper, operands) {
 		}
 		public MatrixCommand(PdfLiteral oper, float a, float b, float c, float d, float e, float f)
-			: base(oper, new List<PdfObject>(6) {
+			: base(oper, [
 					new PdfNumber (a), new PdfNumber(b),
 					new PdfNumber (c), new PdfNumber (d),
 					new PdfNumber (e), new PdfNumber(f)
-			}) {
+			]) {
 		}
 		public void Multiply(double[] matrix) {
 			var m1 = Array.ConvertAll(Operands, (i) => ((PdfNumber)i).DoubleValue);

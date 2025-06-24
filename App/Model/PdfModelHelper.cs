@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using CLR;
 using iTextSharp.text.pdf;
 
 namespace PDFPatcher.Model
@@ -100,7 +101,8 @@ namespace PDFPatcher.Model
 			var bytes = text.GetBytes();
 			using (MemoryStream ms = new MemoryStream(bytes)) {
 				if (encoding == null) {
-					if (bytes.Length >= 2 && (bytes[0] == 0xFF && bytes[1] == 0xFE || bytes[0] == 0xFE && bytes[1] == 0xFF)) {
+					if (bytes.Length >= 2 && Op.Cast<byte, ushort>(ref bytes[0]).CeqAny(0xFFFE, 0xFEFF)) {
+						// bytes 以 0xFEFF 或 0xFFFE 开头
 						using (TextReader r = new StreamReader(ms, true)) {
 							return r.ReadToEnd();
 						}
@@ -110,14 +112,16 @@ namespace PDFPatcher.Model
 					}
 				}
 				else {
-					// 忽略字节顺序标记
-					if (bytes.Length >= 2 && (bytes[0] == 0xFF && bytes[1] == 0xFE || bytes[0] == 0xFE && bytes[1] == 0xFF)) {
+					// 跳过字节顺序标记
+					if (bytes.Length >= 2 && Op.Cast<byte, ushort>(ref bytes[0]).CeqAny(0xFFFE, 0xFEFF)) {
+						// bytes 以 0xFEFF 或 0xFFFE 开头
 						ms.Position += 2;
 					}
 					else if (bytes.Length >= 3 && bytes[0] == 0xef && bytes[1] == 0xbb && bytes[2] == 0xbf) {
 						ms.Position += 3;
 					}
-					else if (bytes.Length >= 4 && bytes[0] == 0 && bytes[1] == 0 && bytes[2] == 0xfe && bytes[3] == 0xff) {
+					else if (bytes.Length >= 4 && Op.Cast<byte, uint>(ref bytes[0]) == 0xFFFE0000) {
+						// bytes 以 0000FEFF 开头
 						ms.Position += 4;
 					}
 					using (TextReader r = new StreamReader(ms, encoding)) {

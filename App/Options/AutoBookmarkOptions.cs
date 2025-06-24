@@ -61,7 +61,7 @@ namespace PDFPatcher
 		[XmlAttribute("忽略重叠文本")]
 		public bool IgnoreOverlappedText { get; set; }
 
-		private readonly Collection<MatchPattern> _IgnorePatterns = new Collection<MatchPattern>();
+		private readonly Collection<MatchPattern> _IgnorePatterns = [];
 		/// <summary>
 		/// 忽略指定的表达式。
 		/// </summary>
@@ -69,7 +69,7 @@ namespace PDFPatcher
 		[XmlArrayItem("表达式")]
 		public Collection<MatchPattern> IgnorePatterns => _IgnorePatterns;
 
-		private readonly Collection<LevelAdjustmentOption> _LevelAdjustment = new Collection<LevelAdjustmentOption>();
+		private readonly Collection<LevelAdjustmentOption> _LevelAdjustment = [];
 		[XmlElement("级别调整")]
 		[PowerJson.JsonField("级别调整")]
 		public Collection<LevelAdjustmentOption> LevelAdjustment => _LevelAdjustment;

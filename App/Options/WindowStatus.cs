@@ -41,7 +41,7 @@ namespace PDFPatcher
 
 		public void Position(Form form) {
 			var a = Screen.FromControl(form).WorkingArea;
-			if (a.IntersectsWith(new System.Drawing.Rectangle(Left, Top, Width, Height)) == false) {
+			if (!a.IntersectsWith(new System.Drawing.Rectangle(Left, Top, Width, Height))) {
 				return;
 			}
 			form.StartPosition = FormStartPosition.Manual;

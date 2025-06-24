@@ -38,7 +38,7 @@ namespace PDFPatcher.Model
 		}
 
 		public void SortItems(SortType options, bool recursive) {
-			if (_Items.HasContent() == false) {
+			if (!_Items.HasContent()) {
 				return;
 			}
 			switch (options) {
@@ -49,7 +49,7 @@ namespace PDFPatcher.Model
 					_Items.Sort((x, y) => FileHelper.NumericAwareComparePath(x.FilePath, y.FilePath));
 					break;
 				case SortType.CajSort:
-					if (CajSort(_Items) == false) {
+					if (!CajSort(_Items)) {
 						goto case SortType.NumericAwareSort;
 					}
 					break;
@@ -60,7 +60,7 @@ namespace PDFPatcher.Model
 					_Items.Reverse();
 					break;
 			}
-			if (recursive == false) {
+			if (!recursive) {
 				return;
 			}
 			foreach (var item in _Items) {
@@ -142,13 +142,13 @@ namespace PDFPatcher.Model
 		internal string GetInfoFileName() {
 			// 优先采用与输入文件同名的 XML 信息文件
 			var f = new FilePath(FileHelper.CombinePath(FolderName, Path.ChangeExtension(FileName, Constants.FileExtensions.Xml)));
-			if (f.ExistsFile == false) {
+			if (!f.ExistsFile) {
 				// 次之采用与输入文件同名的 TXT 信息文件
 				f = f.ChangeExtension(Constants.FileExtensions.Txt);
-				if (f.ExistsFile == false) {
+				if (!f.ExistsFile) {
 					// 次之采用同一个信息文件
 					f = FilePath.ChangeExtension(Constants.FileExtensions.Xml);
-					if (f.ExistsFile == false) {
+					if (!f.ExistsFile) {
 						f = FilePath.Empty;
 					}
 				}
@@ -410,7 +410,7 @@ namespace PDFPatcher.Model
 			FilePath = path;
 			FileName = path.FileName;
 			FolderName = path.Directory;
-			if (AppContext.Merger.AutoBookmarkTitle == false) {
+			if (!AppContext.Merger.AutoBookmarkTitle) {
 				return;
 			}
 			var t = path.ExistsDirectory ? FileName : path.FileNameWithoutExtension;
@@ -420,7 +420,7 @@ namespace PDFPatcher.Model
 		}
 
 		protected static void GetFileInfo(FilePath fileName, out int kilobytes, out DateTime fileTime) {
-			if (fileName.ExistsFile == false) {
+			if (!fileName.ExistsFile) {
 				kilobytes = 0;
 				fileTime = DateTime.MinValue;
 			}
@@ -500,7 +500,7 @@ namespace PDFPatcher.Model
 				}
 				body.Add(path);
 			}
-			if (m == false) {
+			if (!m) {
 				return false;
 			}
 			cov.Sort(StringComparer.OrdinalIgnoreCase);
@@ -566,7 +566,7 @@ namespace PDFPatcher.Model
 				}
 				body.Add(file);
 			}
-			if (m == false) {
+			if (!m) {
 				return false;
 			}
 			cov.Sort(CompareFilePath);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using CLR;
 using PDFPatcher.Common;
 
 namespace PDFPatcher.Model
@@ -12,8 +13,8 @@ namespace PDFPatcher.Model
 			EndValue = endValue;
 		}
 		public bool Contains(int value) {
-			return value >= StartValue && value <= EndValue
-				|| value >= EndValue && value <= StartValue;
+			return value.IsBetween(StartValue, EndValue)
+				|| value.IsBetween(EndValue, StartValue);
 		}
 
 		public override string ToString() {
@@ -76,7 +77,7 @@ namespace PDFPatcher.Model
 					_Current++;
 					return true;
 				}
-				else if (_isIncremental == false && _Current > _end) {
+				else if (!_isIncremental && _Current > _end) {
 					_Current--;
 					return true;
 				}

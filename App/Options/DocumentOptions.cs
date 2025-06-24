@@ -35,7 +35,7 @@ namespace PDFPatcher
 
 		protected DocumentOptions() {
 			FullCompression = true;
-			PageLabels = new List<PageLabel>();
+			PageLabels = [];
 			ViewerPreferences = new ViewerOptions();
 			MetaData = new GeneralInfo();
 		}

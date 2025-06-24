@@ -73,7 +73,7 @@ namespace PDFPatcher
 			encodingName = (value == Constants.Encoding.Automatic ? null : value);
 		}
 		static void GetEncoding(string encodingName, ref Encoding encoding) {
-			if (encoding == null && String.IsNullOrEmpty(encodingName) == false) {
+			if (encoding == null && !String.IsNullOrEmpty(encodingName)) {
 				encoding = ValueHelper.MapValue(encodingName, Constants.Encoding.EncodingNames, Constants.Encoding.Encodings);
 			}
 		}

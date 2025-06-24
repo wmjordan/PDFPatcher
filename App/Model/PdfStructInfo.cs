@@ -38,7 +38,7 @@ namespace PDFPatcher.Model
 		}
 
 		static void AddSubItems(Dictionary<string, PdfStructInfo> d, XmlElement element) {
-			if (element.HasChildNodes == false) {
+			if (!element.HasChildNodes) {
 				return;
 			}
 			var currentToken = element.GetAttribute("Token");

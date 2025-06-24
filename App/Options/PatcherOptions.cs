@@ -69,8 +69,8 @@ namespace PDFPatcher
 		public List<FontSubstitution> FontSubstitutions { get; }
 
 		public PatcherOptions() {
-			PageSettings = new List<PageBoxSettings>();
-			FontSubstitutions = new List<FontSubstitution>();
+			PageSettings = [];
+			FontSubstitutions = [];
 			UnifiedPageSettings = new PageBoxSettings();
 		}
 	}

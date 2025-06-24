@@ -61,7 +61,7 @@ namespace PDFPatcher.Model
 		}
 
 		public void ReadXml(XmlReader reader) {
-			if (reader.Read() == false || reader.Name != "pattern") {
+			if (!reader.Read() || reader.Name != "pattern") {
 				return;
 			}
 			Name = reader.GetAttribute("name");
@@ -96,7 +96,7 @@ namespace PDFPatcher.Model
 
 			public bool Matches(string text) {
 				var m = _regex.Match(text);
-				return m.Success && (_fullMatch == false || text.Length == m.Length);
+				return m.Success && (!_fullMatch || text.Length == m.Length);
 			}
 			public string Replace(string text, string replacement) {
 				return _regex.Replace(text, replacement);
@@ -116,7 +116,7 @@ namespace PDFPatcher.Model
 					return false;
 				}
 				var i = text.IndexOf(_text, _comparison);
-				return i != -1 && (_fullMatch == false || i == 0);
+				return i != -1 && (!_fullMatch || i == 0);
 			}
 			public string Replace(string text, string replacement) {
 				return Replace(text, _text, replacement, _comparison);

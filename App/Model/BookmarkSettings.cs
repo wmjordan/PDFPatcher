@@ -53,7 +53,7 @@ namespace PDFPatcher.Model
 		}
 
 		public void ReadXml(XmlReader reader) {
-			if (reader.Read() == false) {
+			if (!reader.Read()) {
 				return;
 			}
 			Title = reader.GetAttribute("title");

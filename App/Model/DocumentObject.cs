@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CLR;
 using iTextSharp.text.pdf;
 using PDFPatcher.Common;
 using PDFPatcher.Processor;
@@ -61,9 +62,8 @@ namespace PDFPatcher.Model
 					if (r.Type == PdfObject.DICTIONARY && Parent.Type == PdfObjectType.Outline && Name == "Next") {
 						return false;
 					}
-					return r.Type == PdfObject.DICTIONARY && __ReversalRefNames.Contains(Name) == false
-						|| r.Type == PdfObject.ARRAY
-						|| r.Type == PdfObject.STREAM
+					return r.Type == PdfObject.DICTIONARY && !__ReversalRefNames.Contains(Name)
+						|| r.Type.CeqAny(PdfObject.ARRAY, PdfObject.STREAM)
 						;
 				}
 				return false;
@@ -143,11 +143,14 @@ namespace PDFPatcher.Model
 						while (po.Type == PdfObject.INDIRECT) {
 							po = PdfReader.GetPdfObject(po);
 						}
-						if (po.Type == PdfObject.ARRAY) {
-							((PdfArray)po).Remove(i);
-						}
-						else if (po.Type == PdfObject.DICTIONARY || po.Type == PdfObject.STREAM) {
-							((PdfDictionary)po).Remove(new PdfName(name));
+						switch (po.Type) {
+							case PdfObject.ARRAY:
+								((PdfArray)po).Remove(i);
+								break;
+							case PdfObject.DICTIONARY:
+							case PdfObject.STREAM:
+								((PdfDictionary)po).Remove(new PdfName(name));
+								break;
 						}
 					}
 					return true;
@@ -281,9 +284,9 @@ namespace PDFPatcher.Model
 			if (po == null) {
 				return;
 			}
-			if (po.Type == PdfObject.DICTIONARY || po.Type == PdfObject.STREAM) {
+			if (po.Type.CeqAny(PdfObject.DICTIONARY, PdfObject.STREAM)) {
 				var pd = po as PdfDictionary;
-				var cs = Type == PdfObjectType.Page || Type == PdfObjectType.Form; // 是否有 content stream
+				var cs = Type.CeqAny(PdfObjectType.Page, PdfObjectType.Form); // 是否有 content stream
 				var r = new DocumentObject[pd.Size + (cs ? 1 : 0)];
 				var n = 0;
 				foreach (var item in pd) {
@@ -293,7 +296,7 @@ namespace PDFPatcher.Model
 					if (i.Name != null && i.IsKeyObject) {
 						d.IsKeyObject = true;
 					}
-					if (String.IsNullOrEmpty(i.ImageKey) == false) {
+					if (!String.IsNullOrEmpty(i.ImageKey)) {
 						d.ImageKey = i.ImageKey;
 					}
 				}
@@ -349,7 +352,7 @@ namespace PDFPatcher.Model
 					if (i.Name != null && i.IsKeyObject) {
 						d.IsKeyObject = true;
 					}
-					if (String.IsNullOrEmpty(i.ImageKey) == false) {
+					if (!String.IsNullOrEmpty(i.ImageKey)) {
 						d.ImageKey = i.ImageKey;
 					}
 				}
@@ -498,7 +501,7 @@ namespace PDFPatcher.Model
 
 		static void CreateChildrenList(ref IList<DocumentObject> list) {
 			if (list == null || list == __Leaf) {
-				list = new List<DocumentObject>();
+				list = [];
 			}
 		}
 

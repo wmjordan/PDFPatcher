@@ -33,7 +33,7 @@ namespace PDFPatcher.Model
 		}
 
 		private TextLine() {
-			_Texts = new List<TextInfo>();
+			_Texts = [];
 			Direction = DefaultDirection;
 		}
 
@@ -93,7 +93,7 @@ namespace PDFPatcher.Model
 			}
 
 			var tl = _Texts;
-			if (SuppressTextInfoArrangement == false) {
+			if (!SuppressTextInfoArrangement) {
 				if (Direction == WritingDirection.Vertical) {
 					tl.Sort(TextInfo.CompareRegionY);
 				}
@@ -148,7 +148,7 @@ namespace PDFPatcher.Model
 				foreach (var t in tl) {
 					ts += t.LetterWidth;
 					foreach (var c in t.Text) {
-						if (Char.IsLetterOrDigit(c) == false) {
+						if (!Char.IsLetterOrDigit(c)) {
 							continue;
 						}
 						cc += (c > 0x36F ? 2 : 1);
