@@ -225,6 +225,9 @@ namespace PDFPatcher.Processor
 							SetBookmarkAction(bookmark);
 						}
 					}
+					if (_option.ExtraEmptyPageForOddPdf && c % 2 == 1) {
+						_writer.AddPage(new Rectangle(_doc.Right - _doc.Left, _doc.Top - _doc.Bottom, 0), 0);
+					}
 				}
 				finally {
 					fi?.Dispose();
