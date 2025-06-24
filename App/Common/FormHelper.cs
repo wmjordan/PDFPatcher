@@ -23,10 +23,10 @@ namespace PDFPatcher.Common
 		}
 		public static RectangleF Union(this RectangleF rectangle, RectangleF other) {
 			return RectangleF.FromLTRB(
-				rectangle.Left < other.Left ? rectangle.Left : other.Left,
-				rectangle.Top < other.Top ? rectangle.Top : other.Top,
-				rectangle.Right > other.Right ? rectangle.Right : other.Right,
-				rectangle.Bottom > other.Bottom ? rectangle.Bottom : other.Bottom
+				Math.Min(rectangle.Left, other.Left),
+				Math.Min(rectangle.Top, other.Top),
+				Math.Max(rectangle.Right, other.Right),
+				Math.Max(rectangle.Bottom, other.Bottom)
 				);
 		}
 		public static Point Transpose(this Point point, int x, int y) {
@@ -122,7 +122,7 @@ namespace PDFPatcher.Common
 			return box;
 		}
 		public static void SetLocation(this FileDialog dialog, string path) {
-			if (FileHelper.IsPathValid(path) == false) {
+			if (!FileHelper.IsPathValid(path)) {
 				return;
 			}
 			dialog.InitialDirectory = System.IO.Path.GetDirectoryName(path);

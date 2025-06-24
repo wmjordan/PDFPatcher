@@ -182,7 +182,7 @@ namespace PDFPatcher.Common
 
 		[DebuggerStepThrough]
 		public static void WriteValue(this XmlWriter writer, string name, string value, string defaultValue) {
-			if (writer != null && string.Equals(value, defaultValue, StringComparison.OrdinalIgnoreCase) == false) {
+			if (writer != null && !string.Equals(value, defaultValue, StringComparison.OrdinalIgnoreCase)) {
 				writer.WriteAttributeString(name, value);
 			}
 		}
@@ -246,7 +246,7 @@ namespace PDFPatcher.Common
 
 		static class Empty<TNode>
 		{
-			public static readonly TNode[] Item = new TNode[0];
+			public static readonly TNode[] Item = [];
 		}
 
 		sealed class ChildrenOrFollowingElementEnumerator(XmlElement baseElement) : IEnumerable<XmlElement>, IEnumerator<XmlElement>

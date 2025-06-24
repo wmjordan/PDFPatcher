@@ -5,8 +5,8 @@ namespace PDFPatcher.Common
 {
 	public class DualKeyDictionary<K, V> : IDictionary<K, V>
 	{
-		private readonly Dictionary<K, V> _keyDictionary = new Dictionary<K, V>();
-		private readonly Dictionary<V, K> _reverseDictionary = new Dictionary<V, K>();
+		private readonly Dictionary<K, V> _keyDictionary = [];
+		private readonly Dictionary<V, K> _reverseDictionary = [];
 
 		public DualKeyDictionary() {
 
@@ -33,7 +33,7 @@ namespace PDFPatcher.Common
 		public ICollection<K> Keys => _keyDictionary.Keys;
 
 		public bool Remove(K key) {
-			if (_keyDictionary.ContainsKey(key) == false) {
+			if (!_keyDictionary.ContainsKey(key)) {
 				return false;
 			}
 			var value = _keyDictionary[key];

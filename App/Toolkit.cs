@@ -7,7 +7,7 @@ namespace PDFPatcher
 	/// </summary>
 	sealed class Toolkit
 	{
-		internal static readonly Toolkit[] Toolkits = {
+		internal static readonly Toolkit[] Toolkits = [
 			new Toolkit ("编辑器","Editor","Editor","创建或修改 PDF 文档的书签，修改 PDF 文档的设置", true),
 			new Toolkit ("批量修改文档","Patcher","DocumentProcessor","根据配置批量处理 PDF 文档，生成新的文档", true),
 			new Toolkit ("合并文档","Merger","Merger","将多个图片和 PDF 文档合并为新的 PDF 文档", true),
@@ -20,7 +20,7 @@ namespace PDFPatcher
 			new Toolkit ("结构探查器","Inspector","DocumentInspector","探查 PDF 文档的内部结构", false, false),
 			new Toolkit ("导出导入信息文件","InfoExchanger","ExportInfoFile","导出书签、文档元数据、阅读器设定等信息到信息文件"),
 			new Toolkit ("程序配置","Options","AppOptions","修改 PDF 补丁丁的程序配置", false, false)
-		};
+		];
 		internal static Toolkit Get(string id) {
 			foreach (var item in Toolkits) {
 				if (item.Identifier == id) {

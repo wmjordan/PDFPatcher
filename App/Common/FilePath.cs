@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using CLR;
 using NameList = System.Collections.Generic.List<string>;
 using SysDirectory = System.IO.Directory;
 
@@ -30,7 +31,7 @@ namespace PDFPatcher.Common
 		/// <summary>获取应用程序的文件路径（对于 Web 应用程序，返回 <see cref="Empty"/>）。</summary>
 		public static readonly FilePath AppPath = Assembly.GetEntryAssembly() != null ? (FilePath)Assembly.GetEntryAssembly().Location : Empty;
 
-		static readonly char[] __PathSeparators = { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar };
+		static readonly char[] __PathSeparators = [Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar];
 		static readonly string __CurrentPath = "." + Path.DirectorySeparatorChar;
 		readonly string _value;
 
@@ -59,7 +60,7 @@ namespace PDFPatcher.Common
 							if (d) {
 								s = EndWithSep;
 							}
-							else if (Char.IsWhiteSpace(c) == false) {
+							else if (!Char.IsWhiteSpace(c)) {
 								s = EndWithLetter;
 							}
 							continue;
@@ -182,7 +183,7 @@ namespace PDFPatcher.Common
 		/// <summary>在路径后附加 <see cref="Path.DirectorySeparatorChar"/> 字符。</summary>
 		/// <returns>附加了“\”字符的路径。</returns>
 		public FilePath AppendPathSeparator() {
-			return IsEmpty == false && _value[_value.Length - 1] == Path.DirectorySeparatorChar
+			return !IsEmpty && _value[_value.Length - 1] == Path.DirectorySeparatorChar
 				? this
 				: (FilePath)(_value + Path.DirectorySeparatorChar);
 		}
@@ -197,7 +198,7 @@ namespace PDFPatcher.Common
 			int i;
 			for (i = p.Length - 1; i >= 0; i--) {
 				char c = p[i];
-				if (!Char.IsWhiteSpace(c) && IsDirectorySeparator(c) == false) {
+				if (!Char.IsWhiteSpace(c) && !IsDirectorySeparator(c)) {
 					return _value.Substring(0, i + 1);
 				}
 			}
@@ -251,7 +252,7 @@ namespace PDFPatcher.Common
 			var p2 = path._value;
 			var ps = p2[0];
 			bool p2r;
-			if ((p2r = IsDirectorySeparator(ps)) && rootAsRelative == false // note 不能调转 && 参数的顺序，p2r 在后面有用
+			if ((p2r = IsDirectorySeparator(ps)) && !rootAsRelative // note 不能调转 && 参数的顺序，p2r 在后面有用
 				|| p2.Length > 1 && (p2[1] == Path.VolumeSeparatorChar || ps == Path.DirectorySeparatorChar && p2[1] == ps)) {
 				return path;
 			}
@@ -265,7 +266,7 @@ namespace PDFPatcher.Common
 					return p1 + p2; // 合并扩展名
 				}
 			}
-			return IsDirectorySeparator(p1[p1.Length - 1]) == false && p2r == false
+			return !IsDirectorySeparator(p1[p1.Length - 1]) && !p2r
 				? new FilePath(p1 + Path.DirectorySeparatorChar + p2)
 				: new FilePath(p1 + p2, false);
 		}
@@ -277,7 +278,7 @@ namespace PDFPatcher.Common
 				return Empty;
 			}
 			var p = ToFullPath();
-			if (SysDirectory.Exists(p) == false) {
+			if (!SysDirectory.Exists(p)) {
 				SysDirectory.CreateDirectory(p);
 			}
 			return p;
@@ -290,7 +291,7 @@ namespace PDFPatcher.Common
 				return Empty;
 			}
 			var f = Directory;
-			if (SysDirectory.Exists(f._value) == false) {
+			if (!SysDirectory.Exists(f._value)) {
 				SysDirectory.CreateDirectory(f._value);
 			}
 			return f;
@@ -351,7 +352,7 @@ namespace PDFPatcher.Common
 			if (String.IsNullOrEmpty(pattern)) {
 				return SysDirectory.Exists(f._value)
 					? GetFiles(f._value, Wildcard, filter)
-					: new FilePath[0];
+					: [];
 			}
 
 			string fp;
@@ -364,7 +365,7 @@ namespace PDFPatcher.Common
 			}
 			else {
 				if (t.Count == 0) {
-					return new FilePath[0];
+					return [];
 				}
 				fp = p[pl - 1];
 			}
@@ -384,7 +385,7 @@ namespace PDFPatcher.Common
 			return SysDirectory.Exists(directory) ? Array.ConvertAll(
 				filter != null ? Array.FindAll(SysDirectory.GetFiles(directory, filePattern), filter) : SysDirectory.GetFiles(directory, filePattern)
 				, i => (FilePath)i)
-					: new FilePath[0];
+					: [];
 		}
 
 		/// <summary>获取当前 <see cref="FilePath"/> 下符合匹配模式和筛选条件的目录。在执行匹配前，先将当前实例转换为完整路径。当前用户无权访问的目录将被忽略。</summary>
@@ -396,7 +397,7 @@ namespace PDFPatcher.Common
 			if (String.IsNullOrEmpty(pattern)) {
 				return SysDirectory.Exists(f._value)
 					? GetDirectories(f._value, Wildcard, filter)
-					: new FilePath[0];
+					: [];
 			}
 
 			string fp;
@@ -409,7 +410,7 @@ namespace PDFPatcher.Common
 			}
 			else {
 				if (t.Count == 0) {
-					return new FilePath[0];
+					return [];
 				}
 				fp = p[p.Length - 1];
 			}
@@ -428,7 +429,7 @@ namespace PDFPatcher.Common
 		static FilePath[] GetDirectories(string directory, string filePattern, Predicate<string> filter) {
 			return SysDirectory.Exists(directory)
 					? Array.ConvertAll(filter != null ? Array.FindAll(SysDirectory.GetDirectories(directory, filePattern), filter) : SysDirectory.GetDirectories(directory, filePattern), i => (FilePath)i)
-					: new FilePath[0];
+					: [];
 		}
 
 		static NameList GetDirectories(string path, string[] parts, int partCount) {
@@ -438,7 +439,7 @@ namespace PDFPatcher.Common
 				r = new NameList(10);
 				var pi = parts[i];
 				if (pi.Length == 0) {
-					t = new NameList(1) { Path.GetPathRoot(path) };
+					t = [Path.GetPathRoot(path)];
 					continue;
 				}
 				else if (pi == "..") {
@@ -446,7 +447,7 @@ namespace PDFPatcher.Common
 						var n = IsDirectorySeparator(item[item.Length - 1])
 							? Path.GetDirectoryName(item.Substring(0, item.Length - 1))
 							: Path.GetDirectoryName(item);
-						if (n != null && r.Contains(n) == false) {
+						if (n != null && !r.Contains(n)) {
 							r.Add(n);
 						}
 					}
@@ -496,7 +497,7 @@ namespace PDFPatcher.Common
 		/// <returns>目录的各个部分。</returns>
 		public string[] GetParts(bool removeInvalidParts) {
 			if (IsEmpty) {
-				return new string[0];
+				return [];
 			}
 			var p = _value.Split(__PathSeparators);
 			string s;
@@ -563,7 +564,7 @@ namespace PDFPatcher.Common
 				++v;
 			}
 			if (v < 1) {
-				return new string[0];
+				return [];
 			}
 			if (v < p.Length) {
 				Array.Resize(ref p, v);
@@ -625,7 +626,7 @@ namespace PDFPatcher.Common
 		/// <param name="extension">文件扩展名。</param>
 		public bool HasExtension(string extension) {
 			return String.IsNullOrEmpty(extension)
-				|| (IsEmpty == false && _value.EndsWith(extension, StringComparison.OrdinalIgnoreCase)
+				|| (!IsEmpty && _value.EndsWith(extension, StringComparison.OrdinalIgnoreCase)
 					&& (extension[0] == '.' || _value.Length > extension.Length && _value[_value.Length - extension.Length - 1] == '.')
 				);
 		}
@@ -665,7 +666,7 @@ namespace PDFPatcher.Common
 		/// <summary>返回指定的字符是否 <see cref="Path.DirectorySeparatorChar"/> 或 <see cref="Path.AltDirectorySeparatorChar"/>。</summary>
 		/// <param name="ch">要检查的字符。</param>
 		static bool IsDirectorySeparator(char ch) {
-			return ch == Path.DirectorySeparatorChar || ch == Path.AltDirectorySeparatorChar;
+			return ch.CeqAny(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
 		}
 
 		/// <summary>返回当前路径是否为子路径（不会指向当前目录的上级目录）。</summary>
@@ -779,12 +780,12 @@ namespace PDFPatcher.Common
 		/// <param name="maxBytes">允许读取的最大字节数。如此值非正整数，则按读取文件的大小读取最多 <see cref="int.MaxValue"/> 个字节。</param>
 		/// <returns>文件的字节数组。</returns>
 		public byte[] ReadAllBytes(int maxBytes) {
-			if (ExistsFile == false) {
-				return new byte[0];
+			if (!ExistsFile) {
+				return [];
 			}
 			using (var s = new FileStream(ToFullPath()._value, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) {
-				if (s.CanRead == false) {
-					return new byte[0];
+				if (!s.CanRead) {
+					return [];
 				}
 				var l = s.Length;
 				var r = new byte[maxBytes < 1 || maxBytes > l ? l : maxBytes];
@@ -807,7 +808,7 @@ namespace PDFPatcher.Common
 		/// <param name="encoding">用于读取文件的编码。编码为 <see langword="null"/> 时采用 UTF-8 编码。</param>
 		/// <returns>文件中每行对应一个字符串所构成的集合。</returns>
 		public IEnumerable<string> ReadLines(Encoding encoding) {
-			return ExistsFile == false
+			return !ExistsFile
 				? new string[0]
 				: File.ReadLines(ToFullPath()._value, encoding ?? Encoding.UTF8);
 		}

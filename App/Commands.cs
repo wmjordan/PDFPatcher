@@ -87,8 +87,8 @@ namespace PDFPatcher
 		internal const string EditorViewerScrollToBookmark = "_ViewerScrollToBookmark";
 		internal const string EditorInsertPageLabel = "_InsertPageLabel";
 		#endregion
-		internal static readonly string[] TopMenuItems = { File, Tools, Selection };
-		internal static readonly string[] CommonSelectionCommands = { SelectAllItems, SelectNone, InvertSelection };
+		internal static readonly string[] TopMenuItems = [File, Tools, Selection];
+		internal static readonly string[] CommonSelectionCommands = [SelectAllItems, SelectNone, InvertSelection];
 		internal static readonly HashSet<string> DefaultDisabledItems = new HashSet<string>(
 			new string[] {
 				SelectAllItems, InvertSelection, SelectNone,

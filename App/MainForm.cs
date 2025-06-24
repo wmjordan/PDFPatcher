@@ -10,7 +10,7 @@ namespace PDFPatcher
 {
 	public partial class MainForm : Form
 	{
-		static readonly Dictionary<Function, FunctionControl> __FunctionControls = new Dictionary<Function, FunctionControl>();
+		static readonly Dictionary<Function, FunctionControl> __FunctionControls = [];
 
 		ReportControl _LogControl;
 		#region 公共功能
@@ -81,7 +81,7 @@ namespace PDFPatcher
 			foreach (TabPage item in _FunctionContainer.TabPages) {
 				item.Enabled = true;
 			}
-			if (e.Error == null || e.Cancelled == false) {
+			if (e.Error == null || !e.Cancelled) {
 				_LogControl.Complete();
 			}
 		}
@@ -130,43 +130,33 @@ namespace PDFPatcher
 		#endregion
 
 		internal FunctionControl GetFunctionControl(Function functionName) {
-			if (__FunctionControls.TryGetValue(functionName, out FunctionControl f) && f.IsDisposed == false) {
+			if (__FunctionControls.TryGetValue(functionName, out FunctionControl f) && !f.IsDisposed) {
 				return f;
 			}
 			switch (functionName) {
-				case Function.FrontPage:
-					return __FunctionControls[functionName] = new FrontPageControl();
-				case Function.Patcher:
-					return __FunctionControls[functionName] = new PatcherControl();
-				case Function.Merger:
-					return __FunctionControls[functionName] = new MergerControl();
-				case Function.BookmarkGenerator:
-					return __FunctionControls[functionName] = new AutoBookmarkControl();
-				case Function.InfoExchanger:
-					return __FunctionControls[functionName] = new InfoExchangerControl();
-				case Function.ExtractPages:
-					return __FunctionControls[functionName] = new ExtractPageControl();
-				case Function.ExtractImages:
-					return __FunctionControls[functionName] = new ExtractImageControl();
+				case Function.FrontPage: f = new FrontPageControl(); break;
+				case Function.Patcher: f = new PatcherControl(); break;
+				case Function.Merger: f = new MergerControl(); break;
+				case Function.BookmarkGenerator: f = new AutoBookmarkControl(); break;
+				case Function.InfoExchanger: f = new InfoExchangerControl(); break;
+				case Function.ExtractPages: f = new ExtractPageControl(); break;
+				case Function.ExtractImages: f = new ExtractImageControl(); break;
 				case Function.Editor:
 					var b = new EditorControl();
 					b.DocumentChanged += OnDocumentChanged;
 					return b;
-				case Function.Ocr:
-					return __FunctionControls[functionName] = new OcrControl();
-				case Function.RenderPages:
-					return __FunctionControls[functionName] = new RenderImageControl();
-				case Function.About:
-					return __FunctionControls[functionName] = new AboutControl();
+				case Function.Ocr: f = new OcrControl(); break;
+				case Function.RenderPages: f = new RenderImageControl(); break;
+				case Function.About: f = new AboutControl(); break;
 				case Function.Inspector:
 					var d = new DocumentInspectorControl();
 					d.DocumentChanged += OnDocumentChanged;
 					return d;
-				case Function.Rename:
-					return __FunctionControls[functionName] = new RenameControl();
+				case Function.Rename: f = new RenameControl(); break;
 				default:
 					return null;
 			}
+			return __FunctionControls[functionName] = f;
 		}
 
 		void OnDocumentChanged(object sender, DocumentChangedEventArgs args) {
@@ -213,7 +203,7 @@ namespace PDFPatcher
 				}
 			}
 			if (n != 0
-				&& this.ConfirmYesBox(Messages.ConfirmCloseNDirtyDocument.Replace("<N>", n.ToText())) == false) {
+				&& !this.ConfirmYesBox(Messages.ConfirmCloseNDirtyDocument.Replace("<N>", n.ToText()))) {
 				e.Cancel = true;
 			}
 			else if (FullScreen) {
@@ -228,7 +218,7 @@ namespace PDFPatcher
 
 			bool firstLoad;
 			try {
-				firstLoad = AppContext.Load(null) == false;
+				firstLoad = !AppContext.Load(null);
 			}
 			catch (Exception) {
 				// ignore loading exception
@@ -323,7 +313,7 @@ namespace PDFPatcher
 					x.Load(new System.IO.MemoryStream(args.Result));
 					var r = x.DocumentElement;
 					var u = r.GetAttribute("url");
-					if (String.IsNullOrEmpty(u) == false
+					if (!String.IsNullOrEmpty(u)
 						&& new Version(ProductVersion) < new Version(r.GetAttribute("version"))
 						&& this.ConfirmOKBox("发现新版本，是否前往下载？")) {
 						this.ShowDialog<UpdateForm>();
@@ -342,14 +332,15 @@ namespace PDFPatcher
 		void MenuCommand(object sender, ToolStripItemClickedEventArgs e) {
 			var ci = e.ClickedItem;
 			var t = ci.Tag as string;
-			if (String.IsNullOrEmpty(t) == false) {
+			if (!String.IsNullOrEmpty(t)) {
 				SelectFunctionList((Function)Enum.Parse(typeof(Function), t));
 				return;
 			}
 			ci.HidePopupMenu();
 			if (ci.OwnerItem == _RecentFiles) {
-				var f = GetActiveFunctionControl() as FunctionControl;
-				f.RecentFileItemClicked?.Invoke(_MainMenu, e);
+				((FunctionControl)GetActiveFunctionControl())
+					.RecentFileItemClicked
+					?.Invoke(_MainMenu, e);
 			}
 			else {
 				ExecuteCommand(ci.Name);
@@ -364,7 +355,7 @@ namespace PDFPatcher
 				}
 			}
 			else if (commandName == Commands.RestoreOptions && _OpenConfigDialog.ShowDialog() == DialogResult.OK) {
-				if (AppContext.Load(_OpenConfigDialog.FileName) == false) {
+				if (!AppContext.Load(_OpenConfigDialog.FileName)) {
 					FormHelper.ErrorBox("无法加载指定的配置文件。");
 					return;
 				}
@@ -427,7 +418,7 @@ namespace PDFPatcher
 				_GeneralToolbar.Items[i].Dispose();
 			}
 			foreach (var item in AppContext.Toolbar.Buttons) {
-				if (item.Visible == false) {
+				if (!item.Visible) {
 					continue;
 				}
 				_GeneralToolbar.Items.Add(item.CreateButton());
@@ -489,7 +480,7 @@ namespace PDFPatcher
 				foreach (TabPage item in _FunctionContainer.TabPages) {
 					if (item.Controls.Count > 0 && item.Controls[0] == c) {
 						_FunctionContainer.SelectedTab = item;
-						if (String.IsNullOrEmpty(p) == false
+						if (!String.IsNullOrEmpty(p)
 							&& c is IDocumentSource tc
 							&& String.IsNullOrEmpty(tc.DocumentPath)) {
 							c.ExecuteCommand(Commands.OpenFile, p);
@@ -517,7 +508,7 @@ namespace PDFPatcher
 				c.Dock = DockStyle.Fill;
 				t.Controls.Add(c);
 				_FunctionContainer.SelectedTab = t;
-				if (func != Function.Editor && String.IsNullOrEmpty(p) == false) {
+				if (func != Function.Editor && !String.IsNullOrEmpty(p)) {
 					c.ExecuteCommand(Commands.OpenFile, p);
 				}
 				AcceptButton = c.DefaultButton;

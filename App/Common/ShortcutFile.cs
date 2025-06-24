@@ -62,16 +62,16 @@ namespace PDFPatcher.Common
 		/// <summary>将快捷方式保存到目标位置。</summary>
 		/// <param name="position">快捷方式文件的位置。</param>
 		public void Save(string position) {
-			if (String.IsNullOrEmpty(WorkingDirectory) == false) {
+			if (!String.IsNullOrEmpty(WorkingDirectory)) {
 				_link.SetWorkingDirectory(WorkingDirectory);
 			}
-			if (String.IsNullOrEmpty(Description) == false) {
+			if (!String.IsNullOrEmpty(Description)) {
 				_link.SetDescription(Description);
 			}
-			if (String.IsNullOrEmpty(Arguments) == false) {
+			if (!String.IsNullOrEmpty(Arguments)) {
 				_link.SetArguments(Arguments);
 			}
-			if (String.IsNullOrEmpty(IconLocation) == false) {
+			if (!String.IsNullOrEmpty(IconLocation)) {
 				_link.SetIconLocation(IconLocation, IconIndex >= 0 ? IconIndex : 0);
 			}
 			var file = (System.Runtime.InteropServices.ComTypes.IPersistFile)_link;

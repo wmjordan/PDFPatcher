@@ -67,7 +67,7 @@ namespace PDFPatcher
 
 			public static bool HasAssociation() {
 				using (var command = Registry.CurrentUser.OpenOrCreateSubKey(ApplicationKey + ShellOpenCommandKey, false)) {
-					if (command?.GetValue(String.Empty) is string != true) {
+					if (command?.GetValue(String.Empty) is not string) {
 						return false;
 					}
 				}
@@ -111,7 +111,7 @@ namespace PDFPatcher
 						}
 					}
 					for (char i = 'a'; i <= 'z'; i++) {
-						if (slots[i - 'a'] == false) {
+						if (!slots[i - 'a']) {
 							openWithList.SetValue(i.ToString(), AppName);
 							if (mruList.IndexOf(i) < 0) {
 								openWithList.SetValue(MRUList, i + mruList);

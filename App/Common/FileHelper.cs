@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using CLR;
 
 namespace PDFPatcher.Common
 {
@@ -108,7 +109,7 @@ namespace PDFPatcher.Common
 			return path1.Length - path2.Length;
 		}
 		static char ToLowerAscii(char c) {
-			return c >= 'A' && c <= 'Z' ? (char)(c + ('a' - 'A')) : c;
+			return c.IsBetween('A', 'Z') ? (char)(c + ('a' - 'A')) : c;
 		}
 
 		internal static bool CheckOverwrite(string targetFile) {
@@ -160,7 +161,7 @@ namespace PDFPatcher.Common
 				}
 			}
 			var ch = path1[path1.Length - 1];
-			if (IsPathSeparator(ch) == false) {
+			if (!IsPathSeparator(ch)) {
 				return path1 + Path.DirectorySeparatorChar + path2;
 			}
 			return path1 + path2;
@@ -170,11 +171,11 @@ namespace PDFPatcher.Common
 		}
 
 		public static bool IsPathValid(string filePath) {
-			return String.IsNullOrEmpty(filePath) == false && filePath.Trim().Length > 0
+			return !String.IsNullOrEmpty(filePath) && filePath.Trim().Length > 0
 				&& filePath.IndexOfAny(FilePath.InvalidPathChars) == -1;
 		}
 		static bool IsPathSeparator(char c) {
-			return c == Path.DirectorySeparatorChar || c == Path.AltDirectorySeparatorChar;
+			return c.CeqAny(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
 		}
 
 		internal static void ResetOverwriteMode() {

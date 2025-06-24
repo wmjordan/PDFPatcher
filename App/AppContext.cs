@@ -55,11 +55,11 @@ namespace PDFPatcher
 		///<summary>获取或指定是否在加载 PDF 文档时仅加载部分文档。</summary>
 		public static bool LoadPartialPdfFile { get; set; }
 
-		private static string[] _SourceFiles = new string[0];
+		private static string[] _SourceFiles = [];
 		///<summary>获取或指定要处理的源文件路径列表。</summary>
 		public static string[] SourceFiles {
 			get => _SourceFiles;
-			set => _SourceFiles = value ?? new string[0];
+			set => _SourceFiles = value ?? [];
 		}
 
 		///<summary>获取或指定检查更新的日期。</summary>
@@ -112,25 +112,25 @@ namespace PDFPatcher
 		{
 			///<summary>获取最近使用的 PDF 文件列表。</summary>
 			[JsonField("源文件")]
-			public List<string> SourcePdfFiles { get; } = new List<string>();
+			public List<string> SourcePdfFiles { get; } = [];
 			///<summary>获取最近使用的 PDF 输出文件列表。</summary>
 			[JsonField("输出文件")]
-			public List<string> TargetPdfFiles { get; } = new List<string>();
+			public List<string> TargetPdfFiles { get; } = [];
 			///<summary>获取最近使用的信息文件列表。</summary>
 			[JsonField("信息文件")]
-			public List<string> InfoDocuments { get; } = new List<string>();
+			public List<string> InfoDocuments { get; } = [];
 			///<summary>获取最近使用的文件名模板列表。</summary>
 			[JsonField("文件名模板")]
-			public List<string> FileNameTemplates { get; } = new List<string>();
+			public List<string> FileNameTemplates { get; } = [];
 			///<summary>获取最近使用的文件夹列表。</summary>
 			[JsonField("文件夹")]
-			public List<string> Folders { get; } = new List<string>();
+			public List<string> Folders { get; } = [];
 			///<summary>获取最近使用的查找字符串列表。</summary>
 			[JsonField("查找项")]
-			public List<string> SearchPatterns { get; } = new List<string>();
+			public List<string> SearchPatterns { get; } = [];
 			///<summary>获取最近使用的替换字符串列表。</summary>
 			[JsonField("替换项")]
-			public List<string> ReplacePatterns { get; } = new List<string>();
+			public List<string> ReplacePatterns { get; } = [];
 
 			internal static void AddHistoryItem(IList<string> list, string item) {
 				if (String.IsNullOrEmpty(item)) {
@@ -162,11 +162,11 @@ namespace PDFPatcher
 		}
 
 		internal static void CleanUpInexistentFiles(List<string> list) {
-			list.RemoveAll(item => FileHelper.HasFileNameMacro(item) == false && File.Exists(item) == false);
+			list.RemoveAll(item => !FileHelper.HasFileNameMacro(item) && !File.Exists(item));
 		}
 
 		internal static void CleanUpInexistentFolders(List<string> list) {
-			list.RemoveAll(item => FileHelper.HasFileNameMacro(item) == false && Directory.Exists(item) == false);
+			list.RemoveAll(item => !FileHelper.HasFileNameMacro(item) && !Directory.Exists(item));
 		}
 
 		internal static bool Load(string path) {
@@ -177,13 +177,13 @@ namespace PDFPatcher
 			if (String.IsNullOrEmpty(path)) {
 				path = AppConfigFilePath;
 			}
-			if (File.Exists(path) == false) {
+			if (!File.Exists(path)) {
 				return false;
 			}
 			ConfigurationSerialization conf;
 			try {
 				conf = Json.ToObject<ConfigurationSerialization>(File.ReadAllText(path, Encoding.UTF8), JsonSm);
-				if (conf == null || conf.SaveAppSettings == false) {
+				if (conf == null || !conf.SaveAppSettings) {
 					SaveAppSettings = false;
 					return false;
 				}
