@@ -27,20 +27,36 @@ namespace MuPDF
 		}
 
 		public Bitmap GetBitmap(int pageNumber) {
-			if (_buffer == null
-				|| _document.IsDisposed
-				|| _buffer.TryGetValue(pageNumber, out var result) == false) {
-				return null;
-			}
-			return result.Image;
+			return TryGetRenderResult(pageNumber, out RenderResult result)
+				? result.Image
+				: null;
+		}
+		public TextPage GetTextPage(int pageNumber) {
+			return TryGetRenderResult(pageNumber, out RenderResult result)
+				? result.TextPage
+				: null;
 		}
 
-		public void AddBitmap(int pageNumber, Bitmap bmp) {
+		bool TryGetRenderResult(int pageNumber, out RenderResult result) {
+			result = null;
+			return _buffer != null
+				&& !_document.IsDisposed
+				&& _buffer.TryGetValue(pageNumber, out result);
+		}
+
+		public void SetBitmap(int pageNumber, Bitmap bmp) {
 			if (_buffer.TryGetValue(pageNumber, out var image)) {
 				image.Image?.Dispose();
 			}
 			_buffer[pageNumber].Image = bmp;
 			TrimBitmapBuffer(pageNumber);
+		}
+
+		public void SetTextPage(int pageNumber, TextPage textPage) {
+			if (_buffer.TryGetValue(pageNumber, out var image)) {
+				image.TextPage?.Dispose();
+			}
+			_buffer[pageNumber].TextPage = textPage;
 		}
 
 		void TrimBitmapBuffer(int pageNumber) {
@@ -61,7 +77,7 @@ namespace MuPDF
 		}
 
 		public void Clear() {
-			if (_buffer.HasContent() == false) {
+			if (!_buffer.HasContent()) {
 				return;
 			}
 			foreach (var item in _buffer) {
@@ -79,6 +95,7 @@ namespace MuPDF
 		{
 			public Page Page { get; private set; }
 			public Bitmap Image { get; internal set; }
+			public TextPage TextPage { get; internal set; }
 
 			public RenderResult(Page page) {
 				Page = page;
@@ -87,6 +104,7 @@ namespace MuPDF
 			public void Dispose() {
 				Page?.Dispose();
 				Image?.Dispose();
+				TextPage?.Dispose();
 			}
 		}
 	}
