@@ -13,10 +13,10 @@ namespace PDFPatcher.Processor
 		// Fields
 		readonly Stack<Model.GraphicsState> _GsStack = new Stack<Model.GraphicsState>();
 		readonly Stack<MarkedContentInfo> _MarkedContentStack = new Stack<MarkedContentInfo>();
-		readonly Dictionary<string, IContentOperator> _Operators = new Dictionary<string, IContentOperator>();
-		readonly Dictionary<PdfName, IXObjectDoHandler> _XObjectDoHandlers = new Dictionary<PdfName, IXObjectDoHandler>();
-		readonly Dictionary<int, FontInfoCache> _FontCache = new Dictionary<int, FontInfoCache>();
-		readonly Dictionary<int, string> _FontNameCache = new Dictionary<int, string>();
+		readonly Dictionary<string, IContentOperator> _Operators = [];
+		readonly Dictionary<PdfName, IXObjectDoHandler> _XObjectDoHandlers = [];
+		readonly Dictionary<int, FontInfoCache> _FontCache = [];
+		readonly Dictionary<int, string> _FontNameCache = [];
 		//IRenderListener renderListener;
 		ResourceDictionary _Resources;
 		Matrix _TextLineMatrix;
@@ -151,7 +151,7 @@ namespace PDFPatcher.Processor
 		}
 
 		public void ProcessContent(byte[] contentBytes, PdfDictionary resources) {
-			if (contentBytes.HasContent() == false || resources == null) {
+			if (!contentBytes.HasContent() || resources == null) {
 				return;
 			}
 			_Resources.Push(resources);
@@ -165,7 +165,7 @@ namespace PDFPatcher.Processor
 				}
 				if ("BI".Equals(oper.ToString())) {
 					var img = InlineImageUtils.ParseInlineImage(ps, resources.GetAsDict(PdfName.COLORSPACE));
-					InvokeOperator(oper, new List<PdfObject> { img, oper });
+					InvokeOperator(oper, [img, oper]);
 					//    this.renderListener.RenderImage (renderInfo);
 				}
 				else {
@@ -343,7 +343,7 @@ namespace PDFPatcher.Processor
 			public bool HasOutput => true;
 
 			public void Invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
-				textMoveNextLine.Invoke(processor, null, new List<PdfObject>(0));
+				textMoveNextLine.Invoke(processor, null, []);
 				showText.Invoke(processor, null, operands);
 			}
 		}
@@ -416,7 +416,7 @@ namespace PDFPatcher.Processor
 
 		protected sealed class ResourceDictionary : PdfDictionary
 		{
-			readonly IList<PdfDictionary> _ResourcesStack = new List<PdfDictionary>();
+			readonly IList<PdfDictionary> _ResourcesStack = [];
 
 			public override PdfObject GetDirectObject(PdfName key) {
 				for (int i = _ResourcesStack.Count - 1; i >= 0; i--) {
@@ -450,7 +450,7 @@ namespace PDFPatcher.Processor
 			public bool HasOutput => false;
 			public void Invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
 				var fontResourceName = (PdfName)operands[0];
-				var f = processor._Resources.GetAsDict(PdfName.FONT).Get(fontResourceName);
+				var f = (processor._Resources.GetDirectObject(PdfName.FONT) as PdfDictionary)?.Get(fontResourceName);
 				var g = processor.CurrentGraphicState;
 				if (f is PRIndirectReference fref) {
 					g.FontID = fref.Number;
@@ -564,10 +564,10 @@ namespace PDFPatcher.Processor
 
 			public bool HasOutput => false;
 			public void Invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
-				_MoveStartNextLine.Invoke(processor, null, new List<PdfObject>(2) {
+				_MoveStartNextLine.Invoke(processor, null, [
 					new PdfNumber(0),
 					new PdfNumber(-processor.CurrentGraphicState.Leading)
-				});
+				]);
 			}
 		}
 
@@ -595,7 +595,7 @@ namespace PDFPatcher.Processor
 			public bool HasOutput => false;
 			public void Invoke(PdfContentStreamProcessor processor, PdfLiteral oper, List<PdfObject> operands) {
 				float ty = ((PdfNumber)operands[1]).FloatValue;
-				_SetTextLeading.Invoke(processor, null, new List<PdfObject>(1) { new PdfNumber(-ty) });
+				_SetTextLeading.Invoke(processor, null, [new PdfNumber(-ty)]);
 				_MoveStartNextLine.Invoke(processor, null, operands);
 			}
 		}

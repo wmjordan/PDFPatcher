@@ -509,6 +509,9 @@ namespace PDFPatcher.Model
 		{
 			public new IEnumerable<PdfName> Keys => GetKeyValues().Select(i => i.Key);
 			public override int Size => (primary?.Size ?? 0) + (auxiliary?.Size ?? 0);
+			public override PdfObject Get(PdfName key) {
+				return primary?.Get(key) ?? auxiliary?.Get(key);
+			}
 			public override PdfObject GetDirectObject(PdfName key) {
 				var po = primary?.GetDirectObject(key);
 				if (po is PdfDictionary pd) {
