@@ -369,6 +369,7 @@ namespace PDFPatcher.Functions
 				if (_disposed) {
 					return;
 				}
+				bool invalidate = false;
 				for (int i = r.StartValue; i >= r.StartValue && i < r.EndValue + 2; i++) {
 					if (i < 1 || i > _mupdf.PageCount) {
 						continue;
@@ -387,10 +388,13 @@ namespace PDFPatcher.Functions
 							var z = GetZoomFactorForPage(pb);
 							RenderPage(i, (pb.Width * z).ToInt32(), (pb.Height * z).ToInt32());
 							if (r.Contains(i)) {
-								Invalidate();
+								invalidate = true;
 							}
 						}
 					}
+				}
+				if (invalidate) {
+					Invalidate();
 				}
 			};
 			_renderWorker.RunWorkerCompleted += (s, args) => {
@@ -602,7 +606,10 @@ namespace PDFPatcher.Functions
 				}
 				g.DrawRectangle(Pens.Black, r.Left - 1, r.Top - 1, r.Width + 1, r.Height + 1);
 				if (ShowTextBorders) {
-					DrawTextBorders(g, p, op);
+					var textPage = _cache.GetTextPage(p);
+					if (textPage != null) {
+						DrawTextBorders(g, p, op, textPage);
+					}
 				}
 			} while ((HorizontalFlow ? (r.Right > 0) : (r.Bottom < vp.Height))
 				&& ++p < _pageOffsets.Length);
@@ -637,7 +644,7 @@ namespace PDFPatcher.Functions
 			return new Model.PageRange(start, end);
 		}
 
-		void DrawTextBorders(Graphics g, int pageNumber, DrawingPoint offset) {
+		void DrawTextBorders(Graphics g, int pageNumber, DrawingPoint offset, TextPage textPage) {
 			if (_mupdf.IsDisposed) {
 				return;
 			}
@@ -653,7 +660,7 @@ namespace PDFPatcher.Functions
 				using (var m = new System.Drawing.Drawing2D.Matrix(z, 0, 0, z, offset.X + o.X, offset.Y + o.Y)) {
 					g.MultiplyTransform(m);
 				}
-				foreach (var block in p.TextPage) {
+				foreach (var block in textPage) {
 					g.DrawRectangle(blockPen, block.Bound.ToRectangle());
 					if (block == null) {
 						continue;
@@ -854,13 +861,16 @@ namespace PDFPatcher.Functions
 				return null;
 			}
 			lock (_syncObj) {
-				var p = _cache.LoadPage(pageNumber);
-				if (pageNumber < _DisplayRange.StartValue - 1 || pageNumber > _DisplayRange.EndValue + 1) {
-					return null;
+				lock (_cache.SyncObj) {
+					var p = _cache.LoadPage(pageNumber);
+					if (pageNumber < _DisplayRange.StartValue - 1 || pageNumber > _DisplayRange.EndValue + 1) {
+						return null;
+					}
+					Tracker.DebugMessage("render page " + pageNumber);
+					bmp = p.RenderBitmapPage(width, height, _renderOptions, _cookie);
+					_cache.SetBitmap(pageNumber, bmp);
+					_cache.SetTextPage(pageNumber, p.TextPage);
 				}
-				Tracker.DebugMessage("render page " + pageNumber);
-				bmp = p.RenderBitmapPage(width, height, _renderOptions, _cookie);
-				_cache.AddBitmap(pageNumber, bmp);
 			}
 			return bmp;
 		}
