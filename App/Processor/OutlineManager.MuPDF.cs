@@ -27,7 +27,7 @@ namespace PDFPatcher.Processor
 					pdf,
 					pdf.LoadNameTree(PdfNames.Dests),
 					new PdfActionExporter(unitConverter),
-					(PdfDictionary)(outlines.GetValue(PdfNames.First).UnderlyingObject),
+					(outlines.GetValue(PdfNames.First).UnderlyingObject) as PdfDictionary,
 					w);
 			}
 			return doc.DocumentElement;
