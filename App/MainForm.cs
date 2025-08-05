@@ -273,9 +273,6 @@ namespace PDFPatcher
 			}
 
 			SelectFunctionList(Function.FrontPage);
-			if (firstLoad) {
-				SelectFunctionList(Function.About);
-			}
 
 			_GeneralToolbar.ItemClicked += MenuCommand;
 			if (AppContext.CheckUpdateDate < DateTime.Today) {
