@@ -105,6 +105,14 @@ namespace PDFPatcher.Functions.Editor
 					var d = v.Document;
 					Model.PdfDocument = v.Document = PdfHelper.OpenMuDocument(s);
 					d.TryDispose();
+					if (v.Document.RepairAttempted
+						&& AppContext.MainForm.ConfirmYesBox("文档存在错误。如需处理文档，请点击“是”按钮保存文档。\n是否保存修复过的文档？")) {
+						v.Document.Save(s + ".repair", new MuPDF.WriterOptions { Clean = true });
+						Uninitialize(v);
+						File.Replace(s + ".repair", s, s + ".bak");
+						Model.PdfDocument = v.Document = PdfHelper.OpenMuDocument(s);
+						FormHelper.InfoBox("已完成文档的修复工作。旧文档被保存为如下文件：\n" + s + ".bak");
+					}
 					View.AutoBookmark.TryDispose();
 					v.Enabled = true;
 					View.ViewerToolbar.Enabled = true;
