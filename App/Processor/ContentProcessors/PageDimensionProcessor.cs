@@ -118,7 +118,7 @@ namespace PDFPatcher.Processor
 			}
 			var ls = mb.Width > mb.Height; // Landscape
 			if (ls && (settings.Filter & PageFilterFlag.Portrait) == PageFilterFlag.Portrait
-				|| ls == false && (settings.Filter & PageFilterFlag.Landscape) == PageFilterFlag.Landscape) {
+				|| !ls && (settings.Filter & PageFilterFlag.Landscape) == PageFilterFlag.Landscape) {
 				return false;
 			}
 			var n = (PdfHelper.GetPageRotation(page) + settings.Rotation) % 360;
@@ -182,10 +182,10 @@ namespace PDFPatcher.Processor
 				if (PdfReader.GetPdfObject(item) is PdfDictionary an) {
 					var rect = an.GetAsArray(PdfName.RECT);
 					if (rect != null && rect.Size == 4) {
-						rect[0] = new PdfNumber(((PdfNumber)rect[0]).FloatValue * ct.XScale + ct.XTranslation);
-						rect[1] = new PdfNumber(((PdfNumber)rect[1]).FloatValue * ct.YScale + ct.YTranslation);
-						rect[2] = new PdfNumber(((PdfNumber)rect[2]).FloatValue * ct.XScale + ct.XTranslation);
-						rect[3] = new PdfNumber(((PdfNumber)rect[3]).FloatValue * ct.YScale + ct.YTranslation);
+						rect[0] = new PdfNumber((rect.GetAsNumber(0)?.FloatValue ?? 0) * ct.XScale + ct.XTranslation);
+						rect[1] = new PdfNumber((rect.GetAsNumber(1)?.FloatValue ?? 0) * ct.YScale + ct.YTranslation);
+						rect[2] = new PdfNumber((rect.GetAsNumber(2)?.FloatValue ?? 0) * ct.XScale + ct.XTranslation);
+						rect[3] = new PdfNumber((rect.GetAsNumber(3)?.FloatValue ?? 0) * ct.YScale + ct.YTranslation);
 					}
 				}
 			}
@@ -294,8 +294,8 @@ namespace PDFPatcher.Processor
 
 		public bool Process(PageProcessorContext context) {
 			var f = Settings.Filter;
-			if (FilterPageNumber(context.PageNumber, f) == false
-				|| _pageRanges != null && _pageRanges.IsInRange(context.PageNumber) == false) {
+			if (!FilterPageNumber(context.PageNumber, f)
+				|| _pageRanges != null && !_pageRanges.IsInRange(context.PageNumber)) {
 				return false;
 			}
 
