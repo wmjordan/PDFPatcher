@@ -419,7 +419,82 @@ namespace PDFPatcher.Model
 			}
 		}
 
-		private void PopulatePageCommand(PdfPageCommand item) {
+		void PopulatePageCommand(PdfPageCommand item) {
+			int i;
+			var o = MakeDocumentObjectFromCommand(item);
+			switch (item.Type) {
+				case PdfPageCommandType.Text:
+					var t = (TextCommand)item;
+					o.FriendlyValue = t.TextInfo.PdfString.GetFriendlyValue();
+					o.Description = t.TextInfo.Text;
+					if (item.Name.ToString() == "TJ") {
+						var a = item.Operands[0] as PdfArray;
+						if (a.Size > 0) {
+							var pt = item as PaceAndTextCommand;
+							i = 0;
+							CreateChildrenList(ref o._Children);
+							foreach (var ti in a.ArrayList) {
+								var d = new DocumentObject(OwnerDocument, o, (++i).ToText(), ti);
+								if (ti.Type == PdfObject.STRING) {
+									d.FriendlyValue = ((PdfString)ti).GetFriendlyValue();
+									d.Description = pt.DecodedTexts[i - 1];
+								}
+								o._Children.Add(d);
+							}
+						}
+					}
+					break;
+				case PdfPageCommandType.Font:
+					var f = (FontCommand)item;
+					o.FriendlyValue = String.Concat(
+						Constants.Content.OperandNames.ResourceName, "：", f.ResourceName.ToString(), "; ",
+						Constants.Content.OperandNames.Size, "：", f.FontSize.DoubleValue.ToText()
+						);
+					o.Description = f.FontName;
+					break;
+				case PdfPageCommandType.Enclosure:
+					if (item.Operands.HasContent()) {
+						i = 0;
+						CreateChildrenList(ref o._Children);
+						foreach (var op in item.Operands) {
+							o._Children.Add(new DocumentObject(OwnerDocument, o, (++i).ToText(), op));
+						}
+					}
+					var e = (EnclosingCommand)item;
+					if (!e.HasCommand) {
+						return;
+					}
+					foreach (var cmd in e.Commands) {
+						o.PopulatePageCommand(cmd);
+					}
+					break;
+				case PdfPageCommandType.InlineImage:
+					var s = (PdfImageData)item.Operands[0];
+					CreateChildrenList(ref o._Children);
+					foreach (var ii in s) {
+						o._Children.Add(new DocumentObject(OwnerDocument, o, PdfHelper.DecodeKeyName(ii.Key), ii.Value));
+					}
+					break;
+				case PdfPageCommandType.Invalid:
+					o.Description = ((InvalidCommand)item).Error;
+					o.ExtensiveObject = "?";
+					if (item.Operands.HasContent()) {
+						i = 0;
+						CreateChildrenList(ref o._Children);
+						foreach (var op in item.Operands) {
+							o._Children.Add(new DocumentObject(OwnerDocument, o, (++i).ToText(), op));
+						}
+					}
+					break;
+				default:
+					o.FriendlyValue = item.GetOperandsText();
+					break;
+			}
+			CreateChildrenList(ref _Children);
+			_Children.Add(o);
+		}
+
+		DocumentObject MakeDocumentObjectFromCommand(PdfPageCommand item) {
 			string fn;
 			var op = item.Name.ToString();
 			if (!PdfPageCommand.GetFriendlyCommandName(op, out fn)) {
@@ -429,74 +504,7 @@ namespace PDFPatcher.Model
 				FriendlyName = fn + "(" + op + ")",
 				ExtensiveObject = op
 			};
-			if (item.Type == PdfPageCommandType.Text) {
-				var t = item as TextCommand;
-				o.FriendlyValue = t.TextInfo.PdfString.GetFriendlyValue();
-				o.Description = t.TextInfo.Text;
-				if (item.Name.ToString() == "TJ") {
-					var a = item.Operands[0] as PdfArray;
-					if (a.Size > 0) {
-						var pt = item as PaceAndTextCommand;
-						var i = 0;
-						CreateChildrenList(ref o._Children);
-						foreach (var ti in a.ArrayList) {
-							var d = new DocumentObject(OwnerDocument, o, (++i).ToText(), ti);
-							if (ti.Type == PdfObject.STRING) {
-								d.FriendlyValue = ((PdfString)ti).GetFriendlyValue();
-								d.Description = pt.DecodedTexts[i - 1];
-							}
-							o._Children.Add(d);
-						}
-					}
-				}
-			}
-			else if (item.Type == PdfPageCommandType.Font) {
-				var f = item as FontCommand;
-				o.FriendlyValue = String.Concat(
-					Constants.Content.OperandNames.ResourceName, "：", f.ResourceName.ToString(), "; ",
-					Constants.Content.OperandNames.Size, "：", f.FontSize.DoubleValue.ToText()
-					);
-				o.Description = f.FontName;
-			}
-			else if (item.Type == PdfPageCommandType.Enclosure) {
-				if (item.Operands.HasContent()) {
-					var i = 0;
-					CreateChildrenList(ref o._Children);
-					foreach (var t in item.Operands) {
-						o._Children.Add(new DocumentObject(OwnerDocument, o, (++i).ToText(), t));
-					}
-				}
-				var e = (EnclosingCommand)item;
-				if (!e.HasCommand) {
-					return;
-				}
-				foreach (var cmd in e.Commands) {
-					o.PopulatePageCommand(cmd);
-				}
-			}
-			else if (item.Type == PdfPageCommandType.InlineImage) {
-				var s = (PdfImageData)item.Operands[0];
-				CreateChildrenList(ref o._Children);
-				foreach (var ii in s) {
-					o._Children.Add(new DocumentObject(OwnerDocument, o, PdfHelper.DecodeKeyName(ii.Key), ii.Value));
-				}
-			}
-			else if (item.Type == PdfPageCommandType.Invalid) {
-				o.Description = ((InvalidCommand)item).Error;
-				o.ExtensiveObject = "?";
-				if (item.Operands.HasContent()) {
-					var i = 0;
-					CreateChildrenList(ref o._Children);
-					foreach (var t in item.Operands) {
-						o._Children.Add(new DocumentObject(OwnerDocument, o, (++i).ToText(), t));
-					}
-				}
-			}
-			else {
-				o.FriendlyValue = item.GetOperandsText();
-			}
-			CreateChildrenList(ref _Children);
-			_Children.Add(o);
+			return o;
 		}
 
 		static void CreateChildrenList(ref IList<DocumentObject> list) {

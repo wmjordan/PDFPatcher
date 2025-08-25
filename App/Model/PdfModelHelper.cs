@@ -24,7 +24,7 @@ namespace PDFPatcher.Model
 					if (s.Type != PdfObject.DICTIONARY && s.Type != PdfObject.STREAM) {
 						return null;
 					}
-					s = (s as PdfDictionary).GetDirectObject(n);
+					s = ((PdfDictionary)s).GetDirectObject(n);
 					continue;
 				}
 				if (item is not int) {
@@ -34,7 +34,7 @@ namespace PDFPatcher.Model
 				if (s.Type != PdfObject.ARRAY) {
 					return null;
 				}
-				s = (s as PdfArray).GetDirectObject(i);
+				s = ((PdfArray)s).GetDirectObject(i);
 			}
 			return s as T;
 		}
@@ -99,11 +99,11 @@ namespace PDFPatcher.Model
 				return String.Empty;
 			}
 			var bytes = text.GetBytes();
-			using (MemoryStream ms = new MemoryStream(bytes)) {
+			using (var ms = new MemoryStream(bytes)) {
 				if (encoding == null) {
 					if (bytes.Length >= 2 && Op.Cast<byte, ushort>(ref bytes[0]).CeqAny(0xFFFE, 0xFEFF)) {
 						// bytes 以 0xFEFF 或 0xFFFE 开头
-						using (TextReader r = new StreamReader(ms, true)) {
+						using (var r = new StreamReader(ms, true)) {
 							return r.ReadToEnd();
 						}
 					}
@@ -124,7 +124,7 @@ namespace PDFPatcher.Model
 						// bytes 以 0000FEFF 开头
 						ms.Position += 4;
 					}
-					using (TextReader r = new StreamReader(ms, encoding)) {
+					using (var r = new StreamReader(ms, encoding)) {
 						return r.ReadToEnd();
 					}
 				}
