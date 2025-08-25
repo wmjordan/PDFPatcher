@@ -25,36 +25,37 @@
 		/// 使用代码编辑器修改此方法的内容。
 		/// </summary>
 		private void InitializeComponent () {
-			this._OptionsBox = new PDFPatcher.Functions.PatcherOptionsControl();
-			this.SuspendLayout();
-			// 
-			// _OptionsBox
-			// 
-			this._OptionsBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this._OptionsBox = new PDFPatcher.Functions.PatcherOptionsControl();
+            this.SuspendLayout();
+            // 
+            // _OptionsBox
+            // 
+            this._OptionsBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this._OptionsBox.ForEditor = false;
-			this._OptionsBox.Location = new System.Drawing.Point(12, 15);
-			this._OptionsBox.Name = "_OptionsBox";
-			this._OptionsBox.Options = null;
-			this._OptionsBox.Size = new System.Drawing.Size(452, 321);
-			this._OptionsBox.TabIndex = 0;
-			// 
-			// PatcherOptionForm
-			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(476, 348);
-			this.Controls.Add(this._OptionsBox);
-			this.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-			this.MaximizeBox = false;
-			this.MinimizeBox = false;
-			this.MinimumSize = new System.Drawing.Size(482, 374);
-			this.Name = "PatcherOptionForm";
-			this.ShowInTaskbar = false;
-			this.Text = "PDF 文档选项";
-			this.ResumeLayout(false);
+            this._OptionsBox.ForEditor = false;
+            this._OptionsBox.Location = new System.Drawing.Point(18, 22);
+            this._OptionsBox.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this._OptionsBox.Name = "_OptionsBox";
+            this._OptionsBox.Options = null;
+            this._OptionsBox.Size = new System.Drawing.Size(678, 482);
+            this._OptionsBox.TabIndex = 0;
+            // 
+            // PatcherOptionForm
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(714, 522);
+            this.Controls.Add(this._OptionsBox);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(712, 533);
+            this.Name = "PatcherOptionForm";
+            this.ShowInTaskbar = false;
+            this.Text = "PDF 文档选项";
+            this.ResumeLayout(false);
 
 		}
 

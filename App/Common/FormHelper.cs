@@ -155,16 +155,26 @@ namespace PDFPatcher.Common
 			}
 		}
 
-		public static ToolStrip ScaleIcons(this ToolStrip toolStrip, int size) {
-			size = (int)(toolStrip.GetDpiScale() * size);
-			return toolStrip.ScaleIcons(new Size(size, size));
+		public static ToolStrip ScaleElements(this ToolStrip toolStrip, float scale = 0) {
+			if (scale <= 0) {
+				scale = toolStrip.GetDpiScale();
+			}
+			var iconSize = (int)(scale * 16);
+			var splitButtonWidth = (int)(11 * scale);
+			return toolStrip.DpiAwareScale(new Size(iconSize, iconSize), splitButtonWidth);
 		}
-		public static ToolStrip ScaleIcons(this ToolStrip toolStrip, Size size) {
+
+		public static ToolStrip DpiAwareScale(this ToolStrip toolStrip, Size size, int splitButtonWidth) {
 			toolStrip.SuspendLayout();
 			toolStrip.AutoSize = false;
 			toolStrip.ImageScalingSize = size;
 			toolStrip.ResumeLayout();
 			toolStrip.AutoSize = true;
+			foreach (var item in toolStrip.Items) {
+				if (item is ToolStripSplitButton sb) {
+					sb.DropDownButtonWidth = splitButtonWidth;
+				}
+			}
 			return toolStrip;
 		}
 

@@ -57,7 +57,7 @@ namespace PDFPatcher.Functions
 		}
 
 		void OnLoad() {
-			_MainToolbar.ScaleIcons(16);
+			_MainToolbar.ScaleElements();
 			_ObjectDetailBox.ScaleColumnWidths();
 
 			_ObjectDetailBox.EmptyListMsg = "请使用“打开”按钮加载需要检查结构的 PDF 文件，或从资源管理器拖放文件到本列表框";

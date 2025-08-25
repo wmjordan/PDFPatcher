@@ -26,7 +26,7 @@ namespace PDFPatcher.Functions
 		}
 
 		void OnLoad() {
-			_MainToolbar.ScaleIcons(16);
+			_MainToolbar.ScaleElements();
 			_ItemList.ListViewItemSorter = new ListViewItemComparer(0);
 
 			AppContext.MainForm.SetTooltip(_BookmarkControl.FileList, "需要导出或导入的信息文件路径");

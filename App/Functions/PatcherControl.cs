@@ -28,12 +28,13 @@ namespace PDFPatcher.Functions
 		}
 
 		void OnLoad() {
-			_MainToolbar.ScaleIcons(16);
-			_ItemListMenu.ScaleIcons(16);
-			_RecentFileMenu.ScaleIcons(16);
-			_RefreshInfoMenu.ScaleIcons(16);
-			_SelectionMenu.ScaleIcons(16);
-			_SortMenu.ScaleIcons(16);
+			var s = this.GetDpiScale();
+			_MainToolbar.ScaleElements(s);
+			_ItemListMenu.ScaleElements(s);
+			_RecentFileMenu.ScaleElements(s);
+			_RefreshInfoMenu.ScaleElements(s);
+			_SelectionMenu.ScaleElements(s);
+			_SortMenu.ScaleElements(s);
 
 			AppContext.MainForm.SetTooltip(_ConfigButton, "点击此处设置 PDF 文件的修改方式选项");
 			AppContext.MainForm.SetTooltip(_ActionsBox, "双击项目编辑操作选项；右键点击项目弹出上下文菜单");

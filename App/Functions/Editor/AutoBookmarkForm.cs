@@ -26,7 +26,7 @@ namespace PDFPatcher.Functions
 
 		void OnLoad() {
 			MinimumSize = Size;
-			_Toolbar.ScaleIcons(16);
+			_Toolbar.ScaleElements();
 
 			_ConditionColumn.AsTyped<EditModel.AutoBookmarkSettings>(c => c.AspectGetter = o => $"字体为{o.FontName} 尺寸为{o.FontSize}{o.MatchPattern?.ToString() ?? String.Empty}");
 			_LevelColumn.CellEditUseWholeCell = true;

@@ -26,13 +26,12 @@ namespace PDFPatcher.Functions
 		}
 
 		void OnLoad() {
-			var s = (int)(this.GetDpiScale() * 16);
-			var size = new System.Drawing.Size(s, s);
-			_MainToolbar.ScaleIcons(size);
-			_SortMenu.ScaleIcons(size);
-			_ItemListMenu.ScaleIcons(size);
-			_RecentFileMenu.ScaleIcons(size);
-			_RefreshInfoMenu.ScaleIcons(size);
+			var s = this.GetDpiScale();
+			_MainToolbar.ScaleElements(s);
+			_SortMenu.ScaleElements(s);
+			_ItemListMenu.ScaleElements(s);
+			_RecentFileMenu.ScaleElements(s);
+			_RefreshInfoMenu.ScaleElements(s);
 
 			_ItemList.ListViewItemSorter = new ListViewItemComparer(0);
 

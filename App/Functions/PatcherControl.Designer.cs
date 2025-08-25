@@ -167,7 +167,8 @@
 			// _RefreshInfoMenu
 			// 
 			this._RefreshInfoMenu.Name = "_RefreshInfoMenu";
-			this._RefreshInfoMenu.Size = new System.Drawing.Size(181, 26);
+			this._RefreshInfoMenu.OwnerItem = _RefreshInfo;
+			this._RefreshInfoMenu.Size = new System.Drawing.Size(61, 4);
 			// 
 			// _MainToolbar
 			// 
@@ -217,6 +218,7 @@
             _InvertSelection,
             _SelectNone});
 			this._SelectionMenu.Name = "_SelectionMenu";
+			this._SelectionMenu.OwnerItem = this._SelectionMenuItem;
 			this._SelectionMenu.Size = new System.Drawing.Size(125, 70);
 			this._SelectionMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this._MainToolbar_ItemClicked);
 			// 
@@ -417,7 +419,7 @@
 			this._ConfigButton.Image = global::PDFPatcher.Properties.Resources.PdfOptions;
 			this._ConfigButton.Location = new System.Drawing.Point(253, 297);
 			this._ConfigButton.Name = "_ConfigButton";
-			this._ConfigButton.Size = new System.Drawing.Size(181, 23);
+			this._ConfigButton.Size = new System.Drawing.Size(181, 29);
 			this._ConfigButton.TabIndex = 11;
 			this._ConfigButton.Text = "设置 P&DF 文件的修改方式";
 			this._ConfigButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -454,7 +456,6 @@
 			this.Controls.Add(this._TargetPdfFile);
 			this.Controls.Add(this._ItemActionsContainerBox);
 			this.Controls.Add(this._AutoClearListBox);
-			this.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
 			this.Name = "PatcherControl";
 			this.Size = new System.Drawing.Size(575, 342);
 			this._SortMenu.ResumeLayout(false);

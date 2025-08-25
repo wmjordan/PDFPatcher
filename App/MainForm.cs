@@ -224,7 +224,7 @@ namespace PDFPatcher
 				// ignore loading exception
 				firstLoad = true;
 			}
-			_MainMenu.ScaleIcons(16);
+			_MainMenu.ScaleElements();
 			Text = Constants.AppName + " [" + Application.ProductVersion + "]";
 			MinimumSize = Size;
 			AllowDrop = true;
@@ -423,7 +423,7 @@ namespace PDFPatcher
 		}
 
 		void ScaleToolbar() {
-			_GeneralToolbar.ScaleIcons(16);
+			_GeneralToolbar.ScaleElements();
 		}
 
 		Control GetActiveFunctionControl() {

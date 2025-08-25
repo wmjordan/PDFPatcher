@@ -30,11 +30,12 @@ namespace PDFPatcher.Functions
 		}
 
 		void OnLoad() {
-			_MainToolbar.ScaleIcons(16);
-			_FileMenu.ScaleIcons(16);
-			_ItemListMenu.ScaleIcons(16);
-			_RecentFileMenu.ScaleIcons(16);
-			_RecentFolderMenu.ScaleIcons(16);
+			var s = this.GetDpiScale();
+			_MainToolbar.ScaleElements(s);
+			_FileMenu.ScaleElements(s);
+			_ItemListMenu.ScaleElements(s);
+			_RecentFileMenu.ScaleElements(s);
+			_RecentFolderMenu.ScaleElements(s);
 			_ItemList.ScaleColumnWidths();
 
 			_BookmarkColorButton.SelectedColorChanged += (s, e) => RefreshBookmarkColor();
