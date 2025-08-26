@@ -47,6 +47,7 @@ namespace PDFPatcher.Functions
 			new Editor.Parts.BookmarkInViewSynchronizer(_BookmarkBox, _ViewerBox);
 			new Editor.Parts.BookmarkTitleEditHandler(_controller);
 			new Editor.Parts.CurrentPageBoxHandler(_CurrentPageBox, _ViewerBox);
+			new Editor.Parts.MousePositionInfoHandler(_PageInfoBox, _ViewerBox);
 			ListRecentFiles = _OpenButton_DropDownOpening;
 			RecentFileItemClicked = _OpenButton_DropDownItemClicked;
 			var s = this.GetDpiScale();
@@ -127,27 +128,6 @@ namespace PDFPatcher.Functions
 			//	}
 			//};
 			//_ViewerBox.MouseMode = MouseMode.Selection;
-			_ViewerBox.MouseMove += (s, args) => {
-				if (_ViewerBox.FirstPage == 0) {
-					return;
-				}
-				var l = args.Location;
-				var p = _ViewerBox.TransposeClientToPagePosition(l.X, l.Y);
-				if (p.Page == 0) {
-					return;
-				}
-				var ti = _ViewerBox.FindTextLines(p);
-				var t = ti.ToString();
-				_PageInfoBox.Text = string.Concat("页面：",
-					p.Page,
-					"; 位置：",
-					Math.Round(p.PageX, 2),
-					" * ",
-					Math.Round(p.PageY, 2),
-					ti.Spans.HasContent() ? String.Concat("; 字体：", String.Join(";", ti.GetFontNames()), " ", ti.Spans[0].Size) : null,
-					t != null ? "; 文本：" : null,
-					t);
-			};
 			_ViewerBox.MouseClick += _ViewBox_MouseClick;
 			_ViewerToolbar.Enabled = false;
 

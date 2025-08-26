@@ -111,6 +111,7 @@
     <Compile Include="Functions\Editor\Parts\BookmarkInViewSynchronizer.cs" />
     <Compile Include="Functions\Editor\Parts\BookmarkTitleEditHandler.cs" />
     <Compile Include="Functions\Editor\Parts\CurrentPageBoxHandler.cs" />
+    <Compile Include="Functions\Editor\Parts\MousePositionInfoHandler.cs" />
     <Compile Include="Functions\FunctionTabContainer.cs">
       <SubType>Component</SubType>
     </Compile>
