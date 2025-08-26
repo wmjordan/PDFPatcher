@@ -454,7 +454,6 @@
 			// 
 			// _FolderColumn
 			// 
-			this._FolderColumn.IsEditable = true;
 			this._FolderColumn.Text = "文件夹";
 			this._FolderColumn.Width = 104;
 			// 
@@ -568,9 +567,9 @@
 			// 
 			this._ConfigButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this._ConfigButton.Image = global::PDFPatcher.Properties.Resources.PdfOptions;
-			this._ConfigButton.Location = new System.Drawing.Point(347, 297);
+			this._ConfigButton.Location = new System.Drawing.Point(335, 297);
 			this._ConfigButton.Name = "_ConfigButton";
-			this._ConfigButton.Size = new System.Drawing.Size(86, 23);
+			this._ConfigButton.Size = new System.Drawing.Size(98, 29);
 			this._ConfigButton.TabIndex = 5;
 			this._ConfigButton.Text = "功能选项";
 			this._ConfigButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;

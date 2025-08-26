@@ -70,7 +70,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this._PageRangeBox.Location = new System.Drawing.Point(98, 9);
 			this._PageRangeBox.Name = "_PageRangeBox";
-			this._PageRangeBox.Size = new System.Drawing.Size(335, 21);
+			this._PageRangeBox.Size = new System.Drawing.Size(331, 21);
 			this._PageRangeBox.TabIndex = 1;
 			// 
 			// tabControl1
@@ -82,7 +82,7 @@
 			this.tabControl1.Location = new System.Drawing.Point(13, 124);
 			this.tabControl1.Name = "tabControl1";
 			this.tabControl1.SelectedIndex = 0;
-			this.tabControl1.Size = new System.Drawing.Size(447, 194);
+			this.tabControl1.Size = new System.Drawing.Size(443, 207);
 			this.tabControl1.TabIndex = 4;
 			// 
 			// tabPage1
@@ -106,7 +106,7 @@
 			this.tabPage1.Location = new System.Drawing.Point(4, 22);
 			this.tabPage1.Name = "tabPage1";
 			this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPage1.Size = new System.Drawing.Size(439, 168);
+			this.tabPage1.Size = new System.Drawing.Size(435, 181);
 			this.tabPage1.TabIndex = 0;
 			this.tabPage1.Text = "识别选项";
 			this.tabPage1.UseVisualStyleBackColor = true;
@@ -290,7 +290,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this._SourceFileControl.Location = new System.Drawing.Point(9, 3);
 			this._SourceFileControl.Name = "_SourceFileControl";
-			this._SourceFileControl.Size = new System.Drawing.Size(454, 24);
+			this._SourceFileControl.Size = new System.Drawing.Size(450, 24);
 			this._SourceFileControl.TabIndex = 1;
 			// 
 			// _BookmarkControl
@@ -300,7 +300,7 @@
 			this._BookmarkControl.LabelText = "识别结果文件：";
 			this._BookmarkControl.Location = new System.Drawing.Point(9, 33);
 			this._BookmarkControl.Name = "_BookmarkControl";
-			this._BookmarkControl.Size = new System.Drawing.Size(454, 25);
+			this._BookmarkControl.Size = new System.Drawing.Size(450, 25);
 			this._BookmarkControl.TabIndex = 2;
 			this._BookmarkControl.UseForBookmarkExport = true;
 			// 
@@ -310,16 +310,16 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this._TargetFileControl.Location = new System.Drawing.Point(9, 64);
 			this._TargetFileControl.Name = "_TargetFileControl";
-			this._TargetFileControl.Size = new System.Drawing.Size(454, 25);
+			this._TargetFileControl.Size = new System.Drawing.Size(450, 25);
 			this._TargetFileControl.TabIndex = 16;
 			// 
 			// _ExportBookmarkButton
 			// 
 			this._ExportBookmarkButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this._ExportBookmarkButton.Image = global::PDFPatcher.Properties.Resources.Ocr;
-			this._ExportBookmarkButton.Location = new System.Drawing.Point(211, 96);
+			this._ExportBookmarkButton.Location = new System.Drawing.Point(198, 96);
 			this._ExportBookmarkButton.Name = "_ExportBookmarkButton";
-			this._ExportBookmarkButton.Size = new System.Drawing.Size(120, 23);
+			this._ExportBookmarkButton.Size = new System.Drawing.Size(129, 28);
 			this._ExportBookmarkButton.TabIndex = 3;
 			this._ExportBookmarkButton.Text = "识别图像文本(&S)";
 			this._ExportBookmarkButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -337,7 +337,7 @@
 			this._ImportOcrResultButton.GlowColor = System.Drawing.Color.White;
 			this._ImportOcrResultButton.Image = global::PDFPatcher.Properties.Resources.Save;
 			this._ImportOcrResultButton.InnerBorderColor = System.Drawing.SystemColors.ControlDarkDark;
-			this._ImportOcrResultButton.Location = new System.Drawing.Point(337, 95);
+			this._ImportOcrResultButton.Location = new System.Drawing.Point(333, 95);
 			this._ImportOcrResultButton.Name = "_ImportOcrResultButton";
 			this._ImportOcrResultButton.OuterBorderColor = System.Drawing.SystemColors.ControlLightLight;
 			this._ImportOcrResultButton.ShowFocusBorder = true;
@@ -361,7 +361,7 @@
 			this.Controls.Add(this._ImportOcrResultButton);
 			this.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
 			this.Name = "OcrControl";
-			this.Size = new System.Drawing.Size(475, 333);
+			this.Size = new System.Drawing.Size(471, 346);
 			this.tabControl1.ResumeLayout(false);
 			this.tabPage1.ResumeLayout(false);
 			this.tabPage1.PerformLayout();
