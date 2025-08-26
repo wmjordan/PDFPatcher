@@ -46,6 +46,7 @@ namespace PDFPatcher.Functions
 		void OnLoad() {
 			new Editor.Parts.BookmarkInViewSynchronizer(_BookmarkBox, _ViewerBox);
 			new Editor.Parts.BookmarkTitleEditHandler(_controller);
+			new Editor.Parts.CurrentPageBoxHandler(_CurrentPageBox, _ViewerBox);
 			ListRecentFiles = _OpenButton_DropDownOpening;
 			RecentFileItemClicked = _OpenButton_DropDownItemClicked;
 			var s = this.GetDpiScale();
@@ -90,33 +91,6 @@ namespace PDFPatcher.Functions
 			};
 			_UndoButton.DropDownItemClicked += (s, args) => _controller.Undo(args.ClickedItem.Owner.Items.IndexOf(args.ClickedItem) + 1);
 			QuickSelectCommand.RegisterMenuItems(_QuickSelect.DropDownItems);
-			_CurrentPageBox.KeyUp += (s, args) => {
-				int d;
-				switch (args.KeyCode) {
-					case Keys.Enter:
-						d = 0;
-						break;
-					case Keys.Up:
-					case Keys.OemMinus:
-						d = -1;
-						break;
-					case Keys.Down:
-					case Keys.Add:
-						d = 1;
-						break;
-					case Keys.Home:
-						_ViewerBox.CurrentPageNumber = 1;
-						return;
-					case Keys.End:
-						_ViewerBox.CurrentPageNumber = -1;
-						return;
-					default:
-						return;
-				}
-				if (_CurrentPageBox.Text.TryParse(out int p)) {
-					_ViewerBox.CurrentPageNumber = p + d;
-				}
-			};
 			_ViewerButton.DropDownOpening += (s, args) => SetupMenu(_ViewerButton.DropDownItems);
 			_OcrMenu.DropDownItemClicked += (s, args) => _ViewerBox.OcrLanguage = (int)(args.ClickedItem.Tag ?? 0);
 			_OcrMenu.DropDownOpening += (s, args) => {
@@ -142,7 +116,6 @@ namespace PDFPatcher.Functions
 				AppContext.Reader.Zoom = _ViewerBox.LiteralZoom;
 				_ZoomBox.Text = _ViewerBox.LiteralZoom;
 			};
-			_ViewerBox.PageChanged += (s, args) => _CurrentPageBox.Text = _ViewerBox.CurrentPageNumber.ToText();
 			_ViewerBox.ContentDirectionChanged += (s, args) => AppContext.Reader.ContentDirection = ((ViewerControl)s).ContentDirection;
 			_ViewerBox.PageScrollModeChanged += (s, args) => AppContext.Reader.FullPageScroll = ((ViewerControl)s).FullPageScroll;
 			//_ViewerBox.SelectionChanged += (s, args) =>
@@ -195,7 +168,6 @@ namespace PDFPatcher.Functions
 		void _ViewerBoxInitializeAfterDocumentLoad(object sender, EventArgs e) {
 			_ViewerBox.ContentDirection = AppContext.Reader.ContentDirection;
 			_ViewerBox.FullPageScroll = AppContext.Reader.FullPageScroll;
-			_CurrentPageBox.ToolTipText = $"文档共{_ViewerBox.Document.PageCount}页\nHome：转到第一页\nEnd：转到最后一页";
 			_ZoomBox.Text = _ViewerBox.LiteralZoom = AppContext.Reader.Zoom.SubstituteDefault(Constants.DestinationAttributes.ViewType.FitH);
 			_ZoomBox.Enabled = true;
 		}
