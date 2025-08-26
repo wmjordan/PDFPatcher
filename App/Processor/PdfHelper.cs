@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using iTextSharp.text.pdf;
-using MuPDF.Extensions;
 using PDFPatcher.Common;
 using PDFPatcher.Model;
 
@@ -14,11 +11,13 @@ namespace PDFPatcher.Processor
 {
 	internal static class PdfHelper
 	{
-		internal static readonly int[] CompoundTypes = new int[] { PdfObject.DICTIONARY, PdfObject.ARRAY, PdfObject.STREAM };
+		internal static readonly int[] CompoundTypes = [PdfObject.DICTIONARY, PdfObject.ARRAY, PdfObject.STREAM];
 
 		static readonly DualKeyDictionary<PdfName, string> __PdfNameMap;
 		static readonly Dictionary<string, byte[]> __PdfPasswordCache = new Dictionary<string, byte[]>(StringComparer.OrdinalIgnoreCase);
 		static bool __SuppressUnethicalWarning;
+
+		internal static Dictionary<string, byte[]> PasswordCache => __PdfPasswordCache;
 
 		/// <summary>
 		/// 切换强制读取加密文档模式。
@@ -46,7 +45,7 @@ namespace PDFPatcher.Processor
 			__PdfPasswordCache.TryGetValue(sourceFile, out password);
 			while (true) {
 				try {
-					if (File.Exists(sourceFile) == false) {
+					if (!File.Exists(sourceFile)) {
 						throw new FileNotFoundException($"找不到文件：{sourceFile}");
 					}
 					PdfReader r;
@@ -84,7 +83,7 @@ namespace PDFPatcher.Processor
 					|| __SuppressUnethicalWarning
 					|| FormHelper.ConfirmOKBox(Messages.UserRightRequired);
 			ToggleUnethicalMode(true);
-			if (__SuppressUnethicalWarning == false && FormHelper.IsCtrlKeyDown) {
+			if (!__SuppressUnethicalWarning && FormHelper.IsCtrlKeyDown) {
 				__SuppressUnethicalWarning = true;
 			}
 			return r;
@@ -103,26 +102,6 @@ namespace PDFPatcher.Processor
 				d.Remove(PdfName.PAGES);
 				d.Remove(PdfName.OUTLINES);
 			}
-		}
-
-		internal static MuPDF.Document OpenMuDocument(string sourceFile) {
-			var d = MuPDF.Document.Open(sourceFile);
-			if (d.NeedsPassword) {
-				var authenticated = false;
-				if (__PdfPasswordCache.TryGetValue(sourceFile, out byte[] password)) {
-					authenticated = d.CheckPassword(password != null ? Encoding.Default.GetString(password) : String.Empty);
-				}
-				while (authenticated == false) {
-					using (var f = new PasswordEntryForm(sourceFile)) {
-						if (f.ShowDialog() == System.Windows.Forms.DialogResult.Cancel) {
-							throw new iTextSharp.text.exceptions.BadPasswordException("密码错误，没有权限打开 PDF 文件。");
-						}
-						__PdfPasswordCache[sourceFile] = password = Encoding.Default.GetBytes(f.Password);
-					}
-					authenticated = d.CheckPassword(password != null ? Encoding.Default.GetString(password) : String.Empty);
-				}
-			}
-			return d;
 		}
 
 		static PdfHelper() {
@@ -262,7 +241,7 @@ namespace PDFPatcher.Processor
 		internal static DateTimeOffset ParseDateTime(string date) {
 			if (date == null
 				|| date.Length != 23 && date.Length != 16
-				|| date.StartsWith("D:") == false) {
+				|| !date.StartsWith("D:")) {
 				return DateTimeOffset.MinValue;
 			}
 			try {
@@ -558,7 +537,7 @@ namespace PDFPatcher.Processor
 			int i = 0;
 			var result = new List<int>();
 			foreach (var item in hits) {
-				if (item == false && i > 0) {
+				if (!item && i > 0) {
 					result.Add(i);
 				}
 				++i;

@@ -27,7 +27,7 @@ namespace MuPDF
 
 		/// <summary>获取或指定导出图片的颜色。</summary>
 		[XmlAttribute("图片颜色")]
-		public ColorspaceKind ColorSpace { get; set; }
+		public ColorSpace ColorSpace { get; set; }
 
 		/// <summary>获取或指定是否反转图片的颜色。</summary>
 		[XmlAttribute("反转图片颜色")]
@@ -103,10 +103,11 @@ namespace MuPDF
 	/// </summary>
 	public enum ColorSpace
 	{
+		None,
+		Gray,
 		Rgb,
 		Bgr,
-		Cmyk,
-		Gray
+		Cmyk
 	}
 
 	/// <summary>

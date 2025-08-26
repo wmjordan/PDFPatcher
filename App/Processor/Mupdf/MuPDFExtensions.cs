@@ -101,7 +101,7 @@ namespace MuPDF.Extensions
 			var ctm = CalculateMatrix(page, width, height, options);
 			var bbox = width > 0 && height > 0 ? new BBox(0, 0, width, height) : b.Transform(ctm).Round();
 
-			var pix = Pixmap.Create(options.ColorSpace == ColorspaceKind.None ? ColorspaceKind.Rgb : options.ColorSpace, bbox);
+			var pix = Pixmap.Create(((ColorspaceKind)options.ColorSpace).SubstituteDefault(ColorspaceKind.Rgb), bbox);
 			if (pix == null) {
 				throw new MuException($"无法渲染页面：{(page.PageNumber + 1).ToText()}");
 			}
@@ -191,7 +191,7 @@ namespace MuPDF.Extensions
 		public static unsafe Bitmap ToBitmap(this Pixmap pix, ImageRendererOptions options) {
 			int width = pix.Width;
 			int height = pix.Height;
-			bool grayscale = options.ColorSpace == ColorspaceKind.Gray;
+			bool grayscale = options.ColorSpace == (ColorSpace)ColorspaceKind.Gray;
 			bool invert = options.InvertColor;
 			var bmp = new Bitmap(width, height, grayscale ? PixelFormat.Format8bppIndexed : PixelFormat.Format24bppRgb);
 			var imageData = bmp.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadWrite, bmp.PixelFormat);
