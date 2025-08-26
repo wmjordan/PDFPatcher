@@ -1248,15 +1248,15 @@ namespace PDFPatcher.Functions
 
 		public void ExecuteCommand(string cmd) {
 			switch (cmd) {
-				case "_FirstPage": ScrollToPage(1); break;
-				case "_PreviousPage": Next(-1); break;
-				case "_NextPage": Next(1); break;
-				case "_LastPage": ScrollToPage(-1); break;
-				case "_ScrollVertical": ContentDirection = Editor.ContentDirection.TopToDown; break;
-				case "_ScrollHorizontal": ContentDirection = Editor.ContentDirection.RightToLeft; break;
-				case "_TrueColorSpace": GrayScale = false; break;
-				case "_GrayColorSpace": GrayScale = true; break;
-				case "_InvertColor": InvertColor = !InvertColor; break;
+				case EditorCommands.FirstPage: ScrollToPage(1); break;
+				case EditorCommands.PreviousPage: Next(-1); break;
+				case EditorCommands.NextPage: Next(1); break;
+				case EditorCommands.LastPage: ScrollToPage(-1); break;
+				case EditorCommands.ScrollVertical: ContentDirection = Editor.ContentDirection.TopToDown; break;
+				case EditorCommands.ScrollHorizontal: ContentDirection = Editor.ContentDirection.RightToLeft; break;
+				case EditorCommands.TrueColorSpace: GrayScale = false; break;
+				case EditorCommands.GrayColorSpace: GrayScale = true; break;
+				case EditorCommands.InvertColor: InvertColor = !InvertColor; break;
 				case "_Refresh": UpdateDisplay(); break;
 			}
 		}

@@ -64,6 +64,27 @@ namespace PDFPatcher.Functions.Editor
 			return d;
 		}
 
+		public const string FirstPage = "_FirstPage";
+		public const string PreviousPage = "_PreviousPage";
+		public const string NextPage = "_NextPage";
+		public const string LastPage = "_LastPage";
+		public const string ScrollVertical = "_ScrollVertical";
+		public const string ScrollHorizontal = "_ScrollHorizontal";
+		public const string TrueColorSpace = "_TrueColorSpace";
+		public const string GrayColorSpace = "_GrayColorSpace";
+		public const string InvertColor = "_InvertColor";
+		public const string MoveMode = "_MoveMode";
+		public const string SelectionMode = "_SelectionMode";
+		public const string FullPageScroll = "_FullPageScroll";
+		public const string ShowTextBorders = "_ShowTextBorders";
+		public const string DarkMode = "_DarkMode";
+		public const string GreenMode = "_GreenMode";
+		public const string ShowBookmarks = "_ShowBookmarks";
+		public const string ShowAnnotations = "_ShowAnnotations";
+		public const string OcrDetectPunctuation = "_OcrDetectPunctuation";
+		public const string FullScreen = "_FullScreen";
+		public const string OcrPage = "_OcrPage";
+
 		public static void Execute(string command, Controller controller, params string[] parameters) {
 			__Commands.Process(command, controller, parameters);
 		}

@@ -9,25 +9,25 @@ namespace PDFPatcher.Functions.Editor
 		static readonly Color __DarkModeColor = Color.DarkGray;
 		static readonly Color __GreenModeColor = Color.FromArgb(0xCC, 0xFF, 0xCC);
 		static readonly string[] __commands = [
-			"_FirstPage",
-			"_PreviousPage",
-			"_NextPage",
-			"_LastPage",
-			"_ScrollVertical",
-			"_ScrollHorizontal",
-			"_TrueColorSpace",
-			"_GrayColorSpace",
-			"_InvertColor",
-			"_MoveMode",
-			"_SelectionMode",
-			"_FullPageScroll",
-			"_ShowTextBorders",
-			"_DarkMode",
-			"_GreenMode",
-			"_ShowBookmarks",
-			"_ShowAnnotations",
-			"_OcrDetectPunctuation",
-			"_FullScreen"
+			EditorCommands.FirstPage,
+			EditorCommands.PreviousPage,
+			EditorCommands.NextPage,
+			EditorCommands.LastPage,
+			EditorCommands.ScrollVertical,
+			EditorCommands.ScrollHorizontal,
+			EditorCommands.TrueColorSpace,
+			EditorCommands.GrayColorSpace,
+			EditorCommands.InvertColor,
+			EditorCommands.MoveMode,
+			EditorCommands.SelectionMode,
+			EditorCommands.FullPageScroll,
+			EditorCommands.ShowTextBorders,
+			EditorCommands.DarkMode,
+			EditorCommands.GreenMode,
+			EditorCommands.ShowBookmarks,
+			EditorCommands.ShowAnnotations,
+			EditorCommands.OcrDetectPunctuation,
+			EditorCommands.FullScreen
 		];
 		internal static void RegisterCommands(CommandRegistry<Controller> registry) {
 			foreach (var item in __commands) {
@@ -44,25 +44,25 @@ namespace PDFPatcher.Functions.Editor
 		public void Process(Controller controller, params string[] parameters) {
 			var v = controller.View.Viewer;
 			switch (_command) {
-				case "_FirstPage":
-				case "_PreviousPage":
-				case "_NextPage":
-				case "_LastPage": v.ExecuteCommand(_command); break;
-				case "_ScrollVertical": v.ContentDirection = Editor.ContentDirection.TopToDown; break;
-				case "_ScrollHorizontal": v.ContentDirection = Editor.ContentDirection.RightToLeft; break;
-				case "_TrueColorSpace": v.GrayScale = false; break;
-				case "_GrayColorSpace": v.GrayScale = true; break;
-				case "_InvertColor": v.InvertColor = !v.InvertColor; break;
-				case "_MoveMode": v.MouseMode = Editor.MouseMode.Move; break;
-				case "_SelectionMode": v.MouseMode = Editor.MouseMode.Selection; break;
-				case "_FullPageScroll": v.FullPageScroll = !v.FullPageScroll; break;
-				case "_ShowTextBorders": v.ShowTextBorders = !v.ShowTextBorders; break;
-				case "_DarkMode": v.TintColor = v.TintColor != __DarkModeColor ? __DarkModeColor : Color.Transparent; break;
-				case "_GreenMode": v.TintColor = v.TintColor != __GreenModeColor ? __GreenModeColor : Color.Transparent; break;
-				case "_ShowAnnotations": v.HideAnnotations = !v.HideAnnotations; break;
-				case "_ShowBookmarks": controller.View.MainPanel.Panel1Collapsed = !controller.View.MainPanel.Panel1Collapsed; break;
-				case "_OcrDetectPunctuation": v.OcrOptions.DetectContentPunctuations = !v.OcrOptions.DetectContentPunctuations; break;
-				case "_FullScreen": AppContext.MainForm.FullScreen = !AppContext.MainForm.FullScreen; break;
+				case EditorCommands.FirstPage:
+				case EditorCommands.PreviousPage:
+				case EditorCommands.NextPage:
+				case EditorCommands.LastPage: v.ExecuteCommand(_command); break;
+				case EditorCommands.ScrollVertical: v.ContentDirection = ContentDirection.TopToDown; break;
+				case EditorCommands.ScrollHorizontal: v.ContentDirection = ContentDirection.RightToLeft; break;
+				case EditorCommands.TrueColorSpace: v.GrayScale = false; break;
+				case EditorCommands.GrayColorSpace: v.GrayScale = true; break;
+				case EditorCommands.InvertColor: v.InvertColor = !v.InvertColor; break;
+				case EditorCommands.MoveMode: v.MouseMode = MouseMode.Move; break;
+				case EditorCommands.SelectionMode: v.MouseMode = MouseMode.Selection; break;
+				case EditorCommands.FullPageScroll: v.FullPageScroll = !v.FullPageScroll; break;
+				case EditorCommands.ShowTextBorders: v.ShowTextBorders = !v.ShowTextBorders; break;
+				case EditorCommands.DarkMode: v.TintColor = v.TintColor != __DarkModeColor ? __DarkModeColor : Color.Transparent; break;
+				case EditorCommands.GreenMode: v.TintColor = v.TintColor != __GreenModeColor ? __GreenModeColor : Color.Transparent; break;
+				case EditorCommands.ShowAnnotations: v.HideAnnotations = !v.HideAnnotations; break;
+				case EditorCommands.ShowBookmarks: controller.View.MainPanel.Panel1Collapsed = !controller.View.MainPanel.Panel1Collapsed; break;
+				case EditorCommands.OcrDetectPunctuation: v.OcrOptions.DetectContentPunctuations = !v.OcrOptions.DetectContentPunctuations; break;
+				case EditorCommands.FullScreen: AppContext.MainForm.FullScreen = !AppContext.MainForm.FullScreen; break;
 			}
 		}
 

@@ -8,21 +8,22 @@ using MuPDF.Extensions;
 using PDFPatcher.Common;
 using PDFPatcher.Model;
 using PDFPatcher.Processor;
+using PDFPatcher.Functions.Editor;
 
 namespace PDFPatcher.Functions
 {
-	public sealed partial class EditorControl : FunctionControl, IDocumentEditor, Editor.IEditView
+	public sealed partial class EditorControl : FunctionControl, IDocumentEditor, IEditView
 	{
 		static readonly Color __DarkModeColor = Color.DarkGray;
 		static readonly Color __GreenModeColor = Color.FromArgb(0xCC, 0xFF, 0xCC);
 
 		SearchBookmarkForm _searchForm;
 		AutoBookmarkForm _autoBookmarkForm;
-		readonly Editor.Controller _controller;
+		readonly Controller _controller;
 
 		public EditorControl() {
 			InitializeComponent();
-			_controller = new Editor.Controller(this);
+			_controller = new Controller(this);
 			this.OnFirstLoad(OnLoad);
 		}
 
@@ -88,7 +89,7 @@ namespace PDFPatcher.Functions
 				}
 			};
 			_UndoButton.DropDownItemClicked += (s, args) => _controller.Undo(args.ClickedItem.Owner.Items.IndexOf(args.ClickedItem) + 1);
-			Editor.QuickSelectCommand.RegisterMenuItems(_QuickSelect.DropDownItems);
+			QuickSelectCommand.RegisterMenuItems(_QuickSelect.DropDownItems);
 			_CurrentPageBox.KeyUp += (s, args) => {
 				int d;
 				switch (args.KeyCode) {
@@ -152,7 +153,7 @@ namespace PDFPatcher.Functions
 			//        ShowInsertBookmarkDialog (_ViewerBox.ViewBox.PointToClient (MousePosition), _ViewerBox.MapPositionFromImagePoint (p.Left.ToInt32 (), p.Top.ToInt32 ()), t);
 			//	}
 			//};
-			//_ViewerBox.MouseMode = Editor.MouseMode.Selection;
+			//_ViewerBox.MouseMode = MouseMode.Selection;
 			_ViewerBox.MouseMove += (s, args) => {
 				if (_ViewerBox.FirstPage == 0) {
 					return;
@@ -273,20 +274,20 @@ namespace PDFPatcher.Functions
 					item.Enabled = _ViewerBox.Document != null && !_ViewerBox.Document.IsDisposed;
 					item.Visible = true;
 					break;
-				case "_ScrollVertical": m.Checked = _ViewerBox.ContentDirection == Editor.ContentDirection.TopToDown; break;
-				case "_ScrollHorizontal": m.Checked = _ViewerBox.ContentDirection == Editor.ContentDirection.RightToLeft; break;
-				case "_TrueColorSpace": m.Checked = !_ViewerBox.GrayScale; break;
-				case "_GrayColorSpace": m.Checked = _ViewerBox.GrayScale; break;
-				case "_InvertColor": m.Checked = _ViewerBox.InvertColor; break;
-				case "_MoveMode": m.Checked = _ViewerBox.MouseMode == Editor.MouseMode.Move; break;
-				case "_SelectionMode": m.Checked = _ViewerBox.MouseMode == Editor.MouseMode.Selection; break;
-				case "_FullPageScroll": m.Checked = _ViewerBox.FullPageScroll; break;
-				case "_ShowTextBorders": m.Checked = _ViewerBox.ShowTextBorders; break;
-				case "_DarkMode": m.Checked = _ViewerBox.TintColor == __DarkModeColor; break;
-				case "_GreenMode": m.Checked = _ViewerBox.TintColor == __GreenModeColor; break;
-				case "_ShowAnnotations": m.Checked = !_ViewerBox.HideAnnotations; break;
-				case "_ShowBookmarks": m.Checked = !_MainPanel.Panel1Collapsed; break;
-				case "_OcrPage": item.Enabled = ModiOcr.ModiInstalled && _ViewerBox.OcrLanguage != Constants.Ocr.NoLanguage; break;
+				case EditorCommands.ScrollVertical: m.Checked = _ViewerBox.ContentDirection == ContentDirection.TopToDown; break;
+				case EditorCommands.ScrollHorizontal: m.Checked = _ViewerBox.ContentDirection == ContentDirection.RightToLeft; break;
+				case EditorCommands.TrueColorSpace: m.Checked = !_ViewerBox.GrayScale; break;
+				case EditorCommands.GrayColorSpace: m.Checked = _ViewerBox.GrayScale; break;
+				case EditorCommands.InvertColor: m.Checked = _ViewerBox.InvertColor; break;
+				case EditorCommands.MoveMode: m.Checked = _ViewerBox.MouseMode == MouseMode.Move; break;
+				case EditorCommands.SelectionMode: m.Checked = _ViewerBox.MouseMode == MouseMode.Selection; break;
+				case EditorCommands.FullPageScroll: m.Checked = _ViewerBox.FullPageScroll; break;
+				case EditorCommands.ShowTextBorders: m.Checked = _ViewerBox.ShowTextBorders; break;
+				case EditorCommands.DarkMode: m.Checked = _ViewerBox.TintColor == __DarkModeColor; break;
+				case EditorCommands.GreenMode: m.Checked = _ViewerBox.TintColor == __GreenModeColor; break;
+				case EditorCommands.ShowAnnotations: m.Checked = !_ViewerBox.HideAnnotations; break;
+				case EditorCommands.ShowBookmarks: m.Checked = !_MainPanel.Panel1Collapsed; break;
+				case EditorCommands.OcrPage: item.Enabled = ModiOcr.ModiInstalled && _ViewerBox.OcrLanguage != Constants.Ocr.NoLanguage; break;
 				case "_OcrDetectPunctuation":
 					item.Enabled = ModiOcr.ModiInstalled && _ViewerBox.OcrLanguage != Constants.Ocr.NoLanguage;
 					m.Checked = _ViewerBox.OcrOptions.DetectContentPunctuations;
@@ -527,12 +528,12 @@ namespace PDFPatcher.Functions
 			}
 		}
 
-		#region Editor.IEditView
-		bool Editor.IEditView.AffectsDescendantBookmarks => _IncludeDecendantBox.Checked || ModifierKeys == Keys.Shift;
+		#region IEditView
+		bool IEditView.AffectsDescendantBookmarks => _IncludeDecendantBox.Checked || ModifierKeys == Keys.Shift;
 
-		ToolStripSplitButton Editor.IEditView.UndoButton => _UndoButton;
+		ToolStripSplitButton IEditView.UndoButton => _UndoButton;
 
-		AutoBookmarkForm Editor.IEditView.AutoBookmark {
+		AutoBookmarkForm IEditView.AutoBookmark {
 			get {
 				if (_autoBookmarkForm?.IsDisposed != false) {
 					_autoBookmarkForm = new AutoBookmarkForm(_controller);
@@ -541,15 +542,15 @@ namespace PDFPatcher.Functions
 			}
 		}
 
-		BookmarkEditorView Editor.IEditView.Bookmark => _BookmarkBox;
+		BookmarkEditorView IEditView.Bookmark => _BookmarkBox;
 
-		ViewerControl Editor.IEditView.Viewer => _ViewerBox;
+		ViewerControl IEditView.Viewer => _ViewerBox;
 
-		ToolStrip Editor.IEditView.ViewerToolbar => _ViewerToolbar;
+		ToolStrip IEditView.ViewerToolbar => _ViewerToolbar;
 
-		ToolStrip Editor.IEditView.BookmarkToolbar => _BookmarkToolbar;
+		ToolStrip IEditView.BookmarkToolbar => _BookmarkToolbar;
 
-		SplitContainer Editor.IEditView.MainPanel => _MainPanel;
+		SplitContainer IEditView.MainPanel => _MainPanel;
 
 		#endregion
 	}
