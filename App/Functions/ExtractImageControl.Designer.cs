@@ -499,7 +499,6 @@
 			this.Size = new System.Drawing.Size(487, 333);
 			this.Load += new System.EventHandler(this.Control_Show);
 			this.VisibleChanged += new System.EventHandler(this.Control_Show);
-			this.Click += new System.EventHandler(this._ExtractButton_Click);
 			((System.ComponentModel.ISupportInitialize)(this._MinWidthBox)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._MinHeightBox)).EndInit();
 			this.tabControl1.ResumeLayout(false);
