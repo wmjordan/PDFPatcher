@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Security.Permissions;
-using System.Text;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using PDFPatcher.Common;
@@ -67,12 +66,17 @@ namespace PDFPatcher.Functions
 				var i = _ItemList.GetFirstSelectedIndex();
 				var en = false;
 				if (i != -1) {
+					var selection = _ItemList.SelectedObjects;
+					AppContext.MainForm.StatusText = $"选中 {selection.Count.ToText()} 项，共 {selection.Cast<SourceItem>().Sum(s => s.PageCount).ToText()} 页";
 					var b = (_ItemList.GetModelObject(i) as SourceItem).Bookmark;
 					if (b != null && !String.IsNullOrEmpty(b.Title)) {
 						en = true;
 						_BoldStyleButton.Checked = b.IsBold;
 						_ItalicStyleButton.Checked = b.IsItalic;
 					}
+				}
+				else {
+					AppContext.MainForm.StatusText = Messages.Welcome;
 				}
 				_MainToolbar.ToggleEnabled(en, _bookmarkStyleButtonNames);
 			};
