@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using iTextSharp.text.pdf;
-using PDFPatcher.Common;
 using PDFPatcher.Model;
 using Matrix = iTextSharp.text.pdf.parser.Matrix;
 
@@ -9,7 +8,7 @@ namespace PDFPatcher.Processor
 {
 	sealed class PdfPageCommandProcessor : PdfContentStreamProcessor, IPdfPageCommandContainer
 	{
-		readonly Stack<EnclosingCommand> _commandStack = new Stack<EnclosingCommand>();
+		readonly Stack<EnclosingCommand> _commandStack = new();
 		EnclosingCommand _currentCommand;
 		float _textWidth;
 
@@ -17,7 +16,7 @@ namespace PDFPatcher.Processor
 		/// <summary>
 		/// 分析内容后得到的 PDF 命令操作符及操作数列表。
 		/// </summary>
-		public IList<PdfPageCommand> Commands { get; } = new List<PdfPageCommand>();
+		public IList<PdfPageCommand> Commands { get; } = [];
 		public string LastError { get; private set; }
 
 		public PdfPageCommandProcessor() {
@@ -63,6 +62,12 @@ namespace PDFPatcher.Processor
 
 			switch (oper.ToString()) {
 				case "TJ":
+					if (CurrentGraphicState.Font == null) {
+						cmd = new InvalidCommand(oper, operands) {
+							Error = LastError = "TJ 前缺少 Tf 指令"
+						};
+						goto ADD_COMMAND;
+					}
 					cmd = new PaceAndTextCommand(oper, operands, GetTextInfo(new PdfString()), CurrentGraphicState.Font);
 					break;
 				case "Tj":
@@ -133,7 +138,7 @@ namespace PDFPatcher.Processor
 		}
 
 		/// <summary>
-		/// 将 <see cref="Operands"/> 的内容写入到目标 <see cref="System.IO.Stream"/>。
+		/// 将 <see cref="Commands"/> 的内容写入到目标 <see cref="System.IO.Stream"/>。
 		/// </summary>
 		/// <param name="target">目标流对象。</param>
 		internal void WritePdfCommands(System.IO.Stream target) {
@@ -143,7 +148,7 @@ namespace PDFPatcher.Processor
 		}
 
 		/// <summary>
-		/// 将 <see cref="Operands"/> 的内容写入到目标 <paramref name="pdf"/> 的第 <paramref name="pageNumber"/> 页。
+		/// 将 <see cref="Commands"/> 的内容写入到目标 <paramref name="pdf"/> 的第 <paramref name="pageNumber"/> 页。
 		/// </summary>
 		/// <param name="pdf">目标 <see cref="PdfReader"/>。</param>
 		/// <param name="pageNumber">要写入的页码。</param>
@@ -159,13 +164,7 @@ namespace PDFPatcher.Processor
 			WritePdfCommands(context.Pdf, context.PageNumber);
 		}
 
-		private static string GetOperandsTextValue(List<PdfObject> operands) {
-			var n = operands.ConvertAll((po) => po.Type == PdfObject.NUMBER ? ValueHelper.ToText(((PdfNumber)po).DoubleValue) : null);
-			n.RemoveAt(n.Count - 1);
-			return String.Join(" ", n.ToArray());
-		}
-
-		private TextInfo GetTextInfo(PdfString text) {
+		TextInfo GetTextInfo(PdfString text) {
 			var gs = CurrentGraphicState;
 			var m = TextMatrix;
 			return new TextInfo {
