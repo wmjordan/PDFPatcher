@@ -208,6 +208,26 @@ namespace PDFPatcher.Model
 			return false;
 		}
 
+		internal int IndexOfChild(DocumentObject child, bool sameName = false) {
+			var l = Children as IList<DocumentObject>;
+			var c = 0;
+			if (!sameName) {
+				c = l.IndexOf(child);
+				return c < 0 ? c : c + 1;
+			}
+			var n = child.Name;
+			for (int i = 0; i < l.Count; i++) {
+				var o = l[i];
+				if (o.Name == n) {
+					++c;
+					if (o == child) {
+						return c;
+					}
+				}
+			}
+			return -1;
+		}
+
 		DocumentObject GetPageObject() {
 			var p = this;
 			while (p?.Type != PdfObjectType.Page) {

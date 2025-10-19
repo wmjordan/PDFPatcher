@@ -8,6 +8,7 @@ using System.Security.Permissions;
 using System.Windows.Forms;
 using System.Xml;
 using BrightIdeasSoftware;
+using CLR;
 using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.fonts.cmaps;
 using PDFPatcher.Common;
@@ -400,7 +401,7 @@ namespace PDFPatcher.Functions
 					_ViewButton.Enabled = !d.Name.HasPrefix("Font");
 					_ExportButton.Enabled = _AddObjectMenu.Enabled = true;
 					if (PdfName.IMAGE.Equals(s.GetAsName(PdfName.SUBTYPE))) {
-						ShowDescription("图片", null, PdfHelper.GetTypeName(PdfObject.STREAM));
+						ShowDescription("图片", type: PdfHelper.GetTypeName(PdfObject.STREAM));
 						return;
 					}
 				}
@@ -413,10 +414,10 @@ namespace PDFPatcher.Functions
 			}
 			if (d.Parent == null) {
 				if (d.Type == PdfObjectType.Trailer) {
-					ShowDescription("文档根节点", _fileName, null);
+					ShowDescription("文档根节点", _fileName);
 				}
 				else if (d.Type == PdfObjectType.Pages) {
-					ShowDescription("文档页面", "页数：" + _pdf.PageCount, null);
+					ShowDescription("文档页面", "页数：" + _pdf.PageCount);
 				}
 				return;
 			}
@@ -426,9 +427,33 @@ namespace PDFPatcher.Functions
 			if (o != null) {
 				t = PdfHelper.GetTypeName(o.Type);
 			}
-			ShowDescription(String.IsNullOrEmpty(i.Name) || d.Name == i.Name ? d.Name : $"{d.Name}:{i.Name}", i.Description, t);
+			ShowDescription(String.IsNullOrEmpty(i.Name) || d.Name == i.Name ? d.Name : $"{d.Name}:{i.Name}", i.Description, t, d);
 			_DeleteButton.Enabled = !i.IsRequired && d != null
-				&& (d.Type == PdfObjectType.Normal || d.Type == PdfObjectType.Image || d.Type == PdfObjectType.Form || d.Type == PdfObjectType.Resources || d.Type == PdfObjectType.Outline && d.Name == "Outlines");
+				&& (d.Type.CeqAny(PdfObjectType.Normal, PdfObjectType.Image, PdfObjectType.Form, PdfObjectType.Resources) || d.Type == PdfObjectType.Outline && d.Name == "Outlines");
+		}
+
+		void ShowPath(DocumentObject obj) {
+			var sb = StringBuilderCache.Acquire(30).Append("位置：");
+			var stack = new Stack<KeyValuePair<int, DocumentObject>>();
+			stack.Push(GetPathNumericObject(obj));
+			while ((obj = obj.Parent) != null) {
+				stack.Push(GetPathNumericObject(obj));
+			}
+			while (stack.Count != 0) {
+				var n = stack.Pop();
+				sb.Append('/').Append(n.Value.Name);
+				if (n.Key > 1) {
+					sb.Append('[').Append(n.Key.ToText()).Append(']');
+				}
+			}
+			_DescriptionBox.AppendLine().AppendText(StringBuilderCache.GetStringAndRelease(sb));
+		}
+
+		KeyValuePair<int, DocumentObject> GetPathNumericObject(DocumentObject obj) {
+			var p = obj.Parent;
+			return p is null
+				? new KeyValuePair<int, DocumentObject>(1, obj)
+				: new KeyValuePair<int, DocumentObject>(p.IndexOfChild(obj, true), obj);
 		}
 
 		Dictionary<string, int> InitOpNameIcons() {
@@ -508,7 +533,7 @@ namespace PDFPatcher.Functions
 			_LoadDocumentWorker.RunWorkerAsync(path);
 		}
 
-		void ShowDescription(string name, string description, string type) {
+		void ShowDescription(string name, string description = null, string type = null, DocumentObject obj = null) {
 			_DescriptionBox.Text = String.Empty;
 			if (String.IsNullOrEmpty(name)) {
 				return;
@@ -521,6 +546,9 @@ namespace PDFPatcher.Functions
 			if (type != null) {
 				_DescriptionBox.AppendText(Environment.NewLine);
 				_DescriptionBox.AppendText("类型：" + type);
+			}
+			if (obj != null) {
+				ShowPath(obj);
 			}
 			if (description != null) {
 				_DescriptionBox.AppendText(Environment.NewLine);
