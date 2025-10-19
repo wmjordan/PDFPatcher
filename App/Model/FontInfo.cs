@@ -32,7 +32,7 @@ namespace PDFPatcher.Model
 		internal PdfDictionary FontDescriptor {
 			get {
 				if (_FontDescriptor == null) {
-					_FontDescriptor = _Font.Locate<PdfArray>(PdfName.DESCENDANTFONTS).Locate<PdfDictionary>(0).Locate<PdfDictionary>(PdfName.FONTDESCRIPTOR);
+					_FontDescriptor = _Font.Locate<PdfArray>(PdfName.DESCENDANTFONTS).Locate<PdfDictionary>(0).Locate<PdfDictionary>(PdfName.FONTDESCRIPTOR) ?? _Font.Locate<PdfDictionary>(PdfName.FONTDESCRIPTOR);
 					_FontDescriptor ??= new PdfDictionary();
 				}
 				return _FontDescriptor;
@@ -42,20 +42,20 @@ namespace PDFPatcher.Model
 		internal string FontName {
 			get {
 				if (_FontName == null) {
+					string fn;
 					var f = FontDescriptor.GetAsName(PdfName.FONTNAME);
 					if (f != null) {
-						_FontName = PdfName.DecodeName(f.ToString());
+						fn = PdfName.DecodeName(f.ToString());
 					}
 					else {
-						var fn = PostscriptFontName;
+						fn = PostscriptFontName;
 						var i = fn.LastIndexOf(',');
 						if (i != -1) {
 							fn = fn.Substring(0, i);
 						}
-						_FontName = fn;
 					}
 					// 删除子集的名称
-					_FontName = PdfDocumentFont.RemoveSubsetPrefix(_FontName);
+					_FontName = PdfDocumentFont.RemoveSubsetPrefix(fn);
 				}
 				return _FontName;
 			}
