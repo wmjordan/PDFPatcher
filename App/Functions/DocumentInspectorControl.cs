@@ -657,7 +657,12 @@ namespace PDFPatcher.Functions
 				}
 			}
 			else if (cn == "_ExpandButton") {
-				_ObjectDetailBox.ExpandSelected();
+				if (ModifierKeys.MatchFlags(Keys.Shift)) {
+					_ObjectDetailBox.Expand(_ObjectDetailBox.SelectedObjects, true);
+				}
+				else {
+					_ObjectDetailBox.ExpandSelected();
+				}
 			}
 			else if (cn == "_CollapseButton") {
 				_ObjectDetailBox.CollapseSelected();

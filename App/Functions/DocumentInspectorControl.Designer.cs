@@ -393,7 +393,7 @@
 			this._DeleteButton.Name = "_DeleteButton";
 			this._DeleteButton.Size = new System.Drawing.Size(23, 22);
 			this._DeleteButton.Text = "删除";
-			this._DeleteButton.ToolTipText = "删除选中的对象";
+			this._DeleteButton.ToolTipText = "删除选中的节点";
 			// 
 			// _ExpandButton
 			// 
@@ -404,7 +404,7 @@
 			this._ExpandButton.Name = "_ExpandButton";
 			this._ExpandButton.Size = new System.Drawing.Size(23, 22);
 			this._ExpandButton.Text = "展开";
-			this._ExpandButton.ToolTipText = "展开选中的项目";
+			this._ExpandButton.ToolTipText = "展开选中的节点\nShift: 递归展开深层节点";
 			// 
 			// _CollapseButton
 			// 
@@ -415,7 +415,7 @@
 			this._CollapseButton.Name = "_CollapseButton";
 			this._CollapseButton.Size = new System.Drawing.Size(23, 22);
 			this._CollapseButton.Text = "收拢";
-			this._CollapseButton.ToolTipText = "收拢选中的项目";
+			this._CollapseButton.ToolTipText = "收拢选中的节点";
 			// 
 			// DocumentInspectorControl
 			// 
