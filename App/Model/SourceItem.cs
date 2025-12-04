@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using CLR;
 using PDFPatcher.Common;
 
 namespace PDFPatcher.Model
@@ -392,8 +393,7 @@ namespace PDFPatcher.Model
 			static void AddSubDirectories(string folderPath, List<SourceItem> list) {
 				try {
 					foreach (var item in Directory.EnumerateDirectories(folderPath)) {
-						var f = new Folder(item, true);
-						list.Add(f);
+						list.Add(new Folder(item, true));
 					}
 				}
 				catch (UnauthorizedAccessException) { }
@@ -426,7 +426,7 @@ namespace PDFPatcher.Model
 			}
 			else {
 				var f = fileName.ToFileInfo();
-				kilobytes = (int)(f.Length >> 10);
+				kilobytes = f.Length.IsBetween(1, 1024) ? 1 : (int)(f.Length + 1023 >> 10);
 				fileTime = f.LastWriteTime;
 			}
 		}
@@ -552,7 +552,7 @@ namespace PDFPatcher.Model
 			var body = new List<SourceItem>(fileList.Count);
 			foreach (var file in fileList) {
 				var path = file.FilePath;
-				var f = Path.GetFileNameWithoutExtension(path);
+				var f = path.FileNameWithoutExtension;
 				if (f.Length == 6) {
 					if (MatchCajPatternAddPath(file, f, Constants.CajNaming.Cover, cov)
 						|| MatchCajPatternAddPath(file, f, Constants.CajNaming.TitlePage, bok)
