@@ -620,7 +620,6 @@
     <Compile Include="Processor\InfoDocProcessor\GotoDestinationProcessor.cs" />
     <Compile Include="Processor\IInfoDocProcessor.cs" />
     <Compile Include="Processor\InfoDocProcessor\ForceInternalDestinationProcessor.cs" />
-    <Compile Include="Processor\Imaging\JBig2Decoder.cs" />
     <Compile Include="Processor\Imaging\JBig2Encoder.cs" />
     <Compile Include="Processor\Imaging\JBig2Structs.cs" />
     <Compile Include="Processor\IProcessor.cs" />

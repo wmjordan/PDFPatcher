@@ -111,12 +111,12 @@ namespace PDFPatcher.Processor.Imaging
 								globals = PdfReader.GetStreamBytes(gs);
 							}
 						}
-						outBuf = JBig2Decoder.Decode(decodedBytes, globals);
+						outBuf = MuPDF.JBig2Codec.Decode(decodedBytes, globals);
 						if (outBuf == null) {
 							info.LastDecodeError = "导出 JBig2 编码图片失败。";
 							return null;
 						}
-						if (blackIs1 == false) {
+						if (!blackIs1) {
 							InvertBits(outBuf);
 						}
 					}
@@ -151,7 +151,7 @@ namespace PDFPatcher.Processor.Imaging
 					info.ExtName = Constants.FileExtensions.Png;
 					break;
 				case "JPG":
-					if (options.MergeImages == false) {
+					if (!options.MergeImages) {
 						goto EXIT;
 					}
 					using (var ms = new MemoryStream(decodedBytes))
@@ -234,7 +234,7 @@ namespace PDFPatcher.Processor.Imaging
 		}
 
 		void CreatePalette(FreeImageBitmap bmp) {
-			if (bmp.HasPalette == false) {
+			if (!bmp.HasPalette) {
 				Trace.WriteLine("Bitmap does not have palette.");
 				return;
 			}
