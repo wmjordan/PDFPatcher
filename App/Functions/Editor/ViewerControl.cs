@@ -52,6 +52,7 @@ namespace PDFPatcher.Functions
 		ZoomMode _zoomMode;
 		float _zoomFactor;
 		ContentDirection _contentFlow;
+		int _totalPageCount;
 		/// <summary>
 		/// 页面的尺寸信息。
 		/// </summary>
@@ -316,7 +317,7 @@ namespace PDFPatcher.Functions
 				_mupdf = value;
 				if (value != null) {
 					Tracker.DebugMessage("Load document.");
-					var l = _mupdf.PageCount + 1;
+					var l = (_totalPageCount = _mupdf.PageCount) + 1;
 					_pageOffsets = new int[l];
 					_pageBounds = new Box[l];
 					LoadPageBounds();
@@ -334,6 +335,8 @@ namespace PDFPatcher.Functions
 				}
 			}
 		}
+
+		public int TotalPageCount => _totalPageCount;
 
 		public ViewerControl() {
 			VirtualMode = true;
@@ -1275,6 +1278,7 @@ namespace PDFPatcher.Functions
 			ShowTextBorders = false;
 			_pageBounds = null;
 			_pageOffsets = null;
+			_totalPageCount = 0;
 			if (_cache != null) {
 				lock (_cache.SyncObj) {
 					_cache.Clear();

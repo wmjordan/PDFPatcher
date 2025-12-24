@@ -28,6 +28,8 @@ namespace PDFPatcher.Functions.Editor.Parts
 			var t = ti.ToString();
 			_Label.Text = string.Concat("页面：",
 				p.Page,
+				"/",
+				_ViewerBox.TotalPageCount.ToText(),
 				"; 位置：",
 				Math.Round(p.PageX, 2),
 				" * ",
