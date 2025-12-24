@@ -76,7 +76,7 @@ namespace PDFPatcher.Functions
 					}
 				}
 				else {
-					AppContext.MainForm.StatusText = Messages.Welcome;
+					UpdateFileStatistics();
 				}
 				_MainToolbar.ToggleEnabled(en, _bookmarkStyleButtonNames);
 			};
@@ -133,6 +133,7 @@ namespace PDFPatcher.Functions
 								p.PageRanges = "1-" + p.PageCount.ToText();
 							}
 						}
+						UpdateFileStatistics();
 					};
 				})
 				.ConfigColumn(_FolderColumn, c => c.AspectGetter = (o) => o.FolderName);
@@ -149,6 +150,14 @@ namespace PDFPatcher.Functions
 					FormHelper.ErrorBox("找不到文件：" + file);
 				}
 			};
+		}
+
+		void UpdateFileStatistics() {
+			var r = _ItemList.Roots;
+			int c = r is System.Collections.IList l ? l.Count : r.Cast<object>().Count();
+			AppContext.MainForm.StatusText = c == 0
+				? Messages.Welcome
+				: $"共 {c.ToText()} 项，{_ItemList.Objects.Cast<SourceItem>().Sum(s => s.RecursivePageCount).ToText()} 页";
 		}
 
 		[SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
@@ -433,27 +442,28 @@ namespace PDFPatcher.Functions
 				var args = arg.Argument as object[];
 				var items = args[0] as ICollection<SourceItem>;
 				var target = args[1] as string;
-				if ((bool)args[3]) {
-					Tracker.SetTotalProgressGoal(items.Count);
-					foreach (var item in items) {
-						var tn = FileHelper.CombinePath(System.IO.Path.GetDirectoryName(target), item.FileName + Constants.FileExtensions.Pdf);
-						switch (item.Type) {
-							case SourceItem.ItemType.Empty:
-								Tracker.TraceMessage(Tracker.Category.Error, "首层项目不能为空白页。");
-								break;
-							case SourceItem.ItemType.Pdf:
-							case SourceItem.ItemType.Image:
-								Processor.Worker.MergeDocuments([item], tn, null);
-								break;
-							case SourceItem.ItemType.Folder:
-								Processor.Worker.MergeDocuments(item.Items, tn, null);
-								break;
-						}
-						Tracker.IncrementTotalProgress();
-					}
+				if (!(bool)args[3]) {
+					// 合并为单一文件
+					Processor.Worker.MergeDocuments(items, target, args[2] as string);
+					return;
 				}
-				else {
-					Processor.Worker.MergeDocuments(items, args[1] as string, args[2] as string);
+				// 顶层项合并为独立文件
+				Tracker.SetTotalProgressGoal(items.Count);
+				foreach (var item in items) {
+					var tn = FileHelper.CombinePath(System.IO.Path.GetDirectoryName(target), item.FileName + Constants.FileExtensions.Pdf);
+					switch (item.Type) {
+						case SourceItem.ItemType.Empty:
+							Tracker.TraceMessage(Tracker.Category.Error, "首层项目不能为空白页。");
+							break;
+						case SourceItem.ItemType.Pdf:
+						case SourceItem.ItemType.Image:
+							Processor.Worker.MergeDocuments([item], tn, null);
+							break;
+						case SourceItem.ItemType.Folder:
+							Processor.Worker.MergeDocuments(item.Items, tn, null);
+							break;
+					}
+					Tracker.IncrementTotalProgress();
 				}
 			};
 			worker.RunWorkerAsync(new object[] { fl, targetPdfFile, infoFile, fm });
@@ -543,6 +553,7 @@ namespace PDFPatcher.Functions
 							_itemsContainer.Items.Clear();
 							_itemsContainer.Items.AddRange(Processor.SourceItemSerializer.Deserialize(f.FileName));
 							_ItemList.Objects = _itemsContainer.Items;
+							UpdateFileStatistics();
 						}
 					}
 					break;
@@ -566,6 +577,7 @@ namespace PDFPatcher.Functions
 						if (FormHelper.YesNoBox("是否清空文件列表？") == DialogResult.Yes) {
 							_ItemList.ClearObjects();
 							_itemsContainer.Items.Clear();
+							UpdateFileStatistics();
 						}
 					}
 					else {
@@ -573,6 +585,7 @@ namespace PDFPatcher.Functions
 							GetParentSourceItem(item).Items.Remove(item);
 							_ItemList.RemoveObject(item);
 						}
+						UpdateFileStatistics();
 					}
 					break;
 				case Commands.Copy:

@@ -16,7 +16,8 @@ namespace PDFPatcher.Model
 		public string FileName { get; }
 		public string FolderName { get; }
 		public BookmarkSettings Bookmark { get; set; }
-		public int PageCount { get; private set; }
+		public abstract int PageCount { get; }
+		public int RecursivePageCount => PageCount + (HasSubItems ? _Items.Sum(x => x.RecursivePageCount) : 0);
 		public abstract int FileSize { get; }
 		public abstract DateTime FileTime { get; }
 		public List<SourceItem> Items => _Items ??= [];
@@ -165,15 +166,17 @@ namespace PDFPatcher.Model
 
 		internal sealed class Empty : SourceItem
 		{
+			int _PageCount = 1;
+
 			readonly DateTime _Time = DateTime.Now;
 
 			public override ItemType Type => ItemType.Empty;
-
+			public override int PageCount => _PageCount;
 			public override int FileSize => 0;
 			public override DateTime FileTime => _Time;
 
 			public void SetPageCount(int pageCount) {
-				PageCount = pageCount;
+				_PageCount = pageCount;
 			}
 
 			public override string ToString() {
@@ -186,8 +189,8 @@ namespace PDFPatcher.Model
 				return n;
 			}
 
-			internal Empty() : base(null, 1) { }
-			internal Empty(int pageCount) : base(null, pageCount) { }
+			internal Empty() : base(null) { }
+			internal Empty(int pageCount) : base(null) { }
 		}
 
 		internal sealed class CropOptions
@@ -216,13 +219,14 @@ namespace PDFPatcher.Model
 			readonly DateTime _FileTime;
 
 			public Image(FilePath path)
-				: base(path, 0) {
+				: base(path) {
 				Cropping = new CropOptions();
 				GetFileInfo(path, out _FileSize, out _FileTime);
 			}
 
 			public CropOptions Cropping { get; set; }
 			public override ItemType Type => ItemType.Image;
+			public override int PageCount => 1;
 			public override int FileSize => _FileSize;
 			public override DateTime FileTime => _FileTime;
 			public override bool HasContent => true;
@@ -236,11 +240,14 @@ namespace PDFPatcher.Model
 
 		internal sealed class Pdf : SourceItem
 		{
+			int _FilePageCount, _MergePageCount;
 			int _FileSize = -1;
 			DateTime _FileTime;
+			string _PageRanges;
 
 			public Pdf(FilePath path, string pageRanges, int pageCount, Model.GeneralInfo docInfo)
-				: base(path, pageCount) {
+				: base(path) {
+				_FilePageCount = pageCount;
 				PageRanges = pageRanges;
 				DocInfo = docInfo;
 				ExtractImageOptions = new ImageExtracterOptions() {
@@ -254,15 +261,23 @@ namespace PDFPatcher.Model
 				GetFileInfo(path, out _FileSize, out _FileTime);
 			}
 
-			public Pdf(FilePath path) : base(path, 0) {
+			public Pdf(FilePath path) : base(path) {
 				Refresh(path.ToString(), AppContext.Encodings.DocInfoEncoding);
 			}
 
-			public string PageRanges { get; set; }
+			public string PageRanges {
+				get => _PageRanges;
+				set {
+					var r = PageRangeCollection.Parse(value, 1, _FilePageCount, true);
+					_PageRanges = r.ToString();
+					_MergePageCount = r.TotalPages;
+				}
+			}
 			public bool ImportImagesOnly { get; set; }
 			public ImageExtracterOptions ExtractImageOptions { get; private set; }
 			public Model.GeneralInfo DocInfo { get; private set; }
 			public override ItemType Type => ItemType.Pdf;
+			public override int PageCount => _MergePageCount;
 			public override int FileSize => _FileSize;
 			public override DateTime FileTime => _FileTime;
 			public override bool HasContent => true;
@@ -278,7 +293,7 @@ namespace PDFPatcher.Model
 			}
 
 			public override SourceItem Clone() {
-				var n = new Pdf(FilePath, PageRanges, PageCount, DocInfo) {
+				var n = new Pdf(FilePath, PageRanges, _FilePageCount, DocInfo) {
 					ImportImagesOnly = ImportImagesOnly
 				};
 				CopyProperties(n);
@@ -291,8 +306,8 @@ namespace PDFPatcher.Model
 					if (_FileSize > 0) {
 						using (var reader = Processor.PdfHelper.OpenPdfFile(path, true, false)) {
 							DocInfo = Processor.DocInfoExporter.RewriteDocInfoWithEncoding(reader, encoding);
-							PageCount = reader.NumberOfPages;
-							PageRanges = new PageRange(1, PageCount).ToString();
+							_FilePageCount = reader.NumberOfPages;
+							PageRanges = new PageRange(1, _FilePageCount).ToString();
 						}
 					}
 				}
@@ -307,7 +322,7 @@ namespace PDFPatcher.Model
 		{
 			readonly DateTime _FolderTime;
 
-			public Folder(string path) : base(path, 0) {
+			public Folder(string path) : base(path) {
 				var p = new FilePath(path);
 				if (p.ExistsDirectory) {
 					_FolderTime = p.ToDirectoryInfo().LastWriteTime;
@@ -321,7 +336,7 @@ namespace PDFPatcher.Model
 			}
 
 			public override ItemType Type => ItemType.Folder;
-
+			public override int PageCount => 0;
 			public override int FileSize => 0;
 			public override DateTime FileTime => _FolderTime;
 
@@ -401,8 +416,7 @@ namespace PDFPatcher.Model
 			}
 		}
 
-		protected SourceItem(FilePath path, int pageCount) {
-			PageCount = pageCount;
+		protected SourceItem(FilePath path) {
 			if (!path.IsValidPath) {
 				return;
 			}
@@ -441,7 +455,6 @@ namespace PDFPatcher.Model
 			if (Bookmark != null) {
 				target.Bookmark = Bookmark.Clone();
 			}
-			target.PageCount = PageCount;
 		}
 		static BookmarkSettings CreateBookmarkSettings(string t) {
 			if (AppContext.Merger.CajSort && t.Length == 6) {
