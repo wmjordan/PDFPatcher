@@ -30,6 +30,7 @@ namespace PDFPatcher.Processor.Imaging
 		public int PaletteEntryCount { get; private set; }
 		public PdfImageData InlineImage { get; }
 		public bool IsPageImage { get; }
+		public bool InvertCmyk { get; private set; }
 
 		internal ImageInfo() { }
 		internal ImageInfo(PdfImageData image) {
@@ -40,7 +41,7 @@ namespace PDFPatcher.Processor.Imaging
 		}
 		internal ImageInfo(PdfIndirectReference pdfIndirect, bool isPageImage) {
 			InlineImage = new PdfImageData(pdfIndirect);
-			IsPageImage = IsPageImage;
+			IsPageImage = isPageImage;
 		}
 		internal ImageInfo(PRStream stream) {
 			InlineImage = new PdfImageData(stream);
@@ -72,7 +73,7 @@ namespace PDFPatcher.Processor.Imaging
 			decodedBytes = DecodeStreamContent(data, filters);
 			var filter = filters.Count > 0 ? (filters[filters.Count - 1] as PdfName ?? PdfName.DEFAULT).ToString() : "BMP";
 			var decParam = decParams.Count > 0 ? decParams[decParams.Count - 1] as PdfDictionary : null;
-			ExportColorspace(data.GetDirectObject(PdfName.COLORSPACE), info);
+			ExportColorspace(data, info);
 			switch (filter) {
 				case "/DCTDecode":
 				case "/DCT":
@@ -395,12 +396,23 @@ namespace PDFPatcher.Processor.Imaging
 			return pf;
 		}
 
-		static void ExportColorspace(PdfObject cs, ImageInfo info) {
+		static void ExportColorspace(PdfImageData data, ImageInfo info) {
+			var cs = data.GetDirectObject(PdfName.COLORSPACE);
 			if (cs == null) {
 				return;
 			}
 			info.ColorSpace = cs as PdfName;
 			if (info.ColorSpace != null) {
+				if (info.ColorSpace.Equals(PdfName.DEVICECMYK)) {
+					if (data.GetDirectObject(PdfName.DECODE) is PdfArray d
+						&& d.Size == 8
+						&& d.GetAsNumber(0)?.IntValue == 1
+						&& d.GetAsNumber(1)?.IntValue == 0 // HACK: 偷懒省略后面 3 对 1、0
+					) {
+						return;
+					}
+					info.InvertCmyk = true;
+				}
 				return;
 			}
 

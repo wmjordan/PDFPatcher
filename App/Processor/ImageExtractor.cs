@@ -22,9 +22,9 @@ namespace PDFPatcher.Processor
 		readonly string _fileMask;
 		int _pageRotation;
 		readonly ImageExtracterOptions _options;
-		readonly List<ImageInfo> _imageInfoList = new List<ImageInfo>();
-		readonly List<ImageDisposition> _imagePosList = new List<ImageDisposition>();
-		readonly HashSet<PdfObject> _exportedImages = new HashSet<PdfObject>();
+		readonly List<ImageInfo> _imageInfoList = [];
+		readonly List<ImageDisposition> _imagePosList = [];
+		readonly HashSet<PdfObject> _exportedImages = [];
 		readonly Stack<PdfObject> _visited = new Stack<PdfObject>();
 
 		internal List<ImageInfo> InfoList => _imageInfoList;
@@ -61,7 +61,7 @@ namespace PDFPatcher.Processor
 				_imagePosList.Sort();
 
 				// 删除页面字典中没有在渲染指令中出现的图片
-				if (_options.ExtractOutOfPageImages == false) {
+				if (!_options.ExtractOutOfPageImages) {
 					_imageInfoList.RemoveAll(IsOutOfPage);
 				}
 			}
@@ -111,7 +111,7 @@ namespace PDFPatcher.Processor
 		}
 
 		bool IsOutOfPage(ImageInfo image) {
-			if (image.IsPageImage == false) {
+			if (!image.IsPageImage) {
 				return false;
 			}
 			var r = image.InlineImage.PdfRef;
@@ -131,7 +131,7 @@ namespace PDFPatcher.Processor
 			foreach (var item in source) {
 				if (PdfName.SMASK.Equals(item.Key)
 					|| PdfName.MASK.Equals(item.Key)
-					|| _options.AllowRedundantImages == false && _exportedImages.Contains(item.Value)
+					|| !_options.AllowRedundantImages && _exportedImages.Contains(item.Value)
 					|| PdfReader.GetPdfObject(item.Value) is not PdfDictionary obj
 					|| _visited.Contains(item.Value)) {
 					continue;
@@ -183,11 +183,11 @@ namespace PDFPatcher.Processor
 		}
 
 		internal void ExtractImage(ImageInfo info) {
-			if (_options.AllowRedundantImages == false
-				&& _exportedImages.Add(info.InlineImage.PdfRef) == false) {
+			if (!_options.AllowRedundantImages
+				&& !_exportedImages.Add(info.InlineImage.PdfRef)) {
 				return;
 			}
-			if (_totalImageCount == 0 && Directory.Exists(_options.OutputPath) == false) {
+			if (_totalImageCount == 0 && !Directory.Exists(_options.OutputPath)) {
 				Directory.CreateDirectory(_options.OutputPath);
 			}
 			var bytes = info.DecodeImage(_options);
@@ -255,14 +255,13 @@ namespace PDFPatcher.Processor
 				using (var ms = new MemoryStream(bytes))
 				using (var bmp = new FreeImageBitmap(ms, FREE_IMAGE_LOAD_FLAGS.JPEG_CMYK | FREE_IMAGE_LOAD_FLAGS.TIFF_CMYK)) {
 					RotateBitmap(bmp, _pageRotation, vFlip);
-					if (bmp.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_24_BPP)) {
-						SwapRedBlue(bmp);
-						n = fileName + Constants.FileExtensions.Png;
-						bmp.Save(n, FREE_IMAGE_FORMAT.FIF_PNG);
+					if (info.InvertCmyk) {
+						bmp.Invert();
+						// 图片颜色需要取反，不能再用 JPEG 格式保存，否则会有质量损失
+						bmp.Save(n = fileName + Constants.FileExtensions.Tiff, FREE_IMAGE_FORMAT.FIF_TIFF, FREE_IMAGE_SAVE_FLAGS.TIFF_CMYK | FREE_IMAGE_SAVE_FLAGS.TIFF_DEFLATE);
 					}
 					else {
-						n = fileName + Constants.FileExtensions.Tif;
-						bmp.Save(n, FREE_IMAGE_FORMAT.FIF_TIFF, FREE_IMAGE_SAVE_FLAGS.TIFF_CMYK | FREE_IMAGE_SAVE_FLAGS.TIFF_DEFLATE);
+						bytes.DumpBytes(n = fileName + info.ExtName);
 					}
 					SaveMaskedImage(info, bmp, fileName);
 					if (PrintImageLocation) {
@@ -345,7 +344,7 @@ namespace PDFPatcher.Processor
 			var vFlip = _options.VerticalFlipImages ^ info.VerticalFlip;
 			var ext = info.ExtName;
 			if (info.PixelFormat == PixelFormat.Format1bppIndexed) {
-				ext = _options.MonoPng == false ? Constants.FileExtensions.Tif : Constants.FileExtensions.Png;
+				ext = !_options.MonoPng ? Constants.FileExtensions.Tif : Constants.FileExtensions.Png;
 			}
 			var n = fileName + ext;
 			if (PrintImageLocation) {
@@ -411,7 +410,7 @@ namespace PDFPatcher.Processor
 		}
 
 		static void RotateBitmap(FreeImageBitmap bitmap, int rotation, bool vflip) {
-			if (rotation == 0 && vflip == false) {
+			if (rotation == 0 && !vflip) {
 				return;
 			}
 			RotateFlipType r;
@@ -522,7 +521,7 @@ namespace PDFPatcher.Processor
 						ext = Constants.FileExtensions.Png;
 					}
 					else if (bmp.PixelFormat == PixelFormat.Format1bppIndexed) {
-						if (_options.MonoPng == false) {
+						if (!_options.MonoPng) {
 							ext = Constants.FileExtensions.Tif;
 						}
 						else {
@@ -600,7 +599,7 @@ namespace PDFPatcher.Processor
 
 			public ImageMerger(FreeImageBitmap image) {
 				_Image = image;
-				if (image.HasPalette == false) {
+				if (!image.HasPalette) {
 					_ColorType = ColorType.FullColor;
 				}
 			}
@@ -614,7 +613,7 @@ namespace PDFPatcher.Processor
 					PasteIntoFullColor(bmp);
 					return;
 				}
-				if (bmp.HasPalette == false) {
+				if (!bmp.HasPalette) {
 					ExpandColorSpaceAndPaste(bmp);
 					return;
 				}
@@ -697,13 +696,13 @@ namespace PDFPatcher.Processor
 			}
 
 			static void TryExpandColorDepth(FreeImageBitmap bmp) {
-				if (bmp.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_24_BPP) == false) {
+				if (!bmp.ConvertColorDepth(FREE_IMAGE_COLOR_DEPTH.FICD_24_BPP)) {
 					throw new InvalidOperationException("合并图片失败：无法转换图片颜色");
 				}
 			}
 
 			void PasteAndIncrementHeight(FreeImageBitmap bmp) {
-				if (_Image.Paste(bmp, 0, _Height, Int32.MaxValue) == false) {
+				if (!_Image.Paste(bmp, 0, _Height, Int32.MaxValue)) {
 					throw new InvalidOperationException("合并图片失败：粘贴操作出错");
 				}
 				_Height += bmp.Height;
