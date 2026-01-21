@@ -57,7 +57,7 @@ namespace PDFPatcher.Functions.Editor.Parts
 		}
 
 		void HandleViewerDocumentLoaded(object sender, EventArgs e) {
-			_PageBox.ToolTipText = $"文档共{_ViewerBox.Document.PageCount}页\nHome：转到第一页\nEnd：转到最后一页";
+			_PageBox.ToolTipText = $"文档共{_ViewerBox.TotalPageCount.ToText()}页\nHome：转到第一页\nEnd：转到最后一页";
 		}
 
 		void HandleViewerPageChanged(object sender, EventArgs e) {
