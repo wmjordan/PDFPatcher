@@ -227,7 +227,7 @@ namespace PDFPatcher.Common
 			return source.DumpBytes(path, 0, source?.Length ?? 0);
 		}
 		public static byte[] DumpBytes(this byte[] source, FilePath path, int offset, int count) {
-			using (var f = new FileStream(path.ToFullPath(), FileMode.OpenOrCreate, FileAccess.Write)) {
+			using (var f = new FileStream(path.ToFullPath(), FileMode.Create, FileAccess.Write)) {
 				if (source == null) {
 					return null;
 				}
