@@ -33,6 +33,9 @@ namespace PDFPatcher
 		[XmlAttribute("黑白图片导出为PNG")]
 		public bool MonoPng { get; set; }
 
+		[XmlAttribute("原样导出CMYK色域的图片")]
+		public bool SuppressCmykInversion { get; set; }
+
 		///<summary>获取或指定是否导出批注内的图片。</summary>
 		[XmlAttribute("导出批注图片")]
 		public bool ExtractAnnotationImages { get; set; }

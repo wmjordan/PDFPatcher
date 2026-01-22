@@ -45,6 +45,7 @@
 			this.label9 = new System.Windows.Forms.Label();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.tabPage1 = new System.Windows.Forms.TabPage();
+			this._ExtractOutOfPageImagesBox = new System.Windows.Forms.CheckBox();
 			this._AllowRedundantImagesBox = new System.Windows.Forms.CheckBox();
 			this._MonoPngBox = new System.Windows.Forms.RadioButton();
 			this._MonoTiffBox = new System.Windows.Forms.RadioButton();
@@ -61,7 +62,7 @@
 			this._TargetBox = new PDFPatcher.HistoryComboBox();
 			this._SourceFileControl = new PDFPatcher.SourceFileControl();
 			this._ExtractButton = new EnhancedGlassButton.GlassButton();
-			this._ExtractOutOfPageImagesBox = new System.Windows.Forms.CheckBox();
+			this._SuppressCmyKInversionBox = new System.Windows.Forms.CheckBox();
 			((System.ComponentModel.ISupportInitialize)(this._MinWidthBox)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this._MinHeightBox)).BeginInit();
 			this.tabControl1.SuspendLayout();
@@ -262,6 +263,7 @@
 			// 
 			// tabPage1
 			// 
+			this.tabPage1.Controls.Add(this._SuppressCmyKInversionBox);
 			this.tabPage1.Controls.Add(this._ExtractOutOfPageImagesBox);
 			this.tabPage1.Controls.Add(this._AllowRedundantImagesBox);
 			this.tabPage1.Controls.Add(this._MonoPngBox);
@@ -283,18 +285,28 @@
 			this.tabPage1.Controls.Add(this._MinHeightBox);
 			this.tabPage1.Location = new System.Drawing.Point(4, 22);
 			this.tabPage1.Name = "tabPage1";
-			this.tabPage1.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+			this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
 			this.tabPage1.Size = new System.Drawing.Size(455, 203);
 			this.tabPage1.TabIndex = 0;
 			this.tabPage1.Text = "选项";
 			this.tabPage1.UseVisualStyleBackColor = true;
 			// 
-			// _SkipRedundantImagesBox
+			// _ExtractOutOfPageImagesBox
+			// 
+			this._ExtractOutOfPageImagesBox.AutoSize = true;
+			this._ExtractOutOfPageImagesBox.Location = new System.Drawing.Point(8, 167);
+			this._ExtractOutOfPageImagesBox.Name = "_ExtractOutOfPageImagesBox";
+			this._ExtractOutOfPageImagesBox.Size = new System.Drawing.Size(120, 16);
+			this._ExtractOutOfPageImagesBox.TabIndex = 19;
+			this._ExtractOutOfPageImagesBox.Text = "允许导出隐藏图片";
+			this._ExtractOutOfPageImagesBox.UseVisualStyleBackColor = true;
+			// 
+			// _AllowRedundantImagesBox
 			// 
 			this._AllowRedundantImagesBox.AutoSize = true;
 			this._AllowRedundantImagesBox.Location = new System.Drawing.Point(8, 146);
-			this._AllowRedundantImagesBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-			this._AllowRedundantImagesBox.Name = "_SkipRedundantImagesBox";
+			this._AllowRedundantImagesBox.Margin = new System.Windows.Forms.Padding(2);
+			this._AllowRedundantImagesBox.Name = "_AllowRedundantImagesBox";
 			this._AllowRedundantImagesBox.Size = new System.Drawing.Size(132, 16);
 			this._AllowRedundantImagesBox.TabIndex = 18;
 			this._AllowRedundantImagesBox.Text = "允许导出相同的图片";
@@ -380,7 +392,7 @@
 			this.tabPage2.Controls.Add(this._FileMaskPreviewBox);
 			this.tabPage2.Location = new System.Drawing.Point(4, 22);
 			this.tabPage2.Name = "tabPage2";
-			this.tabPage2.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+			this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
 			this.tabPage2.Size = new System.Drawing.Size(455, 203);
 			this.tabPage2.TabIndex = 1;
 			this.tabPage2.Text = "文件命名";
@@ -400,7 +412,7 @@
 			this.tabPage3.Controls.Add(this.textBox1);
 			this.tabPage3.Location = new System.Drawing.Point(4, 22);
 			this.tabPage3.Name = "tabPage3";
-			this.tabPage3.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+			this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
 			this.tabPage3.Size = new System.Drawing.Size(455, 203);
 			this.tabPage3.TabIndex = 2;
 			this.tabPage3.Text = "页码范围说明";
@@ -447,7 +459,7 @@
 			this._SourceFileControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this._SourceFileControl.Location = new System.Drawing.Point(12, 3);
-			this._SourceFileControl.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this._SourceFileControl.Margin = new System.Windows.Forms.Padding(4);
 			this._SourceFileControl.Name = "_SourceFileControl";
 			this._SourceFileControl.Size = new System.Drawing.Size(463, 29);
 			this._SourceFileControl.TabIndex = 1;
@@ -473,15 +485,15 @@
 			this._ExtractButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
 			this._ExtractButton.Click += new System.EventHandler(this._ExtractButton_Click);
 			// 
-			// _ExtractOnlyInPageBox
+			// _SuppressCmyKInversionBox
 			// 
-			this._ExtractOutOfPageImagesBox.AutoSize = true;
-			this._ExtractOutOfPageImagesBox.Location = new System.Drawing.Point(8, 167);
-			this._ExtractOutOfPageImagesBox.Name = "_ExtractOnlyInPageBox";
-			this._ExtractOutOfPageImagesBox.Size = new System.Drawing.Size(120, 16);
-			this._ExtractOutOfPageImagesBox.TabIndex = 19;
-			this._ExtractOutOfPageImagesBox.Text = "允许导出隐藏图片";
-			this._ExtractOutOfPageImagesBox.UseVisualStyleBackColor = true;
+			this._SuppressCmyKInversionBox.AutoSize = true;
+			this._SuppressCmyKInversionBox.Location = new System.Drawing.Point(208, 149);
+			this._SuppressCmyKInversionBox.Name = "_SuppressCmyKInversionBox";
+			this._SuppressCmyKInversionBox.Size = new System.Drawing.Size(192, 16);
+			this._SuppressCmyKInversionBox.TabIndex = 20;
+			this._SuppressCmyKInversionBox.Text = "不要反转 CMYK 图片的实际颜色";
+			this._SuppressCmyKInversionBox.UseVisualStyleBackColor = true;
 			// 
 			// ExtractImageControl
 			// 
@@ -551,5 +563,6 @@
 		private System.Windows.Forms.Label label6;
 		private System.Windows.Forms.CheckBox _AllowRedundantImagesBox;
 		private System.Windows.Forms.CheckBox _ExtractOutOfPageImagesBox;
+		private System.Windows.Forms.CheckBox _SuppressCmyKInversionBox;
 	}
 }

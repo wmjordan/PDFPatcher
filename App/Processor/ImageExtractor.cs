@@ -255,9 +255,10 @@ namespace PDFPatcher.Processor
 				using (var ms = new MemoryStream(bytes))
 				using (var bmp = new FreeImageBitmap(ms, FREE_IMAGE_LOAD_FLAGS.JPEG_CMYK | FREE_IMAGE_LOAD_FLAGS.TIFF_CMYK)) {
 					RotateBitmap(bmp, _pageRotation, vFlip);
-					if (info.InvertCmyk) {
+					if (info.InvertCmyk && !_options.SuppressCmykInversion) {
+						// NOTE: CMYK 图片一般都是反色写入 PDF，导出后需要取反颜色，才能与阅读器上看到的一致
 						bmp.Invert();
-						// 图片颜色需要取反，不能再用 JPEG 格式保存，否则会有质量损失
+						// 不能再用 JPEG 格式保存，否则会有质量损失
 						bmp.Save(n = fileName + Constants.FileExtensions.Tiff, FREE_IMAGE_FORMAT.FIF_TIFF, FREE_IMAGE_SAVE_FLAGS.TIFF_CMYK | FREE_IMAGE_SAVE_FLAGS.TIFF_DEFLATE);
 					}
 					else {

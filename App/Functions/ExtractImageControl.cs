@@ -81,6 +81,7 @@ namespace PDFPatcher.Functions
 			_MonoPngBox.Checked = o.MonoPng;
 			_AllowRedundantImagesBox.Checked = o.AllowRedundantImages;
 			_ExtractOutOfPageImagesBox.Checked = o.ExtractOutOfPageImages;
+			_SuppressCmyKInversionBox.Checked = o.SuppressCmykInversion;
 		}
 
 		void _BrowseTargetPdfButton_Click(object sender, EventArgs e) {
@@ -154,6 +155,7 @@ namespace PDFPatcher.Functions
 			option.InvertSoftMask = _InvertSoftMaskBox.Checked;
 			option.AllowRedundantImages = _AllowRedundantImagesBox.Checked;
 			option.ExtractOutOfPageImages = _ExtractOutOfPageImagesBox.Checked;
+			option.SuppressCmykInversion = _SuppressCmyKInversionBox.Checked;
 			worker.RunWorkerAsync(
 				new object[] {
 				AppContext.SourceFiles, option
