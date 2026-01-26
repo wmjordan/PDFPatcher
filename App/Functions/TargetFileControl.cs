@@ -19,7 +19,7 @@ namespace PDFPatcher
 
 		///<summary>获取或指定书签文件路径的值。</summary>
 		internal HistoryComboBox FileList => _TargetPdfBox;
-		internal FileDialog FileDialog => _SavePdfBox;
+		internal SaveFileDialog FileDialog => _SavePdfBox;
 		internal Functions.MacroMenu FileMacroMenu => _FileMacroMenu;
 
 		public string BrowseTargetFile() {

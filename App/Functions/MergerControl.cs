@@ -56,6 +56,7 @@ namespace PDFPatcher.Functions
 			_BookmarkControl.FileDialog.CheckFileExists = false;
 			_BookmarkControl.BrowseForFile += FileControl_BrowseForFile;
 			_TargetPdfFile.BrowseForFile += FileControl_BrowseForFile;
+			_TargetPdfFile.FileDialog.OverwritePrompt = true;
 			_IndividualMergerModeBox.CheckedChanged += (s, e) => _BookmarkControl.Enabled = !_IndividualMergerModeBox.Checked;
 			_listHelper = new FileListHelper(_ItemList);
 			_ItemList.FixEditControlWidth();
