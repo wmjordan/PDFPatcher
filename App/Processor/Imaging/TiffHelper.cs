@@ -8,7 +8,7 @@ namespace PDFPatcher.Processor.Imaging
 	{
 		static readonly ImageCodecInfo _tiffCodec = BitmapHelper.GetCodec("image/tiff");
 		static readonly EncoderParameters _encoderParameters = new EncoderParameters(1) {
-			Param = new EncoderParameter[] { new EncoderParameter(Encoder.Compression, (long)EncoderValue.CompressionCCITT4) }
+			Param = [new EncoderParameter(Encoder.Compression, (long)EncoderValue.CompressionCCITT4)]
 		};
 
 		internal static void Save(FreeImageBitmap bmp, string fileName) {
@@ -21,7 +21,8 @@ namespace PDFPatcher.Processor.Imaging
 				// HACK: TIFF编码与调色板不符，解决 .NET TIFF 编码器无法正常保存双色图片的问题
 				var color0 = bmp.Palette[0].Color.ToArgb() & 0x00FFFFFF;
 				if (bmp.ColorType == FREE_IMAGE_COLOR_TYPE.FIC_MINISWHITE) {
-					if (color0 != 0x00FFFFFF) {
+					if (color0 == 0x00FFFFFF) {
+						// 改成 0 表示黑色
 						bmp.Invert();
 					}
 				}

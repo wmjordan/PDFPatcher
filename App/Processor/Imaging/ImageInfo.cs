@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using CLR;
 using FreeImageAPI;
 using iTextSharp.text.pdf;
 using PDFPatcher.Model;
@@ -343,40 +344,36 @@ namespace PDFPatcher.Processor.Imaging
 		}
 
 		static PixelFormat GetPixelFormat(int byteLength, ImageInfo info) {
-			var pf = PixelFormat.Undefined;
 			var components = byteLength / info.Width / info.Height;
 			switch (info.BitsPerComponent) {
-				case 1: pf = PixelFormat.Format1bppIndexed; break;
+				case 1: return PixelFormat.Format1bppIndexed;
 				case 2:
-					pf = PixelFormat.Format1bppIndexed;
 					Trace.WriteLine("Warning: unsupported bpc = 2");
-					break;
-				case 4: pf = PixelFormat.Format4bppIndexed; break;
+					return PixelFormat.Format1bppIndexed;
+				case 4: return PixelFormat.Format4bppIndexed;
 				case 8:
+					if (info.PaletteBytes != null) {
+						return info.BitsPerComponent.Case(1, PixelFormat.Format1bppIndexed, 2, PixelFormat.Format1bppIndexed, 4, PixelFormat.Format4bppIndexed, PixelFormat.Format8bppIndexed);
+					}
 					switch (components) {
 						case 0: // 兼容异常图片（github：#119）
 							Trace.WriteLine("Warning: Not enough bytes.");
 							goto case 1;
 						case 1:
-							pf = PixelFormat.Format8bppIndexed;
-							break;
+							return PixelFormat.Format8bppIndexed;
 						case 2:
-							pf = PixelFormat.Format16bppRgb555;
-							break;
+							return PixelFormat.Format16bppRgb555;
 						case 3:
-							pf = PixelFormat.Format24bppRgb;
-							break;
+							return PixelFormat.Format24bppRgb;
 						case 4:
-							pf = PixelFormat.Format32bppRgb;
-							break;
+							return PixelFormat.Format32bppRgb;
 						default:
 							Trace.WriteLine("Warning: Unknown colors.");
 							break;
 					}
 					break;
 				case 16:
-					pf = PixelFormat.Format48bppRgb;
-					break;
+					return PixelFormat.Format48bppRgb;
 				default:
 					Debug.WriteLine("Warning: bitsPerComponent missing or incorrect (" + info.BitsPerComponent + ").");
 					if (components > 0) {
@@ -385,15 +382,23 @@ namespace PDFPatcher.Processor.Imaging
 					else {
 						var areaPixels = (info.Width + 7) / 8 * info.Height;
 						switch (areaPixels / byteLength) {
-							case 1: pf = PixelFormat.Format1bppIndexed; info.BitsPerComponent = 1; break;
-							case 2: pf = PixelFormat.Format1bppIndexed; info.BitsPerComponent = 2; break;
-							case 4: pf = PixelFormat.Format4bppIndexed; info.BitsPerComponent = 4; break;
-							default: pf = PixelFormat.Format8bppIndexed; info.BitsPerComponent = 8; break;
+							case 1:
+								info.BitsPerComponent = 1;
+								return PixelFormat.Format1bppIndexed;
+							case 2:
+								Trace.WriteLine("Warning: unsupported bpc = 2");
+								info.BitsPerComponent = 2;
+								return PixelFormat.Format1bppIndexed;
+							case 4:
+								info.BitsPerComponent = 4;
+								return PixelFormat.Format4bppIndexed;
+							default:
+								info.BitsPerComponent = 8;
+								return PixelFormat.Format8bppIndexed;
 						}
 					}
-					break;
 			}
-			return pf;
+			return info.PixelFormat;
 		}
 
 		static void ExportColorspace(PdfImageData data, ImageInfo info) {

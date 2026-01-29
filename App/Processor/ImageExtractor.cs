@@ -249,6 +249,13 @@ namespace PDFPatcher.Processor
 					using (FileStream f = new FileStream(n, FileMode.Create)) {
 						f.Write(bytes, 0, bytes.Length);
 					}
+
+					if (info.Mask != null) {
+						using (var ms = new MemoryStream(bytes))
+						using (var bmp = new FreeImageBitmap(ms)) {
+							SaveMaskedImage(info, bmp, fileName);
+						}
+					}
 				}
 			}
 			else if (PdfName.DEVICECMYK.Equals(info.ColorSpace)) {
@@ -259,6 +266,9 @@ namespace PDFPatcher.Processor
 						// NOTE: CMYK 图片一般都是反色写入 PDF，导出后需要取反颜色，才能与阅读器上看到的一致
 						bmp.Invert();
 						// 不能再用 JPEG 格式保存，否则会有质量损失
+						bmp.Save(n = fileName + Constants.FileExtensions.Tiff, FREE_IMAGE_FORMAT.FIF_TIFF, FREE_IMAGE_SAVE_FLAGS.TIFF_CMYK | FREE_IMAGE_SAVE_FLAGS.TIFF_DEFLATE);
+					}
+					else if (_pageRotation != 0 || vFlip) {
 						bmp.Save(n = fileName + Constants.FileExtensions.Tiff, FREE_IMAGE_FORMAT.FIF_TIFF, FREE_IMAGE_SAVE_FLAGS.TIFF_CMYK | FREE_IMAGE_SAVE_FLAGS.TIFF_DEFLATE);
 					}
 					else {
@@ -431,13 +441,13 @@ namespace PDFPatcher.Processor
 			}
 			FreeImageBitmap bmp;
 			if (PdfName.DEVICECMYK.Equals(info.ColorSpace)) {
-				bmp = new FreeImageBitmap(new MemoryStream(bytes), FREE_IMAGE_LOAD_FLAGS.TIFF_CMYK);
+				bmp = new FreeImageBitmap(new MemoryStream(bytes), FREE_IMAGE_LOAD_FLAGS.TIFF_CMYK | FREE_IMAGE_LOAD_FLAGS.JPEG_CMYK);
 			}
 			else if (info.ExtName == Constants.FileExtensions.Jp2 || info.ExtName == Constants.FileExtensions.Jpg) {
 				bmp = new FreeImageBitmap(new MemoryStream(bytes));
 			}
 			else {
-				bmp = new FreeImageBitmap(info.Width, info.Height, GetStride(info, bytes, vFlip), info.PixelFormat, bytes);
+				bmp = new FreeImageBitmap(info.Width, info.Height, GetStride(info, vFlip), info.PixelFormat, bytes);
 			}
 			if (loadPaletteAndIccp
 				|| info.ColorSpace == PdfName.DEVICEGRAY && info.PaletteColorSpace == null) {
@@ -446,14 +456,22 @@ namespace PDFPatcher.Processor
 			return bmp;
 		}
 
-		static int GetStride(ImageInfo info, byte[] bytes, bool vFlip) {
+		static int GetStride(ImageInfo info, bool vFlip) {
 			if (PdfName.COLORSPACE.Equals(info.ColorSpace)) {
 				return vFlip ? -(info.Width << 2) : (info.Width << 2);
 			}
-			var components = bytes.Length / info.Width / info.Height;
-			var stride = components > 0
-				? info.Width * components
-				: (info.Width + 8 / info.BitsPerComponent - 1) / (8 / info.BitsPerComponent);
+			int bitsPerPixel = Image.GetPixelFormatSize(info.PixelFormat);
+			int shift = 0;
+			if (bitsPerPixel == 8 && info.BitsPerComponent < 8) {
+				switch (info.BitsPerComponent) {
+					case 1: shift = 3; break;
+					case 2: shift = 2; break;
+					case 4: shift = 1; break;
+					default:
+						break;
+				}
+			}
+			var stride = ((((info.Width * bitsPerPixel) >> shift) + 7) & ~7) >> 3;
 			return vFlip ? -stride : stride;
 		}
 
@@ -571,7 +589,7 @@ namespace PDFPatcher.Processor
 
 		void DeleteIntermediateFiles() {
 			foreach (var item in _imageInfoList) {
-				if (item.ReferenceCount < 1) {
+				if (item.ReferenceCount < 1 && item.FileName is not null) {
 					File.Delete(item.FileName);
 					item.FileName = null;
 				}
@@ -747,6 +765,13 @@ namespace PDFPatcher.Processor
 						if (info != null) {
 							info.ReferenceCount++;
 							_posList.Add(new ImageDisposition(CurrentGraphicState.TransMatrix, info));
+						}
+						else if (PdfReader.GetPdfObjectRelease(r) is PRStream s
+								&& PdfName.FORM.Equals(s.GetAsName(PdfName.SUBTYPE))) {
+							Trace.WriteLine("Parse form:");
+							Trace.WriteLine(System.Text.Encoding.ASCII.GetString(PdfReader.GetStreamBytes(s)));
+							var res = s.GetAsDict(PdfName.RESOURCES);
+							new PdfPageImageProcessor(_posList, _infoList).ProcessContent(PdfReader.GetStreamBytes(s), res ?? Resource);
 						}
 						else {
 							Trace.WriteLine(String.Concat("Image ", r, " not found."));
