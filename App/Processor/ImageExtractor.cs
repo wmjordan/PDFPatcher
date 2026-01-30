@@ -226,8 +226,7 @@ namespace PDFPatcher.Processor
 			if (info.ExtName == Constants.FileExtensions.Jp2) {
 				if (vFlip || _pageRotation != 0) {
 					try {
-						using (var ms = new MemoryStream(bytes))
-						using (var bmp = new FreeImageBitmap(ms)) {
+						using (var bmp = FreeImageHelper.CreateFromBytes(bytes)) {
 							RotateBitmap(bmp, _pageRotation, vFlip);
 							info.CreatePaletteAndIccProfile(bmp);
 							try {
@@ -251,16 +250,14 @@ namespace PDFPatcher.Processor
 					}
 
 					if (info.Mask != null) {
-						using (var ms = new MemoryStream(bytes))
-						using (var bmp = new FreeImageBitmap(ms)) {
+						using (var bmp = FreeImageHelper.CreateFromBytes(bytes)) {
 							SaveMaskedImage(info, bmp, fileName);
 						}
 					}
 				}
 			}
 			else if (PdfName.DEVICECMYK.Equals(info.ColorSpace)) {
-				using (var ms = new MemoryStream(bytes))
-				using (var bmp = new FreeImageBitmap(ms, FREE_IMAGE_LOAD_FLAGS.JPEG_CMYK | FREE_IMAGE_LOAD_FLAGS.TIFF_CMYK)) {
+				using (var bmp = FreeImageHelper.CreateFromBytes(bytes, FREE_IMAGE_LOAD_FLAGS.JPEG_CMYK | FREE_IMAGE_LOAD_FLAGS.TIFF_CMYK)) {
 					RotateBitmap(bmp, _pageRotation, vFlip);
 					if (info.InvertCmyk && !_options.SuppressCmykInversion) {
 						// NOTE: CMYK 图片一般都是反色写入 PDF，导出后需要取反颜色，才能与阅读器上看到的一致
@@ -286,7 +283,7 @@ namespace PDFPatcher.Processor
 				}
 				if (info.ExtName == Constants.FileExtensions.Jpg) {
 					if (info.Mask != null) {
-						using (var bmp = new FreeImageBitmap(new MemoryStream(bytes), FREE_IMAGE_FORMAT.FIF_JPEG)) {
+						using (var bmp = FreeImageHelper.CreateFromBytes(bytes, FREE_IMAGE_FORMAT.FIF_JPEG)) {
 							SaveMaskedImage(info, bmp, fileName);
 						}
 					}

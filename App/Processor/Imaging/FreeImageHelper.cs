@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 using FreeImageAPI;
@@ -18,11 +17,18 @@ namespace PDFPatcher.Processor.Imaging
 			return false;
 		}
 
+		public static FreeImageBitmap CreateFromBytes(byte[] bytes, FREE_IMAGE_LOAD_FLAGS flags = default) {
+			return new FreeImageBitmap(new System.IO.MemoryStream(bytes), flags);
+		}
+		public static FreeImageBitmap CreateFromBytes(byte[] bytes, FREE_IMAGE_FORMAT format) {
+			return new FreeImageBitmap(new System.IO.MemoryStream(bytes), format);
+		}
+
 		static readonly Func<FreeImageBitmap, FIBITMAP> GetDib = CreateGetDibMethod();
 		static readonly Func<FreeImageBitmap, FIBITMAP, bool> ReplaceDib = CreateReplaceDibMethod();
 
 		static Func<FreeImageBitmap, FIBITMAP> CreateGetDibMethod() {
-			var m = new DynamicMethod("GetDib", typeof(FIBITMAP), new[] { typeof(FreeImageBitmap) }, true);
+			var m = new DynamicMethod("GetDib", typeof(FIBITMAP), [typeof(FreeImageBitmap)], true);
 			var il = m.GetILGenerator();
 			il.Emit(OpCodes.Ldarg_0);
 			il.Emit(OpCodes.Ldfld, typeof(FreeImageBitmap).GetField("dib", BindingFlags.Instance | BindingFlags.NonPublic));
@@ -31,7 +37,7 @@ namespace PDFPatcher.Processor.Imaging
 		}
 
 		static Func<FreeImageBitmap, FIBITMAP, bool> CreateReplaceDibMethod() {
-			var m = new DynamicMethod("ReplaceDib", typeof(bool), new[] { typeof(FreeImageBitmap), typeof(FIBITMAP) }, true);
+			var m = new DynamicMethod("ReplaceDib", typeof(bool), [typeof(FreeImageBitmap), typeof(FIBITMAP)], true);
 			var il = m.GetILGenerator();
 			il.Emit(OpCodes.Ldarg_0);
 			il.Emit(OpCodes.Ldarg_1);

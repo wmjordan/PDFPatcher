@@ -14,17 +14,13 @@ namespace PDFPatcher.Functions
 		internal ImageViewerForm(ImageInfo image, byte[] bytes) : this() {
 			this.SetIcon(Properties.Resources.ViewContent);
 			if (image.ExtName == Constants.FileExtensions.Png || image.ExtName == Constants.FileExtensions.Tif) {
-				using (FreeImageBitmap bmp = ImageExtractor.CreateFreeImageBitmap(image, ref bytes, false, true)) {
-					_ImageBox.Image = bmp.ToBitmap();
-				}
+				using FreeImageBitmap bmp = ImageExtractor.CreateFreeImageBitmap(image, ref bytes, false, true);
+				_ImageBox.Image = bmp.ToBitmap();
 			}
 			else {
 				try {
-					using (var s = new System.IO.MemoryStream(bytes)) {
-						using (FreeImageBitmap bmp = new FreeImageBitmap(s)) {
-							_ImageBox.Image = bmp.ToBitmap();
-						}
-					}
+					using FreeImageBitmap bmp = FreeImageHelper.CreateFromBytes(bytes);
+					_ImageBox.Image = bmp.ToBitmap();
 				}
 				catch (System.Exception ex) {
 					this.ErrorBox("无法加载图片", ex);
@@ -49,9 +45,8 @@ namespace PDFPatcher.Functions
 					}) {
 						if (f.ShowDialog() == DialogResult.OK) {
 							try {
-								using (var fi = new FreeImageAPI.FreeImageBitmap(_ImageBox.Image)) {
-									fi.Save(f.FileName);
-								}
+								using var fi = new FreeImageAPI.FreeImageBitmap(_ImageBox.Image);
+								fi.Save(f.FileName);
 							}
 							catch (System.Exception ex) {
 								FormHelper.ErrorBox(ex.Message);

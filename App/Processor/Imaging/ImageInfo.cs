@@ -156,10 +156,7 @@ namespace PDFPatcher.Processor.Imaging
 					if (!options.MergeImages) {
 						goto EXIT;
 					}
-					using (var ms = new MemoryStream(decodedBytes))
-					using (var bm = PdfName.DEVICECMYK.Equals(info.ColorSpace)
-						? new FreeImageBitmap(ms, FREE_IMAGE_LOAD_FLAGS.JPEG_CMYK)
-						: new FreeImageBitmap(ms)) {
+					using (var bm = FreeImageHelper.CreateFromBytes(decodedBytes, PdfName.DEVICECMYK.Equals(info.ColorSpace) ? FREE_IMAGE_LOAD_FLAGS.JPEG_CMYK : default)) {
 						info.PixelFormat = bm.PixelFormat;
 						switch (bm.ColorType) {
 							case FREE_IMAGE_COLOR_TYPE.FIC_CMYK:
