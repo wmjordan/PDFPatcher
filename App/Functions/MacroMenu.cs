@@ -4,9 +4,7 @@ namespace PDFPatcher.Functions
 {
 	internal sealed class MacroMenu : ContextMenuStrip
 	{
-		readonly TextBox __editOperationWrapper = new TextBox();
-
-		internal const string InsertText = "插入";
+		const string InsertText = "插入";
 
 		public MacroMenu() : base() { }
 		public MacroMenu(System.ComponentModel.IContainer container) : base(container) { }

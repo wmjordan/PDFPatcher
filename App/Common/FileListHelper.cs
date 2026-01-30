@@ -3,19 +3,15 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using PDFPatcher.Common;
 using PDFPatcher.Model;
 
-namespace PDFPatcher.Functions
+namespace PDFPatcher.Common
 {
-	sealed class FileListHelper
+	sealed class FileListHelper(ObjectListView fileList)
 	{
 		public delegate void AddFilesCallback(string[] files, bool alertInvalidFiles);
 
-		readonly ObjectListView _fileList;
-		public FileListHelper(ObjectListView fileList) {
-			_fileList = fileList;
-		}
+		readonly ObjectListView _fileList = fileList;
 
 		/// <summary>
 		/// 设置 PDF 文件列表的拖放操作。

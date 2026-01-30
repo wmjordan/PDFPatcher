@@ -21,6 +21,12 @@ namespace PDFPatcher.Functions
 		AutoBookmarkForm _autoBookmarkForm;
 		readonly Controller _controller;
 
+		#region DEBUG
+		static EditorControl() {
+			MuPDF.Context.SetErrorCallback((err, msg) => System.Diagnostics.Debug.WriteLine((err ? "ERR: " : "WARN: ") + msg));
+		}
+		#endregion
+
 		public EditorControl() {
 			InitializeComponent();
 			_controller = new Controller(this);
@@ -152,10 +158,6 @@ namespace PDFPatcher.Functions
 			_ZoomBox.Enabled = true;
 		}
 
-		//protected override void OnClick (EventArgs e) {
-		//	base.OnClick (e);
-		//	_controller.HideInsertBookmarkForm ();
-		//}
 		internal override void OnDeselected() {
 			base.OnDeselected();
 			_searchForm?.Close();
@@ -176,10 +178,6 @@ namespace PDFPatcher.Functions
 			if (!_ViewerBox.IsClientPointInSelection(l)) {
 				_ViewerBox.SelectNone();
 			}
-			//_ViewerBox.Invalidate ();
-			//var sp = _ViewerBox.FindTextSpanAtPoint (p);
-			//var t = sp != null ? sp.Text : String.Empty;
-			//_controller.ShowInsertBookmarkDialog (l, p, t);
 		}
 
 		void _MainToolbar_ItemClicked(object sender, ToolStripItemClickedEventArgs e) {

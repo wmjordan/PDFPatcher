@@ -4,8 +4,8 @@ using PDFPatcher.Processor;
 
 namespace PDFPatcher.Functions.Editor
 {
-    static class EditorCommands
-    {
+	static class EditorCommands
+	{
 		static readonly CommandRegistry<Controller> __Commands = InitCommands();
 
 		// 在此注册编辑器的命令和对应的命令标识符

@@ -243,10 +243,10 @@
     <Compile Include="Functions\Editor\InsertBookmarkForm.Designer.cs">
       <DependentUpon>InsertBookmarkForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Functions\CustomButton\GlassButton.cs">
+    <Compile Include="Common\CustomButton\GlassButton.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Functions\FileListHelper.cs" />
+    <Compile Include="Common\FileListHelper.cs" />
     <Compile Include="Functions\FrontPageControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -359,10 +359,10 @@
     <Compile Include="Functions\AutoBookmark\TextConditionEditor.Designer.cs">
       <DependentUpon>TextConditionEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="Functions\DocumentInspectorControl.cs">
+    <Compile Include="Functions\DocumentInspector\DocumentInspectorControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Functions\DocumentInspectorControl.Designer.cs">
+    <Compile Include="Functions\DocumentInspector\DocumentInspectorControl.Designer.cs">
       <DependentUpon>DocumentInspectorControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Functions\AutoBookmark\TextPositionConditionEditor.cs">
@@ -458,10 +458,10 @@
     <Compile Include="Functions\Editor\BookmarkEditorView.Designer.cs">
       <DependentUpon>BookmarkEditorView.cs</DependentUpon>
     </Compile>
-    <Compile Include="Functions\EditorControl.cs">
+    <Compile Include="Functions\Editor\EditorControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Functions\EditorControl.Designer.cs">
+    <Compile Include="Functions\Editor\EditorControl.Designer.cs">
       <DependentUpon>EditorControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Functions\DocumentOption\DocumentInfoEditor.cs">
@@ -752,7 +752,7 @@
     <EmbeddedResource Include="Functions\Editor\BookmarkEditorView.resx">
       <DependentUpon>BookmarkEditorView.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Functions\EditorControl.resx">
+    <EmbeddedResource Include="Functions\Editor\EditorControl.resx">
       <DependentUpon>EditorControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -786,6 +786,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Functions\PatcherOptionForm.resx">
       <DependentUpon>PatcherOptionForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Functions\AutoBookmark\FontFilterForm.resx">
       <DependentUpon>FontFilterForm.cs</DependentUpon>
@@ -856,7 +857,7 @@
     <EmbeddedResource Include="Functions\AutoBookmark\TextConditionEditor.resx">
       <DependentUpon>TextConditionEditor.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Functions\DocumentInspectorControl.resx">
+    <EmbeddedResource Include="Functions\DocumentInspector\DocumentInspectorControl.resx">
       <DependentUpon>DocumentInspectorControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
