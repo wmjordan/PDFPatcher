@@ -94,6 +94,7 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\IsExternalInit.cs" />
     <Compile Include="Common\StringBuilderCache.cs" />
     <Compile Include="Configuration.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -123,6 +124,17 @@
     </Compile>
     <Compile Include="Model\ResourceReference.cs" />
     <Compile Include="Options\ReaderOptions.cs" />
+    <Compile Include="Processor\ContentParser\ByteSegment.cs" />
+    <Compile Include="Processor\ContentParser\ContentStreamParser.cs" />
+    <Compile Include="Processor\ContentParser\InlineImageContent.cs" />
+    <Compile Include="Processor\ContentParser\Operation.cs" />
+    <Compile Include="Processor\ContentParser\OperatorCategory.cs" />
+    <Compile Include="Processor\ContentParser\OperatorInfo.cs" />
+    <Compile Include="Processor\ContentParser\OperatorSemantic.cs" />
+    <Compile Include="Processor\ContentParser\OperatorTable.cs" />
+    <Compile Include="Processor\ContentParser\RenderCommandKind.cs" />
+    <Compile Include="Processor\ContentParser\Token.cs" />
+    <Compile Include="Processor\ContentParser\TokenType.cs" />
     <Compile Include="Processor\ContentProcessors\CleanContentStreamProcessor.cs" />
     <Compile Include="Processor\DocInfoExporter.MuPDF.cs" />
     <Compile Include="Processor\Imaging\FreeImageHelper.cs" />

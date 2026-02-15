@@ -345,6 +345,9 @@ namespace PDFPatcher.Common
 			}
 			return null;
 		}
+		public static IDisposable BatchUpdate(this RichTextBox box) {
+			return new RichTextDrawingSuspender(box);
+		}
 
 		sealed class FormEventHandler
 		{
@@ -361,6 +364,28 @@ namespace PDFPatcher.Common
 				_Handler();
 			}
 		}
+
+		sealed class RichTextDrawingSuspender : IDisposable
+		{
+			bool _Resumed;
+
+			public RichTextDrawingSuspender(RichTextBox box) {
+				Box = box;
+				box.SuspendLayout();
+				NativeMethods.SuspendDrawing(box);
+			}
+
+			public RichTextBox Box { get; }
+
+			public void Dispose() {
+				if (!_Resumed) {
+					_Resumed = true;
+					Box.ResumeLayout();
+					NativeMethods.ResumeDrawing(Box);
+				}
+			}
+		}
+
 		sealed class UserControlLoadHandler
 		{
 			readonly UserControl _Control;
@@ -384,8 +409,21 @@ namespace PDFPatcher.Common
 
 			[DllImport(User32DLL, SetLastError = false, CharSet = CharSet.Unicode)]
 			public static extern int SendMessage(IntPtr hWnd, int uMsg, int wParam, ref CopyDataStruct lParam);
+			[DllImport(User32DLL, SetLastError = false)]
+			private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wp, IntPtr lp);
 			[DllImport("kernel32.dll", SetLastError = true)]
 			public static extern IntPtr LocalFree(IntPtr p);
+
+			const int WM_SETREDRAW = 0x000B;
+
+			public static void SuspendDrawing(RichTextBox rtb) {
+				SendMessage(rtb.Handle, WM_SETREDRAW, IntPtr.Zero, IntPtr.Zero);
+			}
+
+			public static void ResumeDrawing(RichTextBox rtb) {
+				SendMessage(rtb.Handle, WM_SETREDRAW, new IntPtr(1), IntPtr.Zero);
+				rtb.Invalidate(); // 强制重绘
+			}
 		}
 
 		struct CopyDataStruct(string text) : IDisposable

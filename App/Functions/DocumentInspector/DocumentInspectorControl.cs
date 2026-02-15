@@ -603,9 +603,11 @@ namespace PDFPatcher.Functions
 					}
 				}
 				else {
-					using (var f = new TextViewerForm(PdfReader.GetStreamBytes(s), true)) {
-						f.ShowDialog(FindForm());
-					}
+					var isContentStream = n.Name == "Contents" && n.Parent.Type == PdfObjectType.Page
+						|| n.Parent?.Name == "Contents" && n.Parent.Parent?.Type == PdfObjectType.Page
+						|| n.Children.Any(i => i.Name == "Subtype" && i.LiteralValue == "Form");
+					using var f = new TextViewerForm(PdfReader.GetStreamBytes(s), true, isContentStream);
+					f.ShowDialog(FindForm());
 				}
 			}
 			else if (cn == "_ExportBinary") {

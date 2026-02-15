@@ -30,6 +30,7 @@
 			this._CancelButton = new System.Windows.Forms.Button();
 			this.label1 = new System.Windows.Forms.Label();
 			this._EncodingBox = new System.Windows.Forms.ComboBox();
+			this._ReformatButton = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
 			// _TextBox
@@ -90,6 +91,17 @@
 			this._EncodingBox.TabIndex = 4;
 			this._EncodingBox.SelectedIndexChanged += new System.EventHandler(this._EncodingBox_SelectedIndexChanged);
 			// 
+			// _ReformatButton
+			// 
+			this._ReformatButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this._ReformatButton.Location = new System.Drawing.Point(208, 240);
+			this._ReformatButton.Name = "_ReformatButton";
+			this._ReformatButton.Size = new System.Drawing.Size(91, 23);
+			this._ReformatButton.TabIndex = 5;
+			this._ReformatButton.Text = "重新排版(&P)";
+			this._ReformatButton.UseVisualStyleBackColor = true;
+			this._ReformatButton.Click += new System.EventHandler(this._ReformatButton_Click);
+			// 
 			// TextViewerForm
 			// 
 			this.AcceptButton = this._OkButton;
@@ -97,6 +109,7 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this._CancelButton;
 			this.ClientSize = new System.Drawing.Size(496, 275);
+			this.Controls.Add(this._ReformatButton);
 			this.Controls.Add(this._EncodingBox);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this._CancelButton);
@@ -116,5 +129,6 @@
 		private System.Windows.Forms.Button _CancelButton;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.ComboBox _EncodingBox;
+		private System.Windows.Forms.Button _ReformatButton;
 	}
 }
