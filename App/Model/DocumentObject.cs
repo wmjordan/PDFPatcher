@@ -37,11 +37,7 @@ namespace PDFPatcher.Model
 		public bool HasChildren {
 			get {
 				if (Type != PdfObjectType.Normal
-					&& (Type == PdfObjectType.Trailer
-						|| Type == PdfObjectType.Pages
-						|| Type == PdfObjectType.Page
-						|| Type == PdfObjectType.PageCommands
-						|| Type == PdfObjectType.Hidden
+					&& (Type.CeqAny(PdfObjectType.Trailer, PdfObjectType.Pages, PdfObjectType.Page, PdfObjectType.PageCommands, PdfObjectType.Hidden)
 						|| Type == PdfObjectType.PageCommand && Children.Count > 0)) {
 					return true;
 				}
@@ -53,13 +49,9 @@ namespace PDFPatcher.Model
 					return true;
 				}
 				else if (po.Type == PdfObject.INDIRECT) {
-					if (Type == PdfObjectType.GoToPage) {
-						return false;
-					}
-					if (ExtensiveObject is not PdfObject r) {
-						return false;
-					}
-					if (r.Type == PdfObject.DICTIONARY && Parent.Type == PdfObjectType.Outline && Name == "Next") {
+					if (Type == PdfObjectType.GoToPage
+						|| ExtensiveObject is not PdfObject r
+						|| r.Type == PdfObject.DICTIONARY && Parent.Type == PdfObjectType.Outline && Name == "Next") {
 						return false;
 					}
 					return r.Type == PdfObject.DICTIONARY && !__ReversalRefNames.Contains(Name)
@@ -120,7 +112,8 @@ namespace PDFPatcher.Model
 					}
 				}
 				else if (value.Type == PdfObject.DICTIONARY) {
-					if (parent != null && (parent.Type == PdfObjectType.Page || parent.Type == PdfObjectType.Form) && name == "Resources") {
+					if (parent?.Type.CeqAny(PdfObjectType.Page, PdfObjectType.Form) == true
+						&& name == "Resources") {
 						type = PdfObjectType.Resources;
 					}
 				}
@@ -402,17 +395,17 @@ namespace PDFPatcher.Model
 						// 解释页面指令
 						var cp = new PdfPageCommandProcessor();
 						try {
-						if (Parent.Type == PdfObjectType.Page) {
-							var pn = (int)Parent.ExtensiveObject;
-							cp.ProcessContent(pdf.GetPageContent(pn), pdf.GetPageN(pn).GetAsDict(PdfName.RESOURCES));
-						}
-						else if (Parent.Type == PdfObjectType.Form) {
-							var form = PdfReader.GetPdfObjectRelease(Parent.Value) as PRStream;
-							cp.ProcessContent(PdfReader.GetStreamBytes(form),
-								new CompositePdfDictionary(form.GetAsDict(PdfName.RESOURCES),
-									pdf.GetPageN((int)GetPageObject().ExtensiveObject).GetAsDict(PdfName.RESOURCES))
-								);
-						}
+							if (Parent.Type == PdfObjectType.Page) {
+								var pn = (int)Parent.ExtensiveObject;
+								cp.ProcessContent(pdf.GetPageContent(pn), pdf.GetPageN(pn).GetAsDict(PdfName.RESOURCES));
+							}
+							else if (Parent.Type == PdfObjectType.Form) {
+								var form = PdfReader.GetPdfObjectRelease(Parent.Value) as PRStream;
+								cp.ProcessContent(PdfReader.GetStreamBytes(form),
+									new CompositePdfDictionary(form.GetAsDict(PdfName.RESOURCES),
+										pdf.GetPageN((int)GetPageObject().ExtensiveObject).GetAsDict(PdfName.RESOURCES))
+									);
+							}
 						}
 						catch (Exception ex) {
 							Description = ex.Message;
