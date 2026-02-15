@@ -401,6 +401,7 @@ namespace PDFPatcher.Model
 				case PdfObjectType.PageCommands: {
 						// 解释页面指令
 						var cp = new PdfPageCommandProcessor();
+						try {
 						if (Parent.Type == PdfObjectType.Page) {
 							var pn = (int)Parent.ExtensiveObject;
 							cp.ProcessContent(pdf.GetPageContent(pn), pdf.GetPageN(pn).GetAsDict(PdfName.RESOURCES));
@@ -411,6 +412,10 @@ namespace PDFPatcher.Model
 								new CompositePdfDictionary(form.GetAsDict(PdfName.RESOURCES),
 									pdf.GetPageN((int)GetPageObject().ExtensiveObject).GetAsDict(PdfName.RESOURCES))
 								);
+						}
+						}
+						catch (Exception ex) {
+							Description = ex.Message;
 						}
 						foreach (var item in cp.Commands) {
 							PopulatePageCommand(item);
