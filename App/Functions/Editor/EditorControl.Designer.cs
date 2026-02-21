@@ -82,6 +82,7 @@
 			System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
 			System.Windows.Forms.ToolStripMenuItem _ScrollVertical;
 			System.Windows.Forms.ToolStripMenuItem _ScrollHorizontal;
+			System.Windows.Forms.ToolStripMenuItem _ScrollHorizontalLeftToRight;
 			System.Windows.Forms.ToolStripMenuItem _FullPageScroll;
 			System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
 			System.Windows.Forms.ToolStripMenuItem _TrueColorSpace;
@@ -222,6 +223,7 @@
 			toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			_ScrollVertical = new System.Windows.Forms.ToolStripMenuItem();
 			_ScrollHorizontal = new System.Windows.Forms.ToolStripMenuItem();
+			_ScrollHorizontalLeftToRight = new System.Windows.Forms.ToolStripMenuItem();
 			_FullPageScroll = new System.Windows.Forms.ToolStripMenuItem();
 			toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
 			_TrueColorSpace = new System.Windows.Forms.ToolStripMenuItem();
@@ -780,6 +782,13 @@
 			_ScrollHorizontal.Size = new System.Drawing.Size(208, 22);
 			_ScrollHorizontal.Text = "从右到左阅读(&Y)";
 			// 
+			// _ScrollHorizontal
+			// 
+			_ScrollHorizontalLeftToRight.Image = global::PDFPatcher.Properties.Resources.ScrollHorizontal;
+			_ScrollHorizontalLeftToRight.Name = "_ScrollHorizontalLeftToRight";
+			_ScrollHorizontalLeftToRight.Size = new System.Drawing.Size(208, 22);
+			_ScrollHorizontalLeftToRight.Text = "从左到右阅读(&D)";
+			// 
 			// _FullPageScroll
 			// 
 			_FullPageScroll.Name = "_FullPageScroll";
@@ -1066,6 +1075,7 @@
             toolStripSeparator1,
             _ScrollVertical,
             _ScrollHorizontal,
+            _ScrollHorizontalLeftToRight,
             _FullPageScroll,
             toolStripSeparator6,
             _TrueColorSpace,

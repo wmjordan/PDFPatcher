@@ -85,13 +85,10 @@ namespace MuPDF.Extensions
 
 		#region 渲染页面
 		public static Bitmap RenderBitmapPage(this Page page, int width, int height, ImageRendererOptions options, Cookie cookie) {
-			using (var pix = InternalRenderPage(page, width, height, options, cookie)) {
-				if (pix != null) {
+			using var pix = InternalRenderPage(page, width, height, options, cookie);
+			return pix?.ToBitmap(options);
 					return pix.ToBitmap(options);
 				}
-			}
-			return null;
-		}
 
 		static Pixmap InternalRenderPage(Page page, int width, int height, ImageRendererOptions options, Cookie cookie) {
 			var b = page.Bound;
