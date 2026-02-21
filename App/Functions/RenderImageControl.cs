@@ -176,7 +176,7 @@ namespace PDFPatcher.Functions
 			};
 			worker.RunWorkerCompleted += (dummy, arg) => { AppContext.ImageExtracter.OutputPath = _ExtractPageRangeBox.Text; };
 			var option = AppContext.ImageRenderer;
-			option.ColorSpace = (ColorSpace)(_ColorSpaceRgbBox.Checked ? ColorspaceKind.Rgb : ColorspaceKind.Gray);
+			option.ColorSpace = (ColorSpace)(_ColorSpaceRgbBox.Checked ? ColorspaceKind.RGB : ColorspaceKind.Gray);
 			option.ExtractPageRange = _ExtractPageRangeBox.Text;
 			option.ExtractImagePath = _RenderToPdfBox.Checked
 				? GetRenderedPdfFileName(_TargetBox.Text)

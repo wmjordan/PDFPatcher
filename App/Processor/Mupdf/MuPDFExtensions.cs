@@ -101,10 +101,8 @@ namespace MuPDF.Extensions
 			var ctm = CalculateMatrix(page, width, height, options);
 			var bbox = width > 0 && height > 0 ? new BBox(0, 0, width, height) : b.Transform(ctm).Round();
 
-			var pix = Pixmap.Create(((ColorspaceKind)options.ColorSpace).SubstituteDefault(ColorspaceKind.Rgb), bbox);
-			if (pix == null) {
-				throw new MuException($"无法渲染页面：{(page.PageNumber + 1).ToText()}");
-			}
+			var pix = Pixmap.Create(((ColorspaceKind)options.ColorSpace).SubstituteDefault(ColorspaceKind.RGB), bbox)
+				?? throw new MuException($"无法渲染页面：{(page.PageNumber + 1).ToText()}");
 			pix.Clear(0xFF);
 			try {
 				using (var dev = Device.NewDraw(pix, Matrix.Identity)) {

@@ -158,7 +158,7 @@ namespace PDFPatcher.Functions
 		public bool GrayScale {
 			get => _renderOptions.ColorSpace == (ColorSpace)ColorspaceKind.Gray;
 			set {
-				var v = (ColorSpace)(value ? ColorspaceKind.Gray : ColorspaceKind.Rgb);
+				var v = (ColorSpace)(value ? ColorspaceKind.Gray : ColorspaceKind.RGB);
 				if (_renderOptions.ColorSpace != v) {
 					_renderOptions.ColorSpace = v;
 					UpdateDisplay();
