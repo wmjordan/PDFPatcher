@@ -16,7 +16,7 @@ namespace PDFPatcher.Functions
 	sealed partial class BookmarkEditorView : TreeListView
 	{
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		internal static List<BookmarkElement> _copiedBookmarks;
+		internal static List<BookmarkElement> CopiedBookmarks;
 
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		internal UndoManager Undo { get; set; }
@@ -428,32 +428,6 @@ namespace PDFPatcher.Functions
 			}
 			RefreshObject(target);
 			SelectedObjects = source;
-		}
-
-		internal void CopySelectedBookmark() {
-			_copiedBookmarks = GetSelectedElements(false);
-			Clipboard.Clear();
-		}
-		internal void PasteBookmarks(XmlElement target, bool asChild) {
-			try {
-				var t = Clipboard.GetText();
-				bool c = false;
-				if (!t.IsNullOrWhiteSpace()) {
-					var doc = new PdfInfoXmlDocument();
-					using (var s = new System.IO.StringReader(t)) {
-						OutlineManager.ImportSimpleBookmarks(s, doc);
-					}
-					_copiedBookmarks = doc.Bookmarks.ToNodeList<BookmarkElement>() as List<BookmarkElement>;
-					c = true;
-				}
-				if (_copiedBookmarks == null || _copiedBookmarks.Count == 0) {
-					return;
-				}
-				CopyOrMoveElement(_copiedBookmarks, target, asChild, true, true, c || OperationAffectsDescendants);
-			}
-			catch (Exception) {
-				// ignore
-			}
 		}
 
 		internal List<BookmarkElement> GetSelectedElements() { return GetSelectedElements(this, true); }
