@@ -102,6 +102,7 @@
       <DependentUpon>Configuration.resx</DependentUpon>
     </Compile>
     <Compile Include="Commands.cs" />
+    <Compile Include="Functions\ContentStreamViewer.cs" />
     <Compile Include="Functions\Editor\AutoResizingTextBox.cs">
       <SubType>Component</SubType>
     </Compile>

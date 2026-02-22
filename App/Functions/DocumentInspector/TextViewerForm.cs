@@ -11,7 +11,6 @@ namespace PDFPatcher.Functions
 	sealed partial class TextViewerForm : Form
 	{
 		static readonly Regex __EscapeChars = new Regex("[\u0000-\u001F\u0080-\u00FF]", RegexOptions.Compiled);
-		const int ContentStreamIndentCount = 2;
 		readonly byte[] _Data;
 
 		///<summary>获取或指定文本内容是否只读。</summary>
@@ -79,76 +78,8 @@ namespace PDFPatcher.Functions
 			}
 			_TextBox.Clear();
 			_TextBox.BackColor = Color.FloralWhite;
-			if (_Data.Length < 64 << 10) {
-				ShowRichParseResultOfContentStream();
-			}
-			else {
-				ShowReformattedContentStream();
-			}
+			ContentStreamViewer.SetContent(_TextBox, _Data);
 			_ReformatButton.Enabled = false;
-		}
-
-		void ShowReformattedContentStream() {
-			var sb = new StringBuilder(32);
-			int indent = 0;
-			foreach (var op in new Processor.ContentParser.ContentStreamParser().Parse(_Data)) {
-				var operands = op.Operands;
-				var oi = op.Info;
-				if (oi.IsEndScope) {
-					indent -= ContentStreamIndentCount;
-				}
-				if (indent > 0) {
-					sb.Append(' ', indent);
-				}
-				if (operands.Length != 0) {
-					for (int i = 0; i < operands.Length; i++) {
-						if (i != 0) {
-							sb.Append(' ');
-						}
-						sb.Append(operands[i].ToString());
-					}
-					sb.Append(' ');
-				}
-				if (oi.IsBeginScope) {
-					indent += ContentStreamIndentCount;
-				}
-				sb.AppendLine(op.Operator);
-			}
-			_TextBox.Text = sb.ToString();
-		}
-
-		void ShowRichParseResultOfContentStream() {
-			using var tb = _TextBox.BatchUpdate();
-			var sb = new StringBuilder(32);
-			int indent = 0;
-			foreach (var op in new Processor.ContentParser.ContentStreamParser().Parse(_Data)) {
-				var operands = op.Operands;
-				var oi = op.Info;
-				if (oi.IsEndScope) {
-					indent -= ContentStreamIndentCount;
-				}
-				if (indent > 0) {
-					sb.Append(' ', indent);
-				}
-				if (operands.Length != 0) {
-					for (int i = 0; i < operands.Length; i++) {
-						if (i != 0) {
-							sb.Append(' ');
-						}
-						sb.Append(operands[i].ToString());
-					}
-					sb.Append(' ');
-				}
-				if (sb.Length != 0) {
-					_TextBox.AppendText(sb.ToString());
-					sb.Clear();
-				}
-				if (oi.IsBeginScope) {
-					indent += ContentStreamIndentCount;
-				}
-				_TextBox.SelectionColor = Color.Blue;
-				_TextBox.AppendLine(op.Operator);
-			}
 		}
 	}
 }

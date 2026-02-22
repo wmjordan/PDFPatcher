@@ -10,18 +10,31 @@ namespace PDFPatcher.Functions.Editor
 {
 	sealed partial class PagePropertyForm : DraggableForm
 	{
+		byte[] _contentBytes;
+
 		public int PageNumber { get; set; }
 
 		public PagePropertyForm() {
 			InitializeComponent();
 			this.OnFirstLoad(OnLoad);
 		}
+
 		void OnLoad() {
+			MinimumSize = Size;
+			_MainTab.SelectedIndexChanged += UpdateOpPage;
 			_PageDimensionBox.SelectedIndexChanged += _PageDimensionBox_SelectedIndexChanged;
 			_CloseButton.Click += (s, args) => Hide();
 			_FontNameColumn.AsTyped<MuFontAndSize>(f => f.AspectGetter = o => o.FontName);
 			_SizeColumn.AsTyped<MuFontAndSize>(f => f.AspectGetter = o => o.Size);
 			_TextStyleBox.ScaleColumnWidths();
+		}
+
+		void UpdateOpPage(object sender, EventArgs e) {
+			if (_contentBytes != null && _MainTab.SelectedTab == _OpPage) {
+				ContentStreamViewer.SetContent(_OpBox, _contentBytes);
+				_contentBytes = null;
+				_MainTab.SelectedIndexChanged -= UpdateOpPage;
+			}
 		}
 
 		public void LoadPage(Page page) {
@@ -45,6 +58,7 @@ namespace PDFPatcher.Functions.Editor
 			_TextStyleBox.Objects = ts;
 			_TextStyleBox.Sort(_SizeColumn, SortOrder.Descending);
 			PageNumber = page.PageNumber + 1;
+			_contentBytes = page.GetContentBytes();
 		}
 
 		void AddBox(Page page, MuRectangle rect, string title) {
@@ -71,29 +85,22 @@ namespace PDFPatcher.Functions.Editor
 			base.OnDeactivate(e);
 		}
 
-		sealed class Box
+		sealed class Box(MuRectangle rect, string title)
 		{
-			public readonly MuRectangle Rect;
-			public readonly string Title;
-			public Box(MuRectangle rect, string title) {
-				Rect = rect;
-				Title = title;
-			}
+			public readonly MuRectangle Rect = rect;
+			public readonly string Title = title;
+
 			public override string ToString() {
 				return Title;
 			}
 		}
 
-		sealed class MuFontAndSize
+		sealed class MuFontAndSize(string fontName, float size)
 		{
-			public readonly string FontName;
-			public readonly float Size;
-
-			public MuFontAndSize(string fontName, float size) {
-				FontName = fontName;
-				Size = size;
-			}
+			public readonly string FontName = fontName;
+			public readonly float Size = size;
 		}
+
 		sealed class FontAndSizeComparer : IEqualityComparer<MuFontAndSize>
 		{
 			public bool Equals(MuFontAndSize x, MuFontAndSize y) {
