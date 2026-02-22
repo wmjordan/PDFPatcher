@@ -13,7 +13,7 @@ namespace PDFPatcher.Processor.Imaging
 			using (var bmp = fi.ToBitmap()) {
 				var bits = bmp.LockBits(new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format1bppIndexed);
 				try {
-					return MuPDF.JBig2Codec.LosslessEncode(bmp.Width, bmp.Height, bits.Stride, zeroIsWhite, bits.Scan0);
+					return MuPDF.JBig2Codec.LosslessEncode(bmp.Width, bmp.Height, bits.Stride, zeroIsWhite, bits.Scan0, false, false);
 				}
 				finally {
 					bmp.UnlockBits(bits);
