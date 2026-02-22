@@ -36,7 +36,7 @@ namespace PDFPatcher.Functions.Editor
 				_PageDimensionBox.SelectedIndex = 0;
 			}
 			var ts = new HashSet<MuFontAndSize>(new FontAndSizeComparer());
-			foreach (var block in page.TextPage) {
+			foreach (var block in page.Text) {
 				foreach (var line in block) {
 					var c = line.FirstCharacter;
 					ts.Add(new MuFontAndSize(Model.PdfDocumentFont.RemoveSubsetPrefix(c.Font.Name), c.Size));

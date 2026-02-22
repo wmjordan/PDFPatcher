@@ -683,7 +683,7 @@ namespace PDFPatcher.Functions.Editor
 					var h = pb.Height;
 					var dh = pb.Y1 - h;
 					var pt = pb.Y0;
-					foreach (var block in p.TextPage) {
+					foreach (var block in p.Text) {
 						string jointBlockText = null;
 						bool hasJointText = false;
 						foreach (var line in block) {
