@@ -112,7 +112,11 @@ internal sealed class ViewerControl : ImageBoxEx
 			}
 		}
 	}
+	[Browsable(false)]
 	public new float ZoomFactor => _zoomFactor * 72f / _renderOptions.Dpi;
+	[Browsable(false)]
+	public bool IsAdaptiveZoomMode => _zoomMode.CeqAny(ZoomMode.FitPage, ZoomMode.FitHorizontal, ZoomMode.FitVertical);
+
 	/// <summary>
 	/// 获取或设置阅读器是否使用右到左的水平滚动模式。
 	/// </summary>
@@ -133,6 +137,9 @@ internal sealed class ViewerControl : ImageBoxEx
 
 			_ContentFlow = value;
 			_LayoutProvider = Editor.Parts.PageLayoutProvider.Get(value);
+			if (IsAdaptiveZoomMode) {
+				CalculateZoomFactor(_LiteralZoom, ViewPortSize);
+			}
 			UpdateLayout(true);
 
 			if (!s.ImageRegion.IsEmpty) {
@@ -163,6 +170,19 @@ internal sealed class ViewerControl : ImageBoxEx
 	}
 	public bool HorizontalFlow => _ContentFlow.CeqAny(ContentDirection.LeftToRight, ContentDirection.RightToLeft);
 	public bool IsReversalLayout => _LayoutProvider?.IsReverse == true;
+	/// <summary>获取剔除了滚动区域后的视图区域。</summary>
+	public Size ViewPortSize {
+		get {
+			var size = ClientSize;
+			if (!VScroll) {
+				size.Width -= SystemInformation.VerticalScrollBarWidth;
+			}
+			if (!HScroll) {
+				size.Height -= SystemInformation.HorizontalScrollBarHeight;
+			}
+			return size;
+		}
+	}
 
 	/// <summary>
 	/// 获取或设置阅读器是否将页面渲染为灰度图像。
@@ -342,7 +362,7 @@ internal sealed class ViewerControl : ImageBoxEx
 			LoadPageBounds();
 			_cache = new RenderResultCache(_mupdf);
 			_LayoutProvider = Editor.Parts.PageLayoutProvider.Get(_ContentFlow);
-			CalculateZoomFactor(_LiteralZoom);
+			CalculateZoomFactor(_LiteralZoom, ViewPortSize);
 			UpdateLayout(true);
 			_refreshTimer.Start();
 			if (!_renderWorker.IsBusy) {
@@ -354,6 +374,7 @@ internal sealed class ViewerControl : ImageBoxEx
 		}
 	}
 
+	[Browsable(false)]
 	public int TotalPageCount => _totalPageCount;
 
 	public ViewerControl() {
@@ -886,6 +907,10 @@ internal sealed class ViewerControl : ImageBoxEx
 	}
 
 	bool ChangeZoom(string zoomMode) {
+		if (_mupdf is null) {
+			return false;
+		}
+
 		var s = GetSelection();
 		var pp = Editor.PagePosition.Empty;
 		float z = 0; // 旧的缩放比例
@@ -897,11 +922,7 @@ internal sealed class ViewerControl : ImageBoxEx
 			pp = GetCurrentScrollPosition();
 		}
 
-		if (!CalculateZoomFactor(zoomMode)) {
-			return false;
-		}
-
-		if (_mupdf == null) {
+		if (!CalculateZoomFactor(zoomMode, ViewPortSize)) {
 			return false;
 		}
 
@@ -925,22 +946,22 @@ internal sealed class ViewerControl : ImageBoxEx
 		return true;
 	}
 
-	bool CalculateZoomFactor(string zoomMode) {
+	bool CalculateZoomFactor(string zoomMode, Size viewSize) {
 		switch (zoomMode) {
 			case Constants.DestinationAttributes.ViewType.Fit:
 				_zoomMode = ZoomMode.FitPage;
 				_zoomFactor = Math.Min(
-						(ClientSize.Width - __doubleMargin) / _maxPageDimension.Width,
-						(ClientSize.Height - __doubleMargin) / _maxPageDimension.Height
+						(viewSize.Width - __doubleMargin) / _maxPageDimension.Width,
+						(viewSize.Height - __doubleMargin) / _maxPageDimension.Height
 					);
 				break;
 			case Constants.DestinationAttributes.ViewType.FitH:
 				_zoomMode = ZoomMode.FitHorizontal;
-				_zoomFactor = (ClientSize.Width - __doubleMargin) / _maxPageDimension.Width;
+				_zoomFactor = (viewSize.Width - __doubleMargin) / _maxPageDimension.Width;
 				break;
 			case Constants.DestinationAttributes.ViewType.FitV:
 				_zoomMode = ZoomMode.FitVertical;
-				_zoomFactor = (ClientSize.Height - __doubleMargin) / _maxPageDimension.Height;
+				_zoomFactor = (viewSize.Height - __doubleMargin) / _maxPageDimension.Height;
 				break;
 			default:
 				int f;
@@ -1006,13 +1027,13 @@ internal sealed class ViewerControl : ImageBoxEx
 		_cancelRendering = false;
 
 		// 执行布局计算
-		var viewport = ClientSize;
+		var viewport = ViewPortSize;
 		_LayoutProvider.Margin = __pageMargin;
 		_LayoutProvider.PerformLayout(_pageBounds, _zoomFactor, viewport);
 		++_lockDown;
 		try {
 			VirtualSize = Size.Ceiling(_LayoutProvider.VirtualSize);
-			UpdateScrollbars();
+			NativeMethods.SetWindowPos(this.Handle);
 			_refreshTimer.Start();
 			if (resized) {
 				Invalidate();
@@ -1295,5 +1316,20 @@ internal sealed class ViewerControl : ImageBoxEx
 
 		_renderWorker.Dispose();
 		_refreshTimer.Dispose();
+	}
+
+	static class NativeMethods
+	{
+		[System.Runtime.InteropServices.DllImport("user32.dll")]
+		static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
+		const uint SWP_NOMOVE = 0x0002;
+		const uint SWP_NOSIZE = 0x0001;
+		const uint SWP_NOZORDER = 0x0004;
+		const uint SWP_FRAMECHANGED = 0x0020;
+
+		// 在设置 VirtualSize 后调用，修复滚动条可能显示不出来的问题
+		public static void SetWindowPos(IntPtr hWnd) {
+			SetWindowPos(hWnd, IntPtr.Zero, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+		}
 	}
 }
