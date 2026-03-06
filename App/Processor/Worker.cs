@@ -268,7 +268,7 @@ namespace PDFPatcher.Processor
 				Tracker.TraceMessage("正在导出信息文件。");
 				if (targetFile.HasExtension(Ext.Txt)) {
 					Tracker.SetProgressGoal(50);
-					using (TextWriter w = new StreamWriter(targetFile, false, AppContext.Exporter.GetEncoding())) {
+					using (var w = new StreamWriter(targetFile, false, AppContext.Exporter.GetEncoding())) {
 						DocInfoExporter.WriteDocumentInfoAttributes(w, sourceFile, r.NumberOfPages);
 						export.ExportDocument(w);
 						w.WriteLine();
@@ -892,9 +892,7 @@ namespace PDFPatcher.Processor
 				FormHelper.ErrorBox("在导出信息文件时遇到错误：\n" + ex.Message);
 			}
 			finally {
-				if (r != null) {
-					r.Close();
-				}
+				r?.Close();
 			}
 		}
 
