@@ -12,7 +12,9 @@ sealed class ContentStreamParser
 	int _position;
 	int _length;
 
-	public IEnumerable<Operation> Parse(byte[] contentBytes) {
+	public static IEnumerable<Operation> Parse(byte[] contentBytes) => new ContentStreamParser().InternalParse(contentBytes);
+
+	IEnumerable<Operation> InternalParse(byte[] contentBytes) {
 		_buffer = contentBytes;
 		_position = 0;
 		_length = _buffer.Length;

@@ -6,7 +6,7 @@ using PDFPatcher.Common;
 
 namespace PDFPatcher.Functions;
 
-sealed class ContentStreamViewer
+static class ContentStreamViewer
 {
 	const int ContentStreamIndentCount = 2;
 
@@ -23,7 +23,7 @@ sealed class ContentStreamViewer
 	static void ShowReformattedContentStream(RichTextBox textBox, byte[] contentBytes) {
 		var sb = new StringBuilder(32);
 		int indent = 0;
-		foreach (var op in new Processor.ContentParser.ContentStreamParser().Parse(contentBytes)) {
+		foreach (var op in Processor.ContentParser.ContentStreamParser.Parse(contentBytes)) {
 			var operands = op.Operands;
 			var oi = op.Info;
 			if (oi.IsEndScope) {
@@ -53,7 +53,7 @@ sealed class ContentStreamViewer
 		using var tb = textBox.BatchUpdate();
 		var sb = new StringBuilder(32);
 		int indent = 0;
-		foreach (var op in new Processor.ContentParser.ContentStreamParser().Parse(contentBytes)) {
+		foreach (var op in Processor.ContentParser.ContentStreamParser.Parse(contentBytes)) {
 			var operands = op.Operands;
 			var oi = op.Info;
 			if (oi.IsEndScope) {
