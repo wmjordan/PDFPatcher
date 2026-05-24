@@ -44,12 +44,25 @@ namespace PDFPatcher
 		}
 
 		int IndexOf(string o) {
-			var l = Contents;
-			if (l != null) {
-				return l.IndexOf(o);
+			if (Contents != null) {
+				var c = Contents;
+				var l = c.Count;
+				for (var i = 0; i < l; i++) {
+					if (String.Equals(c[i], o, StringComparison.OrdinalIgnoreCase)) {
+						return i;
+					}
+				}
+				return -1;
 			}
 			else {
-				return Items.IndexOf(o);
+				var c = Items;
+				var l = c.Count;
+				for (var i = 0; i < l; i++) {
+					if (String.Equals(c[i] as string, o, StringComparison.OrdinalIgnoreCase)) {
+						return i;
+					}
+				}
+				return -1;
 			}
 		}
 
