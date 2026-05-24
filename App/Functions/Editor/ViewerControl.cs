@@ -744,11 +744,11 @@ internal sealed class ViewerControl : ImageBoxEx
 		var page = _cache.LoadPage(position.Page);
 		var point = position.ToPageCoordinate(page);
 		if (!page.Bound.Contains(point)
-			|| !page.Text.Bound.Contains(point)) {
+			|| !page.TextPage.Bound.Contains(point)) {
 			return ti;
 		}
 
-		foreach (var block in page.Text) {
+		foreach (var block in page.TextPage) {
 			if (block.Type == BlockType.Image || !block.Bound.Contains(point)) {
 				continue;
 			}
@@ -810,10 +810,10 @@ internal sealed class ViewerControl : ImageBoxEx
 		List<TextLine> r = null;
 		var page = _cache.LoadPage(region.Page);
 		var pr = region.ToPageCoordinate(page);
-		if (pr.Intersect(page.Text.Bound).IsEmpty) {
+		if (pr.Intersect(page.TextPage.Bound).IsEmpty) {
 			return null;
 		}
-		foreach (var block in page.Text) {
+		foreach (var block in page.TextPage) {
 			if (block.Type == BlockType.Image || pr.Intersect(block.Bound).IsEmpty) {
 				continue;
 			}
@@ -896,7 +896,7 @@ internal sealed class ViewerControl : ImageBoxEx
 				Tracker.DebugMessage("render page " + pageNumber);
 				bmp = p.RenderBitmapPage(width, height, _renderOptions, _cookie);
 				_cache.SetBitmap(pageNumber, bmp);
-				_cache.SetTextPage(pageNumber, p.Text);
+				_cache.SetTextPage(pageNumber, p.TextPage);
 			}
 		}
 		return bmp;
