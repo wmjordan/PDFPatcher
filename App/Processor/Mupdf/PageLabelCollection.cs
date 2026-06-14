@@ -7,7 +7,7 @@ namespace MuPDF
 {
 	public sealed class PageLabelCollection : ICollection<PageLabel>
 	{
-		readonly List<PageLabel> _labels = new List<PageLabel>();
+		readonly List<PageLabel> _labels = [];
 
 		public PageLabel this[int index] => _labels[index];
 
