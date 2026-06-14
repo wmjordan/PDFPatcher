@@ -3,7 +3,7 @@
 namespace PDFPatcher.Processor.ContentParser;
 
 /// <summary>
-/// 表示一个 PDF 操作符的元数据
+/// 表示一个 PDF 操作符的元数据。可从 <see cref="OperatorTable"/> 的静态字段获取预定义的 <see cref="OperatorInfo"/> 实例。
 /// </summary>
 sealed class OperatorInfo(
 	RenderCommandKind kind,
@@ -22,7 +22,7 @@ sealed class OperatorInfo(
 
 	/// <summary>
 	/// 参数数量掩码。
-	/// 使用位操作校验：如果参数数量为 N，则检查 (OperandMask & (1 << N)) != 0。
+	/// 使用位操作校验：如果参数数量为 N，则检查<![CDATA[ (OperandMask & (1 << N)) != 0]]>。
 	/// 如果为 0xFF，则表示参数数量可变。
 	/// </summary>
 	public byte OperandMask { get; } = operandMask;

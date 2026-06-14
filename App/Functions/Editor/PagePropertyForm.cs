@@ -10,7 +10,7 @@ namespace PDFPatcher.Functions.Editor;
 
 sealed partial class PagePropertyForm : DraggableForm
 {
-	byte[] _contentBytes;
+	Document _document;
 
 	public int PageNumber { get; set; }
 
@@ -30,14 +30,14 @@ sealed partial class PagePropertyForm : DraggableForm
 	}
 
 	void UpdateOpPage(object sender, EventArgs e) {
-		if (_contentBytes != null && _MainTab.SelectedTab == _OpPage) {
-			ContentStreamViewer.SetContent(_OpBox, _contentBytes);
-			_contentBytes = null;
+		if (_document != null && _MainTab.SelectedTab == _OpPage) {
+			ContentStreamViewer.SetContent(_OpBox, new Processor.ContentParser.ContentProcessor(_document), PageNumber);
+			_document = null;
 			_MainTab.SelectedIndexChanged -= UpdateOpPage;
 		}
 	}
 
-	public void LoadPage(Page page) {
+	public void LoadPage(Document pdfDocument, Page page) {
 		_PageDimensionBox.Items.Clear();
 		AddBox(page, page.CropBox, Constants.Content.PageSettings.CropBox);
 		AddBox(page, page.MediaBox, Constants.Content.PageSettings.MediaBox);
@@ -58,7 +58,7 @@ sealed partial class PagePropertyForm : DraggableForm
 		_TextStyleBox.Objects = ts;
 		_TextStyleBox.Sort(_SizeColumn, SortOrder.Descending);
 		PageNumber = page.PageNumber + 1;
-		_contentBytes = page.GetContentBytes();
+		_document = pdfDocument;
 	}
 
 	void AddBox(Page page, MuRectangle rect, string title) {

@@ -1,4 +1,6 @@
-﻿namespace PDFPatcher.Functions.Editor;
+﻿using PDFPatcher.Processor.ContentParser;
+
+namespace PDFPatcher.Functions.Editor;
 
 sealed class PagePropertiesCommand : IEditorCommand
 {
@@ -12,7 +14,7 @@ sealed class PagePropertiesCommand : IEditorCommand
 		using var page = controller.Model.PdfDocument.LoadPage(p.Page - 1);
 		f.Location = v.PointToScreen(v.TransposeVirtualImageToClient(l.X, l.Y));
 		f.Show();
-		f.LoadPage(page);
+		f.LoadPage(controller.Model.PdfDocument, page);
 	}
 
 	private static PagePropertyForm GetDialog() {

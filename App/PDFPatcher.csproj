@@ -127,7 +127,10 @@
     <Compile Include="Model\ResourceReference.cs" />
     <Compile Include="Options\ReaderOptions.cs" />
     <Compile Include="Processor\ContentParser\ByteSegment.cs" />
+    <Compile Include="Processor\ContentParser\ContentProcessor.cs" />
+    <Compile Include="Processor\ContentParser\ContentStreamBuilder.cs" />
     <Compile Include="Processor\ContentParser\ContentStreamParser.cs" />
+    <Compile Include="Processor\ContentParser\GraphicsState.cs" />
     <Compile Include="Processor\ContentParser\InlineImageContent.cs" />
     <Compile Include="Processor\ContentParser\Operation.cs" />
     <Compile Include="Processor\ContentParser\OperatorCategory.cs" />
@@ -135,6 +138,7 @@
     <Compile Include="Processor\ContentParser\OperatorSemantic.cs" />
     <Compile Include="Processor\ContentParser\OperatorTable.cs" />
     <Compile Include="Processor\ContentParser\RenderCommandKind.cs" />
+    <Compile Include="Processor\ContentParser\ResourceStack.cs" />
     <Compile Include="Processor\ContentParser\Token.cs" />
     <Compile Include="Processor\ContentParser\TokenType.cs" />
     <Compile Include="Processor\ContentProcessors\CleanContentStreamProcessor.cs" />

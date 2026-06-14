@@ -17,7 +17,7 @@ static class OperatorTable
 		Arg6 = 1 << 6,
 		Variable = 0xFF;
 
-	// ============ 文本相关 ============
+	#region 文本相关
 	// 输出类
 	public static readonly OperatorInfo Tj = new(Kind.ShowText, "Tj", Cat.Text, Sem.ContentOutput, Arg1);
 	public static readonly OperatorInfo TJ = new(Kind.ShowTextWithSpacing, "TJ", Cat.Text, Sem.ContentOutput, Arg1);
@@ -42,8 +42,9 @@ static class OperatorTable
 	// 结构分组类
 	public static readonly OperatorInfo BT = new(Kind.BeginText, "BT", Cat.Text, Sem.GroupStructure, Arg0, isBeginScope: true);
 	public static readonly OperatorInfo ET = new(Kind.EndText, "ET", Cat.Text, Sem.GroupStructure, Arg0, isEndScope: true, pairedBeginKind: Kind.BeginText);
+	#endregion
 
-	// ============ 图形状态 ============
+	#region 图形状态
 	// 结构分组类
 	public static readonly OperatorInfo q = new(Kind.GSave, "q", Cat.GraphicsState, Sem.GroupStructure, Arg0, isBeginScope: true);
 	public static readonly OperatorInfo Q = new(Kind.GRestore, "Q", Cat.GraphicsState, Sem.GroupStructure, Arg0, isEndScope: true, pairedBeginKind: Kind.GSave);
@@ -58,8 +59,9 @@ static class OperatorTable
 	public static readonly OperatorInfo ri = new(Kind.SetRenderingIntent, "ri", Cat.GraphicsState, Sem.StateSetup, Arg1);
 	public static readonly OperatorInfo i = new(Kind.SetFlatness, "i", Cat.GraphicsState, Sem.StateSetup, Arg1);
 	public static readonly OperatorInfo gs = new(Kind.SetGraphicsState, "gs", Cat.GraphicsState, Sem.StateSetup, Arg1);
+	#endregion
 
-	// ============ 颜色 ============
+	#region 颜色
 	// 颜色操作符均为设置颜色状态
 	public static readonly OperatorInfo CS = new(Kind.SetColorSpaceStroking, "CS", Cat.Color, Sem.StateSetup, Arg1);
 	public static readonly OperatorInfo cs = new(Kind.SetColorSpaceNonStroking, "cs", Cat.Color, Sem.StateSetup, Arg1);
@@ -73,8 +75,9 @@ static class OperatorTable
 	public static readonly OperatorInfo rg = new(Kind.SetRGBNonStroking, "rg", Cat.Color, Sem.StateSetup, Arg3);
 	public static readonly OperatorInfo K = new(Kind.SetCMYKStroking, "K", Cat.Color, Sem.StateSetup, Arg4);
 	public static readonly OperatorInfo k = new(Kind.SetCMYKNonStroking, "k", Cat.Color, Sem.StateSetup, Arg4);
+	#endregion
 
-	// ============ 路径 ============
+	#region 路径
 	// 路径构造均为状态设置
 	public static readonly OperatorInfo m = new(Kind.MoveTo, "m", Cat.Path, Sem.StateSetup, Arg2);
 	public static readonly OperatorInfo l = new(Kind.LineTo, "l", Cat.Path, Sem.StateSetup, Arg2);
@@ -83,8 +86,9 @@ static class OperatorTable
 	public static readonly OperatorInfo y = new(Kind.CurveToNoSecondControl, "y", Cat.Path, Sem.StateSetup, Arg4);
 	public static readonly OperatorInfo h = new(Kind.ClosePath, "h", Cat.Path, Sem.StateSetup, Arg0);
 	public static readonly OperatorInfo re = new(Kind.Rectangle, "re", Cat.Path, Sem.StateSetup, Arg4);
+	#endregion
 
-	// ============ 路径绘制 ============
+	#region 路径绘制
 	// 路径绘制均为内容输出
 	public static readonly OperatorInfo S = new(Kind.StrokePath, "S", Cat.Painting, Sem.ContentOutput, Arg0);
 	public static readonly OperatorInfo s = new(Kind.CloseAndStrokePath, "s", Cat.Painting, Sem.ContentOutput, Arg0);
@@ -98,29 +102,32 @@ static class OperatorTable
 	public static readonly OperatorInfo n = new(Kind.EndPath, "n", Cat.Painting, Sem.StateSetup, Arg0); // n 仅结束路径，无输出
 	public static readonly OperatorInfo W = new(Kind.SetClipPath, "W", Cat.Painting, Sem.StateSetup, Arg0);
 	public static readonly OperatorInfo W_Star = new(Kind.SetClipPathEvenOdd, "W*", Cat.Painting, Sem.StateSetup, Arg0);
+	#endregion
 
-	// ============ 兼容性 ============
+	#region 标记内容
 	public static readonly OperatorInfo BX = new(Kind.BeginCompatibilitySection, "BX", Cat.Compatibility, Sem.GroupStructure, Arg0, isBeginScope: true);
 	public static readonly OperatorInfo EX = new(Kind.EndCompatibilitySection, "EX", Cat.Compatibility, Sem.GroupStructure, Arg0, isEndScope: true, pairedBeginKind: Kind.BeginCompatibilitySection);
 
-	// ============ 标记内容 ============
 	public static readonly OperatorInfo BMC = new(Kind.BeginMarkedContent, "BMC", Cat.MarkedContent, Sem.GroupStructure, Arg1, isBeginScope: true);
 	public static readonly OperatorInfo BDC = new(Kind.BeginMarkedContentWithProps, "BDC", Cat.MarkedContent, Sem.GroupStructure, Arg2, isBeginScope: true);
 	public static readonly OperatorInfo EMC = new(Kind.EndMarkedContent, "EMC", Cat.MarkedContent, Sem.GroupStructure, Arg0, isEndScope: true, pairedBeginKind: Kind.BeginMarkedContent);
 	public static readonly OperatorInfo MP = new(Kind.DefineMarkedContentPoint, "MP", Cat.MarkedContent, Sem.GroupStructure, Arg1);
 	public static readonly OperatorInfo DP = new(Kind.DefineMarkedContentPointWithProps, "DP", Cat.MarkedContent, Sem.GroupStructure, Arg2);
+	#endregion
 
-	// ============ 内联图像 ============
+	#region 内联图像
 	public static readonly OperatorInfo BI = new(Kind.BeginInlineImage, "BI", Cat.Image, Sem.GroupStructure, Arg0, isBeginScope: true);
 	public static readonly OperatorInfo EI = new(Kind.EndInlineImage, "EI", Cat.Image, Sem.GroupStructure, Arg1, isEndScope: true, pairedBeginKind: Kind.BeginInlineImage);
 	public static readonly OperatorInfo ID = new(Kind.BeginInlineImageData, "ID", Cat.Image, Sem.StateSetup, Arg0);
+	#endregion
 
-	// ============ XObject / Shading ============
+	#region XObject / Shading
 	// Do 和 sh 均为内容输出
 	public static readonly OperatorInfo Do = new(Kind.PaintXObject, "Do", Cat.XObject, Sem.ContentOutput, Arg1);
 	public static readonly OperatorInfo sh = new(Kind.PaintShading, "sh", Cat.XObject, Sem.ContentOutput, Arg1);
+	#endregion
 
-	// ============ 兜底 ============
+	// 兜底
 	static readonly OperatorInfo _Unknown = new(Kind.Unknown, "", Cat.Unknown, Sem.StateSetup, Variable);
 
 	public static OperatorInfo Resolve(byte[] buffer, int offset, int length) {
