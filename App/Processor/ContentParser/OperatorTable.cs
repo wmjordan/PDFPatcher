@@ -19,116 +19,116 @@ static class OperatorTable
 
 	#region 文本相关
 	// 输出类
-	public static readonly OperatorInfo Tj = new(Kind.ShowText, "Tj", Cat.Text, Sem.ContentOutput, Arg1);
-	public static readonly OperatorInfo TJ = new(Kind.ShowTextWithSpacing, "TJ", Cat.Text, Sem.ContentOutput, Arg1);
-	public static readonly OperatorInfo Quote = new(Kind.NextLineShowText, "'", Cat.Text, Sem.ContentOutput, Arg1);
-	public static readonly OperatorInfo DoubleQuote = new(Kind.MoveToNextLineAndShowText, "\"", Cat.Text, Sem.ContentOutput, Arg3);
+	public static readonly OperatorInfo Tj = new(Kind.ShowText, "Tj", "字符串", Cat.Text, Sem.ContentOutput, Arg1);
+	public static readonly OperatorInfo TJ = new(Kind.ShowTextWithSpacing, "TJ", "间距字符串", Cat.Text, Sem.ContentOutput, Arg1);
+	public static readonly OperatorInfo Quote = new(Kind.NextLineShowText, "'", "换行字符串", Cat.Text, Sem.ContentOutput, Arg1);
+	public static readonly OperatorInfo DoubleQuote = new(Kind.MoveToNextLineAndShowText, "\"", "换行间距字符串", Cat.Text, Sem.ContentOutput, Arg3);
 
 	// 状态设置类
-	public static readonly OperatorInfo T_Star = new(Kind.NextLine, "T*", Cat.Text, Sem.StateSetup, Arg0);
-	public static readonly OperatorInfo Tc = new(Kind.SetCharSpacing, "Tc", Cat.Text, Sem.StateSetup, Arg1);
-	public static readonly OperatorInfo Tw = new(Kind.SetWordSpacing, "Tw", Cat.Text, Sem.StateSetup, Arg1);
-	public static readonly OperatorInfo Tz = new(Kind.SetHorizontalScaling, "Tz", Cat.Text, Sem.StateSetup, Arg1);
-	public static readonly OperatorInfo TL = new(Kind.SetTextLeading, "TL", Cat.Text, Sem.StateSetup, Arg1);
-	public static readonly OperatorInfo Tf = new(Kind.SetFont, "Tf", Cat.Text, Sem.StateSetup, Arg2);
-	public static readonly OperatorInfo Tr = new(Kind.SetTextRenderMode, "Tr", Cat.Text, Sem.StateSetup, Arg1);
-	public static readonly OperatorInfo Ts = new(Kind.SetTextRise, "Ts", Cat.Text, Sem.StateSetup, Arg1);
-	public static readonly OperatorInfo Td = new(Kind.MoveText, "Td", Cat.Text, Sem.StateSetup, Arg2);
-	public static readonly OperatorInfo TD = new(Kind.MoveTextSetLeading, "TD", Cat.Text, Sem.StateSetup, Arg2);
-	public static readonly OperatorInfo Tm = new(Kind.SetTextMatrix, "Tm", Cat.Text, Sem.StateSetup, Arg6);
-	public static readonly OperatorInfo d0 = new(Kind.SetGlyphWidthInType3Font, "d0", Cat.Text, Sem.StateSetup, Arg2);
-	public static readonly OperatorInfo d1 = new(Kind.SetGlyphWidthAndBoundingBoxInType3Font, "d1", Cat.Text, Sem.StateSetup, Arg6);
+	public static readonly OperatorInfo T_Star = new(Kind.NextLine, "T*", "换行", Cat.Text, Sem.StateSetup, Arg0);
+	public static readonly OperatorInfo Tc = new(Kind.SetCharSpacing, "Tc", "字距", Cat.Text, Sem.StateSetup, Arg1);
+	public static readonly OperatorInfo Tw = new(Kind.SetWordSpacing, "Tw", "词距", Cat.Text, Sem.StateSetup, Arg1);
+	public static readonly OperatorInfo Tz = new(Kind.SetHorizontalScaling, "Tz", "文本水平拉伸", Cat.Text, Sem.StateSetup, Arg1);
+	public static readonly OperatorInfo TL = new(Kind.SetTextLeading, "TL", "行距", Cat.Text, Sem.StateSetup, Arg1);
+	public static readonly OperatorInfo Tf = new(Kind.SetFont, "Tf", "字体", Cat.Text, Sem.StateSetup, Arg2);
+	public static readonly OperatorInfo Tr = new(Kind.SetTextRenderMode, "Tr", "文本渲染", Cat.Text, Sem.StateSetup, Arg1);
+	public static readonly OperatorInfo Ts = new(Kind.SetTextRise, "Ts", "文本垂直偏移", Cat.Text, Sem.StateSetup, Arg1);
+	public static readonly OperatorInfo Td = new(Kind.MoveText, "Td", "换行", Cat.Text, Sem.StateSetup, Arg2);
+	public static readonly OperatorInfo TD = new(Kind.MoveTextSetLeading, "TD", "缩进换行", Cat.Text, Sem.StateSetup, Arg2);
+	public static readonly OperatorInfo Tm = new(Kind.SetTextMatrix, "Tm", "文本矩阵", Cat.Text, Sem.StateSetup, Arg6);
+	public static readonly OperatorInfo d0 = new(Kind.SetGlyphWidthInType3Font, "d0", "Type3字宽", Cat.Text, Sem.StateSetup, Arg2);
+	public static readonly OperatorInfo d1 = new(Kind.SetGlyphWidthAndBoundingBoxInType3Font, "d1", "Type3字宽及容器", Cat.Text, Sem.StateSetup, Arg6);
 
 	// 结构分组类
-	public static readonly OperatorInfo BT = new(Kind.BeginText, "BT", Cat.Text, Sem.GroupStructure, Arg0, isBeginScope: true);
-	public static readonly OperatorInfo ET = new(Kind.EndText, "ET", Cat.Text, Sem.GroupStructure, Arg0, isEndScope: true, pairedBeginKind: Kind.BeginText);
+	public static readonly OperatorInfo BT = new(Kind.BeginText, "BT", "文本区", Cat.Text, Sem.GroupStructure, Arg0, isBeginScope: true);
+	public static readonly OperatorInfo ET = new(Kind.EndText, "ET", "结束文本区", Cat.Text, Sem.GroupStructure, Arg0, isEndScope: true, pairedBeginKind: Kind.BeginText);
 	#endregion
 
 	#region 图形状态
 	// 结构分组类
-	public static readonly OperatorInfo q = new(Kind.GSave, "q", Cat.GraphicsState, Sem.GroupStructure, Arg0, isBeginScope: true);
-	public static readonly OperatorInfo Q = new(Kind.GRestore, "Q", Cat.GraphicsState, Sem.GroupStructure, Arg0, isEndScope: true, pairedBeginKind: Kind.GSave);
+	public static readonly OperatorInfo q = new(Kind.GSave, "q", "绘图状态", Cat.GraphicsState, Sem.GroupStructure, Arg0, isBeginScope: true);
+	public static readonly OperatorInfo Q = new(Kind.GRestore, "Q", "绘图状态出栈", Cat.GraphicsState, Sem.GroupStructure, Arg0, isEndScope: true, pairedBeginKind: Kind.GSave);
 
 	// 状态设置类
-	public static readonly OperatorInfo cm = new(Kind.ConcatMatrix, "cm", Cat.GraphicsState, Sem.StateSetup, Arg6);
-	public static readonly OperatorInfo w = new(Kind.SetLineWidth, "w", Cat.GraphicsState, Sem.StateSetup, Arg1);
-	public static readonly OperatorInfo J = new(Kind.SetLineCap, "J", Cat.GraphicsState, Sem.StateSetup, Arg1);
-	public static readonly OperatorInfo j = new(Kind.SetLineJoin, "j", Cat.GraphicsState, Sem.StateSetup, Arg1);
-	public static readonly OperatorInfo M = new(Kind.SetMiterLimit, "M", Cat.GraphicsState, Sem.StateSetup, Arg1);
-	public static readonly OperatorInfo d = new(Kind.SetDashPattern, "d", Cat.GraphicsState, Sem.StateSetup, Arg2);
-	public static readonly OperatorInfo ri = new(Kind.SetRenderingIntent, "ri", Cat.GraphicsState, Sem.StateSetup, Arg1);
-	public static readonly OperatorInfo i = new(Kind.SetFlatness, "i", Cat.GraphicsState, Sem.StateSetup, Arg1);
-	public static readonly OperatorInfo gs = new(Kind.SetGraphicsState, "gs", Cat.GraphicsState, Sem.StateSetup, Arg1);
+	public static readonly OperatorInfo cm = new(Kind.ConcatMatrix, "cm", "矩阵", Cat.GraphicsState, Sem.StateSetup, Arg6);
+	public static readonly OperatorInfo w = new(Kind.SetLineWidth, "w", "线宽", Cat.GraphicsState, Sem.StateSetup, Arg1);
+	public static readonly OperatorInfo J = new(Kind.SetLineCap, "J", "线端样式", Cat.GraphicsState, Sem.StateSetup, Arg1);
+	public static readonly OperatorInfo j = new(Kind.SetLineJoin, "j", "连接线样式", Cat.GraphicsState, Sem.StateSetup, Arg1);
+	public static readonly OperatorInfo M = new(Kind.SetMiterLimit, "M", "斜接面上限", Cat.GraphicsState, Sem.StateSetup, Arg1);
+	public static readonly OperatorInfo d = new(Kind.SetDashPattern, "d", "虚线图案", Cat.GraphicsState, Sem.StateSetup, Arg2);
+	public static readonly OperatorInfo ri = new(Kind.SetRenderingIntent, "ri", "颜色渲染意向", Cat.GraphicsState, Sem.StateSetup, Arg1);
+	public static readonly OperatorInfo i = new(Kind.SetFlatness, "i", "平滑度容限", Cat.GraphicsState, Sem.StateSetup, Arg1);
+	public static readonly OperatorInfo gs = new(Kind.SetGraphicsState, "gs", "绘图参数", Cat.GraphicsState, Sem.StateSetup, Arg1);
 	#endregion
 
 	#region 颜色
 	// 颜色操作符均为设置颜色状态
-	public static readonly OperatorInfo CS = new(Kind.SetColorSpaceStroking, "CS", Cat.Color, Sem.StateSetup, Arg1);
-	public static readonly OperatorInfo cs = new(Kind.SetColorSpaceNonStroking, "cs", Cat.Color, Sem.StateSetup, Arg1);
-	public static readonly OperatorInfo SC = new(Kind.SetColorStroking, "SC", Cat.Color, Sem.StateSetup, Variable);
-	public static readonly OperatorInfo SCN = new(Kind.SetColorPatternStroking, "SCN", Cat.Color, Sem.StateSetup, Variable);
-	public static readonly OperatorInfo sc = new(Kind.SetColorNonStroking, "sc", Cat.Color, Sem.StateSetup, Variable);
-	public static readonly OperatorInfo scn = new(Kind.SetColorPatternNonStroking, "scn", Cat.Color, Sem.StateSetup, Variable);
-	public static readonly OperatorInfo G = new(Kind.SetGrayStroking, "G", Cat.Color, Sem.StateSetup, Arg1);
-	public static readonly OperatorInfo g = new(Kind.SetGrayNonStroking, "g", Cat.Color, Sem.StateSetup, Arg1);
-	public static readonly OperatorInfo RG = new(Kind.SetRGBStroking, "RG", Cat.Color, Sem.StateSetup, Arg3);
-	public static readonly OperatorInfo rg = new(Kind.SetRGBNonStroking, "rg", Cat.Color, Sem.StateSetup, Arg3);
-	public static readonly OperatorInfo K = new(Kind.SetCMYKStroking, "K", Cat.Color, Sem.StateSetup, Arg4);
-	public static readonly OperatorInfo k = new(Kind.SetCMYKNonStroking, "k", Cat.Color, Sem.StateSetup, Arg4);
+	public static readonly OperatorInfo CS = new(Kind.SetColorSpaceStroking, "CS", "画线色域", Cat.Color, Sem.StateSetup, Arg1);
+	public static readonly OperatorInfo cs = new(Kind.SetColorSpaceNonStroking, "cs", "非线色域", Cat.Color, Sem.StateSetup, Arg1);
+	public static readonly OperatorInfo SC = new(Kind.SetColorStroking, "SC", "画线颜色", Cat.Color, Sem.StateSetup, Variable);
+	public static readonly OperatorInfo SCN = new(Kind.SetColorPatternStroking, "SCN", "画线颜色", Cat.Color, Sem.StateSetup, Variable);
+	public static readonly OperatorInfo sc = new(Kind.SetColorNonStroking, "sc", "非线颜色", Cat.Color, Sem.StateSetup, Variable);
+	public static readonly OperatorInfo scn = new(Kind.SetColorPatternNonStroking, "scn", "非线颜色", Cat.Color, Sem.StateSetup, Variable);
+	public static readonly OperatorInfo G = new(Kind.SetGrayStroking, "G", "画线灰色", Cat.Color, Sem.StateSetup, Arg1);
+	public static readonly OperatorInfo g = new(Kind.SetGrayNonStroking, "g", "非线灰色", Cat.Color, Sem.StateSetup, Arg1);
+	public static readonly OperatorInfo RG = new(Kind.SetRGBStroking, "RG", "画线三色", Cat.Color, Sem.StateSetup, Arg3);
+	public static readonly OperatorInfo rg = new(Kind.SetRGBNonStroking, "rg", "非线三色", Cat.Color, Sem.StateSetup, Arg3);
+	public static readonly OperatorInfo K = new(Kind.SetCMYKStroking, "K", "画线四色", Cat.Color, Sem.StateSetup, Arg4);
+	public static readonly OperatorInfo k = new(Kind.SetCMYKNonStroking, "k", "非线四色", Cat.Color, Sem.StateSetup, Arg4);
 	#endregion
 
 	#region 路径
 	// 路径构造均为状态设置
-	public static readonly OperatorInfo m = new(Kind.MoveTo, "m", Cat.Path, Sem.StateSetup, Arg2);
-	public static readonly OperatorInfo l = new(Kind.LineTo, "l", Cat.Path, Sem.StateSetup, Arg2);
-	public static readonly OperatorInfo c = new(Kind.CurveTo, "c", Cat.Path, Sem.StateSetup, Arg6);
-	public static readonly OperatorInfo v = new(Kind.CurveToNoFirstControl, "v", Cat.Path, Sem.StateSetup, Arg4);
-	public static readonly OperatorInfo y = new(Kind.CurveToNoSecondControl, "y", Cat.Path, Sem.StateSetup, Arg4);
-	public static readonly OperatorInfo h = new(Kind.ClosePath, "h", Cat.Path, Sem.StateSetup, Arg0);
-	public static readonly OperatorInfo re = new(Kind.Rectangle, "re", Cat.Path, Sem.StateSetup, Arg4);
+	public static readonly OperatorInfo m = new(Kind.MoveTo, "m", "始点", Cat.Path, Sem.StateSetup, Arg2);
+	public static readonly OperatorInfo l = new(Kind.LineTo, "l", "直线", Cat.Path, Sem.StateSetup, Arg2);
+	public static readonly OperatorInfo c = new(Kind.CurveTo, "c", "曲线", Cat.Path, Sem.StateSetup, Arg6);
+	public static readonly OperatorInfo v = new(Kind.CurveToNoFirstControl, "v", "控尾曲线", Cat.Path, Sem.StateSetup, Arg4);
+	public static readonly OperatorInfo y = new(Kind.CurveToNoSecondControl, "y", "控首曲线", Cat.Path, Sem.StateSetup, Arg4);
+	public static readonly OperatorInfo h = new(Kind.ClosePath, "h", "终点", Cat.Path, Sem.StateSetup, Arg0);
+	public static readonly OperatorInfo re = new(Kind.Rectangle, "re", "矩形", Cat.Path, Sem.StateSetup, Arg4);
 	#endregion
 
 	#region 路径绘制
 	// 路径绘制均为内容输出
-	public static readonly OperatorInfo S = new(Kind.StrokePath, "S", Cat.Painting, Sem.ContentOutput, Arg0);
-	public static readonly OperatorInfo s = new(Kind.CloseAndStrokePath, "s", Cat.Painting, Sem.ContentOutput, Arg0);
-	public static readonly OperatorInfo f = new(Kind.FillPathNonZero, "f", Cat.Painting, Sem.ContentOutput, Arg0);
-	public static readonly OperatorInfo F = new(Kind.FillPathNonZero, "F", Cat.Painting, Sem.ContentOutput, Arg0);
-	public static readonly OperatorInfo f_Star = new(Kind.FillPathEvenOdd, "f*", Cat.Painting, Sem.ContentOutput, Arg0);
-	public static readonly OperatorInfo B = new(Kind.FillStrokePathNonZero, "B", Cat.Painting, Sem.ContentOutput, Arg0);
-	public static readonly OperatorInfo B_Star = new(Kind.FillStrokePathEvenOdd, "B*", Cat.Painting, Sem.ContentOutput, Arg0);
-	public static readonly OperatorInfo b = new(Kind.CloseFillStrokePathNonZero, "b", Cat.Painting, Sem.ContentOutput, Arg0);
-	public static readonly OperatorInfo b_Star = new(Kind.CloseFillStrokePathEvenOdd, "b*", Cat.Painting, Sem.ContentOutput, Arg0);
-	public static readonly OperatorInfo n = new(Kind.EndPath, "n", Cat.Painting, Sem.StateSetup, Arg0); // n 仅结束路径，无输出
-	public static readonly OperatorInfo W = new(Kind.SetClipPath, "W", Cat.Painting, Sem.StateSetup, Arg0);
-	public static readonly OperatorInfo W_Star = new(Kind.SetClipPathEvenOdd, "W*", Cat.Painting, Sem.StateSetup, Arg0);
+	public static readonly OperatorInfo S = new(Kind.StrokePath, "S", "画线", Cat.Painting, Sem.ContentOutput, Arg0);
+	public static readonly OperatorInfo s = new(Kind.CloseAndStrokePath, "s", "画封闭线", Cat.Painting, Sem.ContentOutput, Arg0);
+	public static readonly OperatorInfo f = new(Kind.FillPathNonZero, "f", "非零填充", Cat.Painting, Sem.ContentOutput, Arg0);
+	public static readonly OperatorInfo F = new(Kind.FillPathNonZero, "F", "非零填充", Cat.Painting, Sem.ContentOutput, Arg0);
+	public static readonly OperatorInfo f_Star = new(Kind.FillPathEvenOdd, "f*", "奇偶填充", Cat.Painting, Sem.ContentOutput, Arg0);
+	public static readonly OperatorInfo B = new(Kind.FillStrokePathNonZero, "B", "非零画线填充", Cat.Painting, Sem.ContentOutput, Arg0);
+	public static readonly OperatorInfo B_Star = new(Kind.FillStrokePathEvenOdd, "B*", "奇偶画线填充", Cat.Painting, Sem.ContentOutput, Arg0);
+	public static readonly OperatorInfo b = new(Kind.CloseFillStrokePathNonZero, "b", "闭合非零画线填充", Cat.Painting, Sem.ContentOutput, Arg0);
+	public static readonly OperatorInfo b_Star = new(Kind.CloseFillStrokePathEvenOdd, "b*", "闭合奇偶画线填充", Cat.Painting, Sem.ContentOutput, Arg0);
+	public static readonly OperatorInfo n = new(Kind.EndPath, "n", "闭合路径不填充", Cat.Painting, Sem.StateSetup, Arg0); // n 仅结束路径，无输出
+	public static readonly OperatorInfo W = new(Kind.SetClipPath, "W", "非零裁剪", Cat.Painting, Sem.StateSetup, Arg0);
+	public static readonly OperatorInfo W_Star = new(Kind.SetClipPathEvenOdd, "W*", "奇偶裁剪", Cat.Painting, Sem.StateSetup, Arg0);
 	#endregion
 
 	#region 标记内容
-	public static readonly OperatorInfo BX = new(Kind.BeginCompatibilitySection, "BX", Cat.Compatibility, Sem.GroupStructure, Arg0, isBeginScope: true);
-	public static readonly OperatorInfo EX = new(Kind.EndCompatibilitySection, "EX", Cat.Compatibility, Sem.GroupStructure, Arg0, isEndScope: true, pairedBeginKind: Kind.BeginCompatibilitySection);
+	public static readonly OperatorInfo BX = new(Kind.BeginCompatibilitySection, "BX", "兼容区", Cat.Compatibility, Sem.GroupStructure, Arg0, isBeginScope: true);
+	public static readonly OperatorInfo EX = new(Kind.EndCompatibilitySection, "EX", "兼容区结束", Cat.Compatibility, Sem.GroupStructure, Arg0, isEndScope: true, pairedBeginKind: Kind.BeginCompatibilitySection);
 
-	public static readonly OperatorInfo BMC = new(Kind.BeginMarkedContent, "BMC", Cat.MarkedContent, Sem.GroupStructure, Arg1, isBeginScope: true);
-	public static readonly OperatorInfo BDC = new(Kind.BeginMarkedContentWithProps, "BDC", Cat.MarkedContent, Sem.GroupStructure, Arg2, isBeginScope: true);
-	public static readonly OperatorInfo EMC = new(Kind.EndMarkedContent, "EMC", Cat.MarkedContent, Sem.GroupStructure, Arg0, isEndScope: true, pairedBeginKind: Kind.BeginMarkedContent);
-	public static readonly OperatorInfo MP = new(Kind.DefineMarkedContentPoint, "MP", Cat.MarkedContent, Sem.GroupStructure, Arg1);
-	public static readonly OperatorInfo DP = new(Kind.DefineMarkedContentPointWithProps, "DP", Cat.MarkedContent, Sem.GroupStructure, Arg2);
+	public static readonly OperatorInfo BMC = new(Kind.BeginMarkedContent, "BMC", "标记内容区", Cat.MarkedContent, Sem.GroupStructure, Arg1, isBeginScope: true);
+	public static readonly OperatorInfo BDC = new(Kind.BeginMarkedContentWithProps, "BDC", "标记内容区及属性", Cat.MarkedContent, Sem.GroupStructure, Arg2, isBeginScope: true);
+	public static readonly OperatorInfo EMC = new(Kind.EndMarkedContent, "EMC", "标记内容区结束", Cat.MarkedContent, Sem.GroupStructure, Arg0, isEndScope: true, pairedBeginKind: Kind.BeginMarkedContent);
+	public static readonly OperatorInfo MP = new(Kind.DefineMarkedContentPoint, "MP", "标记内容点", Cat.MarkedContent, Sem.GroupStructure, Arg1);
+	public static readonly OperatorInfo DP = new(Kind.DefineMarkedContentPointWithProps, "DP", "标记内容点及属性", Cat.MarkedContent, Sem.GroupStructure, Arg2);
 	#endregion
 
 	#region 内联图像
-	public static readonly OperatorInfo BI = new(Kind.BeginInlineImage, "BI", Cat.Image, Sem.GroupStructure, Arg0, isBeginScope: true);
-	public static readonly OperatorInfo EI = new(Kind.EndInlineImage, "EI", Cat.Image, Sem.GroupStructure, Arg1, isEndScope: true, pairedBeginKind: Kind.BeginInlineImage);
-	public static readonly OperatorInfo ID = new(Kind.BeginInlineImageData, "ID", Cat.Image, Sem.StateSetup, Arg0);
+	public static readonly OperatorInfo BI = new(Kind.BeginInlineImage, "BI", "内嵌图像", Cat.Image, Sem.GroupStructure, Arg0, isBeginScope: true);
+	public static readonly OperatorInfo EI = new(Kind.EndInlineImage, "EI", "内嵌图像结束", Cat.Image, Sem.GroupStructure, Arg1, isEndScope: true, pairedBeginKind: Kind.BeginInlineImage);
+	public static readonly OperatorInfo ID = new(Kind.BeginInlineImageData, "ID", "内嵌图像数据", Cat.Image, Sem.StateSetup, Arg0);
 	#endregion
 
 	#region XObject / Shading
 	// Do 和 sh 均为内容输出
-	public static readonly OperatorInfo Do = new(Kind.PaintXObject, "Do", Cat.XObject, Sem.ContentOutput, Arg1);
-	public static readonly OperatorInfo sh = new(Kind.PaintShading, "sh", Cat.XObject, Sem.ContentOutput, Arg1);
+	public static readonly OperatorInfo Do = new(Kind.PaintXObject, "Do", "绘制对象", Cat.XObject, Sem.ContentOutput, Arg1);
+	public static readonly OperatorInfo sh = new(Kind.PaintShading, "sh", "阴影", Cat.XObject, Sem.ContentOutput, Arg1);
 	#endregion
 
 	// 兜底
-	static readonly OperatorInfo _Unknown = new(Kind.Unknown, "", Cat.Unknown, Sem.StateSetup, Variable);
+	static readonly OperatorInfo _Unknown = new(Kind.Unknown, "", "未知命令", Cat.Unknown, Sem.StateSetup, Variable);
 
 	public static OperatorInfo Resolve(byte[] buffer, int offset, int length) {
 		if (length <= 0) return _Unknown;
@@ -285,6 +285,6 @@ static class OperatorTable
 				}
 				break;
 		}
-		return new OperatorInfo(Kind.Unknown, Encoding.ASCII.GetString(buffer, offset, length), Cat.Unknown, Sem.StateSetup, Variable);
+		return new OperatorInfo(Kind.Unknown, Encoding.ASCII.GetString(buffer, offset, length), "未知命令", Cat.Unknown, Sem.StateSetup, Variable);
 	}
 }

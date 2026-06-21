@@ -8,6 +8,7 @@ namespace PDFPatcher.Processor.ContentParser;
 sealed class OperatorInfo(
 	RenderCommandKind kind,
 	string name,
+	string description,
 	OperatorCategory category,
 	OperatorSemantic semantic,
 	byte operandMask,
@@ -17,6 +18,7 @@ sealed class OperatorInfo(
 {
 	public RenderCommandKind Kind { get; } = kind;
 	public string Name { get; } = name;
+	public string Description { get; } = description;
 	public OperatorCategory Category { get; } = category;
 	public OperatorSemantic Semantic { get; } = semantic;
 
