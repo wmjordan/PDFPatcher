@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using CLR;
 using MuPDF;
+using PDFPatcher.Common;
 
 namespace PDFPatcher.Processor.ContentParser;
 
@@ -10,6 +11,8 @@ sealed class ContentProcessor : IDisposable
 {
 	readonly Document _document;
 	readonly Stack<GraphicsState> _stateStack = new();
+	readonly Dictionary<string, FontDescriptor> _fontMap = [];
+	readonly Dictionary<PdfReference, FontDescriptor> _gsFontMap = [];
 	ResourceStack _resources;
 	GraphicsState _state = new();
 	StringBuilder _textBuffer;
@@ -50,10 +53,15 @@ sealed class ContentProcessor : IDisposable
 				case RenderCommandKind.SetFont: // Tf
 					var fontName = op.GetStringOperand(0);
 					var fontSize = op.Operands[1].AsFloat();
-					var font = _resources.LookupResource(PdfNames.Font, fontName);
-					_state.CurrentFont = font is not null
-						? FontDescriptor.Load(_document, _resources.Current, font)
-						: null;
+					if (_fontMap.TryGetValue(fontName, out var f)) {
+						_state.CurrentFont = f;
+					}
+					else {
+						var font = _resources.LookupResource(PdfNames.Font, fontName);
+						_fontMap[fontName] = _state.CurrentFont = font is not null
+							? FontDescriptor.Load(_document, _resources.Current, font)
+							: null;
+					}
 					_state.FontSize = fontSize;
 					break;
 				case RenderCommandKind.SetCharSpacing: // Tc
@@ -131,15 +139,24 @@ sealed class ContentProcessor : IDisposable
 		if (gs is PdfDictionary dict) {
 			var font = dict.GetValue(PdfNames.Font);
 			if (font is PdfArray a) {
-				_state.CurrentFont = FontDescriptor.Load(_document, _resources.Current, (PdfDictionary)a[0].UnderlyingObject);
+				if (a[0] is PdfReference r) {
+					if (_gsFontMap.TryGetValue(r, out var f)) {
+						_state.CurrentFont = f;
+					}
+					else {
+						_gsFontMap[r] = _state.CurrentFont = FontDescriptor.Load(_document, _resources.Current, (PdfDictionary)r.UnderlyingObject);
+					}
+				}
 				_state.FontSize = a[1].FloatValue;
 			}
 		}
 	}
 
 	void ProcessText(Operation op) {
-		if (_state.CurrentFont == null)
-			return; // 无字体，无法解码
+		if (_state.CurrentFont == null) {
+			_state.Text = "错误: 未指定字体或字体不存在";
+			return;
+		}
 
 		string text;
 		var sb = _textBuffer == null
@@ -185,6 +202,12 @@ sealed class ContentProcessor : IDisposable
 
 	public void Dispose() {
 		Dispose(disposing: true);
+		foreach (var item in _fontMap) {
+			item.Value.TryDispose();
+		}
+		foreach (var item in _gsFontMap) {
+			item.Value.TryDispose();
+		}
 		GC.SuppressFinalize(this);
 	}
 }
