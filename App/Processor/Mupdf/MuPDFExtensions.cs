@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Text;
@@ -10,6 +11,9 @@ namespace MuPDF.Extensions;
 public static class MuPDFExtensions
 {
 	#region 文档基础结构
+	public static bool IsContainer(this PdfObject obj) {
+		return obj.TypeKind.CeqAny(Kind.Dictionary, Kind.Array, Kind.Stream);
+	}
 	public static TObj Get<TObj>(this PdfArray array, int index) where TObj : PdfObject {
 		return array[index].UnderlyingObject as TObj;
 	}
@@ -19,9 +23,53 @@ public static class MuPDFExtensions
 	public static TObj Get<TObj>(this PdfDictionary dict, PdfNames key) where TObj : PdfObject {
 		return dict[key].UnderlyingObject as TObj;
 	}
+	public static bool TryGet<TObj>(this PdfDictionary dict, PdfNames key, out TObj value) where TObj : PdfObject {
+		return (value = dict[key].UnderlyingObject as TObj) is not null;
+	}
+	public static bool HasNameValue(this PdfDictionary dict, PdfNames key, PdfNames valueToCompare) {
+		return (dict[key].UnderlyingObject as PdfName)?.Equals(valueToCompare) == true;
+	}
 	public static TObj Get<TObj>(this PdfDictionary dict, PdfNames key, PdfNames alias) where TObj : PdfObject {
 		return dict.GetValue(key, alias).UnderlyingObject as TObj;
 	}
+
+	public static string GetName(this Kind kind) {
+		return kind switch {
+			Kind.Array => "array",
+			Kind.Boolean => "bool",
+			Kind.Dictionary => "dictionary",
+			Kind.Reference => "reference",
+			Kind.Name => "name",
+			Kind.Null => "null",
+			Kind.Integer or Kind.Float => "number",
+			Kind.Stream => "stream",
+			Kind.String => "string",
+			_ => String.Empty,
+		};
+	}
+
+	internal static string GetArrayString(this IEnumerable<PdfObject> array) {
+		var sb = StringBuilderCache.Acquire();
+		int k = 0;
+		foreach (var item in array) {
+			if (++k > 1) {
+				sb.Append(' ');
+			}
+			if (item.TypeKind == Kind.Array) {
+				sb.Append('[');
+				sb.Append(GetArrayString(item as PdfArray));
+				sb.Append(']');
+			}
+			else if (item.TypeKind.CeqAny(Kind.Dictionary, Kind.Stream)) {
+				sb.Append("<<...>>");
+			}
+			else {
+				sb.Append(item);
+			}
+		}
+		return StringBuilderCache.GetStringAndRelease(sb);
+	}
+
 	#endregion
 
 	#region 几何尺寸
