@@ -67,6 +67,13 @@ namespace PDFPatcher.Processor.Imaging
 			return r;
 		}
 
+		public static void CreateStandardGrayscalePalette(this Image bmp) {
+			var palette = bmp.Palette;
+			for (int i = 0; i < 256; ++i)
+				palette.Entries[i] = Color.FromArgb(i, i, i);
+			bmp.Palette = palette;
+		}
+
 		/// <summary>
 		/// 检查 <see cref="Image"/> 是否为索引调色板图像。
 		/// </summary>

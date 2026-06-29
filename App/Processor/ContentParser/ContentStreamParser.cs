@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using CLR;
+using PDFPatcher.Common;
 
 namespace PDFPatcher.Processor.ContentParser;
 
@@ -293,7 +294,7 @@ sealed class ContentStreamParser
 
 	string ParseName() {
 		_position++;
-		var sb = new StringBuilder();
+		var sb = StringBuilderCache.Acquire(32);
 
 		while (_position < _length) {
 			byte b = _buffer[_position];
@@ -311,7 +312,7 @@ sealed class ContentStreamParser
 				sb.Append((char)b);
 			}
 		}
-		return sb.ToString();
+		return StringBuilderCache.GetStringAndRelease(sb);
 	}
 
 	Token ParseInlineImageBody() {
@@ -332,10 +333,11 @@ sealed class ContentStreamParser
 		SkipWhiteSpace();
 
 		int dataStart = _position;
-
-		while (_position < _length - 1) {
+		int end = _length - 1;
+		while (_position < end) {
 			if (_buffer[_position] == 'E' && _buffer[_position + 1] == 'I') {
 				if (_position + 2 >= _length || IsWhiteSpaceOrDelimiter(_buffer[_position + 2])) {
+					_position += 2;
 					break;
 				}
 			}
@@ -349,15 +351,16 @@ sealed class ContentStreamParser
 
 	bool MatchKeyword(string keyword) {
 		SkipWhiteSpaceAndComments();
-		if (_position + keyword.Length > _length) return false;
+		var keywordLength = keyword.Length;
+		if (_position + keywordLength > _length) return false;
 
-		for (int i = 0; i < keyword.Length; i++) {
+		for (int i = 0; i < keywordLength; i++) {
 			if (_buffer[_position + i] != (byte)keyword[i]) return false;
 		}
 
-		if (!IsWhiteSpaceOrDelimiter(_buffer[_position + keyword.Length])) return false;
+		if (!IsWhiteSpaceOrDelimiter(_buffer[_position + keywordLength])) return false;
 
-		_position += keyword.Length;
+		_position += keywordLength;
 		return true;
 	}
 

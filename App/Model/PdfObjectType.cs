@@ -14,6 +14,7 @@
 		PageCommand,
 		PageCommands,
 		GoToPage,
-		Hidden
+		Hidden,
+		Token
 	}
 }

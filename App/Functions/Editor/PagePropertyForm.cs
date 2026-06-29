@@ -31,7 +31,9 @@ sealed partial class PagePropertyForm : DraggableForm
 
 	void UpdateOpPage(object sender, EventArgs e) {
 		if (_document != null && _MainTab.SelectedTab == _OpPage) {
-			ContentStreamViewer.SetContent(_OpBox, new Processor.ContentParser.ContentProcessor(_document), PageNumber);
+			using (var p = new Processor.ContentParser.ContentProcessor(_document)) {
+				ContentStreamViewer.SetContent(_OpBox, p, PageNumber);
+			}
 			_document = null;
 			_MainTab.SelectedIndexChanged -= UpdateOpPage;
 		}

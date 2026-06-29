@@ -5,6 +5,7 @@ using System.Drawing.Imaging;
 using System.Text;
 using CLR;
 using PDFPatcher.Common;
+using PDFPatcher.Processor.Imaging;
 
 namespace MuPDF.Extensions;
 
@@ -229,6 +230,62 @@ public static class MuPDFExtensions
 		}
 		return ctm;
 	}
+	/// <summary>
+	/// 将 MuPDF Pixmap 转换为 .NET Bitmap。
+	/// 假设 pixmap.Samples 返回 IntPtr，像素数据为 BGR 排列。
+	/// </summary>
+	public static unsafe Bitmap ToBitmap(this Pixmap pix) {
+		int w = pix.Width;
+		int h = pix.Height;
+		int n = pix.Components;       // 总分量数 = colorants + spots + alpha
+		int colorants = pix.Colorants; // 过程色分量数
+		int spots = pix.Spots;         // 专色通道数
+		bool hasAlpha = pix.Alpha == 1;
+
+		// 存在 spot 通道时，应先通过 MuPDF 的 fz_convert_pixmap
+		// 转为 DeviceRGB/BGR，否则屏幕无法正确显示专色
+
+		// ── 1. 灰度 → 8bpp Indexed ──
+		if ((colorants == 1 && !hasAlpha || colorants == 0 && hasAlpha) && spots == 0) {
+			var bmp = new Bitmap(w, h, PixelFormat.Format8bppIndexed);
+			bmp.CreateStandardGrayscalePalette();
+			var data = bmp.LockBits(true);
+			Copy8bppImage(pix, w, h, hasAlpha, data);
+			bmp.UnlockBits(data);
+			return bmp;
+		}
+
+		// ── 2. BGR 24bpp → Format24bppRgb（直接拷贝，无需换序） ──
+		if (colorants == 3 && !hasAlpha && spots == 0) {
+			var bmp = new Bitmap(w, h, PixelFormat.Format24bppRgb);
+			var data = bmp.LockBits(true);
+			Copy24bppImage(pix, w, h, false, data);
+			bmp.UnlockBits(data);
+			return bmp;
+		}
+
+		// ── 3. BGR+Alpha 32bpp → Format32bppArgb（需反预乘） ──
+		if (colorants == 3 && hasAlpha && spots == 0) {
+			var bmp = new Bitmap(w, h, PixelFormat.Format32bppArgb);
+			var data = bmp.LockBits(true);
+			Copy32bppBgraUnpremultiply(pix, w, h, data);
+			bmp.UnlockBits(data);
+			return bmp;
+		}
+
+		if (colorants == 4 && !hasAlpha && spots == 0) {
+			var bmp = new Bitmap(w, h, PixelFormat.Format24bppRgb);
+			var data = bmp.LockBits(true);
+			using (var rgbPix = pix.ConvertColorspace(ColorspaceKind.RGB, null)) {
+				Copy24bppImage(rgbPix, w, h, false, data);
+			}
+			bmp.UnlockBits(data);
+			return bmp;
+		}
+
+		throw new NotSupportedException(
+			$"不支持的像素格式: colorants={colorants}, spots={spots}, alpha={hasAlpha}");
+	}
 
 	/// <summary>
 	/// 将 Pixmap 的数据转换为 <see cref="Bitmap"/>。
@@ -239,57 +296,120 @@ public static class MuPDFExtensions
 		bool grayscale = options.ColorSpace == (ColorSpace)ColorspaceKind.Gray;
 		bool invert = options.InvertColor;
 		var bmp = new Bitmap(width, height, grayscale ? PixelFormat.Format8bppIndexed : PixelFormat.Format24bppRgb);
-		var imageData = bmp.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadWrite, bmp.PixelFormat);
-		var ptrSrc = (byte*)pix.Samples;
-		var ptrDest = (byte*)imageData.Scan0;
-		if (grayscale) {
-			var palette = bmp.Palette;
-			for (int i = 0; i < 256; ++i)
-				palette.Entries[i] = Color.FromArgb(i, i, i);
-			bmp.Palette = palette;
-			for (int y = 0; y < height; y++) {
-				var pl = ptrDest;
-				var sl = ptrSrc;
-				for (int x = 0; x < width; x++) {
-					*pl = invert ? (byte)(*sl ^ 0xFF) : *sl;
-					pl++;
-					sl++;
-				}
-				ptrDest += imageData.Stride;
-				ptrSrc = sl;
+		var imageData = bmp.LockBits(true);
+		try {
+			if (grayscale) {
+				bmp.CreateStandardGrayscalePalette();
+				Copy8bppImage(pix, width, height, invert, imageData);
+			}
+			else { // DeviceBGR
+				Copy24bppImage(pix, width, height, invert, imageData);
 			}
 		}
-		else { // DeviceBGR
-			for (int y = 0; y < height; y++) {
-				var pl = ptrDest;
-				var sl = ptrSrc;
-				if (invert) {
-					for (int x = 0; x < width; x++) {
-						// 在这里进行 RGB 到 DIB BGR 的转换（省去 Mupdf 内部的转换工作）
-						pl[2] = (byte)(*sl ^ 0xFF); sl++; // R
-						pl[1] = (byte)(*sl ^ 0xFF); sl++; // G
-						pl[0] = (byte)(*sl ^ 0xFF); sl++; // B
-						pl += 3;
-					}
-				}
-				else {
-					for (int x = 0; x < width; x++) {
-						// 在这里进行 RGB 到 DIB BGR 的转换（省去 Mupdf 内部的转换工作）
-						pl[2] = *sl; sl++; // R
-						pl[1] = *sl; sl++; // G
-						pl[0] = *sl; sl++; // B
-						pl += 3;
-					}
-				}
-				ptrDest += imageData.Stride;
-				ptrSrc = sl;
-			}
+		finally {
+			bmp.UnlockBits(imageData);
 		}
-		bmp.UnlockBits(imageData);
 		if (options.Dpi > 0) {
 			bmp.SetResolution(options.Dpi, options.Dpi);
 		}
 		return bmp;
+	}
+
+	/// <summary>
+	/// 灰度图像：1 byte/pixel，可选反转（用于 min-is-white 的图像）
+	/// </summary>
+	static unsafe void Copy8bppImage(Pixmap pix, int width, int height, bool invert, BitmapData imageData) {
+		var ptrSrc = (byte*)pix.Samples;
+		var ptrDest = (byte*)imageData.Scan0;
+		int srcStride = pix.Stride;
+
+		for (int y = 0; y < height; y++) {
+			var sl = ptrSrc;
+			var dl = ptrDest;
+			if (invert) {
+				for (int x = 0; x < width; x++)
+					*dl++ = (byte)(*sl++ ^ 0xFF);
+			}
+			else {
+				// 整行拷贝，比逐字节快得多
+				Op.CopyUnaligned(sl, dl, width);
+			}
+			ptrSrc += srcStride;
+			ptrDest += imageData.Stride;
+		}
+	}
+	/// <summary>
+	/// BGR+Alpha 32bpp → RGB+Alpha 32bpp，交换 R/B 并反预乘 alpha。
+	/// MuPDF 渲染输出是 premultiplied alpha，.NET Bitmap 需要 straight alpha。
+	/// </summary>
+	static unsafe void Copy32bppBgraUnpremultiply(Pixmap pix, int width, int height,
+												   BitmapData imageData) {
+		var ptrSrc = (byte*)pix.Samples;
+		var ptrDest = (byte*)imageData.Scan0;
+		int srcStride = pix.Stride;
+
+		for (int y = 0; y < height; y++) {
+			byte* sl = ptrSrc;
+			byte* dl = ptrDest;
+			for (int x = 0; x < width; x++) {
+				byte bSrc = sl[0]; // 源 B
+				byte g = sl[1]; // 源 G
+				byte rSrc = sl[2]; // 源 R
+				byte a = sl[3]; // 源 A
+
+				// 反预乘
+				byte r, b;
+				if (a > 0 && a < 255) {
+					r = (byte)Math.Min(255, rSrc * 255 / a);
+					g = (byte)Math.Min(255, g * 255 / a);
+					b = (byte)Math.Min(255, bSrc * 255 / a);
+				}
+				else {
+					r = rSrc;
+					b = bSrc;
+				}
+
+				// 写入目标：RGB 顺序
+				dl[0] = r;
+				dl[1] = g;
+				dl[2] = b;
+				dl[3] = a;
+
+				sl += 4;
+				dl += 4;
+			}
+			ptrSrc += srcStride;
+			ptrDest += imageData.Stride;
+		}
+	}
+
+	static unsafe void Copy24bppImage(Pixmap pix, int width, int height, bool invert, BitmapData imageData) {
+		var ptrSrc = (byte*)pix.Samples;
+		var ptrDest = (byte*)imageData.Scan0;
+		for (int y = 0; y < height; y++) {
+			var pl = ptrDest;
+			var sl = ptrSrc;
+			if (invert) {
+				for (int x = 0; x < width; x++) {
+					// 在这里进行 RGB 到 DIB BGR 的转换（省去 Mupdf 内部的转换工作）
+					pl[2] = (byte)(*sl ^ 0xFF); sl++; // R
+					pl[1] = (byte)(*sl ^ 0xFF); sl++; // G
+					pl[0] = (byte)(*sl ^ 0xFF); sl++; // B
+					pl += 3;
+				}
+			}
+			else {
+				for (int x = 0; x < width; x++) {
+					// 在这里进行 RGB 到 DIB BGR 的转换（省去 Mupdf 内部的转换工作）
+					pl[2] = *sl; sl++; // R
+					pl[1] = *sl; sl++; // G
+					pl[0] = *sl; sl++; // B
+					pl += 3;
+				}
+			}
+			ptrDest += imageData.Stride;
+			ptrSrc = sl;
+		}
 	}
 	#endregion
 
