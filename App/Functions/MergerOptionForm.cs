@@ -123,7 +123,7 @@ namespace PDFPatcher.Functions
 			ps.PaperSize.PaperName = paperName;
 			ps.PaperSize.Width = CmToPoint(_WidthBox);
 			ps.PaperSize.Height = CmToPoint(_HeightBox);
-			ps.HorizontalAlign = (Model.HorizontalAlignment)_ImageHAlignBox.SelectedIndex;
+			ps.HorizontalAlign = (HorizontalAlignment)_ImageHAlignBox.SelectedIndex;
 			ps.VerticalAlign = (VerticalAlignment)_ImageVAlignBox.SelectedIndex;
 			ps.ScaleContent = _ScalePdfPagesBox.Checked;
 			option.SubFolder = _SubFoldersBeforeFilesBox.Checked ? MergerOptions.SubFolderPosition.BeforeFiles

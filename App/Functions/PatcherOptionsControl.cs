@@ -30,8 +30,8 @@ namespace PDFPatcher.Functions
 			ps.PaperSize.PaperName = paperName;
 			ps.PaperSize.Width = CmToPoint(_WidthBox);
 			ps.PaperSize.Height = CmToPoint(_HeightBox);
-			ps.HorizontalAlign = (Model.HorizontalAlignment)_ImageHAlignBox.SelectedIndex;
-			ps.VerticalAlign = (Model.VerticalAlignment)_ImageVAlignBox.SelectedIndex;
+			ps.HorizontalAlign = (HorizontalAlignment)_ImageHAlignBox.SelectedIndex;
+			ps.VerticalAlign = (VerticalAlignment)_ImageVAlignBox.SelectedIndex;
 			ps.ScaleContent = _ScalePdfPagesBox.Checked;
 			settings.RecompressWithJbig2 = _RecompressWithJbig2Box.Checked;
 			settings.RemoveAnnotations = _RemoveAnnotationsBox.Checked;

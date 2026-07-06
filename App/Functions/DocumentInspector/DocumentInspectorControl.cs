@@ -75,49 +75,21 @@ public sealed partial class DocumentInspectorControl : FunctionControl, IDocumen
 		_ObjectDetailBox.FixEditControlWidth();
 		new TypedColumn<DocumentObject>(_NameColumn) {
 			AspectGetter = (DocumentObject d) => d.FriendlyName ?? d.Name,
-			ImageGetter = (DocumentObject d) => {
-				if (d.ImageKey != null) {
-					return d.ImageKey;
-				}
-				if (d.Type == PdfObjectType.Normal) {
-					return GetImageKey(d);
-				}
-				switch (d.Type) {
-					case PdfObjectType.Trailer:
-						return __OpNameIcons["Document"];
-					case PdfObjectType.Root:
-						break;
-					case PdfObjectType.Pages:
-						return __OpNameIcons["Pages"];
-					case PdfObjectType.Page:
-						return __OpNameIcons["Page"];
-					case PdfObjectType.Image:
-						return __OpNameIcons["Image"];
-					case PdfObjectType.Form:
-						return __OpNameIcons["Form"];
-					case PdfObjectType.Resources:
-						return __OpNameIcons["Resources"];
-					case PdfObjectType.Outline:
-						return __OpNameIcons["Outline"];
-					case PdfObjectType.PageCommands:
-						return __OpNameIcons["PageCommands"];
-					case PdfObjectType.PageCommand:
-						if (d.ImageKey == null) {
-							var n = d.ExtensiveObject as Operation;
-							if ((n != null && __OpNameIcons.TryGetValue(n.Operator, out int ic))
-								|| (d.Name.StartsWith(Constants.ContentPrefix + ":") && __OpNameIcons.TryGetValue(d.Name, out ic))
-								) {
-								d.ImageKey = ic;
-							}
-							else {
-								d.ImageKey = __OpNameIcons["?"];
-							}
-						}
-						return d.ImageKey;
-					case PdfObjectType.Hidden:
-						return __OpNameIcons["Hidden"];
-				}
-				return GetImageKey(d);
+			ImageGetter = (DocumentObject d) => d.ImageKey ?? d.Type switch {
+				PdfObjectType.Normal => GetImageKey(d),
+				PdfObjectType.Trailer => __OpNameIcons["Document"],
+				PdfObjectType.Root => GetImageKey(d),
+				PdfObjectType.Pages => __OpNameIcons["Pages"],
+				PdfObjectType.Page => __OpNameIcons["Page"],
+				PdfObjectType.Image => __OpNameIcons["Image"],
+				PdfObjectType.Form => __OpNameIcons["Form"],
+				PdfObjectType.Resources => __OpNameIcons["Resources"],
+				PdfObjectType.Outline => __OpNameIcons["Outline"],
+				PdfObjectType.PageCommands => __OpNameIcons["PageCommands"],
+				PdfObjectType.PageCommand => MakeImageKeyForPageCommand(d),
+				PdfObjectType.GoToPage => __OpNameIcons["GoToPage"],
+				PdfObjectType.Hidden => __OpNameIcons["Hidden"],
+				_ => GetImageKey(d),
 			}
 		};
 		new TypedColumn<DocumentObject>(_ValueColumn) {
@@ -189,15 +161,7 @@ public sealed partial class DocumentInspectorControl : FunctionControl, IDocumen
 			MAKE_CONTROL:
 			args.Control = new AutoResizingTextBox(args.CellBounds, t, (Control)s) { ReadOnly = readOnly };
 		};
-		_ObjectDetailBox.CanExpandGetter = (object o) => {
-			if (o is not DocumentObject d) {
-				return false;
-			}
-			if (d.Type == PdfObjectType.GoToPage) {
-				d.ImageKey = __OpNameIcons["GoToPage"];
-			}
-			return d.HasChildren;
-		};
+		_ObjectDetailBox.CanExpandGetter = (object o) => o is DocumentObject d && d.HasChildren;
 		_ObjectDetailBox.ChildrenGetter = (object o) => o is DocumentObject d
 			? (System.Collections.IEnumerable)d.Children
 			: null;
@@ -262,6 +226,13 @@ public sealed partial class DocumentInspectorControl : FunctionControl, IDocumen
 			LoadDocument(args.ClickedItem.ToolTipText);
 		};
 		Disposed += (s, args) => _pdf?.Document.Dispose();
+	}
+
+	static object MakeImageKeyForPageCommand(DocumentObject d) {
+		return d.ImageKey ??= (d.ExtensiveObject is Operation n && __OpNameIcons.TryGetValue(n.Operator, out int ic))
+					|| (d.Name.StartsWith(Constants.ContentPrefix + ":") && __OpNameIcons.TryGetValue(d.Name, out ic))
+				? ic
+				: __OpNameIcons["?"];
 	}
 
 	public override void SetupCommand(ToolStripItem item) {

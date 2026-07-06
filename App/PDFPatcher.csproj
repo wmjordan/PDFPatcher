@@ -423,7 +423,7 @@
     <Compile Include="Model\AutoBookmarkContext.cs" />
     <Compile Include="Model\BookmarkSettings.cs" />
     <Compile Include="Model\InsertBookmarkPositionType.cs" />
-    <Compile Include="Model\PageBoxSettings.cs" />
+    <Compile Include="Options\PageBoxSettings.cs" />
     <Compile Include="Model\PageFilterFlag.cs" />
     <Compile Include="Model\PdfDocumentFont.cs" />
     <Compile Include="Model\PageResizing.cs" />
