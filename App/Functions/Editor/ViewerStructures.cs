@@ -13,6 +13,7 @@ namespace PDFPatcher.Functions.Editor;
 
 public enum ContentDirection
 {
+	Auto,
 	TopToDown,
 	RightToLeft,
 	LeftToRight,

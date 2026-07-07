@@ -27,7 +27,8 @@ sealed class ViewerCommand : IEditorCommand
 		EditorCommands.ShowBookmarks,
 		EditorCommands.ShowAnnotations,
 		EditorCommands.OcrDetectPunctuation,
-		EditorCommands.FullScreen
+		EditorCommands.FullScreen,
+		EditorCommands.Option,
 	];
 	internal static void RegisterCommands(CommandRegistry<Controller> registry) {
 		foreach (var item in __commands) {
@@ -64,6 +65,7 @@ sealed class ViewerCommand : IEditorCommand
 			case EditorCommands.ShowBookmarks: controller.View.MainPanel.Panel1Collapsed = !controller.View.MainPanel.Panel1Collapsed; break;
 			case EditorCommands.OcrDetectPunctuation: v.OcrOptions.DetectContentPunctuations = !v.OcrOptions.DetectContentPunctuations; break;
 			case EditorCommands.FullScreen: AppContext.MainForm.FullScreen = !AppContext.MainForm.FullScreen; break;
+			case EditorCommands.Option: controller.View.Viewer.ShowDialog<ReaderOptionForm>(); break;
 		}
 	}
 

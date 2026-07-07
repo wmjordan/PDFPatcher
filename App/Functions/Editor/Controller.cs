@@ -104,6 +104,12 @@ sealed class Controller
 			try {
 				var d = v.Document;
 				Model.PdfDocument = v.Document = MuPdfHelper.OpenMuDocument(s);
+				View.MainPanel.Panel1Collapsed = AppContext.Reader.BookmarkState switch {
+					BookmarkState.Auto => !v.Document.Trailer.Locate(MuPDF.PdfNames.Root, MuPDF.PdfNames.Outlines).IsDictionary,
+					BookmarkState.Show => false,
+					BookmarkState.Hide => true,
+					_ => false
+				};
 				d.TryDispose();
 				if (v.Document.RepairAttempted
 					&& AppContext.MainForm.ConfirmYesBox("文档存在错误。如需处理文档，请点击“是”按钮保存文档。\n是否保存修复过的文档？")) {

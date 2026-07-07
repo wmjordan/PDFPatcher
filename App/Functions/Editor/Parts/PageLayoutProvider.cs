@@ -129,7 +129,12 @@ abstract class PageLayoutProvider
 			ContentDirection.TopToDown => new TopDownLayoutProvider(),
 			ContentDirection.RightToLeft => new RightToLeftLayoutProvider(),
 			ContentDirection.LeftToRight => new LeftToRightLayoutProvider(),
-			_ => throw new InvalidEnumArgumentException(nameof(direction), (int)direction, typeof(ContentDirection)),
+			_ =>
+#if DEBUG
+			throw new InvalidEnumArgumentException(nameof(direction), (int)direction, typeof(ContentDirection))
+#else
+			new TopDownLayoutProvider()
+#endif
 		};
 	}
 

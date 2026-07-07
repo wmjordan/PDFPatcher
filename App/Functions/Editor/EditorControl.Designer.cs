@@ -138,6 +138,7 @@
 			this._OcrMenu = new System.Windows.Forms.ToolStripMenuItem();
 			this._InsertWithOcrOnly = new System.Windows.Forms.ToolStripMenuItem();
 			this._ShowAnnotations = new System.Windows.Forms.ToolStripMenuItem();
+			this._Option = new System.Windows.Forms.ToolStripMenuItem();
 			this._EditMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this._ChangeZoomRate = new System.Windows.Forms.ToolStripMenuItem();
 			this._SetOpenStatus = new System.Windows.Forms.ToolStripMenuItem();
@@ -1087,7 +1088,8 @@
             toolStripSeparator14,
             _ShowBookmarks,
             _ShowTextBorders,
-            this._ShowAnnotations});
+            this._ShowAnnotations,
+			this._Option});
 			this._ViewerButton.Image = global::PDFPatcher.Properties.Resources.CreateDocument;
 			this._ViewerButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this._ViewerButton.Name = "_ViewerButton";
@@ -1117,6 +1119,12 @@
 			this._ShowAnnotations.Name = "_ShowAnnotations";
 			this._ShowAnnotations.Size = new System.Drawing.Size(208, 22);
 			this._ShowAnnotations.Text = "显示文档批注(&P)";
+			// 
+			// _Option
+			// 
+			this._Option.Name = "_Option";
+			this._Option.Size = new System.Drawing.Size(208, 22);
+			this._Option.Text = "阅读器选项(&Y)";
 			// 
 			// _EditMenu
 			// 
@@ -1469,20 +1477,6 @@
 			// 
 			// _ZoomBox
 			// 
-			this._ZoomBox.Items.AddRange(new object[] {
-            "适合页面",
-            "适合页宽",
-            "适合页高",
-            "20%",
-            "30%",
-            "50%",
-            "75%",
-            "100%",
-            "133%",
-            "150%",
-            "200%",
-            "300%",
-            "400%"});
 			this._ZoomBox.Name = "_ZoomBox";
 			this._ZoomBox.Size = new System.Drawing.Size(75, 25);
 			// 
@@ -1561,5 +1555,6 @@
 		private System.Windows.Forms.ToolStripMenuItem _ExpandSelection;
 		private System.Windows.Forms.ToolStripMenuItem _CollapseSelection;
 		private System.Windows.Forms.ToolStripMenuItem _SelectChildren;
+		private System.Windows.Forms.ToolStripMenuItem _Option;
 	}
 }

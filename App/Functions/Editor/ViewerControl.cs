@@ -346,6 +346,7 @@ internal sealed class ViewerControl : ImageBoxEx
 	[Description("指定需要显示的 PDF 文档")]
 	[Browsable(false)]
 	[DefaultValue(null)]
+	[EditorBrowsable(EditorBrowsableState.Never)]
 	public Document Document {
 		get => _mupdf;
 		set {
@@ -361,7 +362,17 @@ internal sealed class ViewerControl : ImageBoxEx
 			_pageBounds = new Box[l];
 			LoadPageBounds();
 			_cache = new RenderResultCache(_mupdf);
-			_LayoutProvider = Editor.Parts.PageLayoutProvider.Get(_ContentFlow);
+			ContentDirection contentFlow;
+			if (AppContext.Reader.ContentDirection == ContentDirection.Auto) {
+				var layout = (value.Trailer.Get<PdfDictionary>(PdfNames.Root)?[new PdfName("PageLayout")] as PdfName)?.Name;
+				contentFlow = layout == "TwoColumnRight" || layout == "TwoPageRight"
+					? ContentDirection.RightToLeft
+					: ContentDirection.TopToDown;
+			}
+			else {
+				contentFlow = _ContentFlow.SubstituteDefault(ContentDirection.TopToDown);
+			}
+			_LayoutProvider = Editor.Parts.PageLayoutProvider.Get(contentFlow);
 			CalculateZoomFactor(_LiteralZoom, ViewPortSize);
 			UpdateLayout(true);
 			_refreshTimer.Start();
@@ -1285,11 +1296,13 @@ internal sealed class ViewerControl : ImageBoxEx
 			}
 			_mupdf = null;
 		}
-		_ContentFlow = AppContext.Reader.ContentDirection;
-		_FullPageScroll = AppContext.Reader.FullPageScroll;
-		_LiteralZoom = AppContext.Reader.Zoom.SubstituteDefault(Constants.DestinationAttributes.ViewType.FitH);
-		// 创建默认布局提供者
-		_LayoutProvider = Editor.Parts.PageLayoutProvider.Get(_ContentFlow);
+		var options = AppContext.Reader;
+		_ContentFlow = options.ContentDirection;
+		_FullPageScroll = options.FullPageScroll;
+		_LiteralZoom = options.Zoom.SubstituteDefault(Constants.DestinationAttributes.ViewType.FitH);
+		_ShowTextBorders = options.ShowTextBoder;
+		HideAnnotations = !options.ShowAnnotation;
+		GrayScale = options.GrayScale;
 		_OcrOptions.CompressWhiteSpaces = true;
 		_ocrResults = [];
 	}
