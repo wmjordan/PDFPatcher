@@ -59,6 +59,7 @@ static class EditorCommands
 		d.Register(new SavePageImageCommand(), Commands.EditorSavePageImage);
 		d.Register(new ViewerScrollToBookmarkCommand(), Commands.EditorViewerScrollToBookmark);
 		d.Register(new InsertPageLabelCommand(), Commands.EditorInsertPageLabel);
+		d.Register(new CopySelectedContentCommand(), "_CopySelection");
 		d.Register(new ApplyBookmarkOptionCommand(), EditorCommands.ApplyOptions);
 		BookmarkMarkerCommand.RegisterCommands(d);
 		ViewerCommand.RegisterCommands(d);

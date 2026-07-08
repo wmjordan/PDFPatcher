@@ -107,6 +107,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Functions\Editor\Commands\ApplyBookmarkOptionCommand.cs" />
+    <Compile Include="Functions\Editor\Commands\CopySelectedContentCommand.cs" />
     <Compile Include="Functions\Editor\Commands\InsertPageLabelCommand.cs" />
     <Compile Include="Functions\Editor\Commands\BookmarkSearchReplaceCommand.cs" />
     <Compile Include="Functions\Editor\EditorCommands.cs" />

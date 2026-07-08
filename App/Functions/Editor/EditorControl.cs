@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Drawing;
-using System.Linq;
 using System.Security.Permissions;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using MuPDF.Extensions;
 using PDFPatcher.Common;
+using PDFPatcher.Functions.Editor;
 using PDFPatcher.Model;
 using PDFPatcher.Processor;
-using PDFPatcher.Functions.Editor;
 
 namespace PDFPatcher.Functions;
 
@@ -277,21 +275,6 @@ public sealed partial class EditorControl : FunctionControl, IDocumentEditor, IE
 			#region 阅读器工具栏命令
 			case "_AutoBookmark":
 				_controller.ShowAutoBookmarkForm();
-				break;
-			case "_CopySelection":
-				var sel = _ViewerBox.GetSelection();
-				if (sel.Page > 0) {
-					var r = _ViewerBox.GetSelectionPageRegion();
-					var lines = _ViewerBox.FindTextLines(r);
-					if (lines != null) {
-						Clipboard.SetText(String.Join(Environment.NewLine, lines.Select(i => i.GetText())));
-					}
-					else {
-						using (var b = sel.GetSelectedBitmap()) {
-							Clipboard.SetImage(b);
-						}
-					}
-				}
 				break;
 			case "_InsertWithOcrOnly":
 				_controller.Model.InsertBookmarkWithOcrOnly = !_controller.Model.InsertBookmarkWithOcrOnly;
