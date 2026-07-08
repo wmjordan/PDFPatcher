@@ -58,6 +58,7 @@ static class EditorCommands
 		d.Register(new SavePageImageCommand(), Commands.EditorSavePageImage);
 		d.Register(new ViewerScrollToBookmarkCommand(), Commands.EditorViewerScrollToBookmark);
 		d.Register(new InsertPageLabelCommand(), Commands.EditorInsertPageLabel);
+		d.Register(new ApplyBookmarkOptionCommand(), EditorCommands.ApplyOptions);
 		BookmarkMarkerCommand.RegisterCommands(d);
 		ViewerCommand.RegisterCommands(d);
 		QuickSelectCommand.RegisterCommands(d);
@@ -85,7 +86,8 @@ static class EditorCommands
 	public const string OcrDetectPunctuation = "_OcrDetectPunctuation";
 	public const string FullScreen = "_FullScreen";
 	public const string OcrPage = "_OcrPage";
-	public const string Option = "_Option";
+	public const string Options = "_Option";
+	public const string ApplyOptions = "_ApplyOptions";
 
 	public static void Execute(string command, Controller controller, params string[] parameters) {
 		__Commands.Process(command, controller, parameters);

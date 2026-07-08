@@ -362,17 +362,7 @@ internal sealed class ViewerControl : ImageBoxEx
 			_pageBounds = new Box[l];
 			LoadPageBounds();
 			_cache = new RenderResultCache(_mupdf);
-			ContentDirection contentFlow;
-			if (AppContext.Reader.ContentDirection == ContentDirection.Auto) {
-				var layout = (value.Trailer.Get<PdfDictionary>(PdfNames.Root)?[new PdfName("PageLayout")] as PdfName)?.Name;
-				contentFlow = layout == "TwoColumnRight" || layout == "TwoPageRight"
-					? ContentDirection.RightToLeft
-					: ContentDirection.TopToDown;
-			}
-			else {
-				contentFlow = _ContentFlow.SubstituteDefault(ContentDirection.TopToDown);
-			}
-			_LayoutProvider = Editor.Parts.PageLayoutProvider.Get(contentFlow);
+			ApplyOptions(AppContext.Reader);
 			CalculateZoomFactor(_LiteralZoom, ViewPortSize);
 			UpdateLayout(true);
 			_refreshTimer.Start();
@@ -1115,6 +1105,9 @@ internal sealed class ViewerControl : ImageBoxEx
 		return new DrawingPoint(o.X + (int)imageX, o.Y + (int)imageY);
 	}
 	internal DrawingPoint GetVirtualImageOffset(int pageNumber) {
+		if (_LayoutProvider is null) {
+			return default;
+		}
 		var pageRect = _LayoutProvider.GetPageRect(pageNumber);
 		return new DrawingPoint((int)pageRect.Left, (int)pageRect.Top);
 	}
@@ -1296,16 +1289,28 @@ internal sealed class ViewerControl : ImageBoxEx
 			}
 			_mupdf = null;
 		}
-		var options = AppContext.Reader;
-		_ContentFlow = options.ContentDirection;
-		_FullPageScroll = options.FullPageScroll;
-		_LiteralZoom = options.Zoom.SubstituteDefault(Constants.DestinationAttributes.ViewType.FitH);
-		_ShowTextBorders = options.ShowTextBoder;
-		HideAnnotations = !options.ShowAnnotation;
-		GrayScale = options.GrayScale;
 		_OcrOptions.CompressWhiteSpaces = true;
 		_ocrResults = [];
 	}
+
+	internal void ApplyOptions(ReaderOptions options) {
+		_LiteralZoom = options.Zoom.SubstituteDefault(Constants.DestinationAttributes.ViewType.FitH);
+		_FullPageScroll = options.FullPageScroll;
+		_ShowTextBorders = options.ShowTextBoder;
+
+		HideAnnotations = !options.ShowAnnotation;
+		GrayScale = options.GrayScale;
+
+		if (options.ContentDirection == ContentDirection.Auto) {
+			if (Document is not null) {
+				var layout = (Document.Trailer.Get<PdfDictionary>(PdfNames.Root)?[new PdfName("PageLayout")] as PdfName)?.Name;
+				ContentDirection = layout == "TwoColumnRight" || layout == "TwoPageRight"
+					? ContentDirection.RightToLeft
+					: ContentDirection.TopToDown;
+			}
+		}
+	}
+
 
 	protected override void Dispose(bool disposing) {
 		base.Dispose(disposing);

@@ -54,10 +54,6 @@ public sealed partial class EditorControl : FunctionControl, IDocumentEditor, IE
 		new Editor.Parts.BookmarkTitleEditHandler(_controller);
 		new Editor.Parts.CurrentPageBoxHandler(_CurrentPageBox, _ViewerBox);
 		new Editor.Parts.MousePositionInfoHandler(_PageInfoBox, _ViewerBox);
-		var options = AppContext.Reader;
-		if (!String.IsNullOrEmpty(options.BookmarkFont)) {
-			_BookmarkBox.Font = new Font(options.BookmarkFont, Font.Size);
-		}
 		ListRecentFiles = _OpenButton_DropDownOpening;
 		RecentFileItemClicked = _OpenButton_DropDownItemClicked;
 		var s = this.GetDpiScale();
@@ -122,6 +118,7 @@ public sealed partial class EditorControl : FunctionControl, IDocumentEditor, IE
 		_ZoomBox.Enabled = false;
 		_ZoomBox.TextChanged += (s, args) => _ViewerBox.LiteralZoom = _ZoomBox.Text;
 		_ViewerBox.Enabled = false;
+		_ViewerBox.ApplyOptions(AppContext.Reader);
 		_ViewerBox.DocumentLoaded += _ViewerBoxInitializeAfterDocumentLoad;
 		_ViewerBox.ZoomChanged += (s, args) => {
 			_ZoomBox.ToolTipText = "当前显示比例：" + (_ViewerBox.ZoomFactor * 100).ToInt32() + "%";
@@ -142,7 +139,7 @@ public sealed partial class EditorControl : FunctionControl, IDocumentEditor, IE
 		Disposed += (s, args) => _controller.Destroy();
 	}
 
-	private void CreateChangeZoomRateItems() {
+	void CreateChangeZoomRateItems() {
 		var di = _ChangeZoomRate.DropDownItems;
 		di.AddRange(Array.ConvertAll(Constants.DestinationAttributes.ViewType.Names, n => new ToolStripMenuItem { Name = n, Text = n }));
 		di.RemoveByKey(Constants.DestinationAttributes.ViewType.FitR);
@@ -154,6 +151,7 @@ public sealed partial class EditorControl : FunctionControl, IDocumentEditor, IE
 	}
 
 	void _ViewerBoxInitializeAfterDocumentLoad(object sender, EventArgs e) {
+		_controller.ExecuteCommand(EditorCommands.ApplyOptions);
 		_ZoomBox.Text = _ViewerBox.LiteralZoom;
 		_ZoomBox.Enabled = true;
 		_ViewerBox.ScrollToPage(1);

@@ -37,11 +37,13 @@ public partial class ReaderOptionForm : Form
 		_ShowAnnotationBox.Checked = options.ShowAnnotation;
 		_GrayScaleBox.Checked = options.GrayScale;
 		_FullPageScrollBox.Checked = options.FullPageScroll;
-
-		_DirectionBox.Select((int)options.ContentDirection);
-		_ShowBookmarkBox.Select((int)options.BookmarkState);
 		_ZoomRateBox.Text = options.Zoom.SubstituteDefault("自动");
+		_DirectionBox.Select((int)options.ContentDirection);
+
+		_ShowBookmarkBox.Select((int)options.BookmarkState);
 		_BookmarkFontBox.Text = options.BookmarkFont;
+		_AutoEditNextBookmarkBox.Checked = options.ContinuousBookmarkEdit;
+		_LocateOnBookmarkEditBox.Checked = options.LocateBookmarkOnEdit;
 
 		_uiLockDown = false;
 	}
@@ -53,10 +55,12 @@ public partial class ReaderOptionForm : Form
 		options.ShowAnnotation = _ShowAnnotationBox.Checked;
 		options.GrayScale = _GrayScaleBox.Checked;
 		options.FullPageScroll = _FullPageScrollBox.Checked;
-
 		options.ContentDirection = (Editor.ContentDirection)_DirectionBox.SelectedIndex;
-		options.BookmarkState = (BookmarkState)_ShowBookmarkBox.SelectedIndex;
 		options.Zoom = _ZoomRateBox.Text;
+
+		options.BookmarkState = (BookmarkState)_ShowBookmarkBox.SelectedIndex;
 		options.BookmarkFont = _BookmarkFontBox.Text;
+		options.ContinuousBookmarkEdit = _AutoEditNextBookmarkBox.Checked;
+		options.LocateBookmarkOnEdit = _LocateOnBookmarkEditBox.Checked;
 	}
 }

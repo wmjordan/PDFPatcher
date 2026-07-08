@@ -3,7 +3,7 @@ using PDFPatcher.Common;
 
 namespace PDFPatcher.Functions.Editor;
 
-sealed class ViewerCommand : IEditorCommand
+sealed class ViewerCommand(string command) : IEditorCommand
 {
 	static readonly Color __DarkModeColor = Color.DarkGray;
 	static readonly Color __GreenModeColor = Color.FromArgb(0xCC, 0xFF, 0xCC);
@@ -28,7 +28,7 @@ sealed class ViewerCommand : IEditorCommand
 		EditorCommands.ShowAnnotations,
 		EditorCommands.OcrDetectPunctuation,
 		EditorCommands.FullScreen,
-		EditorCommands.Option,
+		EditorCommands.Options,
 	];
 	internal static void RegisterCommands(CommandRegistry<Controller> registry) {
 		foreach (var item in __commands) {
@@ -36,19 +36,13 @@ sealed class ViewerCommand : IEditorCommand
 		}
 	}
 
-	readonly string _command;
-
-	public ViewerCommand(string command) {
-		_command = command;
-	}
-
 	public void Process(Controller controller, params string[] parameters) {
 		var v = controller.View.Viewer;
-		switch (_command) {
+		switch (command) {
 			case EditorCommands.FirstPage:
 			case EditorCommands.PreviousPage:
 			case EditorCommands.NextPage:
-			case EditorCommands.LastPage: v.ExecuteCommand(_command); break;
+			case EditorCommands.LastPage: v.ExecuteCommand(command); break;
 			case EditorCommands.ScrollVertical: v.ContentDirection = ContentDirection.TopToDown; break;
 			case EditorCommands.ScrollHorizontal: v.ContentDirection = ContentDirection.RightToLeft; break;
 			case EditorCommands.ScrollHorizontalLeftToRight: v.ContentDirection = ContentDirection.LeftToRight; break;
@@ -65,7 +59,10 @@ sealed class ViewerCommand : IEditorCommand
 			case EditorCommands.ShowBookmarks: controller.View.MainPanel.Panel1Collapsed = !controller.View.MainPanel.Panel1Collapsed; break;
 			case EditorCommands.OcrDetectPunctuation: v.OcrOptions.DetectContentPunctuations = !v.OcrOptions.DetectContentPunctuations; break;
 			case EditorCommands.FullScreen: AppContext.MainForm.FullScreen = !AppContext.MainForm.FullScreen; break;
-			case EditorCommands.Option: controller.View.Viewer.ShowDialog<ReaderOptionForm>(); break;
+			case EditorCommands.Options:
+				controller.View.Viewer.ShowDialog<ReaderOptionForm>();
+				controller.ExecuteCommand(EditorCommands.ApplyOptions);
+				break;
 		}
 	}
 

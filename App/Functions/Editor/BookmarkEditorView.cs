@@ -504,6 +504,9 @@ namespace PDFPatcher.Functions
 				return;
 			}
 			if (e.Column == _BookmarkNameColumn) {
+				if (!AppContext.Reader.ContinuousBookmarkEdit) {
+					return;
+				}
 				var i = GetItem(e.ListViewItem.Index);
 				var o = e.RowObject as XmlElement;
 				if (o.HasChildNodes) {

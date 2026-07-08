@@ -106,6 +106,7 @@
     <Compile Include="Functions\Editor\AutoResizingTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Functions\Editor\Commands\ApplyBookmarkOptionCommand.cs" />
     <Compile Include="Functions\Editor\Commands\InsertPageLabelCommand.cs" />
     <Compile Include="Functions\Editor\EditorCommands.cs" />
     <Compile Include="Functions\Editor\Commands\ViewerScrollToBookmarkCommand.cs" />
@@ -123,6 +124,12 @@
     </Compile>
     <Compile Include="Functions\PatcherOptionsControl.Designer.cs">
       <DependentUpon>PatcherOptionsControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Functions\Editor\ReaderOptionForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Functions\Editor\ReaderOptionForm.Designer.cs">
+      <DependentUpon>ReaderOptionForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Model\ResourceReference.cs" />
     <Compile Include="Options\ReaderOptions.cs" />
@@ -789,6 +796,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Functions\PatcherOptionsControl.resx">
       <DependentUpon>PatcherOptionsControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Functions\Editor\ReaderOptionForm.resx">
+      <DependentUpon>ReaderOptionForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Functions\RenameControl.resx">
       <DependentUpon>RenameControl.cs</DependentUpon>
