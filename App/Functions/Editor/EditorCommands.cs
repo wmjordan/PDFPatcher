@@ -53,6 +53,7 @@ static class EditorCommands
 		d.Register(new BookmarkSelectionCommand(Commands.ExpandSelection), Commands.ExpandSelection);
 		d.Register(new BookmarkSelectionCommand(Commands.CollapseSelection), Commands.CollapseSelection);
 		d.Register(new BookmarkSelectionCommand(Commands.CollapseChildren), Commands.CollapseChildren);
+		d.Register(new BookmarkSearchReplaceCommand(), "_SearchReplace");
 		d.Register(new OcrPageCommand(), Commands.EditorOcrPage);
 		d.Register(new PagePropertiesCommand(), Commands.EditorPageProperties);
 		d.Register(new SavePageImageCommand(), Commands.EditorSavePageImage);

@@ -17,7 +17,6 @@ public sealed partial class EditorControl : FunctionControl, IDocumentEditor, IE
 	static readonly Color __DarkModeColor = Color.DarkGray;
 	static readonly Color __GreenModeColor = Color.FromArgb(0xCC, 0xFF, 0xCC);
 
-	SearchBookmarkForm _searchForm;
 	AutoBookmarkForm _autoBookmarkForm;
 	readonly Controller _controller;
 
@@ -157,11 +156,6 @@ public sealed partial class EditorControl : FunctionControl, IDocumentEditor, IE
 		_ViewerBox.ScrollToPage(1);
 	}
 
-	internal override void OnDeselected() {
-		base.OnDeselected();
-		_searchForm?.Close();
-	}
-
 	void _ViewBox_MouseClick(object sender, MouseEventArgs args) {
 		if (_ViewerBox.FirstPage == 0) {
 			return;
@@ -278,15 +272,6 @@ public sealed partial class EditorControl : FunctionControl, IDocumentEditor, IE
 				break;
 			case "_MergeBookmark":
 				_controller.MergeBookmark(_BookmarkBox.GetSelectedElements());
-				break;
-			case "_SearchReplace":
-				if (_searchForm == null || _searchForm.IsDisposed) {
-					_searchForm = new SearchBookmarkForm(_controller);
-				}
-				if (!_searchForm.Visible) {
-					_searchForm.Show(this);
-				}
-				_searchForm.BringToFront();
 				break;
 			#endregion
 			#region 阅读器工具栏命令
