@@ -37,12 +37,12 @@ partial class ReaderOptionForm
 			this._ZoomRateBox = new System.Windows.Forms.ComboBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this._BookmarkPage = new System.Windows.Forms.TabPage();
+			this._LocateOnBookmarkEditBox = new System.Windows.Forms.CheckBox();
 			this._AutoEditNextBookmarkBox = new System.Windows.Forms.CheckBox();
 			this._BookmarkFontBox = new System.Windows.Forms.ComboBox();
 			this.label4 = new System.Windows.Forms.Label();
 			this._ShowBookmarkBox = new System.Windows.Forms.ComboBox();
 			this.label3 = new System.Windows.Forms.Label();
-			this._LocateOnBookmarkEditBox = new System.Windows.Forms.CheckBox();
 			this._MainTab.SuspendLayout();
 			this._DefaultPage.SuspendLayout();
 			this._BookmarkPage.SuspendLayout();
@@ -89,7 +89,7 @@ partial class ReaderOptionForm
 			this.label5.Name = "label5";
 			this.label5.Padding = new System.Windows.Forms.Padding(6);
 			this.label5.Size = new System.Drawing.Size(430, 27);
-			this.label5.TabIndex = 12;
+			this.label5.TabIndex = 8;
 			this.label5.Text = "说明：本页的设置仅在打开文档时应用，不影响已打开的文档。";
 			// 
 			// _ShowAnnotationBox
@@ -98,8 +98,8 @@ partial class ReaderOptionForm
 			this._ShowAnnotationBox.Location = new System.Drawing.Point(8, 54);
 			this._ShowAnnotationBox.Name = "_ShowAnnotationBox";
 			this._ShowAnnotationBox.Size = new System.Drawing.Size(96, 16);
-			this._ShowAnnotationBox.TabIndex = 9;
-			this._ShowAnnotationBox.Text = "显示文档批注";
+			this._ShowAnnotationBox.TabIndex = 5;
+			this._ShowAnnotationBox.Text = "隐藏文档批注";
 			this._ShowAnnotationBox.UseVisualStyleBackColor = true;
 			// 
 			// _ShowTextBorderBox
@@ -108,7 +108,7 @@ partial class ReaderOptionForm
 			this._ShowTextBorderBox.Location = new System.Drawing.Point(8, 32);
 			this._ShowTextBorderBox.Name = "_ShowTextBorderBox";
 			this._ShowTextBorderBox.Size = new System.Drawing.Size(96, 16);
-			this._ShowTextBorderBox.TabIndex = 6;
+			this._ShowTextBorderBox.TabIndex = 4;
 			this._ShowTextBorderBox.Text = "显示文本边框";
 			this._ShowTextBorderBox.UseVisualStyleBackColor = true;
 			// 
@@ -118,7 +118,7 @@ partial class ReaderOptionForm
 			this._GrayScaleBox.Location = new System.Drawing.Point(8, 76);
 			this._GrayScaleBox.Name = "_GrayScaleBox";
 			this._GrayScaleBox.Size = new System.Drawing.Size(72, 16);
-			this._GrayScaleBox.TabIndex = 5;
+			this._GrayScaleBox.TabIndex = 6;
 			this._GrayScaleBox.Text = "黑白显示";
 			this._GrayScaleBox.UseVisualStyleBackColor = true;
 			// 
@@ -128,7 +128,7 @@ partial class ReaderOptionForm
 			this._FullPageScrollBox.Location = new System.Drawing.Point(8, 98);
 			this._FullPageScrollBox.Name = "_FullPageScrollBox";
 			this._FullPageScrollBox.Size = new System.Drawing.Size(108, 16);
-			this._FullPageScrollBox.TabIndex = 4;
+			this._FullPageScrollBox.TabIndex = 7;
 			this._FullPageScrollBox.Text = "翻页键整页翻页";
 			this._FullPageScrollBox.UseVisualStyleBackColor = true;
 			// 
@@ -188,13 +188,23 @@ partial class ReaderOptionForm
 			this._BookmarkPage.Text = "书签编辑器";
 			this._BookmarkPage.UseVisualStyleBackColor = true;
 			// 
+			// _LocateOnBookmarkEditBox
+			// 
+			this._LocateOnBookmarkEditBox.AutoSize = true;
+			this._LocateOnBookmarkEditBox.Location = new System.Drawing.Point(8, 32);
+			this._LocateOnBookmarkEditBox.Name = "_LocateOnBookmarkEditBox";
+			this._LocateOnBookmarkEditBox.Size = new System.Drawing.Size(204, 16);
+			this._LocateOnBookmarkEditBox.TabIndex = 4;
+			this._LocateOnBookmarkEditBox.Text = "编辑书签文本时，滚动到对应页面";
+			this._LocateOnBookmarkEditBox.UseVisualStyleBackColor = true;
+			// 
 			// _AutoEditNextBookmarkBox
 			// 
 			this._AutoEditNextBookmarkBox.AutoSize = true;
 			this._AutoEditNextBookmarkBox.Location = new System.Drawing.Point(8, 54);
 			this._AutoEditNextBookmarkBox.Name = "_AutoEditNextBookmarkBox";
 			this._AutoEditNextBookmarkBox.Size = new System.Drawing.Size(204, 16);
-			this._AutoEditNextBookmarkBox.TabIndex = 16;
+			this._AutoEditNextBookmarkBox.TabIndex = 5;
 			this._AutoEditNextBookmarkBox.Text = "修改书签文本后，编辑下一个书签";
 			this._AutoEditNextBookmarkBox.UseVisualStyleBackColor = true;
 			// 
@@ -205,7 +215,7 @@ partial class ReaderOptionForm
 			this._BookmarkFontBox.Location = new System.Drawing.Point(296, 6);
 			this._BookmarkFontBox.Name = "_BookmarkFontBox";
 			this._BookmarkFontBox.Size = new System.Drawing.Size(121, 20);
-			this._BookmarkFontBox.TabIndex = 15;
+			this._BookmarkFontBox.TabIndex = 3;
 			// 
 			// label4
 			// 
@@ -213,7 +223,7 @@ partial class ReaderOptionForm
 			this.label4.Location = new System.Drawing.Point(225, 9);
 			this.label4.Name = "label4";
 			this.label4.Size = new System.Drawing.Size(65, 12);
-			this.label4.TabIndex = 14;
+			this.label4.TabIndex = 2;
 			this.label4.Text = "书签字体：";
 			// 
 			// _ShowBookmarkBox
@@ -227,7 +237,7 @@ partial class ReaderOptionForm
 			this._ShowBookmarkBox.Location = new System.Drawing.Point(77, 6);
 			this._ShowBookmarkBox.Name = "_ShowBookmarkBox";
 			this._ShowBookmarkBox.Size = new System.Drawing.Size(121, 20);
-			this._ShowBookmarkBox.TabIndex = 13;
+			this._ShowBookmarkBox.TabIndex = 1;
 			// 
 			// label3
 			// 
@@ -235,18 +245,8 @@ partial class ReaderOptionForm
 			this.label3.Location = new System.Drawing.Point(6, 9);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(53, 12);
-			this.label3.TabIndex = 12;
+			this.label3.TabIndex = 0;
 			this.label3.Text = "书签栏：";
-			// 
-			// _LocateOnBookmarkEditBox
-			// 
-			this._LocateOnBookmarkEditBox.AutoSize = true;
-			this._LocateOnBookmarkEditBox.Location = new System.Drawing.Point(8, 32);
-			this._LocateOnBookmarkEditBox.Name = "_LocateOnBookmarkEditBox";
-			this._LocateOnBookmarkEditBox.Size = new System.Drawing.Size(204, 16);
-			this._LocateOnBookmarkEditBox.TabIndex = 17;
-			this._LocateOnBookmarkEditBox.Text = "编辑书签文本时，滚动到对应页面";
-			this._LocateOnBookmarkEditBox.UseVisualStyleBackColor = true;
 			// 
 			// ReaderOptionForm
 			// 

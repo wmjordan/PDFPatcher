@@ -34,7 +34,7 @@ public partial class ReaderOptionForm : Form
 		_uiLockDown = true;
 		var options = AppContext.Reader;
 		_ShowTextBorderBox.Checked = options.ShowTextBoder;
-		_ShowAnnotationBox.Checked = options.ShowAnnotation;
+		_ShowAnnotationBox.Checked = options.HideAnnotation;
 		_GrayScaleBox.Checked = options.GrayScale;
 		_FullPageScrollBox.Checked = options.FullPageScroll;
 		_ZoomRateBox.Text = options.Zoom.SubstituteDefault("自动");
@@ -52,7 +52,7 @@ public partial class ReaderOptionForm : Form
 		base.OnClosed(e);
 		var options = AppContext.Reader;
 		options.ShowTextBoder = _ShowTextBorderBox.Checked;
-		options.ShowAnnotation = _ShowAnnotationBox.Checked;
+		options.HideAnnotation = _ShowAnnotationBox.Checked;
 		options.GrayScale = _GrayScaleBox.Checked;
 		options.FullPageScroll = _FullPageScrollBox.Checked;
 		options.ContentDirection = (Editor.ContentDirection)_DirectionBox.SelectedIndex;

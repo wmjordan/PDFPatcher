@@ -1298,7 +1298,7 @@ internal sealed class ViewerControl : ImageBoxEx
 		_FullPageScroll = options.FullPageScroll;
 		_ShowTextBorders = options.ShowTextBoder;
 
-		HideAnnotations = !options.ShowAnnotation;
+		HideAnnotations = options.HideAnnotation;
 		GrayScale = options.GrayScale;
 
 		if (options.ContentDirection == ContentDirection.Auto) {

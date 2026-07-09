@@ -9,10 +9,10 @@ public class ReaderOptions
 	public bool FullPageScroll { get; set; }
 	[XmlAttribute("黑白显示")]
 	public bool GrayScale { get; set; }
-	[XmlAttribute("文本边框")]
+	[XmlAttribute("显示文本边框")]
 	public bool ShowTextBoder { get; set; }
-	[XmlAttribute("文档标注")]
-	public bool ShowAnnotation { get; set; }
+	[XmlAttribute("隐藏文档标注")]
+	public bool HideAnnotation { get; set; }
 	[XmlAttribute("缩放状态")]
 	public string Zoom { get; set; }
 	[XmlAttribute("滚动方向")]
