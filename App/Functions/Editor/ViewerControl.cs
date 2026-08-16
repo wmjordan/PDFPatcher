@@ -1216,9 +1216,6 @@ internal sealed class ViewerControl : ImageBoxEx
 		}
 		if (py != 0) {
 			py = bound.Height - (py - bound.Y0);
-			if (!h && Math.Abs(py) < 0.001f) {
-				op.Y -= __pageMargin;
-			}
 		}
 		var z = GetZoomFactorForPage(bound);
 		ScrollTo(
@@ -1301,13 +1298,12 @@ internal sealed class ViewerControl : ImageBoxEx
 		HideAnnotations = options.HideAnnotation;
 		GrayScale = options.GrayScale;
 
-		if (options.ContentDirection == ContentDirection.Auto) {
-			if (Document is not null) {
-				var layout = (Document.Trailer.Get<PdfDictionary>(PdfNames.Root)?[new PdfName("PageLayout")] as PdfName)?.Name;
-				ContentDirection = layout == "TwoColumnRight" || layout == "TwoPageRight"
-					? ContentDirection.RightToLeft
-					: ContentDirection.TopToDown;
-			}
+		if (options.ContentDirection == ContentDirection.Auto
+			&& Document is not null) {
+			var layout = (Document.Trailer.Get<PdfDictionary>(PdfNames.Root)?[new PdfName("PageLayout")] as PdfName)?.Name;
+			ContentDirection = layout == "TwoColumnRight" || layout == "TwoPageRight"
+				? ContentDirection.RightToLeft
+				: ContentDirection.TopToDown;
 		}
 	}
 
