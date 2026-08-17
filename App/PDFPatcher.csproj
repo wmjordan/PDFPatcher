@@ -94,6 +94,7 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\EventArgs.cs" />
     <Compile Include="Common\IsExternalInit.cs" />
     <Compile Include="Common\StringBuilderCache.cs" />
     <Compile Include="Configuration.Designer.cs">
