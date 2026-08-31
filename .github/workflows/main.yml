@@ -4,7 +4,10 @@ on:
   release:
     types: [published]
   workflow_dispatch:   # ← 允许在 Actions 页面手动触发
- 
+  push:                          # ← 临时添加
+    branches:
+      - wmjordan-patch-1    # ← 仅在该分支触发
+
 jobs:
   build-and-sign:
     runs-on: windows-latest
