@@ -1,0 +1,60 @@
+name: Sign Release Artifact
+ 
+on:
+  release:
+    types: [published]
+ 
+jobs:
+  build-and-sign:
+    runs-on: windows-latest
+ 
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+ 
+      # .NET Framework 4.0 项目需用 MSBuild，不能用 dotnet build
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+ 
+      # packages.config 格式的 NuGet 还原
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v2
+ 
+      - name: Restore NuGet packages
+        run: nuget restore PDFPatcher.sln
+ 
+      # 项目仅配置了 x86 平台，Release 输出路径为 bin/Release/
+      - name: Build
+        run: msbuild PDFPatcher.sln /p:Configuration=Release /p:Platform=x86 /t:Rebuild
+ 
+      # 从 AssemblyInfo.cs 提取版本号，供签名参数使用
+      - name: Extract version
+        id: version
+        shell: pwsh
+        run: |
+          $content = Get-Content App/Properties/AssemblyInfo.cs -Raw
+          if ($content -match 'AssemblyFileVersion\("([^"]+)"\)') {
+            $version = $Matches[1]
+          } elseif ($content -match 'AssemblyVersion\("([^"]+)"\)') {
+            $version = $Matches[1]
+          }
+          echo "version=$version" >> $env:GITHUB_OUTPUT
+ 
+      - name: Upload unsigned artifact
+        id: upload-unsigned-artifact
+        uses: actions/upload-artifact@v7
+        with:
+          path: bin/Release/PDFPatcher.exe
+ 
+      - name: Submit signing request
+        uses: signpath/github-action-submit-signing-request@v2
+        with:
+          api-token: '${{ secrets.SIGNPATH_API_TOKEN }}'
+          organization-id: '9e59d77b-1688-4585-8ddd-35c559a993e1'
+          project-slug: 'PDFPatcher'
+          signing-policy-slug: 'release-signing'
+          github-artifact-id: '${{ steps.upload-unsigned-artifact.outputs.artifact-id }}'
+          wait-for-completion: true
+          output-artifact-directory: 'bin/Release/signed/'
+          parameters: |
+            version: "${{ steps.version.outputs.version }}"
