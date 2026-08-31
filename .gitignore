@@ -1,7 +1,6 @@
 *.snk
 *.pld
 CopyReleasedFiles.js
-ILRepack.targets
 7za.exe
 misc/
 
