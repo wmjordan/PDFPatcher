@@ -3,6 +3,7 @@ name: Sign Release Artifact
 on:
   release:
     types: [published]
+  workflow_dispatch:   # ← 允许在 Actions 页面手动触发
  
 jobs:
   build-and-sign:
