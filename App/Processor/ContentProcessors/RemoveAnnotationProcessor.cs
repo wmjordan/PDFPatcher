@@ -43,7 +43,7 @@ namespace PDFPatcher.Processor
 				if (PdfReader.GetPdfObject(anns[i]) is not PdfDictionary ann) {
 					continue;
 				}
-				if (_AnnotationType.Equals(ann.GetAsName(PdfName.SUBTYPE)) == false) {
+				if (!_AnnotationType.Equals(ann.GetAsName(PdfName.SUBTYPE))) {
 					continue;
 				}
 				anns.Remove(i);

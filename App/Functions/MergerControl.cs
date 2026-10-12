@@ -9,960 +9,959 @@ using BrightIdeasSoftware;
 using PDFPatcher.Common;
 using PDFPatcher.Model;
 
-namespace PDFPatcher.Functions
+namespace PDFPatcher.Functions;
+
+[ToolboxItem(false)]
+public partial class MergerControl : FunctionControl
 {
-	[ToolboxItem(false)]
-	public partial class MergerControl : FunctionControl
-	{
-		FileListHelper _listHelper;
-		readonly SourceItem _itemsContainer = new SourceItem.Empty();
-		readonly string[] _bookmarkStyleButtonNames;
+	FileListHelper _listHelper;
+	readonly SourceItem _itemsContainer = new SourceItem.Empty();
+	readonly string[] _bookmarkStyleButtonNames;
 
-		public override string FunctionName => "合并文档";
+	public override string FunctionName => "合并文档";
 
-		public override Bitmap IconImage => Properties.Resources.Merger;
+	public override Bitmap IconImage => Properties.Resources.Merger;
 
-		public MergerControl() {
-			InitializeComponent();
-			_bookmarkStyleButtonNames = ["_BoldStyleButton", "_BookmarkColorButton", "_ItalicStyleButton"];
-			this.OnFirstLoad(OnLoad);
-		}
+	public MergerControl() {
+		InitializeComponent();
+		_bookmarkStyleButtonNames = ["_BoldStyleButton", "_BookmarkColorButton", "_ItalicStyleButton"];
+		this.OnFirstLoad(OnLoad);
+	}
 
-		void OnLoad() {
-			var s = this.GetDpiScale();
-			_MainToolbar.ScaleElements(s);
-			_FileMenu.ScaleElements(s);
-			_ItemListMenu.ScaleElements(s);
-			_RecentFileMenu.ScaleElements(s);
-			_RecentFolderMenu.ScaleElements(s);
-			_ItemList.ScaleColumnWidths();
+	void OnLoad() {
+		var s = this.GetDpiScale();
+		_MainToolbar.ScaleElements(s);
+		_FileMenu.ScaleElements(s);
+		_ItemListMenu.ScaleElements(s);
+		_RecentFileMenu.ScaleElements(s);
+		_RecentFolderMenu.ScaleElements(s);
+		_ItemList.ScaleColumnWidths();
 
-			_BookmarkColorButton.SelectedColorChanged += (s, e) => RefreshBookmarkColor();
+		_BookmarkColorButton.SelectedColorChanged += (s, e) => RefreshBookmarkColor();
 
-			AppContext.MainForm.SetTooltip(_BookmarkControl.FileList, "为目标 PDF 文件添加书签的信息文件（可选）");
-			AppContext.MainForm.SetTooltip(_ItemList, "在此添加需要合并的 PDF 文件、图片文件或包含上述类型文件的文件夹");
-			AppContext.MainForm.SetTooltip(_ImportButton, "点击此按钮将列表的文件合并为一个 PDF 文件");
-			AppContext.MainForm.SetTooltip(_TargetPdfFile.FileList, "生成的目标 PDF 文件路径");
-			_ItemList.EmptyListMsg = "请使用“添加文件”按钮添加需要合并的文件，或从资源管理器拖放文件到本列表框";
+		AppContext.MainForm.SetTooltip(_BookmarkControl.FileList, "为目标 PDF 文件添加书签的信息文件（可选）");
+		AppContext.MainForm.SetTooltip(_ItemList, "在此添加需要合并的 PDF 文件、图片文件或包含上述类型文件的文件夹");
+		AppContext.MainForm.SetTooltip(_ImportButton, "点击此按钮将列表的文件合并为一个 PDF 文件");
+		AppContext.MainForm.SetTooltip(_TargetPdfFile.FileList, "生成的目标 PDF 文件路径");
+		_ItemList.EmptyListMsg = "请使用“添加文件”按钮添加需要合并的文件，或从资源管理器拖放文件到本列表框";
 
-			var fi = _FileTypeList.Images;
-			fi.AddRange([
-				Properties.Resources.EmptyPage,
-				Properties.Resources.OriginalPdfFile,
-				Properties.Resources.Image,
-				Properties.Resources.ImageFolder
-			]);
+		var fi = _FileTypeList.Images;
+		fi.AddRange([
+			Properties.Resources.EmptyPage,
+			Properties.Resources.OriginalPdfFile,
+			Properties.Resources.Image,
+			Properties.Resources.ImageFolder
+		]);
 
-			_BookmarkControl.FileDialog.CheckFileExists = false;
-			_BookmarkControl.BrowseForFile += FileControl_BrowseForFile;
-			_TargetPdfFile.BrowseForFile += FileControl_BrowseForFile;
-			_TargetPdfFile.FileDialog.OverwritePrompt = true;
-			_IndividualMergerModeBox.CheckedChanged += (s, e) => _BookmarkControl.Enabled = !_IndividualMergerModeBox.Checked;
-			_listHelper = new FileListHelper(_ItemList);
-			_ItemList.FixEditControlWidth();
-			_ItemList.BeforeSorting += (s, e) => e.Canceled = true;
-			_ItemList.CanExpandGetter = (x) => ((SourceItem)x).HasSubItems;
-			_ItemList.ChildrenGetter = (x) => ((SourceItem)x).Items;
-			_ItemList.SelectedIndexChanged += (s, e) => {
-				var i = _ItemList.GetFirstSelectedIndex();
-				var en = false;
-				if (i != -1) {
-					var selection = _ItemList.SelectedObjects;
-					AppContext.MainForm.StatusText = $"选中 {selection.Count.ToText()} 项，共 {selection.Cast<SourceItem>().Sum(s => s.PageCount).ToText()} 页";
-					var b = (_ItemList.GetModelObject(i) as SourceItem).Bookmark;
-					if (b != null && !String.IsNullOrEmpty(b.Title)) {
-						en = true;
-						_BoldStyleButton.Checked = b.IsBold;
-						_ItalicStyleButton.Checked = b.IsItalic;
-					}
+		_BookmarkControl.FileDialog.CheckFileExists = false;
+		_BookmarkControl.BrowseForFile += FileControl_BrowseForFile;
+		_TargetPdfFile.BrowseForFile += FileControl_BrowseForFile;
+		_TargetPdfFile.FileDialog.OverwritePrompt = true;
+		_IndividualMergerModeBox.CheckedChanged += (s, e) => _BookmarkControl.Enabled = !_IndividualMergerModeBox.Checked;
+		_listHelper = new FileListHelper(_ItemList);
+		_ItemList.FixEditControlWidth();
+		_ItemList.BeforeSorting += (s, e) => e.Canceled = true;
+		_ItemList.CanExpandGetter = (x) => ((SourceItem)x).HasSubItems;
+		_ItemList.ChildrenGetter = (x) => ((SourceItem)x).Items;
+		_ItemList.SelectedIndexChanged += (s, e) => {
+			var i = _ItemList.GetFirstSelectedIndex();
+			var en = false;
+			if (i != -1) {
+				var selection = _ItemList.SelectedObjects;
+				AppContext.MainForm.StatusText = $"选中 {selection.Count.ToText()} 项，共 {selection.Cast<SourceItem>().Sum(s => s.PageCount).ToText()} 页";
+				var b = (_ItemList.GetModelObject(i) as SourceItem).Bookmark;
+				if (b != null && !String.IsNullOrEmpty(b.Title)) {
+					en = true;
+					_BoldStyleButton.Checked = b.IsBold;
+					_ItalicStyleButton.Checked = b.IsItalic;
+				}
+			}
+			else {
+				UpdateFileStatistics();
+			}
+			_MainToolbar.ToggleEnabled(en, _bookmarkStyleButtonNames);
+		};
+		_ItemList.CellEditStarting += (s, e) => {
+			_MainToolbar.Enabled = false;
+			if (e.Column == _BookmarkColumn) {
+				e.Control = new AutoResizingTextBox(e.CellBounds, ((SourceItem)e.RowObject).Bookmark?.Title, (Control)s);
+			}
+			else if (e.Column == _FolderColumn) {
+				if (e.RowObject is SourceItem i && i.FolderName != null) {
+					e.Control = new AutoResizingTextBox(e.CellBounds, i.FolderName, (Control)s) { ReadOnly = true };
 				}
 				else {
-					UpdateFileStatistics();
+					e.Cancel = true;
 				}
-				_MainToolbar.ToggleEnabled(en, _bookmarkStyleButtonNames);
-			};
-			_ItemList.CellEditStarting += (s, e) => {
-				_MainToolbar.Enabled = false;
-				if (e.Column == _BookmarkColumn) {
-					e.Control = new AutoResizingTextBox(e.CellBounds, ((SourceItem)e.RowObject).Bookmark?.Title, (Control)s);
-				}
-				else if (e.Column == _FolderColumn) {
-					if (e.RowObject is SourceItem i && i.FolderName != null) {
-						e.Control = new AutoResizingTextBox(e.CellBounds, i.FolderName, (Control)s) { ReadOnly = true };
+			}
+		};
+		_ItemList.CellEditFinishing += (s, e) => _MainToolbar.Enabled = true;
+		_ItemList.CanDrop += ItemList_CanDropFile;
+		_ItemList.Dropped += ItemList_FileDropped;
+		_ItemList.ModelCanDrop += ItemList_CanDropModel;
+		_ItemList.ModelDropped += ItemList_Dropped;
+		_ItemListMenu.Opening += (s, e) => {
+			foreach (ToolStripItem item in _ItemListMenu.Items) {
+				SetupCommand(item);
+			}
+		};
+		_ItemList.AsTyped<SourceItem>()
+			.ConfigColumn(_NameColumn, c => {
+				c.AspectGetter = o => o.FileName ?? "<空白页>";
+				c.ImageGetter = o => (int)o.Type;
+			})
+			.ConfigColumn(_BookmarkColumn, c => {
+				c.AspectGetter = (o) => o.Bookmark?.Title;
+				c.AspectPutter = (o, v) => {
+					var s = v as string;
+					if (String.IsNullOrEmpty(s)) {
+						o.Bookmark = null;
+					}
+					else if (o.Bookmark == null) {
+						o.Bookmark = new BookmarkSettings(s);
 					}
 					else {
-						e.Cancel = true;
+						o.Bookmark.Title = s;
 					}
-				}
-			};
-			_ItemList.CellEditFinishing += (s, e) => _MainToolbar.Enabled = true;
-			_ItemList.CanDrop += ItemList_CanDropFile;
-			_ItemList.Dropped += ItemList_FileDropped;
-			_ItemList.ModelCanDrop += ItemList_CanDropModel;
-			_ItemList.ModelDropped += ItemList_Dropped;
-			_ItemListMenu.Opening += (s, e) => {
-				foreach (ToolStripItem item in _ItemListMenu.Items) {
-					SetupCommand(item);
-				}
-			};
-			_ItemList.AsTyped<SourceItem>()
-				.ConfigColumn(_NameColumn, c => {
-					c.AspectGetter = o => o.FileName ?? "<空白页>";
-					c.ImageGetter = o => (int)o.Type;
-				})
-				.ConfigColumn(_BookmarkColumn, c => {
-					c.AspectGetter = (o) => o.Bookmark?.Title;
-					c.AspectPutter = (o, v) => {
-						var s = v as string;
-						if (String.IsNullOrEmpty(s)) {
-							o.Bookmark = null;
+				};
+			})
+			.ConfigColumn(_PageRangeColumn, c => {
+				c.AspectGetter = (o) => (o as SourceItem.Pdf)?.PageRanges;
+				c.AspectPutter = (o, v) => {
+					if (o is SourceItem.Pdf p) {
+						p.PageRanges = v as string;
+						if (String.IsNullOrEmpty(p.PageRanges)) {
+							p.PageRanges = "1-" + p.PageCount.ToText();
 						}
-						else if (o.Bookmark == null) {
-							o.Bookmark = new BookmarkSettings(s);
-						}
-						else {
-							o.Bookmark.Title = s;
-						}
-					};
-				})
-				.ConfigColumn(_PageRangeColumn, c => {
-					c.AspectGetter = (o) => (o as SourceItem.Pdf)?.PageRanges;
-					c.AspectPutter = (o, v) => {
-						if (o is SourceItem.Pdf p) {
-							p.PageRanges = v as string;
-							if (String.IsNullOrEmpty(p.PageRanges)) {
-								p.PageRanges = "1-" + p.PageCount.ToText();
-							}
-						}
-						UpdateFileStatistics();
-					};
-				})
-				.ConfigColumn(_FolderColumn, c => c.AspectGetter = (o) => o.FolderName);
-			FileListHelper.SetupCommonPdfColumns(_FileTimeColumn);
-			_AddFilesButton.DropDownOpening += FileListHelper.OpenPdfButtonDropDownOpeningHandler;
-			_AddFilesButton.DropDownItemClicked += (s, e) => {
-				_RecentFileMenu.Hide();
-				FilePath file = e.ClickedItem.ToolTipText;
-				if (file.ExistsFile) {
-					ExecuteCommand(Commands.OpenFile, file);
-					AppContext.RecentItems.AddHistoryItem(AppContext.Recent.SourcePdfFiles, file);
-				}
-				else {
-					FormHelper.ErrorBox("找不到文件：" + file);
-				}
-			};
-		}
+					}
+					UpdateFileStatistics();
+				};
+			})
+			.ConfigColumn(_FolderColumn, c => c.AspectGetter = (o) => o.FolderName);
+		FileListHelper.SetupCommonPdfColumns(_FileTimeColumn);
+		_AddFilesButton.DropDownOpening += FileListHelper.OpenPdfButtonDropDownOpeningHandler;
+		_AddFilesButton.DropDownItemClicked += (s, e) => {
+			_RecentFileMenu.Hide();
+			FilePath file = e.ClickedItem.ToolTipText;
+			if (file.ExistsFile) {
+				ExecuteCommand(Commands.OpenFile, file);
+				AppContext.RecentItems.AddHistoryItem(AppContext.Recent.SourcePdfFiles, file);
+			}
+			else {
+				FormHelper.ErrorBox("找不到文件：" + file);
+			}
+		};
+	}
 
-		void UpdateFileStatistics() {
-			var r = _ItemList.Roots;
-			int c = r is System.Collections.IList l ? l.Count : r.Cast<object>().Count();
-			AppContext.MainForm.StatusText = c == 0
-				? Messages.Welcome
-				: $"共 {c.ToText()} 项，{_ItemList.Objects.Cast<SourceItem>().Sum(s => s.RecursivePageCount).ToText()} 页";
-		}
+	void UpdateFileStatistics() {
+		var r = _ItemList.Roots;
+		int c = r is System.Collections.IList l ? l.Count : r.Cast<object>().Count();
+		AppContext.MainForm.StatusText = c == 0
+			? Messages.Welcome
+			: $"共 {c.ToText()} 项，{_ItemList.Objects.Cast<SourceItem>().Sum(s => s.RecursivePageCount).ToText()} 页";
+	}
 
-		[SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
-		protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
-			if (_ItemList.IsCellEditing || !_ItemList.Focused) {
+	[SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.UnmanagedCode)]
+	protected override bool ProcessCmdKey(ref Message msg, Keys keyData) {
+		if (_ItemList.IsCellEditing || !_ItemList.Focused) {
+			return base.ProcessCmdKey(ref msg, keyData);
+		}
+		switch (keyData) {
+			case Keys.Delete:
+				ExecuteCommand(Commands.Delete);
+				return true;
+			case Keys.Control | Keys.B:
+				_BoldStyleButton.PerformClick();
+				return true;
+			case Keys.Control | Keys.I:
+				_ItalicStyleButton.PerformClick();
+				return true;
+			default:
 				return base.ProcessCmdKey(ref msg, keyData);
-			}
-			switch (keyData) {
-				case Keys.Delete:
-					ExecuteCommand(Commands.Delete);
-					return true;
-				case Keys.Control | Keys.B:
-					_BoldStyleButton.PerformClick();
-					return true;
-				case Keys.Control | Keys.I:
-					_ItalicStyleButton.PerformClick();
-					return true;
-				default:
-					return base.ProcessCmdKey(ref msg, keyData);
-			}
 		}
+	}
 
-		#region 拖放操作
-		void ItemList_CanDropFile(object sender, OlvDropEventArgs e) {
-			if (e.DataObject is not DataObject o) {
+	#region 拖放操作
+	void ItemList_CanDropFile(object sender, OlvDropEventArgs e) {
+		if (e.DataObject is not DataObject o) {
+			return;
+		}
+		var f = o.GetFileDropList();
+		var d = e.DropTargetItem;
+		var child = d != null && e.MouseLocation.X > d.Position.X + d.GetBounds(ItemBoundsPortion.ItemOnly).Width / 2;
+		var after = d == null || e.MouseLocation.Y > d.Position.Y + d.Bounds.Height / 2;
+		foreach (var item in f) {
+			if (System.IO.Directory.Exists(item)) {
+				e.Handled = true;
+				e.Effect = DragDropEffects.Copy;
+				e.InfoMessage = $"添加目录{item}到{(child ? "所有子项" : String.Empty)}{(after ? "后面" : "前面")}";
 				return;
 			}
-			var f = o.GetFileDropList();
-			var d = e.DropTargetItem;
-			var child = d != null && e.MouseLocation.X > d.Position.X + d.GetBounds(ItemBoundsPortion.ItemOnly).Width / 2;
-			var after = d == null || e.MouseLocation.Y > d.Position.Y + d.Bounds.Height / 2;
-			foreach (var item in f) {
-				if (System.IO.Directory.Exists(item)) {
-					e.Handled = true;
-					e.Effect = DragDropEffects.Copy;
-					e.InfoMessage = $"添加目录{item}到{(child ? "所有子项" : String.Empty)}{(after ? "后面" : "前面")}";
-					return;
-				}
-				var ext = System.IO.Path.GetExtension(item).ToLowerInvariant();
-				if (ext == Constants.FileExtensions.Pdf || Constants.FileExtensions.AllSupportedImageExtension.Contains(ext)) {
-					e.Handled = true;
-					e.Effect = DragDropEffects.Copy;
-					e.InfoMessage = $"添加文件{item}到{(child ? "所有子项" : String.Empty)}{(after ? "后面" : "前面")}";
-					return;
-				}
-			}
-		}
-
-		void ItemList_FileDropped(object sender, OlvDropEventArgs e) {
-			if (e.DataObject is not DataObject o) {
+			var ext = System.IO.Path.GetExtension(item).ToLowerInvariant();
+			if (ext == Constants.FileExtensions.Pdf || Constants.FileExtensions.AllSupportedImageExtension.Contains(ext)) {
+				e.Handled = true;
+				e.Effect = DragDropEffects.Copy;
+				e.InfoMessage = $"添加文件{item}到{(child ? "所有子项" : String.Empty)}{(after ? "后面" : "前面")}";
 				return;
 			}
-			var f = o.GetFileDropList();
-			var fl = new string[f.Count];
-			f.CopyTo(fl, 0);
-			SourceItem.SortFileList(fl);
-			var sl = new List<SourceItem>(fl.Length);
-			foreach (var item in fl) {
-				var si = SourceItem.Create(item);
-				if (si == null) {
-					continue;
-				}
-				sl.Add(si);
-			}
-			var ti = e.ListView.GetModelObject(e.DropTargetIndex) as SourceItem;
-			var d = e.DropTargetItem;
-			var child = d != null && e.MouseLocation.X > d.Position.X + d.GetBounds(ItemBoundsPortion.ItemOnly).Width / 2;
-			var after = d != null && e.MouseLocation.Y > d.Position.Y + d.Bounds.Height / 2;
-			CopyOrMoveElement(sl, ti, child, after, false);
 		}
+	}
 
-		void ItemList_CanDropModel(object sender, ModelDropEventArgs e) {
-			var si = e.SourceModels;
-			var ti = e.TargetModel as SourceItem;
-			if (si == null || si.Count == 0 || e.TargetModel == null) {
+	void ItemList_FileDropped(object sender, OlvDropEventArgs e) {
+		if (e.DataObject is not DataObject o) {
+			return;
+		}
+		var f = o.GetFileDropList();
+		var fl = new string[f.Count];
+		f.CopyTo(fl, 0);
+		SourceItem.SortFileList(fl);
+		var sl = new List<SourceItem>(fl.Length);
+		foreach (var item in fl) {
+			var si = SourceItem.Create(item);
+			if (si == null) {
+				continue;
+			}
+			sl.Add(si);
+		}
+		var ti = e.ListView.GetModelObject(e.DropTargetIndex) as SourceItem;
+		var d = e.DropTargetItem;
+		var child = d != null && e.MouseLocation.X > d.Position.X + d.GetBounds(ItemBoundsPortion.ItemOnly).Width / 2;
+		var after = d != null && e.MouseLocation.Y > d.Position.Y + d.Bounds.Height / 2;
+		CopyOrMoveElement(sl, ti, child, after, false);
+	}
+
+	void ItemList_CanDropModel(object sender, ModelDropEventArgs e) {
+		var si = e.SourceModels;
+		var ti = e.TargetModel as SourceItem;
+		if (si == null || si.Count == 0 || e.TargetModel == null) {
+			e.Effect = DragDropEffects.None;
+			return;
+		}
+		var copy = (ModifierKeys & Keys.Control) != Keys.None;
+		if (!copy) {
+			if (e.DropTargetItem.Selected) {
 				e.Effect = DragDropEffects.None;
 				return;
 			}
-			var copy = (ModifierKeys & Keys.Control) != Keys.None;
-			if (!copy) {
-				if (e.DropTargetItem.Selected) {
+			var al = _ItemList.GetAncestorsOrSelf(ti);
+			foreach (SourceItem item in si) {
+				if (al.IndexOf(item) != -1) {
 					e.Effect = DragDropEffects.None;
+					e.InfoMessage = "目标项不能是源项目的子项。";
 					return;
 				}
-				var al = _ItemList.GetAncestorsOrSelf(ti);
-				foreach (SourceItem item in si) {
-					if (al.IndexOf(item) != -1) {
-						e.Effect = DragDropEffects.None;
-						e.InfoMessage = "目标项不能是源项目的子项。";
+			}
+		}
+		var d = e.DropTargetItem;
+		var ml = e.MouseLocation;
+		var child = ml.X > d.Position.X + d.GetBounds(ItemBoundsPortion.ItemOnly).Width / 2;
+		var append = ml.Y > d.Position.Y + d.Bounds.Height / 2;
+		if (!child && !copy) {
+			var xi = e.DropTargetIndex + (append ? 1 : -1);
+			if (xi > -1 && xi < e.ListView.GetItemCount()
+				&& e.ListView.Items[xi].Selected
+				&& GetParentSourceItem(ti) == GetParentSourceItem(_ItemList.GetModelObject(xi) as SourceItem)) {
+				e.Effect = DragDropEffects.None;
+				return;
+			}
+		}
+		e.Effect = copy ? DragDropEffects.Copy : DragDropEffects.Move;
+		e.InfoMessage = $"{(copy ? "复制" : "移动")}到{(child ? "所有子项" : String.Empty)}{(append ? "后面" : "前面")}";
+	}
+
+	void ItemList_Dropped(object sender, ModelDropEventArgs e) {
+		var t = e.TargetModel as SourceItem;
+		var si = (e.SourceListView as TreeListView).GetSelectedModels<SourceItem>();
+		if (si == null) {
+			return;
+		}
+		var ti = e.TargetModel as SourceItem;
+		var d = e.DropTargetItem;
+		var child = e.MouseLocation.X > d.Position.X + d.GetBounds(ItemBoundsPortion.ItemOnly).Width / 2;
+		var after = e.MouseLocation.Y > d.Position.Y + d.Bounds.Height / 2;
+		var copy = (ModifierKeys & Keys.Control) != Keys.None;
+		var deepCopy = copy && ((ModifierKeys & Keys.Shift) != Keys.None);
+		var tii = _ItemList.TopItemIndex;
+		CopyOrMoveElement(si, ti, child, after, copy);
+		e.RefreshObjects();
+		_ItemList.TopItemIndex = tii;
+	}
+	#endregion
+
+	public override void SetupCommand(ToolStripItem item) {
+		var n = item.Name;
+		if (item.OwnerItem != null && item.OwnerItem.Name == Commands.Selection) {
+			EnableCommand(item, _ItemList.GetItemCount() > 0 && _ItemList.Focused, true);
+		}
+		else if (n.HasPrefix(Commands.Copy) || n.HasPrefix(Commands.Paste) || n == Commands.Delete) {
+			EnableCommand(item, _ItemList.GetItemCount() > 0 && _ItemList.GetFirstSelectedIndex() > -1, true);
+		}
+		else if (n == Commands.Options) {
+			item.Text = "合并文档设置(&S)...";
+			item.ToolTipText = "设置合并后的 PDF 文档";
+			EnableCommand(item, true, true);
+			item.Tag = nameof(Function.MergerOptions);
+		}
+		base.SetupCommand(item);
+	}
+
+	void FileControl_BrowseForFile(object sender, EventArgs e) {
+		_listHelper.PrepareSourceFiles();
+	}
+
+	/// <summary>
+	/// 复制或移动书签。
+	/// </summary>
+	/// <param name="source">需要复制或移动的源书签。</param>
+	/// <param name="target">目标书签。</param>
+	/// <param name="child">是否复制为子节点。</param>
+	/// <param name="after">是否复制到后面。</param>
+	/// <param name="copy">是否复制书签。</param>
+	internal void CopyOrMoveElement(List<SourceItem> source, SourceItem target, bool child, bool after, bool copy) {
+		if (copy) {
+			var clones = new List<SourceItem>(source.Count);
+			foreach (SourceItem item in source) {
+				clones.Add(item.Clone());
+			}
+			source = clones;
+		}
+		else {
+			foreach (var item in source) {
+				GetParentSourceItem(item).Items.Remove(item);
+			}
+			_ItemList.RemoveObjects(source);
+		}
+		if (child && target != null) {
+			if (after) {
+				target.Items.AddRange(source);
+			}
+			else {
+				var a = target.Items.ToArray();
+				target.Items.Clear();
+				target.Items.AddRange(source);
+				target.Items.AddRange(a);
+			}
+			if (target == _itemsContainer) {
+				_ItemList.SetObjects(target.Items);
+			}
+			else {
+				_ItemList.Expand(target);
+			}
+		}
+		else {
+			var p = GetParentSourceItem(target);
+			if (after) {
+				p.Items.InsertRange(target != null ? p.Items.IndexOf(target) + 1 : p.Items.Count, source);
+			}
+			else {
+				p.Items.InsertRange(target != null ? p.Items.IndexOf(target) : p.Items.Count, source);
+			}
+			if (p == _itemsContainer) {
+				_ItemList.SetObjects(_itemsContainer.Items);
+			}
+		}
+		_ItemList.SelectedObjects = source;
+	}
+
+	SourceItem GetParentSourceItem(SourceItem item) {
+		var p = _ItemList.GetParentModel(item);
+		p ??= _itemsContainer;
+		return p;
+	}
+
+	void AddFiles(string[] files) {
+		if (files == null || files.Length == 0) {
+			return;
+		}
+		if ((ModifierKeys & Keys.Control) != Keys.None) {
+			_ItemList.ClearObjects();
+		}
+		if (files.Length > 3) {
+			AppContext.MainForm.Enabled = false;
+		}
+		SourceItem.SortFileList(files);
+		_AddDocumentWorker.RunWorkerAsync(files);
+	}
+
+	void _AddFolder_DropDownOpening(object sender, EventArgs e) {
+		var l = _AddFolderButton.DropDown.Items;
+		l.ClearDropDownItems();
+		foreach (var item in AppContext.Recent.Folders) {
+			if (FileHelper.IsPathValid(item) && !String.IsNullOrEmpty(System.IO.Path.GetFileName(item))) {
+				l.Add(FileHelper.GetEllipticPath(item, 50)).ToolTipText = item;
+			}
+		}
+	}
+
+	void _AddFolderButton_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e) {
+		_RecentFolderMenu.Hide();
+		var f = e.ClickedItem.ToolTipText;
+		if (!System.IO.Directory.Exists(f)) {
+			FormHelper.ErrorBox("找不到文件夹：" + f);
+			return;
+		}
+		ExecuteCommand(Commands.OpenFile, f);
+	}
+
+	void _ImportButton_Click(object sender, EventArgs e) {
+		var infoFile = _BookmarkControl.Text.Trim();
+		var targetPdfFile = _TargetPdfFile.Text.Trim();
+		if (String.IsNullOrEmpty(targetPdfFile) && String.IsNullOrEmpty(targetPdfFile = _TargetPdfFile.BrowseTargetFile())) {
+			FormHelper.ErrorBox(Messages.TargetFileNotSpecified);
+			return;
+		}
+		if (!FileHelper.IsPathValid(targetPdfFile)) {
+			FormHelper.ErrorBox($"输出文件名无效。{(FileHelper.HasFileNameMacro(targetPdfFile) ? "\n合并 PDF 文件功能不支持替代符。" : String.Empty)}");
+			return;
+		}
+
+		var l = _ItemList.GetItemCount();
+		if (l == 0) {
+			FormHelper.InfoBox("请添加用于生成 PDF 文件的图片或 PDF 源文件。");
+			return;
+		}
+		_BookmarkControl.FileList.AddHistoryItem();
+		_TargetPdfFile.FileList.AddHistoryItem();
+		var fm = _IndividualMergerModeBox.Checked;
+		var fl = fm ? new List<SourceItem>(_itemsContainer.Items.Count) : _itemsContainer.Items;
+
+		if (fm) {
+			foreach (var item in _itemsContainer.Items) {
+				if (item.HasContent) {
+					fl.Add(item);
+				}
+			}
+			if (fl.Count == 0) {
+				FormHelper.ErrorBox("合并文件列表没有包含文件的首层项目。");
+				return;
+			}
+		}
+
+		AppContext.MainForm.ResetWorker();
+		var worker = AppContext.MainForm.GetWorker();
+		worker.DoWork += (dummy, arg) => {
+			var args = arg.Argument as object[];
+			var items = args[0] as ICollection<SourceItem>;
+			var target = args[1] as string;
+			if (!(bool)args[3]) {
+				// 合并为单一文件
+				Processor.Worker.MergeDocuments(items, target, args[2] as string);
+				return;
+			}
+			// 顶层项合并为独立文件
+			Tracker.SetTotalProgressGoal(items.Count);
+			foreach (var item in items) {
+				var tn = FileHelper.CombinePath(System.IO.Path.GetDirectoryName(target), item.FileName + Constants.FileExtensions.Pdf);
+				switch (item.Type) {
+					case SourceItem.ItemType.Empty:
+						Tracker.TraceMessage(Tracker.Category.Error, "首层项目不能为空白页。");
+						break;
+					case SourceItem.ItemType.Pdf:
+					case SourceItem.ItemType.Image:
+						Processor.Worker.MergeDocuments([item], tn, null);
+						break;
+					case SourceItem.ItemType.Folder:
+						Processor.Worker.MergeDocuments(item.Items, tn, null);
+						break;
+				}
+				Tracker.IncrementTotalProgress();
+			}
+		};
+		worker.RunWorkerAsync(new object[] { fl, targetPdfFile, infoFile, fm });
+	}
+
+	void _SortMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e) {
+		SourceItem.SortType sortOptions;
+		bool recursive = ModifierKeys != Keys.Control;
+		switch (e.ClickedItem.Name) {
+			case "_SortByAlphaItem":
+				sortOptions = SourceItem.SortType.Literal;
+				break;
+			case "_SortByNaturalNumberItem":
+				sortOptions = SourceItem.SortType.NumericAwareSort;
+				break;
+			case "_SortByCaj":
+				sortOptions = SourceItem.SortType.CajSort;
+				break;
+			case "_SortByFileTime":
+				sortOptions = SourceItem.SortType.FileTime;
+				break;
+			case "_ReverseSort":
+				sortOptions = SourceItem.SortType.Reverse;
+				break;
+			default:
+				return;
+		}
+		_itemsContainer.SortItems(sortOptions, recursive);
+		_ItemList.Objects = _itemsContainer.Items;
+	}
+
+	void _MainToolbar_ButtonClick(object sender, EventArgs e) {
+		if (sender == _AddFilesButton) {
+			ExecuteCommand(Commands.Open);
+		}
+		else if (sender == _ConfigButton) {
+			AppContext.MainForm.SelectFunctionList(Function.MergerOptions);
+		}
+		else if (sender == _AddFolderButton) {
+			using (var f = new OpenFileDialog() {
+				FileName = "【选择目录】",
+				Filter = _OpenImageBox.Filter,
+				CheckFileExists = false,
+				Title = "选择包含图片或 PDF 的文件夹，点击“打开”按钮"
+			}) {
+				if (f.ShowDialog() == DialogResult.OK) {
+					var p = System.IO.Path.GetDirectoryName(f.FileName);
+					if (String.IsNullOrEmpty(System.IO.Path.GetFileName(p))) {
+						FormHelper.ErrorBox("选择的文件夹无效，不允许选择根目录。");
 						return;
 					}
-				}
-			}
-			var d = e.DropTargetItem;
-			var ml = e.MouseLocation;
-			var child = ml.X > d.Position.X + d.GetBounds(ItemBoundsPortion.ItemOnly).Width / 2;
-			var append = ml.Y > d.Position.Y + d.Bounds.Height / 2;
-			if (!child && !copy) {
-				var xi = e.DropTargetIndex + (append ? 1 : -1);
-				if (xi > -1 && xi < e.ListView.GetItemCount()
-					&& e.ListView.Items[xi].Selected
-					&& GetParentSourceItem(ti) == GetParentSourceItem(_ItemList.GetModelObject(xi) as SourceItem)) {
-					e.Effect = DragDropEffects.None;
-					return;
-				}
-			}
-			e.Effect = copy ? DragDropEffects.Copy : DragDropEffects.Move;
-			e.InfoMessage = $"{(copy ? "复制" : "移动")}到{(child ? "所有子项" : String.Empty)}{(append ? "后面" : "前面")}";
-		}
-
-		void ItemList_Dropped(object sender, ModelDropEventArgs e) {
-			var t = e.TargetModel as SourceItem;
-			var si = (e.SourceListView as TreeListView).GetSelectedModels<SourceItem>();
-			if (si == null) {
-				return;
-			}
-			var ti = e.TargetModel as SourceItem;
-			var d = e.DropTargetItem;
-			var child = e.MouseLocation.X > d.Position.X + d.GetBounds(ItemBoundsPortion.ItemOnly).Width / 2;
-			var after = e.MouseLocation.Y > d.Position.Y + d.Bounds.Height / 2;
-			var copy = (ModifierKeys & Keys.Control) != Keys.None;
-			var deepCopy = copy && ((ModifierKeys & Keys.Shift) != Keys.None);
-			var tii = _ItemList.TopItemIndex;
-			CopyOrMoveElement(si, ti, child, after, copy);
-			e.RefreshObjects();
-			_ItemList.TopItemIndex = tii;
-		}
-		#endregion
-
-		public override void SetupCommand(ToolStripItem item) {
-			var n = item.Name;
-			if (item.OwnerItem != null && item.OwnerItem.Name == Commands.Selection) {
-				EnableCommand(item, _ItemList.GetItemCount() > 0 && _ItemList.Focused, true);
-			}
-			else if (n.HasPrefix(Commands.Copy) || n.HasPrefix(Commands.Paste) || n == Commands.Delete) {
-				EnableCommand(item, _ItemList.GetItemCount() > 0 && _ItemList.GetFirstSelectedIndex() > -1, true);
-			}
-			else if (n == Commands.Options) {
-				item.Text = "合并文档设置(&S)...";
-				item.ToolTipText = "设置合并后的 PDF 文档";
-				EnableCommand(item, true, true);
-				item.Tag = nameof(Function.MergerOptions);
-			}
-			base.SetupCommand(item);
-		}
-
-		void FileControl_BrowseForFile(object sender, EventArgs e) {
-			_listHelper.PrepareSourceFiles();
-		}
-
-		/// <summary>
-		/// 复制或移动书签。
-		/// </summary>
-		/// <param name="source">需要复制或移动的源书签。</param>
-		/// <param name="target">目标书签。</param>
-		/// <param name="child">是否复制为子节点。</param>
-		/// <param name="after">是否复制到后面。</param>
-		/// <param name="copy">是否复制书签。</param>
-		internal void CopyOrMoveElement(List<SourceItem> source, SourceItem target, bool child, bool after, bool copy) {
-			if (copy) {
-				var clones = new List<SourceItem>(source.Count);
-				foreach (SourceItem item in source) {
-					clones.Add(item.Clone());
-				}
-				source = clones;
-			}
-			else {
-				foreach (var item in source) {
-					GetParentSourceItem(item).Items.Remove(item);
-				}
-				_ItemList.RemoveObjects(source);
-			}
-			if (child && target != null) {
-				if (after) {
-					target.Items.AddRange(source);
-				}
-				else {
-					var a = target.Items.ToArray();
-					target.Items.Clear();
-					target.Items.AddRange(source);
-					target.Items.AddRange(a);
-				}
-				if (target == _itemsContainer) {
-					_ItemList.SetObjects(target.Items);
-				}
-				else {
-					_ItemList.Expand(target);
-				}
-			}
-			else {
-				var p = GetParentSourceItem(target);
-				if (after) {
-					p.Items.InsertRange(target != null ? p.Items.IndexOf(target) + 1 : p.Items.Count, source);
-				}
-				else {
-					p.Items.InsertRange(target != null ? p.Items.IndexOf(target) : p.Items.Count, source);
-				}
-				if (p == _itemsContainer) {
-					_ItemList.SetObjects(_itemsContainer.Items);
-				}
-			}
-			_ItemList.SelectedObjects = source;
-		}
-
-		SourceItem GetParentSourceItem(SourceItem item) {
-			var p = _ItemList.GetParentModel(item);
-			p ??= _itemsContainer;
-			return p;
-		}
-
-		void AddFiles(string[] files) {
-			if (files == null || files.Length == 0) {
-				return;
-			}
-			if ((ModifierKeys & Keys.Control) != Keys.None) {
-				_ItemList.ClearObjects();
-			}
-			if (files.Length > 3) {
-				AppContext.MainForm.Enabled = false;
-			}
-			SourceItem.SortFileList(files);
-			_AddDocumentWorker.RunWorkerAsync(files);
-		}
-
-		void _AddFolder_DropDownOpening(object sender, EventArgs e) {
-			var l = _AddFolderButton.DropDown.Items;
-			l.ClearDropDownItems();
-			foreach (var item in AppContext.Recent.Folders) {
-				if (FileHelper.IsPathValid(item) && !String.IsNullOrEmpty(System.IO.Path.GetFileName(item))) {
-					l.Add(FileHelper.GetEllipticPath(item, 50)).ToolTipText = item;
+					ExecuteCommand(Commands.OpenFile, p);
+					AppContext.RecentItems.AddHistoryItem(AppContext.Recent.Folders, p);
 				}
 			}
 		}
+	}
 
-		void _AddFolderButton_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e) {
-			_RecentFolderMenu.Hide();
-			var f = e.ClickedItem.ToolTipText;
-			if (!System.IO.Directory.Exists(f)) {
-				FormHelper.ErrorBox("找不到文件夹：" + f);
-				return;
-			}
-			ExecuteCommand(Commands.OpenFile, f);
-		}
+	void _MainToolbar_ItemClicked(object sender, ToolStripItemClickedEventArgs e) {
+		ExecuteCommand(e.ClickedItem);
+	}
 
-		void _ImportButton_Click(object sender, EventArgs e) {
-			var infoFile = _BookmarkControl.Text.Trim();
-			var targetPdfFile = _TargetPdfFile.Text.Trim();
-			if (String.IsNullOrEmpty(targetPdfFile) && String.IsNullOrEmpty(targetPdfFile = _TargetPdfFile.BrowseTargetFile())) {
-				FormHelper.ErrorBox(Messages.TargetFileNotSpecified);
-				return;
-			}
-			if (!FileHelper.IsPathValid(targetPdfFile)) {
-				FormHelper.ErrorBox($"输出文件名无效。{(FileHelper.HasFileNameMacro(targetPdfFile) ? "\n合并 PDF 文件功能不支持替代符。" : String.Empty)}");
-				return;
-			}
-
-			var l = _ItemList.GetItemCount();
-			if (l == 0) {
-				FormHelper.InfoBox("请添加用于生成 PDF 文件的图片或 PDF 源文件。");
-				return;
-			}
-			_BookmarkControl.FileList.AddHistoryItem();
-			_TargetPdfFile.FileList.AddHistoryItem();
-			var fm = _IndividualMergerModeBox.Checked;
-			var fl = fm ? new List<SourceItem>(_itemsContainer.Items.Count) : _itemsContainer.Items;
-
-			if (fm) {
-				foreach (var item in _itemsContainer.Items) {
-					if (item.HasContent) {
-						fl.Add(item);
+	public override void ExecuteCommand(string commandName, params string[] parameters) {
+		switch (commandName) {
+			case Commands.Open:
+				if (_OpenImageBox.ShowDialog() == DialogResult.OK) {
+					ExecuteCommand(Commands.OpenFile, _OpenImageBox.FileNames);
+					foreach (FilePath item in _OpenImageBox.FileNames) {
+						if (item.HasExtension(Constants.FileExtensions.Pdf)) {
+							AppContext.RecentItems.AddHistoryItem(AppContext.Recent.SourcePdfFiles, item);
+						}
 					}
 				}
-				if (fl.Count == 0) {
-					FormHelper.ErrorBox("合并文件列表没有包含文件的首层项目。");
-					return;
-				}
-			}
-
-			AppContext.MainForm.ResetWorker();
-			var worker = AppContext.MainForm.GetWorker();
-			worker.DoWork += (dummy, arg) => {
-				var args = arg.Argument as object[];
-				var items = args[0] as ICollection<SourceItem>;
-				var target = args[1] as string;
-				if (!(bool)args[3]) {
-					// 合并为单一文件
-					Processor.Worker.MergeDocuments(items, target, args[2] as string);
-					return;
-				}
-				// 顶层项合并为独立文件
-				Tracker.SetTotalProgressGoal(items.Count);
-				foreach (var item in items) {
-					var tn = FileHelper.CombinePath(System.IO.Path.GetDirectoryName(target), item.FileName + Constants.FileExtensions.Pdf);
-					switch (item.Type) {
-						case SourceItem.ItemType.Empty:
-							Tracker.TraceMessage(Tracker.Category.Error, "首层项目不能为空白页。");
-							break;
-						case SourceItem.ItemType.Pdf:
-						case SourceItem.ItemType.Image:
-							Processor.Worker.MergeDocuments([item], tn, null);
-							break;
-						case SourceItem.ItemType.Folder:
-							Processor.Worker.MergeDocuments(item.Items, tn, null);
-							break;
-					}
-					Tracker.IncrementTotalProgress();
-				}
-			};
-			worker.RunWorkerAsync(new object[] { fl, targetPdfFile, infoFile, fm });
-		}
-
-		void _SortMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e) {
-			SourceItem.SortType sortOptions;
-			bool recursive = ModifierKeys != Keys.Control;
-			switch (e.ClickedItem.Name) {
-				case "_SortByAlphaItem":
-					sortOptions = SourceItem.SortType.Literal;
-					break;
-				case "_SortByNaturalNumberItem":
-					sortOptions = SourceItem.SortType.NumericAwareSort;
-					break;
-				case "_SortByCaj":
-					sortOptions = SourceItem.SortType.CajSort;
-					break;
-				case "_SortByFileTime":
-					sortOptions = SourceItem.SortType.FileTime;
-					break;
-				case "_ReverseSort":
-					sortOptions = SourceItem.SortType.Reverse;
-					break;
-				default:
-					return;
-			}
-			_itemsContainer.SortItems(sortOptions, recursive);
-			_ItemList.Objects = _itemsContainer.Items;
-		}
-
-		void _MainToolbar_ButtonClick(object sender, EventArgs e) {
-			if (sender == _AddFilesButton) {
-				ExecuteCommand(Commands.Open);
-			}
-			else if (sender == _ConfigButton) {
-				AppContext.MainForm.SelectFunctionList(Function.MergerOptions);
-			}
-			else if (sender == _AddFolderButton) {
+				break;
+			case Commands.OpenFile:
+				AddFiles(parameters);
+				break;
+			case Commands.LoadList:
 				using (var f = new OpenFileDialog() {
-					FileName = "【选择目录】",
-					Filter = _OpenImageBox.Filter,
-					CheckFileExists = false,
-					Title = "选择包含图片或 PDF 的文件夹，点击“打开”按钮"
+					Title = "请选择需要打开的文件列表",
+					Filter = Constants.FileExtensions.XmlFilter,
+					DefaultExt = Constants.FileExtensions.Xml
 				}) {
 					if (f.ShowDialog() == DialogResult.OK) {
-						var p = System.IO.Path.GetDirectoryName(f.FileName);
-						if (String.IsNullOrEmpty(System.IO.Path.GetFileName(p))) {
-							FormHelper.ErrorBox("选择的文件夹无效，不允许选择根目录。");
-							return;
-						}
-						ExecuteCommand(Commands.OpenFile, p);
-						AppContext.RecentItems.AddHistoryItem(AppContext.Recent.Folders, p);
-					}
-				}
-			}
-		}
-
-		void _MainToolbar_ItemClicked(object sender, ToolStripItemClickedEventArgs e) {
-			ExecuteCommand(e.ClickedItem);
-		}
-
-		public override void ExecuteCommand(string commandName, params string[] parameters) {
-			switch (commandName) {
-				case Commands.Open:
-					if (_OpenImageBox.ShowDialog() == DialogResult.OK) {
-						ExecuteCommand(Commands.OpenFile, _OpenImageBox.FileNames);
-						foreach (FilePath item in _OpenImageBox.FileNames) {
-							if (item.HasExtension(Constants.FileExtensions.Pdf)) {
-								AppContext.RecentItems.AddHistoryItem(AppContext.Recent.SourcePdfFiles, item);
-							}
-						}
-					}
-					break;
-				case Commands.OpenFile:
-					AddFiles(parameters);
-					break;
-				case Commands.LoadList:
-					using (var f = new OpenFileDialog() {
-						Title = "请选择需要打开的文件列表",
-						Filter = Constants.FileExtensions.XmlFilter,
-						DefaultExt = Constants.FileExtensions.Xml
-					}) {
-						if (f.ShowDialog() == DialogResult.OK) {
-							_ItemList.DeselectAll();
-							_ItemList.ClearObjects();
-							_itemsContainer.Items.Clear();
-							_itemsContainer.Items.AddRange(Processor.SourceItemSerializer.Deserialize(f.FileName));
-							_ItemList.Objects = _itemsContainer.Items;
-							UpdateFileStatistics();
-						}
-					}
-					break;
-				case Commands.SaveList:
-					using (var f = new SaveFileDialog() {
-						Title = "请输入需要保存文件列表的文件名",
-						Filter = Constants.FileExtensions.XmlFilter,
-						DefaultExt = Constants.FileExtensions.Xml
-					}) {
-						if (f.ShowDialog() == DialogResult.OK) {
-							Processor.SourceItemSerializer.Serialize(_itemsContainer.Items, f.FileName);
-						}
-					}
-					break;
-				case Commands.Delete:
-					if (_ItemList.GetItemCount() == 0) {
-						return;
-					}
-					var l = _ItemList.SelectedObjects;
-					if (l.Count == 0) {
-						if (FormHelper.YesNoBox("是否清空文件列表？") == DialogResult.Yes) {
-							_ItemList.ClearObjects();
-							_itemsContainer.Items.Clear();
-							UpdateFileStatistics();
-						}
-					}
-					else {
-						foreach (SourceItem item in _ItemList.SelectedObjects) {
-							GetParentSourceItem(item).Items.Remove(item);
-							_ItemList.RemoveObject(item);
-						}
+						_ItemList.DeselectAll();
+						_ItemList.ClearObjects();
+						_itemsContainer.Items.Clear();
+						_itemsContainer.Items.AddRange(Processor.SourceItemSerializer.Deserialize(f.FileName));
+						_ItemList.Objects = _itemsContainer.Items;
 						UpdateFileStatistics();
 					}
-					break;
-				case Commands.Copy:
-					var sb = StringBuilderCache.Acquire(200);
-					var sl = GetSourceItems<SourceItem>(true);
-					if (!sl.HasContent()) {
-						sl = GetSourceItems<SourceItem>(false);
-						if (!sl.HasContent()) {
-							return;
-						}
-					}
-					foreach (var item in sl) {
-						if (item.Type == SourceItem.ItemType.Empty) {
-							if (!String.IsNullOrEmpty(item.Bookmark?.Title)) {
-								sb.Append('\t').Append(item.Bookmark.Title).Append('\t').Append('-').AppendLine();
-							}
-						}
-						else if (item.Type == SourceItem.ItemType.Pdf) {
-							var pi = item as SourceItem.Pdf;
-							sb.AppendLine(String.Join("\t", [
-								pi.FilePath.ToString(),
-								item.Bookmark != null ? item.Bookmark.Title : String.Empty,
-								pi.PageRanges,
-								pi.PageCount.ToText ()
-							]));
-						}
-						else if (item.Type == SourceItem.ItemType.Image) {
-							var im = item as SourceItem.Image;
-							sb.AppendLine(String.Join("\t", [
-								im.FilePath.ToString(),
-								item.Bookmark != null ? item.Bookmark.Title : String.Empty,
-								"-"/*im.PageRanges*/,
-								im.PageCount.ToText () ]));
-						}
-						else if (item.Type == SourceItem.ItemType.Folder) {
-							sb.AppendLine(item.FilePath.ToString());
-						}
-					}
-					if (sb.Length > 0) {
-						Clipboard.SetText(sb.ToString());
-					}
-					StringBuilderCache.Release(sb);
-					break;
-				case "_InsertEmptyPage":
-					AddItem(new SourceItem.Empty());
-					break;
-				case Commands.SelectAllItems:
-					_ItemList.SelectAll();
-					break;
-				case Commands.SelectNone:
-					_ItemList.SelectObjects(null);
-					break;
-				case Commands.InvertSelection:
-					_ItemList.InvertSelect();
-					break;
-				case Commands.SelectAllImages:
-					SelectItemsByType(SourceItem.ItemType.Image);
-					break;
-				case Commands.SelectAllPdf:
-					SelectItemsByType(SourceItem.ItemType.Pdf);
-					break;
-				case Commands.SelectAllFolders:
-					SelectItemsByType(SourceItem.ItemType.Folder);
-					break;
-				case "_EditItemProperty":
-				case "_SetPdfOptions":
-					_ItemList_ItemActivate(null, null);
-					break;
-				case "_SetCroppingOptions":
-					SetImageCropping();
-					break;
-				case "_RefreshFolder":
-					foreach (SourceItem.Folder item in _ItemList.SelectedObjects) {
-						item?.Reload();
-					}
-					_ItemList.RefreshObjects(_ItemList.SelectedObjects);
-					break;
-				case "_PdfOptions":
-					AppContext.MainForm.SelectFunctionList(Function.PatcherOptions);
-					break;
-				case "_BoldStyleButton":
-					var cb = !_BoldStyleButton.Checked;
-					foreach (SourceItem item in _ItemList.SelectedObjects) {
-						if (item?.Bookmark != null) {
-							item.Bookmark.IsBold = cb;
-						}
-					}
-					goto case "__Refresh";
-				case "_ItalicStyleButton":
-					var ci = !_ItalicStyleButton.Checked;
-					foreach (SourceItem item in _ItemList.SelectedObjects) {
-						if (item?.Bookmark != null) {
-							item.Bookmark.IsItalic = ci;
-						}
-					}
-					goto case "__Refresh";
-				case "_BookmarkColorButton":
-					RefreshBookmarkColor();
-					break;
-				case "_CopyFileName":
-					CopySelectedItems(item => item.FilePath.FileNameWithoutExtension);
-					break;
-				case "_CopyBookmarkText":
-					CopySelectedItems(item => item != null && item.Bookmark != null ? item.Bookmark.Title : String.Empty);
-					break;
-				case "_PasteBookmarkText":
-					var ct = Clipboard.GetText(TextDataFormat.UnicodeText);
-					if (String.IsNullOrEmpty(ct) || _ItemList.GetItemCount() == 0) {
-						break;
-					}
-					var li = _ItemList.GetLastItemInDisplayOrder().Index;
-					using (var sr = new System.IO.StringReader(ct)) {
-						var i = _ItemList.GetFirstSelectedIndex();
-						if (i == -1) {
-							i = 0;
-						}
-						while (i <= li && sr.Peek() != -1) {
-							if (_ItemList.GetModelObject(i) is SourceItem b) {
-								if (b.Bookmark == null) {
-									b.Bookmark = new BookmarkSettings(sr.ReadLine());
-								}
-								else {
-									b.Bookmark.Title = sr.ReadLine();
-								}
-							}
-							var di = _ItemList.GetDisplayOrderOfItemIndex(i);
-							++di;
-							var ni = _ItemList.GetNthItemInDisplayOrder(di);
-							if (ni == null) {
-								break;
-							}
-							i = ni.Index;
-						}
-					}
-					break;
-				case "_ClearBookmarkTitle":
-					foreach (SourceItem item in _ItemList.SelectedObjects) {
-						if (item?.Bookmark != null) {
-							item.Bookmark = null;
-						}
-					}
-					goto case "__Refresh";
-				case "_SetBookmarkTitle":
-					foreach (SourceItem item in _ItemList.SelectedObjects) {
-						if (item != null) {
-							BookmarkSettings b;
-							var t = System.IO.Path.GetFileNameWithoutExtension(item.FileName);
-							if ((b = item.Bookmark) == null) {
-								b = item.Bookmark = new BookmarkSettings(t);
-							}
-							else {
-								item.Bookmark.Title = t;
-							}
-						}
-					}
-					goto case "__Refresh";
-				case "__Refresh":
-					_ItemList.RefreshObjects(_ItemList.SelectedObjects);
-					break;
-			}
-		}
-
-		void CopySelectedItems(Converter<SourceItem, string> converter) {
-			var bt = StringBuilderCache.Acquire(200);
-			foreach (SourceItem item in _ItemList.SelectedObjects) {
-				bt.AppendLine(converter(item));
-			}
-			if (bt.Length > 0) {
-				try {
-					Clipboard.SetDataObject(bt.ToString(), true, 10, 50);
 				}
-				catch (System.Runtime.InteropServices.ExternalException) {
-					// ignore
-				}
-			}
-			StringBuilderCache.Release(bt);
-		}
-
-		void RefreshBookmarkColor() {
-			var sc = _BookmarkColorButton.Color == Color.White
-							   ? Color.Transparent
-							   : _BookmarkColorButton.Color;
-			foreach (SourceItem item in _ItemList.SelectedObjects) {
-				if (item?.Bookmark != null) {
-					item.Bookmark.ForeColor = sc;
-				}
-			}
-			_ItemList.RefreshObjects(_ItemList.SelectedObjects);
-		}
-
-		void SelectItemsByType(SourceItem.ItemType type) {
-			var r = new List<SourceItem>();
-			SelectItemsByType(type, r, _itemsContainer);
-			_ItemList.SelectedObjects = r.Count > 0 ? r : null;
-		}
-
-		void SelectItemsByType(SourceItem.ItemType type, List<SourceItem> result, SourceItem container) {
-			foreach (var item in container.Items) {
-				if (item.Type == type) {
-					_ItemList.Reveal(item, false);
-					result.Add(item);
-				}
-				if (item.HasSubItems) {
-					SelectItemsByType(type, result, item);
-				}
-			}
-		}
-
-		void _ItemList_ItemActivate(object sender, EventArgs e) {
-			var vi = GetFocusedPdfItem();
-			if (vi != null) {
-				var pdfItem = _ItemList.GetModelObject(vi.Index) as SourceItem.Pdf;
-				using (SourcePdfOptionForm f = new SourcePdfOptionForm(pdfItem)) {
+				break;
+			case Commands.SaveList:
+				using (var f = new SaveFileDialog() {
+					Title = "请输入需要保存文件列表的文件名",
+					Filter = Constants.FileExtensions.XmlFilter,
+					DefaultExt = Constants.FileExtensions.Xml
+				}) {
 					if (f.ShowDialog() == DialogResult.OK) {
-						_ItemList.RefreshObject(pdfItem);
+						Processor.SourceItemSerializer.Serialize(_itemsContainer.Items, f.FileName);
 					}
 				}
-				return;
-			}
-			SetImageCropping();
-		}
-
-		void SetImageCropping() {
-			var items = _ItemList.SelectedObjects;
-			if (items.Count == 0) {
-				return;
-			}
-
-			var s = items[0] as SourceItem.Image;
-			int c = 1;
-			for (int i = 1; i < items.Count; i++) {
-				if (items[i] is not SourceItem.Image image || image.Type == SourceItem.ItemType.Pdf) {
-					continue;
+				break;
+			case Commands.Delete:
+				if (_ItemList.GetItemCount() == 0) {
+					return;
 				}
-				if (s == null) {
-					s = image;
-					continue;
+				var l = _ItemList.SelectedObjects;
+				if (l.Count == 0) {
+					if (FormHelper.YesNoBox("是否清空文件列表？") == DialogResult.Yes) {
+						_ItemList.ClearObjects();
+						_itemsContainer.Items.Clear();
+						UpdateFileStatistics();
+					}
 				}
-				c++;
-				if (!s.Cropping.Equals(image.Cropping)) {
-					if (FormHelper.YesNoBox("选择的图片具有不同的设置，是否重置为统一的值？") == DialogResult.No) {
+				else {
+					foreach (SourceItem item in _ItemList.SelectedObjects) {
+						GetParentSourceItem(item).Items.Remove(item);
+						_ItemList.RemoveObject(item);
+					}
+					UpdateFileStatistics();
+				}
+				break;
+			case Commands.Copy:
+				var sb = StringBuilderCache.Acquire(200);
+				var sl = GetSourceItems<SourceItem>(true);
+				if (!sl.HasContent()) {
+					sl = GetSourceItems<SourceItem>(false);
+					if (!sl.HasContent()) {
 						return;
 					}
-					break;
 				}
-			}
-			if (s == null) {
-				return;
-			}
-			var o = new SourceItem.Image(c > 1 ? (FilePath)(c + " 个文件") : s.FilePath) {
-				Cropping = s.Cropping.Clone()
-			};
-			using (var f = new SourceImageOptionForm(o)) {
-				if (f.ShowDialog() == DialogResult.OK) {
-					foreach (SourceItem.Image image in items) {
-						if (image == null || image.Type == SourceItem.ItemType.Pdf) {
-							continue;
+				foreach (var item in sl) {
+					if (item.Type == SourceItem.ItemType.Empty) {
+						if (!String.IsNullOrEmpty(item.Bookmark?.Title)) {
+							sb.Append('\t').Append(item.Bookmark.Title).Append('\t').Append('-').AppendLine();
 						}
-						image.Cropping = o.Cropping.Clone();
+					}
+					else if (item.Type == SourceItem.ItemType.Pdf) {
+						var pi = item as SourceItem.Pdf;
+						sb.AppendLine(String.Join("\t", [
+							pi.FilePath.ToString(),
+							item.Bookmark != null ? item.Bookmark.Title : String.Empty,
+							pi.PageRanges,
+							pi.PageCount.ToText ()
+						]));
+					}
+					else if (item.Type == SourceItem.ItemType.Image) {
+						var im = item as SourceItem.Image;
+						sb.AppendLine(String.Join("\t", [
+							im.FilePath.ToString(),
+							item.Bookmark != null ? item.Bookmark.Title : String.Empty,
+							"-"/*im.PageRanges*/,
+							im.PageCount.ToText () ]));
+					}
+					else if (item.Type == SourceItem.ItemType.Folder) {
+						sb.AppendLine(item.FilePath.ToString());
 					}
 				}
-			}
-		}
-
-		ListViewItem GetFocusedPdfItem() {
-			var vi = _ItemList.FocusedItem;
-			if (vi == null
-				|| !vi.Text.EndsWith(Constants.FileExtensions.Pdf, StringComparison.OrdinalIgnoreCase)) {
-				return null;
-			}
-			return vi;
-		}
-
-		void _ItemListMenu_Opening(object sender, CancelEventArgs e) {
-			var vi = _ItemList.FocusedItem;
-			if (vi == null) {
-				_ItemListMenu.ToggleEnabled(false, "_SetPdfOptions", "_RefreshFolder", "_SetCroppingOptions");
-				return;
-			}
-			var s = _ItemList.GetModelObject(vi.Index) as SourceItem;
-			_ItemListMenu.Items["_SetPdfOptions"].Enabled = s.Type == SourceItem.ItemType.Pdf;
-			_ItemListMenu.Items["_SetCroppingOptions"].Enabled = s.Type == SourceItem.ItemType.Image;
-			_ItemListMenu.Items["_RefreshFolder"].Enabled = s.Type == SourceItem.ItemType.Folder;
-		}
-
-		List<T> GetSourceItems<T>(bool selectedOnly) where T : SourceItem {
-			if (_ItemList.GetItemCount() == 0) {
-				return null;
-			}
-			var l = selectedOnly ? _ItemList.SelectedObjects : _ItemList.Objects;
-			var items = new List<T>(selectedOnly ? 10 : _ItemList.GetItemCount());
-			SelectItems(l, items);
-			return items;
-		}
-
-		static void SelectItems<T>(System.Collections.IEnumerable list, List<T> results) where T : SourceItem {
-			foreach (T item in list) {
-				if (item == null) {
-					continue;
+				if (sb.Length > 0) {
+					Clipboard.SetText(sb.ToString());
 				}
-				results.Add(item);
-				if (item.HasSubItems) {
-					SelectItems(item.Items, results);
+				StringBuilderCache.Release(sb);
+				break;
+			case "_InsertEmptyPage":
+				AddItem(new SourceItem.Empty());
+				break;
+			case Commands.SelectAllItems:
+				_ItemList.SelectAll();
+				break;
+			case Commands.SelectNone:
+				_ItemList.SelectObjects(null);
+				break;
+			case Commands.InvertSelection:
+				_ItemList.InvertSelect();
+				break;
+			case Commands.SelectAllImages:
+				SelectItemsByType(SourceItem.ItemType.Image);
+				break;
+			case Commands.SelectAllPdf:
+				SelectItemsByType(SourceItem.ItemType.Pdf);
+				break;
+			case Commands.SelectAllFolders:
+				SelectItemsByType(SourceItem.ItemType.Folder);
+				break;
+			case "_EditItemProperty":
+			case "_SetPdfOptions":
+				_ItemList_ItemActivate(null, null);
+				break;
+			case "_SetCroppingOptions":
+				SetImageCropping();
+				break;
+			case "_RefreshFolder":
+				foreach (SourceItem.Folder item in _ItemList.SelectedObjects) {
+					item?.Reload();
+				}
+				_ItemList.RefreshObjects(_ItemList.SelectedObjects);
+				break;
+			case "_PdfOptions":
+				AppContext.MainForm.SelectFunctionList(Function.PatcherOptions);
+				break;
+			case "_BoldStyleButton":
+				var cb = !_BoldStyleButton.Checked;
+				foreach (SourceItem item in _ItemList.SelectedObjects) {
+					if (item?.Bookmark != null) {
+						item.Bookmark.IsBold = cb;
+					}
+				}
+				goto case "__Refresh";
+			case "_ItalicStyleButton":
+				var ci = !_ItalicStyleButton.Checked;
+				foreach (SourceItem item in _ItemList.SelectedObjects) {
+					if (item?.Bookmark != null) {
+						item.Bookmark.IsItalic = ci;
+					}
+				}
+				goto case "__Refresh";
+			case "_BookmarkColorButton":
+				RefreshBookmarkColor();
+				break;
+			case "_CopyFileName":
+				CopySelectedItems(item => item.FilePath.FileNameWithoutExtension);
+				break;
+			case "_CopyBookmarkText":
+				CopySelectedItems(item => item != null && item.Bookmark != null ? item.Bookmark.Title : String.Empty);
+				break;
+			case "_PasteBookmarkText":
+				var ct = Clipboard.GetText(TextDataFormat.UnicodeText);
+				if (String.IsNullOrEmpty(ct) || _ItemList.GetItemCount() == 0) {
+					break;
+				}
+				var li = _ItemList.GetLastItemInDisplayOrder().Index;
+				using (var sr = new System.IO.StringReader(ct)) {
+					var i = _ItemList.GetFirstSelectedIndex();
+					if (i == -1) {
+						i = 0;
+					}
+					while (i <= li && sr.Peek() != -1) {
+						if (_ItemList.GetModelObject(i) is SourceItem b) {
+							if (b.Bookmark == null) {
+								b.Bookmark = new BookmarkSettings(sr.ReadLine());
+							}
+							else {
+								b.Bookmark.Title = sr.ReadLine();
+							}
+						}
+						var di = _ItemList.GetDisplayOrderOfItemIndex(i);
+						++di;
+						var ni = _ItemList.GetNthItemInDisplayOrder(di);
+						if (ni == null) {
+							break;
+						}
+						i = ni.Index;
+					}
+				}
+				break;
+			case "_ClearBookmarkTitle":
+				foreach (SourceItem item in _ItemList.SelectedObjects) {
+					if (item?.Bookmark != null) {
+						item.Bookmark = null;
+					}
+				}
+				goto case "__Refresh";
+			case "_SetBookmarkTitle":
+				foreach (SourceItem item in _ItemList.SelectedObjects) {
+					if (item != null) {
+						BookmarkSettings b;
+						var t = System.IO.Path.GetFileNameWithoutExtension(item.FileName);
+						if ((b = item.Bookmark) == null) {
+							b = item.Bookmark = new BookmarkSettings(t);
+						}
+						else {
+							item.Bookmark.Title = t;
+						}
+					}
+				}
+				goto case "__Refresh";
+			case "__Refresh":
+				_ItemList.RefreshObjects(_ItemList.SelectedObjects);
+				break;
+		}
+	}
+
+	void CopySelectedItems(Converter<SourceItem, string> converter) {
+		var bt = StringBuilderCache.Acquire(200);
+		foreach (SourceItem item in _ItemList.SelectedObjects) {
+			bt.AppendLine(converter(item));
+		}
+		if (bt.Length > 0) {
+			try {
+				Clipboard.SetDataObject(bt.ToString(), true, 10, 50);
+			}
+			catch (System.Runtime.InteropServices.ExternalException) {
+				// ignore
+			}
+		}
+		StringBuilderCache.Release(bt);
+	}
+
+	void RefreshBookmarkColor() {
+		var sc = _BookmarkColorButton.Color == Color.White
+						   ? Color.Transparent
+						   : _BookmarkColorButton.Color;
+		foreach (SourceItem item in _ItemList.SelectedObjects) {
+			if (item?.Bookmark != null) {
+				item.Bookmark.ForeColor = sc;
+			}
+		}
+		_ItemList.RefreshObjects(_ItemList.SelectedObjects);
+	}
+
+	void SelectItemsByType(SourceItem.ItemType type) {
+		var r = new List<SourceItem>();
+		SelectItemsByType(type, r, _itemsContainer);
+		_ItemList.SelectedObjects = r.Count > 0 ? r : null;
+	}
+
+	void SelectItemsByType(SourceItem.ItemType type, List<SourceItem> result, SourceItem container) {
+		foreach (var item in container.Items) {
+			if (item.Type == type) {
+				_ItemList.Reveal(item, false);
+				result.Add(item);
+			}
+			if (item.HasSubItems) {
+				SelectItemsByType(type, result, item);
+			}
+		}
+	}
+
+	void _ItemList_ItemActivate(object sender, EventArgs e) {
+		var vi = GetFocusedPdfItem();
+		if (vi != null) {
+			var pdfItem = _ItemList.GetModelObject(vi.Index) as SourceItem.Pdf;
+			using (SourcePdfOptionForm f = new SourcePdfOptionForm(pdfItem)) {
+				if (f.ShowDialog() == DialogResult.OK) {
+					_ItemList.RefreshObject(pdfItem);
+				}
+			}
+			return;
+		}
+		SetImageCropping();
+	}
+
+	void SetImageCropping() {
+		var items = _ItemList.SelectedObjects;
+		if (items.Count == 0) {
+			return;
+		}
+
+		var s = items[0] as SourceItem.Image;
+		int c = 1;
+		for (int i = 1; i < items.Count; i++) {
+			if (items[i] is not SourceItem.Image image || image.Type == SourceItem.ItemType.Pdf) {
+				continue;
+			}
+			if (s == null) {
+				s = image;
+				continue;
+			}
+			c++;
+			if (!s.Cropping.Equals(image.Cropping)) {
+				if (FormHelper.YesNoBox("选择的图片具有不同的设置，是否重置为统一的值？") == DialogResult.No) {
+					return;
+				}
+				break;
+			}
+		}
+		if (s == null) {
+			return;
+		}
+		var o = new SourceItem.Image(c > 1 ? (FilePath)(c + " 个文件") : s.FilePath) {
+			Cropping = s.Cropping.Clone()
+		};
+		using (var f = new SourceImageOptionForm(o)) {
+			if (f.ShowDialog() == DialogResult.OK) {
+				foreach (SourceItem.Image image in items) {
+					if (image == null || image.Type == SourceItem.ItemType.Pdf) {
+						continue;
+					}
+					image.Cropping = o.Cropping.Clone();
 				}
 			}
 		}
+	}
 
-		#region AddDocumentWorker
-		void _AddDocumentWorker_DoWork(object sender, DoWorkEventArgs e) {
-			var files = e.Argument as string[];
-			Array.ForEach(files, f => ((BackgroundWorker)sender).ReportProgress(0, f));
+	ListViewItem GetFocusedPdfItem() {
+		var vi = _ItemList.FocusedItem;
+		if (vi == null
+			|| !vi.Text.EndsWith(Constants.FileExtensions.Pdf, StringComparison.OrdinalIgnoreCase)) {
+			return null;
 		}
+		return vi;
+	}
 
-		void _AddDocumentWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
-			AppContext.MainForm.Enabled = true;
+	void _ItemListMenu_Opening(object sender, CancelEventArgs e) {
+		var vi = _ItemList.FocusedItem;
+		if (vi == null) {
+			_ItemListMenu.ToggleEnabled(false, "_SetPdfOptions", "_RefreshFolder", "_SetCroppingOptions");
+			return;
 		}
+		var s = _ItemList.GetModelObject(vi.Index) as SourceItem;
+		_ItemListMenu.Items["_SetPdfOptions"].Enabled = s.Type == SourceItem.ItemType.Pdf;
+		_ItemListMenu.Items["_SetCroppingOptions"].Enabled = s.Type == SourceItem.ItemType.Image;
+		_ItemListMenu.Items["_RefreshFolder"].Enabled = s.Type == SourceItem.ItemType.Folder;
+	}
 
-		void _AddDocumentWorker_ProgressChanged(object sender, ProgressChangedEventArgs e) {
-			AddItem(SourceItem.Create(e.UserState as string));
+	List<T> GetSourceItems<T>(bool selectedOnly) where T : SourceItem {
+		if (_ItemList.GetItemCount() == 0) {
+			return null;
 		}
+		var l = selectedOnly ? _ItemList.SelectedObjects : _ItemList.Objects;
+		var items = new List<T>(selectedOnly ? 10 : _ItemList.GetItemCount());
+		SelectItems(l, items);
+		return items;
+	}
 
-		void AddItem(SourceItem item) {
+	static void SelectItems<T>(System.Collections.IEnumerable list, List<T> results) where T : SourceItem {
+		foreach (T item in list) {
 			if (item == null) {
-				return;
+				continue;
 			}
-			_ItemList.Focus();
-			AddItems([item]);
+			results.Add(item);
+			if (item.HasSubItems) {
+				SelectItems(item.Items, results);
+			}
 		}
+	}
 
-		void AddItems(SourceItem[] items) {
-			int i = _ItemList.GetLastSelectedIndex();
-			if (i == -1) {
-				i = _ItemList.FocusedItem?.Index ?? -1;
-			}
-			if (i == -1) {
-				_itemsContainer.Items.AddRange(items);
-				_ItemList.Objects = _itemsContainer.Items;
-				goto SELECT;
-			}
-			var m = _ItemList.GetModelObject(i) as SourceItem;
-			var p = _ItemList.GetParentModel(m);
-			if (p == null) {
-				i = _itemsContainer.Items.IndexOf(m);
-				_itemsContainer.Items.InsertRange(++i, items);
-				_ItemList.Objects = _itemsContainer.Items;
-				_ItemList.RebuildAll(true);
-				goto SELECT;
-			}
-			i = p.Items.IndexOf(m);
-			p.Items.InsertRange(++i, items);
-			_ItemList.RefreshObject(p);
-			SELECT:
-			_ItemList.SelectedObjects = items;
-			_ItemList.FocusedObject = items[0];
+	#region AddDocumentWorker
+	void _AddDocumentWorker_DoWork(object sender, DoWorkEventArgs e) {
+		var files = e.Argument as string[];
+		Array.ForEach(files, f => ((BackgroundWorker)sender).ReportProgress(0, f));
+	}
+
+	void _AddDocumentWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
+		AppContext.MainForm.Enabled = true;
+	}
+
+	void _AddDocumentWorker_ProgressChanged(object sender, ProgressChangedEventArgs e) {
+		AddItem(SourceItem.Create(e.UserState as string));
+	}
+
+	void AddItem(SourceItem item) {
+		if (item == null) {
+			return;
 		}
-		#endregion
+		_ItemList.Focus();
+		AddItems([item]);
+	}
 
-		#region IDefaultButtonControl 成员
+	void AddItems(SourceItem[] items) {
+		int i = _ItemList.GetLastSelectedIndex();
+		if (i == -1) {
+			i = _ItemList.FocusedItem?.Index ?? -1;
+		}
+		if (i == -1) {
+			_itemsContainer.Items.AddRange(items);
+			_ItemList.Objects = _itemsContainer.Items;
+			goto SELECT;
+		}
+		var m = _ItemList.GetModelObject(i) as SourceItem;
+		var p = _ItemList.GetParentModel(m);
+		if (p == null) {
+			i = _itemsContainer.Items.IndexOf(m);
+			_itemsContainer.Items.InsertRange(++i, items);
+			_ItemList.Objects = _itemsContainer.Items;
+			_ItemList.RebuildAll(true);
+			goto SELECT;
+		}
+		i = p.Items.IndexOf(m);
+		p.Items.InsertRange(++i, items);
+		_ItemList.RefreshObject(p);
+		SELECT:
+		_ItemList.SelectedObjects = items;
+		_ItemList.FocusedObject = items[0];
+	}
+	#endregion
 
-		public override Button DefaultButton => _ImportButton;
+	#region IDefaultButtonControl 成员
 
-		#endregion
+	public override Button DefaultButton => _ImportButton;
 
-		void _ItemList_FormatRow(object sender, FormatRowEventArgs e) {
-			var si = e.Model as SourceItem;
-			var bs = si.Bookmark;
-			if (bs == null) {
-				return;
-			}
-			e.Item.UseItemStyleForSubItems = false;
-			e.UseCellFormatEvents = false;
-			var c = e.Item.SubItems[1];
-			c.ForeColor = bs.ForeColor.IsEmptyOrTransparent() ? Color.Black : bs.ForeColor;
-			if (bs.IsBold || bs.IsItalic) {
-				c.Font = new Font(c.Font, (bs.IsBold ? FontStyle.Bold : FontStyle.Regular) | (bs.IsItalic ? FontStyle.Italic : FontStyle.Regular));
-			}
+	#endregion
+
+	void _ItemList_FormatRow(object sender, FormatRowEventArgs e) {
+		var si = e.Model as SourceItem;
+		var bs = si.Bookmark;
+		if (bs == null) {
+			return;
+		}
+		e.Item.UseItemStyleForSubItems = false;
+		e.UseCellFormatEvents = false;
+		var c = e.Item.SubItems[1];
+		c.ForeColor = bs.ForeColor.IsEmptyOrTransparent() ? Color.Black : bs.ForeColor;
+		if (bs.IsBold || bs.IsItalic) {
+			c.Font = new Font(c.Font, (bs.IsBold ? FontStyle.Bold : FontStyle.Regular) | (bs.IsItalic ? FontStyle.Italic : FontStyle.Regular));
 		}
 	}
 }

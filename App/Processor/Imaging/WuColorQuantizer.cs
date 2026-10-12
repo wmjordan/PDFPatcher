@@ -291,7 +291,7 @@ namespace PDFPatcher.Processor.Imaging
 
 			if ((maxRed.Value >= maxGreen.Value) && (maxRed.Value >= maxBlue.Value)) {
 				direction = __Red;
-				if (maxRed.CanSplit == false) {
+				if (!maxRed.CanSplit) {
 					return false;
 				}
 			}
@@ -598,7 +598,7 @@ namespace PDFPatcher.Processor.Imaging
 		sealed class LookupData
 		{
 			public LookupData(int granularity) {
-				Lookups = new List<Pixel>();
+				Lookups = [];
 				Tags = new int[granularity * granularity * granularity];
 			}
 
@@ -622,7 +622,7 @@ namespace PDFPatcher.Processor.Imaging
 		sealed class QuantizedPalette
 		{
 			public QuantizedPalette(int size) {
-				Colors = new List<Color>();
+				Colors = [];
 				PixelIndex = new int[size];
 			}
 			public IList<Color> Colors { get; }

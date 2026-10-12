@@ -13,6 +13,12 @@ namespace PDFPatcher.Processor.ContentParser;
 static class ContentStreamBuilder
 {
 	static readonly Encoding Latin1 = Encoding.GetEncoding("ISO-8859-1");
+	static readonly byte[] __Null = Latin1.GetBytes("null"),
+		__True = Latin1.GetBytes("true"),
+		__False = Latin1.GetBytes("false"),
+		__BI = Latin1.GetBytes("BI "),
+		__ID = Latin1.GetBytes("ID"),
+		__EI = Latin1.GetBytes("EI");
 	const byte Space = (byte)' ', NewLine = (byte)'\n';
 
 	/// <summary>
@@ -58,10 +64,15 @@ static class ContentStreamBuilder
 
 		switch (token.Type) {
 			case TokenType.Null:
-				WriteString(stream, "null");
+				stream.Write(__Null, 0, 4);
 				break;
 			case TokenType.Boolean:
-				WriteString(stream, (bool)token.Value ? "true" : "false");
+				if ((bool)token.Value) {
+					stream.Write(__True, 0, 4);
+				}
+				else {
+					stream.Write(__False, 0, 5);
+				}
 				break;
 			case TokenType.Integer:
 				WriteString(stream, ((long)token.Value).ToString(CultureInfo.InvariantCulture));
@@ -153,8 +164,7 @@ static class ContentStreamBuilder
 
 	private static void WriteInlineImage(Stream stream, InlineImageContent img) {
 		// BI
-		WriteString(stream, "BI");
-		stream.WriteByte(Space);
+		stream.Write(__BI, 0, 3);
 
 		// 字典键值对
 		bool first = true;
@@ -175,11 +185,11 @@ static class ContentStreamBuilder
 		}
 
 		// ID 和图像数据
-		WriteString(stream, "ID");
+		stream.Write(__ID, 0, 2);
 		// ID 后通常紧跟图像数据，无空白
 		stream.Write(img.Data.Buffer, img.Data.Offset, img.Data.Length);
 		// EI
-		WriteString(stream, "EI");
+		stream.Write(__EI, 0, 2);
 	}
 
 	private static void WriteOperator(Stream stream, string opName) {
@@ -193,7 +203,7 @@ static class ContentStreamBuilder
 
 	private static readonly char[] HexChars = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
-	private static string EncodeName(string name) {
+	static string EncodeName(string name) {
 		// 快速路径：检测是否需要转义，同时统计转义次数
 		int escapeCount = 0;
 		int firstEscape = -1;

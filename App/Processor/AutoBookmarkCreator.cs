@@ -21,14 +21,14 @@ namespace PDFPatcher.Processor
 
 		sealed class FontOccurrence
 		{
-			readonly Dictionary<string, List<SizeOccurrence>> oc = new Dictionary<string, List<SizeOccurrence>>();
+			readonly Dictionary<string, List<SizeOccurrence>> oc = [];
 			internal List<SizeOccurrence> GetOccurrence(string fontName) {
 				return oc.TryGetValue(fontName, out List<SizeOccurrence> s) ? s : null;
 			}
 
 			internal void AddOccurrence(string fontName, float size, int page, string instance) {
-				if (oc.ContainsKey(fontName) == false) {
-					oc.Add(fontName, new List<SizeOccurrence>() { new SizeOccurrence(size, page, instance) });
+				if (!oc.ContainsKey(fontName)) {
+					oc.Add(fontName, [new SizeOccurrence(size, page, instance)]);
 				}
 				else {
 					var o = oc[fontName].Find((s) => s.Size == size);
@@ -87,7 +87,7 @@ namespace PDFPatcher.Processor
 				ig = null;
 			}
 			else {
-				ig = new List<MatchPattern.IMatcher>();
+				ig = [];
 				foreach (var item in options.IgnorePatterns) {
 					if (String.IsNullOrEmpty(item.Text)) {
 						continue;
@@ -102,7 +102,7 @@ namespace PDFPatcher.Processor
 			}
 
 			XmlWriter oldWriter = null;
-			if (options.ExportTextCoordinates == false) {
+			if (!options.ExportTextCoordinates) {
 				oldWriter = writer;
 				writer = new NullXmlWriter();
 			}
@@ -245,7 +245,7 @@ namespace PDFPatcher.Processor
 			WriteDocumentFontOccurrences(writer, options, p, fontOccurrences);
 			SetGoToTop(options, doc);
 			writer.WriteStartElement(Constants.DocumentBookmark);
-			if (options.CreateBookmarkForFirstPage && String.IsNullOrEmpty(options.FirstPageTitle) == false) {
+			if (options.CreateBookmarkForFirstPage && !String.IsNullOrEmpty(options.FirstPageTitle)) {
 				writer.WriteStartElement(Constants.Bookmark);
 				writer.WriteAttributeString(Constants.BookmarkAttributes.Title, options.FirstPageTitle);
 				writer.WriteAttributeString(Constants.DestinationAttributes.Page, "1");
@@ -273,7 +273,7 @@ namespace PDFPatcher.Processor
 				var fo = "0";
 				var sl = fontOccurrences.GetOccurrence(item.Value);
 				if (sl != null) {
-					if (dl.Contains(item.Value) == false) {
+					if (!dl.Contains(item.Value)) {
 						int o = 0;
 						foreach (var s in sl) {
 							o += s.Occurrence;
@@ -336,7 +336,7 @@ namespace PDFPatcher.Processor
 					if (a.Region.Middle < b.Region.Middle) {
 						return 1;
 					}
-					else if (a.Region.Middle > b.Region.Middle) {
+					if (a.Region.Middle > b.Region.Middle) {
 						return -1;
 					}
 					return 0;
@@ -388,21 +388,21 @@ namespace PDFPatcher.Processor
 				for (int i = ll.Count - 1; i >= end; i--) {
 					var li = ll[i];
 					// 文本尺寸应在误差范围之内
-					if (Math.Abs(item.Size - li.FirstText.Size) > ds && options.MergeDifferentSizeTitles == false) {
+					if (Math.Abs(item.Size - li.FirstText.Size) > ds && !options.MergeDifferentSizeTitles) {
 						continue;
 					}
-					if (options.MergeDifferentFontTitles == false && li.FirstText.Font.FontID != item.Font.FontID) {
+					if (!options.MergeDifferentFontTitles && li.FirstText.Font.FontID != item.Font.FontID) {
 						break;
 					}
 					cd = li.GetDistance(ir);
 					if ((cd.IsOverlapping // 当前项与文本行交叠
-							&& (md.IsOverlapping == false // 最小距离不是交叠
+							&& (!md.IsOverlapping // 最小距离不是交叠
 								|| cd.DistanceRadial < md.DistanceRadial) // 当前项与文本行的交叠中心距离小于最小距离
 							)
 						//&& (options.MergeDifferentFontTitles || li.FirstText.Font.FontID == item.Font.FontID)
 						|| ((md.Location == DistanceInfo.Placement.Unknown // 未知最小距离
-							|| (cd.IsOverlapping == false
-								&& md.IsOverlapping == false
+							|| (!cd.IsOverlapping
+								&& !md.IsOverlapping
 								&& cd.MinDistance < md.MinDistance) // 当前项与文本行的距离小于最小距离
 							)
 							&& (((cd.IsHorizontallyAligned) // 相对位置为水平
@@ -415,7 +415,7 @@ namespace PDFPatcher.Processor
 																									   // && Math.Abs (item.Region.Middle - li.Region.Middle) < li.Region.Height // 行间距离小于行高
 									)
 								)
-							&& (options.DetectColumns == false || cd.MinDistance < cw)
+							&& (!options.DetectColumns || cd.MinDistance < cw)
 							&& (options.MergeDifferentFontTitles || li.FirstText.Font.FontID == item.Font.FontID)
 						)
 						) {
@@ -486,17 +486,17 @@ namespace PDFPatcher.Processor
 					if (Math.Abs(item.FirstText.Size - li.Lines[0].FirstText.Size) > ds && _options.MergeAdjacentTitles) {
 						continue;
 					}
-					if (_options.MergeDifferentFontTitles == false && li.Lines[0].FirstText.Font.FontID != item.FirstText.Font.FontID) {
+					if (!_options.MergeDifferentFontTitles && li.Lines[0].FirstText.Font.FontID != item.FirstText.Font.FontID) {
 						break;
 					}
 					cd = li.Region.GetDistance(ir, li.Direction);
 					if ((cd.IsOverlapping // 当前项与文本行交叠
-							&& (md.IsOverlapping == false // 最小距离不是交叠
+							&& (!md.IsOverlapping // 最小距离不是交叠
 								|| cd.DistanceRadial < md.DistanceRadial) // 当前项与文本行的交叠中心距离小于最小距离
 							)
 						|| ((md.Location == DistanceInfo.Placement.Unknown // 未知最小距离
-							|| (cd.IsOverlapping == false
-								&& md.IsOverlapping == false
+							|| (!cd.IsOverlapping
+								&& !md.IsOverlapping
 								&& cd.MinDistance < md.MinDistance) // 当前项与文本行的距离小于最小距离
 							)
 							&& (((cd.IsHorizontallyAligned) // 相对位置为水平
@@ -551,7 +551,7 @@ namespace PDFPatcher.Processor
 				_mergeAdjacentTitles = options.MergeAdjacentTitles;
 				_mergeDifferentSizeTitles = options.MergeDifferentSizeTitles;
 				_levelProcessor = new LevelProcessor(options.LevelAdjustment);
-				_TextList = new List<TextInfo>();
+				_TextList = [];
 				PopulateOperators();
 				RegisterContentOperator("TJ", new AccumulatedShowTextArray());
 				_context = context;

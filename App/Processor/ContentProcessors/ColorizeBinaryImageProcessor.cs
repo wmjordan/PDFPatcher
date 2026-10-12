@@ -37,7 +37,7 @@ namespace PDFPatcher.Processor
 			var bw = new List<PdfName>();
 			foreach (var item in images) {
 				if (PdfReader.GetPdfObject(item.Value) is not PRStream im
-					|| PdfName.IMAGE.Equals(im.GetAsName(PdfName.SUBTYPE)) == false
+					|| !PdfName.IMAGE.Equals(im.GetAsName(PdfName.SUBTYPE))
 					|| im.TryGetInt32(PdfName.BITSPERCOMPONENT, 0) != 1
 					) {
 					continue;

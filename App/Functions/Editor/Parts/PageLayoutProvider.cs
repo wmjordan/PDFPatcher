@@ -21,7 +21,7 @@ abstract class PageLayoutProvider
 	public abstract bool IsReverse { get; }
 	public abstract bool IsHorizontal { get; }
 	public float Margin {
-		get => field;
+		get;
 		set { field = value; DoubleMargin = value * 2; }
 	}
 	protected float DoubleMargin { get; private set; }

@@ -16,7 +16,7 @@ namespace PDFPatcher.Processor
 
 		internal override bool Matches(AutoBookmarkContext context) {
 			foreach (var item in _filters) {
-				if (item.Matches(context) == false) {
+				if (!item.Matches(context)) {
 					return false;
 				}
 			}

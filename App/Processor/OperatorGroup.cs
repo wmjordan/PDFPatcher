@@ -13,7 +13,7 @@ namespace PDFPatcher.Processor
 		public bool HasOutput { get; }
 
 		public OperatorGroup(IEnumerable<PdfContentStreamProcessor.IContentOperator> operators) {
-			Operators = new List<PdfContentStreamProcessor.IContentOperator>();
+			Operators = [];
 			if (operators != null) {
 				Operators.AddRange(operators);
 				foreach (var item in operators) {

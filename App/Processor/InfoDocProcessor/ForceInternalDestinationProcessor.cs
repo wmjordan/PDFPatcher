@@ -20,9 +20,9 @@ namespace PDFPatcher.Processor
 				case Constants.ActionType.Uri:
 					if (item.GetAttribute(Constants.DestinationAttributes.Path).EndsWith(".pdf", StringComparison.InvariantCultureIgnoreCase)) {
 						item.RemoveAttribute(Constants.DestinationAttributes.Action);
-						if (item.HasAttribute(Constants.DestinationAttributes.Page) == false
-							&& item.HasAttribute(Constants.DestinationAttributes.Named) == false
-							&& item.HasAttribute(Constants.DestinationAttributes.NamedN) == false
+						if (!item.HasAttribute(Constants.DestinationAttributes.Page)
+							&& !item.HasAttribute(Constants.DestinationAttributes.Named)
+							&& !item.HasAttribute(Constants.DestinationAttributes.NamedN)
 							) {
 							item.SetAttribute(Constants.DestinationAttributes.Page, "1");
 						}

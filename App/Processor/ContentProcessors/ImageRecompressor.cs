@@ -91,7 +91,7 @@ namespace PDFPatcher.Processor
 		static bool OptimizeBinaryImage(PdfIndirectReference imgRef, PRStream imgStream, int length, byte binaryThreshold, byte algorithm) {
 			var oneBitPerComponent = imgStream.GetAsNumber(PdfName.BITSPERCOMPONENT)?.IntValue == 1;
 			var isMask = imgStream.GetAsBoolean(PdfName.IMAGEMASK)?.BooleanValue == true;
-			if (oneBitPerComponent == false && isMask == false && binaryThreshold == 0) {
+			if (!oneBitPerComponent && !isMask && binaryThreshold == 0) {
 				return false;
 			}
 
@@ -100,9 +100,9 @@ namespace PDFPatcher.Processor
 			using (var fi = ImageExtractor.CreateFreeImageBitmap(info, ref bytes, false, info.ICCProfile != null)) {
 				info.CreatePaletteAndIccProfile(fi);
 				if (binaryThreshold != 0
-					&& (fi.HasPalette == false
+					&& (!fi.HasPalette
 					|| fi.UniqueColors > 256
-					|| fi.UseDib(dib => FreeImage.ConvertColorDepth(dib, algorithm == 255 ? ColorDepth.FICD_01_BPP_THRESHOLD | ColorDepth.FICD_FORCE_GREYSCALE | ColorDepth.FICD_REORDER_PALETTE : ColorDepth.FICD_01_BPP_DITHER, binaryThreshold, false)) == false)) {
+					|| !fi.UseDib(dib => FreeImage.ConvertColorDepth(dib, algorithm == 255 ? ColorDepth.FICD_01_BPP_THRESHOLD | ColorDepth.FICD_FORCE_GREYSCALE | ColorDepth.FICD_REORDER_PALETTE : ColorDepth.FICD_01_BPP_DITHER, binaryThreshold, false)))) {
 					return false;
 				}
 				var sb = JBig2Encoder.Encode(fi);
@@ -131,15 +131,14 @@ namespace PDFPatcher.Processor
 		}
 
 		static bool ReplaceJ2kImage(PdfIndirectReference imgRef, PRStream imgStream, PdfName filter) {
-			if (PdfName.JPXDECODE.Equals(filter) == false) {
+			if (!PdfName.JPXDECODE.Equals(filter)) {
 				return false;
 			}
 
 			var info = new ImageInfo(imgRef);
 			byte[] jpg;
-			using (var ms = new System.IO.MemoryStream(info.DecodeImage(_imgExpOption)))
 			using (var js = new System.IO.MemoryStream())
-			using (var fi = new FreeImageAPI.FreeImageBitmap(ms)) {
+			using (var fi = FreeImageHelper.CreateFromBytes(info.DecodeImage(_imgExpOption))) {
 				fi.Save(js, FreeImageAPI.FREE_IMAGE_FORMAT.FIF_JPEG, FreeImageAPI.FREE_IMAGE_SAVE_FLAGS.JPEG_BASELINE | FreeImageAPI.FREE_IMAGE_SAVE_FLAGS.JPEG_QUALITYNORMAL | FreeImageAPI.FREE_IMAGE_SAVE_FLAGS.JPEG_PROGRESSIVE);
 				jpg = js.ToArray();
 			}

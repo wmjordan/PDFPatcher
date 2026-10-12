@@ -50,7 +50,7 @@ namespace PDFPatcher.Processor
 			var r = new HashSet<PdfName>();
 			foreach (var item in fl) {
 				if (PdfReader.GetPdfObject(item.Value) is not PRStream f
-					|| PdfName.FORM.Equals(f.GetAsName(PdfName.SUBTYPE)) == false) {
+					|| !PdfName.FORM.Equals(f.GetAsName(PdfName.SUBTYPE))) {
 					continue;
 				}
 				r.Add(item.Key);

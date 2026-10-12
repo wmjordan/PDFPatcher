@@ -14,7 +14,7 @@ namespace PDFPatcher.Processor
 	sealed class PdfContentExport
 	{
 		readonly ExporterOptions _options;
-		readonly Dictionary<string, string> _resolvedReferences = new Dictionary<string, string>();
+		readonly Dictionary<string, string> _resolvedReferences = [];
 		readonly Stack<string> _tags = new Stack<string>();
 		readonly Stack<PdfDictionary> _dictionaries = new Stack<PdfDictionary>();
 		bool _streamFolderExists;
@@ -48,7 +48,7 @@ namespace PDFPatcher.Processor
 			writer.WriteStartElement("Trailer");
 			writer.WriteAttributeString(Constants.ContentPrefix, "http://www.w3.org/2000/xmlns/", Constants.ContentNamespace);
 			foreach (var item in reader.Trailer) {
-				if (PdfName.ROOT.Equals(item.Key) == false) {
+				if (!PdfName.ROOT.Equals(item.Key)) {
 					ExportPdfDictionaryItem(item, writer);
 				}
 			}
@@ -316,7 +316,7 @@ namespace PDFPatcher.Processor
 		void ExportIndirectReference(PdfIndirectReference r, XmlWriter writer, string key) {
 			var obj = PdfReader.GetPdfObjectRelease(r);
 			writer.WriteAttributeString(Constants.Content.ResourceID, Constants.ContentNamespace, r.ToString());
-			if (AddReferenceRecord(r, key) == false || obj == null) {
+			if (!AddReferenceRecord(r, key) || obj == null) {
 				return;
 			}
 			switch (obj.Type) {
@@ -383,7 +383,7 @@ namespace PDFPatcher.Processor
 			if (pdfIndirect != null) {
 				writer.WriteAttributeString(Constants.Content.Length, bs.Length.ToText());
 				if (bs.Length != 0) {
-					if (_streamFolderExists == false) {
+					if (!_streamFolderExists) {
 						_exportStreamPath.CreateDirectory();
 						_streamFolderExists = true;
 					}
@@ -424,7 +424,7 @@ namespace PDFPatcher.Processor
 				}
 			}
 
-			if (isRaw == false) {
+			if (!isRaw) {
 				if (key == "Contents" || key == "ToUnicode" || isForm) {
 					var sb = StringBuilderCache.Acquire();
 					byte b;
@@ -513,7 +513,7 @@ namespace PDFPatcher.Processor
 						if (escape) {
 							escape = false;
 						}
-						if (inText == false) {
+						if (!inText) {
 							sb.Append(ch);
 						}
 						else {
@@ -572,7 +572,7 @@ namespace PDFPatcher.Processor
 			readonly XmlWriter _writer;
 			readonly bool _writeOperators;
 			readonly List<TextInfo> _textContainer;
-			readonly List<NameValuePair> _operands = new List<NameValuePair>();
+			readonly List<NameValuePair> _operands = [];
 			int _writerLevel;
 			float _textWidth;
 
@@ -581,13 +581,13 @@ namespace PDFPatcher.Processor
 				_export = export;
 				_writer = writer;
 				_writeOperators = options.ExportContentOperators;
-				_textContainer = options.ExportDecodedText ? new List<TextInfo>() : null;
+				_textContainer = options.ExportDecodedText ? [] : null;
 				PopulateOperators();
 				RegisterContentOperator("TJ", new AccumulatedShowTextArray());
 			}
 
 			public void End() {
-				if (_writeOperators == false) {
+				if (!_writeOperators) {
 					return;
 				}
 				while (_writerLevel > 0) {
@@ -671,7 +671,7 @@ namespace PDFPatcher.Processor
 						//case "EI":
 						goto default;
 					default:
-						if (_writeOperators == false) {
+						if (!_writeOperators) {
 							return;
 						}
 						_writer.WriteStartElement(fn ?? "未知操作符");
@@ -681,7 +681,7 @@ namespace PDFPatcher.Processor
 						}
 						break;
 				}
-				if (hasDescriptiveOperands == false) {
+				if (!hasDescriptiveOperands) {
 					if (operands.Count > 0) {
 						// 删除操作符
 						operands.RemoveAt(operands.Count - 1);
@@ -699,7 +699,7 @@ namespace PDFPatcher.Processor
 						}
 					}
 				}
-				if (open == false && _writerLevel >= 0) {
+				if (!open && _writerLevel >= 0) {
 					_writer.WriteEndElement();
 				}
 			}

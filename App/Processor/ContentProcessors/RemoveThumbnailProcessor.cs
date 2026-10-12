@@ -24,7 +24,7 @@ namespace PDFPatcher.Processor
 
 		public bool Process(PageProcessorContext context) {
 			Tracker.IncrementProgress(1);
-			if (context.Page.Contains(PdfName.THUMB) == false) {
+			if (!context.Page.Contains(PdfName.THUMB)) {
 				return false;
 			}
 			context.Page.Remove(PdfName.THUMB);

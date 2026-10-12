@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using PDFPatcher.Model;
 
 namespace PDFPatcher.Model.PdfPath
 {
@@ -21,18 +19,13 @@ namespace PDFPatcher.Model.PdfPath
 		#region IPathExpression 成员
 		public PathValueType ValueType => PathValueType.Expression;
 
-		public IPathAxis Axis { get; private set; }
+		public IPathAxis Axis { get; }
 
-		public string Name { get; private set; }
+		public string Name { get; }
 
 		private IList<IPathPredicate> _Predicates;
 		///<summary>获取匹配条件列表。</summary>
-		public IList<IPathPredicate> Predicates {
-			get {
-				_Predicates ??= new List<IPathPredicate>();
-				return _Predicates;
-			}
-		}
+		public IList<IPathPredicate> Predicates => _Predicates ??= [];
 
 		public DocumentObject SelectObject(DocumentObject source) {
 			return Axis.SelectObject(source, Name, Predicates);
@@ -51,8 +44,5 @@ namespace PDFPatcher.Model.PdfPath
 			Axis = PathAxes.Create(axis);
 			Name = name;
 		}
-
-
 	}
-
 }

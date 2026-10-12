@@ -17,10 +17,10 @@ namespace PDFPatcher.Processor
 		public Dictionary<int, object> ExtraData { get; private set; }
 
 		public PdfProcessingEngine(PdfReader pdf) {
-			DocumentProcessors = new List<IDocProcessor>();
-			PageProcessors = new List<IPageProcessor>();
+			DocumentProcessors = [];
+			PageProcessors = [];
 			Pdf = pdf;
-			ExtraData = new Dictionary<int, object>();
+			ExtraData = [];
 		}
 
 		public void CreateProcessors(PatcherOptions settings) {

@@ -10,17 +10,7 @@ namespace PDFPatcher.Functions
 {
 	sealed partial class FontFilterForm : Form
 	{
-		sealed class FilterSetting
-		{
-			internal string FontName { get; }
-			internal bool FullMatch { get; }
-			internal float Size { get; }
-			public FilterSetting(string fontName, bool fullMatch, float size) {
-				FontName = fontName;
-				FullMatch = fullMatch;
-				Size = size;
-			}
-		}
+		sealed record FilterSetting(string FontName, bool FullMatch, float Size);
 
 		readonly XmlElement _fontInfo;
 		internal AutoBookmarkCondition[] FilterConditions {

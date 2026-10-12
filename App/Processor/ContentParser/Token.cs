@@ -89,14 +89,14 @@ sealed class Token(byte[] buffer, int offset, int length, TokenType type, object
 	}
 	public double AsDouble() {
 		return Type switch {
-			TokenType.Integer => (double)(long)Value,
+			TokenType.Integer => (long)Value,
 			TokenType.Real => (double)Value,
 			_ => 0,
 		};
 	}
 	public double AsDouble(double defaultValue) {
 		return Type switch {
-			TokenType.Integer => (double)(long)Value,
+			TokenType.Integer => (long)Value,
 			TokenType.Real => (double)Value,
 			_ => defaultValue,
 		};

@@ -69,7 +69,7 @@ namespace PDFPatcher.Processor
 
 	sealed class UndoActionGroup : IUndoAction
 	{
-		readonly List<IUndoAction> _actions = new();
+		readonly List<IUndoAction> _actions = [];
 
 		public int Count => _actions.Count;
 

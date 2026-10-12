@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using CLR;
 
 namespace PDFPatcher.Processor
 {
@@ -14,13 +15,13 @@ namespace PDFPatcher.Processor
 		internal const string FullWidthPunctuations = "！＂＃＄％＆＇（）＊＋，－．／：；＜＝＞？＠［＼］＾＿｀｛｜｝～";
 		internal const string HalfWidthPunctuations = "!\"#$%&'()*+,-./;:<=>?@[\\]^_`{|}~";
 
-		internal static string[] CaseNames = new string[]{
+		internal static string[] CaseNames = [
 			"首字母大写(&S)", "英文大写(&Y)", "英文小写(&X)",
 			"全角数字(&Z)", "全角字母(&Q)", "全角标点(&B)",
 			"半角数字(&N)", "半角字母(&M)", "半角标点(&D)",
 			"中文数字(&W)", "大写中文数字(&H)",
 			"繁体汉字转简体(&J)", "简体汉字转繁体(&F)"
-		};
+		];
 
 		public enum LetterCase
 		{
@@ -102,22 +103,22 @@ namespace PDFPatcher.Processor
 		}
 
 		static char FullWidthLetterToHalfWidth(char ch) {
-			return ch >= 'ａ' && ch <= 'ｚ' ? (char)(ch - 'ａ' + 'a')
-				: ch >= 'Ａ' && ch <= 'Ｚ' ? (char)(ch - 'Ａ' + 'A')
+			return ch.IsBetween('ａ', 'ｚ') ? (char)(ch - 'ａ' + 'a')
+				: ch.IsBetween('Ａ', 'Ｚ') ? (char)(ch - 'Ａ' + 'A')
 				: ch;
 		}
 
 		static char HalfWidthLetterToFullWidth(char ch) {
-			return ch >= 'a' && ch <= 'z' ? (char)(ch + 'ａ' - 'a')
-				: ch >= 'A' && ch <= 'Z' ? (char)(ch + 'Ａ' - 'A')
+			return ch.IsBetween('a', 'z') ? (char)(ch + 'ａ' - 'a')
+				: ch.IsBetween('A', 'Z') ? (char)(ch + 'Ａ' - 'A')
 				: ch;
 		}
 		static char FullWidthNumberToHalfWidth(char ch) {
-			return ch >= '０' && ch <= '９' ? (char)(ch - '０' + '0') : ch;
+			return ch.IsBetween('０', '９') ? (char)(ch - '０' + '0') : ch;
 		}
 
 		static char HalfWidthNumberToFullWidth(char ch) {
-			return ch >= '0' && ch <= '9' ? (char)(ch + '０' - '0') : ch;
+			return ch.IsBetween('0', '9') ? (char)(ch + '０' - '0') : ch;
 		}
 
 		static class SC2TC

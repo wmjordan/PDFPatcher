@@ -23,11 +23,11 @@ namespace PDFPatcher.Processor
 				return false;
 			}
 			var a = item.GetAttribute(Constants.DestinationAttributes.Action);
-			if (String.IsNullOrEmpty(a) == false && a != Constants.ActionType.Goto) {
+			if (!String.IsNullOrEmpty(a) && a != Constants.ActionType.Goto) {
 				return false;
 			}
 
-			if (item.GetAttribute(Constants.DestinationAttributes.Page).TryParse(out page) == false) {
+			if (!item.GetAttribute(Constants.DestinationAttributes.Page).TryParse(out page)) {
 				RemoveGotoAction(item);
 				return true;
 			}
@@ -75,8 +75,8 @@ namespace PDFPatcher.Processor
 			if (item.HasChildNodes && item.LocalName == Constants.Bookmark) {
 				while (item.HasChildNodes) {
 					if (item.LastChild is not XmlElement c ||
-						(c.HasAttribute(Constants.DestinationAttributes.Action) == false
-							&& c.HasChildNodes == false)) {
+						(!c.HasAttribute(Constants.DestinationAttributes.Action)
+							&& !c.HasChildNodes)) {
 						item.RemoveChild(item.LastChild);
 						continue;
 					}

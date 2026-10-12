@@ -21,15 +21,15 @@ namespace PDFPatcher.Processor
 			int p = item.GetValue(Constants.DestinationAttributes.Page, 0);
 			var a = item.GetValue(Constants.DestinationAttributes.Action);
 			if (a != Constants.ActionType.Goto && a != Constants.ActionType.GotoR
-				&& (a is null && TakeFollowing) == false && Amount == 0
-				|| String.IsNullOrEmpty(a) == false && p < 0) {
+				&& (a is not null || !TakeFollowing) && Amount == 0
+				|| !String.IsNullOrEmpty(a) && p < 0) {
 				return null;
 			}
 			if (p == 0 && TakeFollowing) {
 				return TakeFollowingBookmarkDestination(item, Amount);
 			}
 			if (SkipZero
-				&& item.HasAttribute(Constants.DestinationAttributes.Page) == false) {
+				&& !item.HasAttribute(Constants.DestinationAttributes.Page)) {
 				return null;
 			}
 			if (item.GetValue(Constants.DestinationAttributes.Page).TryParse(out p)) {
@@ -83,7 +83,7 @@ namespace PDFPatcher.Processor
 		static void CopyAttributes(XmlElement bookmark, XmlElement item, UndoActionGroup undo, params string[] names) {
 			foreach (var name in names) {
 				var value = item.GetValue(name);
-				if (String.IsNullOrEmpty(value) == false) {
+				if (!String.IsNullOrEmpty(value)) {
 					undo.SetAttribute(bookmark, name, value);
 				}
 			}

@@ -12,7 +12,7 @@ namespace PDFPatcher.Model.PdfPath
 		const char StartPredicate = '[';
 		const char EndPredicate = ']';
 
-		static readonly char[] __PredicateChars = new char[] { StartPredicate, EndPredicate };
+		static readonly char[] __PredicateChars = [StartPredicate, EndPredicate];
 
 		sealed class Context
 		{

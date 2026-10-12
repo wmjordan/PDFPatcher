@@ -54,7 +54,7 @@ namespace PDFPatcher.Processor
 			return (T)Get(instance, propertyName);
 		}
 		static object Get(object instance, string propertyName, int index) {
-			return instance.GetType().InvokeMember(propertyName, BindingFlags.GetProperty, null, instance, new object[1] { index });
+			return instance.GetType().InvokeMember(propertyName, BindingFlags.GetProperty, null, instance, [index]);
 		}
 		static void FinalReleaseComObjects(params object[] objs) {
 			for (int i = 0; i < objs.Length; i++) {
@@ -113,7 +113,7 @@ namespace PDFPatcher.Processor
 				if (i == 0) {
 					continue;
 				}
-				if (Constants.Ocr.LangIDs.Contains(i) && list.Contains(i) == false) {
+				if (Constants.Ocr.LangIDs.Contains(i) && !list.Contains(i)) {
 					list.Add(i);
 				}
 			}
@@ -241,7 +241,7 @@ namespace PDFPatcher.Processor
 #if DEBUGOCR
 					Tracker.TraceMessage("保存识别后图像路径：" + saveImagePath);
 #endif
-					if (File.Exists(saveImagePath) == false) {
+					if (!File.Exists(saveImagePath)) {
 						Call(ocr, "SaveAs", saveImagePath, -1);
 					}
 					else {

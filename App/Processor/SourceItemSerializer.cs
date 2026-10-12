@@ -69,7 +69,7 @@ namespace PDFPatcher.Processor
 			var b = new BookmarkSettings(bookmark);
 			var p = bookmark.GetValue(Constants.DestinationAttributes.Path);
 			var s = String.IsNullOrEmpty(p) ? SourceItem.Create() : SourceItem.Create(basePath.Combine(p), false);
-			if (b.Title.IsNullOrWhiteSpace() == false || b.IsOpened || b.IsBold || b.IsItalic || b.ForeColor.IsEmptyOrTransparent() == false) {
+			if (!b.Title.IsNullOrWhiteSpace() || b.IsOpened || b.IsBold || b.IsItalic || !b.ForeColor.IsEmptyOrTransparent()) {
 				s.Bookmark = b;
 			}
 			if (s.Type == SourceItem.ItemType.Pdf) {

@@ -143,7 +143,7 @@ namespace PDFPatcher.Processor
 				Tracker.TraceMessage(Tracker.Category.Error, "输入文件和输出文件不能相同。");
 				return;
 			}
-			if (FileHelper.CheckOverwrite(targetFile) == false) {
+			if (!FileHelper.CheckOverwrite(targetFile)) {
 				return;
 			}
 
@@ -193,7 +193,7 @@ namespace PDFPatcher.Processor
 				}
 				pdf.SelectPages(pages);
 				pdf.Catalog.Remove(PdfName.PAGELABELS);
-				if (options.KeepDocumentProperties == false) {
+				if (!options.KeepDocumentProperties) {
 					pdf.Trailer.Remove(PdfName.INFO);
 					pdf.Catalog.Remove(PdfName.METADATA);
 				}

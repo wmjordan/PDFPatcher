@@ -66,7 +66,7 @@ namespace PDFPatcher.Processor
 				// 读取一页识别结果
 				if (x.MoveToContent() != XmlNodeType.Element
 					|| x.Name != Constants.Ocr.Result
-					|| x.GetAttribute(Constants.Content.PageNumber).TryParse(out p) == false
+					|| !x.GetAttribute(Constants.Content.PageNumber).TryParse(out p)
 					|| p < 1 || p > pn) {
 					x.Skip();
 					continue;
@@ -120,9 +120,9 @@ namespace PDFPatcher.Processor
 		private static void ClearPreviousOcrResult(IList<PdfPageCommand> commands) {
 			for (int i = commands.Count - 1; i >= 0; i--) {
 				if (commands[i] is not EnclosingCommand c
-					|| c.HasOperand == false
+					|| !c.HasOperand
 					|| c.Name.ToString() != "BMC"
-					|| OcrResultBmcName.Equals(c.Operands[0]) == false) {
+					|| !OcrResultBmcName.Equals(c.Operands[0])) {
 					continue;
 				}
 				commands.RemoveAt(i);
@@ -180,7 +180,7 @@ namespace PDFPatcher.Processor
 			fd.Put(PdfName.CAPHEIGHT, new PdfNumber(857));
 			fd.Put(PdfName.DESCENT, new PdfNumber(-143));
 			fd.Put(PdfName.FLAGS, new PdfNumber(4));
-			fd.Put(PdfName.FONTBBOX, new PdfArray(new int[] { -250, -143, 600, 857 }));
+			fd.Put(PdfName.FONTBBOX, new PdfArray([-250, -143, 600, 857]));
 			fd.Put(PdfName.FONTNAME, FontName);
 			fd.Put(PdfName.STEMV, new PdfNumber(91));
 			fd.Put(new PdfName("StemH"), new PdfNumber(91));
@@ -207,8 +207,8 @@ namespace PDFPatcher.Processor
 			if (chars.Count == 0) {
 				return 0;
 			}
-			if (result.GetAttribute(Constants.Coordinates.Width).TryParse(out w) == false
-				|| result.GetAttribute(Constants.Coordinates.Height).TryParse(out h) == false
+			if (!result.GetAttribute(Constants.Coordinates.Width).TryParse(out w)
+				|| !result.GetAttribute(Constants.Coordinates.Height).TryParse(out h)
 				|| w <= 0
 				|| h <= 0
 				) {
@@ -235,7 +235,7 @@ namespace PDFPatcher.Processor
 			bool isV = false, hasHFont = false, hasVFont = false;
 			PdfName fn;
 			foreach (var item in chars) {
-				if (info.GetInfo(item as XmlElement) && String.IsNullOrEmpty(info.Text) == false) {
+				if (info.GetInfo(item as XmlElement) && !String.IsNullOrEmpty(info.Text)) {
 					if (info.IsVertical) {
 						hasVFont = true;
 						fn = OcrFontV;
@@ -279,10 +279,10 @@ namespace PDFPatcher.Processor
 				ImageWidth = imageWidth;
 			}
 			internal bool GetInfo(XmlElement ocrInfoItem) {
-				if (ocrInfoItem.GetAttribute(Constants.Coordinates.Top).TryParse(out _top) == false
-					|| ocrInfoItem.GetAttribute(Constants.Coordinates.Bottom).TryParse(out _bottom) == false
-					|| ocrInfoItem.GetAttribute(Constants.Coordinates.Left).TryParse(out _left) == false
-					|| ocrInfoItem.GetAttribute(Constants.Coordinates.Right).TryParse(out _right) == false
+				if (!ocrInfoItem.GetAttribute(Constants.Coordinates.Top).TryParse(out _top)
+					|| !ocrInfoItem.GetAttribute(Constants.Coordinates.Bottom).TryParse(out _bottom)
+					|| !ocrInfoItem.GetAttribute(Constants.Coordinates.Left).TryParse(out _left)
+					|| !ocrInfoItem.GetAttribute(Constants.Coordinates.Right).TryParse(out _right)
 					|| _top < 0 || _bottom < 0 || _left < 0 || _right < 0
 					|| _top > ImageHeight || _bottom > ImageHeight || _left > ImageWidth || _right > ImageWidth
 					|| String.IsNullOrEmpty(_text = ocrInfoItem.GetAttribute(Constants.Ocr.Text))

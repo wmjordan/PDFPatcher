@@ -18,12 +18,10 @@ namespace PDFPatcher.Processor
 			string v;
 			item.GetAttribute(CoordinateName).TryParse(out c);
 			if (IsAbsolute) {
-				if (c != Value) {
-					v = Value.ToText();
-				}
-				else {
+				if (c == Value) {
 					return null;
 				}
+				v = Value.ToText();
 			}
 			else if (Value != 0) {
 				v = (IsProportional ? Value * c : Value + c).ToText();

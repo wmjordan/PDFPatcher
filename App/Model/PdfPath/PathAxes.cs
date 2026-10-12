@@ -17,7 +17,7 @@ namespace PDFPatcher.Model.PdfPath
 				return true;
 			}
 			foreach (var p in predicates) {
-				if (p.Match(source, p.Operand1, p.Operand2) == false) {
+				if (!p.Match(source, p.Operand1, p.Operand2)) {
 					return false;
 				}
 			}
@@ -183,7 +183,7 @@ namespace PDFPatcher.Model.PdfPath
 		sealed class DescendantsAxis : IPathAxis
 		{
 			void SelectObjects(DocumentObject source, string name, IEnumerable<IPathPredicate> predicates, List<DocumentObject> list) {
-				if (source == null || source.HasChildren == false) {
+				if (source == null || !source.HasChildren) {
 					return;
 				}
 				foreach (var item in source.Children) {
@@ -199,7 +199,7 @@ namespace PDFPatcher.Model.PdfPath
 			public PathAxisType Type => PathAxisType.Descendants;
 
 			public DocumentObject SelectObject(DocumentObject source, string name, IEnumerable<IPathPredicate> predicates) {
-				if (source == null || source.HasChildren == false) {
+				if (source == null || !source.HasChildren) {
 					return null;
 				}
 				foreach (var item in source.Children) {
@@ -215,7 +215,7 @@ namespace PDFPatcher.Model.PdfPath
 			}
 
 			public IList<DocumentObject> SelectObjects(DocumentObject source, string name, IEnumerable<IPathPredicate> predicates) {
-				if (source == null || source.HasChildren == false) {
+				if (source == null || !source.HasChildren) {
 					return PathExpression.EmptyMatchResult;
 				}
 				var r = new List<DocumentObject>();

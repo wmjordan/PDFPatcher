@@ -44,7 +44,7 @@ namespace PDFPatcher.Processor
 			}
 			foreach (var item in fl) {
 				if (PdfReader.GetPdfObject(item.Value) is not PRStream f
-					|| PdfName.FORM.Equals(f.GetAsName(PdfName.SUBTYPE)) == false) {
+					|| !PdfName.FORM.Equals(f.GetAsName(PdfName.SUBTYPE))) {
 					continue;
 				}
 				var p = new PdfPageCommandProcessor(f);

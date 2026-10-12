@@ -21,7 +21,7 @@ namespace PDFPatcher.Processor
 			public List<TextLine> Texts { get; }
 			public Result(ImageDisposition image) {
 				Image = image;
-				Texts = new List<TextLine>();
+				Texts = [];
 			}
 		}
 
@@ -393,7 +393,7 @@ namespace PDFPatcher.Processor
 
 		private void OcrImageFile(List<TextLine> result, string p) {
 			var sp = _options.SaveOcredImagePath;
-			if (FileHelper.HasExtension(p, Constants.FileExtensions.Tif) == false) {
+			if (!FileHelper.HasExtension(p, Constants.FileExtensions.Tif)) {
 				using (var fi = new FreeImageAPI.FreeImageBitmap(p)) {
 #if !DEBUG
 					var t = Path.GetDirectoryName (p) + "\\ocr-" + new Random ().Next ().ToText () +".tif";

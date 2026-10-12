@@ -12,20 +12,20 @@ namespace PDFPatcher.Processor.Imaging
 		static readonly ImageCodecInfo _jpgCodec = BitmapHelper.GetCodec("image/jpeg");
 		static EncoderParameters GetEncoderParameters(int quality) {
 			return new EncoderParameters(2) {
-				Param = new EncoderParameter[] {
+				Param = [
 					new EncoderParameter (Encoder.Compression, (long)EncoderValue.RenderProgressive),
 					new EncoderParameter (Encoder.Quality, quality)
-				}
+				]
 			};
 		}
 		// JPEG 编码器不支持 8 位图像输出
 		static EncoderParameters GetEncoderParameters(int quality, int colorDepth) {
 			return new EncoderParameters(3) {
-				Param = new EncoderParameter[] {
+				Param = [
 					new EncoderParameter (Encoder.Compression, (long)EncoderValue.RenderProgressive),
 					new EncoderParameter (Encoder.Quality, quality),
 					new EncoderParameter (Encoder.ColorDepth, colorDepth)
-				}
+				]
 			};
 		}
 
@@ -243,7 +243,7 @@ namespace PDFPatcher.Processor.Imaging
 				var numerator = ToUint(numeratorData);
 				var denominator = ToUint(denominatorData);
 
-				return new[] { numerator, denominator };
+				return [numerator, denominator];
 			}
 
 
@@ -275,7 +275,7 @@ namespace PDFPatcher.Processor.Imaging
 				int numerator = ToInt(numeratorData);
 				int denominator = ToInt(denominatorData);
 
-				return new[] { numerator, denominator };
+				return [numerator, denominator];
 			}
 
 			/// <summary>
@@ -428,7 +428,7 @@ namespace PDFPatcher.Processor.Imaging
 				_stream.Position = ifdOffset + _tiffHeaderStart;
 
 				// Catalogue this first IFD (there will be another IFD)
-				_ifd0Catalogue = new Dictionary<ushort, long>();
+				_ifd0Catalogue = [];
 				CatalogueIFD(ref _ifd0Catalogue);
 
 				// The address to the IFD1 (the thumbnail IFD) is located immediately after the main IFD
@@ -461,7 +461,7 @@ namespace PDFPatcher.Processor.Imaging
 				// Finally, catalogue the thumbnail IFD if it's present
 				if (_ifd1Offset != 0) {
 					_stream.Position = _ifd1Offset + _tiffHeaderStart;
-					_ifd1Catalogue = new Dictionary<ushort, long>();
+					_ifd1Catalogue = [];
 					CatalogueIFD(ref _ifd1Catalogue);
 				}
 			}
