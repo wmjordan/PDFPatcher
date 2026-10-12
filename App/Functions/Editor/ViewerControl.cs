@@ -1220,7 +1220,7 @@ internal sealed class ViewerControl : ImageBoxEx
 		var z = GetZoomFactorForPage(bound);
 		ScrollTo(
 			(position.PageX == 0 && !h) ? HorizontalScroll.Value : (px * z).ToInt32() + op.X,
-			(position.PageY == 0 && h) ? VerticalScroll.Value : (position.Location.Y == 0 ? 0 : (py * z).ToInt32()) + op.Y
+			(position.PageY == 0 && h) ? VerticalScroll.Value : (position.Location.Y == 0 ? 0 : (py * z).ToInt32()) + op.Y + __pageMargin
 			);
 	}
 
