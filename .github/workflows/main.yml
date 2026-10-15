@@ -56,7 +56,7 @@ jobs:
           api-token: '${{ secrets.SIGNPATH_API_TOKEN }}'
           organization-id: '9e59d77b-1688-4585-8ddd-35c559a993e1'
           project-slug: 'PDFPatcher'
-          signing-policy-slug: 'release-signing'
+          signing-policy-slug: 'test-signing'
           github-artifact-id: '${{ steps.upload-unsigned-artifact.outputs.artifact-id }}'
           wait-for-completion: true
           output-artifact-directory: 'bin/Release/signed/'
