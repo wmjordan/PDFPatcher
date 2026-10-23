@@ -1298,12 +1298,16 @@ internal sealed class ViewerControl : ImageBoxEx
 		HideAnnotations = options.HideAnnotation;
 		GrayScale = options.GrayScale;
 
-		if (options.ContentDirection == ContentDirection.Auto
-			&& Document is not null) {
-			var layout = (Document.Trailer.Get<PdfDictionary>(PdfNames.Root)?[new PdfName("PageLayout")] as PdfName)?.Name;
-			ContentDirection = layout == "TwoColumnRight" || layout == "TwoPageRight"
-				? ContentDirection.RightToLeft
-				: ContentDirection.TopToDown;
+		if (Document is not null) {
+			if (options.ContentDirection == ContentDirection.Auto) {
+				var layout = (Document?.Trailer.Get<PdfDictionary>(PdfNames.Root)?[new PdfName("PageLayout")] as PdfName)?.Name;
+				ContentDirection = layout == "TwoColumnRight" || layout == "TwoPageRight"
+					? ContentDirection.RightToLeft
+					: ContentDirection.TopToDown;
+			}
+			else {
+				ContentDirection = options.ContentDirection;
+			}
 		}
 	}
 
