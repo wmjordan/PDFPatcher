@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<Target Name="ILRepacker" AfterTargets="Build" Condition="'$(Configuration)' == 'Release' And Exists('$(ProjectDir)wmjordan.snk')">
+		<ItemGroup>
+			<InputAssemblies Include="$(OutputPath)$(AssemblyName).exe" />
+			<InputAssemblies Include="$(OutputPath)CLR.dll"/>
+			<InputAssemblies Include="$(OutputPath)ColorPicker.dll"/>
+			<InputAssemblies Include="$(OutputPath)Cyotek.Windows.Forms.ImageBox.dll"/>
+			<InputAssemblies Include="$(OutputPath)HtmlRenderer.dll"/>
+			<InputAssemblies Include="$(OutputPath)HtmlRenderer.WinForms.dll"/>
+			<InputAssemblies Include="$(OutputPath)iTextAsian.dll"/>
+			<InputAssemblies Include="$(OutputPath)itextsharp.dll"/>
+			<InputAssemblies Include="$(OutputPath)JacksonSoft.CustomTabControl.dll"/>
+			<InputAssemblies Include="$(OutputPath)ObjectListView.dll"/>
+			<InputAssemblies Include="$(OutputPath)FreeImageNET.dll"/>
+			<InputAssemblies Include="$(OutputPath)PowerJson.dll"/>
+		</ItemGroup>
+		<ILRepack
+			Parallel="true"
+			Internalize="false"
+			InputAssemblies="@(InputAssemblies)"
+			KeyFile="$(ProjectDir)wmjordan.snk"
+			TargetKind="WinExe"
+			OutputFile="$(OutputPath)$(AssemblyName).exe" />
+
+		<PropertyGroup>
+			<!-- AssemblyInfo.cs 路径 -->
+			<AssemblyInfoFile>$(ProjectDir)Properties\AssemblyInfo.cs</AssemblyInfoFile>
+			<!-- bin\Release 文件夹路径 -->
+			<ReleaseFolder>$(SolutionDir)bin\Release</ReleaseFolder>
+			<!-- JS 脚本路径 -->
+			<ScriptFile>$(SolutionDir)CopyReleasedFiles.js</ScriptFile>
+		</PropertyGroup>
+
+		<!-- 调用 CScript，路径用 &quot; 包裹以支持含空格路径 -->
+		<Exec Command="cscript.exe &quot;$(ScriptFile)&quot; &quot;$(AssemblyInfoFile)&quot; &quot;$(ReleaseFolder)&quot;"
+          WorkingDirectory="$(ReleaseFolder)"
+          ContinueOnError="false" />
+	</Target>
+</Project>
